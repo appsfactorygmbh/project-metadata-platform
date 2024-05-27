@@ -5,7 +5,7 @@ stages:
   - deploy
 
 variables:
-  DEVELOP_BRANCH: develop
+  DEVELOP_BRANCH: feature/addPipeline
 
 include:
   - project: 'projekt2024_A_Appsfactory_Project_Metadata_Platform/templates'
