@@ -17,7 +17,7 @@ test:
   image: node:latest
   script:
     - npm install
-    - vitest run --ci --reporters=junit --outputFile=./junit.xml
+    - npm run test --ci --reporters=junit --outputFile=./junit.xml
   artifacts:
     when: always
     reports:
