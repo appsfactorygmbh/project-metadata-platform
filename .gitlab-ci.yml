@@ -40,4 +40,4 @@ sonarqube:
     - sonar-scanner
   allow_failure: true
   rules:
-    - if: $CI_COMMIT_BRANCH != $DEVELOP_BRANCH
+    - if: $CI_COMMIT_BRANCH == $DEVELOP_BRANCH
