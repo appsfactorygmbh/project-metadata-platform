@@ -4,7 +4,7 @@ import { ref } from 'vue'
 defineProps<{ msg: string }>()
 
 const count = ref(0)
-const weatherForecasts = ref([])
+const weatherForecasts = ref<any[]>([])
 
 async function getForecasts() {
   count.value++;
