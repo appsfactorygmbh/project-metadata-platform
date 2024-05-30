@@ -1,5 +1,4 @@
 <script setup lang="ts">
-i<script setup lang="ts">
 import { ref } from 'vue'
 import {Splitpanes, Pane} from 'splitpanes' //externes Framework, dass die Schieberegler implementiert
 import 'splitpanes/dist/splitpanes.css'
