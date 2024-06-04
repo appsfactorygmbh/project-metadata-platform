@@ -588,6 +588,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash-es@npm:^4.17.12":
+  version: 4.17.12
+  resolution: "@types/lodash-es@npm:4.17.12"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 10c0/5d12d2cede07f07ab067541371ed1b838a33edb3c35cb81b73284e93c6fd0c4bbeaefee984e69294bffb53f62d7272c5d679fdba8e595ff71e11d00f2601dde0
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:*, @types/lodash@npm:^4.17.4":
+  version: 4.17.4
+  resolution: "@types/lodash@npm:4.17.4"
+  checksum: 10c0/0124c64cb9fe7a0f78b6777955abd05ef0d97844d49118652eae45f8fa57bfb7f5a7a9bccc0b5a84c0a6dc09631042e4590cb665acb9d58dfd5e6543c75341ec
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/eslint-plugin@npm:7.12.0":
   version: 7.12.0
   resolution: "@typescript-eslint/eslint-plugin@npm:7.12.0"
@@ -1842,6 +1858,8 @@ __metadata:
   resolution: "frontend@workspace:."
   dependencies:
     "@eslint/eslintrc": "npm:^3.1.0"
+    "@types/lodash": "npm:^4.17.4"
+    "@types/lodash-es": "npm:^4.17.12"
     "@vitejs/plugin-vue": "npm:^5.0.4"
     "@vue/test-utils": "npm:^2.4.0-alpha.2"
     ant-design-vue: "npm:4.x"
@@ -1849,6 +1867,7 @@ __metadata:
     eslint-formatter-gitlab: "npm:^5.1.0"
     eslint-plugin-vue: "npm:^9.26.0"
     happy-dom: "npm:^14.11.1"
+    lodash: "npm:^4.17.21"
     prettier: "npm:^3.3.0"
     typescript: "npm:^5.2.2"
     typescript-eslint: "npm:^7.12.0"
