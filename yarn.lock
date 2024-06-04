@@ -1858,7 +1858,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.10.5":
+"dayjs@npm:^1.10.5, dayjs@npm:^1.11.11":
   version: 1.11.11
   resolution: "dayjs@npm:1.11.11"
   checksum: 10c0/0131d10516b9945f05a57e13f4af49a6814de5573a494824e103131a3bbe4cc470b1aefe8e17e51f9a478a22cd116084be1ee5725cedb66ec4c3f9091202dc4b
@@ -2421,6 +2421,7 @@ __metadata:
     "@vitejs/plugin-vue-jsx": "npm:^4.0.0"
     "@vue/test-utils": "npm:^2.4.0-alpha.2"
     ant-design-vue: "npm:4.x"
+    dayjs: "npm:^1.11.11"
     eslint: "npm:^8.56.0"
     eslint-formatter-gitlab: "npm:^5.1.0"
     eslint-plugin-vue: "npm:^9.26.0"
