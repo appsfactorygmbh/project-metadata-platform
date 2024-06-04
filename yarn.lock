@@ -979,7 +979,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:*, @types/lodash@npm:^4.17.4":
+"@types/lodash@npm:*":
   version: 4.17.4
   resolution: "@types/lodash@npm:4.17.4"
   checksum: 10c0/0124c64cb9fe7a0f78b6777955abd05ef0d97844d49118652eae45f8fa57bfb7f5a7a9bccc0b5a84c0a6dc09631042e4590cb665acb9d58dfd5e6543c75341ec
@@ -2414,7 +2414,6 @@ __metadata:
     "@eslint/eslintrc": "npm:^3.1.0"
     "@eslint/js": "npm:^9.4.0"
     "@types/eslint__js": "npm:^8.42.3"
-    "@types/lodash": "npm:^4.17.4"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^20.14.1"
     "@vitejs/plugin-vue": "npm:^5.0.5"
@@ -2426,7 +2425,7 @@ __metadata:
     eslint-formatter-gitlab: "npm:^5.1.0"
     eslint-plugin-vue: "npm:^9.26.0"
     happy-dom: "npm:^14.11.1"
-    lodash: "npm:^4.17.21"
+    lodash-es: "npm:^4.17.21"
     prettier: "npm:^3.3.0"
     typescript: "npm:^5.4.5"
     typescript-eslint: "npm:^7.12.0"
@@ -2968,7 +2967,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash-es@npm:^4.17.15":
+"lodash-es@npm:^4.17.15, lodash-es@npm:^4.17.21":
   version: 4.17.21
   resolution: "lodash-es@npm:4.17.21"
   checksum: 10c0/fb407355f7e6cd523a9383e76e6b455321f0f153a6c9625e21a8827d10c54c2a2341bd2ae8d034358b60e07325e1330c14c224ff582d04612a46a4f0479ff2f2
