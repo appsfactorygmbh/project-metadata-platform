@@ -28,6 +28,8 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./",\
         "packageDependencies": [\
           ["@eslint/eslintrc", "npm:3.1.0"],\
+          ["@types/lodash", "npm:4.17.4"],\
+          ["@types/lodash-es", "npm:4.17.12"],\
           ["@vitejs/plugin-vue", "virtual:d9650954c7f1725ea712d2e40695de9ea5d1c0fa9b89379134c62909d440d91b03d6c37e2823804a3404472b90a5bec73c82193190dd3c4db4c9e9edd75db91e#npm:5.0.5"],\
           ["@vue/test-utils", "npm:2.4.6"],\
           ["ant-design-vue", "virtual:d9650954c7f1725ea712d2e40695de9ea5d1c0fa9b89379134c62909d440d91b03d6c37e2823804a3404472b90a5bec73c82193190dd3c4db4c9e9edd75db91e#npm:4.2.1"],\
@@ -35,6 +37,7 @@ const RAW_RUNTIME_STATE =
           ["eslint-formatter-gitlab", "virtual:d9650954c7f1725ea712d2e40695de9ea5d1c0fa9b89379134c62909d440d91b03d6c37e2823804a3404472b90a5bec73c82193190dd3c4db4c9e9edd75db91e#npm:5.1.0"],\
           ["eslint-plugin-vue", "virtual:d9650954c7f1725ea712d2e40695de9ea5d1c0fa9b89379134c62909d440d91b03d6c37e2823804a3404472b90a5bec73c82193190dd3c4db4c9e9edd75db91e#npm:9.26.0"],\
           ["happy-dom", "npm:14.12.0"],\
+          ["lodash", "npm:4.17.21"],\
           ["prettier", "npm:3.3.0"],\
           ["typescript", "patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>::version=5.4.5&hash=5adc0c"],\
           ["typescript-eslint", "virtual:d9650954c7f1725ea712d2e40695de9ea5d1c0fa9b89379134c62909d440d91b03d6c37e2823804a3404472b90a5bec73c82193190dd3c4db4c9e9edd75db91e#npm:7.12.0"],\
@@ -788,6 +791,25 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "../../../../../../.yarn/berry/cache/@types-json-schema-npm-7.0.15-fd16381786-10c0.zip/node_modules/@types/json-schema/",\
         "packageDependencies": [\
           ["@types/json-schema", "npm:7.0.15"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@types/lodash", [\
+      ["npm:4.17.4", {\
+        "packageLocation": "../../../../../../.yarn/berry/cache/@types-lodash-npm-4.17.4-3f78228325-10c0.zip/node_modules/@types/lodash/",\
+        "packageDependencies": [\
+          ["@types/lodash", "npm:4.17.4"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@types/lodash-es", [\
+      ["npm:4.17.12", {\
+        "packageLocation": "../../../../../../.yarn/berry/cache/@types-lodash-es-npm-4.17.12-87dce3f795-10c0.zip/node_modules/@types/lodash-es/",\
+        "packageDependencies": [\
+          ["@types/lodash-es", "npm:4.17.12"],\
+          ["@types/lodash", "npm:4.17.4"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -2312,6 +2334,8 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["frontend", "workspace:."],\
           ["@eslint/eslintrc", "npm:3.1.0"],\
+          ["@types/lodash", "npm:4.17.4"],\
+          ["@types/lodash-es", "npm:4.17.12"],\
           ["@vitejs/plugin-vue", "virtual:d9650954c7f1725ea712d2e40695de9ea5d1c0fa9b89379134c62909d440d91b03d6c37e2823804a3404472b90a5bec73c82193190dd3c4db4c9e9edd75db91e#npm:5.0.5"],\
           ["@vue/test-utils", "npm:2.4.6"],\
           ["ant-design-vue", "virtual:d9650954c7f1725ea712d2e40695de9ea5d1c0fa9b89379134c62909d440d91b03d6c37e2823804a3404472b90a5bec73c82193190dd3c4db4c9e9edd75db91e#npm:4.2.1"],\
@@ -2319,6 +2343,7 @@ const RAW_RUNTIME_STATE =
           ["eslint-formatter-gitlab", "virtual:d9650954c7f1725ea712d2e40695de9ea5d1c0fa9b89379134c62909d440d91b03d6c37e2823804a3404472b90a5bec73c82193190dd3c4db4c9e9edd75db91e#npm:5.1.0"],\
           ["eslint-plugin-vue", "virtual:d9650954c7f1725ea712d2e40695de9ea5d1c0fa9b89379134c62909d440d91b03d6c37e2823804a3404472b90a5bec73c82193190dd3c4db4c9e9edd75db91e#npm:9.26.0"],\
           ["happy-dom", "npm:14.12.0"],\
+          ["lodash", "npm:4.17.21"],\
           ["prettier", "npm:3.3.0"],\
           ["typescript", "patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>::version=5.4.5&hash=5adc0c"],\
           ["typescript-eslint", "virtual:d9650954c7f1725ea712d2e40695de9ea5d1c0fa9b89379134c62909d440d91b03d6c37e2823804a3404472b90a5bec73c82193190dd3c4db4c9e9edd75db91e#npm:7.12.0"],\
