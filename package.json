@@ -7,7 +7,8 @@
     "dev": "vue-tsc && vite build && vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "ant-design-vue": "4.x",
@@ -21,6 +22,7 @@
     "eslint-formatter-gitlab": "^5.1.0",
     "eslint-plugin-vue": "^9.26.0",
     "happy-dom": "^14.11.1",
+    "prettier": "^3.3.0",
     "typescript": "^5.2.2",
     "typescript-eslint": "^7.12.0",
     "vite": "^5.2.0",
