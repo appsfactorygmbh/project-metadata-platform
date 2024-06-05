@@ -4,7 +4,13 @@
   defineProps<{ msg: string }>();
 
   const count = ref(0);
-  const weatherForecasts = ref<any[]>([]);
+  const weatherForecasts = ref<
+    {
+      date: string;
+      temperatureC: number;
+      summary: string;
+    }[]
+  >([]);
 
   async function getForecasts() {
     count.value++;
