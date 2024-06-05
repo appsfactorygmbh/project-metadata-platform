@@ -23,6 +23,7 @@ export default tseslint.config(
   },
   {
     name: 'custom-config',
+    files: ['src/**/*.{ts,tsx,vue}'],
     plugins: {
       'typescript-eslint': tseslint.plugin,
     },
