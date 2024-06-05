@@ -10,6 +10,7 @@ import AntdvResolver from 'antdv-component-resolver';
 const baseSrc = fileURLToPath(new URL('./src', import.meta.url));
 
 // https://vitejs.dev/config/
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   return {
     resolve: {
