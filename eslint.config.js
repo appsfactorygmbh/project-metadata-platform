@@ -8,15 +8,17 @@ import eslintConfigPrettier from 'eslint-config-prettier';
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
-  // @ts-ignore
+  // @ts-expect-error mismatched types
   ...pluginVue.configs['flat/recommended'],
   {
     name: 'linter-config',
     files: ['eslint.config.js', 'vite.config.ts'],
-    parserOptions: {
-      parser: tseslint.parser,
-      project: './tsconfig.eslint.json',
-      sourceType: 'module',
+    languageOptions: {
+      parserOptions: {
+        parser: tseslint.parser,
+        project: './tsconfig.eslint.json',
+        sourceType: 'module',
+      },
     },
   },
   {
