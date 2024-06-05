@@ -1,82 +1,106 @@
 /// <reference types="vitest" />
 import { fileURLToPath } from 'node:url'
-import { defineConfig } from 'vite'
+import { defineConfig, ConfigEnv, UserConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import AntdvResolver from 'antdv-component-resolver'
 
 const baseSrc = fileURLToPath(new URL('./src', import.meta.url))
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  resolve: {
-    alias: [
-      {
-        find: 'dayjs',
-        replacement: 'dayjs/esm',
-      },
-      {
-        find: /^dayjs\/locale/,
-        replacement: 'dayjs/esm/locale',
-      },
-      {
-        find: /^dayjs\/plugin/,
-        replacement: 'dayjs/esm/plugin',
-      },
-      {
-        find: /^ant-design-vue\/es$/,
-        replacement: 'ant-design-vue/es',
-      },
-      {
-        find: /^ant-design-vue\/dist$/,
-        replacement: 'ant-design-vue/dist',
-      },
-      {
-        find: /^ant-design-vue\/lib$/,
-        replacement: 'ant-design-vue/es',
-      },
-      {
-        find: /^ant-design-vue$/,
-        replacement: 'ant-design-vue/es',
-      },
-      {
-        find: 'lodash',
-        replacement: 'lodash-es',
-      },
-      {
-        find: '@',
-        replacement: baseSrc,
-      },
-    ],
-  },
-  plugins: [
-    vue(), 
-    vueJsx(),
-    AutoImport({
-      imports: [
-        'vue',
-        'vue-router',
-      ],
-      dts: 'types/auto-imports.d.ts',
-    }),
-  ],
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    exclude: ['node_modules', 'dist', 'coverage', 'lib', '*.d.ts'],
-    coverage: {
-      enabled: true,
-      reporter: ['text', 'html'],
-      exclude: [
-        'node_modules',
-        'dist',
-        'coverage',
-        'lib',
-        '*.d.ts',
+export default defineConfig(({ mode } : ConfigEnv) : UserConfig => {
+  return {
+    resolve: {
+      alias: [
+        {
+          find: 'dayjs',
+          replacement: 'dayjs/esm',
+        },
+        {
+          find: /^dayjs\/locale/,
+          replacement: 'dayjs/esm/locale',
+        },
+        {
+          find: /^dayjs\/plugin/,
+          replacement: 'dayjs/esm/plugin',
+        },
+        {
+          find: /^ant-design-vue\/es$/,
+          replacement: 'ant-design-vue/es',
+        },
+        {
+          find: /^ant-design-vue\/dist$/,
+          replacement: 'ant-design-vue/dist',
+        },
+        {
+          find: /^ant-design-vue\/lib$/,
+          replacement: 'ant-design-vue/es',
+        },
+        {
+          find: /^ant-design-vue$/,
+          replacement: 'ant-design-vue/es',
+        },
+        {
+          find: 'lodash',
+          replacement: 'lodash-es',
+        },
+        {
+          find: '@',
+          replacement: baseSrc,
+        },
       ],
     },
-
-    setupFiles: './tests/setup.ts',
-    reporters: ['default', 'html'],
-  },
+    plugins: [
+      vue(), 
+      vueJsx(),
+      AutoImport({
+        imports: [
+          'vue',
+          'vue-router',
+        ],
+        dts: 'types/auto-imports.d.ts',
+      }),
+      Components({
+        resolvers: [AntdvResolver()],
+        dts: 'types/components.d.ts',
+        dirs: ['src/components'],
+      }),
+    ],
+    build: {
+      chunkSizeWarningLimit: 4096,
+      outDir: 'dist',
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vue: ['vue', 'vue-router'],
+            antd: ['ant-design-vue', '@ant-design/icons-vue', 'dayjs'],
+          },
+        },
+      },
+    },
+    server: {
+      port: 5173,
+    },
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      exclude: ['node_modules', 'dist', 'coverage', 'html', 'lib', '*.d.ts'],
+      coverage: {
+        enabled: true,
+        reporter: ['text', 'html'],
+        exclude: [
+          'node_modules',
+          'dist',
+          'coverage',
+          'html',
+          'lib',
+          '*.d.ts',
+        ],
+      },
+      setupFiles: './tests/setup.ts',
+      reporters: ['default', 'html'],
+    },
+  }
 })
