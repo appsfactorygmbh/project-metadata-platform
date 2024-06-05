@@ -1,9 +1,102 @@
-# Vue 3 + TypeScript + Vite
+# Appsfactory "Metadata Platform" Frontend
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## Overview
 
-## Recommended Setup
+This project is a Vue 3 web application with TypeScript integration, utilizing modern tools like Vite, ESLint, Prettier, and Vitest for development and testing.
 
-- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (previously Volar) and disable Vetur
+## Getting Started
 
-- Use [vue-tsc](https://github.com/vuejs/language-tools/tree/master/packages/tsc) for performing the same type checking from the command line, or for generating d.ts files for SFCs.
+### Prerequisites
+
+- Node.js (v16+)
+- Corepack (manages package managers like Yarn)
+- Yarn
+
+### Installation
+
+1. Clone the repository:
+
+   ```sh
+   git clone <repository-url>
+   cd frontend
+   ```
+
+2. Enable Corepack and install dependencies:
+   ```sh
+   corepack enable
+   yarn install
+   ```
+
+### Scripts
+
+**Development**:
+
+```sh
+yarn dev
+```
+
+Runs the app in development mode.
+
+**Build**:
+
+```sh
+yarn build
+```
+
+Builds the app for production.
+
+**Preview**:
+
+```sh
+yarn preview
+```
+
+Previews the production build.
+
+**Lint**:
+
+```sh
+yarn lint
+```
+
+Lints the codebase with ESLint. Recommended to execute before committing.
+
+**Format**:
+
+```sh
+yarn format
+```
+
+Formats the codebase with Prettier. Recommended to execute before committing.
+
+**Test**:
+
+```sh
+yarn test
+```
+
+Runs unit tests with Vitest.
+
+**Test UI**:
+
+```sh
+yarn test:ui
+```
+
+Runs the Vitest UI.
+
+### Project Structure
+
+- `public`: Static public files like favicon or fonts
+- `src`: Source files
+  - `assets`: Static assets like images
+  - `components`: Vue reusable components
+  - `models`: TypeScript models
+  - `router`: Vue router configuration
+  - `services`: API services
+  - `store`: Vuex stores
+  - `views`: Vue views/pages
+
+### Environment Variables
+
+...
