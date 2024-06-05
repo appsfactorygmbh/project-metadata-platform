@@ -94,7 +94,7 @@ Runs the Vitest UI.
   - `models`: TypeScript models
   - `router`: Vue router configuration
   - `services`: API services
-  - `store`: Vuex stores
+  - `store`: Pinia stores
   - `views`: Vue views/pages
 
 ### Environment Variables
