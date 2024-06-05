@@ -1,16 +1,16 @@
 /// <reference types="vitest" />
-import { fileURLToPath } from 'node:url'
-import { defineConfig, ConfigEnv, UserConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-import AntdvResolver from 'antdv-component-resolver'
+import { fileURLToPath } from 'node:url';
+import { defineConfig, ConfigEnv, UserConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+import AntdvResolver from 'antdv-component-resolver';
 
-const baseSrc = fileURLToPath(new URL('./src', import.meta.url))
+const baseSrc = fileURLToPath(new URL('./src', import.meta.url));
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode } : ConfigEnv) : UserConfig => {
+export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   return {
     resolve: {
       alias: [
@@ -53,13 +53,10 @@ export default defineConfig(({ mode } : ConfigEnv) : UserConfig => {
       ],
     },
     plugins: [
-      vue(), 
+      vue(),
       vueJsx(),
       AutoImport({
-        imports: [
-          'vue',
-          'vue-router',
-        ],
+        imports: ['vue', 'vue-router'],
         dts: 'types/auto-imports.d.ts',
       }),
       Components({
@@ -90,17 +87,10 @@ export default defineConfig(({ mode } : ConfigEnv) : UserConfig => {
       coverage: {
         enabled: true,
         reporter: ['text', 'html'],
-        exclude: [
-          'node_modules',
-          'dist',
-          'coverage',
-          'html',
-          'lib',
-          '*.d.ts',
-        ],
+        exclude: ['node_modules', 'dist', 'coverage', 'html', 'lib', '*.d.ts'],
       },
       setupFiles: './tests/setup.ts',
       reporters: ['default', 'html'],
     },
-  }
-})
+  };
+});
