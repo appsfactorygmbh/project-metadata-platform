@@ -1,26 +1,29 @@
 <script lang="ts">
-  import Plugin from './Plugin.vue';
-  export default {
-    name: 'PluginView',
-    components: {
-      Plugin
+interface Plugin {
+  pluginName: string;
+  url: string;
+}
+import { defineComponent } from "vue";
+import Plugin from "./Plugin.vue";
+export default defineComponent({
+  name: "PluginView",
+  components: {
+    Plugin,
+  },
+  props: {
+    pluginProps: {
+      type: Array as () => Plugin[],
+      required: true,
     },
-    // TODO: fetch Data from API
-  }
+  },
+});
 </script>
-
 <template>
-  <div class="container">
-    <Plugin plugin-name="GitHub" url="https://github.com/dasisteinetesturl"></Plugin>
-  </div>
+  <a-row justify="start" :gutter="[15, 15]">
+    <div v-for="plugin in pluginProps">
+      <a-col class="gutter-row">
+        <Plugin :url="plugin.url" :pluginName="plugin.pluginName"></Plugin>
+      </a-col>
+    </div>
+  </a-row>
 </template>
-
-<style scoped lang="scss">
-  .container{
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-</style>
