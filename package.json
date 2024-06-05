@@ -35,7 +35,7 @@
     "@vitest/ui": "^1.6.0",
     "@vue/test-utils": "^2.4.0-alpha.2",
     "antdv-component-resolver": "^1.0.7",
-    "eslint": "^9.4.0",
+    "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-formatter-gitlab": "^5.1.0",
     "eslint-plugin-vue": "^9.26.0",
