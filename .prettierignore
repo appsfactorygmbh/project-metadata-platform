@@ -3,3 +3,4 @@ coverage
 html
 node_modules
 .gitlab-ci.yml
+nginx.conf
