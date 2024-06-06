@@ -1,12 +1,15 @@
 # Build stage
-FROM node:16 AS build
+FROM node:20-alpine AS build
+
+RUN npm install -g corepack && corepack enable && yarn set version stable
+
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+RUN rm -rf node_modules && yarn install --immutable
 
 COPY . .
-RUN npm run build
+RUN yarn build
 
 # Production stage
 FROM nginx:stable-alpine AS production

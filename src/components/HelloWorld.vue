@@ -1,26 +1,37 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+  import { ref } from 'vue';
 
-defineProps<{ msg: string }>()
+  defineProps<{ msg: string }>();
 
-const count = ref(0)
-const weatherForecasts = ref<any[]>([])
+  const count = ref(0);
+  const weatherForecasts = ref<
+    {
+      date: string;
+      temperatureC: number;
+      summary: string;
+    }[]
+  >([]);
 
-async function getForecasts() {
-  count.value++;
-  try {
-    const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/WeatherForecast?count=' + count.value, {
-      headers: {
-        'Accept': 'text/plain',
-        'Access-Control-Allow-Origin': '*',
-        'cors': 'no-cors'
-      },
-    })
-    weatherForecasts.value = await response.json()
-  } catch (error) {
-    console.error('Failed to fetch weather forecasts:', error)
+  async function getForecasts() {
+    count.value++;
+    try {
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_URL +
+          '/WeatherForecast?count=' +
+          count.value,
+        {
+          headers: {
+            Accept: 'text/plain',
+            'Access-Control-Allow-Origin': '*',
+            cors: 'no-cors',
+          },
+        },
+      );
+      weatherForecasts.value = await response.json();
+    } catch (error) {
+      console.error('Failed to fetch weather forecasts:', error);
+    }
   }
-}
 </script>
 
 <template>
@@ -38,14 +49,15 @@ async function getForecasts() {
     <h2>Weather Forecasts</h2>
     <ul>
       <li v-for="forecast in weatherForecasts" :key="forecast.date">
-        {{ forecast.date }} - {{ forecast.temperatureC }}°C - {{ forecast.summary }}
+        {{ forecast.date }} - {{ forecast.temperatureC }}°C -
+        {{ forecast.summary }}
       </li>
     </ul>
   </div>
 </template>
 
 <style scoped>
-.read-the-docs {
-  color: #888;
-}
+  .read-the-docs {
+    color: #888;
+  }
 </style>
