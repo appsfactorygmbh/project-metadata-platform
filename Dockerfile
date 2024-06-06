@@ -1,12 +1,15 @@
 # Build stage
-FROM node:16 AS build
+FROM node:20-alpine AS build
+
+RUN apk add --no-cache yarn
+
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --legacy-peer-deps
+RUN rm -rf node_modules && yarn install --frozen-lockfile
 
 COPY . .
-RUN npm run build
+RUN yarn build
 
 # Production stage
 FROM nginx:stable-alpine AS production

@@ -3,6 +3,21 @@ stages:
   - build
   - deploy
 
+default:
+  image: node:20-alpine
+  before_script:
+    # Install yarn as outlined in (https://yarnpkg.com/lang/en/docs/install/#alternatives-stable)
+    - curl -o- -L https://yarnpkg.com/install.sh | bash
+    # Make available in the current terminal
+    - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+    - corepack enable
+    - yarn set version stable
+    - rm -rf node_modules && yarn install --immutable --immutable-cache --check-cache
+  cache:
+    paths:
+      - .yarn
+      - node_modules
+
 variables:
   DEVELOP_BRANCH: develop
 
@@ -13,14 +28,12 @@ include:
 
 prettier:
   script:
-    - rm -rf node_modules && yarn install --frozen-lockfile
     - npx prettier --check .
 
 test:
   stage: test
   image: node:latest
   script:
-    - rm -rf node_modules && yarn install --frozen-lockfile
     - yarn test --reporter=junit --outputFile=./junit.xml 
   artifacts:
     when: always
@@ -33,9 +46,7 @@ test:
 
 code-quality:
   stage: test
-  image: node:latest
   script:
-    - rm -rf node_modules && yarn install --frozen-lockfile
     - npx eslint --format gitlab .
   allow_failure: true
   artifacts:
