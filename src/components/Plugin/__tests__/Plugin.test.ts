@@ -32,8 +32,10 @@ describe('Plugin.vue', () => {
 
   it('creates correct favicon URL', () => {
     const result = createFaviconURL('https://example.com');
-    expect(result).toBe('https://www.google.com/s2/favicons?domain=https://example.com&sz=128');
-  })
+    expect(result).toBe(
+      'https://www.google.com/s2/favicons?domain=https://example.com&sz=128',
+    );
+  });
 
   it('cuts URL after TLD', () => {
     //Test with https and .com TLD
@@ -53,5 +55,5 @@ describe('Plugin.vue', () => {
   it('returns invalid URL if URL is invalid', () => {
     const result = cutAfterTLD('www.example');
     expect(result).toBe('www.example');
-  })
+  });
 });

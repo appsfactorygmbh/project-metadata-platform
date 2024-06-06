@@ -5,7 +5,7 @@ export const cutAfterTLD = (url: string): string => {
   if (match) {
     return match[0];
   }
-  return "appsfactory.de"
+  return 'appsfactory.de';
 };
 
 // use google entpoint to get favicon of website
