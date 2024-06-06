@@ -1,7 +1,7 @@
 # Build stage
 FROM node:20-alpine AS build
 
-RUN apk add --no-cache yarn
+RUN npm install -g corepack && corepack enable && yarn set version stable
 
 WORKDIR /app
 
