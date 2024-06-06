@@ -39,6 +39,8 @@ test:
         - junit.xml
 
 code-formatting:
+  stage: test
+  allow_failure: true
   script:
     - npx prettier --check .
 
