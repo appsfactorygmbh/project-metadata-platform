@@ -12,7 +12,7 @@
     },
   });
 
-  const faviconUrl = ref('');
+  const faviconUrl = ref<any>('');
 
   function createFaviconURL(tld: string) {
     faviconUrl.value = `https://www.google.com/s2/favicons?domain=${tld}&sz=128`;
@@ -45,7 +45,7 @@
     class="card"
     :bordered="false"
     toggle="true"
-    body-style="display: flex; flex-direction: row; align-items: center; padding: 15px"
+    :body-style = "{display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '15px'}"
     @click="copyToClipboard"
   >
     <a-avatar :src="faviconUrl" class="avatar"></a-avatar>
@@ -95,7 +95,5 @@
     height: auto;
     aspect-ratio: 1 / 1; // Für ein quadratisches Bild
     object-fit: cover;
-    & img {
-    }
   }
 </style>

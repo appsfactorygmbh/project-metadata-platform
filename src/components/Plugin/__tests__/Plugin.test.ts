@@ -1,14 +1,15 @@
 import { mount } from '@vue/test-utils';
-import Plugin from '../src/components/Plugin.vue';
+import Plugin from '../Plugin.vue';
 import { describe, it, expect } from 'vitest';
+import { cutAfterTLD } from '../editURL';
 
-const generateWrapper = (name, url) => {
-    return mount(Plugin, {
-        props: {
-        pluginName: name,
-        url: url,
-        },
-    });
+const generateWrapper = (name: string, url:string) => {
+  return mount(Plugin, {
+      props: {
+      pluginName: name,
+      url: url,
+      },
+  });
 
 }
 
@@ -30,19 +31,18 @@ describe('Plugin.vue', () => {
   });
 
   it('cuts URL after TLD', () => {
-    const wrapper= generateWrapper('Test Plugin', 'https://example.com/path/to/resource');
-
-    const result1 = wrapper.vm.cutAfterTLD(
+    
+    const result1 = cutAfterTLD(
       'https://example.com/path/to/resource',
     );
     expect(result1).toBe('https://example.com');
 
-    const result2 = wrapper.vm.cutAfterTLD(
+    const result2 = cutAfterTLD(
         'https://example.de/path/to/resource',
     );
     expect(result2).toBe('https://example.de');
 
-    const result3 = wrapper.vm.cutAfterTLD(
+    const result3 = cutAfterTLD(
         'www.example.com/path/to/resource',
     );
     expect(result3).toBe('www.example.com');

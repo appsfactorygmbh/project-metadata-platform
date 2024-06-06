@@ -4,6 +4,7 @@ interface Plugin {
   url: string;
 }
 import { defineComponent } from "vue";
+// eslint-disable-next-line no-redeclare
 import Plugin from "./Plugin.vue";
 export default defineComponent({
   name: "PluginView",
