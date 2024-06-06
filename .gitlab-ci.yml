@@ -3,6 +3,19 @@ stages:
   - build
   - deploy
 
+default:
+  image: node:20-alpine
+  before_script:
+    # Install yarn as outlined in (https://yarnpkg.com/lang/en/docs/install/#alternatives-stable)
+    - npm install -g corepack
+    - corepack enable
+    - yarn set version stable
+    - yarn install --immutable
+  cache:
+    paths:
+      - .yarn
+      - node_modules
+
 variables:
   DEVELOP_BRANCH: develop
 
@@ -15,19 +28,25 @@ test:
   stage: test
   image: node:latest
   script:
-    - npm install --legacy-peer-deps
-    - npm run test -- --reporter=junit --outputFile=./junit.xml
+    - yarn test --reporter=junit --outputFile=./junit.xml 
   artifacts:
     when: always
     reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
       junit:
         - junit.xml
 
+code-formatting:
+  stage: test
+  allow_failure: true
+  script:
+    - npx prettier --check .
+
 code-quality:
   stage: test
-  image: node:latest
   script:
-    - npm install --legacy-peer-deps
     - npx eslint --format gitlab .
   allow_failure: true
   artifacts:
