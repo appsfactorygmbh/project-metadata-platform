@@ -2,7 +2,7 @@
   import defaultTheme from '@/assets/themes/default-theme.json';
 </script>
 <template>
-  <a-config-provider :theme="{ defaultTheme }">
+  <a-config-provider :theme="defaultTheme">
     <slot></slot>
   </a-config-provider>
 </template>
