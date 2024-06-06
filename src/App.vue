@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import {Splitpanes, Pane} from 'splitpanes' //externes Framework, dass die Schieberegler implementiert
-import 'splitpanes/dist/splitpanes.css'
+  import HelloWorld from './components/HelloWorld.vue';
 </script>
 
 <template>
@@ -18,14 +16,16 @@ import 'splitpanes/dist/splitpanes.css'
 </template>
 
 <style scoped>
-.container {
-  width: 100vw;
-  height: 100vh;
-}
-#pane1 {
-  min-width: 25vw;
-}
-#pane2 {
-  min-width: 5vw;
-}
+  .logo {
+    height: 6em;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
+  }
+  .logo:hover {
+    filter: drop-shadow(0 0 2em #646cffaa);
+  }
+  .logo.vue:hover {
+    filter: drop-shadow(0 0 2em #42b883aa);
+  }
 </style>

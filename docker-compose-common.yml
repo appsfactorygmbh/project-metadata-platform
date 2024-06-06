@@ -1,0 +1,6 @@
+services:
+  frontend:
+    ports:
+      - "80:80"
+    networks:
+      - frontend-backend-network
