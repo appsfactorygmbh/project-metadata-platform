@@ -19,11 +19,11 @@
   const plugins = ref([
     {
       name: 'GitLab',
-      url: 'gitlab.com/path/to/project',
+      url: 'https://gitlab.com/path/to/project',
     },
     {
       name: 'GitHub',
-      url: 'github.com/path/to/project',
+      url: 'https://github.com/path/to/project',
     },
     {
       name: 'Azure DevOps',
@@ -32,10 +32,6 @@
     {
       name: 'Google Drive',
       url: 'https://drive.google.com/drive/path/to/own/drive',
-    },
-    {
-      name: 'Salesforce',
-      url: 'https://www.salesforce.com/de/',
     },
   ]);
 </script>

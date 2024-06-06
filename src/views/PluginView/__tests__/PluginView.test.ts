@@ -13,6 +13,6 @@ describe('PluginView', () => {
       },
     });
     console.log(wrapper.html());
-    expect(wrapper.findAll('.plugins')).toHaveLength(5);
+    expect(wrapper.findAll('.plugins')).toHaveLength(4);
   });
 });
