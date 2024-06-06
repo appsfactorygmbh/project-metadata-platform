@@ -6,7 +6,7 @@ RUN apk add --no-cache yarn
 WORKDIR /app
 
 COPY package*.json ./
-RUN rm -rf node_modules && yarn install --frozen-lockfile
+RUN rm -rf node_modules && yarn install --immutable
 
 COPY . .
 RUN yarn build
