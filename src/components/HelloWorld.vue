@@ -23,7 +23,7 @@
           headers: {
             Accept: 'text/plain',
             'Access-Control-Allow-Origin': '*',
-            cors: 'no-cors',
+            cors: 'cors',
           },
         },
       );
