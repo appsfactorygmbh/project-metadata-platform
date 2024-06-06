@@ -10,7 +10,7 @@ default:
     - npm install -g corepack
     - corepack enable
     - yarn set version stable
-    - yarn install --immutable --immutable-cache --check-cache
+    - yarn install --immutable
   cache:
     paths:
       - .yarn
