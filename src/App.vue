@@ -264,5 +264,3 @@ onMounted(reloadData)
     }
 
 </style>
-
-
