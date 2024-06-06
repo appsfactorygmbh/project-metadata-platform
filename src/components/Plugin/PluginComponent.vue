@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-  import { ref, onMounted } from 'vue';
+  import { ref } from 'vue';
+  import { cutAfterTLD, createFaviconURL } from './editURL';
 
   const props = defineProps({
     pluginName: {
@@ -12,20 +13,7 @@
     },
   });
 
-  const faviconUrl = ref<any>('');
-
-  function createFaviconURL(tld: string) {
-    faviconUrl.value = `https://www.google.com/s2/favicons?domain=${tld}&sz=128`;
-  }
-
-  function cutAfterTLD(url: string): string {
-    const regex = /^(https?:\/\/)?([^\/]+(\.[a-z]{2,}))/i;
-    const match = url.match(regex);
-    if (match) {
-      return match[0];
-    }
-    return url;
-  }
+  const faviconUrl = ref(createFaviconURL(cutAfterTLD(props.url)));
 
   async function copyToClipboard() {
     try {
@@ -34,10 +22,6 @@
       console.error('Fehler beim Kopieren: ', err);
     }
   }
-
-  onMounted(() => {
-    createFaviconURL(cutAfterTLD(props.url));
-  });
 </script>
 
 <template>
@@ -45,7 +29,12 @@
     class="card"
     :bordered="false"
     toggle="true"
-    :body-style = "{display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '15px'}"
+    :body-style="{
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: '15px',
+    }"
     @click="copyToClipboard"
   >
     <a-avatar :src="faviconUrl" class="avatar"></a-avatar>
@@ -57,6 +46,8 @@
 </template>
 
 <style scoped lang="scss">
+  // TODO: Import Fonts globally
+
   @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
   .card {
     width: max-content;
