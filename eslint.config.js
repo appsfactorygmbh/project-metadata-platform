@@ -5,18 +5,35 @@ import tseslint from 'typescript-eslint';
 import pluginVue from 'eslint-plugin-vue';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   // @ts-expect-error mismatched types
   ...pluginVue.configs['flat/recommended'],
   {
+    ignores: [
+      '.yarn',
+      '.vscode',
+      '.git',
+      'coverage',
+      'dist',
+      'html',
+      'node_modules',
+    ],
+  },
+  {
     name: 'linter-config',
     files: ['eslint.config.js', 'vite.config.ts'],
     languageOptions: {
       parserOptions: {
         parser: tseslint.parser,
-        project: './tsconfig.eslint.json',
+        project: path.resolve(__dirname, './tsconfig.eslint.json'),
+        tsconfigRootDir: __dirname,
         sourceType: 'module',
       },
     },
@@ -31,8 +48,13 @@ export default tseslint.config(
       parserOptions: {
         parser: tseslint.parser,
         extraFileExtensions: ['.vue'],
-        project: './tsconfig.json',
+        project: path.resolve(__dirname, './tsconfig.json'),
+        tsconfigRootDir: __dirname,
         sourceType: 'module',
+        ecmaFeatures: {
+          modules: true,
+          jsx: true,
+        },
       },
       // to support unplugin-auto-import
       globals: {
