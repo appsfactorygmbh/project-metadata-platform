@@ -6,3 +6,16 @@ import '@testing-library/jest-dom/vitest';
 afterEach(() => {
   cleanup();
 });
+
+// enable window.matchMedia (maybe needs to be changed)
+if (typeof window !== 'undefined') {
+  window.matchMedia =
+    window.matchMedia ||
+    function (): MediaQueryList {
+      return {
+        matches: false,
+        addListener: function () {},
+        removeListener: function () {},
+      } as unknown as MediaQueryList;
+    };
+}

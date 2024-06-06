@@ -1,59 +1,58 @@
-<script lang="ts">
-  // Importiere die Plugin-Komponente aus der Plugin.vue-Datei
-  import Plugin from '../../components/Plugin/Plugin.vue';
-  // Importiere funktionen aus vue
-  import {defineComponent, ref} from "vue";
+<template>
+  <div class="container">
+    <!-- Iterate over each plugin in the array and display using PluginComponent -->
+    <PluginComponent
+      v-for="plugin in plugins"
+      :key="plugin.name"
+      class="plugins"
+      :plugin-name="plugin.name"
+      :url="plugin.url"
+    ></PluginComponent>
+  </div>
+</template>
 
-   export default defineComponent({
-   name: 'PluginView',
-   components: {
-     Plugin
-   },
-    setup() {
-     const plugins = ref([
-       {
-         name: 'Vue Plugin',
-         url: 'https://vuejs.org/'
-       },
-       {
-         name: 'React Plugin',
-         url: 'https://reactjs.org/'
-       }
-     ]);
+<script setup lang="ts">
+import { ref } from 'vue';
+import PluginComponent from '../../components/Plugin/PluginComponent.vue';
 
-     return {
-       plugins
-     };
-   }
- });
+// Define an array of plugins with their names and URLs for demonstration.
+const plugins = ref([
+  {
+    name: 'GitLab',
+    url: 'gitlab.com/path/to/project',
+  },
+  {
+    name: 'GitHub',
+    url: 'github.com/path/to/project',
+  },
+  {
+    name: 'Azure DevOps',
+    url: 'https://azure.microsoft.com/de-de/products/devops',
+  },
+  {
+    name: "Google Drive",
+    url: 'https://drive.google.com/drive/path/to/own/drive'
+  },
+  {
+    name: "Salesforce",
+    url: 'https://www.salesforce.com/de/'
+  }
+]);
 </script>
 
-  <template>
-    <div class="container">
-    <!-- Verwende die Plugin-Komponente für jedes Plugin im Array -->
-    <Plugin class="plugins" v-for="plugin in plugins"
-                 :plugin-name="plugin.name"
-                 :url="plugin.url"
-                 :key="plugin.name"
-    ></Plugin>
-    </div>
-
-    </template>
-
-    <style scoped lang="css">
-  .container{
-    width: 100vw;
-    height: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  .plugins{
-
-    margin-top: 10px;
-  }
-
-
-  </style>
+<style scoped lang="css">
+/* Styling for the container */
+.container {
+  width: 100vw;
+  height: auto;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+/* Styling for each plugin in container */
+.plugins {
+  margin: 10px;
+}
+</style>
