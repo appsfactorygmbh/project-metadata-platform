@@ -7,12 +7,10 @@ default:
   image: node:20-alpine
   before_script:
     # Install yarn as outlined in (https://yarnpkg.com/lang/en/docs/install/#alternatives-stable)
-    - curl -o- -L https://yarnpkg.com/install.sh | bash
-    # Make available in the current terminal
-    - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+    - npm install -g corepack
     - corepack enable
     - yarn set version stable
-    - rm -rf node_modules && yarn install --immutable --immutable-cache --check-cache
+    - yarn install --immutable --immutable-cache --check-cache
   cache:
     paths:
       - .yarn
