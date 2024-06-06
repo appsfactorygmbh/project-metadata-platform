@@ -24,10 +24,6 @@ include:
     ref: main
     file: 'pipeline/all.yml'
 
-prettier:
-  script:
-    - npx prettier --check .
-
 test:
   stage: test
   image: node:latest
@@ -41,6 +37,10 @@ test:
         path: coverage/cobertura-coverage.xml
       junit:
         - junit.xml
+
+code-formatting:
+  script:
+    - npx prettier --check .
 
 code-quality:
   stage: test
