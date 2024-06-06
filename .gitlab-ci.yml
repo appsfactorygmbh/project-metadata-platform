@@ -11,15 +11,23 @@ include:
     ref: main
     file: 'pipeline/all.yml'
 
+prettier:
+  script:
+    - rm -rf node_modules && yarn install --frozen-lockfile
+    - npx prettier --check .
+
 test:
   stage: test
   image: node:latest
   script:
-    - npm install --legacy-peer-deps
-    - npm run test -- --reporter=junit --outputFile=./junit.xml
+    - rm -rf node_modules && yarn install --frozen-lockfile
+    - yarn test --reporter=junit --outputFile=./junit.xml 
   artifacts:
     when: always
     reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
       junit:
         - junit.xml
 
@@ -27,7 +35,7 @@ code-quality:
   stage: test
   image: node:latest
   script:
-    - npm install --legacy-peer-deps
+    - rm -rf node_modules && yarn install --frozen-lockfile
     - npx eslint --format gitlab .
   allow_failure: true
   artifacts:

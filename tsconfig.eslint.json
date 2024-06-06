@@ -8,5 +8,5 @@
     "strict": true,
     "allowJs": true
   },
-  "include": ["vite.config.ts", "eslint.config.js"]
+  "include": ["vite.config.ts", "eslint.config.js", "types/**/*.d.ts"]
 }
