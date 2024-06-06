@@ -1,44 +1,42 @@
-<script lang="ts" xmlns:https="http://www.w3.org/1999/xhtml">
-export default {
-  name: "Plugin",
-  props: {
-    pluginName: {
-      type: String,
-      required: true,
-    },
-    url: {
-      type: String,
-      required: true,
-    },
+<script lang="ts" setup>
+import { ref, onMounted } from 'vue';
+
+const props = defineProps({
+  pluginName: {
+    type: String,
+    required: true,
   },
-  data() {
-    return {
-      faviconUrl: "",
-    };
+  url: {
+    type: String,
+    required: true,
   },
-  methods: {
-    createFaviconURL(tld: string) {
-      this.faviconUrl = `https://www.google.com/s2/favicons?domain=${tld}&sz=128`;
-    },
-    cutAfterTLD(url: string): string {
-      let match = url.match(/^https?:\/\/[^\/]+/);
-      if (match) {
-        return match[0];
-      }
-      return url;
-    },
-    async copyToClipboard() {
-      try {
-        await navigator.clipboard.writeText(this.url);
-      } catch (err) {
-        console.error("Fehler beim Kopieren: ", err);
-      }
-    },
-  },
-  created() {
-    this.createFaviconURL(this.cutAfterTLD(this.url));
-  },
-};
+});
+
+const faviconUrl = ref("");
+
+function createFaviconURL(tld: string) {
+  faviconUrl.value = `https://www.google.com/s2/favicons?domain=${tld}&sz=128`;
+}
+
+function cutAfterTLD(url: string): string {
+  const match = url.match(/^https?:\/\/[^\/]+/);
+  if (match) {
+    return match[0];
+  }
+  return url;
+}
+
+async function copyToClipboard() {
+  try {
+    await navigator.clipboard.writeText(props.url);
+  } catch (err) {
+    console.error("Fehler beim Kopieren: ", err);
+  }
+}
+
+onMounted(() => {
+  createFaviconURL(cutAfterTLD(props.url));
+});
 </script>
 
 <template>
@@ -57,11 +55,11 @@ export default {
   </a-card>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
 .card {
   width: max-content;
-  max-width: 100%;
+  max-width: 400px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
   display: flex;
   flex-direction: column;
@@ -91,5 +89,13 @@ export default {
 }
 .avatar {
   margin: 10px;
+  min-width: 30px;
+  max-width: 30px;
+  height: auto;
+  aspect-ratio: 1 / 1; // Für ein quadratisches Bild
+  object-fit: cover;
+  & img{
+
+  }
 }
 </style>
