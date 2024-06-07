@@ -1,31 +1,35 @@
 <script setup lang="ts">
-  import HelloWorld from './components/HelloWorld.vue';
+import { ref, reactive } from "vue";
+import { useElementSize } from "@vueuse/core";
+import {Splitpanes, Pane} from 'splitpanes' //externes Framework, dass die Schieberegler implementiert
+import 'splitpanes/dist/splitpanes.css'
+import Table from "./components/Table/tableComponent.vue"
+
+const tablePane = ref(null)
+const dimensions = reactive(
+  useElementSize(
+    tablePane
+  ),
+)
+console.log(dimensions);
+console.log(dimensions.width);
+
 </script>
 
 <template>
   <div class="container">
     <splitpanes class="default-theme">
-      <pane id="pane1" size="25">
-        <div></div>
+      <pane size="25" min-size="25">
+        <div ref="tablePane"><Table :paneWidth=dimensions.width :paneHeight=dimensions.height /></div>
       </pane>
-      <pane id="pane2" size="75">
-        <div></div>
+      <pane size="75" min-size="1">
+        <div id="pane2"></div>
       </pane>
     </splitpanes>
   </div>
 </template>
-
 <style scoped>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.vue:hover {
-    filter: drop-shadow(0 0 2em #42b883aa);
-  }
+  .splitpanes {
+  height: 96vh;
+}
 </style>
