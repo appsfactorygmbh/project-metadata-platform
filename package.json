@@ -15,6 +15,7 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.3.7",
     "@ant-design/icons-vue": "^7.0.1",
     "ant-design-vue": "4.x",
     "dayjs": "^1.11.11",

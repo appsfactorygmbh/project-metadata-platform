@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue'
 import {Splitpanes, Pane} from 'splitpanes' //external framework that implements the sliders
 import 'splitpanes/dist/splitpanes.css'
 
+
 //editable project name field
 const isEditing = ref(false)
 const projectName = ref('Project Name')
@@ -12,7 +13,7 @@ const projectName = ref('Project Name')
 const businessUnit = ref('')
 const teamNr = ref('')
 const department = ref('')
-const clientName = ref('')
+const clientName = ref('') 
 
 // Save the new project name after edited
 const toggleEditing = () => {
@@ -22,19 +23,33 @@ const toggleEditing = () => {
   isEditing.value = !isEditing.value
 }
 
-//fetch json object from backend and check for errors
+//fetch json object from backend 
 const reloadData = async () => {
   try {
-    const response = await fetch('/src/test.json') // Replace '/api/projects' with your actual backend API endpoint
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_URL +
+          '/Projects', 
+        {
+          headers: {
+            Accept: 'text/plain',
+            'Access-Control-Allow-Origin': '*',
+            cors: 'no-cors',
+          },
+        },
+      );
+
     const data = await response.json()
     console.log(data.ProjectName)
+
     // Update data in Vue component state
     businessUnit.value = data.BusinessUnit
     teamNr.value = data.TeamNumber
     department.value = data.Department
     clientName.value = data.ClientName
     projectName.value = data.ProjectName // Update ref
+
     console.log('Data reloaded:', data)
+
   } catch (error) {
     console.error('Error fetching data:', error)
   }
@@ -104,9 +119,8 @@ onMounted(reloadData)
             <div class="icon">
               <img src="https://img.icons8.com/?size=50&id=59781&format=png&color=000000" alt="Sign Out" class="out-icon">
             </div>
-
+          
           </div>
-
       </pane>
 
     </splitpanes>
