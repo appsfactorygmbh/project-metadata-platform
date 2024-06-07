@@ -2992,6 +2992,7 @@ __metadata:
     lodash-es: "npm:^4.17.21"
     pinia: "npm:^2.1.7"
     prettier: "npm:^3.3.1"
+    splitpanes: "npm:^3.1.5"
     typescript: "npm:^5.4.5"
     typescript-eslint: "npm:^7.12.0"
     unplugin-auto-import: "npm:^0.17.6"
@@ -5231,6 +5232,13 @@ __metadata:
   version: 1.2.0
   resolution: "source-map-js@npm:1.2.0"
   checksum: 10c0/7e5f896ac10a3a50fe2898e5009c58ff0dc102dcb056ed27a354623a0ece8954d4b2649e1a1b2b52ef2e161d26f8859c7710350930751640e71e374fe2d321a4
+  languageName: node
+  linkType: hard
+
+"splitpanes@npm:^3.1.5":
+  version: 3.1.5
+  resolution: "splitpanes@npm:3.1.5"
+  checksum: 10c0/de1127143cf9ae284d9a3fca1cd6523b3e3392715bdf570a28df6f230f2f2a0801408f60abffcbb3d3628d99efdfbbda7fc08b6556eb2d748b97c8be64321e0d
   languageName: node
   linkType: hard
 
