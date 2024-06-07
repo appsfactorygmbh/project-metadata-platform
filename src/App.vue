@@ -11,12 +11,12 @@ import 'splitpanes/dist/splitpanes.css' //default css for splitpanes
         size: sets default proportion to 1:4
         min-size: sets smalles possible size to 20% and 1%
       -->
-      <pane id="pane1" size="25" min-size="20">
+      <pane size="25" min-size="20">
         <div>
 
         </div>
       </pane>
-      <pane id="pane2" size="75" min-size="1">
+      <pane size="75" min-size="1">
         <div>
 
         </div>
