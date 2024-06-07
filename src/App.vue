@@ -11,8 +11,6 @@ const dimensions = reactive(
     tablePane
   ),
 )
-console.log(dimensions);
-console.log(dimensions.width);
 
 </script>
 

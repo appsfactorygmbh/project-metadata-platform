@@ -2,49 +2,59 @@
     import { SmileOutlined, SearchOutlined } from "@ant-design/icons-vue";
     import { reactive, ref, watch } from "vue";
     import { useWindowSize } from "@vueuse/core";
-    import type { ColumnsType } from "ant-design-vue/es/table";
 
     /*const props = defineProps({
-        projectName: {
+        pname: {
             type: String,
             required: true,
         },
-        clientName: {
+        cname: {
             type: String,
             required: true,
         },
-        bussinesUnit: {
+        bu: {
             type: String,
             required: true,
         },
-        teamNumber: {
+        tnr: {
             type: String,
             required: true,
         }
     })*/
 
+    //Get the width of the pane from App.vue
     const props = defineProps({
-        paneWidth: Number,
+        paneWidth: {
+            type: Number,
+            required: true
+        },
         paneHeight: Number
     });
 
+    //update the Pane-width when the pane is resized
     watch(
         () => props.paneWidth,
         () => {
-            changeColumns(props.paneWidth)
+            changeColumns(props.paneWidth);
         }
     )
     
 </script>
 
 <template>
+    <!-- 
+        Ant Design table with: 
+        columns: filtered if hidden or not
+        scroll: sets height to 0.9 of window size 
+    -->
     <a-table
         :columns="[...columns].filter(item => !item.hidden)" 
-        :data-source="dataSource" 
+        :data-source="[...dataSource]" 
         :pagination="false"
-        :scroll="{ y: 0.904*useWindowSize().height.value}"
+        :scroll="{ y: 900 }"
         bordered
     >
+        <!-- header of the table -->
         <template #headerCell="{ column }">
             <template v-if="column.key === 'name'">
             <span>
@@ -54,6 +64,7 @@
             </template>
         </template>
 
+        <!--  -->
         <template
             #customFilterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
         >
@@ -108,6 +119,8 @@
 
 <script lang="ts">
 
+/*  Data implementation  */
+
 interface DataItem {
     key: number;
     pname: string;
@@ -118,15 +131,66 @@ interface DataItem {
 
 const dataSource: DataItem[] = [];
 
-for (let i = 0; i < 50; i++) {
-    dataSource.push({
-    key: i,
-    pname: "Softwareprojekt",
-    cname: "Appsfactory",
-    bu: "Frontend",
-    tnr: `${i}`
-})    
+function addTableEntry(data: any): void {
+        dataSource.push({
+            key: dataSource.length + 1,
+            pname: data.pname,
+            cname: data.cname,
+            bu: data.bu,
+            tnr: data.tnr
+        })
+        console.log(dataSource)
 }
+
+//Test data
+const testData = []
+
+for (let i = 0; i < 50; i++) {
+    testData.push({
+        key: i,
+        pname: "Softwareprojekt",
+        cname: "Appsfactory",
+        bu: "Frontend",
+        tnr: `${i}`
+    })
+}
+
+testData.forEach((data) => {
+    addTableEntry(data);
+});
+
+/*  Column implementation  */
+
+const fillColumn = (title: string, index: string, key: string) => {
+    return {
+        title: title,
+        dataIndex: index,
+        key: key,
+        customFilterDropdown: true,
+        onFilter: (value: string | number | boolean  , record: any) => record[index].toString().toLowerCase().includes(value.toString().toLowerCase()),
+        onFilterDropdownOpenChange: (visible: any) => { filterDropdownAnimation(visible) },
+        ellipsis: true,
+        align: "center" as const,
+        hidden: false
+    }
+};
+
+const filterDropdownAnimation = (visible: any) => {
+    if (visible) {
+        setTimeout(() => {
+            searchInput.value.focus();
+        }, 100);
+    }
+};
+
+const columns = [
+    fillColumn("Project Name", "pname", "pname"),
+    fillColumn("Client Name", "cname", "cname"),
+    fillColumn("Business Unit", "bu", "bu"),
+    fillColumn("Team Number", "tnr", "tnr")
+];
+
+/*  Search implementation  */
 
 const state = reactive({
     searchText: "",
@@ -135,57 +199,16 @@ const state = reactive({
 
 const searchInput = ref();
 
-const filterDropdownAnimation = () => {
-    if (visible) {
-        setTimeout(() => {
-            searchInput.value.focus();
-        }, 100);
-    }
-}
-
-const getColumnInfo = (title: string, index: string, key: string): ColumnsType => {
-    return {
-        title: title,
-        dataIndex: index,
-        key: key,
-        align: "center",
-        customFilterDropdown: true,
-        onFilter: (value, record) => record[index].toString().toLowerCase().includes(value.toLowerCase()),
-        onFilterDropdownOpenChange: visible => { filterDropdownAnimation },
-        ellipsis: true,
-        hidden: false
-    }
-}
-
-//sets up columns
-const columns: ColumnsType = [
-  getColumnInfo("Project Name", "pname", "pname"),
-  getColumnInfo("Client Name", "cname", "cname"),
-  getColumnInfo("Business Unit", "bu", "bu"),
-  getColumnInfo("Team Number", "tnr", "tnr")
-];
-
-function handleSearch(selectedKeys, confirm, dataIndex) {
+function handleSearch(selectedKeys: any, confirm: any, dataIndex: any) {
     confirm();
     state.searchText = selectedKeys[0];
     state.searchedColumn = dataIndex;
 }
 
-function handleReset(clearFilters) {
+function handleReset(clearFilters: any) {
     clearFilters({ confirm: true });
     state.searchText = "";
 }
-
-
-/*function addTableEntry(data: any): void {
-        dataSource.push({
-            key: dataSource.length + 1,
-            pname: data.projectName,
-            cname: data.clientName,
-            bu: data.bussinesUnit,
-            tnr: data.teamNumber
-        })
-}*/
 
 function changeColumns(pwidth: number) {
     const size = getSize(pwidth);
@@ -215,17 +238,12 @@ function changeColumns(pwidth: number) {
             showColumn(3);
             break;
         default:
+            showColumn(0);
+            hideColumn(1);
+            hideColumn(2);
+            hideColumn(3);
             break;
     }
-    console.log(columns)
-    dataSource.push({
-    key: 0,
-    pname: "Softwareprojekt",
-    cname: "Appsfactory",
-    bu: "Frontend",
-    tnr: "0"
-})  
-    console.log(dataSource)
 }
 
 function hideColumn(id: number) {
@@ -238,7 +256,7 @@ function showColumn(id: number) {
 
 function getSize(pwidth: number): string {
     const windowSize = useWindowSize().width.value
-    const breakpoint: number[] = [0.25 * windowSize, 0.5 * windowSize, 0.75 * windowSize]
+    const breakpoint: number[] = [0.25 * windowSize, 0.42 * windowSize, 0.5 * windowSize]
     
     if (pwidth > breakpoint[2]) {
         return "lg";
