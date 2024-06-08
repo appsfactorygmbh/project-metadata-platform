@@ -3,6 +3,7 @@
     import { reactive, ref, watch } from "vue";
     import { useWindowSize } from "@vueuse/core";
 
+    //maybe useful for later / TODO: implement API request for data entries
     /*const props = defineProps({
         pname: {
             type: String,
@@ -22,7 +23,7 @@
         }
     })*/
 
-    //Get the width of the pane from App.vue
+    //Get the width of the left pane from App.vue
     const props = defineProps({
         paneWidth: {
             type: Number,
@@ -31,7 +32,7 @@
         paneHeight: Number
     });
 
-    //update the Pane-width when the pane is resized
+    //update paneWidth when the pane is resized
     watch(
         () => props.paneWidth,
         () => {
@@ -45,7 +46,7 @@
     <!-- 
         Ant Design table with: 
         columns: filtered if hidden or not
-        scroll: sets height to 0.9 of window size 
+        scroll: sets height of table to 900 and activates scrolling
     -->
     <a-table
         :columns="[...columns].filter(item => !item.hidden)" 
@@ -54,7 +55,7 @@
         :scroll="{ y: 900 }"
         bordered
     >
-        <!-- header of the table -->
+        <!-- Header of the table -->
         <template #headerCell="{ column }">
             <template v-if="column.key === 'name'">
             <span>
@@ -64,11 +65,15 @@
             </template>
         </template>
 
-        <!--  -->
+        <!-- 
+            Search function, when Search icon is clicked a box opens 
+            where you can input a string and filter the table with it 
+        -->
         <template
             #customFilterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
         >
             <div style="padding: 8px">
+                <!-- Input field for search, filters table from input when enter is pressed -->
                 <a-input
                     ref="searchInput"
                     :placeholder="`Search ${column.dataIndex}`"
@@ -77,6 +82,7 @@
                     @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
                     @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)"
                 />
+                <!-- Search button, filters table from input when clicked -->
                 <a-button
                     type="primary"
                     size="small"
@@ -86,23 +92,29 @@
                     <template #icon><SearchOutlined /></template>
                     Search
                 </a-button>
+                <!-- Reset button, resets filter when clicked -->
                 <a-button size="small" style="width: 90px" @click="handleReset(clearFilters)">
                     Reset
                 </a-button>
             </div>
         </template>
 
+        <!-- Search icon, changes color when filter is applied -->
         <template #customFilterIcon="{ filtered }">
             <search-outlined :style="{ color: filtered ? '#108ee9' : undefined }" />
         </template>
 
+        <!-- body of the table with all data entries -->
         <template #bodyCell="{ text, column }">
+            <!-- span only shows when the specific column is searched on-->
             <span v-if="state.searchText && state.searchedColumn === column.dataIndex">
+                <!-- splits the string from the data entries, so i can be highlighted -->
                 <template
                     v-for="(fragment, i) in text
                         .toString()
                         .split(new RegExp(`(?<=${state.searchText})|(?=${state.searchText})`, 'i'))"
-                    >
+                >
+                    <!-- string that is searched gets highlighted in the table entries-->
                     <mark
                         v-if="fragment.toLowerCase() === state.searchText.toLowerCase()"
                         :key="i"
@@ -131,18 +143,21 @@ interface DataItem {
 
 const dataSource: DataItem[] = [];
 
-function addTableEntry(data: any): void {
-        dataSource.push({
-            key: dataSource.length + 1,
-            pname: data.pname,
-            cname: data.cname,
-            bu: data.bu,
-            tnr: data.tnr
-        })
-        console.log(dataSource)
+/**
+ * Adds a new table entry to dataSource.
+ * @param {DataItem} data Stores the data that should be added.
+ */
+function addTableEntry(data: DataItem) {
+    dataSource.push({
+        key: dataSource.length + 1,
+        pname: data.pname,
+        cname: data.cname,
+        bu: data.bu,
+        tnr: data.tnr
+    })
 }
 
-//Test data
+//Test data for showcase
 const testData = []
 
 for (let i = 0; i < 50; i++) {
@@ -161,21 +176,32 @@ testData.forEach((data) => {
 
 /*  Column implementation  */
 
+/**
+ * Fills the parameters for the column with given or fixed values. 
+ * @param {string} title Title of the column, which is show in the view.
+ * @param {string} index Display field of the data entry. Helps to handle the filter.
+ * @param {string} key   Unique key of the column.
+ */
 const fillColumn = (title: string, index: string, key: string) => {
     return {
         title: title,
         dataIndex: index,
         key: key,
         customFilterDropdown: true,
-        onFilter: (value: string | number | boolean  , record: any) => record[index].toString().toLowerCase().includes(value.toString().toLowerCase()),
-        onFilterDropdownOpenChange: (visible: any) => { filterDropdownAnimation(visible) },
+        onFilter: (value: string | number | boolean, record: any) => 
+            record[index].toString().toLowerCase().includes(value.toString().toLowerCase()),
+        onFilterDropdownOpenChange: (visible: boolean) => { filterDropdownAnimation(visible) },
         ellipsis: true,
         align: "center" as const,
         hidden: false
     }
 };
 
-const filterDropdownAnimation = (visible: any) => {
+/**
+ * Adds an animation, when the box of the search element opens.
+ * @param {boolean} visible True when the box is visible, False if not.
+ */
+const filterDropdownAnimation = (visible: boolean) => {
     if (visible) {
         setTimeout(() => {
             searchInput.value.focus();
@@ -192,6 +218,7 @@ const columns = [
 
 /*  Search implementation  */
 
+//saves state of searched text and in which column
 const state = reactive({
     searchText: "",
     searchedColumn: "",
@@ -199,62 +226,99 @@ const state = reactive({
 
 const searchInput = ref();
 
-function handleSearch(selectedKeys: any, confirm: any, dataIndex: any) {
+/**
+ * Saves the searched string and the target column in state, when search is confirmed.
+ * @param {string[]} selectedKeys Has the searched text in the first position.
+ * @param {any}      confirm      Confirms the search.
+ * @param {string}   dataIndex    Has the target column.
+ */
+function handleSearch(selectedKeys: string[], confirm: any, dataIndex: string) {
     confirm();
     state.searchText = selectedKeys[0];
     state.searchedColumn = dataIndex;
 }
 
-function handleReset(clearFilters: any) {
+/**
+ * Resets the filtered search in target column.
+ * @param {any} clearFilters Clears the filter, when confirmed.
+ */
+function handleReset(clearFilters: any) {   
     clearFilters({ confirm: true });
     state.searchText = "";
 }
 
+/*  Column drop implementation  */
+
+/**
+ * Changes the visible columns based on the width of the left pane.
+ * @param {number} pwidth Has the width of the left pane.
+ */
 function changeColumns(pwidth: number) {
-    const size = getSize(pwidth);
-    switch (size) {
+    const breakpoint = getBreakpoint(pwidth);
+    switch (breakpoint) {
         case "xs":
-            showColumn(0);
-            hideColumn(1);
-            hideColumn(2);
-            hideColumn(3);
+            showColumn("pname");
+            hideColumn("cname");
+            hideColumn("bu");
+            hideColumn("tnr");
             break;
         case "sm":
-            showColumn(0);
-            showColumn(1);
-            hideColumn(2);
-            hideColumn(3);
+            showColumn("pname");
+            showColumn("cname");
+            hideColumn("bu");
+            hideColumn("tnr");
             break;
         case "md":
-            showColumn(0);
-            showColumn(1);
-            showColumn(2);
-            hideColumn(3);
+            showColumn("pname");
+            showColumn("cname");
+            showColumn("bu");
+            hideColumn("tnr");
             break;
         case "lg":
-            showColumn(0);
-            showColumn(1);
-            showColumn(2);
-            showColumn(3);
+            showColumn("pname");
+            showColumn("cname");
+            showColumn("bu");
+            showColumn("tnr");
             break;
         default:
-            showColumn(0);
-            hideColumn(1);
-            hideColumn(2);
-            hideColumn(3);
+            showColumn("pname");
+            hideColumn("cname");
+            hideColumn("bu");
+            hideColumn("tnr");
             break;
     }
 }
 
-function hideColumn(id: number) {
-    columns[id].hidden = true
+/**
+ * Hides given column.
+ * @param {number} index Has the dataIndex of the column to hide.
+ */
+function hideColumn(index: string) {
+    columns.forEach(column => {
+        if (column.dataIndex == index) {
+            column.hidden = true;
+        }
+    });
 }
 
-function showColumn(id: number) {
-    columns[id].hidden = false
+/**
+ * Shows given column.
+ * @param {number} index Has the dataIndex of the column to show.
+ */
+function showColumn(index: string) {
+    columns.forEach(column => {
+        if (column.dataIndex == index) {
+            column.hidden = false;
+        }
+    });
 }
 
-function getSize(pwidth: number): string {
+/**
+ * Calculates the breakpoints based on the width of the window and assigns one based on the width of the left pane.
+ * @param {number} pwidth Has the width of the left pane.
+ * @return {string} Returns a string, which represents the current breakpoint of the pane width.
+ */
+function getBreakpoint(pwidth: number): string {
     const windowSize = useWindowSize().width.value
     const breakpoint: number[] = [0.25 * windowSize, 0.42 * windowSize, 0.5 * windowSize]
     
