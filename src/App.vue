@@ -18,7 +18,7 @@ const dimensions = reactive(
   <div class="container">
     <splitpanes class="default-theme">
       <pane size="25" min-size="20">
-        <div ref="tablePane"><Table :paneWidth=dimensions.width :paneHeight=dimensions.height /></div>
+        <div ref="tablePane"><Table :paneWidth=dimensions.width :paneHeight=dimensions.height :isTest=false /></div>
       </pane>
       <pane size="75" min-size="1">
         <div id="pane2"></div>

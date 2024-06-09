@@ -13,6 +13,10 @@
         paneHeight: {
             type: Number,
             required: true
+        },
+        isTest: {
+            type: Boolean,
+            required: true
         }
     });
 
@@ -27,7 +31,7 @@
     /**
      * Fetches the API (for showcase local file) and adds every data entry into the data source
      */
-    const loadData = async () => {
+    const fetchData = async () => {
         try {
             const response = await fetch(
                 "./src/components/Table/testData.json"
@@ -35,19 +39,31 @@
 
             const data: Data[] = await response.json();            
             
-            for (const dataEntry of data) {
-                addTableEntry(dataEntry);
-            }
+            addTableEntry(data);
 
         } catch(err) {
             console.error("Error fetching data: " + err);   
+        }
+    }
+
+    /**
+     * Fetches the data or loads test data if its a test
+     */
+    function loadData (isTest: boolean) {
+        if (isTest) {
+            addTableEntry(testData);
+        } else {
+            fetchData();
         }
     }
     
     //calculates current window height for the scroll value
     const windowHeight = ref(useWindowSize().height.value);
 
-    onMounted(loadData);
+    onMounted( () => {      
+        loadData(props.isTest);
+        changeColumns(props.paneWidth);
+    });
     
 </script>
 
@@ -161,17 +177,40 @@ const dataSource: DataItem[] = reactive([]);
 
 /**
  * Adds a new table entry to dataSource.
- * @param {any} data Stores the data that should be added.
+ * @param {Data[]} data Stores the data that should be added.
  */
-function addTableEntry(data: Data) {
-    dataSource.push({
-        key: dataSource.length + 1,
-        pname: data.ProjectName,
-        cname: data.ClientName,
-        bu: data.BusinessUnit,
-        tnr: data.TeamNumber
-    })
+function addTableEntry(data: Data[]) {
+    for (const date of data) {       
+        dataSource.push({
+            key: dataSource.length + 1,
+            pname: date.ProjectName,
+            cname: date.ClientName,
+            bu: date.BusinessUnit,
+            tnr: date.TeamNumber
+        });
+    }
 }
+
+const testData = [
+    {
+        ProjectName: "C",
+        ClientName: "A",
+        BusinessUnit: "A",
+        TeamNumber: 1
+    },
+    {
+        ProjectName: "A",
+        ClientName: "B",
+        BusinessUnit: "B",
+        TeamNumber: 2
+    },
+    {
+        ProjectName: "B",
+        ClientName: "C",
+        BusinessUnit: "C",
+        TeamNumber: 3
+    }
+];
 
 /*  Column implementation  */
 
@@ -347,7 +386,7 @@ function showColumn(index: string) {
 function getBreakpoint(pwidth: number): string {
     const windowSize = useWindowSize().width.value
     const breakpoint: number[] = [0.25 * windowSize, 0.42 * windowSize, 0.5 * windowSize]
-    
+
     if (pwidth > breakpoint[2]) {
         return "lg";
     } else if (pwidth > breakpoint[1]) {
