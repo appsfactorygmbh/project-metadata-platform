@@ -2,6 +2,7 @@
     import { SmileOutlined, SearchOutlined } from "@ant-design/icons-vue";
     import { reactive, ref, watch, onMounted } from "vue";
     import { useWindowSize } from "@vueuse/core";
+    import { FilterConfirmProps, FilterResetProps } from "ant-design-vue/es/table/interface";
 
     //Get the width of the left pane from App.vue
     const props = defineProps({
@@ -9,7 +10,10 @@
             type: Number,
             required: true
         },
-        paneHeight: Number
+        paneHeight: {
+            type: Number,
+            required: true
+        }
     });
 
     //update paneWidth when the pane is resized
@@ -29,16 +33,19 @@
                 "./src/components/Table/testData.json"
             )
 
-            const data = await response.json();            
+            const data: Data[] = await response.json();            
             
             for (const dataEntry of data) {
                 addTableEntry(dataEntry);
             }
 
         } catch(err) {
-            console.error("Error fetching data:" + err);   
+            console.error("Error fetching data: " + err);   
         }
     }
+    
+    //calculates current window height for the scroll value
+    const windowHeight = ref(useWindowSize().height.value);
 
     onMounted(loadData);
     
@@ -54,7 +61,7 @@
         :columns="[...columns].filter(item => !item.hidden)" 
         :data-source="[...dataSource]" 
         :pagination="false"
-        :scroll="{ y: 0.904*useWindowSize().height.value }"
+        :scroll="{ y: 0.904*windowHeight }"
         bordered
     >
         <!-- Header of the table -->
@@ -82,7 +89,7 @@
                     :value="selectedKeys[0]"
                     style="width: 188px; margin-bottom: 8px; display: block"
                     @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                    @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)"
+                    @press-enter="handleSearch(selectedKeys, confirm, column.dataIndex)"
                 />
                 <!-- Search button, filters table from input when clicked -->
                 <a-button
@@ -135,6 +142,13 @@
 
 /*  Data implementation  */
 
+type Data = {
+    ProjectName: string;
+    ClientName: string;
+    BusinessUnit: string;
+    TeamNumber: number;
+}
+
 type DataItem = {
     key: number;
     pname: string;
@@ -149,13 +163,13 @@ const dataSource: DataItem[] = reactive([]);
  * Adds a new table entry to dataSource.
  * @param {any} data Stores the data that should be added.
  */
-function addTableEntry(data: any) {
+function addTableEntry(data: Data) {
     dataSource.push({
         key: dataSource.length + 1,
         pname: data.ProjectName,
         cname: data.ClientName,
         bu: data.BusinessUnit,
-        tnr: data.TeamNumber.toString()
+        tnr: data.TeamNumber
     })
 }
 
@@ -246,10 +260,10 @@ const searchInput = ref();
 /**
  * Saves the searched string and the target column in state, when search is confirmed.
  * @param {string[]} selectedKeys Has the searched text in the first position.
- * @param {any}      confirm      Confirms the search.
- * @param {string}   dataIndex    Has the target column.
+ * @param {((param?: FilterConfirmProps) => void)} confirm Confirms the search.
+ * @param {string} dataIndex Has the target column.
  */
-function handleSearch(selectedKeys: string[], confirm: any, dataIndex: string) {
+function handleSearch(selectedKeys: string[], confirm: ((param?: FilterConfirmProps) => void), dataIndex: string) {
     confirm();
     state.searchText = selectedKeys[0];
     state.searchedColumn = dataIndex;
@@ -257,9 +271,9 @@ function handleSearch(selectedKeys: string[], confirm: any, dataIndex: string) {
 
 /**
  * Resets the filtered search in target column.
- * @param {any} clearFilters Clears the filter, when confirmed.
+ * @param {((param?: FilterResetProps) => void)} clearFilters Clears the filter, when confirmed.
  */
-function handleReset(clearFilters: any) {   
+function handleReset(clearFilters: ((param?: FilterResetProps) => void)) {   
     clearFilters({ confirm: true });
     state.searchText = "";
 }
