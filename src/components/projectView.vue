@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import {Splitpanes, Pane} from 'splitpanes' //external framework that implements the sliders
-import 'splitpanes/dist/splitpanes.css'
-
 
 //editable project name field
 const isEditing = ref(false)
@@ -31,7 +28,7 @@ const placeHolder = () => {
 const reloadData = async () => {
   try {
       const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL +
+        import.meta.env.VITE_BACKEND_URL + 
           '/Projects', 
         {
           headers: {
@@ -64,71 +61,60 @@ onMounted(reloadData)
 </script>
 
 <template>
-  <div class="container">
-    <!-- divide the UI into pane 1 & pane 2-->
-    <splitpanes class="default-theme">
-      <pane id="pane1" size="25">
-        <div class="main"></div>
-      </pane>
-      
-      <pane id="pane2" size="75">
-          <div class="return">  <!-- add return icon -->
-             <img src="https://img.icons8.com/?size=50&id=26146&format=png&color=000000" alt="Return" class="return-icon" @click="placeHolder">
-          </div>
+    <div class="return">  <!-- add return icon -->
+      <img src="https://img.icons8.com/?size=50&id=26146&format=png&color=000000" alt="Return" class="return-icon" @click="placeHolder">
+    </div>
 
-          <div class="main">
-            <!-- create box for the project name-->    
-            <div class="box">
-              <div class="editable-field">
-                <h1 v-if="!isEditing" id="projectName">{{ projectName }}</h1>
-                <input v-if="isEditing" type="text" id="projectNameInput" :value="projectName" class="project-name-input">
-                <img src="https://img.icons8.com/ios-glyphs/40/000000/pencil.png" class="edit-icon" @click="toggleEditing">
-              </div>
-            </div>
-            <!-- create box for project description (BU, Team Nr, Department, Client Name)-->
-            <div class="box description-box">
-              <div class="profile-field">
-                <label for="businessUnit">Business Unit:</label>
-                <input type="text" v-model="businessUnit" readonly />
-              </div>
+    <div class="main">
+      <!-- create box for the project name-->    
+      <div class="box">
+        <div class="editable-field">
+          <h1 v-if="!isEditing" id="projectName">{{ projectName }}</h1>
+          <input v-if="isEditing" type="text" id="projectNameInput" :value="projectName" class="project-name-input">
+          <img src="https://img.icons8.com/ios-glyphs/40/000000/pencil.png" class="edit-icon" @click="toggleEditing">
+        </div>
+      </div>
+      <!-- create box for project description (BU, Team Nr, Department, Client Name)-->
+      <div class="box description-box">
+        <div class="profile-field">
+          <label for="businessUnit">Business Unit:</label>
+          <input type="text" v-model="businessUnit" readonly />
+        </div>
 
-              <div class="profile-field">
-                <label for="teamNumber">Team Number:</label>
-                <input type="text" v-model="teamNr" readonly />
-              </div>
+        <div class="profile-field">
+          <label for="teamNumber">Team Number:</label>
+          <input type="text" v-model="teamNr" readonly />
+        </div>
 
-              <div class="profile-field">
-                <label for="department">Department:</label>
-                <input type="text" v-model="department" readonly />
-              </div>
+        <div class="profile-field">
+          <label for="department">Department:</label>
+          <input type="text" v-model="department" readonly />
+        </div>
 
-              <div class="profile-field">
-                <label for="clientName">Client Name:</label>
-                <input type="text" v-model="clientName" readonly />
-              </div>
-            </div>
-          </div>
+        <div class="profile-field">
+          <label for="clientName">Client Name:</label>
+          <input type="text" v-model="clientName" readonly />
+        </div>
+      </div>
+    </div>
 
-          <!-- add icons for profile, plugins, global logs, signout -->
-          <div class="menu">
-            <div class="icon">
-              <img src="https://img.icons8.com/?size=50&id=98957&format=png&color=000000" alt="Profile" class="profile-icon" @click="placeHolder">
-            </div>
-            <div class="icon">
-              <img src="https://img.icons8.com/?size=50&id=61018&format=png&color=000000" alt="Plugins" class="plugins-icon" @click="placeHolder">
-            </div>
-            <div class="icon">
-              <img src="https://img.icons8.com/?size=50&id=60674&format=png&color=000000" alt="Global Logs" class="logs-icon" @click="placeHolder">
-            </div>
-            <div class="icon">
-              <img src="https://img.icons8.com/?size=50&id=59781&format=png&color=000000" alt="Sign Out" class="out-icon" @click="placeHolder">
-            </div>
+    <!-- add icons for profile, plugins, global logs, signout -->
+    <div class="menu">
+      <div class="icon">
+        <img src="https://img.icons8.com/?size=50&id=98957&format=png&color=000000" alt="Profile" class="profile-icon" @click="placeHolder">
+      </div>
+      <div class="icon">
+        <img src="https://img.icons8.com/?size=50&id=61018&format=png&color=000000" alt="Plugins" class="plugins-icon" @click="placeHolder">
+      </div>
+      <div class="icon">
+        <img src="https://img.icons8.com/?size=50&id=60674&format=png&color=000000" alt="Global Logs" class="logs-icon" @click="placeHolder">
+      </div>
+      <div class="icon">
+        <img src="https://img.icons8.com/?size=50&id=59781&format=png&color=000000" alt="Sign Out" class="out-icon" @click="placeHolder">
+      </div>
           
-          </div>
-      </pane>
-
-    </splitpanes>
-  </div>
+    </div>
+      
 </template>
 
 <style scoped>
@@ -140,25 +126,6 @@ onMounted(reloadData)
     /* set default color font for titles*/
     * {
       color: rgb(0, 0, 0);
-    }
-
-    #pane1 {
-     min-width: 25vw;
-    }
-
-    #pane2 {
-      padding-right: 30px;
-      min-width: 5vw;
-      color: #EBF0F6;
-      display: flex;
-    }
-
-    .container {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      
     }
 
     input {
