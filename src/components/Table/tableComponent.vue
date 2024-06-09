@@ -1,27 +1,7 @@
 <script lang="ts" setup>
     import { SmileOutlined, SearchOutlined } from "@ant-design/icons-vue";
-    import { reactive, ref, watch } from "vue";
+    import { reactive, ref, watch, onMounted } from "vue";
     import { useWindowSize } from "@vueuse/core";
-
-    //maybe useful for later / TODO: implement API request for data entries
-    /*const props = defineProps({
-        pname: {
-            type: String,
-            required: true,
-        },
-        cname: {
-            type: String,
-            required: true,
-        },
-        bu: {
-            type: String,
-            required: true,
-        },
-        tnr: {
-            type: String,
-            required: true,
-        }
-    })*/
 
     //Get the width of the left pane from App.vue
     const props = defineProps({
@@ -40,6 +20,28 @@
         }
     )
     
+    /**
+     * Fetches the API (for showcase local file) and adds every data entry into the data source
+     */
+    const loadData = async () => {
+        try {
+            const response = await fetch(
+                "./src/components/Table/testData.json"
+            )
+
+            const data = await response.json();            
+            
+            for (const dataEntry of data) {
+                addTableEntry(dataEntry);
+            }
+
+        } catch(err) {
+            console.error("Error fetching data:" + err);   
+        }
+    }
+
+    onMounted(loadData);
+    
 </script>
 
 <template>
@@ -52,7 +54,7 @@
         :columns="[...columns].filter(item => !item.hidden)" 
         :data-source="[...dataSource]" 
         :pagination="false"
-        :scroll="{ y: 900 }"
+        :scroll="{ y: 0.904*useWindowSize().height.value }"
         bordered
     >
         <!-- Header of the table -->
@@ -133,69 +135,31 @@
 
 /*  Data implementation  */
 
-interface DataItem {
+type DataItem = {
     key: number;
     pname: string;
     cname: string;
     bu: string;
-    tnr: string;
+    tnr: number;
 }
 
-const dataSource: DataItem[] = [];
+const dataSource: DataItem[] = reactive([]);
 
 /**
  * Adds a new table entry to dataSource.
- * @param {DataItem} data Stores the data that should be added.
+ * @param {any} data Stores the data that should be added.
  */
-function addTableEntry(data: DataItem) {
+function addTableEntry(data: any) {
     dataSource.push({
         key: dataSource.length + 1,
-        pname: data.pname,
-        cname: data.cname,
-        bu: data.bu,
-        tnr: data.tnr
+        pname: data.ProjectName,
+        cname: data.ClientName,
+        bu: data.BusinessUnit,
+        tnr: data.TeamNumber.toString()
     })
 }
-
-//Test data for showcase
-const testData = []
-
-for (let i = 0; i < 50; i++) {
-    testData.push({
-        key: i,
-        pname: "Softwareprojekt",
-        cname: "Appsfactory",
-        bu: "Frontend",
-        tnr: `${i}`
-    })
-}
-
-testData.forEach((data) => {
-    addTableEntry(data);
-});
 
 /*  Column implementation  */
-
-/**
- * Fills the parameters for the column with given or fixed values. 
- * @param {string} title Title of the column, which is show in the view.
- * @param {string} index Display field of the data entry. Helps to handle the filter.
- * @param {string} key   Unique key of the column.
- */
-const fillColumn = (title: string, index: string, key: string) => {
-    return {
-        title: title,
-        dataIndex: index,
-        key: key,
-        customFilterDropdown: true,
-        onFilter: (value: string | number | boolean, record: any) => 
-            record[index].toString().toLowerCase().includes(value.toString().toLowerCase()),
-        onFilterDropdownOpenChange: (visible: boolean) => { filterDropdownAnimation(visible) },
-        ellipsis: true,
-        align: "center" as const,
-        hidden: false
-    }
-};
 
 /**
  * Adds an animation, when the box of the search element opens.
@@ -209,11 +173,64 @@ const filterDropdownAnimation = (visible: boolean) => {
     }
 };
 
+//sets the parameters for every column
 const columns = [
-    fillColumn("Project Name", "pname", "pname"),
-    fillColumn("Client Name", "cname", "cname"),
-    fillColumn("Business Unit", "bu", "bu"),
-    fillColumn("Team Number", "tnr", "tnr")
+    {
+        title: "Project Name",
+        dataIndex: "pname",
+        key: "pname",
+        customFilterDropdown: true,
+        onFilter: (value: string | number | boolean, record: any) => 
+            record.pname.toString().toLowerCase().includes(value.toString().toLowerCase()),
+        onFilterDropdownOpenChange: (visible: boolean) => { filterDropdownAnimation(visible) },
+        ellipsis: true,
+        align: "center" as const,
+        sorter: (a: DataItem, b: DataItem) => a.pname.localeCompare(b.pname),
+        defaultSortOrder: "ascend" as const,
+        hidden: false
+    },
+    {
+        title: "Client Name",
+        dataIndex: "cname",
+        key: "cname",
+        customFilterDropdown: true,
+        onFilter: (value: string | number | boolean, record: any) => 
+            record.cname.toString().toLowerCase().includes(value.toString().toLowerCase()),
+        onFilterDropdownOpenChange: (visible: boolean) => { filterDropdownAnimation(visible) },
+        ellipsis: true,
+        align: "center" as const,
+        sorter: (a: DataItem, b: DataItem) => a.cname.localeCompare(b.cname),
+        defaultSortOrder: "ascend" as const,
+        hidden: false
+    },
+    {
+        title: "Business Unit",
+        dataIndex: "bu",
+        key: "bu",
+        customFilterDropdown: true,
+        onFilter: (value: string | number | boolean, record: any) => 
+            record.bu.toString().toLowerCase().includes(value.toString().toLowerCase()),
+        onFilterDropdownOpenChange: (visible: boolean) => { filterDropdownAnimation(visible) },
+        ellipsis: true,
+        align: "center" as const,
+        sorter: (a: DataItem, b: DataItem) => a.bu.localeCompare(b.bu),
+        defaultSortOrder: "ascend" as const,
+        hidden: false
+    },
+    {
+        title: "Team Number",
+        dataIndex: "tnr",
+        key: "tnr",
+        customFilterDropdown: true,
+        onFilter: (value: string | number | boolean, record: any) => 
+            record.tnr.toString().toLowerCase().includes(value.toString().toLowerCase()),
+        onFilterDropdownOpenChange: (visible: boolean) => { filterDropdownAnimation(visible) },
+        ellipsis: true,
+        align: "center" as const,
+        sorter: (a: DataItem, b: DataItem) => a.tnr- b.tnr,
+        defaultSortOrder: "ascend" as const,
+        hidden: false
+    }
 ];
 
 /*  Search implementation  */
@@ -257,31 +274,26 @@ function changeColumns(pwidth: number) {
     const breakpoint = getBreakpoint(pwidth);
     switch (breakpoint) {
         case "xs":
-            showColumn("pname");
             hideColumn("cname");
             hideColumn("bu");
             hideColumn("tnr");
             break;
         case "sm":
-            showColumn("pname");
             showColumn("cname");
             hideColumn("bu");
             hideColumn("tnr");
             break;
         case "md":
-            showColumn("pname");
             showColumn("cname");
             showColumn("bu");
             hideColumn("tnr");
             break;
         case "lg":
-            showColumn("pname");
             showColumn("cname");
             showColumn("bu");
             showColumn("tnr");
             break;
         default:
-            showColumn("pname");
             hideColumn("cname");
             hideColumn("bu");
             hideColumn("tnr");
