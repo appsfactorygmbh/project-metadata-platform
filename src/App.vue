@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Splitpanes, Pane } from 'splitpanes'; //external framework for splitpanes
-import 'splitpanes/dist/splitpanes.css'; //default css for splitpanes
+  import { Splitpanes, Pane } from 'splitpanes'; //external framework for splitpanes
+  import 'splitpanes/dist/splitpanes.css'; //default css for splitpanes
 </script>
 
 <template>
@@ -21,7 +21,7 @@ import 'splitpanes/dist/splitpanes.css'; //default css for splitpanes
 </template>
 
 <style scoped>
-.splitpanes {
-  height: 96vh;
-}
+  .splitpanes {
+    height: 96vh;
+  }
 </style>
