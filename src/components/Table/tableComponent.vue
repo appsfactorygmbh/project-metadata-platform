@@ -71,7 +71,7 @@
     <!-- 
         Ant Design table with: 
         columns: filtered if hidden or not
-        scroll: sets height of table to 900 and activates scrolling
+        scroll: sets height of table to ~90% of the window height
     -->
     <a-table
         :columns="[...columns].filter(item => !item.hidden)" 
@@ -239,8 +239,7 @@ const columns = [
         ellipsis: true,
         align: "center" as const,
         sorter: (a: DataItem, b: DataItem) => a.pname.localeCompare(b.pname),
-        defaultSortOrder: "ascend" as const,
-        hidden: false
+        defaultSortOrder: "ascend" as const
     },
     {
         title: "Client Name",
