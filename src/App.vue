@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import PluginView from './views/PluginView/PluginView.vue';
+  import HelloWorld from './components/HelloWorld.vue';
 </script>
 
 <template>
