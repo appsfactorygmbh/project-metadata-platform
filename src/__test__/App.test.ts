@@ -7,7 +7,7 @@ describe('App.vue', () => {
     const wrapper = mount(App, {
       attachTo: document.body,
     });
-    
+
     expect(wrapper.findAll('.splitpanes__pane')[0].isVisible()).toBe(true);
     expect(wrapper.findAll('.splitpanes__pane')[1].isVisible()).toBe(true);
   });
