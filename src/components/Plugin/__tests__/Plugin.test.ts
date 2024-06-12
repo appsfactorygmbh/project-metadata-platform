@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { cutAfterTLD, createFaviconURL } from '../editURL';
 import PluginComponent from '../PluginComponent.vue';
 
@@ -55,5 +55,32 @@ describe('Plugin.vue', () => {
   it('returns invalid URL if URL is invalid', () => {
     const result = cutAfterTLD('www.example');
     expect(result).toBe('www.example');
+  });
+
+  // create Mock for clipboard API
+  const clipboard = { writeText: vi.fn() };
+  beforeEach(() => {
+    Object.defineProperty(global.navigator, 'clipboard', {
+      value: clipboard,
+      writable: true,
+    });
+  });
+
+  it('copies URL to clipboard', async () => {
+    const wrapper = generateWrapper(
+      'Test Plugin',
+      'https://example.com/examplePath',
+    );
+
+    const card = wrapper.findComponent({ name: 'ACard' });
+    // check if card exists, if it does, trigger click event
+    if (card.exists()) {
+      await card.trigger('click');
+      expect(clipboard.writeText).toHaveBeenCalledWith(
+        'https://example.com/examplePath',
+      );
+    } else {
+      throw new Error('ACard component not found');
+    }
   });
 });
