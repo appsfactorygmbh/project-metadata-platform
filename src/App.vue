@@ -22,6 +22,6 @@
 
 <style scoped>
   .splitpanes {
-    height: 96vh;
+    height: 100vh;
   }
 </style>
