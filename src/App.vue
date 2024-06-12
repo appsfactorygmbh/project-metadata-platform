@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { ThemeProvider } from '@/router/Provider';
-  import HelloWorld from '@/components/HelloWorld.vue';
+  import { ThemeProvider } from './router/Provider';
+  import HelloWorld from './components/HelloWorld.vue';
 </script>
 
 <template>
