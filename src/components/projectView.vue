@@ -140,8 +140,8 @@ const projectInputStyle = {
   height: '1.6em',
   textAlign: 'center',
   border: 'none',
-  borderBottom: '2px solid #a5a4a4',
-  backgroundColor: 'rgb(250, 250, 250)',
+  backgroundColor: 'white',
+  cursor: 'default',
 } ;
 
 //
