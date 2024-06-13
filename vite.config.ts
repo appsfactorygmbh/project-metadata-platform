@@ -1,4 +1,5 @@
-/// <reference types="vitest" />
+/// <reference types="vitest/globals" />
+/// <reference types="vite/client" />
 import { fileURLToPath } from 'node:url';
 import { defineConfig, ConfigEnv, UserConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
@@ -57,7 +58,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       vue(),
       vueJsx(),
       AutoImport({
-        imports: ['vue', 'vue-router'],
+        imports: ['vue', 'vue-router', 'vitest'],
         dts: 'types/auto-imports.d.ts',
       }),
       Components({
@@ -87,11 +88,14 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       exclude: ['node_modules', 'dist', 'coverage', 'html', 'lib', '*.d.ts'],
       coverage: {
         enabled: true,
-        reporter: ['text', 'html'],
+        reporter: ['text', 'html', 'cobertura'],
         exclude: ['node_modules', 'dist', 'coverage', 'html', 'lib', '*.d.ts'],
       },
       setupFiles: './tests/setup.ts',
       reporters: ['default', 'html'],
+      outputFile: {
+        junit: './junit.xml',
+      },
     },
   };
 });

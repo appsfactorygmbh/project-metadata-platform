@@ -1,33 +1,33 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
-//editable project name field
-const isEditing = ref(false)
-const projectName = ref('Project Name')
+// Flag for editable Title
+const isEditing = ref(false);
 
-//initialize empty strings for the project attributes boxes
-const businessUnit = ref('')
-const teamNr = ref('')
-const department = ref('')
-const clientName = ref('') 
+const projectName = ref('Your Project Name');
+const businessUnit = ref('Business Unit');
+const teamNr = ref('Team Number');
+const department = ref('Department');
+const clientName = ref('Client Name');
 
-// Save the new project name after edited
+// Place holder for the buttons for now
+const placeHolder = () => {
+  console.log('Icon clicked');
+};
+//Function to save and edit the project name
 const toggleEditing = () => {
+  
   if (isEditing.value) {
     projectName.value = (document.getElementById('projectNameInput') as HTMLInputElement).value
   }
-  isEditing.value = !isEditing.value
-}
 
-// Placeholder for future buttons
-const placeHolder = () => {
-  console.log("Clicked");
-}
+  isEditing.value = !isEditing.value;
+};
 
 //fetch json object from backend 
 const reloadData = async () => {
   try {
-      const response = await fetch(
+      /* const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + 
           '/Projects', 
         {
@@ -37,10 +37,15 @@ const reloadData = async () => {
             cors: 'no-cors',
           },
         },
-      );
+      ); */
+
+    // Fetch test data manually
+    const response = await fetch('src/test.json');
 
     const data = await response.json()
     console.log(data.ProjectName)
+
+
 
     // Update data in Vue component state
     businessUnit.value = data.BusinessUnit
@@ -58,194 +63,211 @@ const reloadData = async () => {
 // Fetch data when component is mounted
 onMounted(reloadData)
 
+// Style for the return button
+const returnStyle = {
+  cursor: 'pointer',
+  height: '60px',
+  margin: '10px',
+};
+
+// Style for the middle section
+const mainStyle = {
+  width: '80vw',
+  height: '80vh',
+  padding: '50px',
+  margin: '10px',
+
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+} as const;
+
+// Style for the Project title box
+const nameBoxStyle = {
+  width: '85%',
+  maxWidth: '750px',
+  minWidth: '250px',
+  padding: '20px',
+  margin: '10px',
+  borderRadius: '10px',
+  
+  background: 'white',
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+  textAlign: 'center',
+};
+
+// Style for the Project name input box
+const projectNameInputStyle = {
+  fontSize: '2.5em',
+  width: '60%',
+  height: '2.5em',
+  textAlign: 'center',
+  border: 'none',
+  borderBottom: '2px solid #a5a4a4',
+  color: 'black',
+  backgroundColor: 'rgb(250, 250, 250)',
+}  as const;
+
+// Style for the pencil button
+const editIconStyle = {
+  cursor: 'pointer',
+  position: 'absolute',
+  right: '10px',
+  height: '50px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  border: 'none',
+};
+
+// Style for the project description box
+const descboxStyle = {
+  width: '85%',
+  maxWidth: '750px',
+  minWidth: '250px',
+  padding: '20px',
+  margin: '10px',
+  borderRadius: '10px',
+  display: 'flex',
+
+  background: 'white',
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+};
+
+// Style for the description field box
+const projectInputStyle = {
+  fontSize: '1.6em',
+  width: '90%',
+  height: '1.6em',
+  textAlign: 'center',
+  border: 'none',
+  borderBottom: '2px solid #a5a4a4',
+  backgroundColor: 'rgb(250, 250, 250)',
+} ;
+
+//
+const profileFieldStyle = {
+  width: '48%',
+  margin: '5px',
+  height: '100px',
+} ;
+
+// Style for the menu button on the top right
+const menuStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  margin: '10px',
+  cursor: 'pointer',
+};
+
+// Style for the icons
+const iconStyle = {
+  marginBottom: '10px',
+  height: '60px',
+};
 </script>
 
 <template>
-    <div class="return">  <!-- add return icon -->
-      <img src="https://img.icons8.com/?size=50&id=26146&format=png&color=000000" alt="Return" class="return-icon" @click="placeHolder">
-    </div>
+  <a-button :style="returnStyle" @click="placeHolder" ghost>
+    <!-- add return icon -->
+    <img
+      src="https://img.icons8.com/?size=50&id=26146&format=png&color=000000"
+      alt="Return"
+    >
+  </a-button>
 
-    <div class="main">
-      <!-- create box for the project name-->    
-      <div class="box">
-        <div class="editable-field">
-          <h1 v-if="!isEditing" id="projectName">{{ projectName }}</h1>
-          <input v-if="isEditing" type="text" id="projectNameInput" :value="projectName" class="project-name-input">
-          <img src="https://img.icons8.com/ios-glyphs/40/000000/pencil.png" class="edit-icon" @click="toggleEditing">
-        </div>
-      </div>
-      <!-- create box for project description (BU, Team Nr, Department, Client Name)-->
-      <div class="box description-box">
-        <div class="profile-field">
-          <label for="businessUnit">Business Unit:</label>
-          <input type="text" v-model="businessUnit" readonly />
-        </div>
+  <div :style="mainStyle">
+    <!-- create box for the project name -->
+    <a-card :style="nameBoxStyle">
 
-        <div class="profile-field">
-          <label for="teamNumber">Team Number:</label>
-          <input type="text" v-model="teamNr" readonly />
-        </div>
+        <h1 v-if="!isEditing" id="projectName" style="font-size: 2.5em; font-weight: bold;">{{projectName}}</h1>
+        <input
+          v-if="isEditing"
+          type="text"
+          id="projectNameInput"
+          :value="projectName"
+          :style="projectNameInputStyle" 
+        />
+        <!-- pencil icon for editing the project name -->
+        <a-button :style="editIconStyle" @click="toggleEditing" ghost>
+          <img
+            src="https://img.icons8.com/ios-glyphs/40/000000/pencil.png"
+            alt="Edit"
+          />
+        </a-button>
 
-        <div class="profile-field">
-          <label for="department">Department:</label>
-          <input type="text" v-model="department" readonly />
-        </div>
+    </a-card>
 
-        <div class="profile-field">
-          <label for="clientName">Client Name:</label>
-          <input type="text" v-model="clientName" readonly />
-        </div>
-      </div>
-    </div>
+    <!-- create box for project description (BU, Team Nr, Department, Client Name) -->
+    <a-row :style="descboxStyle">
 
-    <!-- add icons for profile, plugins, global logs, signout -->
-    <div class="menu">
-      <div class="icon">
-        <img src="https://img.icons8.com/?size=50&id=98957&format=png&color=000000" alt="Profile" class="profile-icon" @click="placeHolder">
-      </div>
-      <div class="icon">
-        <img src="https://img.icons8.com/?size=50&id=61018&format=png&color=000000" alt="Plugins" class="plugins-icon" @click="placeHolder">
-      </div>
-      <div class="icon">
-        <img src="https://img.icons8.com/?size=50&id=60674&format=png&color=000000" alt="Global Logs" class="logs-icon" @click="placeHolder">
-      </div>
-      <div class="icon">
-        <img src="https://img.icons8.com/?size=50&id=59781&format=png&color=000000" alt="Sign Out" class="out-icon" @click="placeHolder">
-      </div>
-          
-    </div>
-      
+        <a-card :style="profileFieldStyle">
+          <label for="businessUnit" style="font-size: 1.2em; font-weight: bold;">Business Unit:</label>
+          <a-input 
+            type="text" 
+            :value="businessUnit"
+            :style="projectInputStyle" 
+            readonly 
+          />
+        </a-card>
+
+        <a-card :style="profileFieldStyle">
+          <label for="teamNumber" style="font-size: 1.2em; font-weight: bold;">Team Number:</label>
+          <a-input 
+            type="text" 
+            :value="teamNr"
+            :style="projectInputStyle" 
+            readonly 
+          />
+        </a-card>
+
+        <a-card :style="profileFieldStyle">
+          <label for="department" style="font-size: 1.2em; font-weight: bold;">Department:</label>
+          <a-input
+            type="text" 
+            :value="department"
+            :style="projectInputStyle" 
+            readonly 
+          />
+        </a-card>
+
+        <a-card :style="profileFieldStyle">
+          <label for="clientName" style="font-size: 1.2em; font-weight: bold;">Client Name:</label>
+          <a-input 
+            type="text" 
+            :value="clientName"
+            :style="projectInputStyle" 
+            readonly 
+          />
+        </a-card>
+      </a-row>
+
+  </div>
+
+  <!-- add icons for profile, plugins, global logs, signout -->
+  <a-col :style="menuStyle">
+    <a-button :style="iconStyle" @click="placeHolder" ghost>
+      <img
+        src="https://img.icons8.com/?size=50&id=98957&format=png&color=000000"
+        alt="Profile"
+      />
+    </a-button>
+    <a-button :style="iconStyle" @click="placeHolder" ghost>
+      <img
+        src="https://img.icons8.com/?size=50&id=61018&format=png&color=000000"
+        alt="Plugins"
+      />
+    </a-button>
+    <a-button :style="iconStyle" @click="placeHolder" ghost>
+      <img
+        src="https://img.icons8.com/?size=50&id=60674&format=png&color=000000"
+        alt="Global Logs"
+      />
+    </a-button>
+    <a-button :style="iconStyle" @click="placeHolder" ghost>
+      <img
+        src="https://img.icons8.com/?size=50&id=59781&format=png&color=000000"
+        alt="Sign Out"
+      />
+    </a-button>
+  </a-col>
 </template>
-
-<style scoped>
-  
-    body {
-      color: #EBF0F6;
-      display: flex;
-    }
-    /* set default color font for titles*/
-    * {
-      color: rgb(0, 0, 0);
-    }
-
-    input {
-      background-color: rgb(255, 255, 255);
-      color: rgb(0, 0, 0);
-    }
-    /* return icon*/
-    .return {
-      cursor: pointer;
-      width: 50px;
-      height: 50px;
-      margin: 10px;
-    }
-
-    .main {
-      width: 80vw;
-      height: 80vh;
-      padding: 50px;
-      margin: 10px;
-      
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* box for the project name headline*/
-    .box {
-      width: 85%;
-      max-width: 750px;
-      padding: 30px;
-      margin: 10px;
-      border-radius: 10px;
-
-      background: white;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-      text-align: center;
-    }
-
-    /* box for the editable field project name*/
-    .box .editable-field {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    /* project name headline*/
-    .box .editable-field h1 {
-      font-size: 3em;
-      display: inline-block;
-    }
-    
-    /* pencil icon*/
-    .box .editable-field .edit-icon {
-      cursor: pointer;
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-    /* project name font size while being edited*/
-    .box .editable-field .project-name-input {
-      font-size: 1.5em;
-      margin: 20px;
-      width: 60%;
-      height: 3em;
-      text-align: center;
-      border: none;
-      border-bottom: 2px solid #a5a4a4;
-      background-color: rgb(250, 250, 250);
-    }
-
-.hidden {
-  display: none;
-}
-    /* project description box*/
-    .description-box {
-      width: 85%;
-      max-width: 750px;
-      padding: 30px;
-      margin: 10px;
-
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-    /* text box for the descriptions */
-    .description-box .profile-field {
-      margin-bottom: 10px;
-      text-align: left;
-      width: 48%;
-    }
-    /* sub-headline for the project description*/
-    .description-box .profile-field label {
-      display: block;
-      margin: 8px;
-      font-weight: Bold;
-    }
-
-    /* fetched description of the project*/
-    .description-box .profile-field input {
-      width: 95%;
-      padding: 8px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-
-    /* icons (profile, plugins, global logs, signout) */
-    .menu {
-      
-      display: flex;
-      flex-direction: column;
-      align-items: left;
-      margin: 10px ;
-      cursor: pointer;
-      width: 50px;
-      height: 200px;
-      
-    }
-
-</style>
