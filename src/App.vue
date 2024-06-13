@@ -11,6 +11,10 @@
 
 <template>
   <div class="container">
+    <!--
+        size: sets default proportion to 1:4
+        min-size: sets smalles possible size to 20% and 1%
+      -->
     <splitpanes class="default-theme">
       <pane size="25" min-size="20">
         <div ref="tablePane">
@@ -22,13 +26,13 @@
         </div>
       </pane>
       <pane size="75" min-size="1">
-        <div id="pane2"></div>
+        <div></div>
       </pane>
     </splitpanes>
   </div>
 </template>
 <style scoped>
   .splitpanes {
-    height: 96vh;
+    height: 100vh;
   }
 </style>

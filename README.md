@@ -107,19 +107,20 @@ To use the backend service during development, one needs to run the backend serv
 
 1. Install Docker and Docker Compose: https://docs.docker.com/get-docker/ and https://docs.docker.com/compose/install/
 2. Download the latest version of `docker-compose-staging.yml` from the backend repository: https://gitlab.dit.htwk-leipzig.de/projekt2024_A_Appsfactory_Project_Metadata_Platform/backend/-/blob/develop/docker-compose-staging.yml?ref_type=heads
-3. Run the backend service by running these commands in the same directory as the downloaded `docker-compose-staging.yml` file (You may need to add `-` between `docker` and `compose`):
+3. Login to the gitlab registry in docker using `docker login gitlab.dit.htwk-leipzig.de:5050` and enter your gitlab username and a personal access token as password. The personal access token needs to have the `read_registry` scope.
+4. Run the backend service by running these commands in the same directory as the downloaded `docker-compose-staging.yml` file (You may need to add `-` between `docker` and `compose`):
 
    ```sh
    docker compose -f docker-compose-staging.yml pull
    docker compose -f docker-compose-staging.yml up --remove-orphans
    ```
 
-4. The backend service should now be available at `http://localhost:8090`. This URL is already configured in the `.env` file of the frontend. Simply use `import.meta.env.VITE_BACKEND_URL + "/<your-endpoint>"` to axxess the api. For example:
+5. The backend service should now be available at `http://localhost:8090`. This URL is already configured in the `.env` file of the frontend. Simply use `import.meta.env.VITE_BACKEND_URL + "/<your-endpoint>"` to axxess the api. For example:
 
    ```ts
    const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/projects');
    ```
 
-5. The env files are already configured to use the correct backend URLs in the staging and production environments. No further changes are necessary after local development is over.
-6. The Swagger UI of the backend service is available at `http://localhost:8090/swagger/index.html`.
-7. To stop the backend service, hit `Ctrl+C` in the terminal where the service is running.
+6. The env files are already configured to use the correct backend URLs in the staging and production environments. No further changes are necessary after local development is over.
+7. The Swagger UI of the backend service is available at `http://localhost:8090/swagger/index.html`.
+8. To stop the backend service, hit `Ctrl+C` in the terminal where the service is running.

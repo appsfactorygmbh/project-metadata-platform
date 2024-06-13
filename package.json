@@ -34,6 +34,7 @@
     "@types/eslint__js": "^8.42.3",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^20.14.2",
+    "@types/splitpanes": "^2.2.6",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vitejs/plugin-vue-jsx": "^4.0.0",
     "@vitest/coverage-v8": "^1.6.0",
