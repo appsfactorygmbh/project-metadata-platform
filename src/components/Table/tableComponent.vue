@@ -7,7 +7,7 @@
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
   import { TableEntry } from 'models/TableModel';
-  import { tableStore } from "../../store/tableStore.ts";
+  import { tableStore } from "../../store/TableStore.ts";
   //import { TableStores } from '../../store/tableStore.ts';
 
   //const store = TableStores();
@@ -188,9 +188,7 @@
    * @param {TableEntry[]} data Stores the data that should be added.
    */
   function addTableEntry(data: TableEntry[]) {
-    for (const date of data) {
-      console.log(date);
-      
+    for (const date of data) {     
       dataSource.push({
         key: date.id,
         pname: date.projectName,
