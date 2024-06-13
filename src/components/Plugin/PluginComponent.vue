@@ -13,18 +13,25 @@
       type: String,
       required: true,
     },
+    displayName: {
+      type: String,
+      required: true,
+    },
   });
 
   // Create a reactive variable for the favicon URL based on the given URL.
   const faviconUrl = ref(createFaviconURL(cutAfterTLD(props.url)));
 
   // Copies URL to clipboard when card is clicked.
-  async function copyToClipboard() {
+  async function handleClick() {
     try {
       await navigator.clipboard.writeText(props.url);
     } catch (err) {
       console.error('Error when trying to copy: ', err);
     }
+
+    //TODO: add Tests
+    window.open(props.url, '_blank');
   }
 </script>
 
@@ -40,14 +47,14 @@
       alignItems: 'center',
       padding: '15px',
     }"
-    @click="copyToClipboard"
+    @click="handleClick"
   >
     <!-- Display the favicon image. -->
     <a-avatar shape="square" :src="faviconUrl" class="avatar"></a-avatar>
     <!-- Container for plugin name and URL text. -->
     <div class="textContainer">
       <h3>{{ pluginName }}</h3>
-      <a :href="url">{{ url }}</a>
+      <p>{{ displayName }}</p>
     </div>
   </a-card>
 </template>
@@ -59,8 +66,8 @@
 
   // Style for the card container.
   .card {
-    min-width: 400px;
-    max-width: 400px;
+    width: max-content;
+    max-width: 300px;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
     display: flex;
     flex-direction: column;
@@ -82,11 +89,11 @@
     white-space: nowrap;
     overflow: hidden;
 
-    & h3 {
+    & > * {
       margin: 0px;
     }
 
-    & a {
+    & p {
       color: #6d6e6f;
       overflow: hidden;
       text-overflow: ellipsis;

@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import HelloWorld from './components/HelloWorld.vue';
+  import PluginView from './views/PluginView/PluginView.vue';
 </script>
 
 <template>
@@ -12,6 +13,7 @@
     </a>
   </div>
   <HelloWorld msg="Vite + Vue" />
+  <PluginView project-i-d="1"></PluginView>
 </template>
 
 <style scoped>

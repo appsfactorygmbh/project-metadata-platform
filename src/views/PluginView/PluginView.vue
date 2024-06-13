@@ -1,39 +1,35 @@
 <template>
   <div class="container">
-    <!-- Iterate over each plugin in the array and display using PluginComponent -->
     <PluginComponent
       v-for="plugin in plugins"
-      :key="plugin.name"
+      :key="plugin.displayName"
       class="plugins"
-      :plugin-name="plugin.name"
+      :plugin-name="plugin.pluginName"
+      :display-name="plugin.displayName"
       :url="plugin.url"
     ></PluginComponent>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { onBeforeMount, computed, toRaw } from 'vue';
   import PluginComponent from '../../components/Plugin/PluginComponent.vue';
+  import { usePluginsStore } from '../../store/Plugin/PluginStore.ts';
 
-  // Define an array of plugins with their names and URLs for demonstration.
-  const plugins = ref([
-    {
-      name: 'GitLab',
-      url: 'https://gitlab.com/path/to/project',
+  const pluginStore = usePluginsStore();
+  const props = defineProps({
+    projectID: {
+      type: String,
+      required: true,
     },
-    {
-      name: 'GitHub',
-      url: 'https://github.com/path/to/project',
-    },
-    {
-      name: 'Azure DevOps',
-      url: 'https://azure.microsoft.com/de-de/products/devops',
-    },
-    {
-      name: 'Google Drive',
-      url: 'https://drive.google.com/drive/path/to/own/drive',
-    },
-  ]);
+  });
+
+  onBeforeMount(async () => {
+    await pluginStore.fetchPlugins(props.projectID);
+    console.log('DAaaaaata', toRaw(pluginStore.getPlugins));
+  });
+
+  const plugins = computed(() => toRaw(pluginStore.getPlugins));
 </script>
 
 <style scoped lang="css">
