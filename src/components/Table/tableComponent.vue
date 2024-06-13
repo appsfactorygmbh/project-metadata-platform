@@ -7,7 +7,7 @@
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
   import { TableEntry } from 'models/TableModel';
-  import { tableStore } from 'store/tableStore';
+  import { tableStore } from '../../store/TableStore.ts';
   //import { TableStores } from '../../store/tableStore.ts';
 
   //const store = TableStores();
