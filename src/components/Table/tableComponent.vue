@@ -6,11 +6,8 @@
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
-  import { TableEntry } from 'models/TableModel';
-  import { tableStore } from '../../store/TableStore.ts';
-  //import { TableStores } from '../../store/tableStore.ts';
-
-  //const store = TableStores();
+  import { TableEntry } from '../../models/TableModel';
+  import { TableStores } from '../../store/tableStore';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -39,9 +36,8 @@
    * Fetches the API and adds every data entry into the data source
    */
   const fetchData = async () => {
-    addTableEntry(await tableStore.getTable());
-    /*await store.fetchTable()
-    addTableEntry(store.getTable());*/
+    const store = TableStores();
+    addTableEntry(await store.getTable());
   };
 
   /**
@@ -188,7 +184,7 @@
    * @param {TableEntry[]} data Stores the data that should be added.
    */
   function addTableEntry(data: TableEntry[]) {
-    for (const date of data) {     
+    for (const date of data) {
       dataSource.push({
         key: date.id,
         pname: date.projectName,

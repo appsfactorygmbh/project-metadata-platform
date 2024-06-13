@@ -77,9 +77,6 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
             antd: ['ant-design-vue', '@ant-design/icons-vue', 'dayjs'],
           },
         },
-        external: [
-          "services/TableService",
-        ],
       },
     },
     server: {
