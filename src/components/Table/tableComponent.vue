@@ -6,6 +6,11 @@
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
+  import { TableEntry } from 'models/TableModel';
+  import { tableStore } from "../../store/tableStore.ts";
+  //import { TableStores } from '../../store/tableStore.ts';
+
+  //const store = TableStores();
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -19,7 +24,6 @@
     },
     isTest: {
       type: Boolean,
-      required: true,
     },
   });
 
@@ -32,18 +36,12 @@
   );
 
   /**
-   * Fetches the API (for showcase local file) and adds every data entry into the data source
+   * Fetches the API and adds every data entry into the data source
    */
   const fetchData = async () => {
-    try {
-      const response = await fetch('./src/components/Table/testData.json');
-
-      const data: Data[] = await response.json();
-
-      addTableEntry(data);
-    } catch (err) {
-      console.error('Error fetching data: ' + err);
-    }
+    addTableEntry(await tableStore.getTable());
+    /*await store.fetchTable()
+    addTableEntry(store.getTable());*/
   };
 
   /**
@@ -110,7 +108,7 @@
           :value="selectedKeys[0]"
           style="width: 188px; margin-bottom: 8px; display: block"
           @change="
-            (e) => setSelectedKeys(e.target.value ? [e.target.value] : [])
+            (e: any) => setSelectedKeys(e.target.value ? [e.target.value] : [])
           "
           @press-enter="handleSearch(selectedKeys, confirm, column.dataIndex)"
         />
@@ -175,13 +173,6 @@
 <script lang="ts">
   /*  Data implementation  */
 
-  type Data = {
-    ProjectName: string;
-    ClientName: string;
-    BusinessUnit: string;
-    TeamNumber: number;
-  };
-
   type DataItem = {
     key: number;
     pname: string;
@@ -194,38 +185,43 @@
 
   /**
    * Adds a new table entry to dataSource.
-   * @param {Data[]} data Stores the data that should be added.
+   * @param {TableEntry[]} data Stores the data that should be added.
    */
-  function addTableEntry(data: Data[]) {
+  function addTableEntry(data: TableEntry[]) {
     for (const date of data) {
+      console.log(date);
+      
       dataSource.push({
-        key: dataSource.length + 1,
-        pname: date.ProjectName,
-        cname: date.ClientName,
-        bu: date.BusinessUnit,
-        tnr: date.TeamNumber,
+        key: date.id,
+        pname: date.projectName,
+        cname: date.clientName,
+        bu: date.businessUnit,
+        tnr: date.teamNumber,
       });
     }
   }
 
   const testData = [
     {
-      ProjectName: 'C',
-      ClientName: 'A',
-      BusinessUnit: 'A',
-      TeamNumber: 1,
+      id: 1,
+      projectName: 'C',
+      clientName: 'A',
+      businessUnit: 'A',
+      teamNumber: 1,
     },
     {
-      ProjectName: 'A',
-      ClientName: 'B',
-      BusinessUnit: 'B',
-      TeamNumber: 2,
+      id: 2,
+      projectName: 'A',
+      clientName: 'B',
+      businessUnit: 'B',
+      teamNumber: 2,
     },
     {
-      ProjectName: 'B',
-      ClientName: 'C',
-      BusinessUnit: 'C',
-      TeamNumber: 3,
+      id: 3,
+      projectName: 'B',
+      clientName: 'C',
+      businessUnit: 'C',
+      teamNumber: 3,
     },
   ];
 
@@ -286,15 +282,6 @@
       title: 'Business Unit',
       dataIndex: 'bu',
       key: 'bu',
-      customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: any) =>
-        record.bu
-          .toString()
-          .toLowerCase()
-          .includes(value.toString().toLowerCase()),
-      onFilterDropdownOpenChange: (visible: boolean) => {
-        filterDropdownAnimation(visible);
-      },
       ellipsis: true,
       align: 'center' as const,
       sorter: (a: DataItem, b: DataItem) => a.bu.localeCompare(b.bu),
@@ -305,15 +292,6 @@
       title: 'Team Number',
       dataIndex: 'tnr',
       key: 'tnr',
-      customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: any) =>
-        record.tnr
-          .toString()
-          .toLowerCase()
-          .includes(value.toString().toLowerCase()),
-      onFilterDropdownOpenChange: (visible: boolean) => {
-        filterDropdownAnimation(visible);
-      },
       ellipsis: true,
       align: 'center' as const,
       sorter: (a: DataItem, b: DataItem) => a.tnr - b.tnr,

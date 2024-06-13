@@ -15,9 +15,9 @@
       <pane size="25" min-size="20">
         <div ref="tablePane">
           <Table
-            :paneWidth="dimensions.width"
-            :paneHeight="dimensions.height"
-            :isTest="false"
+            :pane-width="dimensions.width"
+            :pane-height="dimensions.height"
+            :is-test="false"
           />
         </div>
       </pane>
