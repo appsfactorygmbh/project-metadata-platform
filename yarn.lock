@@ -5319,13 +5319,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"splitpanes@npm:^3.1.5":
-  version: 3.1.5
-  resolution: "splitpanes@npm:3.1.5"
-  checksum: 10c0/de1127143cf9ae284d9a3fca1cd6523b3e3392715bdf570a28df6f230f2f2a0801408f60abffcbb3d3628d99efdfbbda7fc08b6556eb2d748b97c8be64321e0d
-  languageName: node
-  linkType: hard
-
 "sprintf-js@npm:^1.1.3":
   version: 1.1.3
   resolution: "sprintf-js@npm:1.1.3"
