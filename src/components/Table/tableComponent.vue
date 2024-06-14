@@ -240,6 +240,7 @@
       dataIndex: 'pname',
       key: 'pname',
       customFilterDropdown: true,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onFilter: (value: string | number | boolean, record: any) =>
         record.pname
           .toString()
@@ -258,7 +259,8 @@
       dataIndex: 'cname',
       key: 'cname',
       customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: any) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onFilter: (value: string | number | boolean, record: any) => 
         record.cname
           .toString()
           .toLowerCase()
