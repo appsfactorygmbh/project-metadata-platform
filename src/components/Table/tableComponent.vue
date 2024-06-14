@@ -260,7 +260,7 @@
       key: 'cname',
       customFilterDropdown: true,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onFilter: (value: string | number | boolean, record: any) => 
+      onFilter: (value: string | number | boolean, record: any) =>
         record.cname
           .toString()
           .toLowerCase()
