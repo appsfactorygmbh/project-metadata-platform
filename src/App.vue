@@ -14,7 +14,6 @@
       <pane size="25" min-size="20">
         <div ref="tablePane">
         </div>
-
       </pane>
       
       <pane size="75" min-size="7">
@@ -25,14 +24,11 @@
 
     </splitpanes>
   </div>    
-
 </template>
 
 <style scoped>
-
     .splitpanes {
       width: 100vw;
       height: 100vh;
     }
-
 </style>

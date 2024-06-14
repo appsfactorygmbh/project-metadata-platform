@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref , Ref } from 'vue'
 
 // Flag for editable Title
-const isEditing = ref(false);
+const isEditing: Ref<boolean> = ref(false);
 
-const projectName = ref('Your Project Name');
-const businessUnit = ref('Business Unit');
-const teamNr = ref('Team Number');
-const department = ref('Department');
-const clientName = ref('Client Name');
+const projectName: Ref<string> = ref('Your Project Name');
+const businessUnit: Ref<string> = ref('Business Unit');
+const teamNr: Ref<string> = ref('Team Number');
+const department: Ref<string> = ref('Department');
+const clientName: Ref<string> = ref('Client Name');
 
 // Place holder for the buttons for now
 const placeHolder = () => {
@@ -20,7 +20,6 @@ const toggleEditing = () => {
   if (isEditing.value) {
     projectName.value = (document.getElementById('projectNameInput') as HTMLInputElement).value
   }
-
   isEditing.value = !isEditing.value;
 };
 
@@ -41,11 +40,8 @@ const reloadData = async () => {
 
     // Fetch test data manually
     const response = await fetch('src/test.json');
-
     const data = await response.json()
     console.log(data.ProjectName)
-
-
 
     // Update data in Vue component state
     businessUnit.value = data.BusinessUnit
@@ -173,38 +169,37 @@ const iconStyle = {
 
 <template>
   <div :style="paneStyle">
-  <a-button :style="returnStyle" @click="placeHolder" ghost>
-    <!-- add return icon -->
-    <img
-      src="https://img.icons8.com/?size=50&id=26146&format=png&color=000000"
-      alt="Return"
-    >
-  </a-button>
+    <a-button :style="returnStyle" ghost @click="placeHolder">
+      <!-- add return icon -->
+      <img
+        src="https://img.icons8.com/?size=50&id=26146&format=png&color=000000"
+        alt="Return"
+      >
+    </a-button>
 
-  <div :style="mainStyle">
-    <!-- create box for the project name -->
-    <a-card :style="nameBoxStyle">
+    <div :style="mainStyle">
+      <!-- create box for the project name -->
+      <a-card :style="nameBoxStyle">
 
         <h1 v-if="!isEditing" style="font-size: 2.5em; font-weight: bold;">{{projectName}}</h1>
         <input
           v-if="isEditing"
-          type="text"
           id="projectNameInput"
+          type="text"
           :value="projectName"
           :style="projectNameInputStyle" 
         />
         <!-- pencil icon for editing the project name -->
-        <a-button class="edit-button"  :style="editIconStyle" @click="toggleEditing" ghost>
+        <a-button class="edit-button"  :style="editIconStyle" ghost @click="toggleEditing">
           <img
             src="https://img.icons8.com/ios-glyphs/40/000000/pencil.png"
             alt="Edit"
           />
         </a-button>
+      </a-card>
 
-    </a-card>
-
-    <!-- create box for project description (BU, Team Nr, Department, Client Name) -->
-    <a-row :style="descboxStyle">
+      <!-- create box for project description (BU, Team Nr, Department, Client Name) -->
+      <a-row :style="descboxStyle">
 
         <a-card :style="profileFieldStyle">
           <label for="businessUnit" style="font-size: 1.2em; font-weight: bold;">Business Unit:</label>
@@ -246,35 +241,34 @@ const iconStyle = {
           />
         </a-card>
       </a-row>
+    </div>
 
+    <!-- add icons for profile, plugins, global logs, signout -->
+    <a-col :style="menuStyle">
+      <a-button :style="iconStyle" ghost @click="placeHolder">
+        <img
+          src="https://img.icons8.com/?size=50&id=98957&format=png&color=000000"
+          alt="Profile"
+        />
+      </a-button>
+      <a-button :style="iconStyle" ghost @click="placeHolder">
+        <img
+          src="https://img.icons8.com/?size=50&id=61018&format=png&color=000000"
+          alt="Plugins"
+        />
+      </a-button>
+      <a-button :style="iconStyle" ghost @click="placeHolder">
+        <img
+          src="https://img.icons8.com/?size=50&id=60674&format=png&color=000000"
+          alt="Global Logs"
+        />
+      </a-button>
+      <a-button :style="iconStyle" ghost @click="placeHolder">
+        <img
+          src="https://img.icons8.com/?size=50&id=59781&format=png&color=000000"
+          alt="Sign Out"
+        />
+      </a-button>
+    </a-col>
   </div>
-
-  <!-- add icons for profile, plugins, global logs, signout -->
-  <a-col :style="menuStyle">
-    <a-button :style="iconStyle" @click="placeHolder" ghost>
-      <img
-        src="https://img.icons8.com/?size=50&id=98957&format=png&color=000000"
-        alt="Profile"
-      />
-    </a-button>
-    <a-button :style="iconStyle" @click="placeHolder" ghost>
-      <img
-        src="https://img.icons8.com/?size=50&id=61018&format=png&color=000000"
-        alt="Plugins"
-      />
-    </a-button>
-    <a-button :style="iconStyle" @click="placeHolder" ghost>
-      <img
-        src="https://img.icons8.com/?size=50&id=60674&format=png&color=000000"
-        alt="Global Logs"
-      />
-    </a-button>
-    <a-button :style="iconStyle" @click="placeHolder" ghost>
-      <img
-        src="https://img.icons8.com/?size=50&id=59781&format=png&color=000000"
-        alt="Sign Out"
-      />
-    </a-button>
-  </a-col>
-</div>
 </template>
