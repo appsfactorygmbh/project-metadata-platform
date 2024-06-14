@@ -1,4 +1,4 @@
-export type TableEntry = {
+export type Project = {
   id: number;
   projectName: string;
   clientName: string;

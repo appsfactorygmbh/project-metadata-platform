@@ -6,8 +6,8 @@
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
-  import { TableEntry } from '../../models/TableModel';
-  import { TableStores } from '../../store/tableStore';
+  import { Project } from '../../models/TableModel';
+  import { TableStore } from '../../store/tableStore';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -19,9 +19,6 @@
       type: Number,
       required: true,
     },
-    isTest: {
-      type: Boolean,
-    },
   });
 
   //update paneWidth when the pane is resized
@@ -32,32 +29,18 @@
     },
   );
 
-  /**
-   * Fetches the API and adds every data entry into the data source
-   */
-  const fetchData = async () => {
-    const store = TableStores();
-    addTableEntry(await store.getTable());
-  };
-
-  /**
-   * Fetches the data or loads test data if its a test
-   */
-  function loadData(isTest: boolean) {
-    if (isTest) {
-      addTableEntry(testData);
-    } else {
-      fetchData();
-    }
-  }
-
   //calculates current window height for the scroll value
   const windowHeight = ref(useWindowSize().height.value);
 
-  onMounted(() => {
-    loadData(props.isTest);
+  const store = TableStore();
+
+  onMounted(async () => {   
+    const data: Project[] = await store.getTable();
+    
+    addTableEntry(data);
     changeColumns(props.paneWidth);
   });
+
 </script>
 
 <template>
@@ -169,55 +152,23 @@
 <script lang="ts">
   /*  Data implementation  */
 
-  type DataItem = {
-    key: number;
-    pname: string;
-    cname: string;
-    bu: string;
-    tnr: number;
-  };
-
-  const dataSource: DataItem[] = reactive([]);
+  const dataSource: Project[] = reactive([]);
 
   /**
    * Adds a new table entry to dataSource.
-   * @param {TableEntry[]} data Stores the data that should be added.
+   * @param {Project[]} data Stores the data that should be added.
    */
-  function addTableEntry(data: TableEntry[]) {
+  function addTableEntry(data: Project[]) {
     for (const date of data) {
-      dataSource.push({
-        key: date.id,
-        pname: date.projectName,
-        cname: date.clientName,
-        bu: date.businessUnit,
-        tnr: date.teamNumber,
+      dataSource.push({        
+        id: date.id,
+        projectName: date.projectName,
+        clientName: date.clientName,
+        businessUnit: date.businessUnit,
+        teamNumber: date.teamNumber
       });
-    }
+    }   
   }
-
-  const testData = [
-    {
-      id: 1,
-      projectName: 'C',
-      clientName: 'A',
-      businessUnit: 'A',
-      teamNumber: 1,
-    },
-    {
-      id: 2,
-      projectName: 'A',
-      clientName: 'B',
-      businessUnit: 'B',
-      teamNumber: 2,
-    },
-    {
-      id: 3,
-      projectName: 'B',
-      clientName: 'C',
-      businessUnit: 'C',
-      teamNumber: 3,
-    },
-  ];
 
   /*  Column implementation  */
 
@@ -237,12 +188,11 @@
   const columns = [
     {
       title: 'Project Name',
-      dataIndex: 'pname',
+      dataIndex: 'projectName',
       key: 'pname',
       customFilterDropdown: true,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onFilter: (value: string | number | boolean, record: any) =>
-        record.pname
+      onFilter: (value: string | number | boolean, record: Project) =>
+        record.projectName
           .toString()
           .toLowerCase()
           .includes(value.toString().toLowerCase()),
@@ -251,17 +201,16 @@
       },
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: DataItem, b: DataItem) => a.pname.localeCompare(b.pname),
+      sorter: (a: Project, b: Project) => a.projectName.localeCompare(b.projectName),
       defaultSortOrder: 'ascend' as const,
     },
     {
       title: 'Client Name',
-      dataIndex: 'cname',
+      dataIndex: 'clientName',
       key: 'cname',
       customFilterDropdown: true,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onFilter: (value: string | number | boolean, record: any) =>
-        record.cname
+      onFilter: (value: string | number | boolean, record: Project) =>
+        record.clientName
           .toString()
           .toLowerCase()
           .includes(value.toString().toLowerCase()),
@@ -270,27 +219,27 @@
       },
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: DataItem, b: DataItem) => a.cname.localeCompare(b.cname),
+      sorter: (a: Project, b: Project) => a.clientName.localeCompare(b.clientName),
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },
     {
       title: 'Business Unit',
-      dataIndex: 'bu',
+      dataIndex: 'businessUnit',
       key: 'bu',
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: DataItem, b: DataItem) => a.bu.localeCompare(b.bu),
+      sorter: (a: Project, b: Project) => a.businessUnit.localeCompare(b.businessUnit),
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },
     {
       title: 'Team Number',
-      dataIndex: 'tnr',
+      dataIndex: 'teamNumber',
       key: 'tnr',
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: DataItem, b: DataItem) => a.tnr - b.tnr,
+      sorter: (a: Project, b: Project) => a.teamNumber - b.teamNumber,
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },
@@ -370,11 +319,11 @@
 
   /**
    * Hides given column.
-   * @param {number} index Has the dataIndex of the column to hide.
+   * @param {number} key Has the key of the column to hide.
    */
-  function hideColumn(index: string) {
+  function hideColumn(key: string) {
     columns.forEach((column) => {
-      if (column.dataIndex == index) {
+      if (column.key == key) {
         column.hidden = true;
       }
     });
@@ -382,11 +331,11 @@
 
   /**
    * Shows given column.
-   * @param {number} index Has the dataIndex of the column to show.
+   * @param {number} key Has the key of the column to show.
    */
-  function showColumn(index: string) {
+  function showColumn(key: string) {
     columns.forEach((column) => {
-      if (column.dataIndex == index) {
+      if (column.key == key) {
         column.hidden = false;
       }
     });
@@ -403,7 +352,7 @@
       0.25 * windowSize,
       0.42 * windowSize,
       0.5 * windowSize,
-    ];
+    ];    
 
     if (pwidth > breakpoint[2]) {
       return 'lg';

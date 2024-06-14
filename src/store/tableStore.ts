@@ -1,15 +1,15 @@
-import { tableService } from '../services/TableService';
-import { TableEntry } from 'models/TableModel';
+import { projectsService } from '../services/TableService';
+import { Project } from 'models/TableModel';
 import { defineStore } from 'pinia';
 
-export const TableStores = defineStore({
+export const TableStore = defineStore({
   id: 'table',
   state: () => ({
-    table: [] as TableEntry[],
+    table: [] as Project[],
   }),
   actions: {
     async getTable() {
-      this.table = (await tableService.fetchProjects()) ?? [];
+      this.table = (await projectsService.fetchProjects()) ?? [];
       return this.table;
     },
   },

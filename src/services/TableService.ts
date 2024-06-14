@@ -1,20 +1,20 @@
-import { TableEntry } from 'models/TableModel';
+import { Project } from 'models/TableModel';
 
-class TableService {
+class ProjectsService {
   fetchProjects = async () => {
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/projects',
       );
 
-      const data: TableEntry[] = await response.json();
+      const data: Project[] = await response.json();
 
       return data;
     } catch (err) {
-      console.error('Error fetching data: ' + err);
+      console.error('Error fetching projects: ' + err);
     }
   };
 }
 
-const tableService = new TableService();
-export { tableService };
+const projectsService = new ProjectsService();
+export { projectsService };
