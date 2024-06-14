@@ -4,7 +4,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { createPinia } from 'pinia';
 import App from '../../../App.vue';
 
-createApp(App).use(createPinia())
+createApp(App).use(createPinia());
 
 const testData = [
   {
@@ -20,30 +20,28 @@ const testData = [
     clientName: 'B',
     businessUnit: 'B',
     teamNumber: 2,
-  }
+  },
 ];
 
 const mockResponse = {
   ok: true,
-  statusText: "Ok",
+  statusText: 'Ok',
   json: async () => testData,
 } as Response;
-globalThis.fetch = vi.fn().mockResolvedValue(mockResponse)
+globalThis.fetch = vi.fn().mockResolvedValue(mockResponse);
 
 const wrapper = mount(Table, {
   props: {
     paneWidth: 800,
     paneHeight: 800,
-  }
+  },
 });
 
 describe('tableComponent.vue', () => {
   it('renders correctly with 4 columns', () => {
-
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
   });
   it('shows the data entries in alphabetical order', () => {
-    
     expect(
       wrapper.findAll('.ant-table-row')[0].find('.ant-table-cell').text(),
     ).toBe('A');

@@ -8,11 +8,11 @@ describe('App.vue', () => {
       global: {
         stubs: {
           Table: {
-            template: '<span />'
-          }
-        }
-      }
-    })    
+            template: '<span />',
+          },
+        },
+      },
+    });
 
     expect(wrapper.findAll('.splitpanes__pane')[0].isVisible()).toBe(true);
     expect(wrapper.findAll('.splitpanes__pane')[1].isVisible()).toBe(true);

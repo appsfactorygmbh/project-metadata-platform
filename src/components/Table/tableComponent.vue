@@ -34,13 +34,12 @@
 
   const store = TableStore();
 
-  onMounted(async () => {   
+  onMounted(async () => {
     const data: Project[] = await store.getTable();
-    
+
     addTableEntry(data);
     changeColumns(props.paneWidth);
   });
-
 </script>
 
 <template>
@@ -160,14 +159,14 @@
    */
   function addTableEntry(data: Project[]) {
     for (const date of data) {
-      dataSource.push({        
+      dataSource.push({
         id: date.id,
         projectName: date.projectName,
         clientName: date.clientName,
         businessUnit: date.businessUnit,
-        teamNumber: date.teamNumber
+        teamNumber: date.teamNumber,
       });
-    }   
+    }
   }
 
   /*  Column implementation  */
@@ -201,7 +200,8 @@
       },
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: Project, b: Project) => a.projectName.localeCompare(b.projectName),
+      sorter: (a: Project, b: Project) =>
+        a.projectName.localeCompare(b.projectName),
       defaultSortOrder: 'ascend' as const,
     },
     {
@@ -219,7 +219,8 @@
       },
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: Project, b: Project) => a.clientName.localeCompare(b.clientName),
+      sorter: (a: Project, b: Project) =>
+        a.clientName.localeCompare(b.clientName),
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },
@@ -229,7 +230,8 @@
       key: 'bu',
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: Project, b: Project) => a.businessUnit.localeCompare(b.businessUnit),
+      sorter: (a: Project, b: Project) =>
+        a.businessUnit.localeCompare(b.businessUnit),
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },
@@ -352,7 +354,7 @@
       0.25 * windowSize,
       0.42 * windowSize,
       0.5 * windowSize,
-    ];    
+    ];
 
     if (pwidth > breakpoint[2]) {
       return 'lg';
