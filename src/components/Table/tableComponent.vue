@@ -7,7 +7,7 @@
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
   import { Project } from '../../models/TableModel';
-  import { TableStore } from '../../store/tableStore';
+  import { TableStore } from '../../store/TableStore';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
