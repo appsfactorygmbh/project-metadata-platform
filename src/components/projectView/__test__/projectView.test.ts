@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import projectView from './projectView.vue';
+import projectView from '../projectView.vue';
 
 describe('projectView.vue', () => {
   const wrapper = mount(projectView);

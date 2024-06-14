@@ -72,7 +72,7 @@ const returnStyle = {
 
 // Style for the middle section
 const mainStyle = {
-  width: '80vw',
+  width: '60vw',
   height: '80vh',
   padding: '50px',
   margin: '10px',
@@ -159,6 +159,11 @@ const menuStyle = {
   cursor: 'pointer',
 };
 
+const paneStyle = {
+  display: 'flex',
+  flexDirection: 'row',
+} as const;
+
 // Style for the icons
 const iconStyle = {
   marginBottom: '10px',
@@ -167,6 +172,7 @@ const iconStyle = {
 </script>
 
 <template>
+  <div :style="paneStyle">
   <a-button :style="returnStyle" @click="placeHolder" ghost>
     <!-- add return icon -->
     <img
@@ -270,4 +276,5 @@ const iconStyle = {
       />
     </a-button>
   </a-col>
+</div>
 </template>
