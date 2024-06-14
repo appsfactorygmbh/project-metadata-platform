@@ -185,7 +185,7 @@ const iconStyle = {
     <!-- create box for the project name -->
     <a-card :style="nameBoxStyle">
 
-        <h1 v-if="!isEditing" id="projectName" style="font-size: 2.5em; font-weight: bold;">{{projectName}}</h1>
+        <h1 v-if="!isEditing" style="font-size: 2.5em; font-weight: bold;">{{projectName}}</h1>
         <input
           v-if="isEditing"
           type="text"
@@ -194,7 +194,7 @@ const iconStyle = {
           :style="projectNameInputStyle" 
         />
         <!-- pencil icon for editing the project name -->
-        <a-button :style="editIconStyle" @click="toggleEditing" ghost>
+        <a-button class="edit-button"  :style="editIconStyle" @click="toggleEditing" ghost>
           <img
             src="https://img.icons8.com/ios-glyphs/40/000000/pencil.png"
             alt="Edit"
