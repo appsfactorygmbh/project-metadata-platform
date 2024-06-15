@@ -1,10 +1,12 @@
 <script setup lang="ts">
   import ThemeProvider from './router/Provider/ThemeProvider.vue';
   import HelloWorld from './components/HelloWorld.vue';
+  import SearchBar from './components/Searchbar/SearchBar.vue';
 </script>
 
 <template>
   <ThemeProvider>
+    <SearchBar />
     <div>
       <a href="https://vitejs.dev" target="_blank">
         <img src="/vite.svg" class="logo" alt="Vite logo" />
