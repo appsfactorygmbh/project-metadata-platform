@@ -4,6 +4,7 @@
   import { Splitpanes, Pane } from 'splitpanes'; //external framework for splitpanes
   import 'splitpanes/dist/splitpanes.css';
   import Table from './components/Table/tableComponent.vue';
+  import CreateProjectView from '@/views/CreateProject/createProjectView.vue';
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
@@ -15,6 +16,7 @@
         size: sets default proportion to 1:4
         min-size: sets smalles possible size to 20% and 1%
       -->
+    <CreateProjectView></CreateProjectView>
     <splitpanes class="default-theme">
       <pane size="99" min-size="20">
         <div ref="tablePane">

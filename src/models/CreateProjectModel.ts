@@ -5,9 +5,9 @@
 //     "ClientName": ""
 
 export type CreateProject = {
-  projectName: string,
-  businessUnit: string,
-  teamNumber: string,
-  department: string,
-  clientname: string,
-}
+  projectName: string;
+  businessUnit: string;
+  teamNumber: string;
+  department: string;
+  clientName: string;
+};

@@ -18,24 +18,27 @@ class ProjectsService {
 
   addProject = async (projectData: CreateProject) => {
     try {
-      const response = await fetch(import.meta.env.VITE_BACKEND_URL, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/projects',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(projectData),
         },
-        body: JSON.stringify(projectData)
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.statusText}`);
       }
 
       const responseData = await response.json();
-      console.log("Success:", responseData);
+      console.log(responseData);
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
-  }
+  };
 }
 
 const projectsService = new ProjectsService();
