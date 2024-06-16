@@ -2,8 +2,10 @@
 /// <reference types="vite/client" />
 import { fileURLToPath } from 'node:url';
 import { defineConfig, ConfigEnv, UserConfig } from 'vite';
+import { configDefaults } from 'vitest/config';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
+import VueDevTools from 'vite-plugin-vue-devtools';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import AntdvResolver from 'antdv-component-resolver';
@@ -57,6 +59,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     plugins: [
       vue(),
       vueJsx(),
+      VueDevTools(),
       AutoImport({
         imports: ['vue', 'vue-router', 'vitest'],
         dts: 'types/auto-imports.d.ts',
@@ -85,7 +88,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     test: {
       globals: true,
       environment: 'jsdom',
-      exclude: ['node_modules', 'dist', 'coverage', 'html', 'lib', '*.d.ts'],
+      exclude: [...configDefaults.exclude, '*.d.ts'],
+      root: fileURLToPath(new URL('./', import.meta.url)),
       coverage: {
         enabled: true,
         reporter: ['text', 'html', 'cobertura'],
