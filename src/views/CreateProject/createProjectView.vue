@@ -100,7 +100,7 @@
         await tableStore.fetchTable();
       }
 
-      resetAndCloseModal()
+      resetAndCloseModal();
     }
   };
 </script>
