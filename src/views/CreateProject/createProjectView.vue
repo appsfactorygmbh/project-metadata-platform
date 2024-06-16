@@ -24,6 +24,8 @@
   const departmentStatus = ref<string>('');
   const clientNameStatus = ref<string>('');
 
+  const fetchError = ref<boolean>(false);
+
   const showModal = () => {
     open.value = true;
   };
@@ -39,7 +41,7 @@
     }
   };
 
-  const handleOk = () => {
+  const handleOk = async () => {
     validateField(projectName.value, projectNameStatus);
     validateField(businessUnit.value, businessUnitStatus);
     validateField(teamNumber.value, teamNumberStatus);
@@ -60,8 +62,14 @@
         department: department.value,
         clientName: clientName.value,
       };
-      projectsService.addProject(projectData);
-      open.value = false;
+      const response = await projectsService.addProject(projectData);
+      console.log(response);
+      if (!response) {
+        fetchError.value = true;
+      } else {
+        fetchError.value = false;
+        open.value = false;
+      }
     }
   };
 </script>
@@ -135,6 +143,12 @@
             <UserOutlined />
           </template>
         </a-input>
+        <a-alert
+          v-if="fetchError"
+          message="Failed to create Project"
+          type="error"
+          show-icon
+        ></a-alert>
       </a-space>
     </a-modal>
   </div>
@@ -149,9 +163,5 @@
     & > * {
       width: 100%;
     }
-  }
-
-  .inputField {
-    width: 90%;
   }
 </style>
