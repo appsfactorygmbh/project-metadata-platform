@@ -35,7 +35,8 @@
   const store = TableStore();
 
   onMounted(async () => {
-    const data: Project[] = await store.getTable();
+    await store.fetchTable();
+    const data: Project[] = store.table;
 
     addTableEntry(data);
     changeColumns(props.paneWidth);

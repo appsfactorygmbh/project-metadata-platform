@@ -4,7 +4,7 @@
   import { Splitpanes, Pane } from 'splitpanes'; //external framework for splitpanes
   import 'splitpanes/dist/splitpanes.css';
   import Table from './components/Table/tableComponent.vue';
-  import CreateProjectView from '@/views/CreateProject/createProjectView.vue';
+  import CreateProjectView from './views/CreateProject/createProjectView.vue';
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));

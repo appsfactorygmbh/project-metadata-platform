@@ -9,9 +9,15 @@
     UserOutlined,
   } from '@ant-design/icons-vue';
   import { projectsService } from '../../services/ProjectService.ts';
+  import { InputState } from '../../models/InputStateModel.ts';
+  import { TableStore } from '../../store/TableStore.ts';
+
+  // TableStore to refetch Table after Project was added
+  const tableStore = TableStore();
 
   const open = ref<boolean>(false);
 
+  // Required values for creating a project
   const projectName = ref<string>('');
   const businessUnit = ref<string>('');
   const teamNumber = ref<string>('');
@@ -24,10 +30,14 @@
   const departmentStatus = ref<string>('');
   const clientNameStatus = ref<string>('');
 
+  const fetchError = ref<boolean>(false);
+
+  // opens modal when plussign is clicked
   const showModal = () => {
     open.value = true;
   };
 
+  // validates that required fields have been filled, sets error state otherwise
   const resetAndCloseModal = () => {
     // Reset the input fields
     projectName.value = '';
@@ -49,7 +59,7 @@
 
   const validateField = (
     fieldValue: string,
-    fieldStatus: { value: string },
+    fieldStatus: { value: InputState },
   ) => {
     if (!fieldValue) {
       fieldStatus.value = 'error';
@@ -58,7 +68,8 @@
     }
   };
 
-  const handleOk = () => {
+  // checks for correct input and does PUT request to the backend
+  const handleOk = async () => {
     validateField(projectName.value, projectNameStatus);
     validateField(businessUnit.value, businessUnitStatus);
     validateField(teamNumber.value, teamNumberStatus);
@@ -79,7 +90,15 @@
         department: department.value,
         clientName: clientName.value,
       };
-      projectsService.addProject(projectData);
+      const response = await projectsService.addProject(projectData);
+      console.log(response);
+      if (!response?.ok) {
+        fetchError.value = true;
+      } else {
+        fetchError.value = false;
+        open.value = false;
+        await tableStore.fetchTable();
+      }
 
       resetAndCloseModal()
     }
@@ -150,6 +169,13 @@
             <UserOutlined />
           </template>
         </a-input>
+        <!--shows error if the PUT reqeust failed-->
+        <a-alert
+          v-if="fetchError"
+          message="Failed to create Project"
+          type="error"
+          show-icon
+        ></a-alert>
       </a-space>
     </a-modal>
   </div>
@@ -165,7 +191,6 @@
       width: 100%;
     }
   }
-
   .inputField {
     width: 90%;
   }

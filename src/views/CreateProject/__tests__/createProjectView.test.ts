@@ -1,98 +1,111 @@
-import { mount } from '@vue/test-utils';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { mount, VueWrapper } from '@vue/test-utils';
+import { createPinia } from 'pinia';
 import createProjectView from '../createProjectView.vue';
-import { PlusOutlined, ShoppingOutlined, TeamOutlined, BankOutlined, UserOutlined } from '@ant-design/icons-vue';
-import { nextTick } from 'vue';
+import { projectsService } from '../../../services/ProjectService.ts';
 
-const generateWrapper = () => {
-    return mount(createProjectView, {
-        global: {
-            components: {
-                PlusOutlined, ShoppingOutlined, TeamOutlined, BankOutlined, UserOutlined
-            }
-        }
-    });
+type CreateProjectViewInstance = {
+  projectName: string;
+  businessUnit: string;
+  teamNumber: string;
+  department: string;
+  clientName: string;
+  projectNameStatus: string;
+  businessUnitStatus: string;
+  teamNumberStatus: string;
+  departmentStatus: string;
+  clientNameStatus: string;
+  fetchError: boolean;
+  open: boolean;
+  handleOk: () => Promise<void>;
 };
 
-describe('createProjectView.vue', () => {
-    it('renders the modal with input fields and icons', async () => {
-        const wrapper = generateWrapper();
+import App from '../../../App.vue';
 
-        // Check if the modal is not open initially
-        expect(wrapper.findComponent({name: "AModal"}).exists()).toBe(false);
+createApp(App).use(createPinia());
 
-        // Simulate clicking the float button to open the modal
-        await wrapper.findComponent({name: "AFloatButton"}).trigger('click');
-        await nextTick();
+const spy = vi.spyOn(projectsService, 'addProject');
 
-        // Check if the modal is open
-        expect(wrapper.findComponent({name: "AModal"}).exists()).toBe(true);
+describe('ProjectModal.vue', () => {
+  let wrapper: VueWrapper<CreateProjectViewInstance>;
 
-        // Check if input fields and icons are rendered
-        expect(wrapper.findComponent(ShoppingOutlined).exists()).toBe(true);
-        expect(wrapper.findComponent(TeamOutlined).exists()).toBe(true);
-        expect(wrapper.findComponent(BankOutlined).exists()).toBe(true);
-        expect(wrapper.findComponent(UserOutlined).exists()).toBe(true);
+  beforeEach(() => {
+    wrapper = mount(createProjectView) as VueWrapper<CreateProjectViewInstance>;
+  });
+
+  it('should open the modal when the float button is clicked', async () => {
+    const button = wrapper.findComponent({ name: 'a-float-button' });
+    await button.trigger('click');
+    expect(wrapper.vm.open).toBe(true);
+  });
+
+  it('should validate fields correctly', async () => {
+    wrapper.vm.projectName = '';
+    wrapper.vm.businessUnit = '';
+    wrapper.vm.teamNumber = '';
+    wrapper.vm.department = '';
+    wrapper.vm.clientName = '';
+
+    await wrapper.vm.handleOk();
+
+    expect(wrapper.vm.projectNameStatus).toBe('error');
+    expect(wrapper.vm.businessUnitStatus).toBe('error');
+    expect(wrapper.vm.teamNumberStatus).toBe('error');
+    expect(wrapper.vm.departmentStatus).toBe('error');
+    expect(wrapper.vm.clientNameStatus).toBe('error');
+  });
+
+  it('should call projectsService.addProject with the correct data', async () => {
+    wrapper.vm.projectName = 'Project A';
+    wrapper.vm.businessUnit = 'Business Unit A';
+    wrapper.vm.teamNumber = 'Team 1';
+    wrapper.vm.department = 'Department A';
+    wrapper.vm.clientName = 'Client A';
+
+    await wrapper.vm.handleOk();
+    expect(spy).toHaveBeenCalledWith({
+      projectName: 'Project A',
+      businessUnit: 'Business Unit A',
+      teamNumber: 'Team 1',
+      department: 'Department A',
+      clientName: 'Client A',
     });
+  });
 
-    it('validates input fields and sets status correctly', async () => {
-        const wrapper = generateWrapper();
+  it('should set fetchError to true if project creation fails', async () => {
+    wrapper.vm.projectName = 'Project A';
+    wrapper.vm.businessUnit = 'Business Unit A';
+    wrapper.vm.teamNumber = 'Team 1';
+    wrapper.vm.department = 'Department A';
+    wrapper.vm.clientName = 'Client A';
 
-        // Simulate clicking the float button to open the modal
-        await wrapper.findComponent({name: "AFloatButton"}).trigger('click');
-        await nextTick();
+    spy.mockResolvedValue(
+      new Response(null, {
+        status: 405,
+      }),
+    );
 
-        // Simulate clicking the OK button
-        await wrapper.findComponent({name: "AButton"}).trigger('click');
-        await nextTick();
+    await wrapper.vm.handleOk();
 
+    expect(wrapper.vm.fetchError).toBe(true);
+  });
 
-        // Check if the status of each input field is set to error
-        expect(wrapper.find('#businessUnitField').attributes('status')).toBe('error');
-        expect(wrapper.find('#teamNumberField').attributes('status')).toBe('error');
-        expect(wrapper.find('#departmentField').attributes('status')).toBe('error');
-        expect(wrapper.find('#clientNameField').attributes('status')).toBe('error');
+  it('should close the modal and reset fetchError if project creation succeeds', async () => {
+    wrapper.vm.projectName = 'Project A';
+    wrapper.vm.businessUnit = 'Business Unit A';
+    wrapper.vm.teamNumber = 'Team 1';
+    wrapper.vm.department = 'Department A';
+    wrapper.vm.clientName = 'Client A';
 
-        // Fill in the input fields
-        await wrapper.find('#businessUnitField input').setValue('Business Unit');
-        await wrapper.find('#teamNumberField input').setValue('Team Number');
-        await wrapper.find('#departmentField input').setValue('Department');
-        await wrapper.find('#clientNameField input').setValue('Client Name');
-        await nextTick();
+    spy.mockResolvedValue(
+      new Response('100', {
+        status: 201,
+      }),
+    );
 
-        // Simulate clicking the OK button again
-        await wrapper.findComponent({name: "AButton"}).trigger('click');
-        await nextTick();
+    await wrapper.vm.handleOk();
 
-        // Check if the status of each input field is reset
-        expect(wrapper.find('#businessUnitField').attributes('status')).toBe('');
-        expect(wrapper.find('#teamNumberField').attributes('status')).toBe('');
-        expect(wrapper.find('#departmentField').attributes('status')).toBe('');
-        expect(wrapper.find('#clientNameField').attributes('status')).toBe('');
-
-        // Check if the modal is closed
-        expect(wrapper.findComponent({name: "AModal"}).exists()).toBe(false);
-    });
-
-    it('closes the modal if all fields are filled', async () => {
-        const wrapper = generateWrapper();
-
-        // Simulate clicking the float button to open the modal
-        await wrapper.findComponent({name: "AFloatButton"}).trigger('click');
-        await nextTick();
-
-        // Fill in the input fields
-        await wrapper.findComponent('#businessUnit').setValue('Business Unit');
-        await wrapper.find('#teamNumberField input').setValue('Team Number');
-        await wrapper.find('#departmentField input').setValue('Department');
-        await wrapper.find('#clientNameField input').setValue('Client Name');
-        await nextTick();
-
-        // Simulate clicking the OK button
-        await wrapper.findComponent({name: "AButton"}).trigger('click');
-        await nextTick();
-
-        // Check if the modal is closed
-        expect(wrapper.findComponent({name: "AModal"}).exists()).toBe(false);
-    });
+    expect(wrapper.vm.fetchError).toBe(false);
+    expect(wrapper.vm.open).toBe(false);
+  });
 });

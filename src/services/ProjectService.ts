@@ -28,13 +28,7 @@ class ProjectsService {
           body: JSON.stringify(projectData),
         },
       );
-
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
-      }
-
-      const responseData = await response.json();
-      console.log(responseData);
+      return response;
     } catch (error) {
       console.error('Error:', error);
     }
