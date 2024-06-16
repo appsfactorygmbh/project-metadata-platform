@@ -1,11 +1,6 @@
 import { pluginService } from '../../services/Plugin/PluginService.ts';
 import { defineStore } from 'pinia';
-
-interface Plugin {
-  pluginName: string;
-  url: string;
-  displayName: string;
-}
+import {Plugin} from '../../models/Plugin.ts'
 
 export const usePluginsStore = defineStore('plugin', {
   state: () => {

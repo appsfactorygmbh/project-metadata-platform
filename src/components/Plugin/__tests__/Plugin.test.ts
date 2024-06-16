@@ -3,11 +3,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { cutAfterTLD, createFaviconURL } from '../editURL';
 import PluginComponent from '../PluginComponent.vue';
 
-const generateWrapper = (name: string, url: string) => {
+const generateWrapper = (name: string, url: string, displayName: string) => {
   return mount(PluginComponent, {
     props: {
       pluginName: name,
       url: url,
+      displayName: displayName,
     },
   });
 };
@@ -17,13 +18,11 @@ describe('Plugin.vue', () => {
     const wrapper = generateWrapper(
       'Test Plugin',
       'https://example.com/examplePath',
+      'test instance',
     );
 
     expect(wrapper.find('h3').text()).toBe('Test Plugin');
-    expect(wrapper.find('a').attributes('href')).toBe(
-      'https://example.com/examplePath',
-    );
-    expect(wrapper.find('a').text()).toBe('https://example.com/examplePath');
+    expect(wrapper.find('p').text()).toBe('test instance');
 
     expect(wrapper.find('img').attributes('src')).toBe(
       'https://www.google.com/s2/favicons?domain=https://example.com&sz=128',
@@ -70,6 +69,7 @@ describe('Plugin.vue', () => {
     const wrapper = generateWrapper(
       'Test Plugin',
       'https://example.com/examplePath',
+      'test instance',
     );
 
     const card = wrapper.findComponent({ name: 'ACard' });
@@ -82,5 +82,21 @@ describe('Plugin.vue', () => {
     } else {
       throw new Error('ACard component not found');
     }
+  });
+
+  it('opens the link onclick', async () => {
+    // Mock window.open
+    const windowOpenMock = vi.fn();
+    global.window.open = windowOpenMock;
+    const wrapper = generateWrapper(
+      'Test Plugin',
+      'https://example.com/examplePath',
+      'Test Plugin Instance 1',
+    );
+    await wrapper.findComponent({ name: 'ACard' }).trigger('click');
+    expect(windowOpenMock).toBeCalledWith(
+      'https://example.com/examplePath',
+      '_blank',
+    );
   });
 });

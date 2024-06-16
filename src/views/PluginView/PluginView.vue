@@ -26,7 +26,6 @@
 
   onBeforeMount(async () => {
     await pluginStore.fetchPlugins(props.projectID);
-    console.log('DAaaaaata', toRaw(pluginStore.getPlugins));
   });
 
   const plugins = computed(() => toRaw(pluginStore.getPlugins));

@@ -61,7 +61,7 @@
 
 <style scoped lang="scss">
   // Import Manrope font family.
-  // TODO: install font locally
+  //TODO: add fonts locally
   @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
 
   // Style for the card container.

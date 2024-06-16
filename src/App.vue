@@ -13,7 +13,7 @@
     </a>
   </div>
   <HelloWorld msg="Vite + Vue" />
-  <PluginView project-i-d="1"></PluginView>
+  <PluginView project-i-d="100"></PluginView>
 </template>
 
 <style scoped>

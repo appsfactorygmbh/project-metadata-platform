@@ -8,7 +8,9 @@ class PluginService {
   fetchPlugins = async (projectID: string): Promise<Plugin[]> => {
     console.log(projectID);
     try {
-      const response = await fetch('http://localhost:3000/plugins/');
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/Plugins?id=' + projectID,
+      );
       if (!response.ok) throw new Error('Error when trying to fetch Plugins');
       const data = await response.json();
       console.log('data from fetch: ', data);
