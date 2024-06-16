@@ -1,69 +1,29 @@
 <script setup lang="ts">
-import { onMounted, ref , Ref } from 'vue'
+import { onMounted, computed } from 'vue';
+import { Project } from '../../models/projectViewModel';
+import { projectStore } from '../../store/projectViewStore'
 
-// Flag for editable Title
-const isEditing: Ref<boolean> = ref(false);
+const store = projectStore();
 
-const projectName: Ref<string> = ref('Your Project Name');
-const businessUnit: Ref<string> = ref('Business Unit');
-const teamNr: Ref<string> = ref('Team Number');
-const department: Ref<string> = ref('Department');
-const clientName: Ref<string> = ref('Client Name');
+//Get the width of the right pane from App.vue
+const props = defineProps({
+  paneWidth: {
+    type: Number,
+    required: true,
+  },
+});
 
-// Place holder for the buttons for now
-const placeHolder = () => {
-  console.log('Icon clicked');
-};
-//Function to save and edit the project name
-const toggleEditing = () => {
-  
-  if (isEditing.value) {
-    projectName.value = (document.getElementById('projectNameInput') as HTMLInputElement).value
-  }
-  isEditing.value = !isEditing.value;
-};
-
-//fetch json object from backend 
-const reloadData = async () => {
-  try {
-      /* const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL + 
-          '/Projects', 
-        {
-          headers: {
-            Accept: 'text/plain',
-            'Access-Control-Allow-Origin': '*',
-            cors: 'no-cors',
-          },
-        },
-      ); */
-
-    // Fetch test data manually
-    const response = await fetch('src/test.json');
-    const data = await response.json()
-    console.log(data.ProjectName)
-
-    // Update data in Vue component state
-    businessUnit.value = data.BusinessUnit
-    teamNr.value = data.TeamNumber
-    department.value = data.Department
-    clientName.value = data.ClientName
-    projectName.value = data.ProjectName // Update ref
-
-    console.log('Data reloaded:', data)
-
-  } catch (error) {
-    console.error('Error fetching data:', error)
-  }
-}
 // Fetch data when component is mounted
-onMounted(reloadData)
+onMounted(async () => {
+    const loadProject: Project = await store.getProjectView();
+    addData(loadProject);
+  });
 
 // Style for the return button
 const returnStyle = {
   cursor: 'pointer',
   height: '60px',
-  margin: '10px',
+  margin: '20px',
 };
 
 // Style for the middle section
@@ -83,7 +43,7 @@ const nameBoxStyle = {
   width: '85%',
   maxWidth: '750px',
   minWidth: '250px',
-  padding: '20px',
+  padding: '10px',
   margin: '10px',
   borderRadius: '10px',
   
@@ -94,9 +54,9 @@ const nameBoxStyle = {
 
 // Style for the Project name input box
 const projectNameInputStyle = {
-  fontSize: '2.5em',
-  width: '60%',
-  height: '2.5em',
+  fontSize: '2.8em',
+  width: '80%',
+  height: '2.8em',
   textAlign: 'center',
   border: 'none',
   borderBottom: '2px solid #a5a4a4',
@@ -108,10 +68,10 @@ const projectNameInputStyle = {
 const editIconStyle = {
   cursor: 'pointer',
   position: 'absolute',
-  right: '10px',
+  right: '3%',
   height: '50px',
-  top: '50%',
-  transform: 'translateY(-50%)',
+  top: '38%',
+  padding: '0',
   border: 'none',
 };
 
@@ -123,7 +83,6 @@ const descboxStyle = {
   padding: '20px',
   margin: '10px',
   borderRadius: '10px',
-  display: 'flex',
 
   background: 'white',
   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
@@ -140,21 +99,17 @@ const projectInputStyle = {
   cursor: 'default',
 } ;
 
-//
-const profileFieldStyle = {
-  width: '48%',
-  margin: '5px',
-  height: '100px',
-} ;
-
-// Style for the menu button on the top right
-const menuStyle = {
+// Sizing for the inside box in the project description box
+const profileFieldStyle = computed(() => ({
+  width: props.paneWidth > 958 ? '48%' : '100%',
   display: 'flex',
-  flexDirection: 'column',
-  margin: '10px',
-  cursor: 'pointer',
-};
+  alignItems: 'center',
+  margin: '5px',
+  height: '90px',
 
+}));
+
+//Style for the right panel
 const paneStyle = {
   display: 'flex',
   flexDirection: 'row',
@@ -165,6 +120,13 @@ const iconStyle = {
   marginBottom: '10px',
   height: '60px',
 };
+
+// Style for the menu button on the top right
+const menuStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  margin: '10px',
+};
 </script>
 
 <template>
@@ -172,7 +134,7 @@ const iconStyle = {
     <a-button :style="returnStyle" ghost @click="placeHolder">
       <!-- add return icon -->
       <img
-        src="https://img.icons8.com/?size=50&id=26146&format=png&color=000000"
+        src="/icons/return.png"
         alt="Return"
       >
     </a-button>
@@ -180,19 +142,19 @@ const iconStyle = {
     <div :style="mainStyle">
       <!-- create box for the project name -->
       <a-card :style="nameBoxStyle">
-
-        <h1 v-if="!isEditing" style="font-size: 2.5em; font-weight: bold;">{{projectName}}</h1>
+        
+        <h1 v-if="!isEditing" class="projectNameH1" style="font-size: 2.8em; font-weight: bold;">{{projectName}}</h1>
         <input
-          v-if="isEditing"
-          id="projectNameInput"
-          type="text"
-          :value="projectName"
+          v-else="isEditing"
+          class="projectNameInput"
+          type="input"
+          v-model ="projectName"
           :style="projectNameInputStyle" 
         />
         <!-- pencil icon for editing the project name -->
         <a-button class="edit-button"  :style="editIconStyle" ghost @click="toggleEditing">
           <img
-            src="https://img.icons8.com/ios-glyphs/40/000000/pencil.png"
+            src="/icons/edit.png"
             alt="Edit"
           />
         </a-button>
@@ -205,7 +167,7 @@ const iconStyle = {
           <label for="businessUnit" style="font-size: 1.2em; font-weight: bold;">Business Unit:</label>
           <a-input 
             type="text" 
-            :value="businessUnit"
+            :value="data.businessUnit"
             :style="projectInputStyle" 
             readonly 
           />
@@ -215,7 +177,7 @@ const iconStyle = {
           <label for="teamNumber" style="font-size: 1.2em; font-weight: bold;">Team Number:</label>
           <a-input 
             type="text" 
-            :value="teamNr"
+            :value="data.teamNumber"
             :style="projectInputStyle" 
             readonly 
           />
@@ -225,7 +187,7 @@ const iconStyle = {
           <label for="department" style="font-size: 1.2em; font-weight: bold;">Department:</label>
           <a-input
             type="text" 
-            :value="department"
+            :value="data.department"
             :style="projectInputStyle" 
             readonly 
           />
@@ -235,7 +197,7 @@ const iconStyle = {
           <label for="clientName" style="font-size: 1.2em; font-weight: bold;">Client Name:</label>
           <a-input 
             type="text" 
-            :value="clientName"
+            :value="data.clientName"
             :style="projectInputStyle" 
             readonly 
           />
@@ -247,28 +209,58 @@ const iconStyle = {
     <a-col :style="menuStyle">
       <a-button :style="iconStyle" ghost @click="placeHolder">
         <img
-          src="https://img.icons8.com/?size=50&id=98957&format=png&color=000000"
+          src="/icons/profile.png"
           alt="Profile"
         />
       </a-button>
       <a-button :style="iconStyle" ghost @click="placeHolder">
         <img
-          src="https://img.icons8.com/?size=50&id=61018&format=png&color=000000"
+          src="/icons/plugin.png"
           alt="Plugins"
         />
       </a-button>
       <a-button :style="iconStyle" ghost @click="placeHolder">
         <img
-          src="https://img.icons8.com/?size=50&id=60674&format=png&color=000000"
+          src="/icons/logs.png"
           alt="Global Logs"
         />
       </a-button>
       <a-button :style="iconStyle" ghost @click="placeHolder">
         <img
-          src="https://img.icons8.com/?size=50&id=59781&format=png&color=000000"
+          src="/icons/logout.png"
           alt="Sign Out"
         />
       </a-button>
     </a-col>
   </div>
 </template>
+
+<script lang="ts">
+
+// Flag for editable Title
+const isEditing = ref(false);
+let data = {
+  projectName: '',
+  businessUnit: '',
+  teamNumber: '',
+  department: '',
+  clientName: ''
+};
+let projectName = ref('');
+
+//Function to save and edit the project name
+const toggleEditing = () => {
+  isEditing.value = !isEditing.value;
+};
+
+// Place holder for the buttons for now
+const placeHolder = () => {
+  console.log('Icon clicked');
+};
+
+//Function to load the data from projectViewService to projectView
+function addData (loadedData: Project){
+  data = loadedData;
+  projectName.value = data.projectName;
+}
+</script>
