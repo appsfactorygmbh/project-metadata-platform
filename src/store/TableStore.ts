@@ -7,8 +7,13 @@ export const TableStore = defineStore({
   state: () => ({
     table: [] as Project[],
   }),
+  getters: {
+    getTable():Project[] {
+      return this.table
+    }
+  },
   actions: {
-    async getTable() {
+    async fetchTable() {
       this.table = (await projectsService.fetchProjects()) ?? [];
       return this.table;
     },

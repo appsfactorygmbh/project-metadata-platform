@@ -28,14 +28,7 @@ class ProjectsService {
           body: JSON.stringify(projectData),
         },
       );
-
-      if (!response.ok) {
-        return false;
-      }
-
-      const responseData = await response.json();
-      console.log(responseData);
-      return responseData;
+      return response;
     } catch (error) {
       console.error('Error:', error);
     }

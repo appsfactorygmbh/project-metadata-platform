@@ -1,1 +1,1 @@
-export type InputState = "" | "error" | "warning" | undefined
+export type InputState = '' | 'error' | 'warning' | undefined;

@@ -10,6 +10,9 @@
   } from '@ant-design/icons-vue';
   import { projectsService } from '../../services/ProjectService.ts';
   import {InputState} from '../../models/InputStateModel.ts'
+  import {TableStore} from '../../store/TableStore.ts'
+
+  const tableStore = TableStore()
 
   const open = ref<boolean>(false);
 
@@ -65,11 +68,12 @@
       };
       const response = await projectsService.addProject(projectData);
       console.log(response);
-      if (!response) {
+      if (!response?.ok) {
         fetchError.value = true;
       } else {
         fetchError.value = false;
         open.value = false;
+        await tableStore.fetchTable();
       }
     }
   };
