@@ -19,8 +19,8 @@
     },
     isLoading: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   });
 
   // Create a reactive variable for the favicon URL based on the given URL.

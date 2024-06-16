@@ -1,9 +1,4 @@
-interface Plugin {
-  pluginName: string;
-  url: string;
-  displayName: string;
-  id: string;
-}
+import { Plugin } from '../../models/Plugin.ts';
 class PluginService {
   fetchPlugins = async (projectID: string): Promise<Plugin[]> => {
     console.log(projectID);

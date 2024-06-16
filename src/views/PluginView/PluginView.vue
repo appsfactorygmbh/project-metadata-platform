@@ -30,7 +30,7 @@
   });
 
   const plugins = computed(() => toRaw(pluginStore.getPlugins));
-  const loading = ref(pluginStore.isLoading)
+  const loading = ref(pluginStore.isLoading);
 </script>
 
 <style scoped lang="css">
