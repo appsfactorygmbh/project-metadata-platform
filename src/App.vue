@@ -24,7 +24,6 @@
         <div ref="projectPane">
           <ProjectView 
             :pane-width="dimensions.width"
-            :pane-height="dimensions.height"
           /> 
         </div>
       </pane>

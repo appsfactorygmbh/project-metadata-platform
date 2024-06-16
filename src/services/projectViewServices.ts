@@ -4,7 +4,7 @@ import { Project } from '../models/projectViewModel';
 class ProjectsService {
   fetchProject = async (): Promise<Project | null> => {
     try {
-       /*const response = await fetch(
+       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + 
           '/Projects', 
         {
@@ -14,10 +14,10 @@ class ProjectsService {
             cors: 'no-cors',
           },
         },
-      ); */
+      ); 
       
       // Fetch from local for test
-      const response = await fetch('src/components/projectView/test.json');
+      //const response = await fetch('src/components/projectView/test.json');
       const data: Project = await response.json();
       return data;
     } catch (err) {

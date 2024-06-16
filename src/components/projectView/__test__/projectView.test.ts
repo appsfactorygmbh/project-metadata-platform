@@ -9,11 +9,9 @@ createApp(App).use(createPinia());
 describe('projectView.vue', () => {
   it('displays the project name when not editing', async () => {
     const wrapper = mount(projectView, {
-      data() {
-        return {
-          isEditing: false,
-        };
-      }
+      propsData: {
+        paneWidth: 1000,
+      },
     });
     expect(wrapper.find('.projectNameH1').exists()).toBe(true);
     expect((wrapper.vm as any).isEditing).toBe(false);
@@ -22,7 +20,11 @@ describe('projectView.vue', () => {
   });
 
   it('toggles editing mode on edit button click', async () => {
-    const wrapper = mount(projectView);
+    const wrapper = mount(projectView, {
+      propsData: {
+        paneWidth: 1000, 
+      },
+    });
     const editButton = wrapper.find('.edit-button');
     await editButton.trigger('click');
 
@@ -36,7 +38,11 @@ describe('projectView.vue', () => {
 
 
   it('Save name', async () => {
-    const wrapper = mount(projectView);
+    const wrapper = mount(projectView, {
+      propsData: {
+        paneWidth: 1000,
+      },
+    });
     const editButton = wrapper.find('.edit-button');
     const input = wrapper.find('.projectNameInput');
 
