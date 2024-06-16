@@ -1,47 +1,68 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { mount, VueWrapper } from '@vue/test-utils';
+import { createPinia } from 'pinia';
 import createProjectView from '../createProjectView.vue';
 import { projectsService } from '../../../services/ProjectService.ts';
+
+type CreateProjectViewInstance = {
+  projectName: string;
+  businessUnit: string;
+  teamNumber: string;
+  department: string;
+  clientName: string;
+  projectNameStatus: string;
+  businessUnitStatus: string;
+  teamNumberStatus: string;
+  departmentStatus: string;
+  clientNameStatus: string;
+  fetchError: boolean;
+  open: boolean;
+  handleOk: () => Promise<void>;
+};
+
+import App from '../../../App.vue';
+
+createApp(App).use(createPinia());
 
 const spy = vi.spyOn(projectsService, 'addProject');
 
 describe('ProjectModal.vue', () => {
-  let wrapper: VueWrapper<InstanceType<typeof createProjectView>>;
+  let wrapper: VueWrapper<CreateProjectViewInstance>;
 
   beforeEach(() => {
-    wrapper = mount(createProjectView);
+    wrapper = mount(createProjectView) as VueWrapper<CreateProjectViewInstance>;
   });
 
   it('should open the modal when the float button is clicked', async () => {
     const button = wrapper.findComponent({ name: 'a-float-button' });
     await button.trigger('click');
-    expect((wrapper.vm as any).open).toBe(true);
+    expect(wrapper.vm.open).toBe(true);
   });
 
   it('should validate fields correctly', async () => {
-    (wrapper.vm as any).projectName = '';
-    (wrapper.vm as any).businessUnit = '';
-    (wrapper.vm as any).teamNumber = '';
-    (wrapper.vm as any).department = '';
-    (wrapper.vm as any).clientName = '';
+    wrapper.vm.projectName = '';
+    wrapper.vm.businessUnit = '';
+    wrapper.vm.teamNumber = '';
+    wrapper.vm.department = '';
+    wrapper.vm.clientName = '';
 
-    await (wrapper.vm as any).handleOk();
+    await wrapper.vm.handleOk();
 
-    expect((wrapper.vm as any).projectNameStatus).toBe('error');
-    expect((wrapper.vm as any).businessUnitStatus).toBe('error');
-    expect((wrapper.vm as any).teamNumberStatus).toBe('error');
-    expect((wrapper.vm as any).departmentStatus).toBe('error');
-    expect((wrapper.vm as any).clientNameStatus).toBe('error');
+    expect(wrapper.vm.projectNameStatus).toBe('error');
+    expect(wrapper.vm.businessUnitStatus).toBe('error');
+    expect(wrapper.vm.teamNumberStatus).toBe('error');
+    expect(wrapper.vm.departmentStatus).toBe('error');
+    expect(wrapper.vm.clientNameStatus).toBe('error');
   });
 
   it('should call projectsService.addProject with the correct data', async () => {
-    (wrapper.vm as any).projectName = 'Project A';
-    (wrapper.vm as any).businessUnit = 'Business Unit A';
-    (wrapper.vm as any).teamNumber = 'Team 1';
-    (wrapper.vm as any).department = 'Department A';
-    (wrapper.vm as any).clientName = 'Client A';
+    wrapper.vm.projectName = 'Project A';
+    wrapper.vm.businessUnit = 'Business Unit A';
+    wrapper.vm.teamNumber = 'Team 1';
+    wrapper.vm.department = 'Department A';
+    wrapper.vm.clientName = 'Client A';
 
-    await (wrapper.vm as any).handleOk();
+    await wrapper.vm.handleOk();
     expect(spy).toHaveBeenCalledWith({
       projectName: 'Project A',
       businessUnit: 'Business Unit A',
@@ -52,35 +73,39 @@ describe('ProjectModal.vue', () => {
   });
 
   it('should set fetchError to true if project creation fails', async () => {
-    (wrapper.vm as any).projectName = 'Project A';
-    (wrapper.vm as any).businessUnit = 'Business Unit A';
-    (wrapper.vm as any).teamNumber = 'Team 1';
-    (wrapper.vm as any).department = 'Department A';
-    (wrapper.vm as any).clientName = 'Client A';
+    wrapper.vm.projectName = 'Project A';
+    wrapper.vm.businessUnit = 'Business Unit A';
+    wrapper.vm.teamNumber = 'Team 1';
+    wrapper.vm.department = 'Department A';
+    wrapper.vm.clientName = 'Client A';
 
-    spy.mockResolvedValue(new Response(null, {
-      status: 405,
-    }));
+    spy.mockResolvedValue(
+      new Response(null, {
+        status: 405,
+      }),
+    );
 
-    await (wrapper.vm as any).handleOk();
+    await wrapper.vm.handleOk();
 
-    expect((wrapper.vm as any).fetchError).toBe(true);
+    expect(wrapper.vm.fetchError).toBe(true);
   });
 
   it('should close the modal and reset fetchError if project creation succeeds', async () => {
-    (wrapper.vm as any).projectName = 'Project A';
-    (wrapper.vm as any).businessUnit = 'Business Unit A';
-    (wrapper.vm as any).teamNumber = 'Team 1';
-    (wrapper.vm as any).department = 'Department A';
-    (wrapper.vm as any).clientName = 'Client A';
+    wrapper.vm.projectName = 'Project A';
+    wrapper.vm.businessUnit = 'Business Unit A';
+    wrapper.vm.teamNumber = 'Team 1';
+    wrapper.vm.department = 'Department A';
+    wrapper.vm.clientName = 'Client A';
 
-    spy.mockResolvedValue(new Response("100", {
-      status: 201,
-    }));
+    spy.mockResolvedValue(
+      new Response('100', {
+        status: 201,
+      }),
+    );
 
-    await (wrapper.vm as any).handleOk();
+    await wrapper.vm.handleOk();
 
-    expect((wrapper.vm as any).fetchError).toBe(false);
-    expect((wrapper.vm as any).open).toBe(false);
+    expect(wrapper.vm.fetchError).toBe(false);
+    expect(wrapper.vm.open).toBe(false);
   });
 });

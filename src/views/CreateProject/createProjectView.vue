@@ -9,19 +9,22 @@
     UserOutlined,
   } from '@ant-design/icons-vue';
   import { projectsService } from '../../services/ProjectService.ts';
-  import {InputState} from '../../models/InputStateModel.ts'
-  import {TableStore} from '../../store/TableStore.ts'
+  import { InputState } from '../../models/InputStateModel.ts';
+  import { TableStore } from '../../store/TableStore.ts';
 
-  const tableStore = TableStore()
+  // TableStore to refetch Table after Project was added
+  const tableStore = TableStore();
 
   const open = ref<boolean>(false);
 
+  // Required values for creating a project
   const projectName = ref<string>('');
   const businessUnit = ref<string>('');
   const teamNumber = ref<string>('');
   const department = ref<string>('');
   const clientName = ref<string>('');
 
+  // Defines the state to input field is currently in (error, success)
   const projectNameStatus = ref<InputState>('');
   const businessUnitStatus = ref<InputState>('');
   const teamNumberStatus = ref<InputState>('');
@@ -30,10 +33,12 @@
 
   const fetchError = ref<boolean>(false);
 
+  // opens modal when plussign is clicked
   const showModal = () => {
     open.value = true;
   };
 
+  // validates that required fields have been filled, sets error state otherwise
   const validateField = (
     fieldValue: string,
     fieldStatus: { value: InputState },
@@ -45,6 +50,7 @@
     }
   };
 
+  // checks for correct input and does PUT request to the backend
   const handleOk = async () => {
     validateField(projectName.value, projectNameStatus);
     validateField(businessUnit.value, businessUnitStatus);
@@ -97,7 +103,7 @@
           id="projectNameField"
           v-model:value="projectName"
           class="inputField"
-          :status = "projectNameStatus"
+          :status="projectNameStatus"
           placeholder="Project Name"
         >
           <template #prefix>
@@ -148,6 +154,7 @@
             <UserOutlined />
           </template>
         </a-input>
+        <!--shows error if the PUT reqeust failed-->
         <a-alert
           v-if="fetchError"
           message="Failed to create Project"

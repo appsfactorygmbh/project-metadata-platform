@@ -8,9 +8,9 @@ export const TableStore = defineStore({
     table: [] as Project[],
   }),
   getters: {
-    getTable():Project[] {
-      return this.table
-    }
+    getTable(): Project[] {
+      return this.table;
+    },
   },
   actions: {
     async fetchTable() {
