@@ -28,6 +28,25 @@
     open.value = true;
   };
 
+  const resetAndCloseModal = () => {
+    // Reset the input fields
+    projectName.value = '';
+    businessUnit.value = '';
+    teamNumber.value = '';
+    department.value = '';
+    clientName.value = '';
+
+    // Reset the status fields
+    projectNameStatus.value = '';
+    businessUnitStatus.value = '';
+    teamNumberStatus.value = '';
+    departmentStatus.value = '';
+    clientNameStatus.value = '';
+
+    // Close the modal
+    open.value = false;
+  };
+
   const validateField = (
     fieldValue: string,
     fieldStatus: { value: string },
@@ -61,7 +80,8 @@
         clientName: clientName.value,
       };
       projectsService.addProject(projectData);
-      open.value = false;
+
+      resetAndCloseModal()
     }
   };
 </script>
@@ -75,13 +95,12 @@
     </a-float-button>
     <a-modal
       v-model:open="open"
-      width="400px"
+      width="500px"
       title="Create Project"
       @ok="handleOk"
     >
       <a-space direction="vertical" class="space">
         <a-input
-          id="projectNameField"
           v-model:value="projectName"
           class="inputField"
           :status="projectNameStatus"
@@ -92,7 +111,6 @@
           </template>
         </a-input>
         <a-input
-          id="businessUnitField"
           v-model:value="businessUnit"
           class="inputField"
           :status="businessUnitStatus"
@@ -103,7 +121,6 @@
           </template>
         </a-input>
         <a-input
-          id="teamNumberField"
           v-model:value="teamNumber"
           class="inputField"
           :status="teamNumberStatus"
@@ -114,7 +131,6 @@
           </template>
         </a-input>
         <a-input
-          id="departmentField"
           v-model:value="department"
           class="inputField"
           :status="departmentStatus"
@@ -125,7 +141,6 @@
           </template>
         </a-input>
         <a-input
-          id="clientNameField"
           v-model:value="clientName"
           class="inputField"
           :status="clientNameStatus"
