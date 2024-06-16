@@ -4,8 +4,6 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 RUN npm install -g corepack && corepack enable && yarn set version stable
-# Fix missig permisions
-RUN npm config set user 0 && npm config set unsafe-perm true
 
 COPY yarn.lock ./
 COPY package.json ./

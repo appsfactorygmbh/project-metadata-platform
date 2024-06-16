@@ -14,7 +14,8 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint --fix src",
-    "format": "prettier --write ."
+    "format": "prettier -write .",
+    "prepare": "husky"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
@@ -50,7 +51,7 @@
     "happy-dom": "^14.11.1",
     "husky": "^9.0.11",
     "jsdom": "^24.1.0",
-    "lint-staged": "^15.2.5",
+    "lint-staged": "^15.2.7",
     "prettier": "^3.3.1",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.12.0",
@@ -70,7 +71,7 @@
     }
   },
   "lint-staged": {
-    "*.{ts,vue}": "eslint --fix",
-    "*": "prettier -w -u"
+    "**/*.{ts,tsx,vue}": "eslint --fix",
+    "**/*": "prettier -w -u"
   }
 }

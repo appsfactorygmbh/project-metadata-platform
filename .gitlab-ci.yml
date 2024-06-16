@@ -11,6 +11,7 @@ default:
     - corepack enable
     - yarn set version stable
     - yarn install --immutable
+    - chmod -R a+x ./node_modules/.bin/
   cache:
     paths:
       - .yarn
@@ -28,7 +29,7 @@ test:
   stage: test
   image: node:latest
   script:
-    - yarn test --reporter=junit --outputFile=./junit.xml 
+    - yarn test --reporter=junit --outputFile=./junit.xml
   artifacts:
     when: always
     reports:
@@ -42,7 +43,7 @@ code-formatting:
   stage: test
   allow_failure: true
   script:
-    - npx prettier --check .
+    - npx prettier . --check
 
 code-quality:
   stage: test
