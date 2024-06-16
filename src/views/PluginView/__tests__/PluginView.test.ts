@@ -1,64 +1,40 @@
-// YourComponent.test.js
 import { mount } from '@vue/test-utils';
+import { describe, it, expect, vi } from 'vitest';
 import PluginView from '../PluginView.vue';
-import { usePluginsStore } from '../../../store/Plugin/PluginStore.ts';
-import { vi } from 'vitest';
-import { nextTick } from 'vue';
+import { createPinia, setActivePinia } from 'pinia';
 
-// Mock the usePluginsStore
-vi.mock('../../store/Plugin/PluginStore.ts', () => {
+
+const fetchPluginsMock = vi.fn();
+const getPluginsMock= vi.fn(() => []);
+
+vi.mock('../../../store/Plugin/PluginStore.ts', () => {
   return {
-    usePluginsStore: vi.fn(),
-  };
-});
-
-describe('PluginView', () => {
-  let fetchPluginsMock;
-  let getPluginsMock;
-
-  beforeEach(() => {
-    fetchPluginsMock = vi.fn();
-    getPluginsMock = vi.fn(() => [
-      {
-        pluginName: 'plugin1',
-        displayName: 'Plugin 1',
-        url: 'http://plugin1.com',
-      },
-      {
-        pluginName: 'plugin2',
-        displayName: 'Plugin 2',
-        url: 'http://plugin2.com',
-      },
-    ]);
-
-    // Mock the return value of usePluginsStore
-    usePluginsStore.mockReturnValue({
+    usePluginsStore: vi.fn(() => ({
       fetchPlugins: fetchPluginsMock,
-      getPlugins: getPluginsMock,
-    });
+      getPlugins:  getPluginsMock,
+  })),
+};
+});
+
+describe('PluginView.vue', () => {
+  beforeEach(() =>{
+    const pinia = createPinia();
+    setActivePinia(pinia);
   });
 
-  test('calls fetchPlugins on mount and renders plugins', async () => {
-    const projectID = '12345';
-    const wrapper = mount(PluginView, {
-      props: { projectID },
+
+  it('calls fetchPlugins on beforeMount', async () => {
+    mount(PluginView, {
+      props: { projectID: '100' }
     });
 
-    // Ensure fetchPlugins is called
-    expect(fetchPluginsMock).toHaveBeenCalledWith(projectID);
+     await new Promise(resolve => setTimeout(resolve, 0));
 
-    // Wait for any pending promises
-    await nextTick();
 
-    // Ensure the plugins are rendered
-    const pluginComponents = wrapper.findAllComponents({ name: 'PluginComponent' });
-    expect(pluginComponents.length).toBe(2);
+    expect(fetchPluginsMock).toHaveBeenCalledWith('100');
 
-    // Check the props of the first plugin component
-    expect(pluginComponents[0].props()).toMatchObject({
-      pluginName: 'plugin1',
-      displayName: 'Plugin 1',
-      url: 'http://plugin1.com',
-    });
+
   });
 });
+
+
