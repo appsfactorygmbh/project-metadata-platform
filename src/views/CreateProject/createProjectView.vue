@@ -9,6 +9,7 @@
     UserOutlined,
   } from '@ant-design/icons-vue';
   import { projectsService } from '../../services/ProjectService.ts';
+  import {InputState} from '../../models/InputStateModel.ts'
 
   const open = ref<boolean>(false);
 
@@ -18,11 +19,11 @@
   const department = ref<string>('');
   const clientName = ref<string>('');
 
-  const projectNameStatus = ref<string>('');
-  const businessUnitStatus = ref<string>('');
-  const teamNumberStatus = ref<string>('');
-  const departmentStatus = ref<string>('');
-  const clientNameStatus = ref<string>('');
+  const projectNameStatus = ref<InputState>('');
+  const businessUnitStatus = ref<InputState>('');
+  const teamNumberStatus = ref<InputState>('');
+  const departmentStatus = ref<InputState>('');
+  const clientNameStatus = ref<InputState>('');
 
   const fetchError = ref<boolean>(false);
 
@@ -32,7 +33,7 @@
 
   const validateField = (
     fieldValue: string,
-    fieldStatus: { value: string },
+    fieldStatus: { value: InputState },
   ) => {
     if (!fieldValue) {
       fieldStatus.value = 'error';
@@ -92,7 +93,7 @@
           id="projectNameField"
           v-model:value="projectName"
           class="inputField"
-          :status="projectNameStatus"
+          :status = "projectNameStatus"
           placeholder="Project Name"
         >
           <template #prefix>
