@@ -12,11 +12,11 @@ export const projectStore = defineStore({
     async getProjectView() {
       const project = await projectsService.fetchProject();
       this.projectView = project ?? {
-        projectName: 'Your Project Name',
-        businessUnit: 'Business Unit',
-        teamNumber: 'Team Number',
-        department: 'Department',
-        clientName: 'Client Name'
+        projectName: '',
+        businessUnit: '',
+        teamNumber: '',
+        department: '',
+        clientName: ''
       };
       return this.projectView;
     },
