@@ -17,6 +17,10 @@
       type: String,
       required: true,
     },
+    isLoading: {
+      type: Boolean,
+      required: true
+    }
   });
 
   // Create a reactive variable for the favicon URL based on the given URL.
@@ -39,6 +43,7 @@
   <!-- Define the card component, styled as a clickable flex container. -->
   <a-card
     class="card"
+    :loading="isLoading"
     :bordered="false"
     toggle="true"
     :body-style="{
@@ -67,6 +72,7 @@
   // Style for the card container.
   .card {
     width: max-content;
+    min-width: 200px;
     max-width: 300px;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
     display: flex;

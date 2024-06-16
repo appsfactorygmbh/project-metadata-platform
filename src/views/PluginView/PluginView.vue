@@ -7,6 +7,7 @@
       :plugin-name="plugin.pluginName"
       :display-name="plugin.displayName"
       :url="plugin.url"
+      :is-loading="loading"
     ></PluginComponent>
   </div>
 </template>
@@ -29,6 +30,7 @@
   });
 
   const plugins = computed(() => toRaw(pluginStore.getPlugins));
+  const loading = ref(pluginStore.isLoading)
 </script>
 
 <style scoped lang="css">

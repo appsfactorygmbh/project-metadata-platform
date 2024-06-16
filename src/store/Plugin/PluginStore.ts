@@ -1,6 +1,6 @@
 import { pluginService } from '../../services/Plugin/PluginService.ts';
 import { defineStore } from 'pinia';
-import {Plugin} from '../../models/Plugin.ts'
+import { Plugin } from '../../models/Plugin.ts';
 
 export const usePluginsStore = defineStore('plugin', {
   state: () => {
@@ -20,17 +20,16 @@ export const usePluginsStore = defineStore('plugin', {
     setPlugins(plugins: Plugin[]): void {
       this.plugins = plugins;
     },
-    setLoadingStatus(status: boolean): void {
+    setLoading(status: boolean): void {
       this.isLoading = status;
     },
+
     async fetchPlugins(projectID: string) {
-      this.setLoadingStatus(true);
-      const pluginsFromServer: Plugin[] =
+      this.setLoading(true);
+      const plugins: Plugin[] =
         await pluginService.fetchPlugins(projectID);
-      console.log('habe gefetched ', pluginsFromServer);
-      this.setPlugins(pluginsFromServer);
-      console.log('from store:', this.plugins);
-      this.setLoadingStatus(false);
+      this.setPlugins(plugins);
+      this.setLoading(false);
     },
   },
 });
