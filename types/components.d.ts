@@ -8,9 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AAlert: (typeof import('ant-design-vue/es'))['Alert'];
-    AAvatar: (typeof import('ant-design-vue/es'))['Avatar'];
     AButton: (typeof import('ant-design-vue/es'))['Button'];
-    ACard: (typeof import('ant-design-vue/es'))['Card'];
     AFloatButton: (typeof import('ant-design-vue/es'))['FloatButton'];
     AInput: (typeof import('ant-design-vue/es'))['Input'];
     AModal: (typeof import('ant-design-vue/es'))['Modal'];

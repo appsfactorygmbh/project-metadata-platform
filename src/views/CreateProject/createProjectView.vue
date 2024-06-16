@@ -24,11 +24,11 @@
   const department = ref<string>('');
   const clientName = ref<string>('');
 
-  const projectNameStatus = ref<string>('');
-  const businessUnitStatus = ref<string>('');
-  const teamNumberStatus = ref<string>('');
-  const departmentStatus = ref<string>('');
-  const clientNameStatus = ref<string>('');
+  const projectNameStatus = ref<InputState>('');
+  const businessUnitStatus = ref<InputState>('');
+  const teamNumberStatus = ref<InputState>('');
+  const departmentStatus = ref<InputState>('');
+  const clientNameStatus = ref<InputState>('');
 
   const fetchError = ref<boolean>(false);
 
@@ -92,15 +92,15 @@
       };
       const response = await projectsService.addProject(projectData);
       console.log(response);
-      if (!response?.ok) {
+      if (!response?.ok || undefined) {
         fetchError.value = true;
+        open.value = true;
       } else {
         fetchError.value = false;
         open.value = false;
         await tableStore.fetchTable();
+        resetAndCloseModal();
       }
-
-      resetAndCloseModal();
     }
   };
 </script>
@@ -190,8 +190,5 @@
     & > * {
       width: 100%;
     }
-  }
-  .inputField {
-    width: 90%;
   }
 </style>
