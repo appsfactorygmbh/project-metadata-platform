@@ -1,14 +1,14 @@
-import { Project } from 'models/TableModel';
+import { Project } from '../models/TableModel';
 
 class ProjectsService {
-  fetchProjects = async (): Promise<Project[] | null> => {
-    try {
+  fetchProjects = async () => {
+    try {      
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/projects',
-        //'src/components/Table/test.json'
+        //'@/components/Table/test.json'
       );
 
-      const data: Project[] = await response.json();
+      const data: Project[] = await response.json();      
 
       return data;
     } catch (err) {

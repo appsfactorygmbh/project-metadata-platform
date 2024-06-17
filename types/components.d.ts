@@ -7,17 +7,13 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    AButton: (typeof import('ant-design-vue/es'))['Button'];
-    AInput: (typeof import('ant-design-vue/es'))['Input'];
-    ATable: (typeof import('ant-design-vue/es'))['Table'];
-    HelloWorld: (typeof import('./../src/components/HelloWorld.vue'))['default'];
-    RouterLink: (typeof import('vue-router'))['RouterLink'];
-    RouterView: (typeof import('vue-router'))['RouterView'];
-    TableComponent: (typeof import('./../src/components/Table/tableComponent.vue'))['default'];
     AButton: typeof import('ant-design-vue/es')['Button']
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
+    AInput: typeof import('ant-design-vue/es')['Input']
+    ATable: typeof import('ant-design-vue/es')['Table']
     HelloWorld: typeof import('./../src/components/HelloWorld.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    TableComponent: typeof import('./../src/components/Table/tableComponent.vue')['default']
   }
 }

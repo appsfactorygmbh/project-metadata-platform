@@ -1,5 +1,5 @@
 import { projectsService } from '../services/TableService';
-import { Project } from 'models/TableModel';
+import { Project } from '@/models/TableModel';
 import { defineStore } from 'pinia';
 
 export const TableStore = defineStore('table', {
@@ -24,7 +24,7 @@ export const TableStore = defineStore('table', {
 
     async fetchTable() {
       this.setLoading(true);
-      const table = (await projectsService.fetchProjects()) ?? [];
+      const table: Project[] = (await projectsService.fetchProjects()) ?? [];
       this.setTable(table);
       this.setLoading(false);
     },
