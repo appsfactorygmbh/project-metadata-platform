@@ -3,12 +3,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { cutAfterTLD, createFaviconURL } from '../editURL';
 import PluginComponent from '../PluginComponent.vue';
 
-const generateWrapper = (name: string, url: string, displayName: string) => {
+const generateWrapper = (
+  name: string,
+  url: string,
+  displayName: string,
+  isLoading: boolean,
+) => {
   return mount(PluginComponent, {
     props: {
       pluginName: name,
       url: url,
       displayName: displayName,
+      isLoading: isLoading,
     },
   });
 };
@@ -19,6 +25,7 @@ describe('Plugin.vue', () => {
       'Test Plugin',
       'https://example.com/examplePath',
       'test instance',
+      false,
     );
 
     expect(wrapper.find('h3').text()).toBe('Test Plugin');
@@ -27,6 +34,38 @@ describe('Plugin.vue', () => {
     expect(wrapper.find('img').attributes('src')).toBe(
       'https://www.google.com/s2/favicons?domain=https://example.com&sz=128',
     );
+  });
+
+  it('renders loading state correctly when isLoading is true', () => {
+    const wrapper = mount(PluginComponent, {
+      props: {
+        pluginName: 'Test Plugin',
+        url: 'https://test.com',
+        displayName: 'Test',
+        isLoading: true,
+      },
+    });
+    const skeleton = wrapper.find('.ant-skeleton-content');
+    expect(skeleton.exists()).toBe(true);
+  });
+
+  it('changes state when isLoading updates', async () => {
+    const wrapper = mount(PluginComponent, {
+      props: {
+        pluginName: 'Test Plugin',
+        url: 'https://test.com',
+        displayName: 'Test',
+        isLoading: true,
+      },
+    });
+    expect(wrapper.find('.ant-skeleton-content').exists()).toBe(true);
+    await wrapper.setProps({
+      pluginName: 'Test Plugin',
+      url: 'https://test.com',
+      displayName: 'Test',
+      isLoading: false,
+    });
+    expect(wrapper.find('.ant-skeleton-content').exists()).toBe(false);
   });
 
   it('creates correct favicon URL', () => {
@@ -70,6 +109,7 @@ describe('Plugin.vue', () => {
       'Test Plugin',
       'https://example.com/examplePath',
       'test instance',
+      false,
     );
 
     const card = wrapper.findComponent({ name: 'ACard' });
@@ -92,6 +132,7 @@ describe('Plugin.vue', () => {
       'Test Plugin',
       'https://example.com/examplePath',
       'Test Plugin Instance 1',
+      false,
     );
     await wrapper.findComponent({ name: 'ACard' }).trigger('click');
     expect(windowOpenMock).toBeCalledWith(

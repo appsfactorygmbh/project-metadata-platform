@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   // Import ref for reactive variables and utility functions for URL handling.
-  import { ref } from 'vue';
+  import { ref, watch } from 'vue';
   import { cutAfterTLD, createFaviconURL } from './editURL';
 
   // Define the component's props with pluginName and url as required strings.
@@ -23,6 +23,14 @@
     },
   });
 
+  const toggleSkeleton = ref<boolean>(props.isLoading);
+
+  watch(
+    () => props.isLoading,
+    (newVal) => {
+      toggleSkeleton.value = newVal;
+    },
+  );
   // Create a reactive variable for the favicon URL based on the given URL.
   const faviconUrl = ref(createFaviconURL(cutAfterTLD(props.url)));
 
@@ -33,8 +41,6 @@
     } catch (err) {
       console.error('Error when trying to copy: ', err);
     }
-
-    //TODO: add Tests
     window.open(props.url, '_blank');
   }
 </script>
@@ -43,7 +49,7 @@
   <!-- Define the card component, styled as a clickable flex container. -->
   <a-card
     class="card"
-    :loading="isLoading"
+    :loading="toggleSkeleton"
     :bordered="false"
     toggle="true"
     :body-style="{
