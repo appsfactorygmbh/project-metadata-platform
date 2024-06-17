@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import App from '../App.vue';
+import SplitView from '../SplitView.vue';
 
 describe('App.vue', () => {
   it('renders correctly', () => {
-    const wrapper = mount(App, {
+    const wrapper = mount(SplitView, {
       global: {
         stubs: {
           Table: {
