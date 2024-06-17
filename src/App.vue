@@ -16,8 +16,8 @@
         min-size: sets smalles possible size to 20% and 1%
       -->
     <splitpanes class="default-theme">
-      <pane size="99" min-size="20">
-        <div ref="tablePane">
+      <pane size="99" min-size="20" ref="tablePane">
+        <div>
           <Table
             :pane-width="dimensions.width"
             :pane-height="dimensions.height"

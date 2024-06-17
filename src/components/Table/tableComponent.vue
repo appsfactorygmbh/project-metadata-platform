@@ -53,7 +53,7 @@
     :data-source="[...dataSource]"
     :pagination="false"
     :loading="isLoading"
-    :scroll="{ y: '94vh' }"
+    :scroll="{ y: props.paneHeight - 55 }"
     bordered
   >
     <!-- Header of the table -->
