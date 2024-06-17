@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  // @ts-expect-error missing types
   import { Splitpanes, Pane } from 'splitpanes'; //external framework for splitpanes
   import 'splitpanes/dist/splitpanes.css'; //default css for splitpanes
 </script>
