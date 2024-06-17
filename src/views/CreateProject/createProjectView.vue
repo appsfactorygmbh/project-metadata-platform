@@ -8,9 +8,9 @@
     BankOutlined,
     UserOutlined,
   } from '@ant-design/icons-vue';
-  import { projectsService } from '../../services/ProjectService.ts';
-  import { InputState } from '../../models/InputStateModel.ts';
-  import { TableStore } from '../../store/TableStore.ts';
+  import { projectsService } from '@/services/ProjectService.ts';
+  import type { InputStateType } from '@/models/InputStateModel.ts';
+  import { TableStore } from '@/store/TableStore.ts';
 
   // TableStore to refetch Table after Project was added
   const tableStore = TableStore();
@@ -24,11 +24,11 @@
   const department = ref<string>('');
   const clientName = ref<string>('');
 
-  const projectNameStatus = ref<InputState>('');
-  const businessUnitStatus = ref<InputState>('');
-  const teamNumberStatus = ref<InputState>('');
-  const departmentStatus = ref<InputState>('');
-  const clientNameStatus = ref<InputState>('');
+  const projectNameStatus = ref<InputStateType>('');
+  const businessUnitStatus = ref<InputStateType>('');
+  const teamNumberStatus = ref<InputStateType>('');
+  const departmentStatus = ref<InputStateType>('');
+  const clientNameStatus = ref<InputStateType>('');
 
   const fetchError = ref<boolean>(false);
 
@@ -57,9 +57,18 @@
     open.value = false;
   };
 
+  const validateTeamNumber = (teamNumber: string) => {
+    if (/\D/.test(teamNumber) || parseInt(teamNumber) < 0) {
+      teamNumberStatus.value = 'error';
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const validateField = (
     fieldValue: string,
-    fieldStatus: { value: InputState },
+    fieldStatus: { value: InputStateType },
   ) => {
     if (!fieldValue) {
       fieldStatus.value = 'error';
@@ -72,21 +81,23 @@
   const handleOk = async () => {
     validateField(projectName.value, projectNameStatus);
     validateField(businessUnit.value, businessUnitStatus);
-    validateField(teamNumber.value, teamNumberStatus);
     validateField(department.value, departmentStatus);
     validateField(clientName.value, clientNameStatus);
+
+    const validTeamNumber = validateTeamNumber(teamNumber.value);
 
     if (
       projectName.value &&
       businessUnit.value &&
       teamNumber.value &&
       department.value &&
-      clientName.value
+      clientName.value &&
+      validTeamNumber
     ) {
       const projectData = {
         projectName: projectName.value,
         businessUnit: businessUnit.value,
-        teamNumber: +teamNumber.value,
+        teamNumber: parseInt(teamNumber.value),
         department: department.value,
         clientName: clientName.value,
       };
@@ -97,7 +108,6 @@
         open.value = true;
       } else {
         fetchError.value = false;
-        open.value = false;
         await tableStore.fetchTable();
         resetAndCloseModal();
       }

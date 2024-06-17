@@ -1,4 +1,4 @@
-export type CreateProject = {
+export type CreateProjectType = {
   projectName: string;
   businessUnit: string;
   teamNumber: number;

@@ -7,7 +7,7 @@ import { projectsService } from '../../../services/ProjectService.ts';
 type CreateProjectViewInstance = {
   projectName: string;
   businessUnit: string;
-  teamNumber: string;
+  teamNumber: number | string;
   department: string;
   clientName: string;
   projectNameStatus: string;
@@ -42,7 +42,7 @@ describe('ProjectModal.vue', () => {
   it('should validate fields correctly', async () => {
     wrapper.vm.projectName = '';
     wrapper.vm.businessUnit = '';
-    wrapper.vm.teamNumber = '';
+    wrapper.vm.teamNumber = '-2';
     wrapper.vm.department = '';
     wrapper.vm.clientName = '';
 
@@ -58,7 +58,7 @@ describe('ProjectModal.vue', () => {
   it('should call projectsService.addProject with the correct data', async () => {
     wrapper.vm.projectName = 'Project A';
     wrapper.vm.businessUnit = 'Business Unit A';
-    wrapper.vm.teamNumber = 'Team 1';
+    wrapper.vm.teamNumber = '1';
     wrapper.vm.department = 'Department A';
     wrapper.vm.clientName = 'Client A';
 
@@ -66,7 +66,7 @@ describe('ProjectModal.vue', () => {
     expect(spy).toHaveBeenCalledWith({
       projectName: 'Project A',
       businessUnit: 'Business Unit A',
-      teamNumber: 'Team 1',
+      teamNumber: 1,
       department: 'Department A',
       clientName: 'Client A',
     });
@@ -75,13 +75,13 @@ describe('ProjectModal.vue', () => {
   it('should set fetchError to true if project creation fails', async () => {
     wrapper.vm.projectName = 'Project A';
     wrapper.vm.businessUnit = 'Business Unit A';
-    wrapper.vm.teamNumber = 'Team 1';
+    wrapper.vm.teamNumber = '2';
     wrapper.vm.department = 'Department A';
     wrapper.vm.clientName = 'Client A';
 
     spy.mockResolvedValue(
       new Response(null, {
-        status: 405,
+        status: 400,
       }),
     );
 
@@ -93,7 +93,7 @@ describe('ProjectModal.vue', () => {
   it('should close the modal and reset fetchError if project creation succeeds', async () => {
     wrapper.vm.projectName = 'Project A';
     wrapper.vm.businessUnit = 'Business Unit A';
-    wrapper.vm.teamNumber = 'Team 1';
+    wrapper.vm.teamNumber = 1;
     wrapper.vm.department = 'Department A';
     wrapper.vm.clientName = 'Client A';
 

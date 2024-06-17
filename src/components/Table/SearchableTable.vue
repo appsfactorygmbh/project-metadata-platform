@@ -1,12 +1,21 @@
 <script lang="ts" setup>
   import { SmileOutlined, SearchOutlined } from '@ant-design/icons-vue';
-  import { reactive, ref, watch, onMounted } from 'vue';
+  import {
+    reactive,
+    ref,
+    watch,
+    onMounted,
+    computed,
+    type ComputedRef,
+    toRaw,
+  } from 'vue';
+
   import { useWindowSize } from '@vueuse/core';
   import type {
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
-  import type { Project } from '@/models/TableModel';
+  import type { ProjectType } from '@/models/TableModel';
   import { TableStore } from '@/store/TableStore';
   import { storeToRefs } from 'pinia';
 
@@ -35,9 +44,12 @@
 
   onMounted(async () => {
     await store.fetchTable();
-    const data: Project[] = store.getTable;
-
-    addTableEntry(data);
+    const data: ComputedRef<ProjectType[]> = computed(() => store.getTable);
+    addTableEntry(store.getTable);
+    watch(
+      () => data.value,
+      () => addTableEntry(toRaw(data.value)),
+    );
     changeColumns(props.paneWidth);
   });
 </script>
@@ -152,13 +164,13 @@
 <script lang="ts">
   /*  Data implementation  */
 
-  const dataSource: Project[] = reactive([]);
+  const dataSource: ProjectType[] = reactive([]);
 
   /**
    * Adds a new table entry to dataSource.
    * @param {Project[]} data Stores the data that should be added.
    */
-  function addTableEntry(data: Project[]) {
+  function addTableEntry(data: ProjectType[]) {
     for (const date of data) {
       dataSource.push({
         id: date.id,
@@ -191,7 +203,7 @@
       dataIndex: 'projectName',
       key: 'pname',
       customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: Project) =>
+      onFilter: (value: string | number | boolean, record: ProjectType) =>
         record.projectName
           .toString()
           .toLowerCase()
@@ -201,7 +213,7 @@
       },
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: Project, b: Project) =>
+      sorter: (a: ProjectType, b: ProjectType) =>
         a.projectName.localeCompare(b.projectName),
       defaultSortOrder: 'ascend' as const,
     },
@@ -210,7 +222,7 @@
       dataIndex: 'clientName',
       key: 'cname',
       customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: Project) =>
+      onFilter: (value: string | number | boolean, record: ProjectType) =>
         record.clientName
           .toString()
           .toLowerCase()
@@ -220,7 +232,7 @@
       },
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: Project, b: Project) =>
+      sorter: (a: ProjectType, b: ProjectType) =>
         a.clientName.localeCompare(b.clientName),
       defaultSortOrder: 'ascend' as const,
       hidden: false,
@@ -231,7 +243,7 @@
       key: 'bu',
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: Project, b: Project) =>
+      sorter: (a: ProjectType, b: ProjectType) =>
         a.businessUnit.localeCompare(b.businessUnit),
       defaultSortOrder: 'ascend' as const,
       hidden: false,
@@ -242,7 +254,7 @@
       key: 'tnr',
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: Project, b: Project) => a.teamNumber - b.teamNumber,
+      sorter: (a: ProjectType, b: ProjectType) => a.teamNumber - b.teamNumber,
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },
