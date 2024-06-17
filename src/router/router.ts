@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import SplitView from '@/views/SplitView';
+import { SplitView } from '@/views';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
