@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import SearchableTable from '@/components/Table/SearchableTable.vue';
+  import { SearchableTable } from '@/components/Table';
 
   const props = defineProps({
     paneWidth: {

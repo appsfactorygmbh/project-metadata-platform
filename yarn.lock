@@ -3448,7 +3448,7 @@ __metadata:
     lint-staged: "npm:^15.2.7"
     lodash-es: "npm:^4.17.21"
     pinia: "npm:^2.1.7"
-    prettier: "npm:^3.3.1"
+    prettier: "npm:^3.3.2"
     splitpanes: "npm:^3.1.5"
     typescript: "npm:^5.4.5"
     typescript-eslint: "npm:^7.12.0"
@@ -5474,7 +5474,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.3.1":
+"prettier@npm:^3.3.2":
   version: 3.3.2
   resolution: "prettier@npm:3.3.2"
   bin:
