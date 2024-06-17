@@ -1,6 +1,8 @@
 # Build stage
 FROM node:20-alpine AS build
 
+ARG BUILD_ENV=production
+
 WORKDIR /app
 
 RUN npm install -g corepack && corepack enable && yarn set version stable
@@ -12,7 +14,7 @@ COPY .yarnrc.yml ./
 RUN rm -rf node_modules && yarn install --immutable
 
 COPY . .
-RUN yarn build
+RUN yarn build --mode $BUILD_ENV
 
 # Production stage
 FROM nginx:stable-alpine AS production
