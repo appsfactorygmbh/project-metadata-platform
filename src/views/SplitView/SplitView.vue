@@ -1,7 +1,12 @@
 <script setup lang="ts">
   import { Splitpanes, Pane } from 'splitpanes'; //external framework for splitpanes
   import 'splitpanes/dist/splitpanes.css'; //default css for splitpanes
-  import { ProjectSearchView } from '@/views';
+  import { ref, reactive } from 'vue';
+  import { useElementSize } from '@vueuse/core';
+  import { ProjectSearchView } from '@/views/ProjectSearchView';
+
+  const tablePane = ref(null);
+  const dimensions = reactive(useElementSize(tablePane));
 </script>
 
 <template>
@@ -11,10 +16,13 @@
         size: sets default proportion to 1:4
         min-size: sets smalles possible size to 20% and 1%
       -->
-      <pane size="25" min-size="20">
-        <ProjectSearchView />
+      <pane ref="tablePane" size="99" min-size="20">
+        <ProjectSearchView
+          :pane-width="dimensions.width"
+          :pane-height="dimensions.height"
+        />
       </pane>
-      <pane size="75" min-size="1">
+      <pane size="1" min-size="1">
         <div></div>
       </pane>
     </splitpanes>

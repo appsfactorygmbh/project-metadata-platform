@@ -24,7 +24,7 @@ export const TableStore = defineStore('table', {
 
     async fetchTable() {
       this.setLoading(true);
-      const table = (await projectsService.fetchProjects()) ?? [];
+      const table: Project[] = (await projectsService.fetchProjects()) ?? [];
       this.setTable(table);
       this.setLoading(false);
     },

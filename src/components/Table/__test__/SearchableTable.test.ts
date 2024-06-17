@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import Table from '../tableComponent.vue';
+import Table from '../SearchableTable.vue';
 import { describe, it, expect, vi } from 'vitest';
 import { createPinia } from 'pinia';
 import App from '../../../App.vue';

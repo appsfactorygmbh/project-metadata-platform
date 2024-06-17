@@ -5,7 +5,13 @@ import SplitView from '../SplitView.vue';
 describe('App.vue', () => {
   it('renders correctly', () => {
     const wrapper = mount(SplitView, {
-      attachTo: document.body,
+      global: {
+        stubs: {
+          Table: {
+            template: '<span />',
+          },
+        },
+      },
     });
 
     expect(wrapper.findAll('.splitpanes__pane')[0].isVisible()).toBe(true);
