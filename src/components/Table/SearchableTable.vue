@@ -46,9 +46,14 @@
     await store.fetchTable();
     const data: ComputedRef<ProjectType[]> = computed(() => store.getTable);
     addTableEntry(store.getTable);
+
+    // Updates Table, when a change in the store is detected
     watch(
       () => data.value,
-      () => addTableEntry(toRaw(data.value)),
+      (newValue, oldValue) => {
+        const newProject = newValue.filter(newObj => !oldValue.some(oldObj => oldObj["id"] === newObj["id"]));
+        addTableEntry(toRaw(newProject))
+      },
     );
     changeColumns(props.paneWidth);
   });
