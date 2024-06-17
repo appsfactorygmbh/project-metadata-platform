@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import SplitView from '../SplitView.vue';
+import { createPinia } from 'pinia';
+import App from '@/App.vue';
+
+createApp(App).use(createPinia());
 
 describe('App.vue', () => {
   it('renders correctly', () => {

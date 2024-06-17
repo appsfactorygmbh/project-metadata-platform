@@ -1,6 +1,6 @@
-import { Plugin } from '../../models/Plugin.ts';
+import type { PluginType } from '../../models/PluginType.ts';
 class PluginService {
-  fetchPlugins = async (projectID: string): Promise<Plugin[]> => {
+  fetchPlugins = async (projectID: string): Promise<PluginType[]> => {
     console.log(projectID);
     try {
       const response = await fetch(
