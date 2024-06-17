@@ -1,5 +1,5 @@
 import { projectsService } from '../services/TableService';
-import { Project } from '@/models/TableModel';
+import type { Project } from '@/models/TableModel';
 import { defineStore } from 'pinia';
 
 export const TableStore = defineStore('table', {

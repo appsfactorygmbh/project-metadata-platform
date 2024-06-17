@@ -1,3 +1,4 @@
 import SplitView from './SplitView';
+import ProjectSearchView from './ProjectSearchView.vue';
 
-export { SplitView };
+export { SplitView, ProjectSearchView };

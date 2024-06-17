@@ -6,8 +6,8 @@
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
-  import { Project } from '../../models/TableModel';
-  import { TableStore } from '../../store/TableStore';
+  import { Project } from '@/models/TableModel';
+  import { TableStore } from '@/store/TableStore';
   import { storeToRefs } from 'pinia';
 
   //Get the width of the left pane from App.vue
@@ -43,8 +43,8 @@
 </script>
 
 <template>
-  <!-- 
-        Ant Design table with: 
+  <!--
+        Ant Design table with:
         columns: filtered if hidden or not
         scroll: sets height of table to ~90% of the window height
     -->
@@ -66,9 +66,9 @@
       </template>
     </template>
 
-    <!-- 
-            Search function, when Search icon is clicked a box opens 
-            where you can input a string and filter the table with it 
+    <!--
+            Search function, when Search icon is clicked a box opens
+            where you can input a string and filter the table with it
         -->
     <template
       #customFilterDropdown="{
