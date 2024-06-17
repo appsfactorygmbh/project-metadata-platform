@@ -32,7 +32,7 @@ export default tseslint.config(
     languageOptions: {
       parserOptions: {
         parser: tseslint.parser,
-        project: path.resolve(__dirname, './tsconfig.eslint.json'),
+        project: path.resolve(__dirname, './tsconfig.node.json'),
         tsconfigRootDir: __dirname,
         sourceType: 'module',
       },
@@ -48,7 +48,7 @@ export default tseslint.config(
       parserOptions: {
         parser: tseslint.parser,
         extraFileExtensions: ['.vue'],
-        project: path.resolve(__dirname, './tsconfig.json'),
+        project: path.resolve(__dirname, './tsconfig.app.json'),
         tsconfigRootDir: __dirname,
         sourceType: 'module',
         ecmaFeatures: {
