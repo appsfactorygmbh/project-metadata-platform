@@ -52,10 +52,10 @@
         scroll: sets height of table to ~90% of the window height
     -->
   <a-table
-    v-if="!isLoading"
     :columns="[...columns].filter((item) => !item.hidden)"
     :data-source="[...dataSource]"
     :pagination="false"
+    :loading="isLoading"
     :scroll="{ y: 0.904 * windowHeight }"
     bordered
   >
@@ -150,12 +150,6 @@
       </span>
     </template>
   </a-table>
-
-  <!-- shows skeleton when loading -->
-  <a-skeleton v-if="isLoading" active style="padding: 1em" />
-  <div style="text-align: center; padding-top: 2em; filter: saturate(0)">
-    <a-spin v-if="isLoading" size="large" />
-  </div>
 </template>
 
 <script lang="ts">
