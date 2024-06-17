@@ -1,7 +1,7 @@
 import { Project } from 'models/TableModel';
 
 class ProjectsService {
-  fetchProjects = async () => {
+  fetchProjects = async (): Promise<Project[] | null> => {
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/projects',
@@ -12,6 +12,7 @@ class ProjectsService {
       return data;
     } catch (err) {
       console.error('Error fetching projects: ' + err);
+      return null;
     }
   };
 }

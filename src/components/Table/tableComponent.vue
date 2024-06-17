@@ -8,6 +8,7 @@
   } from 'ant-design-vue/es/table/interface';
   import { Project } from '../../models/TableModel';
   import { TableStore } from '../../store/TableStore';
+  import { storeToRefs } from 'pinia';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -33,9 +34,11 @@
   const windowHeight = ref(useWindowSize().height.value);
 
   const store = TableStore();
+  const { isLoading } = storeToRefs(store);
 
   onMounted(async () => {
-    const data: Project[] = await store.getTable();
+    await store.fetchTable();
+    const data: Project[] = store.getTable;
 
     addTableEntry(data);
     changeColumns(props.paneWidth);
@@ -49,6 +52,7 @@
         scroll: sets height of table to ~90% of the window height
     -->
   <a-table
+    v-if="!isLoading"
     :columns="[...columns].filter((item) => !item.hidden)"
     :data-source="[...dataSource]"
     :pagination="false"
@@ -146,6 +150,12 @@
       </span>
     </template>
   </a-table>
+
+  <!-- shows skeleton when loading -->
+  <a-skeleton v-if="isLoading" active style="padding: 1em" />
+  <div style="text-align: center; padding-top: 2em; filter: saturate(0)">
+    <a-spin v-if="isLoading" size="large" />
+  </div>
 </template>
 
 <script lang="ts">
