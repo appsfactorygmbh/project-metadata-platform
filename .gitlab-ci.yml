@@ -41,8 +41,8 @@ code-formatting:
   stage: test
   allow_failure: true
   script:
-    - chmod -R a+x ./node_modules/.bin
-    - ./node_modules/.bin/prettier --check .
+    - npm install -g prettier
+    - prettier --check .
 
 code-quality:
   stage: test
