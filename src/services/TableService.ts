@@ -1,4 +1,4 @@
-import { Project } from 'models/TableModel';
+import type { Project } from '@/models/TableModel';
 
 class ProjectsService {
   fetchProjects = async (): Promise<Project[] | null> => {

@@ -1,17 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import App from '../App.vue';
+import SplitView from '../SplitView.vue';
 
 describe('App.vue', () => {
   it('renders correctly', () => {
-    const wrapper = mount(App, {
-      global: {
-        stubs: {
-          Table: {
-            template: '<span />',
-          },
-        },
-      },
+    const wrapper = mount(SplitView, {
+      attachTo: document.body,
     });
 
     expect(wrapper.findAll('.splitpanes__pane')[0].isVisible()).toBe(true);
