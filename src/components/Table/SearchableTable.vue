@@ -2,12 +2,13 @@
   import { SmileOutlined, SearchOutlined } from '@ant-design/icons-vue';
   import { reactive, ref, watch, onMounted } from 'vue';
   import { useWindowSize } from '@vueuse/core';
-  import {
+  import type {
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
-  import { Project } from '../../models/TableModel';
-  import { TableStore } from '../../store/TableStore';
+  import type { Project } from '@/models/TableModel';
+  import { TableStore } from '@/store/TableStore';
+  import { storeToRefs } from 'pinia';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -29,14 +30,12 @@
     },
   );
 
-  //calculates current window height for the scroll value
-  const windowHeight = ref(useWindowSize().height.value);
-
   const store = TableStore();
+  const { isLoading } = storeToRefs(store);
 
   onMounted(async () => {
     await store.fetchTable();
-    const data: Project[] = store.table;
+    const data: Project[] = store.getTable;
 
     addTableEntry(data);
     changeColumns(props.paneWidth);
@@ -44,8 +43,8 @@
 </script>
 
 <template>
-  <!-- 
-        Ant Design table with: 
+  <!--
+        Ant Design table with:
         columns: filtered if hidden or not
         scroll: sets height of table to ~90% of the window height
     -->
@@ -53,7 +52,8 @@
     :columns="[...columns].filter((item) => !item.hidden)"
     :data-source="[...dataSource]"
     :pagination="false"
-    :scroll="{ y: 0.904 * windowHeight }"
+    :loading="isLoading"
+    :scroll="{ y: props.paneHeight - 55 }"
     bordered
   >
     <!-- Header of the table -->
@@ -66,9 +66,9 @@
       </template>
     </template>
 
-    <!-- 
-            Search function, when Search icon is clicked a box opens 
-            where you can input a string and filter the table with it 
+    <!--
+            Search function, when Search icon is clicked a box opens
+            where you can input a string and filter the table with it
         -->
     <template
       #customFilterDropdown="{

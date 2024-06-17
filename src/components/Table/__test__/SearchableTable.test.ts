@@ -1,8 +1,8 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import Table from '../tableComponent.vue';
+import { SearchableTable } from '@/components/Table';
 import { describe, it, expect, vi } from 'vitest';
 import { createPinia } from 'pinia';
-import App from '../../../App.vue';
+import App from '@/App.vue';
 
 createApp(App).use(createPinia());
 
@@ -30,7 +30,7 @@ const mockResponse = {
 } as Response;
 globalThis.fetch = vi.fn().mockResolvedValue(mockResponse);
 
-const wrapper = mount(Table, {
+const wrapper = mount(SearchableTable, {
   props: {
     paneWidth: 800,
     paneHeight: 800,
@@ -50,7 +50,7 @@ describe('tableComponent.vue', () => {
     ).toBe('C');
   });
   it('hides columns when the pane width is not large enough', async () => {
-    const wrapper2 = mount(Table, {
+    const wrapper2 = mount(SearchableTable, {
       props: {
         paneWidth: 300,
         paneHeight: 800,

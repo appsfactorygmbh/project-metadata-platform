@@ -1,21 +1,32 @@
-import { projectsService } from '../services/ProjectService';
-import { Project } from 'models/TableModel';
+import { projectsService } from '../services/TableService';
+import type { Project } from '@/models/TableModel';
 import { defineStore } from 'pinia';
 
-export const TableStore = defineStore({
-  id: 'table',
-  state: () => ({
-    table: [] as Project[],
-  }),
+export const TableStore = defineStore('table', {
+  state: () => {
+    return {
+      table: [] as Project[],
+      isLoading: false as boolean,
+    };
+  },
   getters: {
     getTable(): Project[] {
       return this.table;
     },
   },
   actions: {
+    setTable(table: Project[]) {
+      this.table = table;
+    },
+    setLoading(status: boolean) {
+      this.isLoading = status;
+    },
+
     async fetchTable() {
-      this.table = (await projectsService.fetchProjects()) ?? [];
-      return this.table;
+      this.setLoading(true);
+      const table: Project[] = (await projectsService.fetchProjects()) ?? [];
+      this.setTable(table);
+      this.setLoading(false);
     },
   },
 });
