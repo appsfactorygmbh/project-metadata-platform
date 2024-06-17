@@ -5,11 +5,12 @@ class ProjectsService {
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/projects',
-        //'@/components/Table/test.json'
+        //"./src/components/Table/test.json"
       );
 
       const data: Project[] = await response.json();
-
+      console.log(data);
+      
       return data;
     } catch (err) {
       console.error('Error fetching projects: ' + err);
