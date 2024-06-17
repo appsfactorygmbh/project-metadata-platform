@@ -2,11 +2,11 @@
   import { SmileOutlined, SearchOutlined } from '@ant-design/icons-vue';
   import { reactive, ref, watch, onMounted } from 'vue';
   import { useWindowSize } from '@vueuse/core';
-  import {
+  import type {
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
-  import { Project } from '@/models/TableModel';
+  import type { Project } from '@/models/TableModel';
   import { TableStore } from '@/store/TableStore';
   import { storeToRefs } from 'pinia';
 

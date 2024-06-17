@@ -20,3 +20,4 @@ class ProjectsService {
 
 const projectsService = new ProjectsService();
 export { projectsService };
+export type { ProjectsService };

@@ -12,7 +12,7 @@
         min-size: sets smalles possible size to 20% and 1%
       -->
       <pane size="25" min-size="20">
-        <div><ProjectSearchView /></div>
+        <ProjectSearchView />
       </pane>
       <pane size="75" min-size="1">
         <div></div>
