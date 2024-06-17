@@ -2,6 +2,7 @@ stages:
   - test
   - build
   - deploy
+  - release
 
 default:
   image: node:20-alpine
