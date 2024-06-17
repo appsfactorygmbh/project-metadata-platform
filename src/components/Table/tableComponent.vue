@@ -30,9 +30,6 @@
     },
   );
 
-  //calculates current window height for the scroll value
-  const windowHeight = ref(useWindowSize().height.value);
-
   const store = TableStore();
   const { isLoading } = storeToRefs(store);
 
@@ -56,7 +53,7 @@
     :data-source="[...dataSource]"
     :pagination="false"
     :loading="isLoading"
-    :scroll="{ y: 0.904 * windowHeight }"
+    :scroll="{ y: '94vh' }"
     bordered
   >
     <!-- Header of the table -->
