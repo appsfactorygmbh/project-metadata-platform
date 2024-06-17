@@ -86,7 +86,7 @@
       const projectData = {
         projectName: projectName.value,
         businessUnit: businessUnit.value,
-        teamNumber: teamNumber.value,
+        teamNumber: +teamNumber.value,
         department: department.value,
         clientName: clientName.value,
       };

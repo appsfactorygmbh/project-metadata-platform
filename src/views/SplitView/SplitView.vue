@@ -4,6 +4,7 @@
   import { ref, reactive } from 'vue';
   import { useElementSize } from '@vueuse/core';
   import { ProjectSearchView } from '@/views/ProjectSearchView';
+  import CreateProjectView from '@/views/CreateProject/createProjectView.vue';
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
@@ -11,6 +12,7 @@
 
 <template>
   <div class="container">
+    <CreateProjectView></CreateProjectView>
     <splitpanes class="default-theme">
       <!--
         size: sets default proportion to 1:4

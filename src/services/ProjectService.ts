@@ -1,5 +1,5 @@
-import { Project } from 'models/TableModel';
-import { CreateProject } from 'models/CreateProjectModel';
+import type { Project } from '@/models/TableModel';
+import type { CreateProject } from '@/models/CreateProjectModel';
 
 class ProjectsService {
   fetchProjects = async () => {
@@ -21,7 +21,7 @@ class ProjectsService {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/projects',
         {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },

@@ -1,7 +1,7 @@
 export type CreateProject = {
   projectName: string;
   businessUnit: string;
-  teamNumber: string;
+  teamNumber: number;
   department: string;
   clientName: string;
 };

@@ -1,4 +1,4 @@
-import { projectsService } from '../services/TableService';
+import { projectsService } from '@/services/ProjectService.ts';
 import type { Project } from '@/models/TableModel';
 import { defineStore } from 'pinia';
 
