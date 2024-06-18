@@ -1,6 +1,6 @@
 import { projectsService } from '../services/ProjectsService';
 import type { ProjectModel } from '@/models/ProjectModel';
-import type {CreateProjectModel} from '@/models/CreateProjectModel.ts';
+import type { CreateProjectModel } from '@/models/CreateProjectModel.ts';
 import { defineStore } from 'pinia';
 
 export const ProjectsStore = defineStore('table', {
@@ -17,10 +17,10 @@ export const ProjectsStore = defineStore('table', {
       return this.projects;
     },
     getIsAdding(): boolean {
-      return this.isAdding
+      return this.isAdding;
     },
     getAddedSuccessfully(): boolean {
-      return this.addedSuccessfully
+      return this.addedSuccessfully;
     },
   },
   actions: {
@@ -30,11 +30,11 @@ export const ProjectsStore = defineStore('table', {
     setLoading(status: boolean) {
       this.isLoading = status;
     },
-    setIsAdding(status: boolean){
-      this.isAdding = status
+    setIsAdding(status: boolean) {
+      this.isAdding = status;
     },
     setAddedSuccessfully(status: boolean) {
-      this.addedSuccessfully = status
+      this.addedSuccessfully = status;
     },
 
     async fetchProjects() {
@@ -45,20 +45,19 @@ export const ProjectsStore = defineStore('table', {
       this.setLoading(false);
     },
 
-    async addProjects(projectData: CreateProjectModel){
+    async addProject(projectData: CreateProjectModel) {
+      this.setAddedSuccessfully(false);
       this.setIsAdding(true);
-      const response:Response | undefined = await projectsService.addProject(projectData);
-      if (response?.ok && response != undefined && response != null) {
+      const response: Response | undefined =
+        await projectsService.addProject(projectData);
+      console.log(response);
+      if (response?.ok && response != null && response != undefined) {
         this.setAddedSuccessfully(true);
+        this.setIsAdding(false)
       } else {
         this.setAddedSuccessfully(false);
-      }
-      setTimeout(() => {
         this.setIsAdding(false);
-        //TODO: remove Testing Methode
-        console.log("This message will be logged after 5 seconds");
-      }, 5000);
-    }
-
+      }
+    },
   },
 });

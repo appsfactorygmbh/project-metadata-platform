@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, inject, computed } from 'vue';
+  import { ref, inject, computed, watch } from 'vue';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import {
     FontColorsOutlined,
@@ -16,19 +16,12 @@
   const formRef = ref();
   const labelCol = { style: { width: '150px' } };
   const wrapperCol = { span: 14 };
+  const cancelFetch = ref<boolean>()
 
   // TableStore to refetch Table after Project was added
   const projectsStore = inject(projectsStoreSymbol)
 
   const isAdding = computed (() => projectsStore?.getIsAdding)
-
-  // Required values for creating a project
-  const projectName = ref<string>('');
-  const businessUnit = ref<string>('');
-  const teamNumber = ref<string>('');
-  const department = ref<string>('');
-  const clientName = ref<string>('');
-
   const fetchError = ref<boolean>(false);
 
   interface FormState {
@@ -60,12 +53,13 @@
     open.value = true;
   };
 
-  const reset = () => {
+  const resetModal = () => {
     formRef.value.resetFields();
   };
 
   // checks for correct input
   const handleOk = () => {
+    cancelFetch.value = false
     formRef.value
       .validate()
       .then(() => {
@@ -78,6 +72,22 @@
 
   // sends PUT request to the backend
   const submit = async () => {
+    projectsStore?.setIsAdding(true)
+
+    // wait for project creation and checks whether it has been created correctly
+    watch((isAdding), newVal => {
+      if(newVal == false){
+        if(projectsStore?.getAddedSuccessfully){
+          projectsStore.fetchProjects()
+          fetchError.value = false;
+          open.value = false;
+          resetModal()
+        } else {
+          fetchError.value = true
+        }
+      }
+    })
+
     const projectData = {
       projectName: formState.projectName,
       businessUnit: formState.businessUnit,
@@ -86,9 +96,8 @@
       clientName: formState.clientName,
     };
 
-    const response = await projectsStore.addProject(projectData);
+    await projectsStore?.addProject(projectData);
 
-    // checks for correct input and does PUT request to the backend
   }
 </script>
 
@@ -104,8 +113,9 @@
       v-model:open="open"
       width="500px"
       title="Create Project"
+      :ok-button-props="{disabled: isAdding}"
       @ok="handleOk"
-      :ok-button-props="{ disabled: isAdding}"
+      @cancel="resetModal"
     >
       <a-form
         ref="formRef"
