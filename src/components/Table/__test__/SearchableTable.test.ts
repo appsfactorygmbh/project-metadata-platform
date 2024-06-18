@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { SearchableTable } from '@/components/Table';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { createPinia } from 'pinia';
 import App from '@/App.vue';
 
@@ -23,17 +23,11 @@ const testData = [
   },
 ];
 
-const mockResponse = {
-  ok: true,
-  statusText: 'Ok',
-  json: async () => testData,
-} as Response;
-globalThis.fetch = vi.fn().mockResolvedValue(mockResponse);
-
 const wrapper = mount(SearchableTable, {
   props: {
     paneWidth: 800,
     paneHeight: 800,
+    tableData: testData,
   },
 });
 
@@ -54,6 +48,7 @@ describe('tableComponent.vue', () => {
       props: {
         paneWidth: 300,
         paneHeight: 800,
+        tableData: testData,
       },
     });
     await flushPromises();
