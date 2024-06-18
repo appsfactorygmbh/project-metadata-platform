@@ -2,7 +2,7 @@ import { projectsService } from '../services/ProjectsService';
 import type { ProjectModel } from '@/models/ProjectModel';
 import { defineStore } from 'pinia';
 
-export const ProjectsStore = defineStore('table', {
+export const ProjectsStore = defineStore('projects', {
   state: () => {
     return {
       projects: [] as ProjectModel[],
@@ -24,9 +24,9 @@ export const ProjectsStore = defineStore('table', {
 
     async fetchProjects() {
       this.setLoading(true);
-      const table: ProjectModel[] =
+      const projects: ProjectModel[] =
         (await projectsService.fetchProjects()) ?? [];
-      this.setProjects(table);
+      this.setProjects(projects);
       this.setLoading(false);
     },
   },
