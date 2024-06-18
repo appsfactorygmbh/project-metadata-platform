@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia } from 'pinia';
 import App from '../../../App.vue';
-import projectView from '../projectView.vue';
+import projectView from '../ProjectView.vue';
 
 createApp(App).use(createPinia());
 
@@ -14,6 +14,7 @@ describe('projectView.vue', () => {
       },
     });
     expect(wrapper.find('.projectNameH1').exists()).toBe(true);
+
     expect(wrapper.find('.projectNameInput').exists()).toBe(false);
     expect(wrapper.find('.projectNameH1').text()).toBe('');
   });

@@ -1,5 +1,5 @@
-import { projectsService } from '../services/projectViewServices';
-import { Project } from '../models/projectViewModel';
+import { projectsService } from '@/services/ProjectViewServices';
+import type { Project } from '@/models/ProjectViewModel';
 import { defineStore } from 'pinia';
 
 //to store the project description
@@ -16,7 +16,7 @@ export const projectStore = defineStore({
         businessUnit: '',
         teamNumber: '',
         department: '',
-        clientName: ''
+        clientName: '',
       };
       return this.projectView;
     },

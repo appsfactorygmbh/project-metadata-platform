@@ -1,6 +1,12 @@
 <script setup lang="ts">
   import { Splitpanes, Pane } from 'splitpanes'; //external framework for splitpanes
   import 'splitpanes/dist/splitpanes.css'; //default css for splitpanes
+  import { ref, reactive } from 'vue';
+  import { useElementSize } from '@vueuse/core';
+  import { ProjectView } from '@/views/ProjectView';
+
+  const projectPane = ref(null);
+  const dimensions = reactive(useElementSize(projectPane));
 </script>
 
 <template>
@@ -8,13 +14,16 @@
     <splitpanes class="default-theme">
       <!--
         size: sets default proportion to 1:4
-        min-size: sets smalles possible size to 20% and 1%
+        min-size: sets smallest possible size to 20% and 1%
       -->
-      <pane size="25" min-size="20">
+      <pane size="99" min-size="20">
         <div></div>
       </pane>
-      <pane size="75" min-size="1">
-        <div></div>
+
+      <pane size="1" min-size="1">
+        <div ref="projectPane">
+          <ProjectView :pane-width="dimensions.width" />
+        </div>
       </pane>
     </splitpanes>
   </div>

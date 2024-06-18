@@ -10,11 +10,11 @@ declare module 'vue' {
     AButton: typeof import('ant-design-vue/es')['Button']
     ACard: typeof import('ant-design-vue/es')['Card']
     ACol: typeof import('ant-design-vue/es')['Col']
+    AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     AInput: typeof import('ant-design-vue/es')['Input']
     ARow: typeof import('ant-design-vue/es')['Row']
-    AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     HelloWorld: typeof import('./../src/components/HelloWorld.vue')['default']
-    ProjectView: typeof import('./../src/components/projectView/projectView.vue')['default']
+    ProjectView: typeof import('./../src/components/ProjectView/ProjectView.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
