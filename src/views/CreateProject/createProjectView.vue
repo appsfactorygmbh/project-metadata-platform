@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref } from 'vue';
+  import { ref, inject, computed } from 'vue';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import {
     FontColorsOutlined,
@@ -17,9 +17,28 @@
   const formRef = ref();
   const labelCol = { style: { width: '150px' } };
   const wrapperCol = { span: 14 };
+  import type { InputStateType } from '@/models/InputStateModel.ts';
+  import { projectsStoreSymbol } from '@/store/injectionSymbols';
 
   // TableStore to refetch Table after Project was added
-  const tableStore = TableStore();
+  const projectsStore = inject(projectsStoreSymbol)
+
+  const open = ref<boolean>(false);
+
+  const isAdding = computed (() => projectsStore?.getIsAdding)
+
+  // Required values for creating a project
+  const projectName = ref<string>('');
+  const businessUnit = ref<string>('');
+  const teamNumber = ref<string>('');
+  const department = ref<string>('');
+  const clientName = ref<string>('');
+
+  const projectNameStatus = ref<InputStateType>('');
+  const businessUnitStatus = ref<InputStateType>('');
+  const teamNumberStatus = ref<InputStateType>('');
+  const departmentStatus = ref<InputStateType>('');
+  const clientNameStatus = ref<InputStateType>('');
 
   const fetchError = ref<boolean>(false);
 
@@ -88,6 +107,46 @@
       await tableStore.fetchTable();
       reset();
       open.value = false;
+  // checks for correct input and does PUT request to the backend
+  const handleOk = async () => {
+    validateField(projectName.value, projectNameStatus);
+    validateField(businessUnit.value, businessUnitStatus);
+    validateField(department.value, departmentStatus);
+    validateField(clientName.value, clientNameStatus);
+
+    const validTeamNumber = validateTeamNumber(teamNumber.value);
+
+    if (
+      projectName.value &&
+      businessUnit.value &&
+      teamNumber.value &&
+      department.value &&
+      clientName.value &&
+      validTeamNumber
+    ) {
+      const projectData = {
+        projectName: projectName.value,
+        businessUnit: businessUnit.value,
+        teamNumber: parseInt(teamNumber.value),
+        department: department.value,
+        clientName: clientName.value,
+      };
+      await projectsStore?.addProjects(projectData)
+      if (!projectsStore?.getAddedSuccessfully) {
+        fetchError.value = true;
+        open.value = true;
+      } else {
+        setTimeout(() => {
+          fetchError.value = true;
+          stopWatch();
+        }, 1000);
+        const stopWatch = watch(() => isAdding.value, async (added) => {
+          if (added === false) {
+            await projectsStore?.fetchProjects();
+            resetAndCloseModal();
+          }
+        });
+      }
     }
   };
 </script>
@@ -105,6 +164,7 @@
       width="500px"
       title="Create Project"
       @ok="handleOk"
+      :ok-button-props="{ disabled: isAdding}"
     >
       <a-form
         ref="formRef"

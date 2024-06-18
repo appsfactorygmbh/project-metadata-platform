@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { mount, VueWrapper } from '@vue/test-utils';
 import { createPinia } from 'pinia';
 import createProjectView from '../createProjectView.vue';
-import { projectsService } from '../../../services/ProjectService.ts';
+import { projectsService } from '../../../services/ProjectsService';
 
 type CreateProjectViewInstance = {
   projectName: string;
