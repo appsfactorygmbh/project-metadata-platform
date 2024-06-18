@@ -6,8 +6,8 @@
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
-  import type { Project } from '@/models/TableModel';
-  import { TableStore } from '@/store/TableStore';
+  import type { ProjectModel } from '@/models/ProjectModel';
+  import { ProjectsStore } from '@/store/ProjectsStore';
   import { storeToRefs } from 'pinia';
 
   //Get the width of the left pane from App.vue
@@ -20,6 +20,10 @@
       type: Number,
       required: true,
     },
+    tableData: {
+      type: Array<ProjectModel>,
+      required: true,
+    },
   });
 
   //update paneWidth when the pane is resized
@@ -30,14 +34,19 @@
     },
   );
 
-  const store = TableStore();
+  watch(
+    () => props.tableData,
+    () => {
+      dataSource.length = 0;
+      addTableEntry(props.tableData);
+    },
+  );
+
+  const store = ProjectsStore();
   const { isLoading } = storeToRefs(store);
 
-  onMounted(async () => {
-    await store.fetchTable();
-    const data: Project[] = store.getTable;
-
-    addTableEntry(data);
+  onMounted(() => {
+    addTableEntry(props.tableData);
     changeColumns(props.paneWidth);
   });
 </script>
@@ -152,13 +161,13 @@
 <script lang="ts">
   /*  Data implementation  */
 
-  const dataSource: Project[] = reactive([]);
+  const dataSource: ProjectModel[] = reactive([]);
 
   /**
    * Adds a new table entry to dataSource.
    * @param {Project[]} data Stores the data that should be added.
    */
-  function addTableEntry(data: Project[]) {
+  function addTableEntry(data: ProjectModel[]) {
     for (const date of data) {
       dataSource.push({
         id: date.id,
@@ -191,7 +200,7 @@
       dataIndex: 'projectName',
       key: 'pname',
       customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: Project) =>
+      onFilter: (value: string | number | boolean, record: ProjectModel) =>
         record.projectName
           .toString()
           .toLowerCase()
@@ -201,7 +210,7 @@
       },
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: Project, b: Project) =>
+      sorter: (a: ProjectModel, b: ProjectModel) =>
         a.projectName.localeCompare(b.projectName),
       defaultSortOrder: 'ascend' as const,
     },
@@ -210,7 +219,7 @@
       dataIndex: 'clientName',
       key: 'cname',
       customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: Project) =>
+      onFilter: (value: string | number | boolean, record: ProjectModel) =>
         record.clientName
           .toString()
           .toLowerCase()
@@ -220,7 +229,7 @@
       },
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: Project, b: Project) =>
+      sorter: (a: ProjectModel, b: ProjectModel) =>
         a.clientName.localeCompare(b.clientName),
       defaultSortOrder: 'ascend' as const,
       hidden: false,
@@ -231,7 +240,7 @@
       key: 'bu',
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: Project, b: Project) =>
+      sorter: (a: ProjectModel, b: ProjectModel) =>
         a.businessUnit.localeCompare(b.businessUnit),
       defaultSortOrder: 'ascend' as const,
       hidden: false,
@@ -242,7 +251,7 @@
       key: 'tnr',
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: Project, b: Project) => a.teamNumber - b.teamNumber,
+      sorter: (a: ProjectModel, b: ProjectModel) => a.teamNumber - b.teamNumber,
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },
