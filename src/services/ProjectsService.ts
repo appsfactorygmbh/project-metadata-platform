@@ -4,12 +4,11 @@ class ProjectsService {
   fetchProjects = async () => {
     try {
       const response = await fetch(
-        //import.meta.env.VITE_BACKEND_URL + '/projects',
-        './src/components/Table/test.json',
+        import.meta.env.VITE_BACKEND_URL + '/projects',
+        //'./src/components/Table/test.json',
       );
 
       const data: ProjectModel[] = await response.json();
-      console.log(data);
 
       return data;
     } catch (err) {

@@ -1,23 +1,15 @@
 <script lang="ts" setup>
   import { SmileOutlined, SearchOutlined } from '@ant-design/icons-vue';
-  import {
-    reactive,
-    ref,
-    watch,
-    onMounted,
-    computed,
-    type ComputedRef,
-    toRaw,
-  } from 'vue';
-
+  import { reactive, ref, watch, onMounted, inject, toRaw } from 'vue';
+  import type { ComputedRef } from 'vue';
   import { useWindowSize } from '@vueuse/core';
   import type {
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
-  import type { ProjectType } from '@/models/TableModel';
-  import { TableStore } from '@/store/TableStore';
+  import type { ProjectModel } from '@/models/ProjectModel';
   import { storeToRefs } from 'pinia';
+  import { projectsStoreSymbol } from '@/store/injectionSymbols';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -39,20 +31,25 @@
     },
   );
 
-  const store = TableStore();
-  const { isLoading } = storeToRefs(store);
+  const projectsStore = inject(projectsStoreSymbol)!;
+
+  const { isLoading } = storeToRefs(projectsStore);
 
   onMounted(async () => {
-    await store.fetchTable();
-    const data: ComputedRef<ProjectType[]> = computed(() => store.getTable);
-    addTableEntry(store.getTable);
+    await projectsStore.fetchProjects();
+    const data: ComputedRef<ProjectModel[]> = computed(
+      () => projectsStore.getProjects,
+    );
+    addTableEntry(projectsStore.getProjects);
 
     // Updates Table, when a change in the store is detected
     watch(
       () => data.value,
       (newValue, oldValue) => {
-        const newProject = newValue.filter(newObj => !oldValue.some(oldObj => oldObj["id"] === newObj["id"]));
-        addTableEntry(toRaw(newProject))
+        const newProject = newValue.filter(
+          (newObj) => !oldValue.some((oldObj) => oldObj['id'] === newObj['id']),
+        );
+        addTableEntry(toRaw(newProject));
       },
     );
     changeColumns(props.paneWidth);
@@ -169,13 +166,13 @@
 <script lang="ts">
   /*  Data implementation  */
 
-  const dataSource: ProjectType[] = reactive([]);
+  const dataSource: ProjectModel[] = reactive([]);
 
   /**
    * Adds a new table entry to dataSource.
    * @param {Project[]} data Stores the data that should be added.
    */
-  function addTableEntry(data: ProjectType[]) {
+  function addTableEntry(data: ProjectModel[]) {
     for (const date of data) {
       dataSource.push({
         id: date.id,
@@ -208,7 +205,7 @@
       dataIndex: 'projectName',
       key: 'pname',
       customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: ProjectType) =>
+      onFilter: (value: string | number | boolean, record: ProjectModel) =>
         record.projectName
           .toString()
           .toLowerCase()
@@ -218,7 +215,7 @@
       },
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: ProjectType, b: ProjectType) =>
+      sorter: (a: ProjectModel, b: ProjectModel) =>
         a.projectName.localeCompare(b.projectName),
       defaultSortOrder: 'ascend' as const,
     },
@@ -227,7 +224,7 @@
       dataIndex: 'clientName',
       key: 'cname',
       customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: ProjectType) =>
+      onFilter: (value: string | number | boolean, record: ProjectModel) =>
         record.clientName
           .toString()
           .toLowerCase()
@@ -237,7 +234,7 @@
       },
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: ProjectType, b: ProjectType) =>
+      sorter: (a: ProjectModel, b: ProjectModel) =>
         a.clientName.localeCompare(b.clientName),
       defaultSortOrder: 'ascend' as const,
       hidden: false,
@@ -248,7 +245,7 @@
       key: 'bu',
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: ProjectType, b: ProjectType) =>
+      sorter: (a: ProjectModel, b: ProjectModel) =>
         a.businessUnit.localeCompare(b.businessUnit),
       defaultSortOrder: 'ascend' as const,
       hidden: false,
@@ -259,7 +256,7 @@
       key: 'tnr',
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: ProjectType, b: ProjectType) => a.teamNumber - b.teamNumber,
+      sorter: (a: ProjectModel, b: ProjectModel) => a.teamNumber - b.teamNumber,
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },
