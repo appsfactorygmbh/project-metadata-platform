@@ -1,34 +1,53 @@
-// import { mount } from '@vue/test-utils';
-import { describe, it, expect, vi } from 'vitest';
-// import PluginView from '../PluginView.vue';
-import { createPinia, setActivePinia } from 'pinia';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { shallowMount } from '@vue/test-utils';
+import { defineComponent, computed, toRaw } from 'vue';
+import { setActivePinia, createPinia } from 'pinia';
+import { usePluginsStore } from '@/store/Plugin/PluginStore';
+import type { PluginType } from '@/models/PluginType';
 
-const fetchPluginsMock = vi.fn();
-const getPluginsMock = vi.fn(() => []);
+// Mock the pluginService module
+vi.mock('@/services/Plugin/PluginService', () => ({
+  pluginService: {
+    fetchPlugins: vi.fn(),
+  },
+}));
 
-vi.mock('@/store/Plugin/PluginStore.ts', () => {
-  return {
-    usePluginsStore: vi.fn(() => ({
-      fetchPlugins: fetchPluginsMock,
-      getPlugins: getPluginsMock,
-    })),
-  };
+// Define a PluginView component for testing
+const PluginView = defineComponent({
+  setup() {
+    const pluginStore = usePluginsStore();
+    const plugins = computed(() => toRaw(pluginStore.getPlugins));
+    return { plugins };
+  },
+  template: '<div></div>',
 });
 
-describe('PluginView.vue', () => {
+describe('PluginView', () => {
   beforeEach(() => {
-    const pinia = createPinia();
-    setActivePinia(pinia);
+    // Set up a new Pinia store instance before each test
+    setActivePinia(createPinia());
   });
 
-  it('calls fetchPlugins on beforeMount', async () => {
-    // mount(PluginView, {
-    //   props: { projectID: '100' },
-    // });
-    //
-    // await new Promise((resolve) => setTimeout(resolve, 0));
-    //
-    // expect(fetchPluginsMock).toHaveBeenCalledWith('100');
-    expect(1 + 1).equals(2);
+  it('should compute plugins from the store', async () => {
+    const store = usePluginsStore();
+    const mockPlugins: PluginType[] = [
+      {
+        pluginName: 'testPlugin',
+        displayName: 'Test Plugin',
+        url: 'http://example.com/',
+      },
+    ];
+
+    // Set the store plugins
+    store.setPlugins(mockPlugins);
+
+    // Mount the PluginView component
+    const wrapper = shallowMount(PluginView);
+
+    // Access the computed plugins
+    const computedPlugins = wrapper.vm.plugins;
+
+    // Check if the computed plugins match the store plugins
+    expect(computedPlugins).toEqual(mockPlugins);
   });
 });

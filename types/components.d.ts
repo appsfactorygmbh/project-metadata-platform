@@ -13,7 +13,10 @@ declare module 'vue' {
     ACard: typeof import('ant-design-vue/es')['Card']
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     AFloatButton: typeof import('ant-design-vue/es')['FloatButton']
+    AForm: typeof import('ant-design-vue/es')['Form']
+    AFormItem: typeof import('ant-design-vue/es')['FormItem']
     AInput: typeof import('ant-design-vue/es')['Input']
+    AInputNumber: typeof import('ant-design-vue/es')['InputNumber']
     AModal: typeof import('ant-design-vue/es')['Modal']
     ASpace: typeof import('ant-design-vue/es')['Space']
     ATable: typeof import('ant-design-vue/es')['Table']
@@ -21,5 +24,6 @@ declare module 'vue' {
     PluginComponent: typeof import('./../src/components/Plugin/PluginComponent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
   }
 }
