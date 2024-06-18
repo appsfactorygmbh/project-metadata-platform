@@ -8,22 +8,17 @@
     BankOutlined,
     UserOutlined,
   } from '@ant-design/icons-vue';
-  import { projectsService } from '@/services/ProjectService.ts';
-  import { TableStore } from '@/store/TableStore.ts';
   import { reactive } from 'vue';
   import type { UnwrapRef } from 'vue';
+  import { projectsStoreSymbol } from '@/store/injectionSymbols';
 
   const open = ref<boolean>(false);
   const formRef = ref();
   const labelCol = { style: { width: '150px' } };
   const wrapperCol = { span: 14 };
-  import type { InputStateType } from '@/models/InputStateModel.ts';
-  import { projectsStoreSymbol } from '@/store/injectionSymbols';
 
   // TableStore to refetch Table after Project was added
   const projectsStore = inject(projectsStoreSymbol)
-
-  const open = ref<boolean>(false);
 
   const isAdding = computed (() => projectsStore?.getIsAdding)
 
@@ -33,12 +28,6 @@
   const teamNumber = ref<string>('');
   const department = ref<string>('');
   const clientName = ref<string>('');
-
-  const projectNameStatus = ref<InputStateType>('');
-  const businessUnitStatus = ref<InputStateType>('');
-  const teamNumberStatus = ref<InputStateType>('');
-  const departmentStatus = ref<InputStateType>('');
-  const clientNameStatus = ref<InputStateType>('');
 
   const fetchError = ref<boolean>(false);
 
@@ -97,58 +86,10 @@
       clientName: formState.clientName,
     };
 
-    const response = await projectsService.addProject(projectData);
-    console.log(response);
-    if (!response?.ok || undefined) {
-      fetchError.value = true;
-      open.value = true;
-    } else {
-      fetchError.value = false;
-      await tableStore.fetchTable();
-      reset();
-      open.value = false;
-  // checks for correct input and does PUT request to the backend
-  const handleOk = async () => {
-    validateField(projectName.value, projectNameStatus);
-    validateField(businessUnit.value, businessUnitStatus);
-    validateField(department.value, departmentStatus);
-    validateField(clientName.value, clientNameStatus);
+    const response = await projectsStore.addProject(projectData);
 
-    const validTeamNumber = validateTeamNumber(teamNumber.value);
-
-    if (
-      projectName.value &&
-      businessUnit.value &&
-      teamNumber.value &&
-      department.value &&
-      clientName.value &&
-      validTeamNumber
-    ) {
-      const projectData = {
-        projectName: projectName.value,
-        businessUnit: businessUnit.value,
-        teamNumber: parseInt(teamNumber.value),
-        department: department.value,
-        clientName: clientName.value,
-      };
-      await projectsStore?.addProjects(projectData)
-      if (!projectsStore?.getAddedSuccessfully) {
-        fetchError.value = true;
-        open.value = true;
-      } else {
-        setTimeout(() => {
-          fetchError.value = true;
-          stopWatch();
-        }, 1000);
-        const stopWatch = watch(() => isAdding.value, async (added) => {
-          if (added === false) {
-            await projectsStore?.fetchProjects();
-            resetAndCloseModal();
-          }
-        });
-      }
-    }
-  };
+    // checks for correct input and does PUT request to the backend
+  }
 </script>
 
 <template>

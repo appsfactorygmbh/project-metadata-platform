@@ -48,13 +48,14 @@ export const ProjectsStore = defineStore('table', {
     async addProjects(projectData: CreateProjectModel){
       this.setIsAdding(true);
       const response:Response | undefined = await projectsService.addProject(projectData);
-      if (response?.ok && response != undefined) {
+      if (response?.ok && response != undefined && response != null) {
         this.setAddedSuccessfully(true);
       } else {
         this.setAddedSuccessfully(false);
       }
       setTimeout(() => {
         this.setIsAdding(false);
+        //TODO: remove Testing Methode
         console.log("This message will be logged after 5 seconds");
       }, 5000);
     }
