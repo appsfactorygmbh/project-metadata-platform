@@ -1,10 +1,12 @@
 <script setup lang="ts">
-  import { ThemeProvider } from '@/router/Provider';
+  import { ThemeProvider, ProjectProvider } from '@/router/Provider';
 </script>
 
 <template>
   <ThemeProvider>
-    <RouterView />
+    <ProjectProvider>
+      <RouterView />
+    </ProjectProvider>
   </ThemeProvider>
 </template>
 

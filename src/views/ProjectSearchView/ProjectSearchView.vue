@@ -1,8 +1,7 @@
 <script lang="ts" setup>
   import { SearchableTable } from '@/components/Table';
-  import { ProjectsStore } from '@/store/ProjectsStore';
-  import type { ProjectModel } from '@/models/ProjectModel';
-  import { onMounted } from 'vue';
+  import { projectsStoreSymbol } from '@/store/injectionSymbols';
+  import { onMounted, inject } from 'vue';
 
   const props = defineProps({
     paneWidth: {
@@ -15,21 +14,16 @@
     },
   });
 
-  const store = ProjectsStore();
-  let tableData: ProjectModel[] = [];
+  const projectsStore = inject(projectsStoreSymbol)!;
 
-  async function fetchProjects() {
-    await store.fetchProjects();
-    tableData = store.getProjects;
-  }
-
-  onMounted(fetchProjects);
+  onMounted(async () => {
+    await projectsStore.fetchProjects();
+  });
 </script>
 
 <template>
   <SearchableTable
     :pane-width="props.paneWidth"
     :pane-height="props.paneHeight"
-    :table-data="tableData"
   />
 </template>

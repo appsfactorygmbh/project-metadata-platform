@@ -1,14 +1,15 @@
 <script lang="ts" setup>
   import { SmileOutlined, SearchOutlined } from '@ant-design/icons-vue';
-  import { reactive, ref, watch, onMounted } from 'vue';
+  import { reactive, ref, watch, onMounted, inject, toRaw } from 'vue';
+  import type { ComputedRef } from 'vue';
   import { useWindowSize } from '@vueuse/core';
   import type {
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
   import type { ProjectModel } from '@/models/ProjectModel';
-  import { ProjectsStore } from '@/store/ProjectsStore';
   import { storeToRefs } from 'pinia';
+  import { projectsStoreSymbol } from '@/store/injectionSymbols';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -18,10 +19,6 @@
     },
     paneHeight: {
       type: Number,
-      required: true,
-    },
-    tableData: {
-      type: Array<ProjectModel>,
       required: true,
     },
   });
@@ -34,19 +31,27 @@
     },
   );
 
-  watch(
-    () => props.tableData,
-    () => {
-      dataSource.length = 0;
-      addTableEntry(props.tableData);
-    },
-  );
+  const projectsStore = inject(projectsStoreSymbol)!;
 
-  const store = ProjectsStore();
-  const { isLoading } = storeToRefs(store);
+  const { isLoading } = storeToRefs(projectsStore);
 
-  onMounted(() => {
-    addTableEntry(props.tableData);
+  onMounted(async () => {
+    await projectsStore.fetchProjects();
+    const data: ComputedRef<ProjectModel[]> = computed(
+      () => projectsStore.getProjects,
+    );
+    addTableEntry(projectsStore.getProjects);
+
+    // Updates Table, when a change in the store is detected
+    watch(
+      () => data.value,
+      (newValue, oldValue) => {
+        const newProject = newValue.filter(
+          (newObj) => !oldValue.some((oldObj) => oldObj['id'] === newObj['id']),
+        );
+        addTableEntry(toRaw(newProject));
+      },
+    );
     changeColumns(props.paneWidth);
   });
 </script>
