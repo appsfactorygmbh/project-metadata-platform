@@ -13,11 +13,12 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, computed, toRaw } from 'vue';
+  import { onBeforeMount, computed, toRaw, inject } from 'vue';
   import PluginComponent from '../../components/Plugin/PluginComponent.vue';
-  import { usePluginsStore } from '../../store/Plugin/PluginStore.ts';
+  import { pluginStoreSymbol } from '@/store/Plugin/injectionsSymbols';
 
-  const pluginStore = usePluginsStore();
+  const pluginStore = inject(pluginStoreSymbol);
+
   const props = defineProps({
     projectID: {
       type: String,
@@ -26,11 +27,11 @@
   });
 
   onBeforeMount(async () => {
-    await pluginStore.fetchPlugins(props.projectID);
+    await pluginStore?.fetchPlugins(props.projectID);
   });
 
-  const plugins = computed(() => toRaw(pluginStore.getPlugins));
-  const loading = ref(pluginStore.isLoading);
+  const plugins = computed(() => toRaw(pluginStore?.getPlugins));
+  const loading = ref(pluginStore?.isLoading);
 </script>
 
 <style scoped lang="css">

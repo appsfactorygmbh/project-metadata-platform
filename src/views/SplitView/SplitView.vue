@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { Splitpanes, Pane } from 'splitpanes'; //external framework for splitpanes
-  import 'splitpanes/dist/splitpanes.css'; //default css for splitpanes
+  import 'splitpanes/dist/splitpanes.css';
+  import PluginView from '@/views/PluginView/PluginView.vue'; //default css for splitpanes
 </script>
 
 <template>
@@ -14,7 +15,9 @@
         <div></div>
       </pane>
       <pane size="75" min-size="1">
-        <div></div>
+        <div>
+          <PluginView project-i-d="100"></PluginView>
+        </div>
       </pane>
     </splitpanes>
   </div>
