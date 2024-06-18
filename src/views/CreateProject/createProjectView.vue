@@ -26,19 +26,19 @@
   interface FormState {
     projectName: string;
     businessUnit: string;
-    teamNumber: number | null;
+    teamNumber: number | undefined;
     department: string;
     clientName: string;
   }
   const formState: UnwrapRef<FormState> = reactive({
     projectName: '',
     businessUnit: '',
-    teamNumber: null,
+    teamNumber: undefined,
     department: '',
     clientName: '',
   });
   const validateMessages = {
-    required: 'Please input the field.',
+    required: 'This field cannot be empty.',
     types: {
       number: 'Team number is not a valid number!',
     },
