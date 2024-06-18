@@ -14,7 +14,7 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint --fix src",
-    "format": "prettier -write .",
+    "format": "prettier --write .",
     "prepare": "husky"
   },
   "dependencies": {
