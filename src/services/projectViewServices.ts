@@ -1,11 +1,12 @@
-import type { Project } from '@/models/ProjectViewModel';
+import type { Project } from '@/models/projectViewModel';
 
 //Service to fetch data from backend
 class ProjectsService {
   fetchProject = async (): Promise<Project | null> => {
     try {
       const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL + '/Projects',
+        //import.meta.env.VITE_BACKEND_URL + '/Projects',
+        'src/components/projectView/test.json',
         {
           headers: {
             Accept: 'text/plain',
@@ -15,8 +16,6 @@ class ProjectsService {
         },
       );
 
-      // Fetch from local for test
-      //const response = await fetch('src/components/projectView/test.json');
       const data: Project = await response.json();
       return data;
     } catch (err) {

@@ -1,5 +1,5 @@
-import { projectsService } from '@/services/ProjectViewServices';
-import type { Project } from '@/models/ProjectViewModel';
+import { projectsService } from '@/services/projectViewServices';
+import type { Project } from '@/models/projectViewModel';
 import { defineStore } from 'pinia';
 
 //to store the project description

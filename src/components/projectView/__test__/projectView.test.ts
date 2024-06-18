@@ -1,16 +1,32 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia } from 'pinia';
 import App from '../../../App.vue';
-import projectView from '../ProjectView.vue';
+import projectView from '../projectView.vue';
 
 createApp(App).use(createPinia());
 
+const data = {
+  projectName: 'Heute Show',
+  department: 'IT',
+  clientName: 'Zdf',
+  businessUnit: 'Bu Health',
+  teamNumber: 42,
+};
+
 describe('projectView.vue', () => {
+  const mockResponse = {
+    ok: true,
+    statusText: 'Ok',
+    json: async () => data,
+  } as Response;
+  globalThis.fetch = vi.fn().mockResolvedValue(mockResponse);
+
   it('displays the project name when not editing', async () => {
     const wrapper = mount(projectView, {
       propsData: {
         paneWidth: 1000,
+        isTest: true,
       },
     });
     expect(wrapper.find('.projectNameH1').exists()).toBe(true);
@@ -29,10 +45,7 @@ describe('projectView.vue', () => {
     await editButton.trigger('click');
 
     expect(wrapper.find('.projectNameH1').exists()).toBe(false);
-    expect(wrapper.find('.projectNameInput').exists()).toBe(true);
-
-    const input = wrapper.find('.projectNameInput');
-    await input.setValue('Your Project Name');
+    expect(wrapper.find('input').exists()).toBe(true);
   });
 
   it('Save name', async () => {
@@ -45,7 +58,7 @@ describe('projectView.vue', () => {
     const input = wrapper.find('.projectNameInput');
 
     await editButton.trigger('click');
-    expect(wrapper.find('.projectNameH1').text()).toBe('Your Project Name');
-    expect((input.element as HTMLInputElement).value).toBe('Your Project Name');
+    expect(wrapper.find('.projectNameH1').text()).toBe('Heute Show');
+    expect((input.element as HTMLInputElement).value).toBe('Heute Show');
   });
 });

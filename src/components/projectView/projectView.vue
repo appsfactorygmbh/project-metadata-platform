@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { onMounted, computed, ref, watch } from 'vue';
-  import type { Project } from '@/models/ProjectViewModel';
-  import { projectStore } from '@/store/ProjectViewStore';
+  import type { Project } from '@/models/projectViewModel';
+  import { projectStore } from '@/store/projectViewStore';
 
   const store = projectStore();
 
@@ -10,6 +10,10 @@
     paneWidth: {
       type: Number,
       required: true,
+    },
+    isTest: {
+      type: Boolean,
+      default: false,
     },
   });
 
