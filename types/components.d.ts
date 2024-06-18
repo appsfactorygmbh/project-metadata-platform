@@ -12,6 +12,7 @@ declare module 'vue' {
     ACol: typeof import('ant-design-vue/es')['Col']
     AInput: typeof import('ant-design-vue/es')['Input']
     ARow: typeof import('ant-design-vue/es')['Row']
+    AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     HelloWorld: typeof import('./../src/components/HelloWorld.vue')['default']
     ProjectView: typeof import('./../src/components/projectView/projectView.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
