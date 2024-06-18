@@ -51,9 +51,9 @@ export const ProjectsStore = defineStore('table', {
       const response: Response | undefined =
         await projectsService.addProject(projectData);
       console.log(response);
-      if (response?.ok && response != null && response != undefined) {
+      if (response?.ok && response != null) {
         this.setAddedSuccessfully(true);
-        this.setIsAdding(false)
+        this.setIsAdding(false);
       } else {
         this.setAddedSuccessfully(false);
         this.setIsAdding(false);

@@ -10,6 +10,7 @@
   import type { ProjectModel } from '@/models/ProjectModel';
   import { storeToRefs } from 'pinia';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
+  import { ProjectsStore } from '@/store/ProjectsStore';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -21,6 +22,10 @@
       type: Number,
       required: true,
     },
+    isTest: {
+      type: Boolean,
+      default: false,
+    },
   });
 
   //update paneWidth when the pane is resized
@@ -31,12 +36,20 @@
     },
   );
 
-  const projectsStore = inject(projectsStoreSymbol)!;
+  let projectsStore;
+
+  if (props.isTest) {
+    projectsStore = ProjectsStore();
+  } else {
+    projectsStore = inject(projectsStoreSymbol)!;
+  }
 
   const { isLoading } = storeToRefs(projectsStore);
 
   onMounted(async () => {
     await projectsStore.fetchProjects();
+    changeColumns(props.paneWidth);
+
     const data: ComputedRef<ProjectModel[]> = computed(
       () => projectsStore.getProjects,
     );
@@ -52,7 +65,6 @@
         addTableEntry(toRaw(newProject));
       },
     );
-    changeColumns(props.paneWidth);
   });
 </script>
 

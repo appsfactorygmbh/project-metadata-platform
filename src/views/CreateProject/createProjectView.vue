@@ -16,12 +16,12 @@
   const formRef = ref();
   const labelCol = { style: { width: '150px' } };
   const wrapperCol = { span: 14 };
-  const cancelFetch = ref<boolean>()
+  const cancelFetch = ref<boolean>();
 
   // TableStore to refetch Table after Project was added
-  const projectsStore = inject(projectsStoreSymbol)
+  const projectsStore = inject(projectsStoreSymbol);
 
-  const isAdding = computed (() => projectsStore?.getIsAdding)
+  const isAdding = computed(() => projectsStore?.getIsAdding);
   const fetchError = ref<boolean>(false);
 
   interface FormState {
@@ -59,7 +59,7 @@
 
   // checks for correct input
   const handleOk = () => {
-    cancelFetch.value = false
+    cancelFetch.value = false;
     formRef.value
       .validate()
       .then(() => {
@@ -72,21 +72,21 @@
 
   // sends PUT request to the backend
   const submit = async () => {
-    projectsStore?.setIsAdding(true)
+    projectsStore?.setIsAdding(true);
 
     // wait for project creation and checks whether it has been created correctly
-    watch((isAdding), newVal => {
-      if(newVal == false){
-        if(projectsStore?.getAddedSuccessfully){
-          projectsStore.fetchProjects()
+    watch(isAdding, (newVal) => {
+      if (newVal == false) {
+        if (projectsStore?.getAddedSuccessfully) {
+          projectsStore.fetchProjects();
           fetchError.value = false;
           open.value = false;
-          resetModal()
+          resetModal();
         } else {
-          fetchError.value = true
+          fetchError.value = true;
         }
       }
-    })
+    });
 
     const projectData = {
       projectName: formState.projectName,
@@ -97,8 +97,7 @@
     };
 
     await projectsStore?.addProject(projectData);
-
-  }
+  };
 </script>
 
 <template>
@@ -113,7 +112,7 @@
       v-model:open="open"
       width="500px"
       title="Create Project"
-      :ok-button-props="{disabled: isAdding}"
+      :ok-button-props="{ disabled: isAdding }"
       @ok="handleOk"
       @cancel="resetModal"
     >

@@ -1,10 +1,9 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { SearchableTable } from '@/components/Table';
-import { describe, it, expect } from 'vitest';
-import { createPinia } from 'pinia';
-import App from '@/App.vue';
+import { describe, it, expect, vi } from 'vitest';
+import { createPinia, setActivePinia } from 'pinia';
 
-createApp(App).use(createPinia());
+setActivePinia(createPinia());
 
 const testData = [
   {
@@ -23,19 +22,25 @@ const testData = [
   },
 ];
 
-const wrapper = mount(SearchableTable, {
-  props: {
-    paneWidth: 800,
-    paneHeight: 800,
-    tableData: testData,
-  },
-});
-
 describe('tableComponent.vue', () => {
+  const mockResponse = {
+    ok: true,
+    statusText: 'Ok',
+    json: async () => testData,
+  } as Response;
+  globalThis.fetch = vi.fn().mockResolvedValue(mockResponse);
+
+  const wrapper = mount(SearchableTable, {
+    props: {
+      paneWidth: 800,
+      paneHeight: 800,
+      isTest: true,
+    },
+  });
   it('renders correctly with 4 columns', () => {
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
   });
-  it('shows the data entries in alphabetical order', () => {
+  it('shows the data entries in alphabetical order', async () => {
     expect(
       wrapper.findAll('.ant-table-row')[0].find('.ant-table-cell').text(),
     ).toBe('A');
@@ -48,7 +53,7 @@ describe('tableComponent.vue', () => {
       props: {
         paneWidth: 300,
         paneHeight: 800,
-        tableData: testData,
+        isTest: true,
       },
     });
     await flushPromises();
