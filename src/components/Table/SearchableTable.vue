@@ -49,11 +49,11 @@
   onMounted(async () => {
     await projectsStore.fetchProjects();
     changeColumns(props.paneWidth);
+    addTableEntry(projectsStore.getProjects);
 
     const data: ComputedRef<ProjectModel[]> = computed(
       () => projectsStore.getProjects,
     );
-    addTableEntry(projectsStore.getProjects);
 
     // Updates Table, when a change in the store is detected
     watch(

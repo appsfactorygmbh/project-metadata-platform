@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { SearchableTable } from '@/components/Table';
 import { describe, it, expect, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+import { Button, Input } from 'ant-design-vue';
 
 setActivePinia(createPinia());
 
@@ -47,6 +48,21 @@ describe('tableComponent.vue', () => {
     expect(
       wrapper.findAll('.ant-table-row')[1].find('.ant-table-cell').text(),
     ).toBe('C');
+  });
+  it('filters the table when using the search function', async () => {
+    expect(wrapper.findAll('.ant-table-row')).toHaveLength(2);
+    await wrapper.find('.ant-table-filter-trigger').trigger('click');
+
+    const searchInput = wrapper.getComponent(Input);
+    const searchButton = wrapper.getComponent(Button);
+
+    await searchInput.get('.ant-input').setValue('A');
+    await searchButton.trigger('click');
+
+    expect(wrapper.findAll('.ant-table-row')).toHaveLength(1);
+    expect(wrapper.find('.ant-table-row').find('.ant-table-cell').text()).toBe(
+      'A',
+    );
   });
   it('hides columns when the pane width is not large enough', async () => {
     const wrapper2 = mount(SearchableTable, {
