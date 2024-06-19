@@ -9,7 +9,10 @@
   } from 'ant-design-vue/es/table/interface';
   import type { ProjectModel } from '@/models/ProjectModel';
   import { storeToRefs } from 'pinia';
-  import { projectsStoreSymbol } from '@/store/injectionSymbols';
+  import {
+    projectInformationStoreSymbol,
+    projectsStoreSymbol,
+  } from '@/store/injectionSymbols';
   import { ProjectsStore } from '@/store/ProjectsStore';
 
   //Get the width of the left pane from App.vue
@@ -37,6 +40,7 @@
   );
 
   let projectsStore;
+  const projectInformationStore = inject(projectInformationStoreSymbol)!;
 
   if (props.isTest) {
     projectsStore = ProjectsStore();
@@ -45,6 +49,14 @@
   }
 
   const { isLoading } = storeToRefs(projectsStore);
+
+  const customRow = (record: ProjectModel) => {
+    return {
+      onClick: () => {
+        projectInformationStore.fetchProjectInformation(record.id);
+      },
+    };
+  };
 
   onMounted(async () => {
     await projectsStore.fetchProjects();
@@ -80,6 +92,7 @@
     :pagination="false"
     :loading="isLoading"
     :scroll="{ y: props.paneHeight - 55 }"
+    :custom-row="customRow"
     bordered
   >
     <!-- Header of the table -->

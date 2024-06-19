@@ -2,17 +2,20 @@
   import {
     ThemeProvider,
     ProjectProvider,
-    PluginProvider,
+    ProjectInformationProvider,
+    PluginProvider
   } from '@/router/Provider';
 </script>
 
 <template>
   <ThemeProvider>
-    <PluginProvider>
-      <ProjectProvider>
+  <PluginProvider>
+    <ProjectProvider>
+      <ProjectInformationProvider>
         <RouterView />
-      </ProjectProvider>
-    </PluginProvider>
+      </ProjectInformationProvider>
+    </ProjectProvider>
+  <PluginProvider />
   </ThemeProvider>
 </template>
 
