@@ -14,6 +14,9 @@ export const usePluginsStore = defineStore('plugin', {
     getPlugins(): PluginType[] {
       return this.plugins;
     },
+    getIsLoading(): boolean {
+      return this.isLoading;
+    },
   },
 
   actions: {

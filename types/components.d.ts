@@ -14,6 +14,7 @@ declare module 'vue' {
     ACol: typeof import('ant-design-vue/es')['Col']
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     AInput: typeof import('ant-design-vue/es')['Input']
+    ASkeleton: typeof import('ant-design-vue/es')['Skeleton']
     ATable: typeof import('ant-design-vue/es')['Table']
     HelloWorld: typeof import('./../src/components/HelloWorld.vue')['default']
     Plugin: typeof import('./../src/components/Plugin.vue')['default']

@@ -1,4 +1,4 @@
-import type { PluginType } from '../../models/PluginType.ts';
+import type { PluginType } from '@/models/PluginType.ts';
 class PluginService {
   fetchPlugins = async (projectID: number): Promise<PluginType[]> => {
     console.log(projectID);
