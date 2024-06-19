@@ -12,6 +12,7 @@
   import { projectInformationStoreSymbol } from '@/store/injectionSymbols';
   import { ProjectInformationStore } from '@/store/ProjectInformationStore';
   import type { ComputedRef } from 'vue';
+  import { storeToRefs } from 'pinia';
 
   //Get the width of the right pane from App.vue
   const props = defineProps({
@@ -40,6 +41,8 @@
   } else {
     store = inject(projectInformationStoreSymbol)!;
   }
+
+  const { isLoading } = storeToRefs(store);
 
   const profileFieldSize = computed(() => ({
     width: getWidth(props.paneWidth),
@@ -76,20 +79,16 @@
 
     <div class="mainStyle">
       <!-- create box for the project name -->
-      <a-card class="nameBoxStyle">
-        <h1
-          v-if="true"
-          class="projectNameH1"
-          style="font-size: 2.8em; font-weight: bold"
-        >
+      <a-card class="nameBoxStyle" :loading="isLoading">
+        <h1 class="projectNameH1" style="font-size: 2.8em; font-weight: bold">
           {{ projectData.projectName }}
         </h1>
-        <input
+        <!--<input
           v-else
           v-model="projectData.projectName"
           class="projectNameInput"
           type="input"
-        />
+        />--->
         <!-- pencil icon for editing the project name -->
         <a-button class="editIconStyle" ghost @click="placeHolder">
           <template #icon
@@ -104,36 +103,40 @@
           <label for="businessUnit" style="font-size: 1.3em; font-weight: bold"
             >Business Unit:</label
           >
-          <p style="font-size: 1.6em; margin: 0">
+          <p v-if="!isLoading" style="font-size: 1.6em; margin: 0">
             {{ projectData.businessUnit }}
           </p>
+          <a-skeleton v-else active :paragraph="false" />
         </a-card>
 
         <a-card class="profileFieldStyle" :style="profileFieldSize">
           <label for="teamNumber" style="font-size: 1.3em; font-weight: bold"
             >Team Number:</label
           >
-          <p style="font-size: 1.6em; margin: 0">
+          <p v-if="!isLoading" style="font-size: 1.6em; margin: 0">
             {{ projectData.teamNumber }}
           </p>
+          <a-skeleton v-else active :paragraph="false" />
         </a-card>
 
         <a-card class="profileFieldStyle" :style="profileFieldSize">
           <label for="department" style="font-size: 1.3em; font-weight: bold"
             >Department:</label
           >
-          <p style="font-size: 1.6em; margin: 0">
+          <p v-if="!isLoading" style="font-size: 1.6em; margin: 0">
             {{ projectData.department }}
           </p>
+          <a-skeleton v-else active :paragraph="false" />
         </a-card>
 
         <a-card class="profileFieldStyle" :style="profileFieldSize">
           <label for="clientName" style="font-size: 1.3em; font-weight: bold"
             >Client Name:</label
           >
-          <p style="font-size: 1.6em; margin: 0">
+          <p v-if="!isLoading" style="font-size: 1.6em; margin: 0">
             {{ projectData.clientName }}
           </p>
+          <a-skeleton v-else active :paragraph="false" />
         </a-card>
       </a-row>
     </div>

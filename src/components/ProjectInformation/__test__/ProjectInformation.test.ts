@@ -28,6 +28,7 @@ describe('projectView.vue', () => {
         isTest: true,
       },
     });
+    await flushPromises();
     expect(wrapper.find('.projectNameH1').exists()).toBe(true);
 
     expect(wrapper.find('.projectNameInput').exists()).toBe(false);
