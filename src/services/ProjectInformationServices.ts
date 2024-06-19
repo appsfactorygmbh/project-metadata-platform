@@ -1,21 +1,13 @@
-import type { Project } from '@/models/ProjectInformationModel';
+import type { ProjectInformationModel } from '@/models/ProjectInformationModel';
 
 //Service to fetch data from backend
 class ProjectsService {
-  fetchProjectID = async (): Promise<number | null> => {
-    try {
-      const data = 0;
-      return data;
-    } catch (err) {
-      console.error('Error fetching project ID: ' + err);
-      return null;
-    }
-  };
-
-  fetchProject = async (): Promise<Project | null> => {
+  fetchProject = async (
+    id: number,
+  ): Promise<ProjectInformationModel | null> => {
     try {
       const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL + '/Projects' + this.fetchProjectID(),
+        import.meta.env.VITE_BACKEND_URL + '/Projects/' + id.toString(),
         //'src/components/ProjectInformation/test.json',
         {
           headers: {
@@ -26,7 +18,7 @@ class ProjectsService {
         },
       );
 
-      const data: Project = await response.json();
+      const data: ProjectInformationModel = await response.json();
       return data;
     } catch (err) {
       console.error('Error fetching project: ' + err);

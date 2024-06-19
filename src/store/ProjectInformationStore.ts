@@ -1,25 +1,39 @@
 import { projectsService } from '@/services/ProjectInformationServices';
-import type { Project } from '@/models/ProjectInformationModel';
+import type { ProjectInformationModel } from '@/models/ProjectInformationModel';
 import { defineStore } from 'pinia';
 
 //to store the project description
-export const projectStore = defineStore({
+export const ProjectInformationStore = defineStore({
   id: 'ProjectInformation',
   state: () => ({
-    ProjectInformation: {} as Project,
+    projectInformation: {} as ProjectInformationModel,
+    isLoading: false as boolean,
   }),
+  getters: {
+    getProjectInformation(): ProjectInformationModel {
+      return this.projectInformation;
+    },
+  },
   actions: {
-    async getProjectInformation() {
-      const project = await projectsService.fetchProject();
-      this.ProjectInformation = project ?? {
-        id: 100,
-        projectName: '',
-        businessUnit: '',
-        teamNumber: '',
-        department: '',
-        clientName: '',
-      };
-      return this.ProjectInformation;
+    setProjectInformation(projectInformation: ProjectInformationModel) {
+      this.projectInformation = projectInformation;
+    },
+    setLoading(status: boolean) {
+      this.isLoading = status;
+    },
+    async fetchProjectInformation(id: number) {
+      this.setLoading(true);
+      const projectInformation: ProjectInformationModel =
+        (await projectsService.fetchProject(id)) ?? {
+          id: 100,
+          projectName: '',
+          businessUnit: '',
+          teamNumber: '',
+          department: '',
+          clientName: '',
+        };
+      this.setProjectInformation(projectInformation);
+      this.setLoading(false);
     },
   },
 });

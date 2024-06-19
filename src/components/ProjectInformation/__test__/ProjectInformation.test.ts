@@ -1,10 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
-import { createPinia } from 'pinia';
-import App from '../../../App.vue';
+import { flushPromises, mount } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
 import ProjectInformation from '../ProjectInformation.vue';
 
-createApp(App).use(createPinia());
+setActivePinia(createPinia());
 
 const data = {
   projectName: 'Heute Show',
@@ -35,12 +34,14 @@ describe('projectView.vue', () => {
     expect(wrapper.find('.projectNameH1').text()).toBe('');
   });
 
-  it('Save name', () => {
+  it('Save name', async () => {
     const wrapper = mount(ProjectInformation, {
       propsData: {
         paneWidth: 1000,
+        isTest: true,
       },
     });
+    await flushPromises();
     expect(wrapper.find('.projectNameH1').text()).toBe('Heute Show');
   });
 });

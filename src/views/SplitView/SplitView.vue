@@ -30,7 +30,10 @@
 
       <pane size="1" min-size="1">
         <div ref="projectInformationPane">
-          <ProjectInformationView :pane-width="infoSize.width" />
+          <ProjectInformationView
+            :pane-width="infoSize.width"
+            :project-id="100"
+          />
         </div>
       </pane>
     </splitpanes>

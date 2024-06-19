@@ -1,5 +1,5 @@
 //Data type for the ProjectInformation
-export type Project = {
+export type ProjectInformationModel = {
   id: number;
   projectName: string;
   businessUnit: string;

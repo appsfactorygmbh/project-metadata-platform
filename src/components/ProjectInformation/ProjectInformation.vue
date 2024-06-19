@@ -1,7 +1,14 @@
 <script setup lang="ts">
-  import { onMounted, computed, ref, watch } from 'vue';
-  import type { Project } from '@/models/ProjectInformationModel';
-  import { projectStore } from '@/store/ProjectInformationStore';
+  import {
+    onMounted,
+    computed,
+    ref,
+    watch,
+    inject,
+    toRaw,
+    reactive,
+  } from 'vue';
+  import type { ProjectInformationModel } from '@/models/ProjectInformationModel';
   import {
     RightCircleFilled,
     EditOutlined,
@@ -10,6 +17,9 @@
     BarsOutlined,
     AppstoreAddOutlined,
   } from '@ant-design/icons-vue';
+  import { projectInformationStoreSymbol } from '@/store/injectionSymbols';
+  import { ProjectInformationStore } from '@/store/ProjectInformationStore';
+  import type { ComputedRef } from 'vue';
 
   //Get the width of the right pane from App.vue
   const props = defineProps({
@@ -30,11 +40,31 @@
     },
   );
 
-  const store = projectStore();
+  let store;
+
+  if (props.isTest) {
+    store = ProjectInformationStore();
+    store.fetchProjectInformation(100);
+  } else {
+    store = inject(projectInformationStoreSymbol)!;
+  }
+
   // Fetch data when component is mounted
   onMounted(async () => {
-    const loadProject: Project = await store.getProjectInformation();
-    addData(loadProject);
+    addData(store.getProjectInformation);
+
+    const data: ComputedRef<ProjectInformationModel> = computed(
+      () => store.getProjectInformation,
+    );
+
+    watch(
+      () => data.value,
+      (newProject, oldProject) => {
+        if (newProject.id !== oldProject.id) {
+          addData(toRaw(newProject));
+        }
+      },
+    );
   });
 
   // Style for the return button
@@ -128,11 +158,11 @@
           class="projectNameH1"
           style="font-size: 2.8em; font-weight: bold"
         >
-          {{ projectName }}
+          {{ projectData.projectName }}
         </h1>
         <input
           v-else
-          v-model="projectName"
+          v-model="projectData.projectName"
           class="projectNameInput"
           type="input"
         />
@@ -156,7 +186,7 @@
             >Business Unit:</label
           >
           <p style="font-size: 1.6em; margin: 0">
-            {{ data.businessUnit }}
+            {{ projectData.businessUnit }}
           </p>
         </a-card>
 
@@ -165,7 +195,7 @@
             >Team Number:</label
           >
           <p style="font-size: 1.6em; margin: 0">
-            {{ data.teamNumber }}
+            {{ projectData.teamNumber }}
           </p>
         </a-card>
 
@@ -174,7 +204,7 @@
             >Department:</label
           >
           <p style="font-size: 1.6em; margin: 0">
-            {{ data.department }}
+            {{ projectData.department }}
           </p>
         </a-card>
 
@@ -183,7 +213,7 @@
             >Client Name:</label
           >
           <p style="font-size: 1.6em; margin: 0">
-            {{ data.clientName }}
+            {{ projectData.clientName }}
           </p>
         </a-card>
       </a-row>
@@ -218,25 +248,28 @@
 <script lang="ts">
   // Flag for editable Title
   const isEditing = ref(false);
-  let data = {
+  const projectData: ProjectInformationModel = reactive({
     id: 0,
     projectName: '',
     businessUnit: '',
     teamNumber: '',
     department: '',
     clientName: '',
-  };
+  });
 
   // Place holder for the buttons for now
   const placeHolder = () => {
     console.log('Icon clicked');
   };
 
-  let projectName = ref(data.projectName);
   //Function to load the data from projectViewService to projectView
-  function addData(loadedData: Project) {
-    data = loadedData;
-    projectName.value = data.projectName;
+  function addData(loadedData: ProjectInformationModel) {
+    projectData.id = loadedData.id;
+    projectData.projectName = loadedData.projectName;
+    projectData.businessUnit = loadedData.businessUnit;
+    projectData.teamNumber = loadedData.teamNumber;
+    projectData.department = loadedData.department;
+    projectData.clientName = loadedData.clientName;
   }
 
   const getWidth = (pwidth: number) => {
