@@ -1,7 +1,7 @@
 export type SearchType = {
-    ProjectName: string;
-    ClientName: string;
-    BusinessUnit: string;
-    TeamNumber: number;
+    projectName: string;
+    clientName: string;
+    businessUnit: string;
+    teamNumber: number;
   };
   

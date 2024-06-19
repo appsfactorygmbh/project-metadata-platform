@@ -7,15 +7,8 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    AAlert: typeof import('ant-design-vue/es')['Alert']
-    AButton: typeof import('ant-design-vue/es')['Button']
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
-    AFloatButton: typeof import('ant-design-vue/es')['FloatButton']
-    AInput: typeof import('ant-design-vue/es')['Input']
     AInputSearch: typeof import('ant-design-vue/es')['InputSearch']
-    AModal: typeof import('ant-design-vue/es')['Modal']
-    ASpace: typeof import('ant-design-vue/es')['Space']
-    ATable: typeof import('ant-design-vue/es')['Table']
     HelloWorld: typeof import('./../src/components/HelloWorld.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
