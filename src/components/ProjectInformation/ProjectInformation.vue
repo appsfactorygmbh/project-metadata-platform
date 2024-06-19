@@ -68,72 +68,56 @@
 </script>
 
 <template>
-  <div class="paneStyle">
-    <a-button class="returnStyle" ghost @click="placeHolder">
+  <div class="pane">
+    <a-button class="button" ghost @click="placeHolder">
       <template #icon
-        ><RightCircleFilled
-          style="color: black; font-size: 50px; border-radius: 50%"
+        ><RightCircleFilled class="icon"
         />
       </template>
     </a-button>
 
-    <div class="mainStyle">
+    <div class="main">
       <!-- create box for the project name -->
-      <a-card class="nameBoxStyle" :loading="isLoading">
-        <h1 class="projectNameH1" style="font-size: 2.8em; font-weight: bold">
+      <div class="projectNameContainer" :loading="isLoading">
+        <h1 class="projectName">
           {{ projectData.projectName }}
         </h1>
-        <!--<input
-          v-else
-          v-model="projectData.projectName"
-          class="projectNameInput"
-          type="input"
-        />--->
-        <!-- pencil icon for editing the project name -->
-        <a-button class="editIconStyle" ghost @click="placeHolder">
+        <a-button class="button" ghost @click="placeHolder">
           <template #icon
-            ><EditOutlined style="color: black; font-size: 35px" />
+            ><EditOutlined class="icon"/>
           </template>
         </a-button>
-      </a-card>
+      </div>
 
       <!-- create box for project description (BU, Team Nr, Department, Client Name) -->
-      <a-row class="descboxStyle">
-        <a-card class="profileFieldStyle" :style="profileFieldSize">
-          <label for="businessUnit" style="font-size: 1.3em; font-weight: bold"
-            >Business Unit:</label
-          >
-          <p v-if="!isLoading" style="font-size: 1.6em; margin: 0">
+      <a-row class="projectInformationBox">
+        <a-card class="profileField" :style="profileFieldSize">
+          <label class="label">Business Unit</label>
+          <p v-if="!isLoading" class="projectInfo">
             {{ projectData.businessUnit }}
           </p>
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
 
-        <a-card class="profileFieldStyle" :style="profileFieldSize">
-          <label for="teamNumber" style="font-size: 1.3em; font-weight: bold"
-            >Team Number:</label
-          >
-          <p v-if="!isLoading" style="font-size: 1.6em; margin: 0">
+        <a-card class="profileField" :style="profileFieldSize">
+          <label class="label">Team Number</label>
+          <p v-if="!isLoading" class="projectInfo">
             {{ projectData.teamNumber }}
           </p>
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
 
-        <a-card class="profileFieldStyle" :style="profileFieldSize">
-          <label for="department" style="font-size: 1.3em; font-weight: bold"
-            >Department:</label
-          >
-          <p v-if="!isLoading" style="font-size: 1.6em; margin: 0">
+        <a-card class="profileField" :style="profileFieldSize">
+          <label class="label">Department</label>
+          <p v-if="!isLoading" class="projectInfo">
             {{ projectData.department }}
           </p>
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
 
-        <a-card class="profileFieldStyle" :style="profileFieldSize">
-          <label for="clientName" style="font-size: 1.3em; font-weight: bold"
-            >Client Name:</label
-          >
-          <p v-if="!isLoading" style="font-size: 1.6em; margin: 0">
+        <a-card class="profileField" :style="profileFieldSize">
+          <label class="label">Client Name</label>
+          <p v-if="!isLoading" class="projectInfo">
             {{ projectData.clientName }}
           </p>
           <a-skeleton v-else active :paragraph="false" />
@@ -142,25 +126,25 @@
     </div>
 
     <!-- add icons for profile, plugins, global logs, signout -->
-    <a-col class="menuStyle">
-      <a-button class="iconStyle" ghost @click="placeHolder">
+    <a-col class="menu">
+      <a-button class="button" ghost @click="placeHolder">
         <template #icon
-          ><UserOutlined style="color: black; font-size: 40px" />
+          ><UserOutlined class="icon"/>
         </template>
       </a-button>
-      <a-button class="iconStyle" ghost @click="placeHolder">
+      <a-button class="button" ghost @click="placeHolder">
         <template #icon
-          ><AppstoreAddOutlined style="color: black; font-size: 40px" />
+          ><AppstoreAddOutlined class="icon"/>
         </template>
       </a-button>
-      <a-button class="iconStyle" ghost @click="placeHolder">
+      <a-button class="button" ghost @click="placeHolder">
         <template #icon
-          ><BarsOutlined style="color: black; font-size: 40px" />
+          ><BarsOutlined class="icon"/>
         </template>
       </a-button>
-      <a-button class="iconStyle" ghost @click="placeHolder">
+      <a-button class="button" ghost @click="placeHolder">
         <template #icon
-          ><LogoutOutlined style="color: black; font-size: 40px" />
+          ><LogoutOutlined class="icon"/>
         </template>
       </a-button>
     </a-col>
@@ -215,7 +199,7 @@
 
 <style scoped lang="scss">
   /* Style for the middle section */
-  .mainStyle {
+  .main {
     width: 60vw;
     height: 80vh;
     padding: 50px;
@@ -227,13 +211,13 @@
   }
 
   /* Style for the right panel */
-  .paneStyle {
+  .pane {
     display: flex;
     flex-direction: row;
   }
 
   /* Style for the Project name input box */
-  .projectNameInput {
+  .projectNameInput                                                                                                                                                                                                  {
     font-size: 2.8em;
     width: 80%;
     height: 2.8em;
@@ -245,7 +229,7 @@
   }
 
   /* Style for the return button */
-  .returnStyle {
+  .return {
     cursor: pointer;
     height: 60px;
     width: 60px;
@@ -254,35 +238,27 @@
   }
 
   /* Style for the Project title box */
-  .nameBoxStyle {
+  .projectNameContainer {
     width: 85%;
     max-width: 750px;
     min-width: 250px;
     padding: 10px;
     margin: 10px;
     border-radius: 10px;
-
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    //background: white;
+    //box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
   }
 
-  /* Style for the pencil button */
-  .editIconStyle {
-    cursor: pointer;
-    position: absolute;
-    right: 3%;
-    width: 45px;
-    height: 45px;
-    top: 38%;
-    padding: 0;
-    border: none;
+  .projectName {
+    font-size: 2.8em;
+    font-weight: bold;
   }
 
-  /* Style for the project description box */
-  .descboxStyle {
-    width: 85%;
-    max-width: 750px;
+  .projectInformationBox {
+    width: 110%;
+    //max-width: 90%;
     min-width: 250px;
     padding-bottom: 20px;
     margin: 10px;
@@ -292,8 +268,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  /* Sizing for the inside box in the project description box  */
-  .profileFieldStyle {
+  .profileField {
     display: flex;
     justify-content: center;
     margin: 5px;
@@ -301,16 +276,45 @@
     border: none;
   }
 
-  /* Style for the icons */
-  .iconStyle {
+  .button {
     margin-bottom: 10px;
     height: 50px;
     width: 50px;
     border: none;
   }
 
-  /* Style for the menu button on the top right */
-  .menuStyle {
+  .icon{
+    color: black;   //TODO: change to appsfactory grey
+    font-size: 30px;
+  }
+
+  /* Style for the pencil button */
+  .editButton {
+    //cursor: pointer;
+    //position: absolute;
+    //right: 3%;
+    //width: 45px;
+    //height: 35px;
+    //top: 38%;
+    //padding: 0;
+    border: none;
+    margin: 10px;
+
+    color: black;
+    font-size: 30px;
+  }
+
+  .label {
+    font-size: 1.3em;
+    font-weight: bold;
+  }
+
+  .projectInfo{
+    font-size: 1.6em;
+    margin: 0;
+  }
+
+  .menu {
     display: flex;
     flex-direction: column;
     margin: 10px;
