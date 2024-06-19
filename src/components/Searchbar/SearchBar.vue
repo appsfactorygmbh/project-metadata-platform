@@ -10,7 +10,7 @@
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
-import { searchProjects } from '../../services/SearchService'; 
+import { searchProjects } from '@/services/SearchService'; 
 
 // Variable storing the user-search value
 const value = ref<string>('');

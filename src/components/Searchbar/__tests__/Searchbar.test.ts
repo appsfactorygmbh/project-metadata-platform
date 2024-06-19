@@ -3,7 +3,7 @@
 import { mount } from "@vue/test-utils";
 import { describe, it, expect, vi } from 'vitest';
 import SearchBar from "../SearchBar.vue";
-import { searchProjects } from '../../../services/SearchService.ts';
+import { searchProjects } from '@/services/SearchService.ts';
 
 vi.mock('../../../services/SearchService', () => ({
     searchProjects: vi.fn(() => Promise.resolve([]))
