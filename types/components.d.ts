@@ -13,6 +13,7 @@ declare module 'vue' {
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     AFlex: typeof import('ant-design-vue/es')['Flex']
     AInput: typeof import('ant-design-vue/es')['Input']
+    AInputSearch: typeof import('ant-design-vue/es')['InputSearch']
     ARow: typeof import('ant-design-vue/es')['Row']
     ASkeleton: typeof import('ant-design-vue/es')['Skeleton']
     ATable: typeof import('ant-design-vue/es')['Table']
@@ -21,7 +22,6 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
-    AInputSearch: typeof import('ant-design-vue/es')['InputSearch']
     SearchBar: typeof import('./../src/components/Searchbar/SearchBar.vue')['default']
   }
 }
