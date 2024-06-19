@@ -15,8 +15,8 @@ class ProjectsService {
   fetchProject = async (): Promise<Project | null> => {
     try {
       const response = await fetch(
-        //import.meta.env.VITE_BACKEND_URL + '/Projects' + this.fetchProjectID(),
-        'src/components/ProjectInformation/test.json',
+        import.meta.env.VITE_BACKEND_URL + '/Projects' + this.fetchProjectID(),
+        //'src/components/ProjectInformation/test.json',
         {
           headers: {
             Accept: 'text/plain',
