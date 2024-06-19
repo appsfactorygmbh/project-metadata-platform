@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "packageManager": "yarn@4.2.2",
+  "packageManager": "yarn@4.3.0",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only -- {@}\" -- ",
@@ -14,11 +14,12 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint --fix src",
-    "format": "prettier -write .",
+    "format": "prettier --write .",
     "prepare": "husky"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
+    "@vueuse/core": "^10.10.0",
     "ant-design-vue": "4.x",
     "dayjs": "^1.11.11",
     "lodash-es": "^4.17.21",
@@ -54,8 +55,8 @@
     "husky": "^9.0.11",
     "jsdom": "^24.1.0",
     "lint-staged": "^15.2.7",
-    "prettier": "^3.3.1",
     "sass": "^1.77.4",
+    "prettier": "^3.3.2",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.12.0",
     "unplugin-auto-import": "^0.17.6",

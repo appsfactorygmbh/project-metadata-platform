@@ -1,4 +1,5 @@
 import ThemeProvider from './ThemeProvider.vue';
+import ProjectProvider from './ProjectProvider.vue';
 import PluginProvider from './PluginProvider.vue';
 
-export { ThemeProvider, PluginProvider };
+export { ThemeProvider, ProjectProvider, PluginProvider };
