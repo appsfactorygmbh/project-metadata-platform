@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <div v-if="!loading">
+  <div class="main">
+    <div v-if="!loading" class="container">
       <PluginComponent
         v-for="plugin in plugins"
         :key="plugin.displayName"
@@ -57,7 +57,7 @@
     width: 100%;
     height: auto;
     display: flex;
-    justify-content: left;
+    justify-content: center;
     align-items: center;
     flex-direction: row;
     flex-wrap: wrap;
@@ -74,5 +74,8 @@
     display: flex;
     flex-direction: column;
     transition: 0.1s ease-in-out;
+  }
+  .main {
+    width: 100%;
   }
 </style>

@@ -3,4 +3,9 @@ import ProjectProvider from './ProjectProvider.vue';
 import ProjectInformationProvider from './ProjectInformationProvider.vue';
 import PluginProvider from './PluginProvider.vue';
 
-export { ThemeProvider, ProjectProvider, ProjectInformationProvider, PluginProvider };
+export {
+  ThemeProvider,
+  ProjectProvider,
+  ProjectInformationProvider,
+  PluginProvider,
+};
