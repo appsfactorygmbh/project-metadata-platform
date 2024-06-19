@@ -71,9 +71,12 @@
 </template>
 
 <style scoped lang="scss">
-  // Import Manrope font family.
-  //TODO: add fonts locally
-  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+  // Import manrope font family.
+  @font-face {
+    font-family: 'Manrope';
+    src: url('../../../public/fonts/manrope/Manrope-VariableFont_wght.woff2')
+      format('woff');
+  }
 
   // Style for the card container.
   .card {
