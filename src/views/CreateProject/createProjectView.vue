@@ -52,10 +52,6 @@
     open.value = true;
   };
 
-  const reset = () => {
-    formRef.value.resetFields();
-  };
-
   // checks for correct input
   const handleOk = () => {
     formRef.value
@@ -77,7 +73,6 @@
       department: formState.department,
       clientName: formState.clientName,
     };
-
     const response = await projectsService.addProject(projectData);
     console.log(response);
     if (!response?.ok || undefined) {
@@ -86,7 +81,8 @@
     } else {
       fetchError.value = false;
       await tableStore.fetchTable();
-      reset();
+
+      formRef.value.resetFields();
       open.value = false;
     }
   };
@@ -194,6 +190,10 @@
     }
   }
   .inputField {
-    width: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
   }
 </style>

@@ -7,20 +7,18 @@ import { projectsService } from '../../../services/ProjectService.ts';
 type CreateProjectViewInstance = {
   projectName: string;
   businessUnit: string;
-  teamNumber: number | string;
+  teamNumber: number | undefined;
   department: string;
   clientName: string;
-  projectNameStatus: string;
-  businessUnitStatus: string;
-  teamNumberStatus: string;
-  departmentStatus: string;
-  clientNameStatus: string;
+
+  validateStatus: string;
   fetchError: boolean;
   open: boolean;
   handleOk: () => Promise<void>;
 };
 
 import App from '../../../App.vue';
+import {ref} from "vue";
 
 createApp(App).use(createPinia());
 
@@ -42,23 +40,19 @@ describe('ProjectModal.vue', () => {
   it('should validate fields correctly', async () => {
     wrapper.vm.projectName = '';
     wrapper.vm.businessUnit = '';
-    wrapper.vm.teamNumber = '-2';
+    wrapper.vm.teamNumber = -2;
     wrapper.vm.department = '';
     wrapper.vm.clientName = '';
 
     await wrapper.vm.handleOk();
 
-    expect(wrapper.vm.projectNameStatus).toBe('error');
-    expect(wrapper.vm.businessUnitStatus).toBe('error');
-    expect(wrapper.vm.teamNumberStatus).toBe('error');
-    expect(wrapper.vm.departmentStatus).toBe('error');
-    expect(wrapper.vm.clientNameStatus).toBe('error');
+    expect(wrapper.vm.validateStatus).toBe('error');
   });
 
   it('should call projectsService.addProject with the correct data', async () => {
     wrapper.vm.projectName = 'Project A';
     wrapper.vm.businessUnit = 'Business Unit A';
-    wrapper.vm.teamNumber = '1';
+    wrapper.vm.teamNumber = 1;
     wrapper.vm.department = 'Department A';
     wrapper.vm.clientName = 'Client A';
 
