@@ -116,7 +116,13 @@
         :label-col="labelCol"
         :wrapper-col="wrapperCol"
       >
-        <a-form-item name="projectName" :rules="[{ required: true, whitespace: true }]" class="column" :no-style="true" :whitespace="true">
+        <a-form-item
+          name="projectName"
+          :rules="[{ required: true, whitespace: true }]"
+          class="column"
+          :no-style="true"
+          :whitespace="true"
+        >
           <a-input
             v-model:value="formState.projectName"
             class="inputField"
@@ -127,7 +133,11 @@
             </template>
           </a-input>
         </a-form-item>
-        <a-form-item name="businessUnit" :rules="[{ required: true, whitespace: true }]" :no-style="true">
+        <a-form-item
+          name="businessUnit"
+          :rules="[{ required: true, whitespace: true }]"
+          :no-style="true"
+        >
           <a-input
             v-model:value="formState.businessUnit"
             class="inputField"
@@ -140,7 +150,8 @@
         </a-form-item>
         <a-form-item
           name="teamNumber"
-          :rules="[{ required: true }, { type: 'number', min: 0 }] " :no-style="true"
+          :rules="[{ required: true }, { type: 'number', min: 0 }]"
+          :no-style="true"
         >
           <a-input-number
             v-model:value="formState.teamNumber"
@@ -152,7 +163,11 @@
             </template>
           </a-input-number>
         </a-form-item>
-        <a-form-item name="department" :rules="[{ required: true, whitespace: true }]" :no-style="true">
+        <a-form-item
+          name="department"
+          :rules="[{ required: true, whitespace: true }]"
+          :no-style="true"
+        >
           <a-input
             v-model:value="formState.department"
             class="inputField"
@@ -163,7 +178,11 @@
             </template>
           </a-input>
         </a-form-item>
-        <a-form-item name="clientName" :rules="[{ required: true, whitespace: true }]" :no-style="true">
+        <a-form-item
+          name="clientName"
+          :rules="[{ required: true, whitespace: true }]"
+          :no-style="true"
+        >
           <a-input
             v-model:value="formState.clientName"
             class="inputField"
@@ -187,7 +206,6 @@
 </template>
 
 <style scoped lang="scss">
-
   .formItem {
     max-width: none !important;
   }
@@ -196,5 +214,4 @@
     width: 100%;
     margin: 10px 0 10px 0;
   }
-
 </style>

@@ -31,6 +31,7 @@
 
       <pane size="1" min-size="1">
         <div ref="projectInformationPane">
+          <CreateProjectView></CreateProjectView>
           <ProjectInformationView
             :pane-width="infoSize.width"
             :project-id="100"
