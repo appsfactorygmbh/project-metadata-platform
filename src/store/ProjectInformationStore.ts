@@ -12,7 +12,7 @@ export const projectStore = defineStore({
     async getProjectInformation() {
       const project = await projectsService.fetchProject();
       this.ProjectInformation = project ?? {
-        id: 100,
+        id: 0,
         projectName: '',
         businessUnit: '',
         teamNumber: '',
