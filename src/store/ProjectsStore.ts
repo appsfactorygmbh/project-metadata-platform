@@ -53,11 +53,10 @@ export const ProjectsStore = defineStore('table', {
       console.log(response);
       if (response?.ok && response != null) {
         this.setAddedSuccessfully(true);
-        this.setIsAdding(false);
       } else {
         this.setAddedSuccessfully(false);
-        this.setIsAdding(false);
       }
+      this.setIsAdding(false);
     },
   },
 });

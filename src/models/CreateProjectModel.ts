@@ -1,7 +1,7 @@
 export type CreateProjectModel = {
   projectName: string;
   businessUnit: string;
-  teamNumber: number | undefined;
+  teamNumber: number;
   department: string;
   clientName: string;
 };

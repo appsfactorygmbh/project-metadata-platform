@@ -25,17 +25,10 @@
   const isAdding = computed(() => projectsStore?.getIsAdding);
   const fetchError = ref<boolean>(false);
 
-  interface FormState {
-    projectName: string;
-    businessUnit: string;
-    teamNumber: number | undefined;
-    department: string;
-    clientName: string;
-  }
-  const formState: UnwrapRef<FormState> = reactive({
+  const formState: UnwrapRef<CreateProjectModel> = reactive({
     projectName: '',
     businessUnit: '',
-    teamNumber: undefined,
+    teamNumber: null,
     department: '',
     clientName: '',
   });
@@ -56,6 +49,7 @@
 
   const resetModal = () => {
     formRef.value.resetFields();
+    fetchError.value = false;
   };
 
   // checks for correct input
@@ -73,8 +67,6 @@
 
   // sends PUT request to the backend
   const submit = async () => {
-    projectsStore?.setIsAdding(true);
-
     // wait for project creation and checks whether it has been created correctly
     watch(isAdding, (newVal) => {
       if (newVal == false) {
