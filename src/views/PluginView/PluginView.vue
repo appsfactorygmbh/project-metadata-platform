@@ -21,7 +21,7 @@
 
   const props = defineProps({
     projectID: {
-      type: String,
+      type: Number,
       required: true,
     },
   });
@@ -37,7 +37,7 @@
 <style scoped lang="css">
   /* Styling for the container */
   .container {
-    width: 100vw;
+    width: 100%;
     height: auto;
     display: flex;
     justify-content: left;
