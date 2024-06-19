@@ -1,4 +1,4 @@
-import type { Project } from '@/models/projectViewModel';
+import type { Project } from '@/models/ProjectInformationModel';
 
 //Service to fetch data from backend
 class ProjectsService {
@@ -6,7 +6,7 @@ class ProjectsService {
     try {
       const response = await fetch(
         //import.meta.env.VITE_BACKEND_URL + '/Projects',
-        'src/components/projectView/test.json',
+        'src/components/ProjectInformation/test.json',
         {
           headers: {
             Accept: 'text/plain',

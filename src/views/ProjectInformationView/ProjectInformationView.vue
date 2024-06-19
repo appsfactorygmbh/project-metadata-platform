@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ProjectView } from '@/components/projectView';
+  import { ProjectInformation } from '@/components/ProjectInformation';
 
   const props = defineProps({
     paneWidth: {
@@ -10,5 +10,5 @@
 </script>
 
 <template>
-  <ProjectView :pane-width="props.paneWidth" />
+  <ProjectInformation :pane-width="props.paneWidth" />
 </template>

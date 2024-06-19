@@ -3,7 +3,7 @@
   import 'splitpanes/dist/splitpanes.css'; //default css for splitpanes
   import { ref, reactive } from 'vue';
   import { useElementSize } from '@vueuse/core';
-  import { ProjectView } from '@/views/ProjectView';
+  import { ProjectInformationView } from '@/views/ProjectInformationView';
 
   const projectPane = ref(null);
   const dimensions = reactive(useElementSize(projectPane));
@@ -22,7 +22,7 @@
 
       <pane size="1" min-size="1">
         <div ref="projectPane">
-          <ProjectView :pane-width="dimensions.width" />
+          <ProjectInformationView :pane-width="dimensions.width" />
         </div>
       </pane>
     </splitpanes>

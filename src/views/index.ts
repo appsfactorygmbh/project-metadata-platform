@@ -1,4 +1,4 @@
 import SplitView from './SplitView';
-import { ProjectView } from './ProjectView';
+import { ProjectInformationView } from './ProjectInformationView';
 
-export { SplitView, ProjectView };
+export { SplitView, ProjectInformationView };

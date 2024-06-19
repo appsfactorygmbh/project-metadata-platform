@@ -1,4 +1,4 @@
-//Data type for the projectView
+//Data type for the ProjectInformation
 export type Project = {
   projectName: string;
   businessUnit: string;

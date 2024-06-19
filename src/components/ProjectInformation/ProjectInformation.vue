@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { onMounted, computed, ref, watch } from 'vue';
-  import type { Project } from '@/models/projectViewModel';
-  import { projectStore } from '@/store/projectViewStore';
+  import type { Project } from '@/models/ProjectInformationModel';
+  import { projectStore } from '@/store/ProjectInformationStore';
 
   const store = projectStore();
 
@@ -26,7 +26,7 @@
 
   // Fetch data when component is mounted
   onMounted(async () => {
-    const loadProject: Project = await store.getProjectView();
+    const loadProject: Project = await store.getProjectInformation();
     addData(loadProject);
   });
 

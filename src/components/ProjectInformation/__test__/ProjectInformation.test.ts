@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia } from 'pinia';
 import App from '../../../App.vue';
-import projectView from '../projectView.vue';
+import ProjectInformation from '../ProjectInformation.vue';
 
 createApp(App).use(createPinia());
 
@@ -23,7 +23,7 @@ describe('projectView.vue', () => {
   globalThis.fetch = vi.fn().mockResolvedValue(mockResponse);
 
   it('displays the project name when not editing', async () => {
-    const wrapper = mount(projectView, {
+    const wrapper = mount(ProjectInformation, {
       propsData: {
         paneWidth: 1000,
         isTest: true,
@@ -36,7 +36,7 @@ describe('projectView.vue', () => {
   });
 
   it('toggles editing mode on edit button click', async () => {
-    const wrapper = mount(projectView, {
+    const wrapper = mount(ProjectInformation, {
       propsData: {
         paneWidth: 1000,
       },
@@ -49,7 +49,7 @@ describe('projectView.vue', () => {
   });
 
   it('Save name', async () => {
-    const wrapper = mount(projectView, {
+    const wrapper = mount(ProjectInformation, {
       propsData: {
         paneWidth: 1000,
       },
