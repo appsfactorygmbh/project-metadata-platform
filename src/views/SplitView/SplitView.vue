@@ -12,7 +12,6 @@
 
 <template>
   <div class="container">
-    <CreateProjectView></CreateProjectView>
     <splitpanes class="default-theme">
       <!--
         size: sets default proportion to 1:4
@@ -25,7 +24,9 @@
         />
       </pane>
       <pane size="1" min-size="1">
-        <div></div>
+        <div>
+          <CreateProjectView></CreateProjectView>
+        </div>
       </pane>
     </splitpanes>
   </div>

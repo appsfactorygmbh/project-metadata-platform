@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref } from 'vue';
+  import { ref, inject, computed, watch } from 'vue';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import {
     FontColorsOutlined,
@@ -8,19 +8,20 @@
     BankOutlined,
     UserOutlined,
   } from '@ant-design/icons-vue';
-  import { projectsService } from '@/services/ProjectService.ts';
-  import { TableStore } from '@/store/TableStore.ts';
   import { reactive } from 'vue';
   import type { UnwrapRef } from 'vue';
+  import { projectsStoreSymbol } from '@/store/injectionSymbols';
 
   const open = ref<boolean>(false);
   const formRef = ref();
   const labelCol = { style: { width: '150px' } };
   const wrapperCol = { span: 14 };
+  const cancelFetch = ref<boolean>();
 
   // TableStore to refetch Table after Project was added
-  const tableStore = TableStore();
+  const projectsStore = inject(projectsStoreSymbol);
 
+  const isAdding = computed(() => projectsStore?.getIsAdding);
   const fetchError = ref<boolean>(false);
 
   interface FormState {
@@ -52,8 +53,13 @@
     open.value = true;
   };
 
+  const resetModal = () => {
+    formRef.value.resetFields();
+  };
+
   // checks for correct input
   const handleOk = () => {
+    cancelFetch.value = false;
     formRef.value
       .validate()
       .then(() => {
@@ -66,6 +72,22 @@
 
   // sends PUT request to the backend
   const submit = async () => {
+    projectsStore?.setIsAdding(true);
+
+    // wait for project creation and checks whether it has been created correctly
+    watch(isAdding, (newVal) => {
+      if (newVal == false) {
+        if (projectsStore?.getAddedSuccessfully) {
+          projectsStore.fetchProjects();
+          fetchError.value = false;
+          open.value = false;
+          resetModal();
+        } else {
+          fetchError.value = true;
+        }
+      }
+    });
+
     const projectData = {
       projectName: formState.projectName,
       businessUnit: formState.businessUnit,
@@ -85,6 +107,8 @@
       formRef.value.resetFields();
       open.value = false;
     }
+
+    await projectsStore?.addProject(projectData);
   };
 </script>
 
@@ -100,7 +124,9 @@
       v-model:open="open"
       width="500px"
       title="Create Project"
+      :ok-button-props="{ disabled: isAdding }"
       @ok="handleOk"
+      @cancel="resetModal"
     >
       <a-form
         ref="formRef"

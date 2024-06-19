@@ -1,22 +1,24 @@
-import type { ProjectType } from '@/models/TableModel';
-import type { CreateProjectType } from '@/models/CreateProjectModel';
+import type { ProjectModel } from '@/models/ProjectModel';
+import type { CreateProjectModel } from '@/models/CreateProjectModel.ts';
 
 class ProjectsService {
   fetchProjects = async () => {
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/projects',
+        //'./src/components/Table/test.json',
       );
 
-      const data: ProjectType[] = await response.json();
+      const data: ProjectModel[] = await response.json();
 
       return data;
     } catch (err) {
       console.error('Error fetching projects: ' + err);
+      return null;
     }
   };
 
-  addProject = async (projectData: CreateProjectType) => {
+  addProject = async (projectData: CreateProjectModel) => {
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/projects',
@@ -37,3 +39,4 @@ class ProjectsService {
 
 const projectsService = new ProjectsService();
 export { projectsService };
+export type { ProjectsService };

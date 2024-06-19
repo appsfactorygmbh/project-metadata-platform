@@ -1,7 +1,7 @@
-export type CreateProjectType = {
+export type CreateProjectModel = {
   projectName: string;
   businessUnit: string;
-  teamNumber: number;
+  teamNumber: number | null;
   department: string;
   clientName: string;
 };
