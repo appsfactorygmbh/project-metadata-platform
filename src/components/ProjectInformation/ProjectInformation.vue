@@ -70,10 +70,7 @@
 <template>
   <div class="pane">
     <a-button class="button" ghost @click="placeHolder">
-      <template #icon
-        ><RightCircleFilled class="icon"
-        />
-      </template>
+      <template #icon><RightCircleFilled class="icon"/></template>
     </a-button>
 
     <div class="main">
@@ -83,15 +80,13 @@
           {{ projectData.projectName }}
         </h1>
         <a-button class="button" ghost @click="placeHolder">
-          <template #icon
-            ><EditOutlined class="icon"/>
-          </template>
+          <template #icon><EditOutlined class="icon"/></template>
         </a-button>
       </div>
 
       <!-- create box for project description (BU, Team Nr, Department, Client Name) -->
       <a-row class="projectInformationBox">
-        <a-card class="profileField" :style="profileFieldSize">
+        <a-card class="infoCard" :style="profileFieldSize">
           <label class="label">Business Unit</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.businessUnit }}
@@ -99,7 +94,7 @@
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
 
-        <a-card class="profileField" :style="profileFieldSize">
+        <a-card class="infoCard" :style="profileFieldSize">
           <label class="label">Team Number</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.teamNumber }}
@@ -107,7 +102,7 @@
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
 
-        <a-card class="profileField" :style="profileFieldSize">
+        <a-card class="infoCard" :style="profileFieldSize">
           <label class="label">Department</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.department }}
@@ -115,7 +110,7 @@
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
 
-        <a-card class="profileField" :style="profileFieldSize">
+        <a-card class="infoCard" :style="profileFieldSize">
           <label class="label">Client Name</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.clientName }}
@@ -268,11 +263,12 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  .profileField {
+  .infoCard {
     display: flex;
+    align-items: center;
     justify-content: center;
     margin: 5px;
-    height: 90px;
+    height: 50px;
     border: none;
   }
 
@@ -285,22 +281,6 @@
 
   .icon{
     color: black;   //TODO: change to appsfactory grey
-    font-size: 30px;
-  }
-
-  /* Style for the pencil button */
-  .editButton {
-    //cursor: pointer;
-    //position: absolute;
-    //right: 3%;
-    //width: 45px;
-    //height: 35px;
-    //top: 38%;
-    //padding: 0;
-    border: none;
-    margin: 10px;
-
-    color: black;
     font-size: 30px;
   }
 
