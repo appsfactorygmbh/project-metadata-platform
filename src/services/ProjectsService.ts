@@ -6,7 +6,6 @@ class ProjectsService {
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/projects',
-        //'./src/components/Table/test.json',
       );
 
       const data: ProjectModel[] = await response.json();
@@ -28,6 +27,7 @@ class ProjectsService {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(projectData),
+          mode: 'cors',
         },
       );
       return response;
