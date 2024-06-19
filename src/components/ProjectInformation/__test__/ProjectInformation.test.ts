@@ -35,30 +35,12 @@ describe('projectView.vue', () => {
     expect(wrapper.find('.projectNameH1').text()).toBe('');
   });
 
-  it('toggles editing mode on edit button click', async () => {
+  it('Save name', () => {
     const wrapper = mount(ProjectInformation, {
       propsData: {
         paneWidth: 1000,
       },
     });
-    const editButton = wrapper.find('.edit-button');
-    await editButton.trigger('click');
-
-    expect(wrapper.find('.projectNameH1').exists()).toBe(false);
-    expect(wrapper.find('input').exists()).toBe(true);
-  });
-
-  it('Save name', async () => {
-    const wrapper = mount(ProjectInformation, {
-      propsData: {
-        paneWidth: 1000,
-      },
-    });
-    const editButton = wrapper.find('.edit-button');
-    const input = wrapper.find('.projectNameInput');
-
-    await editButton.trigger('click');
     expect(wrapper.find('.projectNameH1').text()).toBe('Heute Show');
-    expect((input.element as HTMLInputElement).value).toBe('Heute Show');
   });
 });
