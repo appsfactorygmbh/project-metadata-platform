@@ -25,7 +25,7 @@ export const ProjectInformationStore = defineStore({
       this.setLoading(true);
       const projectInformation: ProjectInformationModel =
         (await projectsService.fetchProject(id)) ?? {
-          id: 100,
+          id: 0,
           projectName: '',
           businessUnit: '',
           teamNumber: '',
