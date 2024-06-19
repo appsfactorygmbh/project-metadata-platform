@@ -7,11 +7,21 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AButton: typeof import('ant-design-vue/es')['Button']
+    ACard: typeof import('ant-design-vue/es')['Card']
+    ACol: typeof import('ant-design-vue/es')['Col']
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
-    AInputSearch: typeof import('ant-design-vue/es')['InputSearch']
+    AFlex: typeof import('ant-design-vue/es')['Flex']
+    AInput: typeof import('ant-design-vue/es')['Input']
+    ARow: typeof import('ant-design-vue/es')['Row']
+    ASkeleton: typeof import('ant-design-vue/es')['Skeleton']
+    ATable: typeof import('ant-design-vue/es')['Table']
     HelloWorld: typeof import('./../src/components/HelloWorld.vue')['default']
+    ProjectInformation: typeof import('./../src/components/ProjectInformation/ProjectInformation.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
+    AInputSearch: typeof import('ant-design-vue/es')['InputSearch']
     SearchBar: typeof import('./../src/components/Searchbar/SearchBar.vue')['default']
   }
 }

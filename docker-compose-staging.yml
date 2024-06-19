@@ -1,11 +1,6 @@
 services:
-  frontend:
-    extends:
-      file: docker-compose-common.yml
-      service: frontend
+    frontend:
     image: gitlab.dit.htwk-leipzig.de:5050/projekt2024_a_appsfactory_project_metadata_platform/frontend/staging:latest
 
-networks:
-  frontend-backend-network:
-    external: true
-    name: backend-network
+    ports:
+      - "90:80"

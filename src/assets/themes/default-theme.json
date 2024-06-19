@@ -1,8 +1,8 @@
 {
-    "token": {
-        "colorPrimary": "#6d6e6f",
-        "colorSuccess": "#27d157",
-        "colorLink": "#ff002e",
-        "colorInfo": "#ff002e"
-    }
+  "token": {
+    "colorPrimary": "#6d6e6f",
+    "colorSuccess": "#27d157",
+    "colorLink": "#ff002e",
+    "colorInfo": "#ff002e"
+  }
 }
