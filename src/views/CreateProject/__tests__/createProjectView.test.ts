@@ -1,7 +1,6 @@
 import { mount, VueWrapper } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import CreateProjectView from '../createProjectView.vue';
-import { createTestingPinia } from '@pinia/testing';
 
 describe('CreateProjectView.vue', () => {
   type CreateProjectViewInstance = {
@@ -14,12 +13,9 @@ describe('CreateProjectView.vue', () => {
   let wrapper: VueWrapper<CreateProjectViewInstance>;
 
   beforeEach(() => {
-    wrapper = mount(CreateProjectView, {
-      global: {
-        plugins: [createTestingPinia()],
-      },
-    }) as VueWrapper<CreateProjectViewInstance>;
+    wrapper = mount(CreateProjectView) as VueWrapper<CreateProjectViewInstance>;
   });
+
   it('opens modal when plus button is clicked', async () => {
     const button = wrapper.findComponent({ name: 'a-float-button' });
     await button.trigger('click');
