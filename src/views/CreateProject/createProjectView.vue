@@ -1,115 +1,105 @@
 <script lang="ts" setup>
-  import { ref, inject, computed, watch } from 'vue';
-  import { PlusOutlined } from '@ant-design/icons-vue';
-  import {
-    FontColorsOutlined,
-    ShoppingOutlined,
-    TeamOutlined,
-    BankOutlined,
-    UserOutlined,
-  } from '@ant-design/icons-vue';
-  import { reactive } from 'vue';
-  import type { UnwrapRef } from 'vue';
-  import { projectsStoreSymbol } from '@/store/injectionSymbols';
+import { ref, inject, computed, watch } from 'vue';
+import { PlusOutlined } from '@ant-design/icons-vue';
+import {
+  FontColorsOutlined,
+  ShoppingOutlined,
+  TeamOutlined,
+  BankOutlined,
+  UserOutlined,
+} from '@ant-design/icons-vue';
+import { reactive } from 'vue';
+import type { UnwrapRef } from 'vue';
+import { projectsStoreSymbol } from '@/store/injectionSymbols';
+import type {CreateProjectModel} from "@/models/CreateProjectModel.ts";
 
-  const open = ref<boolean>(false);
-  const formRef = ref();
-  const labelCol = { style: { width: '150px' } };
-  const wrapperCol = { span: 14 };
-  const cancelFetch = ref<boolean>();
+const open = ref<boolean>(false);
+const formRef = ref();
+const labelCol = { style: { width: '150px' } };
+const wrapperCol = { span: 14 };
+const cancelFetch = ref<boolean>()
 
-  // TableStore to refetch Table after Project was added
-  const projectsStore = inject(projectsStoreSymbol);
+// TableStore to refetch Table after Project was added
+const projectsStore = inject(projectsStoreSymbol)
 
-  const isAdding = computed(() => projectsStore?.getIsAdding);
-  const fetchError = ref<boolean>(false);
+const isAdding = computed (() => projectsStore?.getIsAdding)
+const fetchError = ref<boolean>(false);
 
-  interface FormState {
-    projectName: string;
-    businessUnit: string;
-    teamNumber: number | undefined;
-    department: string;
-    clientName: string;
-  }
-  const formState: UnwrapRef<FormState> = reactive({
-    projectName: '',
-    businessUnit: '',
-    teamNumber: undefined,
-    department: '',
-    clientName: '',
-  });
-  const validateMessages = {
-    required: 'This field cannot be empty.',
-    types: {
-      number: 'Team number is not a valid number!',
-    },
-    number: {
-      range: 'Team number must be positive number.',
-    },
-  };
+interface FormState {
+  projectName: string;
+  businessUnit: string;
+  teamNumber: number | undefined;
+  department: string;
+  clientName: string;
+}
+const formState: UnwrapRef<FormState> = reactive({
+  projectName: '',
+  businessUnit: '',
+  teamNumber: undefined,
+  department: '',
+  clientName: '',
+});
+const validateMessages = {
+  required: 'Please input the field.',
+  types: {
+    number: 'Team number is not a valid number!',
+  },
+  number: {
+    range: 'Team number must be positive number.',
+  },
+};
 
-  // opens modal when plussign is clicked
-  const showModal = () => {
-    open.value = true;
-  };
+// opens modal when plussign is clicked
+const showModal = () => {
+  open.value = true;
+};
 
-  const resetModal = () => {
-    formRef.value.resetFields();
-  };
+const resetModal = () => {
+  formRef.value.resetFields();
+};
 
-  // checks for correct input
-  const handleOk = () => {
-    cancelFetch.value = false;
-    formRef.value
-      .validate()
-      .then(() => {
-        submit();
-      })
-      .catch((error) => {
-        console.log('error', error);
-      });
-  };
-
-  // sends PUT request to the backend
-  const submit = async () => {
-    projectsStore?.setIsAdding(true);
-
-    // wait for project creation and checks whether it has been created correctly
-    watch(isAdding, (newVal) => {
-      if (newVal == false) {
-        if (projectsStore?.getAddedSuccessfully) {
-          projectsStore.fetchProjects();
-          fetchError.value = false;
-          open.value = false;
-          resetModal();
-        } else {
-          fetchError.value = true;
-        }
-      }
+// checks for correct input
+const handleOk = () => {
+  cancelFetch.value = false
+  formRef.value
+    .validate()
+    .then(() => {
+      submit();
+    })
+    .catch((error) => {
+      console.log('error', error);
     });
+};
 
-    const projectData = {
-      projectName: formState.projectName,
-      businessUnit: formState.businessUnit,
-      teamNumber: formState.teamNumber,
-      department: formState.department,
-      clientName: formState.clientName,
-    };
-    const response = await projectsService.addProject(projectData);
-    console.log(response);
-    if (!response?.ok || undefined) {
-      fetchError.value = true;
-      open.value = true;
-    } else {
-      fetchError.value = false;
-      await tableStore.fetchTable();
+// sends PUT request to the backend
+const submit = async () => {
+  projectsStore?.setIsAdding(true)
 
-      formRef.value.resetFields();
-      open.value = false;
+  // wait for project creation and checks whether it has been created correctly
+  watch((isAdding), newVal => {
+    if(newVal == false){
+      if(projectsStore?.getAddedSuccessfully){
+        projectsStore.fetchProjects()
+        fetchError.value = false;
+        open.value = false;
+        resetModal()
+      } else {
+        fetchError.value = true
+      }
     }
+  })
 
-    await projectsStore?.addProject(projectData);
+  const projectData: CreateProjectModel  = {
+    projectName: formState.projectName,
+    businessUnit: formState.businessUnit,
+    teamNumber: formState.teamNumber,
+    department: formState.department,
+    clientName: formState.clientName,
   };
+
+  await projectsStore?.addProject(projectData);
+
+}
 </script>
 
 <template>
@@ -124,7 +114,7 @@
       v-model:open="open"
       width="500px"
       title="Create Project"
-      :ok-button-props="{ disabled: isAdding }"
+      :ok-button-props="{disabled: isAdding}"
       @ok="handleOk"
       @cancel="resetModal"
     >
@@ -206,20 +196,16 @@
 </template>
 
 <style scoped lang="scss">
-  .space {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    & > * {
-      width: 100%;
-    }
-  }
-  .inputField {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.space {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  & > * {
     width: 100%;
-
   }
+}
+.inputField {
+  width: 90%;
+}
 </style>
