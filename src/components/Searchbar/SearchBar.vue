@@ -9,37 +9,37 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
-import { searchProjects } from '@/services/SearchService'; 
+  import { ref, watch } from 'vue';
+  import { searchProjects } from '@/services/SearchService';
 
-// Variable storing the user-search value
-const value = ref<string>('');
+  // Variable storing the user-search value
+  const value = ref<string>('');
 
-const searchData = ref<any[]>([]);
+  const searchData = ref<any[]>([]);
 
-// Asynchronous function to retrieve data from the API
-const fetchData = async () => {
-  try {
-    const data = await searchProjects(value.value);
-    searchData.value = data;
-  } catch (error) {
-    console.error('Failed to fetch data:', error);
-  }
-};
+  // Asynchronous function to retrieve data from the API
+  const fetchData = async () => {
+    try {
+      const data = await searchProjects(value.value);
+      searchData.value = data;
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+    }
+  };
 
-// Watcher, which calls fetchData function every time the search value changes
-watch(value, () => {
+  // Watcher, which calls fetchData function every time the search value changes
+  watch(value, () => {
+    fetchData();
+  });
+
+  // Initial data-fetch
   fetchData();
-});
 
-// Initial data-fetch
-fetchData();
-
-// Input Listener
-const onInput = (e: Event) => {
-  const target = e.target as HTMLInputElement;
-  value.value = target.value;
-};
+  // Input Listener
+  const onInput = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    value.value = target.value;
+  };
 </script>
 
 <style></style>

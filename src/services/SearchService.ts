@@ -14,7 +14,6 @@ export async function searchProjects(
     const data: SearchType[] = await response.json();
     console.log('Response data:', data);
     return data;
-    
   } catch (err) {
     console.log('Error searching projects: ' + err);
     return [];
