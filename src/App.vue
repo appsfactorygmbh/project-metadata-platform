@@ -3,16 +3,19 @@
     ThemeProvider,
     ProjectProvider,
     ProjectInformationProvider,
+    PluginProvider,
   } from '@/router/Provider';
 </script>
 
 <template>
   <ThemeProvider>
-    <ProjectProvider>
-      <ProjectInformationProvider>
-        <RouterView />
-      </ProjectInformationProvider>
-    </ProjectProvider>
+    <PluginProvider>
+      <ProjectProvider>
+        <ProjectInformationProvider>
+          <RouterView />
+        </ProjectInformationProvider>
+      </ProjectProvider>
+    </PluginProvider>
   </ThemeProvider>
 </template>
 
