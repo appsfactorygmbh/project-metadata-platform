@@ -78,39 +78,63 @@
       </div>
 
       <!-- create box for project description (BU, Team Nr, Department, Client Name) -->
-      <a-row class="projectInformationBox">
-        <a-card class="infoCard" :style="profileFieldSize">
-          <label class="label">Business Unit</label>
+      <a-flex class="projectInformationBox"
+              :body-style="{
+                height: 'fit-content',
+          }">
+        <a-card
+          :body-style="{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '5px',
+          }"
+          class="infoCard" :style="profileFieldSize">
+          <label class="label">Business Unit:</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.businessUnit }}
           </p>
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
 
-        <a-card class="infoCard" :style="profileFieldSize">
-          <label class="label">Team Number</label>
+        <a-card
+          :body-style="{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '5px',
+          }"
+          class="infoCard" :style="profileFieldSize">
+          <label class="label">Team Number:</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.teamNumber }}
           </p>
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
-
-        <a-card class="infoCard" :style="profileFieldSize">
-          <label class="label">Department</label>
+        <a-card
+          :body-style="{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '5px',
+          }"
+          class="infoCard" :style="profileFieldSize">
+          <label class="label">Department:</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.department }}
           </p>
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
-
-        <a-card class="infoCard" :style="profileFieldSize">
-          <label class="label">Client Name</label>
+        <a-card :body-style="{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '5px',
+          }"
+          class="infoCard" :style="profileFieldSize">
+          <label class="label">Client Name:</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.clientName }}
           </p>
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
-      </a-row>
+      </a-flex>
     </div>
   </div>
 </template>
@@ -162,110 +186,117 @@
 </script>
 
 <style scoped lang="scss">
-  /* Style for the middle section */
-  .main {
-    width: 60vw;
-    height: 80vh;
-    padding: 50px;
-    margin: 10px;
+/* Style for the middle section */
+.main {
+  width: 100%;
+  padding-top: 50px;
+  margin-top: 10px;
+  padding-right: 75px;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  /* Style for the right panel */
-  .pane {
-    display: flex;
-    flex-direction: row;
-  }
+/* Style for the right panel */
+.pane {
+  display: flex;
+  flex-direction: row;
+}
 
-  /* Style for the Project name input box */
-  .projectNameInput {
-    font-size: 2.8em;
-    width: 80%;
-    height: 2.8em;
-    text-align: center;
-    border: none;
-    border-bottom: 2px solid #a5a4a4;
-    color: black;
-    background-color: rgb(250, 250, 250);
-  }
+/* Style for the return button */
+.return {
+  cursor: pointer;
+  height: 60px;
+  width: 60px;
+  margin: 20px;
+  border: none;
+}
 
-  /* Style for the return button */
-  .return {
-    cursor: pointer;
-    height: 60px;
-    width: 60px;
-    margin: 20px;
-    border: none;
-  }
+/* Style for the Project name input box */
+.projectNameInput                                                                                                                                                                                                  {
+  font-size: 2.8em;
+  width: 80%;
+  height: 2.8em;
+  text-align: center;
+  border: none;
+  border-bottom: 2px solid #a5a4a4;
+  color: black;
+  background-color: rgb(250, 250, 250);
+}
 
-  /* Style for the Project title box */
-  .projectNameContainer {
-    width: 100%;
-    padding: 10px;
-    margin: 10px;
-    border-radius: 10px;
-    text-align: center;
-    align-items: center;
-    flex-direction: row;
-    display: flex;
-    justify-content: center;
-  }
+/* Style for the Project title box */
+.projectNameContainer {
+  width: 100%;
+  height: 10%;
+  margin: 10px;
+  border-radius: 10px;
+  text-align: center;
+  align-items: center;
+  flex-direction: row;
+  display: flex;
+  justify-content: center;
+}
 
-  .projectName {
-    font-size: 2.8em;
-    font-weight: bold;
-    color: #000;
-  }
+.projectName {
+  font-size: 2.8em;
+  font-weight: bold;
+  color: #000;
+}
 
-  .projectInformationBox {
-    width: 110%;
-    //max-width: 90%;
-    min-width: 250px;
-    padding-bottom: 20px;
-    margin: 10px;
-    border-radius: 10px;
+.projectInformationBox {
+  width: 100%;
+  height: max-content;
+  min-width: 250px;
+  margin: 10px;
+  border-radius: 10px;
 
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-  .infoCard {
-    margin: 5px;
-    height: 50px;
-    border: none;
-    align-items: center;
-    flex-direction: row;
-    display: flex;
-    justify-content: center;
-  }
+  display: flex;
+  flex-wrap: wrap;
 
-  .grid {
-    width: 50%;
-    text-align: center;
-  }
+  justify-content: space-between;
+  flex-basis: 50%;
+}
 
-  .button {
-    margin-bottom: 10px;
-    height: 50px;
-    width: 50px;
-    border: none;
-  }
+.infoCard {
+  margin: 5px;
+  height: fit-content;
+  width:70%;
+  border: none;
+  align-items: center;
+  flex-direction: row;
+  display: flex;
+  justify-content: center;
+}
 
-  .icon {
-    color: black; //TODO: change to appsfactory grey
-    font-size: 30px;
-  }
+//.grid {
+//  width: 50%;
+//  text-align: center;
+//}
 
-  .label {
-    font-size: 1.3em;
-    font-weight: bold;
-  }
+.button {
+  margin-bottom: 10px;
+  height: 50px;
+  width: 50px;
+  border: none;
+}
 
-  .projectInfo {
-    font-size: 1.6em;
-    margin: 0;
-  }
+.icon{
+  color: black;   //TODO: change to appsfactory grey
+  font-size: 30px;
+}
+
+.label {
+  font-size: 1.3em;
+  font-weight: bold;
+  margin-right: 15px;
+}
+
+.projectInfo{
+  font-size: 1.6em;
+  margin: 0;
+}
 </style>
