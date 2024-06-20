@@ -36,7 +36,7 @@ describe('usePluginsStore', () => {
     expect(store.isLoading).toBe(false);
 
     // Call the fetchPlugins action
-    const fetchPromise = store.fetchPlugins('testProjectID');
+    const fetchPromise = store.fetchPlugins(1);
 
     // During the API call: isLoading should be true
     expect(store.isLoading).toBe(true);
@@ -46,6 +46,6 @@ describe('usePluginsStore', () => {
     // Check if the store state is updated correctly
     expect(store.plugins).toEqual(mockPlugins);
     expect(store.isLoading).toBe(false);
-    expect(pluginService.fetchPlugins).toHaveBeenCalledWith('testProjectID');
+    expect(pluginService.fetchPlugins).toHaveBeenCalledWith(1);
   });
 });
