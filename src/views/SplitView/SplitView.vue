@@ -4,6 +4,7 @@
   import { ref, reactive } from 'vue';
   import { useElementSize } from '@vueuse/core';
   import { ProjectSearchView } from '@/views/ProjectSearchView';
+  import { MenuButtons } from '@/components/MenuButtons';
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
@@ -34,6 +35,7 @@
             :pane-width="infoSize.width"
             :project-id="100"
           />
+          <MenuButtons />
         </div>
       </pane>
     </splitpanes>

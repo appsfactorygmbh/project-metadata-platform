@@ -2,7 +2,6 @@
   import { ProjectInformation } from '@/components/ProjectInformation';
   import { projectInformationStoreSymbol } from '@/store/injectionSymbols';
   import { inject, onMounted } from 'vue';
-  import { MenuButtons } from '@/components/MenuButtons';
 
   const props = defineProps({
     paneWidth: {
@@ -24,5 +23,4 @@
 
 <template>
   <ProjectInformation :pane-width="props.paneWidth" />
-  <MenuButtons />
 </template>
