@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, type Ref } from 'vue';
 import _ from 'lodash';
+import type { AnyObject } from 'ant-design-vue/es/_util/type';
 
 type SearchStoreState<T> = {
   searchQuery: string;
@@ -59,5 +60,7 @@ export const useSearchStore = <T extends object>(name: string) =>
     },
   })();
 
-type SearchStore = ReturnType<typeof useSearchStore>;
+type SearchStore<T extends object = AnyObject> = ReturnType<
+  typeof useSearchStore<T>
+>;
 export type { SearchStore };
