@@ -6,6 +6,7 @@
   import { ProjectInformationStore } from '@/store/ProjectInformationStore';
   import type { ComputedRef } from 'vue';
   import { storeToRefs } from 'pinia';
+  import PluginView from '@/views/PluginView/PluginView.vue';
 
   //Get the width of the right pane from App.vue
   const props = defineProps({
@@ -121,6 +122,9 @@
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
       </a-row>
+      <div v-if="!isLoading">
+        <PluginView :project-i-d="projectData.id"></PluginView>
+      </div>
     </div>
   </div>
 </template>
@@ -174,6 +178,8 @@
   /* Style for the middle section */
   .main {
     width: 80vw;
+    max-height: 80vh;
+    height: max-content;
     padding-right: 5em;
     padding-left: 5em;
 

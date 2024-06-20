@@ -15,7 +15,7 @@
 
 @font-face {
   font-family: Manrope;
-  src: url('/Manrope/Manrope-Font.ttf');
+  src: url('../public/fonts/manrope/Manrope-VariableFont_wght.woff2');
 }
 
 body {

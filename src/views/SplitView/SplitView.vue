@@ -5,6 +5,7 @@
   import { useElementSize } from '@vueuse/core';
   import { ProjectSearchView } from '@/views/ProjectSearchView';
   import { MenuButtons } from '@/components/MenuButtons';
+  import CreateProjectView from '@/views/CreateProject/createProjectView.vue';
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
@@ -31,6 +32,7 @@
 
       <pane size="1" min-size="1">
         <div ref="projectInformationPane">
+          <CreateProjectView></CreateProjectView>
           <ProjectInformationView
             :pane-width="infoSize.width"
             :project-id="100"

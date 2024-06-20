@@ -38,6 +38,11 @@ test:
       junit:
         - junit.xml
 
+type-check:
+  stage: test
+  script:
+    - yarn type-check
+
 code-formatting:
   stage: test
   allow_failure: true

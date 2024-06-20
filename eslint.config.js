@@ -65,6 +65,18 @@ export default tseslint.config(
       },
     },
   },
+  {
+    name: 'vitest-config',
+    files: ['**/__tests__/**/*.ts'],
+    languageOptions: {
+      parserOptions: {
+        parser: tseslint.parser,
+        project: path.resolve(__dirname, './tsconfig.vitest.json'),
+        tsconfigRootDir: __dirname,
+        sourceType: 'module',
+      },
+    },
+  },
   // keep as last item to override conflicting rules
   eslintConfigPrettier,
 );
