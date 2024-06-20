@@ -62,7 +62,12 @@
 
 <template>
   <div class="pane">
-    <a-button class="button" ghost @click="placeHolder">
+    <a-button
+      class="button"
+      ghost
+      style="left: 10px; top: 30px"
+      @click="placeHolder"
+    >
       <template #icon><RightCircleFilled class="icon" /></template>
     </a-button>
 
@@ -72,7 +77,12 @@
         <h1 class="projectName">
           {{ projectData.projectName }}
         </h1>
-        <a-button class="button" ghost @click="placeHolder">
+        <a-button
+          class="button"
+          ghost
+          style="margin-left: 10px"
+          @click="placeHolder"
+        >
           <template #icon><EditOutlined class="icon" /></template>
         </a-button>
       </div>
@@ -135,12 +145,14 @@
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
       </a-flex>
+      <div v-if="!isLoading">
+        <PluginView :project-i-d="projectData.id"></PluginView>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-  // Flag for editable Title
   const projectData: ProjectInformationModel = reactive({
     id: 0,
     projectName: '',
@@ -189,9 +201,12 @@
 /* Style for the middle section */
 .main {
   width: 100%;
-  padding-top: 50px;
+  max-height: 80vh;
+  height: max-content;
   margin-top: 10px;
-  padding-right: 75px;
+  padding-top: 50px;
+  padding-right: 5em;
+  padding-left: 5em;
 
   display: flex;
   flex-direction: column;
@@ -239,7 +254,7 @@
 }
 
 .projectName {
-  font-size: 2.8em;
+  font-size: 2.5em;
   font-weight: bold;
   color: #000;
 }
@@ -283,10 +298,15 @@
   width: 50px;
   border: none;
 }
+  .button {
+    height: 40px;
+    width: 40px;
+    border: none;
+  }
 
 .icon{
-  color: black;   //TODO: change to appsfactory grey
-  font-size: 30px;
+  color: black; //TODO: change to appsfactory grey
+  font-size: 2.5em;
 }
 
 .label {

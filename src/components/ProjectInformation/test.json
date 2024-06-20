@@ -1,7 +1,8 @@
 {
-  "projectName": "Heute Show",
+  "id": 100,
+  "projectName": "Tagesschau App",
   "department": "IT",
   "clientName": "Zdf",
   "businessUnit": "Bu Health",
-  "teamNumber": 42
+  "teamNumber": 1
 }
