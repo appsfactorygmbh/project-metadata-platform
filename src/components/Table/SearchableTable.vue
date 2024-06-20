@@ -41,6 +41,7 @@
     : inject(projectsStoreSymbol)!;
 
   const { getIsLoading } = storeToRefs(projectsStore);
+  const isLoading = computed(() => getIsLoading.value);
 
   const customRow = (record: ProjectModel) => {
     return {
@@ -82,7 +83,7 @@
     :columns="[...columns].filter((item) => !item.hidden)"
     :data-source="[...dataSource]"
     :pagination="false"
-    :loading="getIsLoading"
+    :loading="isLoading"
     :scroll="{ y: props.paneHeight - 55 }"
     :custom-row="customRow"
     bordered

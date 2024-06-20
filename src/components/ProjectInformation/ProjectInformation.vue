@@ -43,7 +43,8 @@
     store = inject(projectsStoreSymbol)!;
   }
 
-  const { isLoading } = storeToRefs(store);
+  const { getIsLoadingProject } = storeToRefs(store);
+  const isLoading = computed(() => getIsLoadingProject.value);
 
   const profileFieldSize = computed(() => ({
     width: getWidth(props.paneWidth),
