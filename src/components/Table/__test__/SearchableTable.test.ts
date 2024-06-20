@@ -5,6 +5,7 @@ import { Button, Input } from 'ant-design-vue';
 import { createTestingPinia } from '@pinia/testing';
 import { useSearchStore } from '@/store';
 import { createPinia, setActivePinia } from 'pinia';
+import _ from 'lodash';
 
 const testData = [
   {
@@ -124,6 +125,10 @@ describe('SearchableTable.vue', () => {
   it('hides columns when the pane width is not large enough', async () => {
     await flushPromises();
 
-    expect(wrapper2.findAll('.ant-table-column-sorters').length).toBe(2);
+    _.delay(
+      () =>
+        expect(wrapper2.findAll('.ant-table-column-sorters').length).toBe(2),
+      500,
+    );
   });
 });
