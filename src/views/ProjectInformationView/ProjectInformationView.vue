@@ -2,7 +2,7 @@
   import { ProjectInformation } from '@/components/ProjectInformation';
   import { projectInformationStoreSymbol } from '@/store/injectionSymbols';
   import { inject, onMounted } from 'vue';
-  import PluginView from "@/views/PluginView/PluginView.vue";
+  import PluginView from '@/views/PluginView/PluginView.vue';
 
   const props = defineProps({
     paneWidth: {

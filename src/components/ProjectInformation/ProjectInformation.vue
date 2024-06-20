@@ -1,12 +1,11 @@
 <script setup lang="ts">
-  import { onMounted, computed, watch, inject, toRaw } from 'vue';
+  import { onMounted, computed, watch, inject, toRaw, reactive } from 'vue';
   import type { ProjectInformationModel } from '@/models/ProjectInformationModel';
-  import { RightCircleFilled, EditOutlined } from '@ant-design/icons-vue';
+  import { EditOutlined } from '@ant-design/icons-vue';
   import { projectInformationStoreSymbol } from '@/store/injectionSymbols';
   import { ProjectInformationStore } from '@/store/ProjectInformationStore';
   import type { ComputedRef } from 'vue';
   import { storeToRefs } from 'pinia';
-  import PluginView from "@/views/PluginView/PluginView.vue";
 
   //Get the width of the right pane from App.vue
   const props = defineProps({
@@ -213,7 +212,7 @@
     align-items: center;
   }
 
-  .pluginView{
+  .pluginView {
     padding: 0;
   }
 
