@@ -44,3 +44,6 @@ export const usePluginsStore = defineStore('plugin', {
     },
   },
 });
+
+type PluginsStore = ReturnType<typeof usePluginsStore>;
+export type { PluginsStore };
