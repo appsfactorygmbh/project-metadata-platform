@@ -1,14 +1,7 @@
 <script setup lang="ts">
   import { onMounted, computed, watch, inject, toRaw, reactive } from 'vue';
   import type { ProjectInformationModel } from '@/models/ProjectInformationModel';
-  import {
-    RightCircleFilled,
-    EditOutlined,
-    UserOutlined,
-    LogoutOutlined,
-    BarsOutlined,
-    AppstoreAddOutlined,
-  } from '@ant-design/icons-vue';
+  import { RightCircleFilled, EditOutlined } from '@ant-design/icons-vue';
   import { projectInformationStoreSymbol } from '@/store/injectionSymbols';
   import { ProjectInformationStore } from '@/store/ProjectInformationStore';
   import type { ComputedRef } from 'vue';
@@ -70,7 +63,7 @@
 <template>
   <div class="pane">
     <a-button class="button" ghost @click="placeHolder">
-      <template #icon><RightCircleFilled class="icon"/></template>
+      <template #icon><RightCircleFilled class="icon" /></template>
     </a-button>
 
     <div class="main">
@@ -80,7 +73,7 @@
           {{ projectData.projectName }}
         </h1>
         <a-button class="button" ghost @click="placeHolder">
-          <template #icon><EditOutlined class="icon"/></template>
+          <template #icon><EditOutlined class="icon" /></template>
         </a-button>
       </div>
 
@@ -119,30 +112,6 @@
         </a-card>
       </a-row>
     </div>
-
-    <!-- add icons for profile, plugins, global logs, signout -->
-    <a-col class="menu">
-      <a-button class="button" ghost @click="placeHolder">
-        <template #icon
-          ><UserOutlined class="icon"/>
-        </template>
-      </a-button>
-      <a-button class="button" ghost @click="placeHolder">
-        <template #icon
-          ><AppstoreAddOutlined class="icon"/>
-        </template>
-      </a-button>
-      <a-button class="button" ghost @click="placeHolder">
-        <template #icon
-          ><BarsOutlined class="icon"/>
-        </template>
-      </a-button>
-      <a-button class="button" ghost @click="placeHolder">
-        <template #icon
-          ><LogoutOutlined class="icon"/>
-        </template>
-      </a-button>
-    </a-col>
   </div>
 </template>
 
@@ -212,7 +181,7 @@
   }
 
   /* Style for the Project name input box */
-  .projectNameInput                                                                                                                                                                                                  {
+  .projectNameInput {
     font-size: 2.8em;
     width: 80%;
     height: 2.8em;
@@ -285,8 +254,8 @@
     border: none;
   }
 
-  .icon{
-    color: black;   //TODO: change to appsfactory grey
+  .icon {
+    color: black; //TODO: change to appsfactory grey
     font-size: 30px;
   }
 
@@ -295,14 +264,8 @@
     font-weight: bold;
   }
 
-  .projectInfo{
+  .projectInfo {
     font-size: 1.6em;
     margin: 0;
-  }
-
-  .menu {
-    display: flex;
-    flex-direction: column;
-    margin: 10px;
   }
 </style>
