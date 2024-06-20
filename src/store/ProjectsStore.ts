@@ -1,14 +1,14 @@
 import { projectsService } from '@/services';
 import type {
   ProjectModel,
-  ProjectDetailedModel,
+  DetailedProjectModel,
   CreateProjectModel,
 } from '@/models/Project';
 import { defineStore } from 'pinia';
 
 type StoreState = {
   projects: ProjectModel[];
-  project: ProjectDetailedModel | null;
+  project: DetailedProjectModel | null;
   isLoadingAdd: boolean;
   isLoadingProjects: boolean;
   isLoadingProject: boolean;
@@ -30,7 +30,7 @@ export const useProjectStore = defineStore('project', {
     getProjects(): ProjectModel[] {
       return this.projects;
     },
-    getProject(): ProjectDetailedModel | null {
+    getProject(): DetailedProjectModel | null {
       return this.project;
     },
     getIsLoading(): boolean {
@@ -55,7 +55,7 @@ export const useProjectStore = defineStore('project', {
     setProjects(projects: ProjectModel[]) {
       this.projects = projects;
     },
-    setProject(project: ProjectDetailedModel | null) {
+    setProject(project: DetailedProjectModel | null) {
       this.project = project;
     },
     setLoadingAdd(status: boolean) {
@@ -98,7 +98,7 @@ export const useProjectStore = defineStore('project', {
     async fetchProject(id: number) {
       try {
         this.setLoadingProject(true);
-        const project: ProjectDetailedModel =
+        const project: DetailedProjectModel =
           (await projectsService.fetchProject(id)) ?? {
             id: 0,
             projectName: '',
