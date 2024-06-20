@@ -275,7 +275,6 @@
     flex-direction: row;
     display: flex;
     justify-content: center;
-    border: 2px solid red;
   }
 
   .button {
