@@ -28,7 +28,7 @@
   const formState: UnwrapRef<CreateProjectModel> = reactive({
     projectName: '',
     businessUnit: '',
-    teamNumber: null,
+    teamNumber: -1,
     department: '',
     clientName: '',
   });
@@ -60,7 +60,7 @@
       .then(() => {
         submit();
       })
-      .catch((error) => {
+      .catch((error: unknown) => {
         console.log('error', error);
       });
   };
