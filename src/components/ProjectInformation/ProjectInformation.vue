@@ -63,15 +63,6 @@
 
 <template>
   <div class="pane">
-    <a-button
-      class="button"
-      ghost
-      style="left: 10px; top: 30px"
-      @click="placeHolder"
-    >
-      <template #icon><RightCircleFilled class="icon" /></template>
-    </a-button>
-
     <div class="main">
       <!-- create box for the project name -->
       <div class="projectNameContainer" :loading="isLoading">
@@ -157,9 +148,6 @@
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
       </a-flex>
-      <div v-if="!isLoading">
-        <PluginView :project-i-d="projectData.id"></PluginView>
-      </div>
     </div>
   </div>
 </template>
@@ -225,21 +213,14 @@
     align-items: center;
   }
 
+  .pluginView{
+    padding: 0;
+  }
+
   /* Style for the right panel */
   .pane {
     display: flex;
     flex-direction: row;
-    overflow: scroll;
-    height: 100vh;
-  }
-
-  /* Style for the return button */
-  .return {
-    cursor: pointer;
-    height: 60px;
-    width: 60px;
-    margin: 20px;
-    border: none;
   }
 
   /* Style for the Project name input box */
@@ -292,7 +273,6 @@
   }
 
   .infoCard {
-    margin: 5px;
     height: fit-content;
     width: 70%;
     border: none;

@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div class="pluginCanvas">
     <div v-if="!loading" class="container">
       <PluginComponent
         v-for="plugin in plugins"
@@ -75,7 +75,7 @@
     flex-direction: column;
     transition: 0.1s ease-in-out;
   }
-  .main {
+  .pluginCanvas {
     width: 100%;
   }
 </style>
