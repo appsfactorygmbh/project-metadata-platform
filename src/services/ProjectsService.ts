@@ -5,11 +5,14 @@ import type {
 } from '@/models/Project';
 
 class ProjectsService {
-  fetchProjects = async (): Promise<ProjectModel[] | null> => {
+  fetchProjects = async (search?: string): Promise<ProjectModel[] | null> => {
+    let url = `${import.meta.env.VITE_BACKEND_URL}/Projects`;
+    if (search) url += '?search=' + search;
     try {
-      const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL + '/projects',
-      );
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
 
       const data: ProjectModel[] = await response.json();
 
@@ -61,28 +64,6 @@ class ProjectsService {
     } catch (error) {
       console.error('Error:', error);
       return null;
-    }
-  };
-
-  searchProjects = async (
-    searchQuery: string = '',
-  ): Promise<ProjectModel[]> => {
-    const url = `${import.meta.env.VITE_BACKEND_URL}/Projects?search=${searchQuery}`;
-    try {
-      //Fetching
-      console.log('Fetching URL:', url);
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      //Response
-      const data: ProjectModel[] = await response.json();
-      console.log('Response data:', data);
-      return data;
-    } catch (err) {
-      console.error('Error searching projects:', err);
-      return [];
     }
   };
 }

@@ -31,7 +31,7 @@
   if (FETCHING_METHOD === 'BACKEND') {
     const fetchData = async (value: string) => {
       try {
-        return await projectsService.searchProjects(value);
+        return await projectsService.fetchProjects(value);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
