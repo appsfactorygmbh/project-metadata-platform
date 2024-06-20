@@ -1,13 +1,13 @@
-import { ProjectsStore } from './ProjectsStore';
-import { ProjectInformationStore } from './ProjectInformationStore';
+import { useProjectStore } from './ProjectsStore';
+import { usePluginsStore } from './PluginStore';
 import type { InjectionKey } from 'vue';
 
 const projectsStoreSymbol = Symbol() as InjectionKey<
-  ReturnType<typeof ProjectsStore>
+  ReturnType<typeof useProjectStore>
 >;
 
-const projectInformationStoreSymbol = Symbol() as InjectionKey<
-  ReturnType<typeof ProjectInformationStore>
+const pluginStoreSymbol = Symbol() as InjectionKey<
+  ReturnType<typeof usePluginsStore>
 >;
 
-export { projectsStoreSymbol, projectInformationStoreSymbol };
+export { projectsStoreSymbol, pluginStoreSymbol };

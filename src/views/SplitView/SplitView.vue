@@ -4,11 +4,11 @@
   import { ref, reactive } from 'vue';
   import { useElementSize } from '@vueuse/core';
   import { ProjectSearchView } from '@/views/ProjectSearchView';
+  import CreateProjectView from '@/views/CreateProject/createProjectView.vue';
+  import { ProjectInformationView } from '@/views/ProjectInformationView';
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
-
-  import { ProjectInformationView } from '@/views/ProjectInformationView';
 
   const projectInformationPane = ref(null);
   const infoSize = reactive(useElementSize(projectInformationPane));
@@ -30,6 +30,7 @@
 
       <pane size="1" min-size="1">
         <div ref="projectInformationPane">
+          <CreateProjectView></CreateProjectView>
           <ProjectInformationView
             :pane-width="infoSize.width"
             :project-id="100"

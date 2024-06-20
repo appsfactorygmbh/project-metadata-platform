@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { onMounted, computed, watch, inject, toRaw, reactive } from 'vue';
-  import type { ProjectInformationModel } from '@/models/ProjectInformationModel';
+  import type { ProjectDetailedModel } from '@/models/Project';
   import {
     RightCircleFilled,
     EditOutlined,
@@ -9,10 +9,11 @@
     BarsOutlined,
     AppstoreAddOutlined,
   } from '@ant-design/icons-vue';
-  import { projectInformationStoreSymbol } from '@/store/injectionSymbols';
-  import { ProjectInformationStore } from '@/store/ProjectInformationStore';
+  import { projectsStoreSymbol } from '@/store/injectionSymbols';
+  import { useProjectStore } from '@/store';
   import type { ComputedRef } from 'vue';
   import { storeToRefs } from 'pinia';
+  import PluginView from '@/views/PluginView/PluginView.vue';
 
   //Get the width of the right pane from App.vue
   const props = defineProps({
@@ -36,13 +37,14 @@
   let store;
 
   if (props.isTest) {
-    store = ProjectInformationStore();
-    store.fetchProjectInformation(100);
+    store = useProjectStore();
+    store.fetchProject(100);
   } else {
-    store = inject(projectInformationStoreSymbol)!;
+    store = inject(projectsStoreSymbol)!;
   }
 
-  const { isLoading } = storeToRefs(store);
+  const { getIsLoadingProject } = storeToRefs(store);
+  const isLoading = computed(() => getIsLoadingProject.value);
 
   const profileFieldSize = computed(() => ({
     width: getWidth(props.paneWidth),
@@ -50,16 +52,18 @@
 
   // Fetch data when component is mounted
   onMounted(async () => {
-    addData(store.getProjectInformation);
+    const project = store.getProject;
+    if (project) addData(project);
 
-    const data: ComputedRef<ProjectInformationModel> = computed(
-      () => store.getProjectInformation,
+    const data: ComputedRef<ProjectDetailedModel | null> = computed(
+      () => store.getProject,
     );
 
     watch(
       () => data.value,
       (newProject, oldProject) => {
-        if (newProject.id !== oldProject.id) {
+        if (!newProject) return;
+        if (newProject.id !== oldProject?.id) {
           addData(toRaw(newProject));
         }
       },
@@ -139,6 +143,9 @@
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
       </a-row>
+      <div v-if="!isLoading">
+        <PluginView :project-i-d="projectData.id"></PluginView>
+      </div>
     </div>
 
     <!-- add icons for profile, plugins, global logs, signout -->
@@ -169,11 +176,11 @@
 
 <script lang="ts">
   // Flag for editable Title
-  const projectData: ProjectInformationModel = reactive({
+  const projectData: ProjectDetailedModel = reactive({
     id: 0,
     projectName: '',
     businessUnit: '',
-    teamNumber: '',
+    teamNumber: 0,
     department: '',
     clientName: '',
   });
@@ -184,7 +191,7 @@
   };
 
   //Function to load the data from projectViewService to projectView
-  function addData(loadedData: ProjectInformationModel) {
+  function addData(loadedData: ProjectDetailedModel) {
     projectData.id = loadedData.id;
     projectData.projectName = loadedData.projectName;
     projectData.businessUnit = loadedData.businessUnit;
@@ -217,7 +224,8 @@
   /* Style for the middle section */
   .mainStyle {
     width: 60vw;
-    height: 80vh;
+    max-height: 80vh;
+    height: max-content;
     padding: 50px;
     margin: 10px;
 
@@ -230,6 +238,8 @@
   .paneStyle {
     display: flex;
     flex-direction: row;
+    overflow: scroll;
+    height: 100vh;
   }
 
   /* Style for the Project name input box */

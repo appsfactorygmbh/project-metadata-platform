@@ -7,13 +7,10 @@
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
-  import type { ProjectModel } from '@/models/ProjectModel';
+  import type { ProjectModel } from '@/models/Project';
   import { storeToRefs } from 'pinia';
-  import {
-    projectInformationStoreSymbol,
-    projectsStoreSymbol,
-  } from '@/store/injectionSymbols';
-  import { ProjectsStore } from '@/store/ProjectsStore';
+  import { projectsStoreSymbol } from '@/store/injectionSymbols';
+  import { useProjectStore } from '@/store/ProjectsStore';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -39,21 +36,17 @@
     },
   );
 
-  let projectsStore;
-  const projectInformationStore = inject(projectInformationStoreSymbol)!;
+  const projectsStore = props.isTest
+    ? useProjectStore()
+    : inject(projectsStoreSymbol)!;
 
-  if (props.isTest) {
-    projectsStore = ProjectsStore();
-  } else {
-    projectsStore = inject(projectsStoreSymbol)!;
-  }
-
-  const { isLoading } = storeToRefs(projectsStore);
+  const { getIsLoading } = storeToRefs(projectsStore);
+  const isLoading = computed(() => getIsLoading.value);
 
   const customRow = (record: ProjectModel) => {
     return {
       onClick: () => {
-        projectInformationStore.fetchProjectInformation(record.id);
+        projectsStore.fetchProject(record.id);
       },
     };
   };

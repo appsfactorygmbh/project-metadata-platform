@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { ProjectInformation } from '@/components/ProjectInformation';
-  import { projectInformationStoreSymbol } from '@/store/injectionSymbols';
+  import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import { inject, onMounted } from 'vue';
 
   const props = defineProps({
@@ -14,10 +14,10 @@
     },
   });
 
-  const projectInformationStore = inject(projectInformationStoreSymbol)!;
+  const projectStore = inject(projectsStoreSymbol)!;
 
   onMounted(async () => {
-    await projectInformationStore.fetchProjectInformation(props.projectId);
+    await projectStore.fetchProject(props.projectId);
   });
 </script>
 

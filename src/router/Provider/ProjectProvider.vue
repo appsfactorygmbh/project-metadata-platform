@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-  import { ProjectsStore } from '@/store/ProjectsStore';
+  import { useProjectStore } from '@/store';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import { provide } from 'vue';
 
-  const projectsStore = ProjectsStore();
+  const projectsStore = useProjectStore();
   provide<typeof projectsStore>(projectsStoreSymbol, projectsStore);
 </script>
 <template>
