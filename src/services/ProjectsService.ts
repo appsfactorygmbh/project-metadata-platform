@@ -1,8 +1,11 @@
-import type { ProjectModel } from '@/models/ProjectModel';
-import type { CreateProjectModel } from '@/models/CreateProjectModel.ts';
+import type {
+  ProjectModel,
+  ProjectDetailedModel,
+  CreateProjectModel,
+} from '@/models/Project';
 
 class ProjectsService {
-  fetchProjects = async () => {
+  fetchProjects = async (): Promise<ProjectModel[] | null> => {
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/projects',
@@ -17,7 +20,31 @@ class ProjectsService {
     }
   };
 
-  addProject = async (projectData: CreateProjectModel) => {
+  fetchProject = async (id: number): Promise<ProjectDetailedModel | null> => {
+    try {
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/Projects/' + id.toString(),
+        //'src/components/ProjectInformation/test.json',
+        {
+          headers: {
+            Accept: 'text/plain',
+            'Access-Control-Allow-Origin': '*',
+            cors: 'cors',
+          },
+        },
+      );
+
+      const data: ProjectDetailedModel = await response.json();
+      return data;
+    } catch (err) {
+      console.error('Error fetching project: ' + err);
+      return null;
+    }
+  };
+
+  addProject = async (
+    projectData: CreateProjectModel,
+  ): Promise<Response | null> => {
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/projects',
@@ -33,6 +60,7 @@ class ProjectsService {
       return response;
     } catch (error) {
       console.error('Error:', error);
+      return null;
     }
   };
 }

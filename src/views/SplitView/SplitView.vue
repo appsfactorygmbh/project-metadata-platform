@@ -5,11 +5,10 @@
   import { useElementSize } from '@vueuse/core';
   import { ProjectSearchView } from '@/views/ProjectSearchView';
   import CreateProjectView from '@/views/CreateProject/createProjectView.vue';
+  import { ProjectInformationView } from '@/views/ProjectInformationView';
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
-
-  import { ProjectInformationView } from '@/views/ProjectInformationView';
 
   const projectInformationPane = ref(null);
   const infoSize = reactive(useElementSize(projectInformationPane));

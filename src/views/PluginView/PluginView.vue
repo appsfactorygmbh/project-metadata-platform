@@ -30,8 +30,8 @@
 
 <script setup lang="ts">
   import { onBeforeMount, computed, toRaw, inject } from 'vue';
-  import PluginComponent from '../../components/Plugin/PluginComponent.vue';
-  import { pluginStoreSymbol } from '@/store/Plugin/injectionsSymbols';
+  import PluginComponent from '@/components/Plugin/PluginComponent.vue';
+  import { pluginStoreSymbol } from '@/store/injectionSymbols';
 
   const pluginStore = inject(pluginStoreSymbol);
 

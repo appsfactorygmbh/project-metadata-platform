@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import { defineComponent, computed, toRaw } from 'vue';
 import { setActivePinia, createPinia } from 'pinia';
-import { usePluginsStore } from '@/store/Plugin/PluginStore';
-import type { PluginType } from '@/models/PluginType';
+import { usePluginsStore } from '@/store';
+import type { PluginModel } from '@/models/Plugin';
 
 // Mock the pluginService module
-vi.mock('@/services/Plugin/PluginService', () => ({
+vi.mock('@/services/PluginService', () => ({
   pluginService: {
     fetchPlugins: vi.fn(),
   },
@@ -30,7 +30,7 @@ describe('PluginView', () => {
 
   it('should compute plugins from the store', async () => {
     const store = usePluginsStore();
-    const mockPlugins: PluginType[] = [
+    const mockPlugins: PluginModel[] = [
       {
         pluginName: 'testPlugin',
         displayName: 'Test Plugin',
