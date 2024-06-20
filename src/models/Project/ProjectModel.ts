@@ -5,3 +5,7 @@ export type ProjectModel = {
   businessUnit: string;
   teamNumber: number;
 };
+
+export type DetailedProjectModel = ProjectModel & {
+  department: string;
+};

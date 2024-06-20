@@ -1,5 +1,4 @@
-import type { ProjectModel } from './ProjectModel';
-import type { ProjectDetailedModel } from './ProjectDetailedModel';
+import type { ProjectModel, DetailedProjectModel } from './ProjectModel';
 import type { CreateProjectModel } from './CreateProjectModel';
 
-export type { ProjectModel, ProjectDetailedModel, CreateProjectModel };
+export type { ProjectModel, DetailedProjectModel, CreateProjectModel };

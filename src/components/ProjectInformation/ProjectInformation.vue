@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { onMounted, computed, watch, inject, toRaw, reactive } from 'vue';
-  import type { ProjectDetailedModel } from '@/models/Project';
+  import type { DetailedProjectModel } from '@/models/Project';
   import {
     RightCircleFilled,
     EditOutlined,
@@ -55,7 +55,7 @@
     const project = store.getProject;
     if (project) addData(project);
 
-    const data: ComputedRef<ProjectDetailedModel | null> = computed(
+    const data: ComputedRef<DetailedProjectModel | null> = computed(
       () => store.getProject,
     );
 
@@ -176,7 +176,7 @@
 
 <script lang="ts">
   // Flag for editable Title
-  const projectData: ProjectDetailedModel = reactive({
+  const projectData: DetailedProjectModel = reactive({
     id: 0,
     projectName: '',
     businessUnit: '',
@@ -191,7 +191,7 @@
   };
 
   //Function to load the data from projectViewService to projectView
-  function addData(loadedData: ProjectDetailedModel) {
+  function addData(loadedData: DetailedProjectModel) {
     projectData.id = loadedData.id;
     projectData.projectName = loadedData.projectName;
     projectData.businessUnit = loadedData.businessUnit;

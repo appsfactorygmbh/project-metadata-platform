@@ -1,6 +1,6 @@
 import type {
   ProjectModel,
-  ProjectDetailedModel,
+  DetailedProjectModel,
   CreateProjectModel,
 } from '@/models/Project';
 
@@ -20,7 +20,7 @@ class ProjectsService {
     }
   };
 
-  fetchProject = async (id: number): Promise<ProjectDetailedModel | null> => {
+  fetchProject = async (id: number): Promise<DetailedProjectModel | null> => {
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/Projects/' + id.toString(),
@@ -34,7 +34,7 @@ class ProjectsService {
         },
       );
 
-      const data: ProjectDetailedModel = await response.json();
+      const data: DetailedProjectModel = await response.json();
       return data;
     } catch (err) {
       console.error('Error fetching project: ' + err);
