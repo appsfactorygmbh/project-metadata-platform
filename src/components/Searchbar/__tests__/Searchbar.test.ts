@@ -4,15 +4,6 @@ import SearchBar from '../SearchBar.vue';
 import { useSearchStore } from '@/store';
 import { createTestingPinia } from '@pinia/testing';
 
-vi.mock('@/store/SearchStore', () => ({
-  useSearchStore: vi.fn(() => ({
-    searchQuery: '',
-    setSearchQuery: vi.fn((query: string) => {
-      return query;
-    }),
-  })),
-}));
-
 describe('SearchBar.vue', () => {
   beforeEach(() => {
     // Reset mock before each test
