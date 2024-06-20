@@ -221,7 +221,7 @@
     {
       title: 'Project Name',
       dataIndex: 'projectName',
-      key: 'pname',
+      key: 'projectName',
       customFilterDropdown: true,
       onFilter: (value: string | number | boolean, record: ProjectModel) =>
         record.projectName
@@ -240,7 +240,7 @@
     {
       title: 'Client Name',
       dataIndex: 'clientName',
-      key: 'cname',
+      key: 'clientName',
       customFilterDropdown: true,
       onFilter: (value: string | number | boolean, record: ProjectModel) =>
         record.clientName
@@ -260,7 +260,7 @@
     {
       title: 'Business Unit',
       dataIndex: 'businessUnit',
-      key: 'bu',
+      key: 'businessNumber',
       ellipsis: true,
       align: 'center' as const,
       sorter: (a: ProjectModel, b: ProjectModel) =>
@@ -271,7 +271,7 @@
     {
       title: 'Team Number',
       dataIndex: 'teamNumber',
-      key: 'tnr',
+      key: 'teamNumber',
       ellipsis: true,
       align: 'center' as const,
       sorter: (a: ProjectModel, b: ProjectModel) => a.teamNumber - b.teamNumber,
@@ -325,29 +325,29 @@
     const breakpoint = getBreakpoint(pwidth);
     switch (breakpoint) {
       case 'xs':
-        hideColumn('cname');
-        hideColumn('bu');
-        hideColumn('tnr');
+        hideColumn('clientName');
+        hideColumn('businessNumber');
+        hideColumn('teamNumber');
         break;
       case 'sm':
-        showColumn('cname');
-        hideColumn('bu');
-        hideColumn('tnr');
+        showColumn('clientName');
+        hideColumn('businessNumber');
+        hideColumn('teamNumber');
         break;
       case 'md':
-        showColumn('cname');
-        showColumn('bu');
-        hideColumn('tnr');
+        showColumn('clientName');
+        showColumn('businessNumber');
+        hideColumn('teamNumber');
         break;
       case 'lg':
-        showColumn('cname');
-        showColumn('bu');
-        showColumn('tnr');
+        showColumn('clientName');
+        showColumn('businessNumber');
+        showColumn('teamNumber');
         break;
       default:
-        hideColumn('cname');
-        hideColumn('bu');
-        hideColumn('tnr');
+        hideColumn('clientName');
+        hideColumn('businessNumber');
+        hideColumn('teamNumber');
         break;
     }
   }
