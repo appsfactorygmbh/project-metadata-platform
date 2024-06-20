@@ -234,21 +234,21 @@
 
   /* Style for the Project title box */
   .projectNameContainer {
-    width: 85%;
-    max-width: 750px;
-    min-width: 250px;
+    width: 100%;
     padding: 10px;
     margin: 10px;
     border-radius: 10px;
-    align-items: center;
-    //background: white;
-    //box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
+    align-items: center;
+    flex-direction: row;
+    display: flex;
+    justify-content: center;
   }
 
   .projectName {
     font-size: 2.8em;
     font-weight: bold;
+    color: #000;
   }
 
   .projectInformationBox {
@@ -264,12 +264,18 @@
   }
 
   .infoCard {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     margin: 5px;
     height: 50px;
     border: none;
+    align-items: center;
+    flex-direction: row;
+    display: flex;
+    justify-content: center;
+  }
+
+  .grid {
+    width: 50%;
+    text-align: center;
   }
 
   .button {
