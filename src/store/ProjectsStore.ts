@@ -74,9 +74,9 @@ export const useProjectStore = defineStore('project', {
     async fetchProjects() {
       try {
         this.setLoadingProjects(true);
-        const table: ProjectModel[] =
+        const projects: ProjectModel[] =
           (await projectsService.fetchProjects()) ?? [];
-        this.setProjects(table);
+        this.setProjects(projects);
       } finally {
         this.setLoadingProjects(false);
       }

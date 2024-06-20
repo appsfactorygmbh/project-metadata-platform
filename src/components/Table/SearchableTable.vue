@@ -1,7 +1,6 @@
 <script lang="ts" setup>
   import { SmileOutlined, SearchOutlined } from '@ant-design/icons-vue';
-  import { reactive, ref, watch, onMounted, inject, toRaw } from 'vue';
-  import type { ComputedRef } from 'vue';
+  import { reactive, ref, watch, onMounted, inject } from 'vue';
   import { useWindowSize } from '@vueuse/core';
   import type {
     FilterConfirmProps,
@@ -10,10 +9,15 @@
   import type { ProjectModel } from '@/models/Project';
   import { storeToRefs } from 'pinia';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
-  import { useProjectStore } from '@/store/ProjectsStore';
+  import { useProjectStore, type SearchStore } from '@/store';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
+    searchStoreSymbol: {
+      type: Symbol,
+      required: false,
+      default: Symbol(''),
+    },
     paneWidth: {
       type: Number,
       required: true,
@@ -27,6 +31,10 @@
       default: false,
     },
   });
+
+  const searchStore = inject<SearchStore<ProjectModel>>(
+    props.searchStoreSymbol,
+  );
 
   //update paneWidth when the pane is resized
   watch(
@@ -52,24 +60,9 @@
   };
 
   onMounted(async () => {
-    await projectsStore.fetchProjects();
     changeColumns(props.paneWidth);
-    addTableEntry(projectsStore.getProjects);
-
-    const data: ComputedRef<ProjectModel[]> = computed(
-      () => projectsStore.getProjects,
-    );
-
-    // Updates Table, when a change in the store is detected
-    watch(
-      () => data.value,
-      (newValue, oldValue) => {
-        const newProject = newValue.filter(
-          (newObj) => !oldValue.some((oldObj) => oldObj['id'] === newObj['id']),
-        );
-        addTableEntry(toRaw(newProject));
-      },
-    );
+    await projectsStore.fetchProjects();
+    searchStore?.setBaseSet(projectsStore.getProjects);
   });
 </script>
 
@@ -81,10 +74,10 @@
     -->
   <a-table
     :columns="[...columns].filter((item) => !item.hidden)"
-    :data-source="[...dataSource]"
+    :data-source="[...(searchStore?.getSearchResults || [])]"
     :pagination="false"
     :loading="isLoading"
-    :scroll="{ y: props.paneHeight - 55 }"
+    :scroll="{ y: props.paneHeight - 155 }"
     :custom-row="customRow"
     bordered
   >
@@ -182,26 +175,6 @@
 </template>
 
 <script lang="ts">
-  /*  Data implementation  */
-
-  const dataSource: ProjectModel[] = reactive([]);
-
-  /**
-   * Adds a new table entry to dataSource.
-   * @param {Project[]} data Stores the data that should be added.
-   */
-  function addTableEntry(data: ProjectModel[]) {
-    for (const date of data) {
-      dataSource.push({
-        id: date.id,
-        projectName: date.projectName,
-        clientName: date.clientName,
-        businessUnit: date.businessUnit,
-        teamNumber: date.teamNumber,
-      });
-    }
-  }
-
   /*  Column implementation  */
 
   /**

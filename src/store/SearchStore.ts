@@ -36,23 +36,28 @@ export const useSearchStore = <T extends object>(name: string) =>
     actions: {
       setSearchQuery(query: string) {
         this.searchQuery = query;
-        _.debounce(this.applySearch, 300);
+        this.applySearch();
       },
       setBaseSet(baseSet: T[]) {
         this.baseSet = baseSet;
-        _.debounce(this.applySearch, 300);
+        this.applySearch();
       },
       applySearch() {
         if (_.isEmpty(this.baseSet)) return;
+        if (_.isEmpty(this.searchQuery)) {
+          this.searchResults = this.baseSet;
+          return;
+        }
         this.isLoading = true;
-        const keys = Object.keys(this.baseSet[0]);
+        const keys = Object.keys(this.baseSet[0]).filter(
+          (key) => !excludedKeys.includes(key),
+        );
         const results = this.baseSet.filter((item) =>
-          keys.some((key) => {
-            if (excludedKeys.includes(key)) return false;
+          keys.some((key) =>
             String(item[key as keyof T])
               .toLowerCase()
-              .includes(this.searchQuery.toLowerCase());
-          }),
+              .includes(this.searchQuery.toLowerCase()),
+          ),
         );
         this.searchResults = results;
         this.isLoading = false;
