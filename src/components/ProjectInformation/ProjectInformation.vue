@@ -229,6 +229,8 @@
   .pane {
     display: flex;
     flex-direction: row;
+    overflow: scroll;
+    height: 100vh;
   }
 
   /* Style for the return button */
