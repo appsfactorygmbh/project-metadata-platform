@@ -13,6 +13,7 @@
     projectInformationStoreSymbol,
     projectsStoreSymbol,
   } from '@/store/injectionSymbols';
+  import { pluginStoreSymbol } from '@/store/Plugin/injectionsSymbols';
   import { ProjectsStore } from '@/store/ProjectsStore';
 
   //Get the width of the left pane from App.vue
@@ -41,6 +42,7 @@
 
   let projectsStore;
   const projectInformationStore = inject(projectInformationStoreSymbol)!;
+  const pluginStore = inject(pluginStoreSymbol)!;
 
   if (props.isTest) {
     projectsStore = ProjectsStore();
@@ -54,6 +56,7 @@
     return {
       onClick: () => {
         projectInformationStore.fetchProjectInformation(record.id);
+        pluginStore.fetchPlugins(record.id);
       },
     };
   };

@@ -1,5 +1,5 @@
 <template>
-  <div class="pluginCanvas">
+  <div class="main">
     <div v-if="!loading" class="container">
       <PluginComponent
         v-for="plugin in plugins"
@@ -29,11 +29,13 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, computed, toRaw, inject } from 'vue';
+  import { onBeforeMount, computed, toRaw, inject, onMounted } from 'vue';
   import PluginComponent from '../../components/Plugin/PluginComponent.vue';
   import { pluginStoreSymbol } from '@/store/Plugin/injectionsSymbols';
+  import type { PluginType } from '@/models/PluginType';
+  import type { ComputedRef } from 'vue';
 
-  const pluginStore = inject(pluginStoreSymbol);
+  const pluginStore = inject(pluginStoreSymbol)!;
 
   const props = defineProps({
     projectID: {
@@ -42,12 +44,31 @@
     },
   });
 
-  const plugins = computed(() => toRaw(pluginStore?.getPlugins));
-  const loading = computed(() => pluginStore?.getIsLoading);
+  let plugins: ComputedRef<PluginType[]>;
+  const loading = computed(() => pluginStore.getIsLoading);
+
+  function setPlugins(newPlugins: PluginType[]) {
+    plugins = computed(() => toRaw(newPlugins));
+  }
 
   onBeforeMount(async () => {
-    pluginStore?.setLoading(true);
-    await pluginStore?.fetchPlugins(props.projectID);
+    pluginStore.setLoading(true);
+    await pluginStore.fetchPlugins(props.projectID);
+  });
+
+  onMounted(async () => {
+    setPlugins(pluginStore.getPlugins);
+
+    const data: ComputedRef<PluginType[]> = computed(
+      () => pluginStore.getPlugins,
+    );
+
+    watch(
+      () => data.value,
+      (newProject) => {
+        setPlugins(newProject);
+      },
+    );
   });
 </script>
 
@@ -75,7 +96,7 @@
     flex-direction: column;
     transition: 0.1s ease-in-out;
   }
-  .pluginCanvas {
+  .main {
     width: 100%;
   }
 </style>
