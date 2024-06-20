@@ -11,6 +11,7 @@
 <script lang="ts" setup>
   import { ref, watch } from 'vue';
   import { searchProjects } from '@/services/SearchService';
+  import { debounce } from 'lodash';
 
   // Variable storing the user-search value
   const value = ref<string>('');
@@ -27,9 +28,12 @@
     }
   };
 
+  // Debounced version of fetchData
+  const debouncedFetchData = debounce(fetchData, 300);
+
   // Watcher, which calls fetchData function every time the search value changes
   watch(value, () => {
-    fetchData();
+    debouncedFetchData();
   });
 
   // Initial data-fetch

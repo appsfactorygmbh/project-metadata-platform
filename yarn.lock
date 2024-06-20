@@ -1291,6 +1291,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4":
+  version: 4.17.5
+  resolution: "@types/lodash@npm:4.17.5"
+  checksum: 10c0/55924803ed853e72261512bd3eaf2c5b16558c3817feb0a3125ef757afe46e54b86f33d1960e40b7606c0ddab91a96f47966bf5e6006b7abfd8994c13b04b19b
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*, @types/node@npm:^20.14.2":
   version: 20.14.2
   resolution: "@types/node@npm:20.14.2"
@@ -4085,6 +4092,7 @@ __metadata:
     "@types/eslint-config-prettier": "npm:^6.11.3"
     "@types/eslint__js": "npm:^8.42.3"
     "@types/jsdom": "npm:^21.1.7"
+    "@types/lodash": "npm:^4"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^20.14.2"
     "@types/splitpanes": "npm:^2.2.6"
@@ -4107,6 +4115,7 @@ __metadata:
     husky: "npm:^9.0.11"
     jsdom: "npm:^24.1.0"
     lint-staged: "npm:^15.2.7"
+    lodash: "npm:^4.17.21"
     lodash-es: "npm:^4.17.21"
     pinia: "npm:^2.1.7"
     prettier: "npm:^3.3.2"
