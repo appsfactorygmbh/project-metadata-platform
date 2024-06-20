@@ -15,8 +15,7 @@
   const props = defineProps({
     searchStoreSymbol: {
       type: Symbol,
-      required: false,
-      default: Symbol(''),
+      required: true,
     },
     paneWidth: {
       type: Number,
@@ -61,8 +60,6 @@
 
   onMounted(async () => {
     changeColumns(props.paneWidth);
-    await projectsStore.fetchProjects();
-    searchStore?.setBaseSet(projectsStore.getProjects);
   });
 </script>
 
@@ -316,11 +313,6 @@
         showColumn('clientName');
         showColumn('businessNumber');
         showColumn('teamNumber');
-        break;
-      default:
-        hideColumn('clientName');
-        hideColumn('businessNumber');
-        hideColumn('teamNumber');
         break;
     }
   }

@@ -5,6 +5,7 @@ import { useSearchStore } from '@/store';
 import { createTestingPinia } from '@pinia/testing';
 
 describe('SearchBar.vue', () => {
+  createTestingPinia();
   beforeEach(() => {
     // Reset mock before each test
     vi.clearAllMocks();

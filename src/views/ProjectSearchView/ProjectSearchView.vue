@@ -24,7 +24,7 @@
 
   onMounted(async () => {
     await projectsStore.fetchProjects();
-    searchStore.setBaseSet(projectsStore.projects);
+    searchStore.setBaseSet(projectsStore.getProjects);
   });
 </script>
 
