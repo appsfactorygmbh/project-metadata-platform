@@ -32,7 +32,6 @@
 
       <pane size="32" min-size="32">
         <div ref="projectInformationPane">
-          <CreateProjectView></CreateProjectView>
           <ProjectInformationView
             :pane-width="infoSize.width"
             :project-id="100"
@@ -40,6 +39,7 @@
           <MenuButtons />
         </div>
       </pane>
+      <CreateProjectView />
     </splitpanes>
   </div>
 </template>
