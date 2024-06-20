@@ -94,7 +94,7 @@
           class="infoCard"
           :style="profileFieldSize"
         >
-          <label class="label">Business Unit:</label>
+          <label class="label">Business&nbsp;Unit:</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.businessUnit }}
           </p>
@@ -110,7 +110,7 @@
           class="infoCard"
           :style="profileFieldSize"
         >
-          <label class="label">Team Number:</label>
+          <label class="label">Team&nbsp;Number:</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.teamNumber }}
           </p>
@@ -140,7 +140,7 @@
           class="infoCard"
           :style="profileFieldSize"
         >
-          <label class="label">Client Name:</label>
+          <label class="label">Client&nbsp;Name:</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.clientName }}
           </p>
@@ -257,8 +257,9 @@
   .projectInformationBox {
     width: 100%;
     height: max-content;
-    min-width: 250px;
     margin: 10px;
+    padding-top: 1em;
+    padding-bottom: 1em;
     border-radius: 10px;
 
     background: white;
@@ -266,19 +267,15 @@
 
     display: flex;
     flex-wrap: wrap;
-
-    justify-content: space-between;
-    flex-basis: 50%;
   }
 
   .infoCard {
-    height: fit-content;
-    width: 70%;
     border: none;
     align-items: center;
     flex-direction: row;
     display: flex;
     justify-content: center;
+    border: 2px solid red;
   }
 
   .button {
@@ -299,13 +296,12 @@
   }
 
   .label {
-    font-size: 1.6em;
+    font-size: 1.4em;
     font-weight: bold;
-    margin-right: 15px;
   }
 
   .projectInfo {
-    font-size: 1.6em;
+    font-size: 1.4em;
     margin: 0;
   }
 </style>
