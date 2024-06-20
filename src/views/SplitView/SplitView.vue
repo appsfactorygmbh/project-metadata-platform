@@ -4,7 +4,6 @@
   import { ref, reactive } from 'vue';
   import { useElementSize } from '@vueuse/core';
   import { ProjectSearchView } from '@/views/ProjectSearchView';
-  import SearchBar from '@/components/Searchbar/SearchBar.vue';
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
@@ -23,7 +22,6 @@
         min-size: sets smallest possible size to 20% and 1%
       -->
       <pane ref="tablePane" size="99" min-size="20">
-        <SearchBar />
         <ProjectSearchView
           :pane-width="dimensions.width"
           :pane-height="dimensions.height"

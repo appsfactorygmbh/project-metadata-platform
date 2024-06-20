@@ -22,6 +22,7 @@
 </script>
 
 <template>
+  <SearchBar />
   <SearchableTable
     :pane-width="props.paneWidth"
     :pane-height="props.paneHeight"
