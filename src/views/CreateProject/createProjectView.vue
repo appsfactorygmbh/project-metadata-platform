@@ -28,7 +28,7 @@
   const formState: UnwrapRef<CreateProjectModel> = reactive({
     projectName: '',
     businessUnit: '',
-    teamNumber: -1,
+    teamNumber: undefined,
     department: '',
     clientName: '',
   });
