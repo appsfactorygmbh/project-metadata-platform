@@ -8,6 +8,10 @@ describe('CreateProjectView.vue', () => {
     open: boolean;
     handleOk: () => Promise<void>;
     resetModal: () => void;
+    formRef: {
+      resetFields?: () => void;
+      validate?: () => Promise<void>;
+    };
   };
 
   let wrapper: VueWrapper<CreateProjectViewInstance>;
