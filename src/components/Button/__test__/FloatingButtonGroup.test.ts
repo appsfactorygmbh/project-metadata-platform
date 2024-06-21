@@ -2,6 +2,7 @@ import FloatingButtonGroup from '../FloatingButtonGroup.vue';
 import { QuestionOutlined } from '@ant-design/icons-vue';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import type { ButtonModel } from '@/models/ButtonModel';
 
 const testButtons: ButtonModel[] = [
   {
