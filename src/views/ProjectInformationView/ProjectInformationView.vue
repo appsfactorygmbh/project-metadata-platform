@@ -31,7 +31,10 @@
 
     watch(
       () => data.value,
-      (newProject, oldProject) => {
+      (
+        newProject: ProjectInformationModel,
+        oldProject: ProjectInformationModel,
+      ) => {
         if (newProject.id !== oldProject.id) {
           addData(toRaw(newProject));
         }
@@ -53,7 +56,7 @@
           class="button"
           ghost
           style="margin-left: 10px"
-          @click="placeHolder"
+          @click="() => {}"
         >
           <template #icon><EditOutlined class="icon" /></template>
         </a-button>
@@ -158,11 +161,6 @@
     department: '',
     clientName: '',
   });
-
-  // Place holder for the buttons for now
-  const placeHolder = () => {
-    console.log('Icon clicked');
-  };
 
   //Function to load the data from projectViewService to projectView
   function addData(loadedData: ProjectInformationModel) {

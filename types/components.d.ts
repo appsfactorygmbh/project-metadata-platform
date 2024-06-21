@@ -32,5 +32,6 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
+    SplitPaneButton: typeof import('./../src/components/SplitPaneButton/SplitPaneButton.vue')['default']
   }
 }
