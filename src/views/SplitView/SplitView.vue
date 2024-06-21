@@ -6,14 +6,22 @@
   import { ProjectSearchView } from '@/views/ProjectSearchView';
   import { MenuButtons } from '@/components/MenuButtons';
   import { CreateProjectView } from '../CreateProject/';
+  import { ProjectInformationView } from '@/views/ProjectInformationView';
+  import type { ButtonModel } from '@/models/ButtonModel';
+  import { RightOutlined } from '@ant-design/icons-vue';
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
 
-  import { ProjectInformationView } from '@/views/ProjectInformationView';
+  const button: ButtonModel = {
+    name: 'SplitButton',
+    onClick: () => {},
+    icon: RightOutlined,
+    disabled: false,
+    tooltip: 'Click here to expand the table',
+  };
 
   const projectInformationPane = ref(null);
-  const infoSize = reactive(useElementSize(projectInformationPane));
 </script>
 
 <template>
@@ -31,11 +39,9 @@
       </pane>
 
       <pane size="32" min-size="32">
+        <FloatingButton :button="button" class="button" />
         <div ref="projectInformationPane">
-          <ProjectInformationView
-            :pane-width="infoSize.width"
-            :project-id="100"
-          />
+          <ProjectInformationView />
           <MenuButtons />
         </div>
         <CreateProjectView />
@@ -47,5 +53,11 @@
 <style scoped>
   .splitpanes {
     height: 100vh;
+  }
+
+  .button {
+    position: relative;
+    top: 2.5em;
+    left: 1em;
   }
 </style>

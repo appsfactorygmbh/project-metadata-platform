@@ -106,7 +106,7 @@
 
 <template>
   <div>
-    <FloatingButton :button="button" @clicked="button.onClick" />
+    <FloatingButton :button="button" />
 
     <a-modal
       v-model:open="open"

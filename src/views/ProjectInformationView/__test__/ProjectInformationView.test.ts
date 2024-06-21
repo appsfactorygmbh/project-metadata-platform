@@ -24,8 +24,6 @@ describe('projectView.vue', () => {
   function generateWrapper() {
     return mount(ProjectInformation, {
       propsData: {
-        paneWidth: 1000,
-        projectId: 100,
         isTest: true,
       },
       global: {

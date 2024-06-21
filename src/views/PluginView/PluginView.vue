@@ -37,13 +37,6 @@
 
   const pluginStore = inject(pluginStoreSymbol)!;
 
-  const props = defineProps({
-    projectID: {
-      type: Number,
-      required: true,
-    },
-  });
-
   let plugins: ComputedRef<PluginType[]>;
   const loading = computed(() => pluginStore.getIsLoading);
 
@@ -53,7 +46,7 @@
 
   onBeforeMount(async () => {
     pluginStore.setLoading(true);
-    await pluginStore.fetchPlugins(props.projectID);
+    await pluginStore.fetchPlugins(100);
   });
 
   onMounted(async () => {
@@ -92,8 +85,6 @@
     min-width: 200px;
     max-width: 100%;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
-    display: flex;
-    flex-direction: column;
     transition: 0.1s ease-in-out;
   }
   .main {

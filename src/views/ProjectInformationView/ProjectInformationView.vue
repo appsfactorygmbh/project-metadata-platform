@@ -7,29 +7,13 @@
   import type { ProjectInformationModel } from '@/models/ProjectInformationModel';
   import type { ComputedRef } from 'vue';
   import { EditOutlined } from '@ant-design/icons-vue';
-  import { useWindowSize } from '@vueuse/core';
 
   const props = defineProps({
-    paneWidth: {
-      type: Number,
-      required: true,
-    },
-    projectId: {
-      type: Number,
-      required: true,
-    },
     isTest: {
       type: Boolean,
       default: false,
     },
   });
-
-  watch(
-    () => props.paneWidth,
-    () => {
-      getWidth(props.paneWidth);
-    },
-  );
 
   const projectInformationStore = props.isTest
     ? ProjectInformationStore()
@@ -37,12 +21,8 @@
 
   const { isLoading } = storeToRefs(projectInformationStore);
 
-  const profileFieldSize = computed(() => ({
-    width: getWidth(props.paneWidth),
-  }));
-
   onMounted(async () => {
-    await projectInformationStore.fetchProjectInformation(props.projectId);
+    await projectInformationStore.fetchProjectInformation(100);
     addData(projectInformationStore.getProjectInformation);
 
     const data: ComputedRef<ProjectInformationModel> = computed(
@@ -93,7 +73,6 @@
             padding: '5px',
           }"
           class="infoCard"
-          :style="profileFieldSize"
         >
           <label class="label">Business&nbsp;Unit:</label>
           <p v-if="!isLoading" class="projectInfo">
@@ -114,7 +93,6 @@
             padding: '5px',
           }"
           class="infoCard"
-          :style="profileFieldSize"
         >
           <label class="label">Team&nbsp;Number:</label>
           <p v-if="!isLoading" class="projectInfo">
@@ -134,7 +112,6 @@
             padding: '5px',
           }"
           class="infoCard"
-          :style="profileFieldSize"
         >
           <label class="label">Department:</label>
           <p v-if="!isLoading" class="projectInfo">
@@ -154,7 +131,6 @@
             padding: '5px',
           }"
           class="infoCard"
-          :style="profileFieldSize"
         >
           <label class="label">Client&nbsp;Name:</label>
           <p v-if="!isLoading" class="projectInfo">
@@ -170,7 +146,7 @@
       </a-flex>
     </div>
   </div>
-  <PluginView :project-i-d="props.projectId"></PluginView>
+  <PluginView class="pluginView"></PluginView>
 </template>
 
 <script lang="ts">
@@ -196,29 +172,6 @@
     projectData.teamNumber = loadedData.teamNumber;
     projectData.department = loadedData.department;
     projectData.clientName = loadedData.clientName;
-  }
-
-  const getWidth = (pwidth: number) => {
-    switch (getBreakpoint(pwidth)) {
-      case 'lg':
-        return '25%';
-      case 'md':
-        return '50%';
-      case 'sm':
-        return '100%';
-    }
-  };
-
-  function getBreakpoint(pwidth: number): string {
-    const windowWidth = useWindowSize().width.value;
-    const breakpoint: number[] = [0.7 * windowWidth, 0.4 * windowWidth];
-    if (pwidth >= breakpoint[0]) {
-      return 'lg';
-    } else if (pwidth >= breakpoint[1]) {
-      return 'md';
-    } else {
-      return 'sm';
-    }
   }
 </script>
 
@@ -280,20 +233,23 @@
 
   .projectInformationBox {
     width: 100%;
-    height: max-content;
-    margin: 10px;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
     padding-top: 1em;
     padding-bottom: 1em;
     border-radius: 10px;
 
     background: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-    flex-wrap: wrap;
   }
 
   .infoCard {
     border: none;
+    width: 50%;
     display: table;
     padding-left: 1em;
     padding-right: 1em;
@@ -319,11 +275,18 @@
   .label {
     font-size: 1.4em;
     font-weight: bold;
-    margin: 0 auto;
+    margin: 0 0 0 auto;
   }
 
   .projectInfo {
     font-size: 1.4em;
-    margin: 0;
+    margin: 0 auto 0 1em;
+    white-space: nowrap;
+  }
+
+  .pluginView {
+    display: flex;
+    justify-content: center;
+    padding-top: 1em;
   }
 </style>
