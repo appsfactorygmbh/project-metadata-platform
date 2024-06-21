@@ -12,6 +12,7 @@
   import type { UnwrapRef } from 'vue';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import type { CreateProjectModel } from '@/models/CreateProjectModel.ts';
+  import type { ButtonModel } from '@/models/ButtonModel';
 
   const open = ref<boolean>(false);
   const formRef = ref();
@@ -40,6 +41,16 @@
     number: {
       range: 'Team number must be positive number.',
     },
+  };
+
+  const button: ButtonModel = {
+    name: 'CreateProjectButton',
+    onClick: () => {
+      showModal();
+    },
+    icon: PlusOutlined,
+    disabled: false,
+    tooltip: 'Click here to create a new project',
   };
 
   // opens modal when plussign is clicked
@@ -95,11 +106,7 @@
 
 <template>
   <div>
-    <a-float-button @click="showModal">
-      <template #icon>
-        <PlusOutlined />
-      </template>
-    </a-float-button>
+    <FloatingButton :button="button" @clicked="button.onClick" />
 
     <a-modal
       v-model:open="open"

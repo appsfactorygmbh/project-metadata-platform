@@ -5,7 +5,7 @@
   import { useElementSize } from '@vueuse/core';
   import { ProjectSearchView } from '@/views/ProjectSearchView';
   import { MenuButtons } from '@/components/MenuButtons';
-  import CreateProjectView from '@/views/CreateProject/createProjectView.vue';
+  import { CreateProjectView } from '../CreateProject/';
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
@@ -38,8 +38,8 @@
           />
           <MenuButtons />
         </div>
+        <CreateProjectView />
       </pane>
-      <CreateProjectView />
     </splitpanes>
   </div>
 </template>
