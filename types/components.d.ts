@@ -21,6 +21,7 @@ declare module 'vue' {
     AInputNumber: typeof import('ant-design-vue/es')['InputNumber']
     AModal: typeof import('ant-design-vue/es')['Modal']
     ASkeleton: typeof import('ant-design-vue/es')['Skeleton']
+    ASpin: typeof import('ant-design-vue/es')['Spin']
     ATable: typeof import('ant-design-vue/es')['Table']
     FloatingButton: typeof import('./../src/components/Button/FloatingButton.vue')['default']
     FloatingButtonGroup: typeof import('./../src/components/Button/FloatingButtonGroup.vue')['default']

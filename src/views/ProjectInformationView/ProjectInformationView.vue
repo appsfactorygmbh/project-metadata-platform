@@ -7,6 +7,7 @@
   import type { ProjectInformationModel } from '@/models/ProjectInformationModel';
   import type { ComputedRef } from 'vue';
   import { EditOutlined } from '@ant-design/icons-vue';
+  import { useWindowSize } from '@vueuse/core';
 
   const props = defineProps({
     paneWidth: {
@@ -63,10 +64,11 @@
   <div class="pane">
     <div class="main">
       <!-- create box for the project name -->
-      <div class="projectNameContainer" :loading="isLoading">
-        <h1 class="projectName">
+      <div class="projectNameContainer">
+        <h1 v-if="!isLoading" class="projectName">
           {{ projectData.projectName }}
         </h1>
+        <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
         <a-button
           class="button"
           ghost
@@ -97,7 +99,12 @@
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.businessUnit }}
           </p>
-          <a-skeleton v-else active :paragraph="false" />
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="padding-left: 1em"
+          />
         </a-card>
 
         <a-card
@@ -113,7 +120,12 @@
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.teamNumber }}
           </p>
-          <a-skeleton v-else active :paragraph="false" />
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="padding-left: 1em"
+          />
         </a-card>
         <a-card
           :body-style="{
@@ -128,7 +140,12 @@
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.department }}
           </p>
-          <a-skeleton v-else active :paragraph="false" />
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="padding-left: 1em"
+          />
         </a-card>
         <a-card
           :body-style="{
@@ -143,7 +160,12 @@
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.clientName }}
           </p>
-          <a-skeleton v-else active :paragraph="false" />
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="padding-left: 1em"
+          />
         </a-card>
       </a-flex>
     </div>
@@ -179,17 +201,21 @@
   const getWidth = (pwidth: number) => {
     switch (getBreakpoint(pwidth)) {
       case 'lg':
-        return '48%';
-
+        return '25%';
+      case 'md':
+        return '50%';
       case 'sm':
         return '100%';
     }
   };
 
   function getBreakpoint(pwidth: number): string {
-    const breakpoint: number[] = [978];
+    const windowWidth = useWindowSize().width.value;
+    const breakpoint: number[] = [0.7 * windowWidth, 0.4 * windowWidth];
     if (pwidth >= breakpoint[0]) {
       return 'lg';
+    } else if (pwidth >= breakpoint[1]) {
+      return 'md';
     } else {
       return 'sm';
     }
@@ -202,8 +228,6 @@
     width: 100%;
     max-height: 80vh;
     height: max-content;
-    //margin-top: 10px;
-    //padding-top: 50px;
     padding-right: 5em;
     padding-left: 5em;
 
@@ -265,16 +289,14 @@
     background: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-    display: flex;
     flex-wrap: wrap;
   }
 
   .infoCard {
     border: none;
-    align-items: center;
-    flex-direction: row;
-    display: flex;
-    justify-content: center;
+    display: table;
+    padding-left: 1em;
+    padding-right: 1em;
   }
 
   .button {
@@ -297,6 +319,7 @@
   .label {
     font-size: 1.4em;
     font-weight: bold;
+    margin: 0 auto;
   }
 
   .projectInfo {
