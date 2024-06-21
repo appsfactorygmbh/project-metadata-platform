@@ -35,7 +35,6 @@
           :pane-height="dimensions.height"
         />
       </pane>
-
       <pane size="30" min-size="30" class="rightPane">
         <ProjectInformationView />
         <FloatingButton :button="splitButton" class="button" />
