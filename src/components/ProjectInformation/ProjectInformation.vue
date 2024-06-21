@@ -1,19 +1,11 @@
 <script setup lang="ts">
   import { onMounted, computed, watch, inject, toRaw, reactive } from 'vue';
   import type { DetailedProjectModel } from '@/models/Project';
-  import {
-    RightCircleFilled,
-    EditOutlined,
-    UserOutlined,
-    LogoutOutlined,
-    BarsOutlined,
-    AppstoreAddOutlined,
-  } from '@ant-design/icons-vue';
+  import { EditOutlined } from '@ant-design/icons-vue';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import { useProjectStore } from '@/store';
   import type { ComputedRef } from 'vue';
   import { storeToRefs } from 'pinia';
-  import PluginView from '@/views/PluginView/PluginView.vue';
 
   //Get the width of the right pane from App.vue
   const props = defineProps({
@@ -72,105 +64,93 @@
 </script>
 
 <template>
-  <div class="paneStyle">
-    <a-button class="returnStyle" ghost @click="placeHolder">
-      <template #icon
-        ><RightCircleFilled
-          style="color: black; font-size: 50px; border-radius: 50%"
-        />
-      </template>
-    </a-button>
-
-    <div class="mainStyle">
+  <div class="pane">
+    <div class="main">
       <!-- create box for the project name -->
-      <a-card class="nameBoxStyle" :loading="isLoading">
-        <h1 class="projectNameH1" style="font-size: 2.8em; font-weight: bold">
+      <div class="projectNameContainer" :loading="isLoading">
+        <h1 class="projectName">
           {{ projectData.projectName }}
         </h1>
-        <!--<input
-          v-else
-          v-model="projectData.projectName"
-          class="projectNameInput"
-          type="input"
-        />--->
-        <!-- pencil icon for editing the project name -->
-        <a-button class="editIconStyle" ghost @click="placeHolder">
-          <template #icon
-            ><EditOutlined style="color: black; font-size: 35px" />
-          </template>
+        <a-button
+          class="button"
+          ghost
+          style="margin-left: 10px"
+          @click="placeHolder"
+        >
+          <template #icon><EditOutlined class="icon" /></template>
         </a-button>
-      </a-card>
+      </div>
 
       <!-- create box for project description (BU, Team Nr, Department, Client Name) -->
-      <a-row class="descboxStyle">
-        <a-card class="profileFieldStyle" :style="profileFieldSize">
-          <label for="businessUnit" style="font-size: 1.3em; font-weight: bold"
-            >Business Unit:</label
-          >
-          <p v-if="!isLoading" style="font-size: 1.6em; margin: 0">
+      <a-flex
+        class="projectInformationBox"
+        :body-style="{
+          height: 'fit-content',
+        }"
+      >
+        <a-card
+          :body-style="{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '5px',
+          }"
+          class="infoCard"
+          :style="profileFieldSize"
+        >
+          <label class="label">Business&nbsp;Unit:</label>
+          <p v-if="!isLoading" class="projectInfo">
             {{ projectData.businessUnit }}
           </p>
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
 
-        <a-card class="profileFieldStyle" :style="profileFieldSize">
-          <label for="teamNumber" style="font-size: 1.3em; font-weight: bold"
-            >Team Number:</label
-          >
-          <p v-if="!isLoading" style="font-size: 1.6em; margin: 0">
+        <a-card
+          :body-style="{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '5px',
+          }"
+          class="infoCard"
+          :style="profileFieldSize"
+        >
+          <label class="label">Team&nbsp;Number:</label>
+          <p v-if="!isLoading" class="projectInfo">
             {{ projectData.teamNumber }}
           </p>
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
-
-        <a-card class="profileFieldStyle" :style="profileFieldSize">
-          <label for="department" style="font-size: 1.3em; font-weight: bold"
-            >Department:</label
-          >
-          <p v-if="!isLoading" style="font-size: 1.6em; margin: 0">
+        <a-card
+          :body-style="{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '5px',
+          }"
+          class="infoCard"
+          :style="profileFieldSize"
+        >
+          <label class="label">Department:</label>
+          <p v-if="!isLoading" class="projectInfo">
             {{ projectData.department }}
           </p>
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
-
-        <a-card class="profileFieldStyle" :style="profileFieldSize">
-          <label for="clientName" style="font-size: 1.3em; font-weight: bold"
-            >Client Name:</label
-          >
-          <p v-if="!isLoading" style="font-size: 1.6em; margin: 0">
+        <a-card
+          :body-style="{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '5px',
+          }"
+          class="infoCard"
+          :style="profileFieldSize"
+        >
+          <label class="label">Client&nbsp;Name:</label>
+          <p v-if="!isLoading" class="projectInfo">
             {{ projectData.clientName }}
           </p>
           <a-skeleton v-else active :paragraph="false" />
         </a-card>
-      </a-row>
-      <div v-if="!isLoading">
-        <PluginView :project-i-d="projectData.id"></PluginView>
-      </div>
+      </a-flex>
     </div>
-
-    <!-- add icons for profile, plugins, global logs, signout -->
-    <a-col class="menuStyle">
-      <a-button class="iconStyle" ghost @click="placeHolder">
-        <template #icon
-          ><UserOutlined style="color: black; font-size: 40px" />
-        </template>
-      </a-button>
-      <a-button class="iconStyle" ghost @click="placeHolder">
-        <template #icon
-          ><AppstoreAddOutlined style="color: black; font-size: 40px" />
-        </template>
-      </a-button>
-      <a-button class="iconStyle" ghost @click="placeHolder">
-        <template #icon
-          ><BarsOutlined style="color: black; font-size: 40px" />
-        </template>
-      </a-button>
-      <a-button class="iconStyle" ghost @click="placeHolder">
-        <template #icon
-          ><LogoutOutlined style="color: black; font-size: 40px" />
-        </template>
-      </a-button>
-    </a-col>
   </div>
 </template>
 
@@ -222,24 +202,28 @@
 
 <style scoped lang="scss">
   /* Style for the middle section */
-  .mainStyle {
-    width: 60vw;
+  .main {
+    width: 100%;
     max-height: 80vh;
     height: max-content;
-    padding: 50px;
-    margin: 10px;
+    //margin-top: 10px;
+    //padding-top: 50px;
+    padding-right: 5em;
+    padding-left: 5em;
 
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
+  .pluginView {
+    padding: 0;
+  }
+
   /* Style for the right panel */
-  .paneStyle {
+  .pane {
     display: flex;
     flex-direction: row;
-    overflow: scroll;
-    height: 100vh;
   }
 
   /* Style for the Project name input box */
@@ -254,75 +238,73 @@
     background-color: rgb(250, 250, 250);
   }
 
-  /* Style for the return button */
-  .returnStyle {
-    cursor: pointer;
-    height: 60px;
-    width: 60px;
-    margin: 20px;
-    border: none;
-  }
-
   /* Style for the Project title box */
-  .nameBoxStyle {
-    width: 85%;
-    max-width: 750px;
-    min-width: 250px;
-    padding: 10px;
+  .projectNameContainer {
+    width: 100%;
+    height: 5%;
     margin: 10px;
     border-radius: 10px;
-
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
-  }
-
-  /* Style for the pencil button */
-  .editIconStyle {
-    cursor: pointer;
-    position: absolute;
-    right: 3%;
-    width: 45px;
-    height: 45px;
-    top: 38%;
-    padding: 0;
-    border: none;
-  }
-
-  /* Style for the project description box */
-  .descboxStyle {
-    width: 85%;
-    max-width: 750px;
-    min-width: 250px;
-    padding-bottom: 20px;
-    margin: 10px;
-    border-radius: 10px;
-
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Sizing for the inside box in the project description box  */
-  .profileFieldStyle {
+    align-items: center;
+    flex-direction: row;
     display: flex;
     justify-content: center;
-    margin: 5px;
-    height: 90px;
-    border: none;
   }
 
-  /* Style for the icons */
-  .iconStyle {
+  .projectName {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #000;
+    margin: 10px;
+  }
+
+  .projectInformationBox {
+    width: 100%;
+    height: max-content;
+    margin: 10px;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    border-radius: 10px;
+
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .infoCard {
+    border: none;
+    align-items: center;
+    flex-direction: row;
+    display: flex;
+    justify-content: center;
+  }
+
+  .button {
     margin-bottom: 10px;
     height: 50px;
     width: 50px;
     border: none;
   }
+  .button {
+    height: 40px;
+    width: 40px;
+    border: none;
+  }
 
-  /* Style for the menu button on the top right */
-  .menuStyle {
-    display: flex;
-    flex-direction: column;
-    margin: 10px;
+  .icon {
+    color: black; //TODO: change to appsfactory grey
+    font-size: 2.5em;
+  }
+
+  .label {
+    font-size: 1.4em;
+    font-weight: bold;
+  }
+
+  .projectInfo {
+    font-size: 1.4em;
+    margin: 0;
   }
 </style>

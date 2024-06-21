@@ -29,10 +29,12 @@ describe('projectView.vue', () => {
       },
     });
     await flushPromises();
-    expect(wrapper.find('.projectNameH1').exists()).toBe(true);
+    console.log(wrapper.html());
+
+    expect(wrapper.find('.projectName').exists()).toBe(true);
 
     expect(wrapper.find('.projectNameInput').exists()).toBe(false);
-    expect(wrapper.find('.projectNameH1').text()).toBe('');
+    expect(wrapper.find('.projectName').text()).toBe('');
   });
 
   it('Save name', async () => {
@@ -43,6 +45,6 @@ describe('projectView.vue', () => {
       },
     });
     await flushPromises();
-    expect(wrapper.find('.projectNameH1').text()).toBe('Heute Show');
+    expect(wrapper.find('.projectNameContainer').text()).toBe('Heute Show');
   });
 });

@@ -2,6 +2,7 @@
   import { ProjectInformation } from '@/components/ProjectInformation';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import { inject, onMounted } from 'vue';
+  import PluginView from '@/views/PluginView/PluginView.vue';
 
   const props = defineProps({
     paneWidth: {
@@ -23,4 +24,5 @@
 
 <template>
   <ProjectInformation :pane-width="props.paneWidth" />
+  <PluginView :project-i-d="props.projectId"></PluginView>
 </template>
