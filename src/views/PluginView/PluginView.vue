@@ -29,11 +29,13 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, computed, toRaw, inject } from 'vue';
+  import { onBeforeMount, computed, toRaw, inject, onMounted } from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
+  import type { PluginModel } from '@/models/Plugin';
+  import type { ComputedRef } from 'vue';
 
-  const pluginStore = inject(pluginStoreSymbol);
+  const pluginStore = inject(pluginStoreSymbol)!;
 
   const props = defineProps({
     projectID: {
@@ -42,12 +44,31 @@
     },
   });
 
-  const plugins = computed(() => toRaw(pluginStore?.getPlugins));
-  const loading = computed(() => pluginStore?.getIsLoading);
+  let plugins: ComputedRef<PluginModel[]>;
+  const loading = computed(() => pluginStore.getIsLoading);
+
+  function setPlugins(newPlugins: PluginModel[]) {
+    plugins = computed(() => toRaw(newPlugins));
+  }
 
   onBeforeMount(async () => {
-    pluginStore?.setLoading(true);
-    await pluginStore?.fetchPlugins(props.projectID);
+    pluginStore.setLoading(true);
+    await pluginStore.fetchPlugins(props.projectID);
+  });
+
+  onMounted(async () => {
+    setPlugins(pluginStore.getPlugins);
+
+    const data: ComputedRef<PluginModel[]> = computed(
+      () => pluginStore.getPlugins,
+    );
+
+    watch(
+      () => data.value,
+      (newProject) => {
+        setPlugins(newProject);
+      },
+    );
   });
 </script>
 
