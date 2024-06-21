@@ -38,8 +38,8 @@
           />
           <MenuButtons />
         </div>
+        <CreateProjectView />
       </pane>
-      <CreateProjectView />
     </splitpanes>
   </div>
 </template>
