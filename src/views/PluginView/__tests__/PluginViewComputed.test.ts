@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
-import { usePluginsStore } from '@/store/Plugin/PluginStore';
-import { pluginService } from '@/services/Plugin/PluginService';
-import type { PluginType } from '@/models/PluginType';
+import { usePluginsStore } from '@/store/PluginStore';
+import { pluginService } from '@/services';
+import type { PluginModel } from '@/models/Plugin';
 
 // Mock the pluginService module
-vi.mock('@/services/Plugin/PluginService', () => ({
+vi.mock('@/services/PluginService', () => ({
   pluginService: {
     fetchPlugins: vi.fn(),
   },
@@ -19,7 +19,7 @@ describe('usePluginsStore', () => {
 
   it('should fetch plugins and update the store', async () => {
     const store = usePluginsStore();
-    const mockPlugins: PluginType[] = [
+    const mockPlugins: PluginModel[] = [
       {
         pluginName: 'testPlugin',
         displayName: 'Test Plugin',

@@ -1,58 +1,42 @@
 <script lang="ts" setup>
-  import { projectInformationStoreSymbol } from '@/store/injectionSymbols';
   import { inject, onMounted, toRaw, reactive } from 'vue';
+  import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import PluginView from '@/views/PluginView/PluginView.vue';
-  import { ProjectInformationStore } from '@/store/ProjectInformationStore';
+  import { useProjectStore } from '@/store';
   import { storeToRefs } from 'pinia';
-  import type { ProjectInformationModel } from '@/models/ProjectInformationModel';
+  import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
   import { EditOutlined } from '@ant-design/icons-vue';
-  import { useWindowSize } from '@vueuse/core';
 
   const props = defineProps({
-    paneWidth: {
-      type: Number,
-      required: true,
-    },
-    projectId: {
-      type: Number,
-      required: true,
-    },
     isTest: {
       type: Boolean,
       default: false,
     },
   });
 
-  watch(
-    () => props.paneWidth,
-    () => {
-      getWidth(props.paneWidth);
-    },
-  );
+  const projectsStore = props.isTest
+    ? useProjectStore()
+    : inject(projectsStoreSymbol)!;
 
-  const projectInformationStore = props.isTest
-    ? ProjectInformationStore()
-    : inject(projectInformationStoreSymbol)!;
-
-  const { isLoading } = storeToRefs(projectInformationStore);
-
-  const profileFieldSize = computed(() => ({
-    width: getWidth(props.paneWidth),
-  }));
+  const { getIsLoadingProject } = storeToRefs(projectsStore);
+  const isLoading = computed(() => getIsLoadingProject.value);
 
   onMounted(async () => {
-    await projectInformationStore.fetchProjectInformation(props.projectId);
-    addData(projectInformationStore.getProjectInformation);
+    await projectsStore.fetchProject(100);
 
-    const data: ComputedRef<ProjectInformationModel> = computed(
-      () => projectInformationStore.getProjectInformation,
+    const project = projectsStore.getProject;
+    if (project) addData(project);
+
+    const data: ComputedRef<DetailedProjectModel | null> = computed(
+      () => projectsStore.getProject,
     );
 
     watch(
       () => data.value,
       (newProject, oldProject) => {
-        if (newProject.id !== oldProject.id) {
+        if (!newProject) return;
+        if (newProject.id !== oldProject?.id) {
           addData(toRaw(newProject));
         }
       },
@@ -73,7 +57,7 @@
           class="button"
           ghost
           style="margin-left: 10px"
-          @click="placeHolder"
+          @click="() => {}"
         >
           <template #icon><EditOutlined class="icon" /></template>
         </a-button>
@@ -93,7 +77,6 @@
             padding: '5px',
           }"
           class="infoCard"
-          :style="profileFieldSize"
         >
           <label class="label">Business&nbsp;Unit:</label>
           <p v-if="!isLoading" class="projectInfo">
@@ -114,7 +97,6 @@
             padding: '5px',
           }"
           class="infoCard"
-          :style="profileFieldSize"
         >
           <label class="label">Team&nbsp;Number:</label>
           <p v-if="!isLoading" class="projectInfo">
@@ -134,7 +116,6 @@
             padding: '5px',
           }"
           class="infoCard"
-          :style="profileFieldSize"
         >
           <label class="label">Department:</label>
           <p v-if="!isLoading" class="projectInfo">
@@ -154,7 +135,6 @@
             padding: '5px',
           }"
           class="infoCard"
-          :style="profileFieldSize"
         >
           <label class="label">Client&nbsp;Name:</label>
           <p v-if="!isLoading" class="projectInfo">
@@ -170,55 +150,27 @@
       </a-flex>
     </div>
   </div>
-  <PluginView :project-i-d="props.projectId"></PluginView>
+  <PluginView class="pluginView" />
 </template>
 
 <script lang="ts">
-  const projectData: ProjectInformationModel = reactive({
+  const projectData: DetailedProjectModel = reactive({
     id: 0,
     projectName: '',
     businessUnit: '',
-    teamNumber: '',
+    teamNumber: 0,
     department: '',
     clientName: '',
   });
 
-  // Place holder for the buttons for now
-  const placeHolder = () => {
-    console.log('Icon clicked');
-  };
-
   //Function to load the data from projectViewService to projectView
-  function addData(loadedData: ProjectInformationModel) {
+  function addData(loadedData: DetailedProjectModel) {
     projectData.id = loadedData.id;
     projectData.projectName = loadedData.projectName;
     projectData.businessUnit = loadedData.businessUnit;
     projectData.teamNumber = loadedData.teamNumber;
     projectData.department = loadedData.department;
     projectData.clientName = loadedData.clientName;
-  }
-
-  const getWidth = (pwidth: number) => {
-    switch (getBreakpoint(pwidth)) {
-      case 'lg':
-        return '25%';
-      case 'md':
-        return '50%';
-      case 'sm':
-        return '100%';
-    }
-  };
-
-  function getBreakpoint(pwidth: number): string {
-    const windowWidth = useWindowSize().width.value;
-    const breakpoint: number[] = [0.7 * windowWidth, 0.4 * windowWidth];
-    if (pwidth >= breakpoint[0]) {
-      return 'lg';
-    } else if (pwidth >= breakpoint[1]) {
-      return 'md';
-    } else {
-      return 'sm';
-    }
   }
 </script>
 
@@ -280,20 +232,23 @@
 
   .projectInformationBox {
     width: 100%;
-    height: max-content;
-    margin: 10px;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
     padding-top: 1em;
     padding-bottom: 1em;
     border-radius: 10px;
 
     background: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-    flex-wrap: wrap;
   }
 
   .infoCard {
     border: none;
+    width: 50%;
     display: table;
     padding-left: 1em;
     padding-right: 1em;
@@ -319,11 +274,18 @@
   .label {
     font-size: 1.4em;
     font-weight: bold;
-    margin: 0 auto;
+    margin: 0 0 0 auto;
   }
 
   .projectInfo {
     font-size: 1.4em;
-    margin: 0;
+    margin: 0 auto 0 1em;
+    white-space: nowrap;
+  }
+
+  .pluginView {
+    display: flex;
+    justify-content: center;
+    padding-top: 1em;
   }
 </style>

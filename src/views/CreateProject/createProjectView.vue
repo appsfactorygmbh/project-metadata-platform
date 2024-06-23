@@ -11,7 +11,7 @@
   import { reactive } from 'vue';
   import type { UnwrapRef } from 'vue';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
-  import type { CreateProjectModel } from '@/models/CreateProjectModel.ts';
+  import type { CreateProjectModel } from '@/models/Project';
   import type { ButtonModel } from '@/models/ButtonModel';
 
   const open = ref<boolean>(false);
@@ -23,7 +23,7 @@
   // TableStore to refetch Table after Project was added
   const projectsStore = inject(projectsStoreSymbol);
 
-  const isAdding = computed(() => projectsStore?.getIsAdding);
+  const isAdding = computed(() => projectsStore?.getIsLoadingAdd);
   const fetchError = ref<boolean>(false);
 
   const formState: UnwrapRef<CreateProjectModel> = reactive({

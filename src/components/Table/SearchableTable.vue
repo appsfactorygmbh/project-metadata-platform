@@ -1,23 +1,22 @@
 <script lang="ts" setup>
   import { SmileOutlined, SearchOutlined } from '@ant-design/icons-vue';
-  import { reactive, ref, watch, onMounted, inject, toRaw } from 'vue';
-  import type { ComputedRef } from 'vue';
+  import { reactive, ref, watch, onMounted, inject } from 'vue';
   import { useWindowSize } from '@vueuse/core';
   import type {
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
-  import type { ProjectModel } from '@/models/ProjectModel';
+  import type { ProjectModel } from '@/models/Project';
   import { storeToRefs } from 'pinia';
-  import {
-    projectInformationStoreSymbol,
-    projectsStoreSymbol,
-  } from '@/store/injectionSymbols';
-  import { pluginStoreSymbol } from '@/store/Plugin/injectionsSymbols';
-  import { ProjectsStore } from '@/store/ProjectsStore';
+  import { projectsStoreSymbol } from '@/store/injectionSymbols';
+  import { useProjectStore, type SearchStore } from '@/store';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
+    searchStoreSymbol: {
+      type: Symbol,
+      required: true,
+    },
     paneWidth: {
       type: Number,
       required: true,
@@ -32,6 +31,10 @@
     },
   });
 
+  const searchStore = inject<SearchStore<ProjectModel>>(
+    props.searchStoreSymbol,
+  );
+
   //update paneWidth when the pane is resized
   watch(
     () => props.paneWidth,
@@ -40,46 +43,23 @@
     },
   );
 
-  let projectsStore;
-  const projectInformationStore = inject(projectInformationStoreSymbol)!;
-  const pluginStore = inject(pluginStoreSymbol)!;
+  const projectsStore = props.isTest
+    ? useProjectStore()
+    : inject(projectsStoreSymbol)!;
 
-  if (props.isTest) {
-    projectsStore = ProjectsStore();
-  } else {
-    projectsStore = inject(projectsStoreSymbol)!;
-  }
-
-  const { isLoading } = storeToRefs(projectsStore);
+  const { getIsLoading } = storeToRefs(projectsStore);
+  const isLoading = computed(() => getIsLoading.value);
 
   const customRow = (record: ProjectModel) => {
     return {
       onClick: () => {
-        projectInformationStore.fetchProjectInformation(record.id);
-        pluginStore.fetchPlugins(record.id);
+        projectsStore.fetchProject(record.id);
       },
     };
   };
 
   onMounted(async () => {
-    await projectsStore.fetchProjects();
     changeColumns(props.paneWidth);
-    addTableEntry(projectsStore.getProjects);
-
-    const data: ComputedRef<ProjectModel[]> = computed(
-      () => projectsStore.getProjects,
-    );
-
-    // Updates Table, when a change in the store is detected
-    watch(
-      () => data.value,
-      (newValue, oldValue) => {
-        const newProject = newValue.filter(
-          (newObj) => !oldValue.some((oldObj) => oldObj['id'] === newObj['id']),
-        );
-        addTableEntry(toRaw(newProject));
-      },
-    );
   });
 </script>
 
@@ -91,10 +71,10 @@
     -->
   <a-table
     :columns="[...columns].filter((item) => !item.hidden)"
-    :data-source="[...dataSource]"
+    :data-source="[...(searchStore?.getSearchResults || [])]"
     :pagination="false"
     :loading="isLoading"
-    :scroll="{ y: props.paneHeight - 55 }"
+    :scroll="{ y: props.paneHeight - 155 }"
     :custom-row="customRow"
     bordered
   >
@@ -192,26 +172,6 @@
 </template>
 
 <script lang="ts">
-  /*  Data implementation  */
-
-  const dataSource: ProjectModel[] = reactive([]);
-
-  /**
-   * Adds a new table entry to dataSource.
-   * @param {Project[]} data Stores the data that should be added.
-   */
-  function addTableEntry(data: ProjectModel[]) {
-    for (const date of data) {
-      dataSource.push({
-        id: date.id,
-        projectName: date.projectName,
-        clientName: date.clientName,
-        businessUnit: date.businessUnit,
-        teamNumber: date.teamNumber,
-      });
-    }
-  }
-
   /*  Column implementation  */
 
   /**
@@ -231,7 +191,7 @@
     {
       title: 'Project Name',
       dataIndex: 'projectName',
-      key: 'pname',
+      key: 'projectName',
       customFilterDropdown: true,
       onFilter: (value: string | number | boolean, record: ProjectModel) =>
         record.projectName
@@ -250,7 +210,7 @@
     {
       title: 'Client Name',
       dataIndex: 'clientName',
-      key: 'cname',
+      key: 'clientName',
       customFilterDropdown: true,
       onFilter: (value: string | number | boolean, record: ProjectModel) =>
         record.clientName
@@ -270,7 +230,7 @@
     {
       title: 'Business Unit',
       dataIndex: 'businessUnit',
-      key: 'bu',
+      key: 'businessNumber',
       ellipsis: true,
       align: 'center' as const,
       sorter: (a: ProjectModel, b: ProjectModel) =>
@@ -281,7 +241,7 @@
     {
       title: 'Team Number',
       dataIndex: 'teamNumber',
-      key: 'tnr',
+      key: 'teamNumber',
       ellipsis: true,
       align: 'center' as const,
       sorter: (a: ProjectModel, b: ProjectModel) => a.teamNumber - b.teamNumber,
@@ -335,29 +295,24 @@
     const breakpoint = getBreakpoint(pwidth);
     switch (breakpoint) {
       case 'xs':
-        hideColumn('cname');
-        hideColumn('bu');
-        hideColumn('tnr');
+        hideColumn('clientName');
+        hideColumn('businessNumber');
+        hideColumn('teamNumber');
         break;
       case 'sm':
-        showColumn('cname');
-        hideColumn('bu');
-        hideColumn('tnr');
+        showColumn('clientName');
+        hideColumn('businessNumber');
+        hideColumn('teamNumber');
         break;
       case 'md':
-        showColumn('cname');
-        showColumn('bu');
-        hideColumn('tnr');
+        showColumn('clientName');
+        showColumn('businessNumber');
+        hideColumn('teamNumber');
         break;
       case 'lg':
-        showColumn('cname');
-        showColumn('bu');
-        showColumn('tnr');
-        break;
-      default:
-        hideColumn('cname');
-        hideColumn('bu');
-        hideColumn('tnr');
+        showColumn('clientName');
+        showColumn('businessNumber');
+        showColumn('teamNumber');
         break;
     }
   }
