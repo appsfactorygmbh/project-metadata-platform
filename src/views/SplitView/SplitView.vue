@@ -29,7 +29,7 @@
         size: sets default proportion to 1:4
         min-size: sets smallest possible size to 20% and 1%
       -->
-      <pane ref="tablePane" size="68" min-size="20">
+      <pane ref="tablePane" size="70" min-size="20">
         <ProjectSearchView
           :pane-width="dimensions.width"
           :pane-height="dimensions.height"

@@ -70,12 +70,14 @@
         scroll: sets height of table to ~90% of the window height
     -->
   <a-table
+    class="ant-table"
     :columns="[...columns].filter((item) => !item.hidden)"
     :data-source="[...(searchStore?.getSearchResults || [])]"
     :pagination="false"
     :loading="isLoading"
     :scroll="{ y: props.paneHeight - 155 }"
     :custom-row="customRow"
+    :row-class-name="'row'"
     bordered
   >
     <!-- Header of the table -->
@@ -366,9 +368,13 @@
   }
 </script>
 
-<style>
+<style scoped>
   .highlight {
     background-color: rgb(255, 192, 105);
     padding: 0px;
+  }
+
+  .ant-table :deep(.row) {
+    cursor: pointer;
   }
 </style>

@@ -85,8 +85,6 @@
     min-width: 200px;
     max-width: 100%;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
-    display: flex;
-    flex-direction: column;
     transition: 0.1s ease-in-out;
   }
   .main {

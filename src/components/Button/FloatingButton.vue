@@ -14,6 +14,7 @@
   <a-float-button
     v-if="!props.button.disabled"
     :tooltip="props.button.tooltip"
+    :disabled="props.button.disabled"
     @click="props.button.onClick"
   >
     <template #icon>
