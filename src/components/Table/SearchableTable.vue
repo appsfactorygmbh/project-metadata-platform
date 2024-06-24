@@ -70,7 +70,7 @@
         scroll: sets height of table to ~90% of the window height
     -->
   <a-table
-    class="ant-table"
+    class="clickable-table"
     :columns="[...columns].filter((item) => !item.hidden)"
     :data-source="[...(searchStore?.getSearchResults || [])]"
     :pagination="false"
@@ -374,7 +374,7 @@
     padding: 0px;
   }
 
-  .ant-table :deep(.row) {
+  .clickable-table :deep(.row) {
     cursor: pointer;
   }
 </style>

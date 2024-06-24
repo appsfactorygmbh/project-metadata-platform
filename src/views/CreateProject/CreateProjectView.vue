@@ -12,7 +12,7 @@
   import type { UnwrapRef } from 'vue';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import type { CreateProjectModel } from '@/models/Project';
-  import type { ButtonModel } from '@/models/ButtonModel';
+  import type { FloatButtonModel } from '@/components/Button';
 
   const open = ref<boolean>(false);
   const formRef = ref();
@@ -43,7 +43,7 @@
     },
   };
 
-  const button: ButtonModel = {
+  const button: FloatButtonModel = {
     name: 'CreateProjectButton',
     onClick: () => {
       showModal();

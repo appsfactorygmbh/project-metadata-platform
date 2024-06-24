@@ -7,17 +7,18 @@
   import { MenuButtons } from '@/components/MenuButtons';
   import { CreateProjectView } from '@/views/CreateProject';
   import { ProjectInformationView } from '@/views/ProjectInformationView';
-  import type { ButtonModel } from '@/models/ButtonModel';
+  import type { FloatButtonModel } from '@/components/Button';
   import { RightOutlined } from '@ant-design/icons-vue';
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
 
-  const splitButton: ButtonModel = {
+  const splitButton: FloatButtonModel = {
     name: 'SplitButton',
     onClick: () => {},
     icon: RightOutlined,
-    disabled: false,
+    disabled: true,
+    deactivated: false,
     tooltip: 'Click here to expand the table',
   };
 </script>

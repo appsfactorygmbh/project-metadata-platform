@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import type { ButtonModel } from '@/models/ButtonModel';
+  import type { ButtonModel } from '@/components/Button/ButtonModel';
   import { LogoutOutlined, SettingOutlined } from '@ant-design/icons-vue';
 
   const buttons: ButtonModel[] = [
