@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import FloatingButton from './FloatingButton.vue';
-  import type { FloatButtonModel } from '@/components/Button';
+  import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
 
   const props = defineProps({
     buttons: {

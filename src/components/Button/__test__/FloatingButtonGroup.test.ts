@@ -2,21 +2,21 @@ import FloatingButtonGroup from '../FloatingButtonGroup.vue';
 import { QuestionOutlined } from '@ant-design/icons-vue';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
-import type { ButtonModel } from '@/components/Button/FloatButtonModel';
+import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
 
-const testButtons: ButtonModel[] = [
+const testButtons: FloatButtonModel[] = [
   {
     name: '1',
     onClick: () => {},
     icon: QuestionOutlined,
-    disabled: false,
+    status: 'activated',
     tooltip: 'test',
   },
   {
     name: '2',
     onClick: () => {},
     icon: QuestionOutlined,
-    disabled: true,
+    status: 'deactivated',
     tooltip: 'test',
   },
 ];
