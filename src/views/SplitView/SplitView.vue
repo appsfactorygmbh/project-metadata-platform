@@ -7,7 +7,7 @@
   import { MenuButtons } from '@/components/MenuButtons';
   import { CreateProjectView } from '@/views/CreateProject';
   import { ProjectInformationView } from '@/views/ProjectInformationView';
-  import type { FloatButtonModel } from '@/components/Button';
+  import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { RightOutlined } from '@ant-design/icons-vue';
 
   const tablePane = ref(null);

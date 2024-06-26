@@ -12,7 +12,7 @@
   import type { UnwrapRef } from 'vue';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import type { CreateProjectModel } from '@/models/Project';
-  import type { FloatButtonModel } from '@/components/Button';
+  import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
 
   const open = ref<boolean>(false);
   const formRef = ref();
@@ -49,7 +49,7 @@
       showModal();
     },
     icon: PlusOutlined,
-    disabled: false,
+    status: 'activated',
     tooltip: 'Click here to create a new project',
   };
 

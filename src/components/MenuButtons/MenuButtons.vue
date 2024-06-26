@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-  import type { ButtonModel } from '@/components/Button/ButtonModel';
+  import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { LogoutOutlined, SettingOutlined } from '@ant-design/icons-vue';
 
-  const buttons: ButtonModel[] = [
+  const buttons: FloatButtonModel[] = [
     {
       name: 'SettingsButton',
       onClick: () => {
         console.log('Settings clicked');
       },
       icon: SettingOutlined,
-      disabled: false,
+      status: 'activated',
       tooltip: 'Click here to navigate to the settings page',
     },
     {
@@ -18,7 +18,7 @@
         console.log('Logout clicked');
       },
       icon: LogoutOutlined,
-      disabled: false,
+      status: 'activated',
       tooltip: 'Click here to log out',
     },
   ];
