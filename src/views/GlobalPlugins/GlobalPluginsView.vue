@@ -23,7 +23,11 @@
                 <a-button style="margin-right: 1em">
                   <EditOutlined />
                 </a-button>
-                <a-button>
+                <a-button
+                  :loading="isButtonLoading(item.id)"
+                  :disabled="isButtonLoading(item.id)"
+                  @click="handleDelete(item.id)"
+                >
                   <DeleteOutlined />
                 </a-button>
               </div>
@@ -59,6 +63,7 @@
 
   const { getIsLoading } = storeToRefs(pluginStore);
   const isLoading = computed(() => getIsLoading.value);
+  const isDeleting = computed(() => pluginStore?.getIsLoadingDelete);
 
   onBeforeMount(async () => {
     await pluginStore?.fetchGlobalPlugins();
@@ -70,6 +75,30 @@
     icon: PlusOutlined,
     status: 'activated',
     tooltip: 'Click here to create a new global plugin',
+  };
+
+  //stores the plugins, that get deleted at the time
+  const pluginDeleting = ref<Array<number>>([]);
+
+  /**
+   * Adds the plugin to the deleting plugins, deletes the plugin and removes it again
+   * @param pluginId Id of the plugin that should be deleted
+   */
+  const handleDelete = async (pluginId: number) => {
+    pluginDeleting.value.push(pluginId);
+    await pluginStore.deleteGlobalPlugin(pluginId);
+    const index: number = pluginDeleting.value?.indexOf(pluginId);
+    pluginDeleting.value.splice(index, 1);
+  };
+
+  /**
+   * Links the deleting status witch the comparison betwenn the plugin that
+   * is deleted and the corresponding plugin to the button
+   * @param itemId Id of the plugin, that belongs to the button
+   * @returns True, if the store is deleting and the item id is one of the deleting plugins
+   */
+  const isButtonLoading = (itemId: number): boolean => {
+    return isDeleting.value && pluginDeleting.value.includes(itemId);
   };
 </script>
 

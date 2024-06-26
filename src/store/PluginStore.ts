@@ -5,7 +5,10 @@ import type { GlobalPluginModel, PluginModel } from '@/models/Plugin';
 type StoreState = {
   plugins: PluginModel[];
   globalPlugins: GlobalPluginModel[];
-  isLoading: boolean;
+  isLoadingPlugins: boolean;
+  isLoadingGlobalPlugins: boolean;
+  isLoadingDelete: boolean;
+  removedSuccessfully: boolean;
 };
 
 export const usePluginsStore = defineStore('plugin', {
@@ -13,7 +16,10 @@ export const usePluginsStore = defineStore('plugin', {
     return {
       plugins: [],
       globalPlugins: [],
-      isLoading: false,
+      isLoadingPlugins: false,
+      isLoadingGlobalPlugins: false,
+      isLoadingDelete: false,
+      removedSuccessfully: false,
     };
   },
 
@@ -25,7 +31,19 @@ export const usePluginsStore = defineStore('plugin', {
       return this.globalPlugins;
     },
     getIsLoading(): boolean {
-      return this.isLoading;
+      return this.isLoadingPlugins || this.isLoadingPlugins;
+    },
+    getIsLoadingPlugins(): boolean {
+      return this.isLoadingPlugins;
+    },
+    getIsLoadingGlobalPlugins(): boolean {
+      return this.isLoadingGlobalPlugins;
+    },
+    getIsLoadingDelete(): boolean {
+      return this.isLoadingDelete;
+    },
+    getRemovedSuccessfully(): boolean {
+      return this.removedSuccessfully;
     },
   },
 
@@ -36,28 +54,50 @@ export const usePluginsStore = defineStore('plugin', {
     setGlobalPlugins(globalPlugins: GlobalPluginModel[]): void {
       this.globalPlugins = globalPlugins;
     },
-    setLoading(status: boolean): void {
-      this.isLoading = status;
+    setLoadingPlugins(status: boolean): void {
+      this.isLoadingPlugins = status;
+    },
+    setLoadingGlobalPlugins(status: boolean): void {
+      this.isLoadingGlobalPlugins = status;
+    },
+    setLoadingDelete(status: boolean): void {
+      this.isLoadingDelete = status;
+    },
+    setRemovedSuccessfully(status: boolean): void {
+      this.removedSuccessfully = status;
     },
 
     async fetchPlugins(projectID: number) {
       try {
-        this.setLoading(true);
+        this.setLoadingPlugins(true);
         const plugins: PluginModel[] =
           await pluginService.fetchPlugins(projectID);
         this.setPlugins(plugins);
       } finally {
-        this.setLoading(false);
+        this.setLoadingPlugins(false);
       }
     },
+
     async fetchGlobalPlugins() {
       try {
-        this.setLoading(true);
+        this.setLoadingGlobalPlugins(true);
         const globalPlugins: GlobalPluginModel[] =
           await pluginService.fetchGlobalPlugins();
         this.setGlobalPlugins(globalPlugins);
       } finally {
-        this.setLoading(false);
+        this.setLoadingGlobalPlugins(false);
+      }
+    },
+
+    async deleteGlobalPlugin(pluginId: number) {
+      try {
+        this.setLoadingDelete(true);
+        this.setRemovedSuccessfully(false);
+        const response = await pluginService.removeGlobalPlugin(pluginId);
+        if (response && response?.ok) this.setRemovedSuccessfully(true);
+        else this.setRemovedSuccessfully(false);
+      } finally {
+        this.setLoadingDelete(false);
       }
     },
   },

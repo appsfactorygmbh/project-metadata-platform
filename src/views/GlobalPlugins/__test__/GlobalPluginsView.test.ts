@@ -36,7 +36,6 @@ describe('GlobalPluginsView.vue', () => {
         isTest: true,
       },
     });
-
     await flushPromises();
     expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
     expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 2');

@@ -30,6 +30,21 @@ class PluginService {
       return [];
     }
   };
+
+  removeGlobalPlugin = async (pluginId: number): Promise<Response | null> => {
+    try {
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/Plugins/' + pluginId.toString(),
+        {
+          method: 'DELETE',
+        },
+      );
+      return response;
+    } catch (err) {
+      console.error('Error deleting global plugin: ' + err);
+      return null;
+    }
+  };
 }
 
 const pluginService = new PluginService();

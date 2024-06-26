@@ -45,7 +45,7 @@
   }
 
   onBeforeMount(async () => {
-    pluginStore.setLoading(true);
+    pluginStore.setLoadingPlugins(true);
     await pluginStore.fetchPlugins(100);
   });
 
