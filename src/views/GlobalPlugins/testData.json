@@ -1,0 +1,22 @@
+[
+  {
+    "id": 0,
+    "name": "Plugin 1",
+    "archieved": false
+  },
+  {
+    "id": 1,
+    "name": "Plugin 2",
+    "archieved": false
+  },
+  {
+    "id": 2,
+    "name": "Plugin 3",
+    "archieved": false
+  },
+  {
+    "id": 3,
+    "name": "Plugin 4",
+    "archieved": false
+  }
+]

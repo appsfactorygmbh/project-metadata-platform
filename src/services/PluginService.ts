@@ -1,4 +1,4 @@
-import type { PluginModel } from '@/models/Plugin';
+import type { GlobalPluginModel, PluginModel } from '@/models/Plugin';
 class PluginService {
   fetchPlugins = async (projectID: number): Promise<PluginModel[]> => {
     try {
@@ -12,6 +12,21 @@ class PluginService {
       return data;
     } catch (error) {
       console.log(error);
+      return [];
+    }
+  };
+
+  fetchGlobalPlugins = async (): Promise<GlobalPluginModel[]> => {
+    try {
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/Plugins',
+        //"src/views/GlobalPlugins/testData.json"
+      );
+      if (!response.ok) throw new Error('Network response was not ok');
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      console.error('Error fetching global plugins: ' + err);
       return [];
     }
   };
