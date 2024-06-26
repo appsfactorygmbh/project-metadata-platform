@@ -17,8 +17,7 @@
     name: 'SplitButton',
     onClick: () => {},
     icon: RightOutlined,
-    disabled: true,
-    deactivated: false,
+    status: 'activated',
     tooltip: 'Click here to expand the table',
   };
 </script>
