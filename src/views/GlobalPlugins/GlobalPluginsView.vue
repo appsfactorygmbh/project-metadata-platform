@@ -37,6 +37,13 @@
       </a-list-item>
     </template>
   </a-list>
+  <a-alert
+    v-if="fetchError()"
+    class="error-alert"
+    message="Failed to delete global plugin"
+    type="error"
+    show-icon
+  />
 </template>
 <script lang="ts" setup>
   import {
@@ -46,7 +53,6 @@
   } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button';
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
-  import { storeToRefs } from 'pinia';
   import { inject, onBeforeMount } from 'vue';
   import { usePluginsStore } from '@/store';
 
@@ -59,11 +65,15 @@
 
   const pluginStore = props.isTest
     ? usePluginsStore()
-    : inject(pluginStoreSymbol)!;
+    : inject(pluginStoreSymbol);
 
-  const { getIsLoading } = storeToRefs(pluginStore);
-  const isLoading = computed(() => getIsLoading.value);
-  const isDeleting = computed(() => pluginStore?.getIsLoadingDelete);
+  console.log(pluginStore);
+
+  const isLoading = computed(() => pluginStore?.getIsLoading);
+  const isDeleting = computed(() => pluginStore?.getIsLoadingDelete || false);
+  const removedSuccessfully = computed(
+    () => pluginStore?.getRemovedSuccessfully || false,
+  );
 
   onBeforeMount(async () => {
     await pluginStore?.fetchGlobalPlugins();
@@ -86,7 +96,7 @@
    */
   const handleDelete = async (pluginId: number) => {
     pluginDeleting.value.push(pluginId);
-    await pluginStore.deleteGlobalPlugin(pluginId);
+    await pluginStore?.deleteGlobalPlugin(pluginId);
     const index: number = pluginDeleting.value?.indexOf(pluginId);
     pluginDeleting.value.splice(index, 1);
   };
@@ -99,6 +109,10 @@
    */
   const isButtonLoading = (itemId: number): boolean => {
     return isDeleting.value && pluginDeleting.value.includes(itemId);
+  };
+
+  const fetchError = (): boolean => {
+    return !isDeleting.value && !removedSuccessfully.value;
   };
 </script>
 
@@ -120,5 +134,10 @@
 
   .buttons {
     margin-left: auto;
+  }
+
+  .error-alert {
+    width: max-content;
+    margin: 0 auto;
   }
 </style>

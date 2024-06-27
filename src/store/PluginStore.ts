@@ -19,7 +19,7 @@ export const usePluginsStore = defineStore('plugin', {
       isLoadingPlugins: false,
       isLoadingGlobalPlugins: false,
       isLoadingDelete: false,
-      removedSuccessfully: false,
+      removedSuccessfully: true,
     };
   },
 
