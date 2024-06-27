@@ -166,50 +166,45 @@
     const breakpoint = getBreakpoint(pwidth);
     switch (breakpoint) {
       case 'xs':
-        hideColumn('clientName');
-        hideColumn('businessNumber');
-        hideColumn('teamNumber');
+        showOrHideColumns(0);
         break;
       case 'sm':
-        showColumn('clientName');
-        hideColumn('businessNumber');
-        hideColumn('teamNumber');
+        showOrHideColumns(1);
         break;
       case 'md':
-        showColumn('clientName');
-        showColumn('businessNumber');
-        hideColumn('teamNumber');
+        showOrHideColumns(2);
         break;
       case 'lg':
-        showColumn('clientName');
-        showColumn('businessNumber');
-        showColumn('teamNumber');
+        showOrHideColumns(3);
         break;
+    }
+  }
+
+  function showOrHideColumns(number: number) {
+    for (let index: number = 1; index < 4; index++) {
+      if (number > 0) {
+        showColumn(index);
+        number--;
+      } else {
+        hideColumn(index);
+      }
     }
   }
 
   /**
    * Hides given column.
-   * @param {number} key Has the key of the column to hide.
+   * @param {number} index Has the index of the column to hide.
    */
-  function hideColumn(key: string) {
-    columns.forEach((column) => {
-      if (column.key == key) {
-        column.hidden = true;
-      }
-    });
+  function hideColumn(index: number) {
+    columns[index].hidden = true;
   }
 
   /**
    * Shows given column.
-   * @param {number} key Has the key of the column to show.
+   * @param {number} index Has the index of the column to show.
    */
-  function showColumn(key: string) {
-    columns.forEach((column) => {
-      if (column.key == key) {
-        column.hidden = false;
-      }
-    });
+  function showColumn(index: number) {
+    columns[index].hidden = false;
   }
 
   /**
@@ -221,7 +216,7 @@
     const windowSize = useWindowSize().width.value;
     const breakpoint: number[] = [
       0.25 * windowSize,
-      0.42 * windowSize,
+      0.37 * windowSize,
       0.5 * windowSize,
     ];
 
