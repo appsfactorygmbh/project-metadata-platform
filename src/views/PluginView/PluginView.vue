@@ -34,6 +34,16 @@
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
   import type { PluginModel } from '@/models/Plugin';
   import type { ComputedRef } from 'vue';
+  import { useRoute } from 'vue-router';
+
+  const route = useRoute();
+  watch(
+    () => route.query.isEditing,
+    (newVal, oldVal) => {
+      console.log('isEditing changed from', oldVal, 'to', newVal);
+      // You can add your logic here to react to changes in isEditing
+    },
+  );
 
   const pluginStore = inject(pluginStoreSymbol)!;
 
