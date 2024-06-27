@@ -54,20 +54,8 @@
   import type { FloatButtonModel } from '@/components/Button';
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
   import { inject, onBeforeMount } from 'vue';
-  import { usePluginsStore } from '@/store';
 
-  const props = defineProps({
-    isTest: {
-      type: Boolean,
-      default: false,
-    },
-  });
-
-  const pluginStore = props.isTest
-    ? usePluginsStore()
-    : inject(pluginStoreSymbol);
-
-  console.log(pluginStore);
+  const pluginStore = inject(pluginStoreSymbol);
 
   const isLoading = computed(() => pluginStore?.getIsLoading);
   const isDeleting = computed(() => pluginStore?.getIsLoadingDelete || false);

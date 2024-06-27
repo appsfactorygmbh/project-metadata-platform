@@ -3,6 +3,8 @@ import GlobalPluginsView from '../GlobalPluginsView.vue';
 import { describe, it, expect } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
+import { pluginStoreSymbol } from '@/store/injectionSymbols.ts';
+import { usePluginsStore } from '@/store';
 
 const testData = [
   {
@@ -32,8 +34,10 @@ describe('GlobalPluginsView.vue', () => {
           },
         }),
       ],
-      propsData: {
-        isTest: true,
+      global: {
+        provide: {
+          [pluginStoreSymbol as symbol]: usePluginsStore(),
+        },
       },
     });
     await flushPromises();

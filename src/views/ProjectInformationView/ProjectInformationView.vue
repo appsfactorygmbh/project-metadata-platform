@@ -2,34 +2,20 @@
   import { inject, onMounted, toRaw, reactive } from 'vue';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import PluginView from '@/views/PluginView/PluginView.vue';
-  import { useProjectStore } from '@/store';
-  import { storeToRefs } from 'pinia';
   import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
   import { EditOutlined } from '@ant-design/icons-vue';
 
-  const props = defineProps({
-    isTest: {
-      type: Boolean,
-      default: false,
-    },
-  });
+  const projectsStore = inject(projectsStoreSymbol);
 
-  const projectsStore = props.isTest
-    ? useProjectStore()
-    : inject(projectsStoreSymbol)!;
-
-  const { getIsLoadingProject } = storeToRefs(projectsStore);
-  const isLoading = computed(() => getIsLoadingProject.value);
+  const isLoading = computed(() => projectsStore?.getIsLoadingProject);
 
   onMounted(async () => {
-    await projectsStore.fetchProject(100);
-
-    const project = projectsStore.getProject;
+    const project = projectsStore?.getProject;
     if (project) addData(project);
 
-    const data: ComputedRef<DetailedProjectModel | null> = computed(
-      () => projectsStore.getProject,
+    const data: ComputedRef<DetailedProjectModel | null | undefined> = computed(
+      () => projectsStore?.getProject,
     );
 
     watch(

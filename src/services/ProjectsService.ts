@@ -27,7 +27,6 @@ class ProjectsService {
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/Projects/' + id.toString(),
-        //'src/components/ProjectInformation/test.json',
         {
           headers: {
             Accept: 'text/plain',

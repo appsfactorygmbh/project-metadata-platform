@@ -1,11 +1,13 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import ProjectInformation from '../ProjectInformationView.vue';
+import { projectsStoreSymbol } from '@/store/injectionSymbols';
+import { useProjectStore } from '@/store';
+import { createTestingPinia } from '@pinia/testing';
 
-setActivePinia(createPinia());
-
-const data = {
+const testData = {
+  id: 100,
   projectName: 'Heute Show',
   department: 'IT',
   clientName: 'ZDF',
@@ -13,31 +15,32 @@ const data = {
   teamNumber: 42,
 };
 
-describe('projectView.vue', () => {
-  const mockResponse = {
-    ok: true,
-    statusText: 'Ok',
-    json: async () => data,
-  } as Response;
-  globalThis.fetch = vi.fn().mockResolvedValue(mockResponse);
+describe('ProjectInformationView.vue', () => {
+  setActivePinia(createPinia());
 
-  function generateWrapper() {
-    return mount(ProjectInformation, {
-      propsData: {
-        isTest: true,
-      },
+  it('renders the project information correctly', async () => {
+    const wrapper = mount(ProjectInformation, {
+      plugins: [
+        createTestingPinia({
+          stubActions: false,
+          initialState: {
+            project: {
+              project: testData,
+            },
+          },
+        }),
+      ],
       global: {
         stubs: {
           PluginView: {
             template: '<span />',
           },
         },
+        provide: {
+          [projectsStoreSymbol as symbol]: useProjectStore(),
+        },
       },
     });
-  }
-
-  it('renders the project information correctly', async () => {
-    const wrapper = generateWrapper();
     await flushPromises();
 
     expect(wrapper.find('.projectName').text()).toBe('Heute Show');
