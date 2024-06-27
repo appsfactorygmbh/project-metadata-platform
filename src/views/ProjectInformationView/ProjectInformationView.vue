@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { inject, onMounted, toRaw, reactive } from 'vue';
+  import { inject, onMounted, toRaw, reactive, onBeforeMount } from 'vue';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import PluginView from '@/views/PluginView/PluginView.vue';
   import type { DetailedProjectModel } from '@/models/Project';
@@ -9,6 +9,10 @@
   const projectsStore = inject(projectsStoreSymbol);
 
   const isLoading = computed(() => projectsStore?.getIsLoadingProject);
+
+  onBeforeMount(async () => {
+    projectsStore?.fetchProject(100);
+  });
 
   onMounted(async () => {
     const project = projectsStore?.getProject;

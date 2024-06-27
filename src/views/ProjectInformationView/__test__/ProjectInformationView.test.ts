@@ -22,7 +22,7 @@ describe('ProjectInformationView.vue', () => {
     const wrapper = mount(ProjectInformation, {
       plugins: [
         createTestingPinia({
-          stubActions: false,
+          stubActions: true,
           initialState: {
             project: {
               project: testData,
