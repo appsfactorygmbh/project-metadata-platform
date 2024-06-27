@@ -94,8 +94,10 @@ export const usePluginsStore = defineStore('plugin', {
         this.setLoadingDelete(true);
         this.setRemovedSuccessfully(false);
         const response = await pluginService.removeGlobalPlugin(pluginId);
-        if (response && response?.ok) this.setRemovedSuccessfully(true);
-        else this.setRemovedSuccessfully(false);
+        if (response && response?.ok) {
+          this.setRemovedSuccessfully(true);
+          this.fetchGlobalPlugins();
+        } else this.setRemovedSuccessfully(false);
       } finally {
         this.setLoadingDelete(false);
       }
