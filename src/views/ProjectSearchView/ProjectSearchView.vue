@@ -24,6 +24,13 @@
 
   provide<SearchStore>(searchStoreSymbol, searchStore);
 
+  watch(
+    () => projectsStore.getProjects,
+    () => {
+      searchStore.setBaseSet(projectsStore.getProjects);
+    },
+  );
+
   const FETCHING_METHOD: 'FRONTEND' | 'BACKEND' = import.meta.env
     .VITE_PROJECT_SEARCH_METHOD;
   console.log('FETCHING_METHOD:', import.meta.env);
