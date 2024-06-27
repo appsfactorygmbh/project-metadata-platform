@@ -87,7 +87,6 @@
       <SearchBar :search-store-symbol="searchStoreSymbol" />
       <SearchableTable
         :search-store-symbol="searchStoreSymbol"
-        :pane-width="props.paneWidth"
         :pane-height="props.paneHeight"
         :columns="columns.filter((item) => !item.hidden)"
         :is-loading="isLoading"
@@ -180,6 +179,10 @@
     }
   }
 
+  /**
+   * Shows the given amount of columns and hides the rest
+   * @param number Has the number of how many columns should be shown
+   */
   function showOrHideColumns(number: number) {
     for (let index: number = 1; index < 4; index++) {
       if (number > 0) {
