@@ -71,6 +71,8 @@ sonarqube:
     key: '${CI_JOB_NAME}'
     paths:
       - .sonar/cache
+  before_script:
+    - sonar-scanner --version
   script:
     - sonar-scanner
   allow_failure: true
