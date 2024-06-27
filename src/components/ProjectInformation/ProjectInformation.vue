@@ -75,7 +75,7 @@
           class="button"
           ghost
           style="margin-left: 10px"
-          @click="placeHolder"
+          @click="toggleEditingMode"
         >
           <template #icon><EditOutlined class="icon" /></template>
         </a-button>
@@ -155,6 +155,10 @@
 </template>
 
 <script lang="ts">
+  import {useEditing} from '@/utils/hooks/useEditing.tsx'
+
+  const {isEditing, startEditing, stopEditing} = useEditing()
+
   // Flag for editable Title
   const projectData: DetailedProjectModel = reactive({
     id: 0,
@@ -167,8 +171,16 @@
 
   // Place holder for the buttons for now
   const placeHolder = () => {
-    console.log('Icon clicked');
+    console.log('placeHolder');
   };
+
+  const toggleEditingMode = () => {
+    if(isEditing.value === true) {
+      stopEditing()
+    } else {
+      startEditing()
+    }
+  }
 
   //Function to load the data from projectViewService to projectView
   function addData(loadedData: DetailedProjectModel) {
