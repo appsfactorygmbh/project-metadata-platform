@@ -18,7 +18,7 @@
     <a-float-button class="button" ghost @click="placeHolder">
       <template #icon><UserOutlined class="icon" /> </template>
     </a-float-button>
-    <a-float-button class="button" ghost @click="placeHolder">
+    <a-float-button class="button" ghost @click="goToSetting">
       <template #icon><AppstoreAddOutlined class="icon" /> </template>
     </a-float-button>
     <a-float-button class="button" ghost @click="placeHolder">
@@ -29,6 +29,16 @@
     </a-float-button>
   </a-float-button-group>
 </template>
+
+<script lang="ts">
+  export default {
+    methods: {
+      goToSetting() {
+        this.$router.push({ name: 'Setting' });
+      },
+    },
+  };
+</script>
 
 <style lang="scss" scoped>
   .menu {

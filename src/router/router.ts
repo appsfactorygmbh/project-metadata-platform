@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { SplitView } from '@/views';
 import { ProviderCollection } from './Provider';
+import { SettingView } from '@/views/SettingView';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,6 +17,11 @@ const router = createRouter({
           component: SplitView,
         },
       ],
+    },
+    {
+      path: '/Setting',
+      name: 'Setting',
+      component: SettingView,
     },
   ],
 });
