@@ -28,7 +28,7 @@
     "pinia": "^2.1.7",
     "splitpanes": "^3.1.5",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.2"
+    "vue-router": "^4.4.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
