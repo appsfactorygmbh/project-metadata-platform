@@ -6,7 +6,7 @@ export const useEditing = () => {
   const router = useRouter();
 
   const startEditing = () => {
-    console.log("start editing")
+    console.log('start editing');
     isEditing.value = true;
     router.push({
       path: router.currentRoute.value.path,
@@ -15,7 +15,7 @@ export const useEditing = () => {
   };
 
   const stopEditing = () => {
-    console.log("stop editing")
+    console.log('stop editing');
     isEditing.value = false;
     router.push({
       path: router.currentRoute.value.path,

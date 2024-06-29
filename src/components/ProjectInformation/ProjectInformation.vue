@@ -155,9 +155,9 @@
 </template>
 
 <script lang="ts">
-  import {useEditing} from '@/utils/hooks/useEditing.tsx'
+  import { useEditing } from '@/utils/hooks/useEditing.tsx';
 
-  const {isEditing, startEditing, stopEditing} = useEditing()
+  const { isEditing, startEditing, stopEditing } = useEditing();
 
   // Flag for editable Title
   const projectData: DetailedProjectModel = reactive({
@@ -172,15 +172,16 @@
   // Place holder for the buttons for now
   const placeHolder = () => {
     console.log('placeHolder');
+    startEditing();
   };
 
   const toggleEditingMode = () => {
-    if(isEditing.value === true) {
-      stopEditing()
+    if (isEditing.value === true) {
+      stopEditing();
     } else {
-      startEditing()
+      startEditing();
     }
-  }
+  };
 
   //Function to load the data from projectViewService to projectView
   function addData(loadedData: DetailedProjectModel) {
