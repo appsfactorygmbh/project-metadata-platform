@@ -2,6 +2,7 @@
   // Import ref for reactive variables and utility functions for URL handling.
   import { ref, watch } from 'vue';
   import { cutAfterTLD, createFaviconURL } from './editURL';
+  import { DeleteOutlined } from '@ant-design/icons-vue';
 
   // Define the component's props with pluginName and url as required strings.
   const props = defineProps({
@@ -21,7 +22,14 @@
       type: Boolean,
       required: false,
     },
+    isEditing: {
+      type: Boolean,
+      required: true,
+    },
   });
+
+  const displayNameInput = ref<string>(props.displayName);
+  const urlInput = ref<string>(props.url);
 
   const toggleSkeleton = ref<boolean>(props.isLoading);
 
@@ -43,31 +51,66 @@
     }
     window.open(props.url, '_blank');
   }
+
+  const hide = ref(false)
+  const hidePlugin = () => {
+    hide.value = true
+  }
+
 </script>
 
 <template>
-  <!-- Define the card component, styled as a clickable flex container. -->
-  <a-card
-    class="card"
-    :loading="toggleSkeleton"
-    :bordered="false"
-    toggle="true"
-    :body-style="{
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      padding: '15px',
-    }"
-    @click="handleClick"
-  >
-    <!-- Display the favicon image. -->
-    <a-avatar shape="square" :src="faviconUrl" class="avatar"></a-avatar>
-    <!-- Container for plugin name and URL text. -->
-    <div class="textContainer">
-      <h3>{{ pluginName }}</h3>
-      <p>{{ displayName }}</p>
-    </div>
-  </a-card>
+  <template v-if="isEditing" >
+    <a-card
+      :style = "{display: hide ? 'none' : 'block'}"
+      class="cardNoHover"
+      :loading="toggleSkeleton"
+      :bordered="false"
+      toggle="true"
+      :body-style="{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: '15px',
+      }"
+    >
+      <!-- Container for plugin name and URL text. -->
+      <div class="textContainerInput">
+        <h3 style="text-align: center">{{ pluginName }}</h3>
+        <a-input
+          :v-model:value="displayNameInput"
+          :placeHolder="props.displayName"
+        ></a-input>
+        <a-input :v-model:value="urlInput" :placeHolder="props.url"></a-input>
+      </div>
+      <DeleteOutlined class="circleBackground" @click="hidePlugin"/>
+    </a-card>
+  </template>
+
+  <template v-else>
+    <!-- Define the card component, styled as a clickable flex container. -->
+    <a-card
+      class="card"
+      :loading="toggleSkeleton"
+      :bordered="false"
+      toggle="true"
+      :body-style="{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: '15px',
+      }"
+      @click="handleClick"
+    >
+      <!-- Display the favicon image. -->
+      <a-avatar shape="square" :src="faviconUrl" class="avatar"></a-avatar>
+      <!-- Container for plugin name and URL text. -->
+      <div class="textContainer">
+        <h3>{{ pluginName }}</h3>
+        <p>{{ displayName }}</p>
+      </div>
+    </a-card>
+  </template>
 </template>
 
 <style scoped lang="scss">
@@ -79,6 +122,27 @@
   }
 
   // Style for the card container.
+
+  .circleBackground{
+    padding: 50%;
+    border-radius: 100%;
+    background-color: white;
+    position: absolute;
+    top: -3%;
+    right: -3%;
+    padding: 10px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  }
+
+  .cardNoHover {
+    width: max-content;
+    min-width: 200px;
+    max-width: 300px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
+    display: flex;
+    flex-direction: column;
+  }
+
   .card {
     width: max-content;
     min-width: 200px;
@@ -91,6 +155,26 @@
     &:hover {
       cursor: pointer;
       transform: scale(1.01);
+    }
+  }
+
+  .textContainerInput {
+    font-family: Manrope;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+
+    & > * {
+      margin: 5px 0px 5px 0px;
+    }
+
+    & p {
+      color: #6d6e6f;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 
