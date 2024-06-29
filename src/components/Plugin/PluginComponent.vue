@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   // Import ref for reactive variables and utility functions for URL handling.
-  import { ref, watch } from 'vue';
+  import { ref, watch, defineExpose } from 'vue';
   import { cutAfterTLD, createFaviconURL } from './editURL';
   import { DeleteOutlined } from '@ant-design/icons-vue';
 
@@ -31,6 +31,9 @@
   const displayNameInput = ref<string>(props.displayName);
   const urlInput = ref<string>(props.url);
 
+  const resetHide = ():void => {
+    hide.value = false;
+  }
   const toggleSkeleton = ref<boolean>(props.isLoading);
 
   watch(
@@ -52,10 +55,17 @@
     window.open(props.url, '_blank');
   }
 
-  const hide = ref(false)
+  const hide = ref(false);
+
+  const emit = defineEmits(['hide']);
   const hidePlugin = () => {
     hide.value = true
+    emit('hide');
   }
+
+  defineExpose({
+    resetHide,
+  });
 
 </script>
 

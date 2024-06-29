@@ -64,6 +64,8 @@
 </script>
 
 <template>
+  <button>RESET</button>
+  <button>SAVE</button>
   <div class="pane">
     <div class="main">
       <!-- create box for the project name -->
