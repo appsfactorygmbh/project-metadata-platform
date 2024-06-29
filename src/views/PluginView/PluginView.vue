@@ -9,6 +9,7 @@
         :display-name="plugin.displayName"
         :url="plugin.url"
         :is-loading="loading"
+        :is-editing="true"
       ></PluginComponent>
     </div>
 
@@ -34,16 +35,7 @@
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
   import type { PluginModel } from '@/models/Plugin';
   import type { ComputedRef } from 'vue';
-  import { useRoute } from 'vue-router';
-
-  const route = useRoute();
-  watch(
-    () => route.query.isEditing,
-    (newVal, oldVal) => {
-      console.log('isEditing changed from', oldVal, 'to', newVal);
-      // You can add your logic here to react to changes in isEditing
-    },
-  );
+  // import { useEditing } from '@/utils/hooks/useEditing.ts'
 
   const pluginStore = inject(pluginStoreSymbol)!;
 
@@ -79,6 +71,11 @@
         setPlugins(newProject);
       },
     );
+
+    const deletePlugin = (item: string) => {
+      console.log(item)
+    }
+
   });
 </script>
 
