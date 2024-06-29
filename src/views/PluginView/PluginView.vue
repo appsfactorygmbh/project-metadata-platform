@@ -1,8 +1,11 @@
 <template>
   <div class="main">
+    <button @click="hideFunc">RESET PLUGIN</button>
     <div v-if="!loading" class="container">
       <PluginComponent
         v-for="plugin in plugins"
+        ref="itemRefs"
+        @hide = "() => deletePlugin(plugin.displayName)"
         :key="plugin.displayName"
         class="plugins"
         :plugin-name="plugin.pluginName"
@@ -11,6 +14,7 @@
         :is-loading="loading"
         :is-editing="true"
       ></PluginComponent>
+<!--      <PluginComponent ref="testPlugin" :is-editing="true" display-name="testPlugin" url="testURL" plugin-name="testName"></PluginComponent>-->
     </div>
 
     <a-card
@@ -36,6 +40,19 @@
   import type { PluginModel } from '@/models/Plugin';
   import type { ComputedRef } from 'vue';
   // import { useEditing } from '@/utils/hooks/useEditing.ts'
+
+  const itemRefs = ref([])
+  const hideFunc = () => {
+    console.log(itemRefs.value[0])
+    for(let i = 0; i < itemRefs.value.length; i++){
+      //TODO: fix type issue
+      itemRefs.value[i].resetHide()
+    }
+  }
+
+  const deletePlugin = (id: string) => {
+    console.log(id)
+  }
 
   const pluginStore = inject(pluginStoreSymbol)!;
 
@@ -71,11 +88,6 @@
         setPlugins(newProject);
       },
     );
-
-    const deletePlugin = (item: string) => {
-      console.log(item)
-    }
-
   });
 </script>
 
