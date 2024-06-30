@@ -5,7 +5,7 @@ import ConfirmationDialog from '@/components/ConfirmAction/ConfirmationDialog.vu
 describe('ConfirmationDialog.vue', () => {
   it('renders the dialog when isOpen is true', async () => {
     const wrapper = mount(ConfirmationDialog, {
-      attachTo: document.body, // Fügen Sie dies hinzu, um das Teleport-Ziel zu spezifizieren
+      attachTo: document.body, // Add this to specify the teleport destination
       props: {
         isOpen: true,
         title: 'Test Title',

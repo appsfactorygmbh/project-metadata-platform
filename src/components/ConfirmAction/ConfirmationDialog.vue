@@ -60,6 +60,4 @@
   };
 </script>
 
-<style scoped>
-  /* Hier können Sie weitere Styles hinzufügen, falls erforderlich */
-</style>
+<style scoped></style>

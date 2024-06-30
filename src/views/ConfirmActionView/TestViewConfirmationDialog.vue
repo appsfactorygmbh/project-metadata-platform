@@ -41,6 +41,4 @@
   };
 </script>
 
-<style scoped>
-  /* Fügen Sie bei Bedarf weitere Styles hinzu */
-</style>
+<style scoped></style>
