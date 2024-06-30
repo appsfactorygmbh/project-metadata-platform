@@ -1,20 +1,19 @@
 <template>
   <div class="main">
-    <button @click="hideFunc">RESET PLUGIN</button>
+    <button @click="hidePlugin">RESET PLUGIN</button>
     <div v-if="!loading" class="container">
       <PluginComponent
         v-for="plugin in plugins"
         ref="itemRefs"
-        @hide = "() => deletePlugin(plugin.displayName)"
+        @hide="() => deletePlugin(plugin.displayName)"
         :key="plugin.displayName"
         class="plugins"
         :plugin-name="plugin.pluginName"
         :display-name="plugin.displayName"
         :url="plugin.url"
         :is-loading="loading"
-        :is-editing="true"
+        :is-editing="isEditing"
       ></PluginComponent>
-<!--      <PluginComponent ref="testPlugin" :is-editing="true" display-name="testPlugin" url="testURL" plugin-name="testName"></PluginComponent>-->
     </div>
 
     <a-card
@@ -39,20 +38,17 @@
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
   import type { PluginModel } from '@/models/Plugin';
   import type { ComputedRef } from 'vue';
-  // import { useEditing } from '@/utils/hooks/useEditing.ts'
+  import { useEditing } from "@/utils/hooks/useEditing"
 
-  const itemRefs = ref([])
-  const hideFunc = () => {
-    console.log(itemRefs.value[0])
-    for(let i = 0; i < itemRefs.value.length; i++){
-      //TODO: fix type issue
-      itemRefs.value[i].resetHide()
+  const { isEditing } = useEditing();
+
+  const itemRefs = ref<InstanceType<typeof PluginComponent>[]>([]);
+  const hidePlugin = () => {
+    console.log(itemRefs.value[0]);
+    for (let i = 0; i < itemRefs.value.length; i++) {
+      itemRefs.value[i].resetHide();
     }
-  }
-
-  const deletePlugin = (id: string) => {
-    console.log(id)
-  }
+  };
 
   const pluginStore = inject(pluginStoreSymbol)!;
 
@@ -101,10 +97,9 @@
     align-items: center;
     flex-direction: row;
     flex-wrap: wrap;
-  }
-  /* Styling for each plugin in container */
-  .plugins {
-    margin: 10px;
+    & > * {
+      margin: 10px;
+    }
   }
   .dummyCard {
     width: max-content;
