@@ -33,14 +33,11 @@
     isDialogOpen.value = false;
   };
 
-  // Kommentar für Reviewer, habe keine andere lösung gefunden, bei drücken des no buttons, kommt zwei mal die error Meldung
   const handleCancel = () => {
-    if (isDialogOpen.value) {
-      message.error("Deleting the plugin didn't work", 2, () => {
-        router.push('/plugin-settings');
-      });
-      isDialogOpen.value = false;
-    }
+    message.error("Deleting the plugin didn't work", 2, () => {
+      router.push('/plugin-settings');
+    });
+    isDialogOpen.value = false;
   };
 </script>
 

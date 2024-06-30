@@ -1,61 +1,65 @@
 <template>
-  <!-- reusable component -->
   <a-modal
-    v-model:visible="localIsOpen"
+    v-model:open="localIsOpen"
     :title="title"
     :style="{ top: '20px' }"
     ok-text="Yes"
     cancel-text="No"
     @ok="confirm"
-    @cancel="cancel"
+    @cancel="handleCancel"
   >
     <p>{{ message }}</p>
   </a-modal>
 </template>
 
-<script>
-  export default {
-    name: 'ConfirmationDialog',
-    props: {
-      isOpen: {
-        type: Boolean,
-        required: true,
-      },
-      title: {
-        type: String,
-        required: true,
-      },
-      message: {
-        type: String,
-        required: true,
-      },
+<script setup>
+  import { ref, watch } from 'vue';
+
+  const props = defineProps({
+    isOpen: {
+      type: Boolean,
+      required: true,
     },
-    data() {
-      return {
-        localIsOpen: this.isOpen, // Local copy of the isOpen prop to manage the modal's visibility
-      };
+    title: {
+      type: String,
+      required: true,
     },
-    watch: {
-      isOpen(val) {
-        this.localIsOpen = val; // Watch for changes in the isOpen prop and update localIsOpen accordingly
-      },
-      localIsOpen(val) {
-        if (!val) {
-          this.$emit('update:isOpen', val);
-        }
-      },
+    message: {
+      type: String,
+      required: true,
     },
-    methods: {
-      confirm() {
-        this.$emit('confirm');
-        this.localIsOpen = false;
-      },
-      cancel() {
-        this.localIsOpen = false;
-        this.$emit('cancel');
-      },
+  });
+
+  const emit = defineEmits(['confirm', 'cancel', 'update:isOpen']);
+
+  const localIsOpen = ref(props.isOpen);
+
+  watch(
+    () => props.isOpen,
+    (newVal) => {
+      localIsOpen.value = newVal;
     },
+  );
+
+  watch(localIsOpen, (newVal) => {
+    if (!newVal) {
+      emit('update:isOpen', newVal);
+    }
+  });
+
+  const confirm = () => {
+    emit('confirm');
+    localIsOpen.value = false;
+  };
+
+  const handleCancel = () => {
+    localIsOpen.value = false;
+    setTimeout(() => {
+      emit('cancel');
+    }, 0);
   };
 </script>
 
-<style scoped></style>
+<style scoped>
+  /* Hier können Sie weitere Styles hinzufügen, falls erforderlich */
+</style>
