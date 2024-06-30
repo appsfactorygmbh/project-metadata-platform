@@ -3,8 +3,8 @@
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import { inject, onMounted } from 'vue';
   import PluginView from '@/views/PluginView/PluginView.vue';
-  import {SaveOutlined, CloseOutlined} from "@ant-design/icons-vue";
-  import { useEditing } from "@/utils/hooks/useEditing"
+  import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
+  import { useEditing } from '@/utils/hooks/useEditing';
 
   const props = defineProps({
     paneWidth: {
@@ -17,7 +17,7 @@
     },
   });
 
-  const { isEditing } = useEditing();
+  const { isEditing, stopEditing } = useEditing();
 
   const projectStore = inject(projectsStoreSymbol)!;
 
@@ -25,20 +25,25 @@
     await projectStore.fetchProject(props.projectId);
   });
 
+  const pluginViewRef = ref<InstanceType<typeof PluginView>>();
+
+  const cancelEdit = () => {
+    console.log(pluginViewRef.value)
+    pluginViewRef.value?.showPlugins();
+    stopEditing()
+  }
+  const saveEdit = () => {
+    console.log("saved")
+  }
 
 </script>
 
 <template>
-
-  <a-float-button-group class="menu" v-if="isEditing">
-    <a-float-button>
-      <template #icon><SaveOutlined class="icon" /> </template>
-    </a-float-button>
-    <a-float-button>
-      <template #icon><CloseOutlined class="icon" /> </template>
-    </a-float-button>
-  </a-float-button-group>
-
+  <ProjectEditButtons
+    v-if="isEditing"
+    @cancel="cancelEdit"
+    @save="saveEdit"
+  />
   <ProjectInformation :pane-width="props.paneWidth" />
-  <PluginView :project-i-d="props.projectId"></PluginView>
+  <PluginView :project-i-d="props.projectId" ref="pluginViewRef"></PluginView>
 </template>

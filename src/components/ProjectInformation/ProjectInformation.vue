@@ -72,7 +72,6 @@
       startEditing();
     }
   };
-
 </script>
 
 <template>
@@ -87,6 +86,7 @@
           class="button"
           ghost
           style="margin-left: 10px"
+          v-if="!isEditing"
           @click="toggleEditingMode"
         >
           <template #icon><EditOutlined class="icon" /></template>
@@ -176,8 +176,6 @@
     department: '',
     clientName: '',
   });
-
-
 
   //Function to load the data from projectViewService to projectView
   function addData(loadedData: DetailedProjectModel) {

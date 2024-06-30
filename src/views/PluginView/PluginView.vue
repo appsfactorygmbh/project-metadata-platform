@@ -1,6 +1,5 @@
 <template>
   <div class="main">
-    <button @click="hidePlugin">RESET PLUGIN</button>
     <div v-if="!loading" class="container">
       <PluginComponent
         v-for="plugin in plugins"
@@ -33,18 +32,22 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, computed, toRaw, inject, onMounted } from 'vue';
+import {onBeforeMount, computed, toRaw, inject, onMounted, defineExpose} from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
   import type { PluginModel } from '@/models/Plugin';
   import type { ComputedRef } from 'vue';
-  import { useEditing } from "@/utils/hooks/useEditing"
+  import { useEditing } from '@/utils/hooks/useEditing';
+
+  //Placeholder
+  const deletePlugin = (pluginName: string) => {
+    console.log(pluginName);
+  };
 
   const { isEditing } = useEditing();
 
   const itemRefs = ref<InstanceType<typeof PluginComponent>[]>([]);
-  const hidePlugin = () => {
-    console.log(itemRefs.value[0]);
+  const showPlugins = () => {
     for (let i = 0; i < itemRefs.value.length; i++) {
       itemRefs.value[i].resetHide();
     }
@@ -85,6 +88,11 @@
       },
     );
   });
+
+defineExpose({
+  showPlugins,
+});
+
 </script>
 
 <style scoped lang="css">
