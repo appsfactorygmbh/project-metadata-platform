@@ -25,6 +25,8 @@ declare module 'vue' {
     ARow: typeof import('ant-design-vue/es')['Row']
     ASkeleton: typeof import('ant-design-vue/es')['Skeleton']
     ATable: typeof import('ant-design-vue/es')['Table']
+    FormModal: typeof import('./../src/components/Modal/FormModal.vue')['default']
+    GlobalPluginForm: typeof import('./../src/components/GlobalPluginForm/GlobalPluginForm.vue')['default']
     HelloWorld: typeof import('./../src/components/HelloWorld.vue')['default']
     MenuButtons: typeof import('./../src/components/MenuButtons/MenuButtons.vue')['default']
     PluginComponent: typeof import('./../src/components/Plugin/PluginComponent.vue')['default']
