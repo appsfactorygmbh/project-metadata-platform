@@ -25,6 +25,8 @@ declare module 'vue' {
     ARow: typeof import('ant-design-vue/es')['Row']
     ASkeleton: typeof import('ant-design-vue/es')['Skeleton']
     ATable: typeof import('ant-design-vue/es')['Table']
+    ConfimationDialog: typeof import('@/components/ConfirmAction/ConfirmationDialog.vue')['default']
+    ConfirmationDialog: typeof import('./../src/components/ConfirmAction/ConfirmationDialog.vue')['default']
     HelloWorld: typeof import('./../src/components/HelloWorld.vue')['default']
     MenuButtons: typeof import('./../src/components/MenuButtons/MenuButtons.vue')['default']
     PluginComponent: typeof import('./../src/components/Plugin/PluginComponent.vue')['default']
@@ -33,5 +35,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
     SearchBar: typeof import('./../src/components/Searchbar/SearchBar.vue')['default']
+    TestViewConfirmationDialog: typeof import('@/views/ConfirmActionView/TestViewConfirmationDialog.vue')['default']
   }
 }
