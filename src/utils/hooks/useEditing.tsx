@@ -4,12 +4,17 @@ import { useRouter } from 'vue-router';
 export const useEditing = () => {
   const router = useRouter();
 
-  const isEditing = ref<boolean>(router.currentRoute.value.query.isEditing === 'true');
+  const isEditing = ref<boolean>(
+    router.currentRoute.value.query.isEditing === 'true',
+  );
 
   // Update isEditing when the URL query changes
-  watch(() => router.currentRoute.value.query.isEditing, (newQueryIsEditing) => {
-    isEditing.value = newQueryIsEditing === 'true';
-  });
+  watch(
+    () => router.currentRoute.value.query.isEditing,
+    (newQueryIsEditing) => {
+      isEditing.value = newQueryIsEditing === 'true';
+    },
+  );
 
   const startEditing = () => {
     console.log('start editing');
