@@ -7,7 +7,7 @@ class PluginService {
         import.meta.env.VITE_BACKEND_URL +
           '/Projects' +
           projectID.toString() +
-          '/plugins',
+          '/plugins/',
       );
       if (!response.ok) throw new Error('Error when trying to fetch Plugins');
       const data = await response.json();
