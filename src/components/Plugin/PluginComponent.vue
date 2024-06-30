@@ -31,9 +31,9 @@
   const displayNameInput = ref<string>(props.displayName);
   const urlInput = ref<string>(props.url);
 
-  const resetHide = ():void => {
+  const resetHide = (): void => {
     hide.value = false;
-  }
+  };
   const toggleSkeleton = ref<boolean>(props.isLoading);
 
   watch(
@@ -59,20 +59,19 @@
 
   const emit = defineEmits(['hide']);
   const hidePlugin = () => {
-    hide.value = true
+    hide.value = true;
     emit('hide');
-  }
+  };
 
   defineExpose({
     resetHide,
   });
-
 </script>
 
 <template>
-  <template v-if="isEditing" >
+  <template v-if="isEditing">
     <a-card
-      :style = "{display: hide ? 'none' : 'block'}"
+      :style="{ display: hide ? 'none' : 'block' }"
       class="cardNoHover"
       :loading="toggleSkeleton"
       :bordered="false"
@@ -93,7 +92,7 @@
         ></a-input>
         <a-input :v-model:value="urlInput" :placeHolder="props.url"></a-input>
       </div>
-      <DeleteOutlined class="circleBackground" @click="hidePlugin"/>
+      <DeleteOutlined class="circleBackground" @click="hidePlugin" />
     </a-card>
   </template>
 
@@ -133,7 +132,7 @@
 
   // Style for the card container.
 
-  .circleBackground{
+  .circleBackground {
     padding: 50%;
     border-radius: 100%;
     background-color: white;
