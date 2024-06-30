@@ -7,6 +7,9 @@
   import { MenuButtons } from '@/components/MenuButtons';
   import CreateProjectView from '@/views/CreateProject/createProjectView.vue';
   import { ProjectInformationView } from '@/views/ProjectInformationView';
+  import { useEditing } from "@/utils/hooks/useEditing"
+
+  const { isEditing } = useEditing();
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
@@ -37,7 +40,7 @@
           />
           <MenuButtons />
         </div>
-        <CreateProjectView />
+        <CreateProjectView v-if="!isEditing"/>
       </pane>
     </splitpanes>
   </div>

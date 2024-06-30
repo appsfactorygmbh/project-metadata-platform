@@ -6,6 +6,7 @@
   import { useProjectStore } from '@/store';
   import type { ComputedRef } from 'vue';
   import { storeToRefs } from 'pinia';
+  import { useEditing } from '@/utils/hooks/useEditing.tsx';
 
   //Get the width of the right pane from App.vue
   const props = defineProps({
@@ -61,11 +62,20 @@
       },
     );
   });
+
+  const { isEditing, startEditing, stopEditing } = useEditing();
+
+  const toggleEditingMode = () => {
+    if (isEditing.value === true) {
+      stopEditing();
+    } else {
+      startEditing();
+    }
+  };
+
 </script>
 
 <template>
-  <button>RESET</button>
-  <button>SAVE</button>
   <div class="pane">
     <div class="main">
       <!-- create box for the project name -->
@@ -157,10 +167,6 @@
 </template>
 
 <script lang="ts">
-  import { useEditing } from '@/utils/hooks/useEditing.tsx';
-
-  const { isEditing, startEditing, stopEditing } = useEditing();
-
   // Flag for editable Title
   const projectData: DetailedProjectModel = reactive({
     id: 0,
@@ -171,19 +177,7 @@
     clientName: '',
   });
 
-  // Place holder for the buttons for now
-  const placeHolder = () => {
-    console.log('placeHolder');
-    startEditing();
-  };
 
-  const toggleEditingMode = () => {
-    if (isEditing.value === true) {
-      stopEditing();
-    } else {
-      startEditing();
-    }
-  };
 
   //Function to load the data from projectViewService to projectView
   function addData(loadedData: DetailedProjectModel) {
