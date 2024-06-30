@@ -42,6 +42,15 @@ export const usePluginsStore = defineStore('plugin', {
         this.setLoading(false);
       }
     },
+
+    async createPlugin(plugin: PluginModel) {
+      try {
+        this.setLoading(true)
+        await pluginService.createPlugin(plugin)
+      } finally {
+        this.setLoading(false)
+      }
+    },
   },
 });
 
