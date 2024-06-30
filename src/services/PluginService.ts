@@ -18,6 +18,11 @@ class PluginService {
       return [];
     }
   };
+
+  createPlugin = async (plugin: PluginModel): Promise<void> => {
+    //TODO: implement function
+    console.log(plugin);
+  };
 }
 
 const pluginService = new PluginService();
