@@ -12,7 +12,7 @@ const testData = {
   department: 'IT',
   clientName: 'ZDF',
   businessUnit: 'BU Health',
-  teamNumber: 1,
+  teamNumber: 42,
 };
 
 describe('ProjectInformationView.vue', () => {

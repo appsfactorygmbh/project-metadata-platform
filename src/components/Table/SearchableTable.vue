@@ -1,13 +1,14 @@
 <script lang="ts" setup>
   import { SmileOutlined, SearchOutlined } from '@ant-design/icons-vue';
-  import { reactive, ref, inject } from 'vue';
+  import { reactive, ref, watch, onMounted, inject } from 'vue';
+  import { useWindowSize } from '@vueuse/core';
   import type {
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
   import type { ProjectModel } from '@/models/Project';
   import type { SearchStore } from '@/store';
-  import type { SearchableColumn } from './SearchableTableTypes';
+  import { projectsStoreSymbol } from '@/store/injectionSymbols';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -15,16 +16,12 @@
       type: Symbol,
       required: true,
     },
-    paneHeight: {
+    paneWidth: {
       type: Number,
       required: true,
     },
-    columns: {
-      type: Array<SearchableColumn>,
-      required: true,
-    },
-    isLoading: {
-      type: Boolean,
+    paneHeight: {
+      type: Number,
       required: true,
     },
   });
@@ -33,15 +30,29 @@
     props.searchStoreSymbol,
   );
 
-  const emit = defineEmits(['row-click']);
+  //update paneWidth when the pane is resized
+  watch(
+    () => props.paneWidth,
+    () => {
+      changeColumns(props.paneWidth);
+    },
+  );
+
+  const projectsStore = inject(projectsStoreSymbol);
+
+  const isLoading = computed(() => projectsStore?.getIsLoadingProjects);
 
   const customRow = (record: ProjectModel) => {
     return {
       onClick: () => {
-        emit('row-click', record.id);
+        projectsStore?.fetchProject(record.id);
       },
     };
   };
+
+  onMounted(async () => {
+    changeColumns(props.paneWidth);
+  });
 </script>
 
 <template>
@@ -52,10 +63,10 @@
     -->
   <a-table
     class="clickable-table"
-    :columns="[...props.columns]"
+    :columns="[...columns].filter((item) => !item.hidden)"
     :data-source="[...(searchStore?.getSearchResults || [])]"
     :pagination="false"
-    :loading="props.isLoading"
+    :loading="isLoading"
     :scroll="{ y: props.paneHeight - 155 }"
     :custom-row="customRow"
     :row-class-name="'row'"
@@ -155,6 +166,84 @@
 </template>
 
 <script lang="ts">
+  /*  Column implementation  */
+
+  /**
+   * Adds an animation, when the box of the search element opens.
+   * @param {boolean} visible True when the box is visible, False if not.
+   */
+  const filterDropdownAnimation = (visible: boolean) => {
+    if (visible) {
+      setTimeout(() => {
+        searchInput.value.focus();
+      }, 100);
+    }
+  };
+
+  //sets the parameters for every column
+  const columns = [
+    {
+      title: 'Project Name',
+      dataIndex: 'projectName',
+      key: 'projectName',
+      customFilterDropdown: true,
+      onFilter: (value: string | number | boolean, record: ProjectModel) =>
+        record.projectName
+          .toString()
+          .toLowerCase()
+          .includes(value.toString().toLowerCase()),
+      onFilterDropdownOpenChange: (visible: boolean) => {
+        filterDropdownAnimation(visible);
+      },
+      ellipsis: true,
+      align: 'center' as const,
+      sorter: (a: ProjectModel, b: ProjectModel) =>
+        a.projectName.localeCompare(b.projectName),
+      defaultSortOrder: 'ascend' as const,
+    },
+    {
+      title: 'Client Name',
+      dataIndex: 'clientName',
+      key: 'clientName',
+      customFilterDropdown: true,
+      onFilter: (value: string | number | boolean, record: ProjectModel) =>
+        record.clientName
+          .toString()
+          .toLowerCase()
+          .includes(value.toString().toLowerCase()),
+      onFilterDropdownOpenChange: (visible: boolean) => {
+        filterDropdownAnimation(visible);
+      },
+      ellipsis: true,
+      align: 'center' as const,
+      sorter: (a: ProjectModel, b: ProjectModel) =>
+        a.clientName.localeCompare(b.clientName),
+      defaultSortOrder: 'ascend' as const,
+      hidden: false,
+    },
+    {
+      title: 'Business Unit',
+      dataIndex: 'businessUnit',
+      key: 'businessNumber',
+      ellipsis: true,
+      align: 'center' as const,
+      sorter: (a: ProjectModel, b: ProjectModel) =>
+        a.businessUnit.localeCompare(b.businessUnit),
+      defaultSortOrder: 'ascend' as const,
+      hidden: false,
+    },
+    {
+      title: 'Team Number',
+      dataIndex: 'teamNumber',
+      key: 'teamNumber',
+      ellipsis: true,
+      align: 'center' as const,
+      sorter: (a: ProjectModel, b: ProjectModel) => a.teamNumber - b.teamNumber,
+      defaultSortOrder: 'ascend' as const,
+      hidden: false,
+    },
+  ];
+
   /*  Search implementation  */
 
   //saves state of searched text and in which column
@@ -188,6 +277,86 @@
   function handleReset(clearFilters: (param?: FilterResetProps) => void) {
     clearFilters({ confirm: true });
     state.searchText = '';
+  }
+
+  /*  Column drop implementation  */
+
+  /**
+   * Changes the visible columns based on the width of the left pane.
+   * @param {number} pwidth Has the width of the left pane.
+   */
+  function changeColumns(pwidth: number) {
+    const breakpoint = getBreakpoint(pwidth);
+    switch (breakpoint) {
+      case 'xs':
+        hideColumn('clientName');
+        hideColumn('businessNumber');
+        hideColumn('teamNumber');
+        break;
+      case 'sm':
+        showColumn('clientName');
+        hideColumn('businessNumber');
+        hideColumn('teamNumber');
+        break;
+      case 'md':
+        showColumn('clientName');
+        showColumn('businessNumber');
+        hideColumn('teamNumber');
+        break;
+      case 'lg':
+        showColumn('clientName');
+        showColumn('businessNumber');
+        showColumn('teamNumber');
+        break;
+    }
+  }
+
+  /**
+   * Hides given column.
+   * @param {number} key Has the key of the column to hide.
+   */
+  function hideColumn(key: string) {
+    columns.forEach((column) => {
+      if (column.key == key) {
+        column.hidden = true;
+      }
+    });
+  }
+
+  /**
+   * Shows given column.
+   * @param {number} key Has the key of the column to show.
+   */
+  function showColumn(key: string) {
+    columns.forEach((column) => {
+      if (column.key == key) {
+        column.hidden = false;
+      }
+    });
+  }
+
+  /**
+   * Calculates the breakpoints based on the width of the window and assigns one based on the width of the left pane.
+   * @param {number} pwidth Has the width of the left pane.
+   * @return {string} Returns a string, which represents the current breakpoint of the pane width.
+   */
+  function getBreakpoint(pwidth: number): string {
+    const windowSize = useWindowSize().width.value;
+    const breakpoint: number[] = [
+      0.25 * windowSize,
+      0.42 * windowSize,
+      0.5 * windowSize,
+    ];
+
+    if (pwidth > breakpoint[2]) {
+      return 'lg';
+    } else if (pwidth > breakpoint[1]) {
+      return 'md';
+    } else if (pwidth > breakpoint[0]) {
+      return 'sm';
+    } else {
+      return 'xs';
+    }
   }
 </script>
 

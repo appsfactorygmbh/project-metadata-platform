@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-  import { SearchableTable, type SearchableColumn } from '@/components/Table';
+  import { SearchableTable } from '@/components/Table';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import { onMounted, inject, provide } from 'vue';
   import { useSearchStore, type SearchStore } from '@/store/SearchStore';
   import type { ProjectModel } from '@/models/Project';
   import { projectsService } from '@/services';
   import _ from 'lodash';
-  import { useWindowSize } from '@vueuse/core';
 
   const props = defineProps({
     paneWidth: {
@@ -23,8 +22,6 @@
   const searchStore = useSearchStore<ProjectModel>('projects');
   const searchStoreSymbol = Symbol('projectSearchStore');
 
-  const isLoading = computed(() => projectsStore?.getIsLoadingProjects);
-
   provide<SearchStore>(searchStoreSymbol, searchStore);
 
   const FETCHING_METHOD: 'FRONTEND' | 'BACKEND' = import.meta.env
@@ -35,14 +32,6 @@
     () => projectsStore.getProjects,
     (newData) => {
       searchStore?.setBaseSet(newData || []);
-    },
-  );
-
-  //update paneWidth when the pane is resized
-  watch(
-    () => props.paneWidth,
-    () => {
-      changeColumns(props.paneWidth);
     },
   );
 
@@ -70,14 +59,9 @@
     );
   }
 
-  const handleRowClick = (projectId: number) => {
-    projectsStore?.fetchProject(projectId);
-  };
-
   onMounted(async () => {
     await projectsStore.fetchProjects();
     searchStore.setBaseSet(projectsStore.getProjects);
-    changeColumns(props.paneWidth);
   });
 </script>
 
@@ -89,150 +73,7 @@
         :search-store-symbol="searchStoreSymbol"
         :pane-width="props.paneWidth"
         :pane-height="props.paneHeight"
-        :columns="columns.filter((item) => !item.hidden)"
-        :is-loading="isLoading"
-        @row-click="handleRowClick"
       />
     </a-flex>
   </div>
 </template>
-
-<script lang="ts">
-  //sets the parameters for every column
-  const columns: SearchableColumn[] = [
-    {
-      title: 'Project Name',
-      dataIndex: 'projectName',
-      key: 'projectName',
-      customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: ProjectModel) =>
-        record.projectName
-          .toString()
-          .toLowerCase()
-          .includes(value.toString().toLowerCase()),
-      ellipsis: true,
-      align: 'center' as const,
-      sorter: (a: ProjectModel, b: ProjectModel) =>
-        a.projectName.localeCompare(b.projectName),
-      defaultSortOrder: 'ascend' as const,
-    },
-    {
-      title: 'Client Name',
-      dataIndex: 'clientName',
-      key: 'clientName',
-      customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: ProjectModel) =>
-        record.clientName
-          .toString()
-          .toLowerCase()
-          .includes(value.toString().toLowerCase()),
-      ellipsis: true,
-      align: 'center' as const,
-      sorter: (a: ProjectModel, b: ProjectModel) =>
-        a.clientName.localeCompare(b.clientName),
-      defaultSortOrder: 'ascend' as const,
-      hidden: false,
-    },
-    {
-      title: 'Business Unit',
-      dataIndex: 'businessUnit',
-      key: 'businessNumber',
-      ellipsis: true,
-      align: 'center' as const,
-      sorter: (a: ProjectModel, b: ProjectModel) =>
-        a.businessUnit.localeCompare(b.businessUnit),
-      defaultSortOrder: 'ascend' as const,
-      hidden: false,
-    },
-    {
-      title: 'Team Number',
-      dataIndex: 'teamNumber',
-      key: 'teamNumber',
-      ellipsis: true,
-      align: 'center' as const,
-      sorter: (a: ProjectModel, b: ProjectModel) => a.teamNumber - b.teamNumber,
-      defaultSortOrder: 'ascend' as const,
-      hidden: false,
-    },
-  ];
-
-  /*  Column drop implementation  */
-
-  /**
-   * Changes the visible columns based on the width of the left pane.
-   * @param {number} pwidth Has the width of the left pane.
-   */
-  function changeColumns(pwidth: number) {
-    const breakpoint = getBreakpoint(pwidth);
-    switch (breakpoint) {
-      case 'xs':
-        hideColumn('clientName');
-        hideColumn('businessNumber');
-        hideColumn('teamNumber');
-        break;
-      case 'sm':
-        showColumn('clientName');
-        hideColumn('businessNumber');
-        hideColumn('teamNumber');
-        break;
-      case 'md':
-        showColumn('clientName');
-        showColumn('businessNumber');
-        hideColumn('teamNumber');
-        break;
-      case 'lg':
-        showColumn('clientName');
-        showColumn('businessNumber');
-        showColumn('teamNumber');
-        break;
-    }
-  }
-
-  /**
-   * Hides given column.
-   * @param {number} key Has the key of the column to hide.
-   */
-  function hideColumn(key: string) {
-    columns.forEach((column) => {
-      if (column.key == key) {
-        column.hidden = true;
-      }
-    });
-  }
-
-  /**
-   * Shows given column.
-   * @param {number} key Has the key of the column to show.
-   */
-  function showColumn(key: string) {
-    columns.forEach((column) => {
-      if (column.key == key) {
-        column.hidden = false;
-      }
-    });
-  }
-
-  /**
-   * Calculates the breakpoints based on the width of the window and assigns one based on the width of the left pane.
-   * @param {number} pwidth Has the width of the left pane.
-   * @return {string} Returns a string, which represents the current breakpoint of the pane width.
-   */
-  function getBreakpoint(pwidth: number): string {
-    const windowSize = useWindowSize().width.value;
-    const breakpoint: number[] = [
-      0.25 * windowSize,
-      0.42 * windowSize,
-      0.5 * windowSize,
-    ];
-
-    if (pwidth > breakpoint[2]) {
-      return 'lg';
-    } else if (pwidth > breakpoint[1]) {
-      return 'md';
-    } else if (pwidth > breakpoint[0]) {
-      return 'sm';
-    } else {
-      return 'xs';
-    }
-  }
-</script>
