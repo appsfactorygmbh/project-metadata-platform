@@ -53,7 +53,7 @@
         value: string | number | boolean,
         record: ProjectModel,
       ) =>
-        record
+        record.projectName
           .toString()
           .toLowerCase()
           .includes(value.toString().toLowerCase());

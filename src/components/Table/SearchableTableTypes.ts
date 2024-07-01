@@ -1,9 +1,12 @@
+import type { ProjectModel } from '@/models/Project';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 
 type ArrayElement<ArrayType extends readonly unknown[]> =
   ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
 
-export type SearchableColumn<T = object> = ArrayElement<ColumnsType<T>> & {
+export type SearchableColumn<T = ProjectModel> = ArrayElement<
+  ColumnsType<T>
+> & {
   hidden?: boolean;
   searchable?: boolean;
   sortMethod?: 'string' | 'number';

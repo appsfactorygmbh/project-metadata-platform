@@ -5,6 +5,7 @@ import { createTestingPinia } from '@pinia/testing';
 import { useSearchStore } from '@/store';
 import { createPinia, setActivePinia } from 'pinia';
 import type { SearchableColumns } from '../SearchableTableTypes';
+import { Button, Input } from 'ant-design-vue';
 
 const testData = [
   {
@@ -40,9 +41,6 @@ const testColumns: SearchableColumns = [
     key: 'teamNumber',
     ellipsis: true,
     align: 'center' as const,
-    sortMethod: 'number',
-    defaultSortOrder: 'ascend' as const,
-    hidden: false,
   },
 ];
 
@@ -70,30 +68,58 @@ describe('SearchableTable.vue', () => {
     },
   });
 
-  it('renders correctly with 2 columns', () => {
-    expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(2);
-    console.log(wrapper.findAll('.ant-table-column-sorters'));
+  const loadData = async () => {
+    searchStore.setBaseSet(testData);
+    searchStore.setSearchQuery('');
+    await flushPromises();
+  };
 
-    expect(wrapper.findAll('.ant-table-column-sorters')[1].text).toBe(
-      'Project Name',
-    );
-    expect(wrapper.findAll('.ant-table-column-sorters')[2].text).toBe(
-      'Team Number',
-    );
+  it('renders correctly with 2 columns', () => {
+    expect(wrapper.findAll('.ant-table-column-title')).toHaveLength(2);
+  });
+
+  it('show 1 sorter and 1 search filter', () => {
+    expect(wrapper.findAll('.ant-table-column-sorter')).toHaveLength(1);
+    expect(wrapper.findAll('.ant-table-filter-column')).toHaveLength(1);
   });
 
   it('gets the data from the store', async () => {
-    searchStore.setBaseSet(testData);
-    searchStore.setSearchQuery('');
-    console.log(wrapper.html());
+    await loadData();
 
     expect(searchStore.getSearchResults).toEqual(testData);
   });
 
+  it('shows the data entries in alphabetical order', async () => {
+    await loadData();
+
+    expect(
+      wrapper.findAll('.ant-table-row')[0]?.find('.ant-table-cell').text(),
+    ).toBe('A');
+    expect(
+      wrapper.findAll('.ant-table-row')[1]?.find('.ant-table-cell').text(),
+    ).toBe('C');
+  });
+
+  it('filters the table when using the search function', async () => {
+    await loadData();
+
+    expect(wrapper.findAll('.ant-table-row')).toHaveLength(2);
+    await wrapper.find('.ant-table-filter-trigger').trigger('click');
+
+    const searchInput = wrapper.getComponent(Input);
+    const searchButton = wrapper.getComponent(Button);
+
+    await searchInput.get('.ant-input').setValue('A');
+    await searchButton.trigger('click');
+
+    expect(wrapper.findAll('.ant-table-row')).toHaveLength(1);
+    expect(wrapper.find('.ant-table-row').find('.ant-table-cell').text()).toBe(
+      'A',
+    );
+  });
+
   createTestingPinia({});
   const searchStoreTest = useSearchStore('test');
-
-  global.innerWidth = 1800;
 
   it('to wont use search store actions that it is not allowed to', async () => {
     await flushPromises();
