@@ -1,8 +1,10 @@
 <script lang="ts" setup>
   // Import ref for reactive variables and utility functions for URL handling.
-  import { ref, watch, defineExpose } from 'vue';
+  import { ref, watch } from 'vue';
   import { cutAfterTLD, createFaviconURL } from './editURL';
   import { DeleteOutlined } from '@ant-design/icons-vue';
+  import type { PluginModel } from '@/models/Plugin';
+  import { defineStore } from 'pinia';
 
   // Define the component's props with pluginName and url as required strings.
   const props = defineProps({
@@ -63,9 +65,18 @@
     emit('hide');
   };
 
+  const getUpdatedPluginData = (): PluginModel => {
+    return {
+      pluginName: props.pluginName,
+      displayName: displayNameInput.value,
+      url: urlInput.value,
+    };
+  };
+
   defineExpose({
     resetHide,
-  });
+    getUpdatedPluginData,
+  })
 </script>
 
 <template>
@@ -87,10 +98,10 @@
       <div class="textContainerInput">
         <h3 style="text-align: center">{{ pluginName }}</h3>
         <a-input
-          :v-model:value="displayNameInput"
-          :placeHolder="props.displayName"
+          :placeholder = props.displayName
+          v-model:value="displayNameInput"
         ></a-input>
-        <a-input :v-model:value="urlInput" :placeHolder="props.url"></a-input>
+        <a-input v-model:value="urlInput" :placeholder="props.url"></a-input>
       </div>
       <DeleteOutlined class="circleBackground" @click="hidePlugin" />
     </a-card>
@@ -133,14 +144,18 @@
   // Style for the card container.
 
   .circleBackground {
-    padding: 50%;
+    padding: 3.5%;
     border-radius: 100%;
     background-color: white;
     position: absolute;
     top: -3%;
     right: -3%;
-    padding: 10px;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    &:hover {
+      transition: 0.1s ease-in-out;
+      cursor: pointer;
+      transform: scale(1.1);
+    }
   }
 
   .cardNoHover {
