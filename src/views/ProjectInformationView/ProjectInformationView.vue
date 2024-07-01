@@ -5,6 +5,8 @@
   import PluginView from '@/views/PluginView/PluginView.vue';
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
+  import type { PluginModel } from '@/models/Plugin';
+  import type { DetailedProjectModel, ProjectModel } from '@/models/Project';
 
   const props = defineProps({
     paneWidth: {
@@ -28,22 +30,20 @@
   const pluginViewRef = ref<InstanceType<typeof PluginView>>();
 
   const cancelEdit = () => {
-    console.log(pluginViewRef.value)
+    console.log(pluginViewRef.value);
     pluginViewRef.value?.showPlugins();
-    stopEditing()
-  }
+    stopEditing();
+  };
   const saveEdit = () => {
-    console.log("saved")
-  }
-
+    //TODO: implement Backend PUT
+    const updatedPlugins: PluginModel[] = pluginViewRef.value?.getUpdatedPlugins() || [];
+    const updateProjectInformation:DetailedProjectModel | null = projectStore.getProject || null
+    console.log({...updatedPlugins, ...updateProjectInformation})
+  };
 </script>
 
 <template>
-  <ProjectEditButtons
-    v-if="isEditing"
-    @cancel="cancelEdit"
-    @save="saveEdit"
-  />
+  <ProjectEditButtons v-if="isEditing" @cancel="cancelEdit" @save="saveEdit" />
   <ProjectInformation :pane-width="props.paneWidth" />
-  <PluginView :project-i-d="props.projectId" ref="pluginViewRef"></PluginView>
+  <PluginView ref="pluginViewRef" :project-i-d="props.projectId"></PluginView>
 </template>

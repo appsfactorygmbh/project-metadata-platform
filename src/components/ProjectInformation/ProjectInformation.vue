@@ -83,10 +83,10 @@
           {{ projectData.projectName }}
         </h1>
         <a-button
+          v-if="!isEditing"
           class="button"
           ghost
           style="margin-left: 10px"
-          v-if="!isEditing"
           @click="toggleEditingMode"
         >
           <template #icon><EditOutlined class="icon" /></template>
