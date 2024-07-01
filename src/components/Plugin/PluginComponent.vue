@@ -4,7 +4,6 @@
   import { cutAfterTLD, createFaviconURL } from './editURL';
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import type { PluginModel } from '@/models/Plugin';
-  import { defineStore } from 'pinia';
 
   // Define the component's props with pluginName and url as required strings.
   const props = defineProps({
@@ -76,7 +75,7 @@
   defineExpose({
     resetHide,
     getUpdatedPluginData,
-  })
+  });
 </script>
 
 <template>
@@ -98,7 +97,7 @@
       <div class="textContainerInput">
         <h3 style="text-align: center">{{ pluginName }}</h3>
         <a-input
-          :placeholder = props.displayName
+          :placeholder="props.displayName"
           v-model:value="displayNameInput"
         ></a-input>
         <a-input v-model:value="urlInput" :placeholder="props.url"></a-input>
