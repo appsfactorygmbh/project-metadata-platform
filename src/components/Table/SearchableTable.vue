@@ -7,7 +7,10 @@
   } from 'ant-design-vue/es/table/interface';
   import type { ProjectModel } from '@/models/Project';
   import type { SearchStore } from '@/store';
-  import type { SearchableColumn } from './SearchableTableTypes';
+  import type {
+    SearchableColumn,
+    SearchableColumns,
+  } from './SearchableTableTypes';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -42,6 +45,72 @@
       },
     };
   };
+
+  const searchableColumn: SearchableColumns = props.columns;
+  searchableColumn.forEach((column) => {
+    if (column.searchable) {
+      column.onFilter = (
+        value: string | number | boolean,
+        record: ProjectModel,
+      ) =>
+        record
+          .toString()
+          .toLowerCase()
+          .includes(value.toString().toLowerCase());
+      column.customFilterDropdown = true;
+      column.onFilterDropdownOpenChange = (visible: boolean) => {
+        if (visible) {
+          setTimeout(() => {
+            searchInput.value.focus();
+          }, 100);
+        }
+      };
+    }
+    if (column.sortMethod) {
+      if (column.sortMethod == 'string') {
+        column.sorter = (a: ProjectModel, b: ProjectModel) =>
+          a.projectName.localeCompare(b.projectName);
+      } else {
+        column.sorter = (a: ProjectModel, b: ProjectModel) =>
+          a.teamNumber - b.teamNumber;
+      }
+    }
+  });
+
+  /*  Search implementation  */
+
+  //saves state of searched text and in which column
+  const state = reactive({
+    searchText: '',
+    searchedColumn: '',
+  });
+
+  const searchInput = ref();
+
+  /**
+   * Saves the searched string and the target column in state, when search is confirmed.
+   * @param {string[]} selectedKeys Has the searched text in the first position.
+   * @param {((param?: FilterConfirmProps) => void)} confirm Confirms the search.
+   * @param {string} dataIndex Has the target column.
+   */
+  function handleSearch(
+    selectedKeys: string[],
+    confirm: (param?: FilterConfirmProps) => void,
+    dataIndex: string,
+  ) {
+    confirm();
+    state.searchText = selectedKeys[0];
+    state.searchedColumn = dataIndex;
+  }
+
+  /**
+   * Resets the filtered search in target column.
+   * @param {((param?: FilterResetProps) => void)} clearFilters Clears the filter, when confirmed.
+   */
+  function handleReset(clearFilters: (param?: FilterResetProps) => void) {
+    clearFilters({ confirm: true });
+    state.searchText = '';
+  }
 </script>
 
 <template>
@@ -153,43 +222,6 @@
     </template>
   </a-table>
 </template>
-
-<script lang="ts">
-  /*  Search implementation  */
-
-  //saves state of searched text and in which column
-  const state = reactive({
-    searchText: '',
-    searchedColumn: '',
-  });
-
-  const searchInput = ref();
-
-  /**
-   * Saves the searched string and the target column in state, when search is confirmed.
-   * @param {string[]} selectedKeys Has the searched text in the first position.
-   * @param {((param?: FilterConfirmProps) => void)} confirm Confirms the search.
-   * @param {string} dataIndex Has the target column.
-   */
-  function handleSearch(
-    selectedKeys: string[],
-    confirm: (param?: FilterConfirmProps) => void,
-    dataIndex: string,
-  ) {
-    confirm();
-    state.searchText = selectedKeys[0];
-    state.searchedColumn = dataIndex;
-  }
-
-  /**
-   * Resets the filtered search in target column.
-   * @param {((param?: FilterResetProps) => void)} clearFilters Clears the filter, when confirmed.
-   */
-  function handleReset(clearFilters: (param?: FilterResetProps) => void) {
-    clearFilters({ confirm: true });
-    state.searchText = '';
-  }
-</script>
 
 <style scoped>
   .highlight {

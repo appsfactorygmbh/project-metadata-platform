@@ -103,32 +103,20 @@
       title: 'Project Name',
       dataIndex: 'projectName',
       key: 'projectName',
-      customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: ProjectModel) =>
-        record.projectName
-          .toString()
-          .toLowerCase()
-          .includes(value.toString().toLowerCase()),
+      searchable: true,
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: ProjectModel, b: ProjectModel) =>
-        a.projectName.localeCompare(b.projectName),
+      sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
     },
     {
       title: 'Client Name',
       dataIndex: 'clientName',
       key: 'clientName',
-      customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: ProjectModel) =>
-        record.clientName
-          .toString()
-          .toLowerCase()
-          .includes(value.toString().toLowerCase()),
+      searchable: true,
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: ProjectModel, b: ProjectModel) =>
-        a.clientName.localeCompare(b.clientName),
+      sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },
@@ -138,8 +126,7 @@
       key: 'businessNumber',
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: ProjectModel, b: ProjectModel) =>
-        a.businessUnit.localeCompare(b.businessUnit),
+      sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },
@@ -149,7 +136,7 @@
       key: 'teamNumber',
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: ProjectModel, b: ProjectModel) => a.teamNumber - b.teamNumber,
+      sortMethod: 'number',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },

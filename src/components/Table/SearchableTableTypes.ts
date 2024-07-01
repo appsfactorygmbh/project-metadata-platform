@@ -7,7 +7,7 @@ type ArrayElement<ArrayType extends readonly unknown[]> =
 export type SearchableColumn<T = any> = ArrayElement<ColumnsType<T>> & {
   hidden?: boolean;
   searchable?: boolean;
-  sortable?: boolean;
+  sortMethod?: 'string' | 'number';
 };
 
 export type SearchableColumns = SearchableColumn[];
