@@ -4,7 +4,6 @@
       <PluginComponent
         v-for="plugin in plugins"
         ref="itemRefs"
-        @hide="() => deletePlugin(plugin.displayName)"
         :key="plugin.displayName"
         class="plugins"
         :plugin-name="plugin.pluginName"
@@ -12,6 +11,7 @@
         :url="plugin.url"
         :is-loading="loading"
         :is-editing="isEditing"
+        @hide="() => deletePlugin(plugin.displayName)"
       ></PluginComponent>
     </div>
 
@@ -32,7 +32,14 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeMount, computed, toRaw, inject, onMounted, defineExpose} from 'vue';
+  import {
+    onBeforeMount,
+    computed,
+    toRaw,
+    inject,
+    onMounted,
+    defineExpose,
+  } from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
   import type { PluginModel } from '@/models/Plugin';
@@ -51,6 +58,14 @@ import {onBeforeMount, computed, toRaw, inject, onMounted, defineExpose} from 'v
     for (let i = 0; i < itemRefs.value.length; i++) {
       itemRefs.value[i].resetHide();
     }
+  };
+
+  const getUpdatedPlugins = (): PluginModel[] => {
+    let allPlugins: PluginModel[] = [];
+    for (let i = 0; i < itemRefs.value.length; i++) {
+      allPlugins.push(itemRefs.value[i].getUpdatedPluginData());
+    }
+    return allPlugins;
   };
 
   const pluginStore = inject(pluginStoreSymbol)!;
@@ -89,10 +104,10 @@ import {onBeforeMount, computed, toRaw, inject, onMounted, defineExpose} from 'v
     );
   });
 
-defineExpose({
-  showPlugins,
-});
-
+  defineExpose({
+    showPlugins,
+    getUpdatedPlugins,
+  });
 </script>
 
 <style scoped lang="css">
