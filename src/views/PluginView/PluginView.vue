@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div>
     <div v-if="!loading" class="container">
       <PluginComponent
         v-for="plugin in plugins"
@@ -13,6 +13,10 @@
         :is-editing="isEditing"
         @hide="() => deletePlugin(plugin.displayName)"
       ></PluginComponent>
+      <AddPluginComponent
+        v-if="isEditing"
+        style="height: 100%"
+      ></AddPluginComponent>
     </div>
 
     <a-card
@@ -132,8 +136,5 @@
     display: flex;
     flex-direction: column;
     transition: 0.1s ease-in-out;
-  }
-  .main {
-    width: 100%;
   }
 </style>
