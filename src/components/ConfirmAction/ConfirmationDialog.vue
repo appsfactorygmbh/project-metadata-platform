@@ -6,7 +6,7 @@
     ok-text="Yes"
     cancel-text="No"
     @ok="confirm"
-    @cancel="handleCancel"
+    @cancel="cancel"
   >
     <p>{{ message }}</p>
   </a-modal>
@@ -42,21 +42,20 @@
   );
 
   watch(localIsOpen, (newVal) => {
-    if (!newVal) {
-      emit('update:isOpen', newVal);
-    }
+    emit('update:isOpen', newVal);
   });
-
-  const confirm = () => {
-    emit('confirm');
+  const closeModal = () => {
     localIsOpen.value = false;
   };
 
-  const handleCancel = () => {
-    localIsOpen.value = false;
-    setTimeout(() => {
-      emit('cancel');
-    }, 0);
+  const confirm = () => {
+    emit('confirm');
+    closeModal();
+  };
+
+  const cancel = () => {
+    emit('cancel');
+    closeModal();
   };
 </script>
 
