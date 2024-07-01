@@ -10,6 +10,7 @@
   import { storeToRefs } from 'pinia';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import { useProjectStore, type SearchStore } from '@/store';
+  import { stringSorter } from '../../utils/antd/sort';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -204,7 +205,7 @@
       ellipsis: true,
       align: 'center' as const,
       sorter: (a: ProjectModel, b: ProjectModel) =>
-        a.projectName.localeCompare(b.projectName),
+        stringSorter(a, b, 'projectName'),
       defaultSortOrder: 'ascend' as const,
     },
     {
@@ -223,7 +224,7 @@
       ellipsis: true,
       align: 'center' as const,
       sorter: (a: ProjectModel, b: ProjectModel) =>
-        a.clientName.localeCompare(b.clientName),
+        stringSorter(a, b, 'clientName'),
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },
@@ -234,7 +235,7 @@
       ellipsis: true,
       align: 'center' as const,
       sorter: (a: ProjectModel, b: ProjectModel) =>
-        a.businessUnit.localeCompare(b.businessUnit),
+        stringSorter(a, b, 'businessUnit'),
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },
@@ -244,7 +245,8 @@
       key: 'teamNumber',
       ellipsis: true,
       align: 'center' as const,
-      sorter: (a: ProjectModel, b: ProjectModel) => a.teamNumber - b.teamNumber,
+      sorter: (a: ProjectModel, b: ProjectModel) =>
+        stringSorter(a, b, 'teamNumber'),
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },
