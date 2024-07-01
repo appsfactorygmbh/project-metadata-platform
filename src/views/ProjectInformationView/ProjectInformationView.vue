@@ -36,9 +36,11 @@
   };
   const saveEdit = () => {
     //TODO: implement Backend PUT
-    const updatedPlugins: PluginModel[] = pluginViewRef.value?.getUpdatedPlugins() || [];
-    const updateProjectInformation:DetailedProjectModel | null = projectStore.getProject || null
-    console.log({...updatedPlugins, ...updateProjectInformation})
+    const updatedPlugins: PluginModel[] =
+      pluginViewRef.value?.getUpdatedPlugins() || [];
+    const updateProjectInformation: DetailedProjectModel | null =
+      projectStore.getProject || null;
+    console.log({ ...updatedPlugins, ...updateProjectInformation });
   };
 </script>
 
