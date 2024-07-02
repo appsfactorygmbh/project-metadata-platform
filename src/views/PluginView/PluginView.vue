@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, computed, toRaw, inject, onMounted } from 'vue';
+  import { computed, toRaw, inject, onMounted } from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
   import type { PluginModel } from '@/models/Plugin';
@@ -43,11 +43,6 @@
   function setPlugins(newPlugins: PluginModel[]) {
     plugins = computed(() => toRaw(newPlugins));
   }
-
-  onBeforeMount(async () => {
-    pluginStore.setLoading(true);
-    await pluginStore.fetchPlugins(100);
-  });
 
   onMounted(async () => {
     setPlugins(pluginStore.getPlugins);
