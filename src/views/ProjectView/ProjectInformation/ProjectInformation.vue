@@ -19,7 +19,10 @@
     : inject(projectsStoreSymbol)!;
 
   const { getIsLoadingProject } = storeToRefs(projectsStore);
-  const isLoading = computed(() => getIsLoadingProject.value);
+  const { getIsLoading } = storeToRefs(projectsStore);
+  const isLoading = computed(
+    () => getIsLoadingProject.value || getIsLoading.value,
+  );
 
   onMounted(async () => {
     const project = projectsStore.getProject;

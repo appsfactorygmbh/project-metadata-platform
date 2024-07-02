@@ -1,6 +1,9 @@
 <script lang="ts" setup>
   import { SearchableTable } from '@/components/Table';
-  import { projectsStoreSymbol } from '@/store/injectionSymbols';
+  import {
+    pluginStoreSymbol,
+    projectsStoreSymbol,
+  } from '@/store/injectionSymbols';
   import { onMounted, inject, provide } from 'vue';
   import { useSearchStore, type SearchStore } from '@/store/SearchStore';
   import type { ProjectModel } from '@/models/Project';
@@ -19,6 +22,7 @@
   });
 
   const projectsStore = inject(projectsStoreSymbol)!;
+  const pluginStore = inject(pluginStoreSymbol);
   const searchStore = useSearchStore<ProjectModel>('projects');
   const searchStoreSymbol = Symbol('projectSearchStore');
 
@@ -53,7 +57,11 @@
   }
 
   onMounted(async () => {
-    await projectsStore.fetchProjects();
+    await projectsStore?.fetchProjects();
+    const projectId = projectsStore?.getProjects[0].id || 100;
+
+    await projectsStore?.fetchProject(projectId);
+    await pluginStore?.fetchPlugins(projectId);
     searchStore.setBaseSet(projectsStore.getProjects);
   });
 </script>

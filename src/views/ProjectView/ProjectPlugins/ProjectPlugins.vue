@@ -31,14 +31,20 @@
 <script setup lang="ts">
   import { computed, toRaw, inject, onMounted } from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
-  import { pluginStoreSymbol } from '@/store/injectionSymbols';
+  import {
+    pluginStoreSymbol,
+    projectsStoreSymbol,
+  } from '@/store/injectionSymbols';
   import type { PluginModel } from '@/models/Plugin';
   import type { ComputedRef } from 'vue';
 
   const pluginStore = inject(pluginStoreSymbol)!;
+  const projectsStore = inject(projectsStoreSymbol);
 
   let plugins: ComputedRef<PluginModel[]>;
-  const loading = computed(() => pluginStore.getIsLoading);
+  const loading = computed(
+    () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
+  );
 
   function setPlugins(newPlugins: PluginModel[]) {
     plugins = computed(() => toRaw(newPlugins));
