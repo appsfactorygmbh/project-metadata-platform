@@ -6,7 +6,7 @@
   import { ProjectSearchView } from '@/views/ProjectSearchView';
   import { MenuButtons } from '@/components/MenuButtons';
   import { CreateProjectView } from '@/views/CreateProject';
-  import { ProjectView } from '../ProjectInformationView';
+  import ProjectView from '../ProjectView/ProjectView.vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { RightOutlined } from '@ant-design/icons-vue';
 
