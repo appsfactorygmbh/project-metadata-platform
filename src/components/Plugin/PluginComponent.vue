@@ -56,7 +56,7 @@
     window.open(props.url, '_blank');
   }
 
-  const hide = ref(false);
+  const hide = ref<boolean>(false);
 
   const emit = defineEmits(['hide']);
   const hidePlugin = () => {
@@ -97,10 +97,11 @@
       <div class="textContainerInput">
         <h3 style="text-align: center">{{ pluginName }}</h3>
         <a-input
+          class="inputField"
           :placeholder="props.displayName"
           v-model:value="displayNameInput"
         ></a-input>
-        <a-input v-model:value="urlInput" :placeholder="props.url"></a-input>
+        <a-input class="inputField" v-model:value="urlInput" :placeholder="props.url"></a-input>
       </div>
       <DeleteOutlined class="circleBackground" @click="hidePlugin" />
     </a-card>

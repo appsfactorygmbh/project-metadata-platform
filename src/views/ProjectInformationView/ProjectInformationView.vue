@@ -6,7 +6,7 @@
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { PluginModel } from '@/models/Plugin';
-  import type { DetailedProjectModel, ProjectModel } from '@/models/Project';
+  import type { DetailedProjectModel } from '@/models/Project';
 
   const props = defineProps({
     paneWidth: {

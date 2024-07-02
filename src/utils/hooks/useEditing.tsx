@@ -17,7 +17,7 @@ export const useEditing = () => {
   );
 
   const startEditing = () => {
-    console.log('start editing');
+    console.log('start editing ', router.currentRoute.value.path);
     isEditing.value = true;
     router.push({
       path: router.currentRoute.value.path,

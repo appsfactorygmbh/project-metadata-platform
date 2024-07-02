@@ -1,22 +1,33 @@
-import { mount } from '@vue/test-utils';
+import { mount, VueWrapper } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { cutAfterTLD, createFaviconURL } from '../editURL';
 import PluginComponent from '../PluginComponent.vue';
+
+interface PluginComponentInstance {
+  pluginName: string;
+  url: string;
+  displayName: string;
+  isLoading: boolean;
+  isEditing: boolean;
+  hide?: boolean;
+}
 
 const generateWrapper = (
   name: string,
   url: string,
   displayName: string,
   isLoading: boolean,
-) => {
+  isEditing: boolean
+): VueWrapper<ComponentPublicInstance<PluginComponentInstance>> => {
   return mount(PluginComponent, {
     props: {
       pluginName: name,
       url: url,
       displayName: displayName,
       isLoading: isLoading,
+      isEditing: isEditing
     },
-  });
+  }) as VueWrapper<ComponentPublicInstance<PluginComponentInstance>>;
 };
 
 describe('Plugin.vue', () => {
@@ -26,6 +37,7 @@ describe('Plugin.vue', () => {
       'https://example.com/examplePath',
       'test instance',
       false,
+      false
     );
 
     expect(wrapper.find('h3').text()).toBe('Test Plugin');
@@ -43,6 +55,7 @@ describe('Plugin.vue', () => {
         url: 'https://test.com',
         displayName: 'Test',
         isLoading: true,
+        isEditing: false
       },
     });
     const skeleton = wrapper.find('.ant-skeleton-content');
@@ -56,6 +69,7 @@ describe('Plugin.vue', () => {
         url: 'https://test.com',
         displayName: 'Test',
         isLoading: true,
+        isEditing: false
       },
     });
     expect(wrapper.find('.ant-skeleton-content').exists()).toBe(true);
@@ -64,6 +78,7 @@ describe('Plugin.vue', () => {
       url: 'https://test.com',
       displayName: 'Test',
       isLoading: false,
+      isEditing: false
     });
     expect(wrapper.find('.ant-skeleton-content').exists()).toBe(false);
   });
@@ -110,6 +125,7 @@ describe('Plugin.vue', () => {
       'https://example.com/examplePath',
       'test instance',
       false,
+      false
     );
 
     const card = wrapper.findComponent({ name: 'ACard' });
@@ -133,6 +149,7 @@ describe('Plugin.vue', () => {
       'https://example.com/examplePath',
       'Test Plugin Instance 1',
       false,
+      false
     );
     await wrapper.findComponent({ name: 'ACard' }).trigger('click');
     expect(windowOpenMock).toBeCalledWith(
@@ -140,4 +157,34 @@ describe('Plugin.vue', () => {
       '_blank',
     );
   });
+
+  it('renders the edit Component correctly', async() => {
+    const wrapper = generateWrapper(
+      'Test Plugin',
+      'https://example.com/examplePath',
+      'Test Plugin Instance 1',
+      false,
+      true
+    );
+
+    const card = wrapper.findComponent({ name: 'a-card' });
+    expect(card.exists()).toBe(true);
+
+    // Check the plugin name
+    const pluginName = wrapper.find('h3');
+    expect(pluginName.text()).toBe('Test Plugin');
+
+    const inputs = wrapper.findAll(".inputField");
+    expect(inputs.length).toBe(2);
+
+    const deleteIcon = wrapper.findComponent({name: "DeleteOutlined"});
+    expect(deleteIcon.exists()).toBe(true);
+
+    expect((wrapper.vm as PluginComponentInstance).hide).toBe(false);
+
+    await deleteIcon.trigger('click');
+
+    expect(wrapper.vm.hide).toBe(true);
+  });
+
 });
