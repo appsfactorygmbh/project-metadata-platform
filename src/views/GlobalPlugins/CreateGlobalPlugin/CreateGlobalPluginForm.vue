@@ -2,13 +2,9 @@
   import { defineProps, reactive, ref, type UnwrapRef, watch } from 'vue';
   import type { FormType } from '@/components/Modal/FormTypes.ts';
   import type { CreateProjectModel } from '@/models/Project';
-  import {
-    FontColorsOutlined,
-    MinusCircleOutlined,
-    PlusOutlined,
-  } from '@ant-design/icons-vue';
+  import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons-vue';
   import type { FormInstance } from 'ant-design-vue';
-  import type { CreatePluginModel } from '@/models/Plugin';
+  //import type { CreatePluginModel } from '@/models/Plugin';
 
   const { form } = defineProps<{
     form: FormType;
@@ -39,11 +35,8 @@
     },
   };
 
-  const formState: UnwrapRef<CreatePluginModel> = reactive({
+  const dynamicValidateForm = reactive<{ pluginName: string; keys: Key[] }>({
     pluginName: '',
-  });
-
-  const dynamicValidateForm = reactive<{ keys: Key[] }>({
     keys: [],
   });
 
@@ -77,24 +70,22 @@
       :whitespace="true"
     >
       <a-input
-        v-model:value="formState.pluginName"
+        v-model:value="dynamicValidateForm.pluginName"
         class="inputField"
         placeholder="Plugin Name"
+        :rules="[{ required: true, whitespace: true }]"
       >
-        <template #prefix>
-          <FontColorsOutlined />
-        </template>
       </a-input>
     </a-form-item>
     <a-form-item
       v-for="(key, index) in dynamicValidateForm.keys"
       :key="key.key"
       v-bind="index === 0 ? formItemLayout : {}"
-      :label="index === 0 ? 'Key' : ''"
+      :label="index === 0 ? 'Keys' : ''"
       :name="['keys', index, 'value']"
       :rules="{
         required: true,
-        message: 'key can not be null',
+        message: 'Please insert the plugin key.',
         trigger: 'change',
       }"
     >
@@ -112,7 +103,7 @@
     <a-form-item v-bind="formItemLayoutWithOutLabel">
       <a-button type="dashed" style="width: 60%" @click="addKey">
         <PlusOutlined />
-        Add key
+        Add Key
       </a-button>
     </a-form-item>
   </a-form>

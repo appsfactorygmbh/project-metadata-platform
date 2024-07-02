@@ -11,7 +11,7 @@
     onSubmit: FormSubmitType;
   }>();
 
-  const open = ref<boolean>(false);
+  const open = ref<boolean>(true); //TODO: set default to false after implementing button
   const formRef = ref();
   const cancelFetch = ref<boolean>();
 
@@ -23,6 +23,7 @@
     form
       .validate()
       .then(() => {
+        console.log('form.modelRef.value', formRef.value);
         onSubmit(form.modelRef.value);
       })
       .catch((error: unknown) => {

@@ -18,7 +18,8 @@
 
   const onSubmit: FormSubmitType = (fields) => {
     try {
-      pluginStore?.createPlugin(fields);
+      console.log(fields);
+      pluginStore?.createPlugin(form.modelRef.value);
     } catch {
       notificationApi.error({
         message: 'An error occurred. The plugin could not be created',
@@ -34,4 +35,3 @@
     <CreateGlobalPluginForm :form="form" />
   </FormModal>
 </template>
-s
