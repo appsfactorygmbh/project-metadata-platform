@@ -1,5 +1,5 @@
 import FormModal from './FormModal.vue';
-import type { FormType, FormSubmitType} from "./FormTypes";
+import type { FormType, FormSubmitType } from './FormTypes';
 
 export { FormModal };
-export type { FormType, FormSubmitType}
+export type { FormType, FormSubmitType };

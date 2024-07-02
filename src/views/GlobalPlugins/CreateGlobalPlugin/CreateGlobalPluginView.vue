@@ -11,6 +11,7 @@
 
   const modelRef = ref();
   const form: FormType = Form.useForm(modelRef);
+  const formRef = ref(form);
 
   const pluginStore = inject(pluginStoreSymbol);
 
@@ -31,7 +32,7 @@
 
 <template>
   <contextHolder></contextHolder>
-  <FormModal title="Create Plugin" :form="form" :on-submit="onSubmit">
-    <CreateGlobalPluginForm :form="form" />
+  <FormModal title="Create Plugin" :form-ref="formRef" :on-submit="onSubmit">
+    <CreateGlobalPluginForm :form-ref="formRef" />
   </FormModal>
 </template>
