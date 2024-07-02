@@ -48,12 +48,13 @@
 
   const searchableColumn: SearchableColumns = props.columns;
   searchableColumn.forEach((column) => {
+    const index = column.dataIndex as keyof ProjectModel;
     if (column.searchable) {
       column.onFilter = (
         value: string | number | boolean,
         record: ProjectModel,
       ) =>
-        record.projectName
+        record[index]
           .toString()
           .toLowerCase()
           .includes(value.toString().toLowerCase());
@@ -69,10 +70,10 @@
     if (column.sortMethod) {
       if (column.sortMethod == 'string') {
         column.sorter = (a: ProjectModel, b: ProjectModel) =>
-          a.projectName.localeCompare(b.projectName);
+          String(a[index]).localeCompare(String(b[index]));
       } else {
         column.sorter = (a: ProjectModel, b: ProjectModel) =>
-          a.teamNumber - b.teamNumber;
+          Number(a[index]) - Number(b[index]);
       }
     }
   });

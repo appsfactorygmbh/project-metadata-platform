@@ -7,6 +7,7 @@ type ArrayElement<ArrayType extends readonly unknown[]> =
 export type SearchableColumn<T = ProjectModel> = ArrayElement<
   ColumnsType<T>
 > & {
+  dataIndex: string;
   hidden?: boolean;
   searchable?: boolean;
   sortMethod?: 'string' | 'number';
