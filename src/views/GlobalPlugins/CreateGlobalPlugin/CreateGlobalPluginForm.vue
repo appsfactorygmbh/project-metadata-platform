@@ -6,16 +6,14 @@
   import type { FormInstance } from 'ant-design-vue';
   //import type { CreatePluginModel } from '@/models/Plugin';
 
-  const { form } = defineProps<{
-    form: FormType;
+  const { formRef } = defineProps<{
+    formRef: Ref<FormType>;
   }>();
 
   interface Key {
     value: string;
     key: number;
   }
-
-  const formRef = ref<FormInstance>();
 
   const formItemLayout = {
     labelCol: {
@@ -52,13 +50,13 @@
       value: '',
       key: Date.now(),
     });
+    console.log(formRef.value.modelRef.value);
   };
 </script>
 
 <template>
   <a-form
     ref="formRef"
-    :form="form"
     :model="dynamicValidateForm"
     v-bind="formItemLayoutWithOutLabel"
   >

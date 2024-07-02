@@ -5,14 +5,13 @@
     FormType,
   } from '@/components/Modal/FormTypes.ts';
 
-  const { form, title, onSubmit } = defineProps<{
-    form: FormType;
+  const { formRef, title, onSubmit } = defineProps<{
+    formRef: Ref<FormType>;
     title: string;
     onSubmit: FormSubmitType;
   }>();
 
   const open = ref<boolean>(true); //TODO: set default to false after implementing button
-  const formRef = ref();
   const cancelFetch = ref<boolean>();
 
   const fetchError = ref<boolean>(false);
@@ -20,11 +19,11 @@
   // checks for correct input
   const handleOk = () => {
     cancelFetch.value = false;
-    form
+    formRef.value
       .validate()
       .then(() => {
-        console.log('form.modelRef.value', formRef.value);
-        onSubmit(form.modelRef.value);
+        console.log('form.modelRef.value', formRef.value.modelRef.value);
+        onSubmit(formRef.value.modelRef.value);
       })
       .catch((error: unknown) => {
         console.log('error', error);
