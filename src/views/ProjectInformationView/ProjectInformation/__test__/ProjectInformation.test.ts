@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import ProjectInformation from '../ProjectInformationView.vue';
+import ProjectInformation from '../ProjectInformation.vue';
 
 setActivePinia(createPinia());
 
@@ -13,7 +13,7 @@ const data = {
   teamNumber: 42,
 };
 
-describe('projectView.vue', () => {
+describe('ProjectInformation.vue', () => {
   const mockResponse = {
     ok: true,
     statusText: 'Ok',

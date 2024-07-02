@@ -1,7 +1,6 @@
 <script lang="ts" setup>
   import { inject, onMounted, toRaw, reactive } from 'vue';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
-  import PluginView from '@/views/PluginView/PluginView.vue';
   import { useProjectStore } from '@/store';
   import { storeToRefs } from 'pinia';
   import type { DetailedProjectModel } from '@/models/Project';
@@ -23,8 +22,6 @@
   const isLoading = computed(() => getIsLoadingProject.value);
 
   onMounted(async () => {
-    await projectsStore.fetchProject(100);
-
     const project = projectsStore.getProject;
     if (project) addData(project);
 
@@ -150,7 +147,6 @@
       </a-flex>
     </div>
   </div>
-  <PluginView class="pluginView" />
 </template>
 
 <script lang="ts">
@@ -281,11 +277,5 @@
     font-size: 1.4em;
     margin: 0 auto 0 1em;
     white-space: nowrap;
-  }
-
-  .pluginView {
-    display: flex;
-    justify-content: center;
-    padding-top: 1em;
   }
 </style>

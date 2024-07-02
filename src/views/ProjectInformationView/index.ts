@@ -1,3 +1,3 @@
-import ProjectInformationView from './ProjectInformationView.vue';
+import ProjectView from './ProjectView.vue';
 
-export { ProjectInformationView };
+export { ProjectView };
