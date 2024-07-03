@@ -5,8 +5,8 @@
     :style="{ top: '20px' }"
     ok-text="Yes"
     cancel-text="No"
-    @ok="confirm"
-    @cancel="cancel"
+    @ok="onConfirm"
+    @cancel="onCancel"
   >
     <p>{{ message }}</p>
   </a-modal>
@@ -48,12 +48,12 @@
     localIsOpen.value = false;
   };
 
-  const confirm = () => {
+  const onConfirm = () => {
     emit('confirm');
     closeModal();
   };
 
-  const cancel = () => {
+  const onCancel = () => {
     emit('cancel');
     closeModal();
   };
