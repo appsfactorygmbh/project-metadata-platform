@@ -38,7 +38,7 @@
     </template>
   </a-list>
   <a-alert
-    v-if="fetchError()"
+    v-if="deleteError()"
     class="error-alert"
     message="Failed to delete global plugin"
     type="error"
@@ -99,7 +99,7 @@
     return isDeleting.value && pluginDeleting.value.includes(itemId);
   };
 
-  const fetchError = (): boolean => {
+  const deleteError = (): boolean => {
     return !isDeleting.value && !removedSuccessfully.value;
   };
 </script>
