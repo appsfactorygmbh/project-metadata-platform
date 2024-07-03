@@ -34,19 +34,4 @@ describe('SettingView.vue', () => {
     await wrapper.find('.item3').trigger('click');
     expect(vm.tab).toBe('Global Logs');
   });
-
-  /*it('calls placeholder function on breadcrumb click', async () => {
-    const wrapper = mount(SettingView);
-    const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
-
-    // Simulate click on the breadcrumb item
-    await wrapper.find('.breadcrumbItem').trigger('click');
-    expect(consoleMock).toHaveBeenCalled();
-
-    // Assert that console.log was called with 'Icon clicked'
-
-    expect(consoleMock.mock.calls).toContainEqual(['Icon clicked']);
-
-
-  });*/
 });
