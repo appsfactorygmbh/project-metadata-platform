@@ -14,6 +14,7 @@ declare module 'vue' {
     ACol: typeof import('ant-design-vue/es')['Col']
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     AddPluginCard: typeof import('./../src/components/AddPluginCard/AddPluginCard.vue')['default']
+    'AddPluginCard.test': typeof import('./../src/components/AddPluginCard/__tests__/AddPluginCard.test.vue')['default']
     AFlex: typeof import('ant-design-vue/es')['Flex']
     AFloatButton: typeof import('ant-design-vue/es')['FloatButton']
     AFloatButtonGroup: typeof import('ant-design-vue/es')['FloatButtonGroup']
