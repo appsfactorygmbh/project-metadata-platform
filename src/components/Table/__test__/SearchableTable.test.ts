@@ -90,8 +90,6 @@ describe('SearchableTable.vue', () => {
   const searchStoreSymbolTest = Symbol('searchStoreSym');
   const searchStoreTest = useSearchStore('test');
 
-  global.innerWidth = 1800;
-
   const wrapper2 = mount(SearchableTable, {
     plugins: [
       createTestingPinia({
