@@ -1,22 +1,55 @@
 <script lang="ts" setup>
   // import { Setting } from '@/components/SettingView';
+  import {
+    AppstoreAddOutlined,
+    BarsOutlined,
+    UserOutlined,
+    LeftOutlined,
+  } from '@ant-design/icons-vue';
+  import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
 
-  //place for placeholder
+  // Component state using refs
+  const collapsed = ref<boolean>(false);
+  const selectedKeys = ref<string[]>(['1']);
+  const tab = ref<string>('');
+
+  // Router instance
+  const router = useRouter();
+
+  // Methods
+  const goToMain = () => {
+    router.go(-1);
+  };
+
+  const clickTab = (name: string) => {
+    tab.value = name;
+  };
+
   const placeholder = () => {
     console.log('Icon clicked');
   };
 </script>
 
 <template>
-  <a-layout style="min-height: 100vh">
-    <a-layout-sider v-model:collapsed="collapsed" collapsible>
+  <a-layout class="layout" style="min-height: 100vh">
+    <a-layout-sider
+      v-model:collapsed="collapsed"
+      class="sideSlider"
+      collapsible
+    >
       <a-layout-header style="background: #030622; padding: 0" />
       <a-float-button class="icon" ghost @click="goToMain">
         <template #icon><LeftOutlined /> </template>
       </a-float-button>
 
       <div class="logo" />
-      <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
+      <a-menu
+        v-model:selectedKeys="selectedKeys"
+        class="menuItem"
+        theme="dark"
+        mode="inline"
+      >
         <a-sub-menu key="sub1">
           <template #title>
             <span>
@@ -28,20 +61,22 @@
           <a-menu-item key="5" @click="clickTab('User')">User 2</a-menu-item>
           <a-menu-item key="6" @click="clickTab('User')">User 3</a-menu-item>
         </a-sub-menu>
-        <a-menu-item key="2" @click="clickTab('Plugin Creation')">
+        <a-menu-item key="2" class="item2" @click="clickTab('Plugin Creation')">
           <AppstoreAddOutlined />
           <span>Plugin Creation</span>
         </a-menu-item>
-        <a-menu-item key="3" @click="clickTab('Global Logs')">
+        <a-menu-item key="3" class="item3" @click="clickTab('Global Logs')">
           <BarsOutlined />
           <span>Global Logs</span>
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
     <a-layout>
-      <a-layout-content style="margin: 0 16px">
+      <a-layout-content class="addressBar" style="margin: 0 16px">
         <a-breadcrumb style="margin: 16px 0">
-          <a-breadcrumb-item @click="placeholder">Setting</a-breadcrumb-item>
+          <a-breadcrumb-item class="breadcrumbItem" @click="placeholder"
+            >Setting</a-breadcrumb-item
+          >
           <a-breadcrumb-item> {{ tab }} </a-breadcrumb-item>
         </a-breadcrumb>
         <div
@@ -53,40 +88,7 @@
     </a-layout>
   </a-layout>
 </template>
-<script lang="ts">
-  import {
-    AppstoreAddOutlined,
-    BarsOutlined,
-    UserOutlined,
-    LeftOutlined,
-  } from '@ant-design/icons-vue';
-  import { defineComponent, ref } from 'vue';
-  const tab = ref('');
 
-  export default defineComponent({
-    components: {
-      AppstoreAddOutlined,
-      BarsOutlined,
-      UserOutlined,
-      LeftOutlined,
-    },
-
-    data() {
-      return {
-        collapsed: ref<boolean>(false),
-        selectedKeys: ref<string[]>(['1']),
-      };
-    },
-    methods: {
-      goToMain() {
-        this.$router.go(-1);
-      },
-      clickTab(name: string) {
-        tab.value = name;
-      },
-    },
-  });
-</script>
 <style>
   #components-layout-demo-side .logo {
     height: 32px;
