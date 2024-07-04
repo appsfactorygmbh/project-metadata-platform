@@ -100,6 +100,18 @@ describe('SearchableTable.vue', () => {
     ).toBe('C');
   });
 
+  it('changes the order when clicking the sorter field', async () => {
+    await loadData();
+    await wrapper.find('.ant-table-column-sorters').trigger('click');
+
+    expect(
+      wrapper.findAll('.ant-table-row')[0]?.find('.ant-table-cell').text(),
+    ).toBe('C');
+    expect(
+      wrapper.findAll('.ant-table-row')[1]?.find('.ant-table-cell').text(),
+    ).toBe('A');
+  });
+
   it('filters the table when using the search function', async () => {
     await loadData();
 
