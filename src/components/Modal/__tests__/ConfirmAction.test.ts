@@ -86,9 +86,13 @@ describe('ModalComponent open', () => {
   });
 
   it('should open the modal when isOpen prop is true', async () => {
+    // Check that the modal is initially closed
+    expect(wrapper.vm.localIsOpen).toBe(false);
+    expect(document.querySelector('.ant-modal')).toBeNull();
+
+    // Set the isOpen prop to true and check if the modal opens
     await wrapper.setProps({ isOpen: true });
     expect(wrapper.vm.localIsOpen).toBe(true);
-
     expect(document.querySelector('.ant-modal')).not.toBeNull();
   });
 
