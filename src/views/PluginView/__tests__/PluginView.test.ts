@@ -35,6 +35,7 @@ describe('PluginView', () => {
         pluginName: 'testPlugin',
         displayName: 'Test Plugin',
         url: 'http://example.com/',
+        id: 1,
       },
     ];
 

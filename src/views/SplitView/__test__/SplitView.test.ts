@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import SplitView from '../SplitView.vue';
 import { createPinia, setActivePinia } from 'pinia';
+import router from '@/router';
 
 setActivePinia(createPinia());
 
@@ -17,6 +18,7 @@ describe('SplitView.vue', () => {
             template: '<span />',
           },
         },
+        plugins: [router],
       },
     });
 

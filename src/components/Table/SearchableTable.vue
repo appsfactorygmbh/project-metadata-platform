@@ -8,7 +8,10 @@
   } from 'ant-design-vue/es/table/interface';
   import type { ProjectModel } from '@/models/Project';
   import { storeToRefs } from 'pinia';
-  import { projectsStoreSymbol } from '@/store/injectionSymbols';
+  import {
+    projectsStoreSymbol,
+    pluginStoreSymbol,
+  } from '@/store/injectionSymbols';
   import { useProjectStore, type SearchStore } from '@/store';
 
   //Get the width of the left pane from App.vue
@@ -50,10 +53,13 @@
   const { getIsLoading } = storeToRefs(projectsStore);
   const isLoading = computed(() => getIsLoading.value);
 
+  const pluginStore = inject(pluginStoreSymbol)!;
+
   const customRow = (record: ProjectModel) => {
     return {
       onClick: () => {
         projectsStore.fetchProject(record.id);
+        pluginStore.fetchPlugins(record.id);
       },
     };
   };

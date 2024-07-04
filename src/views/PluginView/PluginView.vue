@@ -12,7 +12,7 @@
         :url="plugin.url"
         :is-loading="loading"
         :is-editing="isEditing"
-        @hide="() => deletePlugin(plugin.displayName)"
+        @hide="() => deletePlugin(plugin.id)"
       ></PluginComponent>
       <AddPluginComponent
         v-if="isEditing"
@@ -52,9 +52,12 @@
   import { useEditing } from '@/utils/hooks/useEditing';
 
   //Placeholder
-  const deletePlugin = (pluginName: string) => {
-    console.log(pluginName);
+  const deletePlugin = (pluginId: number) => {
+    console.log(pluginId);
+    deletedPlugins.push(pluginId);
   };
+
+  let deletedPlugins: number[] = [];
 
   const { isEditing } = useEditing();
 
@@ -70,6 +73,10 @@
     for (let i = 0; i < itemRefs.value.length; i++) {
       allPlugins.push(itemRefs.value[i].getUpdatedPluginData());
     }
+    allPlugins = allPlugins.filter(
+      (plugin) => !deletedPlugins.includes(plugin.id),
+    );
+    console.log('allplugin: ', allPlugins);
     return allPlugins;
   };
 
@@ -92,6 +99,7 @@
   onBeforeMount(async () => {
     pluginStore.setLoading(true);
     await pluginStore.fetchPlugins(props.projectID);
+    console.log(props.projectID);
   });
 
   onMounted(async () => {
@@ -112,6 +120,7 @@
   defineExpose({
     showPlugins,
     getUpdatedPlugins,
+    deletedPlugins,
   });
 </script>
 
