@@ -10,12 +10,12 @@ const testData = [
   {
     id: 0,
     name: 'Plugin 1',
-    archieved: true,
+    archived: true,
   },
   {
     id: 1,
     name: 'Plugin 2',
-    archieved: false,
+    archived: false,
   },
 ];
 
@@ -23,12 +23,12 @@ const testDataDelete = [
   {
     id: 0,
     name: 'Plugin 1',
-    archieved: true,
+    archived: true,
   },
   {
     id: 1,
     name: 'Plugin 2',
-    archieved: true,
+    archived: true,
   },
 ];
 
