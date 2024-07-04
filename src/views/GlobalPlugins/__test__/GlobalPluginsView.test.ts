@@ -3,8 +3,8 @@ import GlobalPluginsView from '../GlobalPluginsView.vue';
 import { describe, it, expect } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
-import { pluginStoreSymbol } from '@/store/injectionSymbols.ts';
-import { usePluginsStore } from '@/store';
+import { globalPluginStoreSymbol } from '@/store/injectionSymbols.ts';
+import { useGlobalPluginsStore } from '@/store';
 
 const testData = [
   {
@@ -49,7 +49,7 @@ describe('GlobalPluginsView.vue', () => {
       ],
       global: {
         provide: {
-          [pluginStoreSymbol as symbol]: usePluginsStore(),
+          [globalPluginStoreSymbol as symbol]: useGlobalPluginsStore(),
         },
       },
     });
@@ -65,7 +65,7 @@ describe('GlobalPluginsView.vue', () => {
 
   it('sends a delete request when clicking the delete button', async () => {
     const wrapper = generateWrapper();
-    const pluginStore = usePluginsStore();
+    const pluginStore = useGlobalPluginsStore();
     const spy = vi.spyOn(pluginStore, 'deleteGlobalPlugin');
     spy.mockImplementation(async () =>
       pluginStore.setGlobalPlugins(testDataDelete),

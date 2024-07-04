@@ -5,7 +5,9 @@
     class="plugin-list"
     item-layout="horizontal"
     :data-source="[
-      ...(pluginStore?.getGlobalPlugins.filter((item) => !item.archived) || []),
+      ...(globalPluginsStore?.getGlobalPlugins.filter(
+        (item) => !item.archived,
+      ) || []),
     ]"
     :loading="isLoading"
     bordered
@@ -51,19 +53,23 @@
     PlusOutlined,
   } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button';
-  import { pluginStoreSymbol } from '@/store/injectionSymbols';
+  import { globalPluginStoreSymbol } from '@/store/injectionSymbols';
   import { inject, onBeforeMount } from 'vue';
 
-  const pluginStore = inject(pluginStoreSymbol);
+  const globalPluginsStore = inject(globalPluginStoreSymbol);
 
-  const isLoading = computed(() => pluginStore?.getIsLoading);
-  const isDeleting = computed(() => pluginStore?.getIsLoadingDelete || false);
+  const isLoading = computed(
+    () => globalPluginsStore?.getIsLoadingGlobalPlugins,
+  );
+  const isDeleting = computed(
+    () => globalPluginsStore?.getIsLoadingDelete || false,
+  );
   const removedSuccessfully = computed(
-    () => pluginStore?.getRemovedSuccessfully || false,
+    () => globalPluginsStore?.getRemovedSuccessfully || false,
   );
 
   onBeforeMount(async () => {
-    await pluginStore?.fetchGlobalPlugins();
+    await globalPluginsStore?.fetchGlobalPlugins();
   });
 
   const button: FloatButtonModel = {
@@ -83,7 +89,7 @@
    */
   const handleDelete = async (pluginId: number) => {
     pluginDeleting.value.push(pluginId);
-    await pluginStore?.deleteGlobalPlugin(pluginId);
+    await globalPluginsStore?.deleteGlobalPlugin(pluginId);
     const index: number = pluginDeleting.value?.indexOf(pluginId);
     pluginDeleting.value.splice(index, 1);
   };
