@@ -7,10 +7,9 @@
   } from 'ant-design-vue/es/table/interface';
   import type { ProjectModel } from '@/models/Project';
   import type { SearchStore } from '@/store';
-  import type {
-    SearchableColumn,
-    SearchableColumns,
-  } from './SearchableTableTypes';
+  import type { SearchableColumn } from './SearchableTableTypes';
+  import type { TableColumnType, TableProps } from 'ant-design-vue';
+  import type { ArrayElement } from '@/models/ArrayElement';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -46,16 +45,13 @@
     };
   };
 
-  const searchableColumn: SearchableColumns = props.columns;
-  searchableColumn.forEach((column) => {
-    const index = column.dataIndex as keyof ProjectModel;
+  const mapSearchableColumn = (
+    column: ArrayElement<typeof props.columns>,
+  ): TableColumnType => {
+    const index = column.dataIndex;
     if (column.searchable) {
-      column.onFilter = (
-        value: string | number | boolean,
-        record: ProjectModel,
-      ) =>
-        record[index]
-          .toString()
+      column.onFilter = (value, record) =>
+        String(record[index])
           .toLowerCase()
           .includes(value.toString().toLowerCase());
       column.customFilterDropdown = true;
@@ -69,14 +65,18 @@
     }
     if (column.sortMethod) {
       if (column.sortMethod == 'string') {
-        column.sorter = (a: ProjectModel, b: ProjectModel) =>
+        column.sorter = (a, b) =>
           String(a[index]).localeCompare(String(b[index]));
       } else {
-        column.sorter = (a: ProjectModel, b: ProjectModel) =>
-          Number(a[index]) - Number(b[index]);
+        column.sorter = (a, b) => Number(a[index]) - Number(b[index]);
       }
     }
-  });
+    return column;
+  };
+
+  const columns: TableProps['columns'] = props.columns.map((column) =>
+    mapSearchableColumn(column),
+  );
 
   /*  Search implementation  */
 
@@ -122,7 +122,7 @@
     -->
   <a-table
     class="clickable-table"
-    :columns="[...props.columns]"
+    :columns="[...columns]"
     :data-source="[...(searchStore?.getSearchResults || [])]"
     :pagination="false"
     :loading="props.isLoading"

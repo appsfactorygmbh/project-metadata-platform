@@ -1,12 +1,9 @@
-import type { ProjectModel } from '@/models/Project';
+import type { ArrayElement } from '@/models/ArrayElement';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 
-type ArrayElement<ArrayType extends readonly unknown[]> =
-  ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
-
-export type SearchableColumn<T = ProjectModel> = ArrayElement<
-  ColumnsType<T>
-> & {
+export type SearchableColumn<
+  T = Record<string, string | number | Date | undefined>,
+> = ArrayElement<ColumnsType<T>> & {
   dataIndex: string;
   hidden?: boolean;
   searchable?: boolean;
