@@ -1,12 +1,28 @@
 <script setup lang="ts">
-  import { defineProps, reactive, ref } from 'vue';
+  import { defineProps, onBeforeMount, reactive, ref, toRaw } from 'vue';
   import type { FormType } from '@/components/Modal/FormTypes.ts';
   import type { FormInstance, SelectProps } from 'ant-design-vue';
+  import { pluginStoreSymbol } from '@/store/injectionSymbols';
+  import { inject } from 'vue';
+  import type { GlobalPluginModel } from '@/models/Plugin';
+
+  const pluginStore = inject(pluginStoreSymbol);
+  const options = ref<SelectProps['options']>([]);
+
+  onBeforeMount(async () => {
+    pluginStore!.setLoading(true);
+    await pluginStore!.fetchGlobalPlugins();
+    options.value = toRaw(pluginStore?.getGlobalPlugins)!.map((plugin: GlobalPluginModel) => {
+      return {
+        value: plugin.name,
+        label: plugin.name
+      }
+    });
+  });
 
   const { form } = defineProps<{
     form: FormType;
   }>();
-
 
   const formRef = ref<FormInstance>();
 
@@ -17,27 +33,18 @@
     },
   };
 
-  const dynamicValidateForm = reactive<{ pluginName: string; pluginUrl: string, globalPlugin: string }>({
+  const dynamicValidateForm = reactive<{ pluginName: string; pluginUrl: string, globalPlugin: string, inputsDisabled: boolean }>({
     pluginName: '',
     pluginUrl: '',
-    globalPlugin: ''
+    globalPlugin: '',
+    inputsDisabled: true
   });
-
-  const options = ref<SelectProps['options']>([
-    { value: 'jack', label: 'Jack' },
-    { value: 'lucy', label: 'Lucy' },
-    { value: 'tom', label: 'Tom' },
-  ]);
 
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
+    dynamicValidateForm.inputsDisabled = false;
   };
-  const handleBlur = () => {
-    console.log('blur');
-  };
-  const handleFocus = () => {
-    console.log('focus');
-  };
+  // FIXME
   const filterOption = (input: string, option: any) => {
     return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
@@ -64,8 +71,6 @@
         placeholder="Select a global Plugin"
         :options="options"
         :filter-option="filterOption"
-        @focus="handleFocus"
-        @blur="handleBlur"
         @change="handleChange"
       ></a-select>
     </a-form-item>
@@ -81,6 +86,7 @@
         class="inputField"
         placeholder="Plugin Name"
         :rules="[{ required: true, whitespace: true }]"
+        :disabled="dynamicValidateForm.inputsDisabled"
       >
       </a-input>
     </a-form-item>
@@ -96,6 +102,7 @@
         class="inputField"
         placeholder="Plugin URL"
         :rules="[{ required: true, whitespace: true }]"
+        :disabled="dynamicValidateForm.inputsDisabled"
       >
       </a-input>
     </a-form-item>

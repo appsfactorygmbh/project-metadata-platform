@@ -1,9 +1,10 @@
 import { pluginService } from '@/services';
 import { defineStore } from 'pinia';
-import type { PluginModel } from '@/models/Plugin';
+import type { PluginModel, GlobalPluginModel } from '@/models/Plugin';
 
 type StoreState = {
   plugins: PluginModel[];
+  globalPlugins: GlobalPluginModel[];
   isLoading: boolean;
 };
 
@@ -11,6 +12,7 @@ export const usePluginsStore = defineStore('plugin', {
   state: (): StoreState => {
     return {
       plugins: [],
+      globalPlugins: [],
       isLoading: false,
     };
   },
@@ -18,6 +20,9 @@ export const usePluginsStore = defineStore('plugin', {
   getters: {
     getPlugins(): PluginModel[] {
       return this.plugins;
+    },
+    getGlobalPlugins(): GlobalPluginModel[] {
+      return this.globalPlugins;
     },
     getIsLoading(): boolean {
       return this.isLoading;
@@ -27,6 +32,9 @@ export const usePluginsStore = defineStore('plugin', {
   actions: {
     setPlugins(plugins: PluginModel[]): void {
       this.plugins = plugins;
+    },
+    setGlobalPlugins(plugins: GlobalPluginModel[]): void {
+      this.globalPlugins = plugins;
     },
     setLoading(status: boolean): void {
       this.isLoading = status;
@@ -38,6 +46,17 @@ export const usePluginsStore = defineStore('plugin', {
         const plugins: PluginModel[] =
           await pluginService.fetchPlugins(projectID);
         this.setPlugins(plugins);
+      } finally {
+        this.setLoading(false);
+      }
+    },
+
+    async fetchGlobalPlugins() {
+      try {
+        this.setLoading(true);
+        const plugins: GlobalPluginModel[] =
+          await pluginService.fetchGlobalPlugins();
+        this.setGlobalPlugins(plugins);
       } finally {
         this.setLoading(false);
       }

@@ -1,4 +1,5 @@
-import type { PluginModel } from '@/models/Plugin';
+import type { GlobalPluginModel, PluginModel } from '@/models/Plugin';
+
 class PluginService {
   fetchPlugins = async (projectID: number): Promise<PluginModel[]> => {
     console.log(projectID);
@@ -22,6 +23,19 @@ class PluginService {
   createPlugin = async (plugin: PluginModel): Promise<void> => {
     //TODO: implement function
     console.log(plugin);
+  };
+
+  fetchGlobalPlugins = async (): Promise<GlobalPluginModel[]> => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/Plugins`
+      );
+      if (!response.ok) throw new Error('Error when trying to fetch Plugins');
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
   };
 }
 

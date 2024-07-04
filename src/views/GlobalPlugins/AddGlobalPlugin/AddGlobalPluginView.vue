@@ -6,8 +6,10 @@
   } from '@/components/Modal';
   import { AddGlobalPluginForm } from './';
   import { Form, notification } from 'ant-design-vue';
+  // import { onBeforeMount } from 'vue';
   // import { pluginStoreSymbol } from '@/store/injectionSymbols';
   // import { inject } from 'vue';
+
 
   const modelRef = ref();
   const form: FormType = Form.useForm(modelRef);
