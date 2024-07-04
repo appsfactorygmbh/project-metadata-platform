@@ -5,8 +5,7 @@
     class="plugin-list"
     item-layout="horizontal"
     :data-source="[
-      ...(pluginStore?.getGlobalPlugins.filter((item) => !item.archieved) ||
-        []),
+      ...(pluginStore?.getGlobalPlugins.filter((item) => !item.archived) || []),
     ]"
     :loading="isLoading"
     bordered

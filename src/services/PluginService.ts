@@ -21,7 +21,6 @@ class PluginService {
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/Plugins',
-        //"src/views/GlobalPlugins/testData.json"
       );
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
