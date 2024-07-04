@@ -3,6 +3,7 @@
     <div v-if="!loading" class="container">
       <PluginComponent
         v-for="plugin in plugins"
+        :id="plugin.id"
         ref="itemRefs"
         :key="plugin.displayName"
         class="plugins"

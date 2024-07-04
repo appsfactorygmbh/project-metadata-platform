@@ -7,6 +7,10 @@
 
   // Define the component's props with pluginName and url as required strings.
   const props = defineProps({
+    id: {
+      type: Number,
+      required: true,
+    },
     pluginName: {
       type: String,
       required: true,
@@ -56,7 +60,7 @@
     window.open(props.url, '_blank');
   }
 
-  const hide = ref(false);
+  const hide = ref<boolean>(false);
 
   const emit = defineEmits(['hide']);
   const hidePlugin = () => {
@@ -69,6 +73,7 @@
       pluginName: props.pluginName,
       displayName: displayNameInput.value,
       url: urlInput.value,
+      id: props.id,
     };
   };
 
@@ -97,10 +102,15 @@
       <div class="textContainerInput">
         <h3 style="text-align: center">{{ pluginName }}</h3>
         <a-input
-          :placeholder="props.displayName"
           v-model:value="displayNameInput"
+          class="inputField"
+          :placeholder="props.displayName"
         ></a-input>
-        <a-input v-model:value="urlInput" :placeholder="props.url"></a-input>
+        <a-input
+          v-model:value="urlInput"
+          class="inputField"
+          :placeholder="props.url"
+        ></a-input>
       </div>
       <DeleteOutlined class="circleBackground" @click="hidePlugin" />
     </a-card>

@@ -6,7 +6,7 @@
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { PluginModel } from '@/models/Plugin';
-  import type { DetailedProjectModel, ProjectModel } from '@/models/Project';
+  import type { DetailedProjectModel } from '@/models/Project';
 
   const props = defineProps({
     paneWidth: {
@@ -35,12 +35,12 @@
     stopEditing();
   };
   const saveEdit = () => {
-    //TODO: implement Backend PUT
     const updatedPlugins: PluginModel[] =
       pluginViewRef.value?.getUpdatedPlugins() || [];
     const updateProjectInformation: DetailedProjectModel | null =
       projectStore.getProject || null;
-    console.log({ ...updatedPlugins, ...updateProjectInformation });
+    const updatedProject = { ...updatedPlugins, ...updateProjectInformation };
+    projectStore.addProject(updatedProject);
   };
 </script>
 
