@@ -40,8 +40,8 @@ describe('ConfirmationDialog.vue', () => {
   });
 
   it('should emit confirm and close the modal when confirm is clicked', async () => {
-    const vm = wrapper.vm as InstanceType<typeof ConfirmationDialog>;
-    vm.confirm();
+    const vm = wrapper.vm;
+    vm.onConfirm();
     await nextTick();
 
     const emittedEvents = wrapper.emitted();
@@ -54,8 +54,8 @@ describe('ConfirmationDialog.vue', () => {
   });
 
   it('should emit cancel and close the modal when cancel is clicked', async () => {
-    const vm = wrapper.vm as InstanceType<typeof ConfirmationDialog>;
-    vm.cancel();
+    const vm = wrapper.vm;
+    vm.onCancel();
     await nextTick();
 
     const emittedEvents = wrapper.emitted();
