@@ -1,17 +1,18 @@
 <script setup lang="ts">
   import { Splitpanes, Pane } from 'splitpanes'; //external framework for splitpanes
   import 'splitpanes/dist/splitpanes.css'; //default css for splitpanes
-  import { ref, reactive } from 'vue';
-  import { useElementSize } from '@vueuse/core';
-  import { ProjectSearchView } from '@/views/ProjectSearchView';
+  import { ref } from 'vue';
+  //import { useElementSize } from '@vueuse/core';
+  //import { ProjectSearchView } from '@/views/ProjectSearchView';
   import { MenuButtons } from '@/components/MenuButtons';
   import { CreateProjectView } from '@/views/CreateProject';
   import { ProjectInformationView } from '@/views/ProjectInformationView';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { RightOutlined } from '@ant-design/icons-vue';
+  import GlobalPluginsView from '../GlobalPlugins/GlobalPluginsView.vue';
 
   const tablePane = ref(null);
-  const dimensions = reactive(useElementSize(tablePane));
+  //const dimensions = reactive(useElementSize(tablePane));
 
   const splitButton: FloatButtonModel = {
     name: 'SplitButton',
@@ -30,10 +31,11 @@
         min-size: sets smallest possible size to 20% and 1%
       -->
       <pane ref="tablePane" size="70" min-size="20">
-        <ProjectSearchView
+        <!-- <ProjectSearchView
           :pane-width="dimensions.width"
           :pane-height="dimensions.height"
-        />
+        /> -->
+        <GlobalPluginsView />
       </pane>
 
       <pane size="32" min-size="32" class="rightPane">
