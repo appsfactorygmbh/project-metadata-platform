@@ -9,7 +9,7 @@ type StoreState = {
   removedSuccessfully: boolean;
 };
 
-export const useGlobalPluginsStore = defineStore('plugin', {
+export const useGlobalPluginsStore = defineStore('globalPlugin', {
   state: (): StoreState => {
     return {
       globalPlugins: [],
