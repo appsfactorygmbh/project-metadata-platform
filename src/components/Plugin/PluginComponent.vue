@@ -7,6 +7,10 @@
 
   // Define the component's props with pluginName and url as required strings.
   const props = defineProps({
+    id: {
+      type: Number,
+      required: true
+    },
     pluginName: {
       type: String,
       required: true,
@@ -69,6 +73,7 @@
       pluginName: props.pluginName,
       displayName: displayNameInput.value,
       url: urlInput.value,
+      id: props.id
     };
   };
 

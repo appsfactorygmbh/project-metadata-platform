@@ -40,7 +40,9 @@
       pluginViewRef.value?.getUpdatedPlugins() || [];
     const updateProjectInformation: DetailedProjectModel | null =
       projectStore.getProject || null;
-    console.log({ ...updatedPlugins, ...updateProjectInformation });
+    const updatedProject = ({ ...updatedPlugins, ...updateProjectInformation });
+    console.log(updatedProject)
+    // projectStore.addProject(updatedProject);
   };
 </script>
 

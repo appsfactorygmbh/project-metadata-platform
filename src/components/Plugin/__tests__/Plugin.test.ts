@@ -7,6 +7,7 @@ interface PluginComponentInstance {
   pluginName: string;
   url: string;
   displayName: string;
+  id: number;
   isLoading: boolean;
   isEditing: boolean;
   hide?: boolean;
@@ -17,7 +18,8 @@ const generateWrapper = (
   url: string,
   displayName: string,
   isLoading: boolean,
-  isEditing: boolean
+  isEditing: boolean,
+  id: number
 ): VueWrapper<ComponentPublicInstance<PluginComponentInstance>> => {
   return mount(PluginComponent, {
     props: {
@@ -25,7 +27,8 @@ const generateWrapper = (
       url: url,
       displayName: displayName,
       isLoading: isLoading,
-      isEditing: isEditing
+      isEditing: isEditing,
+      id: id
     },
   }) as VueWrapper<ComponentPublicInstance<PluginComponentInstance>>;
 };
@@ -37,7 +40,8 @@ describe('Plugin.vue', () => {
       'https://example.com/examplePath',
       'test instance',
       false,
-      false
+      false,
+      100
     );
 
     expect(wrapper.find('h3').text()).toBe('Test Plugin');
@@ -55,7 +59,8 @@ describe('Plugin.vue', () => {
         url: 'https://test.com',
         displayName: 'Test',
         isLoading: true,
-        isEditing: false
+        isEditing: false,
+        id: 100
       },
     });
     const skeleton = wrapper.find('.ant-skeleton-content');
@@ -69,7 +74,8 @@ describe('Plugin.vue', () => {
         url: 'https://test.com',
         displayName: 'Test',
         isLoading: true,
-        isEditing: false
+        isEditing: false,
+        id: 100
       },
     });
     expect(wrapper.find('.ant-skeleton-content').exists()).toBe(true);
@@ -78,7 +84,8 @@ describe('Plugin.vue', () => {
       url: 'https://test.com',
       displayName: 'Test',
       isLoading: false,
-      isEditing: false
+      isEditing: false,
+      id: 100
     });
     expect(wrapper.find('.ant-skeleton-content').exists()).toBe(false);
   });
@@ -125,7 +132,8 @@ describe('Plugin.vue', () => {
       'https://example.com/examplePath',
       'test instance',
       false,
-      false
+      false,
+      100
     );
 
     const card = wrapper.findComponent({ name: 'ACard' });
@@ -149,7 +157,8 @@ describe('Plugin.vue', () => {
       'https://example.com/examplePath',
       'Test Plugin Instance 1',
       false,
-      false
+      false,
+      100
     );
     await wrapper.findComponent({ name: 'ACard' }).trigger('click');
     expect(windowOpenMock).toBeCalledWith(
@@ -164,7 +173,8 @@ describe('Plugin.vue', () => {
       'https://example.com/examplePath',
       'Test Plugin Instance 1',
       false,
-      true
+      true,
+      100
     );
 
     const card = wrapper.findComponent({ name: 'a-card' });

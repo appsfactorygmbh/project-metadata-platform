@@ -9,6 +9,7 @@
         :plugin-name="plugin.pluginName"
         :display-name="plugin.displayName"
         :url="plugin.url"
+        :id="plugin.id"
         :is-loading="loading"
         :is-editing="isEditing"
         @hide="() => deletePlugin(plugin.displayName)"
