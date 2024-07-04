@@ -41,7 +41,7 @@ describe('GlobalPluginsView.vue', () => {
         createTestingPinia({
           stubActions: false,
           initialState: {
-            plugin: {
+            globalPlugin: {
               globalPlugins: testData,
             },
           },
