@@ -5,6 +5,7 @@
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
   import { inject } from 'vue';
   import type { GlobalPluginModel } from '@/models/Plugin';
+  import type { LabeledValue, SelectValue } from 'ant-design-vue/lib/select';
 
   const pluginStore = inject(pluginStoreSymbol);
   const options = ref<SelectProps['options']>([]);
@@ -40,13 +41,13 @@
     inputsDisabled: true
   });
 
-  const handleChange = (value: string) => {
+  const handleChange = (value: SelectValue) => {
     console.log(`selected ${value}`);
     dynamicValidateForm.inputsDisabled = false;
   };
-  // FIXME
-  const filterOption = (input: string, option: any) => {
-    return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+
+  const filterOption = (input: string, option: LabeledValue) => {
+    return option.value.valueOf().toString().toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
 </script>
 
