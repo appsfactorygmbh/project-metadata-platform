@@ -7,6 +7,7 @@
   } from 'ant-design-vue/es/table/interface';
   import type { ProjectModel } from '@/models/Project';
   import type { SearchStore } from '@/store';
+  import { numberSorter, stringSorter } from '../../utils/antd/sort';
   import type { SearchableColumn } from './SearchableTableTypes';
   import type { TableColumnType, TableProps } from 'ant-design-vue';
   import type { ArrayElement } from '@/models/ArrayElement';
@@ -65,10 +66,9 @@
     }
     if (column.sortMethod) {
       if (column.sortMethod == 'string') {
-        column.sorter = (a, b) =>
-          String(a[index]).localeCompare(String(b[index]));
+        column.sorter = (a, b) => stringSorter(a, b, index);
       } else {
-        column.sorter = (a, b) => Number(a[index]) - Number(b[index]);
+        column.sorter = (a, b) => numberSorter(a, b, index);
       }
     }
     return column;

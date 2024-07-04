@@ -92,7 +92,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       root: fileURLToPath(new URL('./', import.meta.url)),
       coverage: {
         enabled: true,
-        reporter: ['text', 'html', 'cobertura'],
+        reporter: ['text', 'html', 'cobertura', 'lcov'],
         exclude: ['node_modules', 'dist', 'coverage', 'html', 'lib', '*.d.ts'],
       },
       setupFiles: './tests/setup.ts',
