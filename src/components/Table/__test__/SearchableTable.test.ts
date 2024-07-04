@@ -1,11 +1,12 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { SearchableTable } from '@/components/Table';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { Button, Input } from 'ant-design-vue';
 import { createTestingPinia } from '@pinia/testing';
-import { useSearchStore } from '@/store';
+import { useProjectStore, useSearchStore } from '@/store';
 import { createPinia, setActivePinia } from 'pinia';
 import _ from 'lodash';
+import { projectsStoreSymbol } from '@/store/injectionSymbols';
 
 const testData = [
   {
@@ -29,24 +30,27 @@ describe('SearchableTable.vue', () => {
   const searchStoreSymbol = Symbol('searchStoreSym');
   const searchStore = useSearchStore('test');
 
-  const mockResponse = {
-    ok: true,
-    statusText: 'Ok',
-    json: async () => testData,
-  } as Response;
-  globalThis.fetch = vi.fn().mockResolvedValue(mockResponse);
-
   const wrapper = mount(SearchableTable, {
+    plugins: [
+      createTestingPinia({
+        stubActions: false,
+        initialState: {
+          project: {
+            project: testData,
+          },
+        },
+      }),
+    ],
     global: {
       provide: {
         [searchStoreSymbol as symbol]: searchStore,
+        [projectsStoreSymbol as symbol]: useProjectStore(),
       },
     },
     propsData: {
       searchStoreSymbol: searchStoreSymbol,
       paneWidth: 800,
       paneHeight: 800,
-      isTest: true,
     },
   });
 
@@ -106,13 +110,13 @@ describe('SearchableTable.vue', () => {
     global: {
       provide: {
         [searchStoreSymbolTest as symbol]: searchStoreTest,
+        [projectsStoreSymbol as symbol]: useProjectStore(),
       },
     },
     propsData: {
       searchStoreSymbol: searchStoreSymbolTest,
       paneWidth: 300,
       paneHeight: 800,
-      isTest: true,
     },
   });
 

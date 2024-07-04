@@ -32,6 +32,13 @@
     .VITE_PROJECT_SEARCH_METHOD;
   console.log('FETCHING_METHOD:', import.meta.env);
 
+  watch(
+    () => projectsStore.getProjects,
+    (newData) => {
+      searchStore?.setBaseSet(newData || []);
+    },
+  );
+
   if (FETCHING_METHOD === 'BACKEND') {
     const fetchData = async (value: string) => {
       try {
