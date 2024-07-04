@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import ProjectInformation from '../ProjectInformation.vue';
+import router from '@/router';
 
 setActivePinia(createPinia());
 
@@ -27,6 +28,9 @@ describe('projectView.vue', () => {
         paneWidth: 1000,
         isTest: true,
       },
+      global: {
+        plugins: [router],
+      },
     });
     await flushPromises();
     console.log(wrapper.html());
@@ -42,6 +46,9 @@ describe('projectView.vue', () => {
       propsData: {
         paneWidth: 1000,
         isTest: true,
+      },
+      global: {
+        plugins: [router],
       },
     });
     await flushPromises();

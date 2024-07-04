@@ -3,13 +3,13 @@
     <div v-if="!loading" class="container">
       <PluginComponent
         v-for="plugin in plugins"
+        :id="plugin.id"
         ref="itemRefs"
         :key="plugin.displayName"
         class="plugins"
         :plugin-name="plugin.pluginName"
         :display-name="plugin.displayName"
         :url="plugin.url"
-        :id="plugin.id"
         :is-loading="loading"
         :is-editing="isEditing"
         @hide="() => deletePlugin(plugin.displayName)"

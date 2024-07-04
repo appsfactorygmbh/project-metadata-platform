@@ -9,7 +9,7 @@
   const props = defineProps({
     id: {
       type: Number,
-      required: true
+      required: true,
     },
     pluginName: {
       type: String,
@@ -73,7 +73,7 @@
       pluginName: props.pluginName,
       displayName: displayNameInput.value,
       url: urlInput.value,
-      id: props.id
+      id: props.id,
     };
   };
 
@@ -102,11 +102,15 @@
       <div class="textContainerInput">
         <h3 style="text-align: center">{{ pluginName }}</h3>
         <a-input
+          v-model:value="displayNameInput"
           class="inputField"
           :placeholder="props.displayName"
-          v-model:value="displayNameInput"
         ></a-input>
-        <a-input class="inputField" v-model:value="urlInput" :placeholder="props.url"></a-input>
+        <a-input
+          v-model:value="urlInput"
+          class="inputField"
+          :placeholder="props.url"
+        ></a-input>
       </div>
       <DeleteOutlined class="circleBackground" @click="hidePlugin" />
     </a-card>

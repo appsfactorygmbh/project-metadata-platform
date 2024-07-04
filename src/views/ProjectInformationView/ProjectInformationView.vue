@@ -35,14 +35,12 @@
     stopEditing();
   };
   const saveEdit = () => {
-    //TODO: implement Backend PUT
     const updatedPlugins: PluginModel[] =
       pluginViewRef.value?.getUpdatedPlugins() || [];
     const updateProjectInformation: DetailedProjectModel | null =
       projectStore.getProject || null;
-    const updatedProject = ({ ...updatedPlugins, ...updateProjectInformation });
-    console.log(updatedProject)
-    // projectStore.addProject(updatedProject);
+    const updatedProject = { ...updatedPlugins, ...updateProjectInformation };
+    projectStore.addProject(updatedProject);
   };
 </script>
 

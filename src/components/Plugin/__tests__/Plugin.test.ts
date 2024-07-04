@@ -19,7 +19,7 @@ const generateWrapper = (
   displayName: string,
   isLoading: boolean,
   isEditing: boolean,
-  id: number
+  id: number,
 ): VueWrapper<ComponentPublicInstance<PluginComponentInstance>> => {
   return mount(PluginComponent, {
     props: {
@@ -28,7 +28,7 @@ const generateWrapper = (
       displayName: displayName,
       isLoading: isLoading,
       isEditing: isEditing,
-      id: id
+      id: id,
     },
   }) as VueWrapper<ComponentPublicInstance<PluginComponentInstance>>;
 };
@@ -41,7 +41,7 @@ describe('Plugin.vue', () => {
       'test instance',
       false,
       false,
-      100
+      100,
     );
 
     expect(wrapper.find('h3').text()).toBe('Test Plugin');
@@ -60,7 +60,7 @@ describe('Plugin.vue', () => {
         displayName: 'Test',
         isLoading: true,
         isEditing: false,
-        id: 100
+        id: 100,
       },
     });
     const skeleton = wrapper.find('.ant-skeleton-content');
@@ -75,7 +75,7 @@ describe('Plugin.vue', () => {
         displayName: 'Test',
         isLoading: true,
         isEditing: false,
-        id: 100
+        id: 100,
       },
     });
     expect(wrapper.find('.ant-skeleton-content').exists()).toBe(true);
@@ -85,7 +85,7 @@ describe('Plugin.vue', () => {
       displayName: 'Test',
       isLoading: false,
       isEditing: false,
-      id: 100
+      id: 100,
     });
     expect(wrapper.find('.ant-skeleton-content').exists()).toBe(false);
   });
@@ -133,7 +133,7 @@ describe('Plugin.vue', () => {
       'test instance',
       false,
       false,
-      100
+      100,
     );
 
     const card = wrapper.findComponent({ name: 'ACard' });
@@ -158,7 +158,7 @@ describe('Plugin.vue', () => {
       'Test Plugin Instance 1',
       false,
       false,
-      100
+      100,
     );
     await wrapper.findComponent({ name: 'ACard' }).trigger('click');
     expect(windowOpenMock).toBeCalledWith(
@@ -167,14 +167,14 @@ describe('Plugin.vue', () => {
     );
   });
 
-  it('renders the edit Component correctly', async() => {
+  it('renders the edit Component correctly', async () => {
     const wrapper = generateWrapper(
       'Test Plugin',
       'https://example.com/examplePath',
       'Test Plugin Instance 1',
       false,
       true,
-      100
+      100,
     );
 
     const card = wrapper.findComponent({ name: 'a-card' });
@@ -184,10 +184,10 @@ describe('Plugin.vue', () => {
     const pluginName = wrapper.find('h3');
     expect(pluginName.text()).toBe('Test Plugin');
 
-    const inputs = wrapper.findAll(".inputField");
+    const inputs = wrapper.findAll('.inputField');
     expect(inputs.length).toBe(2);
 
-    const deleteIcon = wrapper.findComponent({name: "DeleteOutlined"});
+    const deleteIcon = wrapper.findComponent({ name: 'DeleteOutlined' });
     expect(deleteIcon.exists()).toBe(true);
 
     expect((wrapper.vm as PluginComponentInstance).hide).toBe(false);
@@ -196,5 +196,4 @@ describe('Plugin.vue', () => {
 
     expect(wrapper.vm.hide).toBe(true);
   });
-
 });
