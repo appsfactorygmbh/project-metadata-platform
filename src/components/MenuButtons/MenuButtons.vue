@@ -5,7 +5,7 @@
   const router = useRouter();
 
   function goToSetting() {
-        router.push({ name: 'Setting' });
+        router.push({ name: 'settings' });
   };
 
   const buttons: FloatButtonModel[] = [
