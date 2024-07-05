@@ -70,8 +70,8 @@
     );
   }
 
-  const handleRowClick = (projectId: number) => {
-    projectsStore?.fetchProject(projectId);
+  const handleRowClick = (project: ProjectModel) => {
+    projectsStore?.fetchProject(project.id);
   };
 
   onMounted(async () => {

@@ -5,7 +5,6 @@
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
-  import type { ProjectModel } from '@/models/Project';
   import type { SearchStore } from '@/store';
   import { numberSorter, stringSorter } from '../../utils/antd/sort';
   import type { SearchableColumn } from './SearchableTableTypes';
@@ -32,16 +31,14 @@
     },
   });
 
-  const searchStore = inject<SearchStore<ProjectModel>>(
-    props.searchStoreSymbol,
-  );
+  const searchStore = inject<SearchStore<object>>(props.searchStoreSymbol);
 
   const emit = defineEmits(['row-click']);
 
-  const customRow = (record: ProjectModel) => {
+  const customRow = (record: object) => {
     return {
       onClick: () => {
-        emit('row-click', record.id);
+        emit('row-click', record);
       },
     };
   };
