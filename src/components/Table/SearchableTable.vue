@@ -125,7 +125,7 @@
     :columns="[...columns]"
     :data-source="[...(searchStore?.getSearchResults || [])]"
     :pagination="false"
-    :loading="props.isLoading"
+    :loading="isLoading"
     :scroll="{ y: props.paneHeight - 155 }"
     :custom-row="customRow"
     :row-class-name="'row'"
