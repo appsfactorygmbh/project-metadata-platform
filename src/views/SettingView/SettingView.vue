@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  // import { Setting } from '@/components/SettingView';
+  //import icons for navigation buttons
   import {
     AppstoreAddOutlined,
     BarsOutlined,
@@ -17,13 +17,32 @@
   // Router instance
   const router = useRouter();
 
-  // Methods
+  // Method to go back to the mainpage
   const goToMain = () => {
-    router.go(-1);
+    router.push('/');
   };
 
+  //Methods for URL link  by clickin the navigation buttons
   const clickTab = (name: string) => {
     tab.value = name;
+    switch (name) {
+      case 'User': {
+        router.push(`/settings/users`);
+        break;
+      }
+      case 'Plugin Creation': {
+        router.push(`/settings/plugins`);
+        break;
+      }
+      case 'Global Logs': {
+        router.push(`/settings/global-logs`);
+        break;
+      }
+      default: {
+        router.push(`/settings`);
+        break;
+      }
+    }
   };
 
   const placeholder = () => {
@@ -32,28 +51,30 @@
 </script>
 
 <template>
-  <a-layout class="layout" style="min-height: 100vh">
+  <a-layout class="layout">
+    <!-- sidebar -->
     <a-layout-sider
       v-model:collapsed="collapsed"
       class="sideSlider"
       collapsible
+      :width="250"
     >
-      <a-layout-header style="background: #030622; padding: 0" />
-      <a-float-button class="icon" ghost @click="goToMain">
+      <!-- return to homepage button-->
+      <a-layout-header />
+      <a-float-button class="iconBack" ghost @click="goToMain">
         <template #icon><LeftOutlined /> </template>
       </a-float-button>
 
-      <div class="logo" />
+      <!-- navigation elements -->
       <a-menu
         v-model:selectedKeys="selectedKeys"
         class="menuItem"
-        theme="dark"
         mode="inline"
       >
         <a-sub-menu key="sub1">
           <template #title>
             <span>
-              <user-outlined />
+              <user-outlined class="icons" />
               <span>User</span>
             </span>
           </template>
@@ -62,49 +83,77 @@
           <a-menu-item key="6" @click="clickTab('User')">User 3</a-menu-item>
         </a-sub-menu>
         <a-menu-item key="2" class="item2" @click="clickTab('Plugin Creation')">
-          <AppstoreAddOutlined />
+          <AppstoreAddOutlined class="icons" />
           <span>Plugin Creation</span>
         </a-menu-item>
         <a-menu-item key="3" class="item3" @click="clickTab('Global Logs')">
-          <BarsOutlined />
+          <BarsOutlined class="icons" />
           <span>Global Logs</span>
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
-    <a-layout>
-      <a-layout-content class="addressBar" style="margin: 0 16px">
-        <a-breadcrumb style="margin: 16px 0">
-          <a-breadcrumb-item class="breadcrumbItem" @click="placeholder"
-            >Setting</a-breadcrumb-item
-          >
+    <a-layout class="addressBar" style="padding: 0 24px 24px">
+      <a-layout-content>
+        <!-- breadcrumbs -->
+        <a-breadcrumb>
+          <a-breadcrumb-item @click="placeholder">Setting</a-breadcrumb-item>
           <a-breadcrumb-item> {{ tab }} </a-breadcrumb-item>
         </a-breadcrumb>
-        <div
-          :style="{ padding: '24px', background: '#fff', minHeight: '650px' }"
-        >
-          test
+        <div style="padding: 24px; min-height: 650px">
+          <!-- <RouterView /> -->
         </div>
       </a-layout-content>
     </a-layout>
   </a-layout>
 </template>
 
-<style>
-  #components-layout-demo-side .logo {
-    height: 32px;
-    margin: 16px;
-    background: rgba(255, 255, 255, 0.3);
-  }
-
-  .site-layout .site-layout-background {
-    background: #ffffff;
-  }
-  [data-theme='light'] .site-layout .site-layout-background {
-    background: #ffffff;
-  }
-
-  .icon {
+<style scoped>
+  .iconBack {
     left: 20px;
     top: 10px;
+  }
+  /* Style for the sidebar icons */
+  .icons * {
+    width: 1.4em;
+    height: 1.4em;
+  }
+
+  .layout {
+    min-height: 100vh;
+  }
+
+  .ant-layout-header {
+    background: #fff;
+    padding: 0;
+  }
+
+  .ant-layout-sider {
+    background: #fff;
+  }
+  /* Style for the sidebar menu */
+  ::v-deep .ant-menu-item {
+    font-size: 1.2em;
+  }
+
+  span {
+    font-size: 1.2em;
+  }
+
+  .ant-layout-content {
+    margin: 0 16px;
+  }
+
+  .ant-breadcrumb {
+    margin: 16px 0;
+  }
+
+  .addressBar {
+    padding: 0 24px 24px;
+  }
+
+  /* Style for the expandable button on bottom*/
+  ::v-deep .ant-layout-sider-trigger {
+    background-color: gray !important;
+    color: white !important;
   }
 </style>

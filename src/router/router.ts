@@ -19,9 +19,26 @@ const router = createRouter({
       ],
     },
     {
-      path: '/Setting',
-      name: 'Setting',
+      path: '/settings',
+      name: 'settings',
       component: SettingView,
+      children: [
+        {
+          path: '/settings/users',
+          name: 'users',
+          component: SettingView,
+        },
+        {
+          path: '/settings/plugins',
+          name: 'plugins',
+          component: SettingView,
+        },
+        {
+          path: '/settings/global-logs',
+          name: 'global-logs',
+          component: SettingView,
+        },
+      ],
     },
   ],
 });

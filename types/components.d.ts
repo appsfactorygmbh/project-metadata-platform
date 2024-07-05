@@ -32,7 +32,13 @@ declare module 'vue' {
     ASkeleton: typeof import('ant-design-vue/es')['Skeleton']
     ASubMenu: typeof import('ant-design-vue/es')['SubMenu']
     ATable: typeof import('ant-design-vue/es')['Table']
+    HelloWorld: typeof import('./../src/components/HelloWorld.vue')['default']
+    MenuButtons: typeof import('./../src/components/MenuButtons/MenuButtons.vue')['default']
+    PluginComponent: typeof import('./../src/components/Plugin/PluginComponent.vue')['default']
+    ProjectInformation: typeof import('./../src/components/ProjectInformation/ProjectInformation.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
+    SearchBar: typeof import('./../src/components/Searchbar/SearchBar.vue')['default']
   }
 }

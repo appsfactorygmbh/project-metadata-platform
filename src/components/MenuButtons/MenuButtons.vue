@@ -34,7 +34,7 @@
   export default {
     methods: {
       goToSetting() {
-        this.$router.push({ name: 'Setting' });
+        this.$router.push({ name: 'settings' });
       },
     },
   };
