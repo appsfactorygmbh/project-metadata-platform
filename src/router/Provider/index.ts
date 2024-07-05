@@ -2,5 +2,12 @@ import ThemeProvider from './ThemeProvider.vue';
 import ProjectProvider from './ProjectProvider.vue';
 import PluginProvider from './PluginProvider.vue';
 import ProviderCollection from './ProviderCollection.vue';
+import GlobalPluginProvider from './GlobalPluginProvider.vue';
 
-export { ThemeProvider, ProviderCollection, ProjectProvider, PluginProvider };
+export {
+  ThemeProvider,
+  ProviderCollection,
+  ProjectProvider,
+  PluginProvider,
+  GlobalPluginProvider,
+};

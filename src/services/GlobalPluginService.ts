@@ -1,22 +1,5 @@
-import type { GlobalPluginModel, PluginModel } from '@/models/Plugin';
-class PluginService {
-  fetchPlugins = async (projectID: number): Promise<PluginModel[]> => {
-    try {
-      const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL +
-          '/Projects/' +
-          projectID.toString() +
-          '/plugins',
-      );
-      if (!response.ok) throw new Error('Error when trying to fetch Plugins');
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.log(error);
-      return [];
-    }
-  };
-
+import type { GlobalPluginModel } from '@/models/Plugin';
+class GlobalPluginService {
   fetchGlobalPlugins = async (): Promise<GlobalPluginModel[]> => {
     try {
       const response = await fetch(
@@ -37,6 +20,7 @@ class PluginService {
         import.meta.env.VITE_BACKEND_URL + '/Plugins/' + pluginId.toString(),
         {
           method: 'DELETE',
+          mode: 'cors',
         },
       );
       return response;
@@ -47,6 +31,6 @@ class PluginService {
   };
 }
 
-const pluginService = new PluginService();
-export { pluginService };
-export type { PluginService };
+const globalPluginService = new GlobalPluginService();
+export { globalPluginService };
+export type { GlobalPluginService };
