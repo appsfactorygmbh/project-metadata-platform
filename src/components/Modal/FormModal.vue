@@ -1,14 +1,10 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import type {
-    FormSubmitType,
-    FormType,
-  } from '@/components/Modal/FormTypes.ts';
+  import { type FormStore } from '@/components/Form/FormStore';
 
-  const { formRef, title, onSubmit } = defineProps<{
-    formRef: Ref<FormType>;
+  const { formStore, title } = defineProps<{
+    formStore: FormStore;
     title: string;
-    onSubmit: FormSubmitType;
   }>();
 
   const open = ref<boolean>(true); //TODO: set default to false after implementing button
@@ -19,11 +15,11 @@
   // checks for correct input
   const handleOk = () => {
     cancelFetch.value = false;
-    formRef.value
+    formStore
       .validate()
       .then(() => {
-        console.log('form.modelRef.value', formRef.value.modelRef.value);
-        onSubmit(formRef.value.modelRef.value);
+        console.log('formStore.getFieldsValue', formStore.getFieldsValue);
+        formStore.submit();
       })
       .catch((error: unknown) => {
         console.log('error', error);
@@ -31,7 +27,7 @@
   };
 
   const resetModal = () => {
-    formRef.value.resetFields();
+    formStore.resetFields();
     fetchError.value = false;
   };
 </script>
@@ -41,7 +37,7 @@
     v-model:open="open"
     width="400px"
     :title="title"
-    :ok-button-props="{ disabled: isAdding }"
+    :ok-button-props="{ disabled: false }"
     @ok="handleOk"
     @cancel="resetModal"
   >
