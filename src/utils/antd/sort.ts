@@ -69,6 +69,9 @@ export const numberSorter = <T>(
   prop: keyof T,
   type: 'int' | 'float' = 'int',
 ) => {
+  if (!a[prop] && !b[prop]) return 0;
+  if (!a[prop]) return 1;
+  if (!b[prop]) return -1;
   if (type === 'float')
     return parseFloat(String(a[prop])) - parseFloat(String(b[prop]));
   else return parseInt(String(a[prop])) - parseInt(String(b[prop]));
