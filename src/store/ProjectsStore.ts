@@ -90,8 +90,10 @@ export const useProjectStore = defineStore('project', {
         this.setAddedSuccessfully(false);
         const response = await projectsService.addProject(projectData);
         console.log(response);
-        if (response && response?.ok) this.setAddedSuccessfully(true);
-        else this.setAddedSuccessfully(false);
+        if (response && response?.ok) {
+          this.fetchProjects();
+          this.setAddedSuccessfully(true);
+        } else this.setAddedSuccessfully(false);
       } finally {
         this.setLoadingAdd(false);
       }
