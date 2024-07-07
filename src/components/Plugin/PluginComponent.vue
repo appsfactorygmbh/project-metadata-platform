@@ -70,16 +70,19 @@
 
   const updateDisplayName = () => {
     let currValue = displayNameInput.value;
-    const index = model.value.findIndex(pluginInArray => pluginInArray.id === props.id);
-    model.value[index].displayName = currValue
+    const index = model.value.findIndex(
+      (pluginInArray) => pluginInArray.id === props.id,
+    );
+    model.value[index].displayName = currValue;
   };
 
   const updateUrl = () => {
     let currValue = urlInput.value;
-    const index = model.value.findIndex(pluginInArray => pluginInArray.id === props.id);
-    model.value[index].url = currValue
+    const index = model.value.findIndex(
+      (pluginInArray) => pluginInArray.id === props.id,
+    );
+    model.value[index].url = currValue;
   };
-
 </script>
 
 <template>

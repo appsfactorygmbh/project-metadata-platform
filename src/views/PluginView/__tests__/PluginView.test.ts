@@ -13,7 +13,7 @@ vi.mock('@/services/PluginService', () => ({
 }));
 
 // Define a PluginView component for testing
-const PluginView = defineComponent({
+const PluginViewTest = defineComponent({
   setup() {
     const pluginStore = usePluginsStore();
     const plugins = computed(() => toRaw(pluginStore.getPlugins));
@@ -43,7 +43,7 @@ describe('PluginView', () => {
     store.setPlugins(mockPlugins);
 
     // Mount the PluginView component
-    const wrapper = shallowMount(PluginView);
+    const wrapper = shallowMount(PluginViewTest);
 
     // Access the computed plugins
     const computedPlugins = wrapper.vm.plugins;

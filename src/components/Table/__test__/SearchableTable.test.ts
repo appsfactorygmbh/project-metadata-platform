@@ -6,6 +6,7 @@ import { createTestingPinia } from '@pinia/testing';
 import { useSearchStore } from '@/store';
 import { createPinia, setActivePinia } from 'pinia';
 import _ from 'lodash';
+import router from '@/router';
 
 const testData = [
   {
@@ -41,6 +42,7 @@ describe('SearchableTable.vue', () => {
       provide: {
         [searchStoreSymbol as symbol]: searchStore,
       },
+      plugins: [router],
     },
     propsData: {
       searchStoreSymbol: searchStoreSymbol,
@@ -90,7 +92,7 @@ describe('SearchableTable.vue', () => {
   const searchStoreSymbolTest = Symbol('searchStoreSym');
   const searchStoreTest = useSearchStore('test');
 
-  global.innerWidth = 1024;
+  global.innerWidth = 960;
 
   const wrapper2 = mount(SearchableTable, {
     plugins: [
@@ -107,6 +109,7 @@ describe('SearchableTable.vue', () => {
       provide: {
         [searchStoreSymbolTest as symbol]: searchStoreTest,
       },
+      plugins: [router],
     },
     propsData: {
       searchStoreSymbol: searchStoreSymbolTest,

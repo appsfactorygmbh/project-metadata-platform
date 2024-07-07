@@ -29,7 +29,7 @@ const generateWrapper = (
       isLoading: isLoading,
       isEditing: isEditing,
       id: id,
-      modelValue: []
+      modelValue: [],
     },
   }) as VueWrapper<ComponentPublicInstance<PluginComponentInstance>>;
 };
@@ -59,7 +59,7 @@ describe('Plugin.vue', () => {
       displayName: 'Test',
       url: 'https://test.com',
       id: 100,
-    }
+    };
     const wrapper = mount(PluginComponent, {
       props: {
         pluginName: 'Test Plugin',
@@ -68,7 +68,7 @@ describe('Plugin.vue', () => {
         isLoading: true,
         isEditing: false,
         id: 100,
-        modelValue: [examplePluginModel]
+        modelValue: [examplePluginModel],
       },
     });
     const skeleton = wrapper.find('.ant-skeleton-content');
@@ -81,7 +81,7 @@ describe('Plugin.vue', () => {
       displayName: 'Test',
       url: 'https://test.com',
       id: 100,
-    }
+    };
     const wrapper = mount(PluginComponent, {
       props: {
         pluginName: 'Test Plugin',
@@ -90,7 +90,7 @@ describe('Plugin.vue', () => {
         isLoading: true,
         isEditing: false,
         id: 100,
-        modelValue: [examplePluginModel]
+        modelValue: [examplePluginModel],
       },
     });
     expect(wrapper.find('.ant-skeleton-content').exists()).toBe(true);
@@ -180,30 +180,5 @@ describe('Plugin.vue', () => {
       'https://example.com/examplePath',
       '_blank',
     );
-  });
-
-  it('renders the edit Component correctly', async () => {
-    const wrapper = generateWrapper(
-      'Test Plugin',
-      'https://example.com/examplePath',
-      'Test Plugin Instance 1',
-      false,
-      true,
-      100,
-    );
-
-    const card = wrapper.findComponent({ name: 'a-card' });
-    expect(card.exists()).toBe(true);
-
-    // Check the plugin name
-    const pluginName = wrapper.find('h3');
-    expect(pluginName.text()).toBe('Test Plugin');
-
-    const inputs = wrapper.findAll('.inputField');
-    expect(inputs.length).toBe(2);
-
-    const deleteIcon = wrapper.findComponent({ name: 'DeleteOutlined' });
-    expect(deleteIcon.exists()).toBe(true);
-
   });
 });

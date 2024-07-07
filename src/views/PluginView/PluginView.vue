@@ -52,7 +52,7 @@
     },
   });
 
-  const pluginsModel = defineModel<PluginModel[]>({
+  const pluginsModel = defineModel<PluginModel[] | null>({
     required: true,
     type: Array,
   });

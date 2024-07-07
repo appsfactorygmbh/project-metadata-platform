@@ -37,6 +37,7 @@
           <ProjectInformationView
             :pane-width="infoSize.width"
             :project-id="100"
+            :model-value="null"
           />
           <MenuButtons />
         </div>

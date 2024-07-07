@@ -13,7 +13,7 @@
     pluginStoreSymbol,
   } from '@/store/injectionSymbols';
   import { useProjectStore, type SearchStore } from '@/store';
-  import {useEditing} from '@/utils/hooks/useEditing';
+  import { useEditing } from '@/utils/hooks/useEditing';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -64,7 +64,6 @@
         projectsStore.fetchProject(record.id);
         pluginStore.fetchPlugins(record.id);
         stopEditing();
-
       },
     };
   };

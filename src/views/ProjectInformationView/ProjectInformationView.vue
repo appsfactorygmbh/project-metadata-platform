@@ -30,10 +30,10 @@
     await projectStore.fetchProject(props.projectId);
   });
 
-  const pluginModel = defineModel<PluginModel[]>({
+  const pluginModel = defineModel<PluginModel[] | null>({
     required: true,
     type: Array,
-  })
+  });
 
   const cancelEdit = () => {
     console.log('plugins:       ', pluginModel.value);
