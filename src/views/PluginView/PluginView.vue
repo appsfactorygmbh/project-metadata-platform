@@ -66,7 +66,7 @@
   }
 
   onBeforeMount(async () => {
-    pluginStore.setLoading(true);
+    pluginStore.setLoadingPlugins(true);
     await pluginStore.fetchPlugins(props.projectID);
     console.log(props.projectID);
   });

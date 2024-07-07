@@ -134,7 +134,7 @@ describe('SearchableTable.vue', () => {
 
     _.delay(
       () =>
-        expect(wrapper2.findAll('.ant-table-column-sorters').length).toBe(2),
+        expect(wrapper2.findAll('.ant-table-column-sorters').length).toBe(4),
       500,
     );
   });

@@ -3,7 +3,6 @@
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
   import PluginView from '@/views/PluginView/PluginView.vue';
-  import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
   import { EditOutlined } from '@ant-design/icons-vue';
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
@@ -20,7 +19,7 @@
     projectsStore?.fetchProject(100);
   });
 
-  const { isEditing, stopEditing } = useEditing();
+  const { isEditing, stopEditing, startEditing } = useEditing();
 
   const projectStore = inject(projectsStoreSymbol)!;
   const pluginStore = inject(pluginStoreSymbol)!;
@@ -43,6 +42,14 @@
       },
     );
   });
+
+  const toggleEditingMode = () => {
+    if (isEditing.value === true) {
+      stopEditing();
+    } else {
+      startEditing();
+    }
+  };
 
   const pluginModel = defineModel<PluginModel[] | null>({
     required: true,
@@ -87,10 +94,10 @@
         </h1>
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
         <a-button
+          @click="toggleEditingMode"
           class="button"
           ghost
           style="margin-left: 10px"
-          @click="() => {}"
         >
           <template #icon><EditOutlined class="icon" /></template>
         </a-button>

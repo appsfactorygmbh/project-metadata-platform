@@ -5,6 +5,7 @@ import ProjectInformation from '../ProjectInformationView.vue';
 import { projectsStoreSymbol } from '@/store/injectionSymbols';
 import { useProjectStore } from '@/store';
 import { createTestingPinia } from '@pinia/testing';
+import router from '@/router';
 
 const testData = {
   id: 100,
@@ -36,6 +37,7 @@ describe('ProjectInformationView.vue', () => {
             template: '<span />',
           },
         },
+        plugins: [router],
         provide: {
           [projectsStoreSymbol as symbol]: useProjectStore(),
         },
