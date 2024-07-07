@@ -1,13 +1,14 @@
 <script lang="ts" setup>
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { LogoutOutlined, SettingOutlined } from '@ant-design/icons-vue';
+  import { useRouter } from 'vue-router';
 
+  // Router instance
   const router = useRouter();
 
-  function goToSetting() {
-        router.push({ name: 'settings' });
+  const goToSetting = () => {
+    router.push('/settings');
   };
-
   const buttons: FloatButtonModel[] = [
     {
       name: 'SettingsButton',

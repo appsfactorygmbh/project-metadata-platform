@@ -100,7 +100,7 @@
           <a-breadcrumb-item> {{ tab }} </a-breadcrumb-item>
         </a-breadcrumb>
         <div style="padding: 24px; min-height: 650px">
-          <!-- <RouterView /> -->
+          <RouterView />
         </div>
       </a-layout-content>
     </a-layout>
