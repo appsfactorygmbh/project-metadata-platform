@@ -131,7 +131,7 @@
     background: #fff;
   }
   /* Style for the sidebar menu */
-  ::v-deep .ant-menu-item {
+  :deep(.ant-menu-item) {
     font-size: 1.2em;
   }
 
@@ -152,7 +152,7 @@
   }
 
   /* Style for the expandable button on bottom*/
-  ::v-deep .ant-layout-sider-trigger {
+  :deep(.ant-layout-sider-trigger) {
     background-color: gray !important;
     color: white !important;
   }

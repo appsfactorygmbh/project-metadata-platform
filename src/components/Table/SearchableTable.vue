@@ -7,9 +7,8 @@
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
   import type { ProjectModel } from '@/models/Project';
-  import { storeToRefs } from 'pinia';
+  import type { SearchStore } from '@/store';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
-  import { useProjectStore, type SearchStore } from '@/store';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -25,10 +24,6 @@
       type: Number,
       required: true,
     },
-    isTest: {
-      type: Boolean,
-      default: false,
-    },
   });
 
   const searchStore = inject<SearchStore<ProjectModel>>(
@@ -43,17 +38,14 @@
     },
   );
 
-  const projectsStore = props.isTest
-    ? useProjectStore()
-    : inject(projectsStoreSymbol)!;
+  const projectsStore = inject(projectsStoreSymbol);
 
-  const { getIsLoading } = storeToRefs(projectsStore);
-  const isLoading = computed(() => getIsLoading.value);
+  const isLoading = computed(() => projectsStore?.getIsLoadingProjects);
 
   const customRow = (record: ProjectModel) => {
     return {
       onClick: () => {
-        projectsStore.fetchProject(record.id);
+        projectsStore?.fetchProject(record.id);
       },
     };
   };
@@ -70,12 +62,14 @@
         scroll: sets height of table to ~90% of the window height
     -->
   <a-table
+    class="clickable-table"
     :columns="[...columns].filter((item) => !item.hidden)"
     :data-source="[...(searchStore?.getSearchResults || [])]"
     :pagination="false"
     :loading="isLoading"
     :scroll="{ y: props.paneHeight - 155 }"
     :custom-row="customRow"
+    :row-class-name="'row'"
     bordered
   >
     <!-- Header of the table -->
@@ -366,9 +360,13 @@
   }
 </script>
 
-<style>
+<style scoped>
   .highlight {
     background-color: rgb(255, 192, 105);
     padding: 0px;
+  }
+
+  .clickable-table :deep(.row) {
+    cursor: pointer;
   }
 </style>
