@@ -1729,6 +1729,15 @@ __metadata:
   resolved "https://registry.npmjs.org/@vitest/snapshot/-/snapshot-1.6.0.tgz"
   integrity sha512-+Hx43f8Chus+DCmygqqfetcAZrDJwvTj0ymqjQq4CvmpKFSTVteEOBzCusu1x2tt4OJcvBflyHUE0DZSLgEMtQ==
   dependencies:
+    "@vitest/utils" "1.6.0"
+    p-limit "^5.0.0"
+    pathe "^1.1.1"
+
+"@vitest/snapshot@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.npmjs.org/@vitest/snapshot/-/snapshot-1.6.0.tgz"
+  integrity sha512-+Hx43f8Chus+DCmygqqfetcAZrDJwvTj0ymqjQq4CvmpKFSTVteEOBzCusu1x2tt4OJcvBflyHUE0DZSLgEMtQ==
+  dependencies:
     magic-string "^0.30.5"
     pathe "^1.1.1"
     pretty-format "^29.7.0"
@@ -1737,6 +1746,21 @@ __metadata:
   version "1.6.0"
   resolved "https://registry.npmjs.org/@vitest/spy/-/spy-1.6.0.tgz"
   integrity sha512-leUTap6B/cqi/bQkXUu6bQV5TZPx7pmMBKBQiI0rJA8c3pB56ZsaTbREnF7CJfmvAS4V2cXIBAh/3rVwrrCYgw==
+    magic-string "^0.30.5"
+    pathe "^1.1.1"
+    pretty-format "^29.7.0"
+
+"@vitest/spy@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.npmjs.org/@vitest/spy/-/spy-1.6.0.tgz"
+  integrity sha512-leUTap6B/cqi/bQkXUu6bQV5TZPx7pmMBKBQiI0rJA8c3pB56ZsaTbREnF7CJfmvAS4V2cXIBAh/3rVwrrCYgw==
+  dependencies:
+    tinyspy "^2.2.0"
+
+"@vitest/ui@^1.6.0", "@vitest/ui@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.npmjs.org/@vitest/ui/-/ui-1.6.0.tgz"
+  integrity sha512-k3Lyo+ONLOgylctiGovRKy7V4+dIN2yxstX3eY5cWFXH6WP+ooVX79YSyi0GagdTQzLmT43BF27T0s6dOIPBXA==
   dependencies:
     tinyspy "^2.2.0"
 
