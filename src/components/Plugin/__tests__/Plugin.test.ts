@@ -29,6 +29,7 @@ const generateWrapper = (
       isLoading: isLoading,
       isEditing: isEditing,
       id: id,
+      modelValue: []
     },
   }) as VueWrapper<ComponentPublicInstance<PluginComponentInstance>>;
 };
@@ -53,6 +54,12 @@ describe('Plugin.vue', () => {
   });
 
   it('renders loading state correctly when isLoading is true', () => {
+    const examplePluginModel = {
+      pluginName: 'Test Plugin',
+      displayName: 'Test',
+      url: 'https://test.com',
+      id: 100,
+    }
     const wrapper = mount(PluginComponent, {
       props: {
         pluginName: 'Test Plugin',
@@ -61,6 +68,7 @@ describe('Plugin.vue', () => {
         isLoading: true,
         isEditing: false,
         id: 100,
+        modelValue: [examplePluginModel]
       },
     });
     const skeleton = wrapper.find('.ant-skeleton-content');
@@ -68,6 +76,12 @@ describe('Plugin.vue', () => {
   });
 
   it('changes state when isLoading updates', async () => {
+    const examplePluginModel = {
+      pluginName: 'Test Plugin',
+      displayName: 'Test',
+      url: 'https://test.com',
+      id: 100,
+    }
     const wrapper = mount(PluginComponent, {
       props: {
         pluginName: 'Test Plugin',
@@ -76,6 +90,7 @@ describe('Plugin.vue', () => {
         isLoading: true,
         isEditing: false,
         id: 100,
+        modelValue: [examplePluginModel]
       },
     });
     expect(wrapper.find('.ant-skeleton-content').exists()).toBe(true);
@@ -190,10 +205,5 @@ describe('Plugin.vue', () => {
     const deleteIcon = wrapper.findComponent({ name: 'DeleteOutlined' });
     expect(deleteIcon.exists()).toBe(true);
 
-    expect((wrapper.vm as PluginComponentInstance).hide).toBe(false);
-
-    await deleteIcon.trigger('click');
-
-    expect(wrapper.vm.hide).toBe(true);
   });
 });

@@ -2,17 +2,17 @@
   <div>
     <div v-if="!loading" class="container">
       <PluginComponent
-        v-for="plugin in plugins"
+        v-for="plugin in pluginsModel"
         :id="plugin.id"
         ref="itemRefs"
         :key="plugin.displayName"
+        v-model="pluginsModel"
         class="plugins"
         :plugin-name="plugin.pluginName"
         :display-name="plugin.displayName"
         :url="plugin.url"
         :is-loading="loading"
         :is-editing="isEditing"
-        @hide="() => deletePlugin(plugin.id)"
       ></PluginComponent>
       <AddPluginComponent
         v-if="isEditing"
@@ -37,50 +37,13 @@
 </template>
 
 <script setup lang="ts">
-  import {
-    onBeforeMount,
-    computed,
-    toRaw,
-    inject,
-    onMounted,
-    defineExpose,
-  } from 'vue';
+  import { onBeforeMount, computed, toRaw, inject, onMounted } from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
   import type { PluginModel } from '@/models/Plugin';
   import type { ComputedRef } from 'vue';
   import { useEditing } from '@/utils/hooks/useEditing';
-
-  //Placeholder
-  const deletePlugin = (pluginId: number) => {
-    console.log(pluginId);
-    deletedPlugins.push(pluginId);
-  };
-
-  let deletedPlugins: number[] = [];
-
   const { isEditing } = useEditing();
-
-  const itemRefs = ref<InstanceType<typeof PluginComponent>[]>([]);
-  const showPlugins = () => {
-    for (let i = 0; i < itemRefs.value.length; i++) {
-      itemRefs.value[i].resetHide();
-    }
-  };
-
-  const getUpdatedPlugins = (): PluginModel[] => {
-    let allPlugins: PluginModel[] = [];
-    for (let i = 0; i < itemRefs.value.length; i++) {
-      allPlugins.push(itemRefs.value[i].getUpdatedPluginData());
-    }
-    allPlugins = allPlugins.filter(
-      (plugin) => !deletedPlugins.includes(plugin.id),
-    );
-    console.log('allplugin: ', allPlugins);
-    return allPlugins;
-  };
-
-  const pluginStore = inject(pluginStoreSymbol)!;
 
   const props = defineProps({
     projectID: {
@@ -89,11 +52,17 @@
     },
   });
 
-  let plugins: ComputedRef<PluginModel[]>;
+  const pluginsModel = defineModel<PluginModel[]>({
+    required: true,
+    type: Array,
+  });
+
+  const pluginStore = inject(pluginStoreSymbol)!;
+
   const loading = computed(() => pluginStore.getIsLoading);
 
   function setPlugins(newPlugins: PluginModel[]) {
-    plugins = computed(() => toRaw(newPlugins));
+    pluginsModel.value = toRaw(newPlugins);
   }
 
   onBeforeMount(async () => {
@@ -115,12 +84,6 @@
         setPlugins(newProject);
       },
     );
-  });
-
-  defineExpose({
-    showPlugins,
-    getUpdatedPlugins,
-    deletedPlugins,
   });
 </script>
 

@@ -33,13 +33,17 @@
     },
   });
 
+  console.log('props.id: ', props.id);
+
   const displayNameInput = ref<string>(props.displayName);
   const urlInput = ref<string>(props.url);
 
-  const resetHide = (): void => {
-    hide.value = false;
-  };
   const toggleSkeleton = ref<boolean>(props.isLoading);
+
+  const model = defineModel<PluginModel[]>({
+    required: true,
+    type: Array,
+  });
 
   watch(
     () => props.isLoading,
@@ -60,33 +64,27 @@
     window.open(props.url, '_blank');
   }
 
-  const hide = ref<boolean>(false);
-
-  const emit = defineEmits(['hide']);
   const hidePlugin = () => {
-    hide.value = true;
-    emit('hide');
+    model.value = model.value.filter((plugin) => plugin.id !== props.id);
   };
 
-  const getUpdatedPluginData = (): PluginModel => {
-    return {
-      pluginName: props.pluginName,
-      displayName: displayNameInput.value,
-      url: urlInput.value,
-      id: props.id,
-    };
+  const updateDisplayName = () => {
+    let currValue = displayNameInput.value;
+    const index = model.value.findIndex(pluginInArray => pluginInArray.id === props.id);
+    model.value[index].displayName = currValue
   };
 
-  defineExpose({
-    resetHide,
-    getUpdatedPluginData,
-  });
+  const updateUrl = () => {
+    let currValue = urlInput.value;
+    const index = model.value.findIndex(pluginInArray => pluginInArray.id === props.id);
+    model.value[index].url = currValue
+  };
+
 </script>
 
 <template>
   <template v-if="isEditing">
     <a-card
-      :style="{ display: hide ? 'none' : 'block' }"
       class="cardNoHover"
       :loading="toggleSkeleton"
       :bordered="false"
@@ -104,12 +102,12 @@
         <a-input
           v-model:value="displayNameInput"
           class="inputField"
-          :placeholder="props.displayName"
+          @input="updateDisplayName"
         ></a-input>
         <a-input
           v-model:value="urlInput"
           class="inputField"
-          :placeholder="props.url"
+          @input="updateUrl"
         ></a-input>
       </div>
       <DeleteOutlined class="circleBackground" @click="hidePlugin" />
@@ -159,7 +157,7 @@
     position: absolute;
     top: -3%;
     right: -3%;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0;
     &:hover {
       transition: 0.1s ease-in-out;
       cursor: pointer;
@@ -171,7 +169,7 @@
     width: max-content;
     min-width: 200px;
     max-width: 300px;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
+    box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0 !important;
     display: flex;
     flex-direction: column;
   }
@@ -180,7 +178,7 @@
     width: max-content;
     min-width: 200px;
     max-width: 300px;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
+    box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0 !important;
     display: flex;
     flex-direction: column;
     transition: 0.1s ease-in-out;
@@ -201,7 +199,7 @@
     overflow: hidden;
 
     & > * {
-      margin: 5px 0px 5px 0px;
+      margin: 5px 0 5px 0;
     }
 
     & p {
@@ -222,7 +220,7 @@
     overflow: hidden;
 
     & > * {
-      margin: 0px;
+      margin: 0;
     }
 
     & p {

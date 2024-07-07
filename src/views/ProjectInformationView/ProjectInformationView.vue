@@ -30,17 +30,18 @@
     await projectStore.fetchProject(props.projectId);
   });
 
-  const pluginViewRef = ref<InstanceType<typeof PluginView>>();
+  const pluginModel = defineModel<PluginModel[]>({
+    required: true,
+    type: Array,
+  })
 
   const cancelEdit = () => {
-    console.log(pluginViewRef.value);
-    pluginViewRef.value?.showPlugins();
+    console.log('plugins:       ', pluginModel.value);
+    pluginModel.value = pluginStore.getPlugins;
     stopEditing();
   };
   const saveEdit = async () => {
-    console.log('curr Proj: ', projectStore.getProject);
-    const updatedPlugins: PluginModel[] =
-      pluginViewRef.value?.getUpdatedPlugins() || [];
+    console.log('plugins:       ', pluginModel.value);
     const updateProjectInformation: DetailedProjectModel | null =
       projectStore.getProject || null;
     const updatedProject: UpdateProjectModel = {
@@ -49,7 +50,7 @@
       teamNumber: updateProjectInformation?.teamNumber,
       department: updateProjectInformation?.department,
       clientName: updateProjectInformation?.clientName,
-      pluginList: updatedPlugins,
+      pluginList: pluginModel.value,
     };
     console.log('updated Project', updatedProject);
     const projectID = computed(() => projectStore.getProject?.id);
@@ -64,5 +65,5 @@
 <template>
   <ProjectEditButtons v-if="isEditing" @cancel="cancelEdit" @save="saveEdit" />
   <ProjectInformation :pane-width="props.paneWidth" />
-  <PluginView ref="pluginViewRef" :project-i-d="props.projectId"></PluginView>
+  <PluginView v-model="pluginModel" :project-i-d="props.projectId"></PluginView>
 </template>
