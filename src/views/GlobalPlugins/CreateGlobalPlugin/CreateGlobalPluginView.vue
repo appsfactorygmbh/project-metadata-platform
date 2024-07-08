@@ -7,7 +7,6 @@
 </script>
 
 <template>
-  <contextHolder></contextHolder>
   <FormModal title="Create Plugin" :form-store="formStore">
     <a-button
       type="primary"

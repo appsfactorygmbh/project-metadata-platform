@@ -19,6 +19,7 @@
       .validate()
       .then(() => {
         console.log('formStore.getFieldsValue', formStore.getFieldsValue);
+        console.log('formStore validateInfos', formStore.form.validateInfos);
         formStore.submit();
       })
       .catch((error: unknown) => {

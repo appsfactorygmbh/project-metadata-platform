@@ -44,18 +44,21 @@
   });
 
   const rulesRef = reactive<RulesObject<FormData>>({
-    pluginName: {
-      required: true,
-      whitespace: true,
-      message: 'Please input the plugin name.',
-      trigger: 'change',
-    },
-
-    keys: {
-      required: true,
-      message: 'Please insert the plugin key.',
-      trigger: 'change',
-    },
+    pluginName: [
+      {
+        required: true,
+        message: 'Please insert the plugin name.',
+        trigger: 'change',
+        type: 'string',
+      },
+    ],
+    keys: [
+      {
+        required: false,
+        message: 'Please insert the plugin key.',
+        trigger: 'change',
+      },
+    ],
   });
 
   formStore.setOnSubmit(onSubmit);
