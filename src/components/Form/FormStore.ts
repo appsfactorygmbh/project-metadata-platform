@@ -56,9 +56,7 @@ export const useFormStore = <T extends FormState>(
       },
       setModel(modelRef: T) {
         this.modelRef = modelRef;
-        if (this.formIsDefined) {
-          this.form.modelRef.value = modelRef;
-        } else if (_.keys(this.rulesRef).length > 0) {
+        if (_.keys(this.rulesRef).length > 0) {
           this.form = useForm(modelRef, this.rulesRef);
         } else {
           this.form = useForm(modelRef);
@@ -66,12 +64,7 @@ export const useFormStore = <T extends FormState>(
       },
       setRules(rulesRef: RulesObject<T>) {
         this.rulesRef = rulesRef;
-        if (this.formIsDefined) {
-          this.form.rulesRef.value = rulesRef;
-        } else {
-          this.form = useForm(this.modelRef, rulesRef);
-        }
-        console.log('rules', this.form.rulesRef);
+        this.form = useForm(this.modelRef, rulesRef);
       },
       // setOptions(options: ArgsType<typeof useForm>[2]) {
       //   this.options = options;
@@ -83,31 +76,33 @@ export const useFormStore = <T extends FormState>(
       // },
       updateField(key: keyof T, value: T[keyof T]) {
         this.modelRef[key] = value;
-        this.form.modelRef = this.modelRef;
+        this.form = useForm(this.modelRef, this.rulesRef);
       },
       updateFields(fields: FieldData[]) {
         console.log('fields', fields);
         fields.forEach(({ name, value }) => {
           this.modelRef[name as keyof T] = value as T[keyof T];
         });
-        this.form.modelRef = this.modelRef;
+        this.form = useForm(this.modelRef, this.rulesRef);
       },
       resetFields() {
         this.modelRef = {} as T;
-        this.form.modelRef.value = {} as T;
+        this.form = useForm(this.modelRef, this.rulesRef);
       },
       getFieldValue(key: keyof T): T[keyof T] {
         return this.modelRef[key];
       },
       validate(): Promise<void> {
         this.form = useForm(this.modelRef, this.rulesRef);
-        // this.form.modelRef = this.modelRef;
         return this.form.validate();
       },
-      submit() {
-        form?.validate().then(() => {
+      async submit() {
+        if (!this.rulesRef) {
+          console.warn('Form rules are not defined before submitting.');
+        }
+        return this.form.validate().then(() => {
           if (this.onSubmit) {
-            this.onSubmit(this.modelRef);
+            return this.onSubmit(this.modelRef);
           }
         });
       },
@@ -116,16 +111,13 @@ export const useFormStore = <T extends FormState>(
       getFieldsValue(): T {
         return this.modelRef;
       },
-      state(): T {
-        return this.form.modelRef.value;
-      },
       formIsDefined(): boolean {
         return !!this.form.validate;
       },
       getForm(): FormType {
         return this.form;
       },
-      getRef(): T {
+      getModel(): T {
         return this.modelRef;
       },
     },
