@@ -3,3 +3,8 @@ export type PluginModel = {
   displayName: string;
   url: string;
 };
+
+export type ProjectKey = {
+  value: string;
+  key: number;
+};

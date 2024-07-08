@@ -8,12 +8,6 @@
 
 <template>
   <FormModal title="Create Plugin" :form-store="formStore">
-    <a-button
-      type="primary"
-      @click="() => console.log('formStore', formStore.getModel)"
-    >
-      Debug
-    </a-button>
     <CreateGlobalPluginForm :form-store="formStore" />
   </FormModal>
 </template>

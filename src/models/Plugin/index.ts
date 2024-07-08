@@ -1,3 +1,3 @@
-import type { PluginModel } from './PluginModel';
+import type { PluginModel, ProjectKey } from './PluginModel';
 
-export type { PluginModel };
+export type { PluginModel, ProjectKey };
