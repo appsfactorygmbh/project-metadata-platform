@@ -4,7 +4,6 @@ import type { FormType } from './types';
 import type { FieldData } from 'ant-design-vue/es/form/interface';
 import { Form } from 'ant-design-vue';
 import type { Rule } from 'ant-design-vue/es/form';
-import _ from 'lodash';
 import type { ArgsType } from '@/utils/types';
 
 const { useForm } = Form;
@@ -54,46 +53,41 @@ export const useFormStore = <T extends FormState>(
       setForm(form: FormType) {
         this.form = form;
       },
+      updateForm() {
+        this.form = useForm(this.modelRef, this.rulesRef, this.options);
+      },
       setModel(modelRef: T) {
         this.modelRef = modelRef;
-        if (_.keys(this.rulesRef).length > 0) {
-          this.form = useForm(modelRef, this.rulesRef);
-        } else {
-          this.form = useForm(modelRef);
-        }
+        this.updateForm();
       },
       setRules(rulesRef: RulesObject<T>) {
         this.rulesRef = rulesRef;
-        this.form = useForm(this.modelRef, rulesRef);
+        this.updateForm();
       },
-      // setOptions(options: ArgsType<typeof useForm>[2]) {
-      //   this.options = options;
-      //   if (this.formIsDefined) {
-      //     this.form.options = options;
-      //   } else {
-      //     this.form = useForm(this.modelRef, this.rulesRef, options);
-      //   }
-      // },
+      setOptions(options: ArgsType<typeof useForm>[2]) {
+        this.options = options;
+        this.updateForm();
+      },
       updateField(key: keyof T, value: T[keyof T]) {
         this.modelRef[key] = value;
-        this.form = useForm(this.modelRef, this.rulesRef);
+        this.updateForm();
       },
       updateFields(fields: FieldData[]) {
         console.log('fields', fields);
         fields.forEach(({ name, value }) => {
           this.modelRef[name as keyof T] = value as T[keyof T];
         });
-        this.form = useForm(this.modelRef, this.rulesRef);
+        this.updateForm();
       },
       resetFields() {
         this.modelRef = {} as T;
-        this.form = useForm(this.modelRef, this.rulesRef);
+        this.updateForm();
       },
       getFieldValue(key: keyof T): T[keyof T] {
         return this.modelRef[key];
       },
       validate(): Promise<void> {
-        this.form = useForm(this.modelRef, this.rulesRef);
+        this.updateForm();
         return this.form.validate();
       },
       async submit() {
