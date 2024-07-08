@@ -10,7 +10,7 @@
   <FormModal title="Create Plugin" :form-store="formStore">
     <a-button
       type="primary"
-      @click="() => console.log('formStore', formStore.getRef)"
+      @click="() => console.log('formStore', formStore.getModel)"
     >
       Debug
     </a-button>

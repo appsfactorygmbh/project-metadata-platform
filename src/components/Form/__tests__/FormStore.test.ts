@@ -10,26 +10,30 @@ describe('FormStore', () => {
   };
   type TestForm = typeof testForm;
 
-  let formStore: FormStore<TestForm>;
-
   beforeEach(() => {
     setActivePinia(createPinia());
   });
 
   it('should create a form store', () => {
-    formStore = useFormStore<TestForm>('test');
+    const formStore: FormStore<TestForm> = useFormStore<TestForm>('test');
     expect(formStore).toBeDefined();
   });
 
   it('should detect if the form is defined', () => {
-    formStore = useFormStore<TestForm>('test');
+    const formStore: FormStore<TestForm> = useFormStore<TestForm>('test');
     expect(formStore.formIsDefined).toBe(false);
-    formStore.setForm(Form.useForm(ref({})));
+    const emptyForm = Form.useForm(ref({}));
+    formStore.setForm(emptyForm);
     expect(formStore.formIsDefined).toBe(true);
+    expect(formStore.getForm).toEqual({
+      ...emptyForm,
+      modelRef: {},
+      rulesRef: {},
+    });
   });
 
   it('should set and get rules', () => {
-    formStore = useFormStore<TestForm>('test');
+    const formStore: FormStore<TestForm> = useFormStore<TestForm>('test');
     const rules = {
       name: [{ required: true, message: 'Name is required' }],
       email: [{ required: true, message: 'Email is required' }],
@@ -40,24 +44,28 @@ describe('FormStore', () => {
   });
 
   it('should set and get the modelRef', () => {
-    formStore = useFormStore<TestForm>('test');
+    const formStore: FormStore<TestForm> = useFormStore<TestForm>('test');
     const model = reactive(testForm);
     formStore.setModel(model);
     expect(formStore.modelRef).toEqual(model);
     expect(formStore.form.modelRef).toEqual(model);
+    expect(formStore.getModel).toEqual(model);
   });
 
   it('should set and get the form', () => {
     const model = reactive(testForm);
     const form = Form.useForm(model);
-    formStore = useFormStore<TestForm>('test', form);
+    const formStore: FormStore<TestForm> = useFormStore<TestForm>('test', form);
     flushPromises().then(() => {
-      expect(form).toEqual(form);
+      expect(formStore.form).toEqual({
+        ...form,
+        rulesRef: {},
+      });
     });
   });
 
   it('should set and get fields', () => {
-    formStore = useFormStore<TestForm>('test');
+    const formStore: FormStore<TestForm> = useFormStore<TestForm>('test');
     const modelRef = reactive(testForm);
     formStore.setModel(modelRef);
     flushPromises().then(() => {
@@ -69,18 +77,19 @@ describe('FormStore', () => {
   });
 
   it('should reset fields', () => {
-    formStore = useFormStore<TestForm>('test');
+    const formStore: FormStore<TestForm> = useFormStore<TestForm>('test');
     const modelRef = reactive(testForm);
     formStore.setModel(modelRef);
     flushPromises().then(() => {
       formStore.resetFields();
       expect(formStore.modelRef).toEqual({});
-      expect(formStore.form.modelRef.value).toEqual({});
+      // useForm sets the modelRef undefined if it's empty
+      expect(formStore.form.modelRef.value).toEqual(undefined);
     });
   });
 
   it('should update fields', () => {
-    formStore = useFormStore<TestForm>('test');
+    const formStore: FormStore<TestForm> = useFormStore<TestForm>('test');
     const modelRef = reactive(testForm);
     formStore.setModel(modelRef);
     flushPromises().then(() => {
@@ -94,7 +103,7 @@ describe('FormStore', () => {
   });
 
   it('should get fields value', () => {
-    formStore = useFormStore<TestForm>('test');
+    const formStore: FormStore<TestForm> = useFormStore<TestForm>('test');
     const modelRef = reactive(testForm);
     formStore.setModel(modelRef);
     flushPromises().then(() => {
@@ -105,9 +114,30 @@ describe('FormStore', () => {
     });
   });
 
-  it('should validate', () => {
-    formStore = useFormStore<TestForm>('test');
+  it('should validate and resolve correct forms', () => {
+    const formStore: FormStore<TestForm> = useFormStore<TestForm>('test');
     const modelRef = reactive(testForm);
+    const rules: RulesObject<TestForm> = reactive({
+      name: [{ required: true, message: 'Name is required' }],
+      email: [{ required: true, message: 'Email is required' }],
+    });
+    formStore.setModel(modelRef);
+    formStore.setRules(rules);
+
+    const validateSpy = vi.fn(formStore.form.validate);
+
+    flushPromises().then(() => {
+      validateSpy();
+      flushPromises().then(() => {
+        expect(validateSpy).toHaveResolved();
+        expect(validateSpy()).resolves.toStrictEqual(testForm);
+      });
+    });
+  });
+
+  it('should validate and reject incorrect forms', () => {
+    const formStore: FormStore<TestForm> = useFormStore<TestForm>('test');
+    const modelRef = reactive({ name: '', email: testForm.email });
     const rules: RulesObject<TestForm> = reactive({
       name: [{ required: true, message: 'Name is required' }],
       email: [{ required: true, message: 'Email is required' }],
@@ -120,18 +150,46 @@ describe('FormStore', () => {
     flushPromises().then(() => {
       validateSpy();
       flushPromises().then(() => {
-        expect(validateSpy).toHaveResolved();
-        expect(validateSpy).rejects.toThrowError();
-        expect(formStore.form.validate).resolves.toBeCalled();
+        expect(validateSpy).not.toHaveResolved();
+        expect(validateSpy).rejects.toStrictEqual({
+          errorFields: [
+            {
+              errors: ['Name is required'],
+              name: 'name',
+              warnings: [],
+            },
+          ],
+          outOfDate: false,
+          values: {
+            email: 'john.doe@gmail.com',
+            name: '',
+          },
+        });
       });
     });
+  });
 
-    flushPromises().then(() => {
-      formStore.updateField('name', '');
+  it("should set the onSubmit callback and call it when the form is submitted and it's valid", async () => {
+    const formStore: FormStore<TestForm> = useFormStore<TestForm>('test');
+    const modelRef = reactive(testForm);
+    formStore.setModel(modelRef);
+    const onSubmit = vi.fn(() => 0);
+    formStore.setOnSubmit(onSubmit);
+    const submitSpy = vi.fn(formStore.submit);
 
-      flushPromises().then(() => {
-        expect(formStore.validate()).rejects.toThrowError();
-      });
-    });
+    await flushPromises();
+
+    expect(formStore.onSubmit).toBe(onSubmit);
+    expect(formStore.form).toBeDefined();
+    expect(onSubmit).not.toHaveBeenCalled();
+
+    submitSpy();
+    expect(submitSpy).not.toThrowError();
+    expect(submitSpy).toReturnWith(Promise.resolve());
+
+    await flushPromises();
+
+    expect(onSubmit).toHaveBeenCalled();
+    expect(onSubmit).toHaveBeenCalledWith(testForm);
   });
 });
