@@ -4,7 +4,7 @@ import type { FormType } from './types';
 import type { FieldData } from 'ant-design-vue/es/form/interface';
 import { Form } from 'ant-design-vue';
 import type { Rule } from 'ant-design-vue/es/form';
-import type { ArgsType } from '@/utils/types';
+import type { ArgsType } from '@/models/utils';
 
 const { useForm } = Form;
 
