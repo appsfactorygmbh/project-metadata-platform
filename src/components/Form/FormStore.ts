@@ -90,6 +90,9 @@ export const useFormStore = <T extends FormState>(
         this.updateForm();
         return this.form.validate();
       },
+      clearValidate() {
+        this.form.clearValidate();
+      },
       async submit() {
         if (!this.rulesRef) {
           console.warn('Form rules are not defined before submitting.');
@@ -113,6 +116,9 @@ export const useFormStore = <T extends FormState>(
       },
       getModel(): T {
         return this.modelRef;
+      },
+      validateInfos() {
+        return this.getForm.validateInfos;
       },
     },
   })();

@@ -14,6 +14,7 @@
 
   const modelRef = reactive<GlobalPluginFormData>(initialValues);
 
+  // TODO: add validation for keys
   const rulesRef = reactive<RulesObject<GlobalPluginFormData>>({
     pluginName: [
       {
