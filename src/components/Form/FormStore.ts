@@ -117,8 +117,8 @@ export const useFormStore = <T extends FormState>(
       getModel(): T {
         return this.modelRef;
       },
-      validateInfos() {
-        return this.getForm.validateInfos;
+      validateInfos(): FormType['validateInfos'] {
+        return this.form.validateInfos;
       },
     },
   })();
