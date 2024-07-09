@@ -251,6 +251,8 @@
     display: table;
     padding-left: 1em;
     padding-right: 1em;
+    border: 2px solid red;
+    align-items: left;
   }
 
   .button {
@@ -266,7 +268,7 @@
   }
 
   .icon {
-    color: black; //TODO: change to appsfactory grey
+    color: black;
     font-size: 2.5em;
   }
 
