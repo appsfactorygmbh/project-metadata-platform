@@ -8,28 +8,16 @@
   }>();
 
   const open = ref<boolean>(true); //TODO: set default to false after implementing button
-  const cancelFetch = ref<boolean>();
-
-  const fetchError = ref<boolean>(false);
 
   // checks for correct input
   const handleOk = () => {
-    cancelFetch.value = false;
-    formStore
-      .validate()
-      .then(() => {
-        console.log('formStore.getFieldsValue', formStore.getFieldsValue);
-        console.log('formStore validateInfos', formStore.form.validateInfos);
-        formStore.submit();
-      })
-      .catch((error: unknown) => {
-        console.log('error', error);
-      });
+    formStore.submit().catch((e) => {
+      console.log(e);
+    });
   };
 
   const resetModal = () => {
     formStore.resetFields();
-    fetchError.value = false;
   };
 </script>
 
