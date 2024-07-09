@@ -49,7 +49,7 @@
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
-      sm: { span: 4 },
+      sm: { span: 7 },
     },
     wrapperCol: {
       xs: { span: 24 },
@@ -60,7 +60,7 @@
   const formItemLayoutWithOutLabel = {
     wrapperCol: {
       xs: { span: 24, offset: 0 },
-      sm: { span: 20, offset: 4 },
+      sm: { span: 20, offset: 0 },
     },
   };
 
@@ -80,8 +80,23 @@
 </script>
 
 <template>
-  <a-form v-bind="formItemLayoutWithOutLabel" ref="formRef" :model="modelRef">
-    <a-form-item name="pluginName" :no-style="true" :whitespace="true">
+  <a-form
+    v-bind="formItemLayoutWithOutLabel"
+    ref="formRef"
+    :model="modelRef"
+    layout="horizontal"
+  >
+    <a-form-item
+      name="pluginName"
+      :no-style="false"
+      :whitespace="true"
+      :rules="{
+        required: true,
+        message: 'Please insert the plugin name.',
+        trigger: 'change',
+        type: 'string',
+      }"
+    >
       <a-input
         v-model:value="modelRef.pluginName"
         class="inputField"
@@ -92,8 +107,9 @@
     <a-form-item
       v-for="(key, index) in modelRef.keys"
       :key="key.key"
-      v-bind="index === 0 ? formItemLayout : {}"
-      :label="index === 0 ? 'ProjectKeys' : ''"
+      v-bind="formItemLayout"
+      :label="index === 0 ? 'Project Keys' : ' '"
+      :colon="false"
       :name="['keys', index, 'value']"
       :rules="{
         required: true,
@@ -112,12 +128,14 @@
         @click="removeProjectKey(key)"
       />
     </a-form-item>
-    <a-form-item v-bind="formItemLayoutWithOutLabel">
-      <a-button type="dashed" style="width: 60%" @click="addProjectKey">
-        <PlusOutlined />
-        Add ProjectKey
-      </a-button>
-    </a-form-item>
+    <a-row style="display: flex; justify-content: center">
+      <a-form-item v-bind="formItemLayoutWithOutLabel">
+        <a-button type="dashed" @click="addProjectKey">
+          <PlusOutlined />
+          Add ProjectKey
+        </a-button>
+      </a-form-item>
+    </a-row>
   </a-form>
   <contextHolder></contextHolder>
 </template>

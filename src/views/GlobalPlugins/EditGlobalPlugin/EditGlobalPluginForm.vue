@@ -44,13 +44,10 @@
         const globalPluginData =
           await pluginService.fetchGlobalPluginData(numericPluginId);
         initialValues.pluginName = globalPluginData.pluginName;
-        const keysArray = Object.entries(globalPluginData.keys).map(
-          ([, value], index) => ({
-            key: index,
-            value: value as string,
-          }),
-        );
-        initialValues.keys = keysArray;
+        initialValues.keys = globalPluginData.keys.map((keyObj, index) => ({
+          key: index,
+          value: keyObj.key as string,
+        }));
       }
     }
   });

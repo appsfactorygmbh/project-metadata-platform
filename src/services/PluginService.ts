@@ -44,7 +44,10 @@ class PluginService {
     return {
       id: pluginId,
       pluginName: 'Test Plugin',
-      keys: { key1: 'value1', key2: 'value2' },
+      keys: [
+        { key: 'value1', archived: false },
+        { key: 'value2', archived: false },
+      ],
     };
   };
 }
