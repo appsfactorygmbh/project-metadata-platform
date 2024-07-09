@@ -1,54 +1,53 @@
 <script setup lang="ts">
     import { ref } from 'vue';
-    import FormModal from '../Modal/FormModal.vue';
-    import { usePluginsStore } from '@/store';
-    import { PluginModel } from '@/models/Plugin';
+    import AddGlobalPluginView from '@/views/GlobalPlugins/AddGlobalPlugin/AddGlobalPluginView.vue';
 
-    const isModalOpen = ref(false);
-    const pluginsStore = usePluginsStore();
+    // It controls the visibility of the modal.
+    const openModal = ref<boolean>(false);
 
-    // opens the modal
-    const openModal = () => {
-        isModalOpen.value = true
-    }
-
-    // closes the modal
-    const closeModal = () => {
-        isModalOpen.value = true
-    }
-
-    // sends form
-    const handleFormSubmit = (plugin: PluginModel) => {
-        pluginsStore.createPlugin(plugin);
-        closeModal();
-    }
-
-    // creates form-object from PluginModel.ts
-    const form = ref({
-        modelRef: ref<PluginModel>({
-            pluginName: '',
-            displayName: '',
-            url: '' 
-        })
-    })
+    // Opens the modal.
+    const handleClick = () => {
+        openModal.value = true;
+        console.log('Open modal');
+    };
 </script>
 
 <template>
-    <div>
-        <button @click="openModal">+</button>
-        <FormModal
-            v-if="isModalOpen"
-            :onSubmit="handleFormSubmit"
-            :form='form.modelRef'
-        >
-        </FormModal>
-    </div>
+    <!-- Placeholder for adding new Plugin -->
+    <a-card
+        class="card"
+        :bordered="false"
+        :bodyStyle="{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '15px',
+        }"
+        @click="handleClick"
+    >
+        <h1>+</h1>
+    </a-card>
+
+    <!-- Opens modal for adding new Plugin when openModal has value "true" -->
+    <AddGlobalPluginView v-if="openModal" />
 </template>
 
-<style scoped>
-    button {
-        font-size: 24px;
-        padding: 10px 20px;
+<style scoped lang="scss">
+    .card {
         cursor: pointer;
+        width: max-content;
+        min-width: 200px;
+        max-width: 300px;
+        border: 1px dashed #d9d9d9;
+        display: flex;
+        flex-direction: column;
+        color: black;
+        transition: 0.1s ease-in-out;
+
+        &:hover {
+        cursor: pointer;
+        transform: scale(1.1);
+        }
     }
 </style>
