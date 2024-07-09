@@ -1729,23 +1729,23 @@ __metadata:
   resolved "https://registry.npmjs.org/@vitest/snapshot/-/snapshot-1.6.0.tgz"
   integrity sha512-+Hx43f8Chus+DCmygqqfetcAZrDJwvTj0ymqjQq4CvmpKFSTVteEOBzCusu1x2tt4OJcvBflyHUE0DZSLgEMtQ==
   dependencies:
-    "@vitest/utils" "1.6.0"
-    p-limit "^5.0.0"
-    pathe "^1.1.1"
+    "@types/node": "npm:*"
+    "@types/tough-cookie": "npm:*"
+    parse5: "npm:^7.0.0"
+  checksum: 10c0/c0c0025adc2b193e85453eeeea168bb909f0ebad08d6552be7474a407e9c163db8f696dcf1e3cbe8cb9c9d970ba45f4386171794509c1a0fe5d1fed72c91679d
+  languageName: node
+  linkType: hard
 
-"@vitest/snapshot@1.6.0":
-  version "1.6.0"
-  resolved "https://registry.npmjs.org/@vitest/snapshot/-/snapshot-1.6.0.tgz"
-  integrity sha512-+Hx43f8Chus+DCmygqqfetcAZrDJwvTj0ymqjQq4CvmpKFSTVteEOBzCusu1x2tt4OJcvBflyHUE0DZSLgEMtQ==
-  dependencies:
-    magic-string "^0.30.5"
-    pathe "^1.1.1"
-    pretty-format "^29.7.0"
+"@types/json-schema@npm:*, @types/json-schema@npm:^7.0.4, @types/json-schema@npm:^7.0.5, @types/json-schema@npm:^7.0.8":
+  version: 7.0.15
+  resolution: "@types/json-schema@npm:7.0.15"
+  checksum: 10c0/a996a745e6c5d60292f36731dd41341339d4eeed8180bb09226e5c8d23759067692b1d88e5d91d72ee83dfc00d3aca8e7bd43ea120516c17922cbcb7c3e252db
+  languageName: node
+  linkType: hard
 
-"@vitest/spy@1.6.0":
-  version "1.6.0"
-  resolved "https://registry.npmjs.org/@vitest/spy/-/spy-1.6.0.tgz"
-  integrity sha512-leUTap6B/cqi/bQkXUu6bQV5TZPx7pmMBKBQiI0rJA8c3pB56ZsaTbREnF7CJfmvAS4V2cXIBAh/3rVwrrCYgw==
+"@types/lodash-es@npm:^4.17.12":
+  version: 4.17.12
+  resolution: "@types/lodash-es@npm:4.17.12"
     magic-string "^0.30.5"
     pathe "^1.1.1"
     pretty-format "^29.7.0"
@@ -1762,235 +1762,172 @@ __metadata:
   resolved "https://registry.npmjs.org/@vitest/ui/-/ui-1.6.0.tgz"
   integrity sha512-k3Lyo+ONLOgylctiGovRKy7V4+dIN2yxstX3eY5cWFXH6WP+ooVX79YSyi0GagdTQzLmT43BF27T0s6dOIPBXA==
   dependencies:
-    tinyspy "^2.2.0"
+    "@types/lodash": "npm:*"
+  checksum: 10c0/5d12d2cede07f07ab067541371ed1b838a33edb3c35cb81b73284e93c6fd0c4bbeaefee984e69294bffb53f62d7272c5d679fdba8e595ff71e11d00f2601dde0
+  languageName: node
+  linkType: hard
 
-"@vitest/ui@^1.6.0", "@vitest/ui@1.6.0":
-  version "1.6.0"
-  resolved "https://registry.npmjs.org/@vitest/ui/-/ui-1.6.0.tgz"
-  integrity sha512-k3Lyo+ONLOgylctiGovRKy7V4+dIN2yxstX3eY5cWFXH6WP+ooVX79YSyi0GagdTQzLmT43BF27T0s6dOIPBXA==
+"@types/lodash@npm:*, @types/lodash@npm:^4":
+  version: 4.17.4
+  resolution: "@types/lodash@npm:4.17.4"
+  checksum: 10c0/0124c64cb9fe7a0f78b6777955abd05ef0d97844d49118652eae45f8fa57bfb7f5a7a9bccc0b5a84c0a6dc09631042e4590cb665acb9d58dfd5e6543c75341ec
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:*, @types/node@npm:^20.14.2":
+  version: 20.14.2
+  resolution: "@types/node@npm:20.14.2"
   dependencies:
-    "@vitest/utils" "1.6.0"
-    fast-glob "^3.3.2"
-    fflate "^0.8.1"
-    flatted "^3.2.9"
-    pathe "^1.1.1"
-    picocolors "^1.0.0"
-    sirv "^2.0.4"
+    undici-types: "npm:~5.26.4"
+  checksum: 10c0/2d86e5f2227aaa42212e82ea0affe72799111b888ff900916376450b02b09b963ca888b20d9c332d8d2b833ed4781987867a38eaa2e4863fa8439071468b0a6f
+  languageName: node
+  linkType: hard
 
-"@vitest/utils@1.6.0":
-  version "1.6.0"
-  resolved "https://registry.npmjs.org/@vitest/utils/-/utils-1.6.0.tgz"
-  integrity sha512-21cPiuGMoMZwiOHa2i4LXkMkMkCGzA+MVFV70jRwHo95dL4x/ts5GZhML1QWuy7yfp3WzK3lRvZi3JnXTYqrBw==
+"@types/normalize-package-data@npm:^2.4.0":
+  version: 2.4.4
+  resolution: "@types/normalize-package-data@npm:2.4.4"
+  checksum: 10c0/aef7bb9b015883d6f4119c423dd28c4bdc17b0e8a0ccf112c78b4fe0e91fbc4af7c6204b04bba0e199a57d2f3fbbd5b4a14bf8739bf9d2a39b2a0aad545e0f86
+  languageName: node
+  linkType: hard
+
+"@types/parse-json@npm:^4.0.0":
+  version: 4.0.2
+  resolution: "@types/parse-json@npm:4.0.2"
+  checksum: 10c0/b1b863ac34a2c2172fbe0807a1ec4d5cb684e48d422d15ec95980b81475fac4fdb3768a8b13eef39130203a7c04340fc167bae057c7ebcafd7dec9fe6c36aeb1
+  languageName: node
+  linkType: hard
+
+"@types/splitpanes@npm:^2.2.6":
+  version: 2.2.6
+  resolution: "@types/splitpanes@npm:2.2.6"
   dependencies:
-    diff-sequences "^29.6.3"
-    estree-walker "^3.0.3"
-    loupe "^2.3.7"
-    pretty-format "^29.7.0"
+    vue: "npm:^2.0.0"
+  checksum: 10c0/c2c1cc6738c5ff7b7a9fafdd4f514f317fc3c73ee46769b2408f256d9fc53f96053afd7ea07e7e3397e64f298b0fa07ad11be2b6e11147bbd99a8d0139429d0f
+  languageName: node
+  linkType: hard
 
-"@volar/language-core@~2.2.4", "@volar/language-core@2.2.5":
-  version "2.2.5"
-  resolved "https://registry.npmjs.org/@volar/language-core/-/language-core-2.2.5.tgz"
-  integrity sha512-2htyAuxRrAgETmFeUhT4XLELk3LiEcqoW/B8YUXMF6BrGWLMwIR09MFaZYvrA2UhbdAeSyeQ726HaWSWkexUcQ==
+"@types/stack-utils@npm:^2.0.0":
+  version: 2.0.3
+  resolution: "@types/stack-utils@npm:2.0.3"
+  checksum: 10c0/1f4658385ae936330581bcb8aa3a066df03867d90281cdf89cc356d404bd6579be0f11902304e1f775d92df22c6dd761d4451c804b0a4fba973e06211e9bd77c
+  languageName: node
+  linkType: hard
+
+"@types/tough-cookie@npm:*":
+  version: 4.0.5
+  resolution: "@types/tough-cookie@npm:4.0.5"
+  checksum: 10c0/68c6921721a3dcb40451543db2174a145ef915bc8bcbe7ad4e59194a0238e776e782b896c7a59f4b93ac6acefca9161fccb31d1ce3b3445cb6faa467297fb473
+  languageName: node
+  linkType: hard
+
+"@types/web-bluetooth@npm:^0.0.20":
+  version: 0.0.20
+  resolution: "@types/web-bluetooth@npm:0.0.20"
+  checksum: 10c0/3a49bd9396506af8f1b047db087aeeea9fe4301b7fad4fe06ae0f6e00d331138caae878fd09e6410658b70b4aaf10e4b191c41c1a5ff72211fe58da290c7d003
+  languageName: node
+  linkType: hard
+
+"@types/webpack-env@npm:^1.15.2":
+  version: 1.18.5
+  resolution: "@types/webpack-env@npm:1.18.5"
+  checksum: 10c0/b9e4876e8c7cae419896249f9ed795db283c008fe1d38efa679cbbf05194fc2eea2a5bfb4ff4393d109e3a9895416dadf5f3ddd5c22931b678062230f860454e
+  languageName: node
+  linkType: hard
+
+"@types/yargs-parser@npm:*":
+  version: 21.0.3
+  resolution: "@types/yargs-parser@npm:21.0.3"
+  checksum: 10c0/e71c3bd9d0b73ca82e10bee2064c384ab70f61034bbfb78e74f5206283fc16a6d85267b606b5c22cb2a3338373586786fed595b2009825d6a9115afba36560a0
+  languageName: node
+  linkType: hard
+
+"@types/yargs@npm:^17.0.8":
+  version: 17.0.32
+  resolution: "@types/yargs@npm:17.0.32"
   dependencies:
-    "@volar/source-map" "2.2.5"
+    "@types/yargs-parser": "npm:*"
+  checksum: 10c0/2095e8aad8a4e66b86147415364266b8d607a3b95b4239623423efd7e29df93ba81bb862784a6e08664f645cc1981b25fd598f532019174cd3e5e1e689e1cccf
+  languageName: node
+  linkType: hard
 
-"@volar/source-map@2.2.5":
-  version "2.2.5"
-  resolved "https://registry.npmjs.org/@volar/source-map/-/source-map-2.2.5.tgz"
-  integrity sha512-wrOEIiZNf4E+PWB0AxyM4tfhkfldPsb3bxg8N6FHrxJH2ohar7aGu48e98bp3pR9HUA7P/pR9VrLmkTrgCCnWQ==
+"@typescript-eslint/eslint-plugin@npm:7.12.0":
+  version: 7.12.0
+  resolution: "@typescript-eslint/eslint-plugin@npm:7.12.0"
   dependencies:
-    muggle-string "^0.4.0"
+    "@eslint-community/regexpp": "npm:^4.10.0"
+    "@typescript-eslint/scope-manager": "npm:7.12.0"
+    "@typescript-eslint/type-utils": "npm:7.12.0"
+    "@typescript-eslint/utils": "npm:7.12.0"
+    "@typescript-eslint/visitor-keys": "npm:7.12.0"
+    graphemer: "npm:^1.4.0"
+    ignore: "npm:^5.3.1"
+    natural-compare: "npm:^1.4.0"
+    ts-api-utils: "npm:^1.3.0"
+  peerDependencies:
+    "@typescript-eslint/parser": ^7.0.0
+    eslint: ^8.56.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/abf899e07144e8edd8ae010d25e4679e2acded407a10efc6aaa7ee325af8daf0dd149946ad58e46982e29e0a23f56b1e0dd461ef09aab09b0d94fc24ffc827c2
+  languageName: node
+  linkType: hard
 
-"@volar/typescript@~2.2.4":
-  version "2.2.5"
-  resolved "https://registry.npmjs.org/@volar/typescript/-/typescript-2.2.5.tgz"
-  integrity sha512-eSV/n75+ppfEVugMC/salZsI44nXDPAyL6+iTYCNLtiLHGJsnMv9GwiDMujrvAUj/aLQyqRJgYtXRoxop2clCw==
+"@typescript-eslint/parser@npm:7.12.0":
+  version: 7.12.0
+  resolution: "@typescript-eslint/parser@npm:7.12.0"
   dependencies:
-    "@volar/language-core" "2.2.5"
-    path-browserify "^1.0.1"
+    "@typescript-eslint/scope-manager": "npm:7.12.0"
+    "@typescript-eslint/types": "npm:7.12.0"
+    "@typescript-eslint/typescript-estree": "npm:7.12.0"
+    "@typescript-eslint/visitor-keys": "npm:7.12.0"
+    debug: "npm:^4.3.4"
+  peerDependencies:
+    eslint: ^8.56.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/223c32a6ba6cee770ee39108fb0a6d132283673d44c751bec85d8792df3382ddb839617787d183dc8fd7686d8a2018bf1ec0f3d63b7010c4370913f249c80fbc
+  languageName: node
+  linkType: hard
 
-"@vue/babel-helper-vue-transform-on@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.npmjs.org/@vue/babel-helper-vue-transform-on/-/babel-helper-vue-transform-on-1.2.2.tgz"
-  integrity sha512-nOttamHUR3YzdEqdM/XXDyCSdxMA9VizUKoroLX6yTyRtggzQMHXcmwh8a7ZErcJttIBIc9s68a1B8GZ+Dmvsw==
-
-"@vue/babel-plugin-jsx@^1.1.5", "@vue/babel-plugin-jsx@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.npmjs.org/@vue/babel-plugin-jsx/-/babel-plugin-jsx-1.2.2.tgz"
-  integrity sha512-nYTkZUVTu4nhP199UoORePsql0l+wj7v/oyQjtThUVhJl1U+6qHuoVhIvR3bf7eVKjbCK+Cs2AWd7mi9Mpz9rA==
+"@typescript-eslint/scope-manager@npm:7.12.0":
+  version: 7.12.0
+  resolution: "@typescript-eslint/scope-manager@npm:7.12.0"
   dependencies:
-    "@babel/helper-module-imports" "~7.22.15"
-    "@babel/helper-plugin-utils" "^7.22.5"
-    "@babel/plugin-syntax-jsx" "^7.23.3"
-    "@babel/template" "^7.23.9"
-    "@babel/traverse" "^7.23.9"
-    "@babel/types" "^7.23.9"
-    "@vue/babel-helper-vue-transform-on" "1.2.2"
-    "@vue/babel-plugin-resolve-type" "1.2.2"
-    camelcase "^6.3.0"
-    html-tags "^3.3.1"
-    svg-tags "^1.0.0"
+    "@typescript-eslint/types": "npm:7.12.0"
+    "@typescript-eslint/visitor-keys": "npm:7.12.0"
+  checksum: 10c0/7af53cd9045cc70459e4f451377affc0ef03e67bd743480ab2cbfebe1b7d8269fc639406966930c5abb26f1b633623c98442c2b60f6257e0ce1555439343d5e9
+  languageName: node
+  linkType: hard
 
-"@vue/babel-plugin-resolve-type@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.npmjs.org/@vue/babel-plugin-resolve-type/-/babel-plugin-resolve-type-1.2.2.tgz"
-  integrity sha512-EntyroPwNg5IPVdUJupqs0CFzuf6lUrVvCspmv2J1FITLeGnUCuoGNNk78dgCusxEiYj6RMkTJflGSxk5aIC4A==
+"@typescript-eslint/type-utils@npm:7.12.0":
+  version: 7.12.0
+  resolution: "@typescript-eslint/type-utils@npm:7.12.0"
   dependencies:
-    "@babel/code-frame" "^7.23.5"
-    "@babel/helper-module-imports" "~7.22.15"
-    "@babel/helper-plugin-utils" "^7.22.5"
-    "@babel/parser" "^7.23.9"
-    "@vue/compiler-sfc" "^3.4.15"
+    "@typescript-eslint/typescript-estree": "npm:7.12.0"
+    "@typescript-eslint/utils": "npm:7.12.0"
+    debug: "npm:^4.3.4"
+    ts-api-utils: "npm:^1.3.0"
+  peerDependencies:
+    eslint: ^8.56.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/41f4aa20d24724b461eb0cdac69d91ef60c2b628fb4a5739e4dbb8378aa4a7ff20c302f60e5d74ce75d5b99fcd3e3d71b9b3c96a1714aac47ce2ce5d6d611fcd
+  languageName: node
+  linkType: hard
 
-"@vue/cli-overlay@^5.0.8":
-  version "5.0.8"
-  resolved "https://registry.npmjs.org/@vue/cli-overlay/-/cli-overlay-5.0.8.tgz"
-  integrity sha512-KmtievE/B4kcXp6SuM2gzsnSd8WebkQpg3XaB6GmFh1BJGRqa1UiW9up7L/Q67uOdTigHxr5Ar2lZms4RcDjwQ==
+"@typescript-eslint/types@npm:7.12.0":
+  version: 7.12.0
+  resolution: "@typescript-eslint/types@npm:7.12.0"
+  checksum: 10c0/76786d02a0838750d74ad6e49b026875c0753b81c5a46a56525a1e82d89c0939a13434b03494e3b31b7ffbba7824f426c5b502a12337806a1f6ca560b5dad46c
+  languageName: node
+  linkType: hard
 
-"@vue/cli-plugin-router@^5.0.8":
-  version "5.0.8"
-  resolved "https://registry.npmjs.org/@vue/cli-plugin-router/-/cli-plugin-router-5.0.8.tgz"
-  integrity sha512-Gmv4dsGdAsWPqVijz3Ux2OS2HkMrWi1ENj2cYL75nUeL+Xj5HEstSqdtfZ0b1q9NCce+BFB6QnHfTBXc/fCvMg==
-  dependencies:
-    "@vue/cli-shared-utils" "^5.0.8"
-
-"@vue/cli-plugin-typescript@^5.0.8":
-  version "5.0.8"
-  resolved "https://registry.npmjs.org/@vue/cli-plugin-typescript/-/cli-plugin-typescript-5.0.8.tgz"
-  integrity sha512-JKJOwzJshBqsmp4yLBexwVMebOZ4VGJgbnYvmHVxasJOStF2RxwyW28ZF+zIvASGdat4sAUuo/3mAQyVhm7JHg==
-  dependencies:
-    "@babel/core" "^7.12.16"
-    "@types/webpack-env" "^1.15.2"
-    "@vue/cli-shared-utils" "^5.0.8"
-    babel-loader "^8.2.2"
-    fork-ts-checker-webpack-plugin "^6.4.0"
-    globby "^11.0.2"
-    thread-loader "^3.0.0"
-    ts-loader "^9.2.5"
-    webpack "^5.54.0"
-
-"@vue/cli-plugin-vuex@^5.0.8":
-  version "5.0.8"
-  resolved "https://registry.npmjs.org/@vue/cli-plugin-vuex/-/cli-plugin-vuex-5.0.8.tgz"
-  integrity sha512-HSYWPqrunRE5ZZs8kVwiY6oWcn95qf/OQabwLfprhdpFWAGtLStShjsGED2aDpSSeGAskQETrtR/5h7VqgIlBA==
-
-"@vue/cli-service@^3.0.0 || ^4.0.0 || ^5.0.0-0":
-  version "5.0.8"
-  resolved "https://registry.npmjs.org/@vue/cli-service/-/cli-service-5.0.8.tgz"
-  integrity sha512-nV7tYQLe7YsTtzFrfOMIHc5N2hp5lHG2rpYr0aNja9rNljdgcPZLyQRb2YRivTHqTv7lI962UXFURcpStHgyFw==
-  dependencies:
-    "@babel/helper-compilation-targets" "^7.12.16"
-    "@soda/friendly-errors-webpack-plugin" "^1.8.0"
-    "@soda/get-current-script" "^1.0.2"
-    "@types/minimist" "^1.2.0"
-    "@vue/cli-overlay" "^5.0.8"
-    "@vue/cli-plugin-router" "^5.0.8"
-    "@vue/cli-plugin-vuex" "^5.0.8"
-    "@vue/cli-shared-utils" "^5.0.8"
-    "@vue/component-compiler-utils" "^3.3.0"
-    "@vue/vue-loader-v15" "npm:vue-loader@^15.9.7"
-    "@vue/web-component-wrapper" "^1.3.0"
-    acorn "^8.0.5"
-    acorn-walk "^8.0.2"
-    address "^1.1.2"
-    autoprefixer "^10.2.4"
-    browserslist "^4.16.3"
-    case-sensitive-paths-webpack-plugin "^2.3.0"
-    cli-highlight "^2.1.10"
-    clipboardy "^2.3.0"
-    cliui "^7.0.4"
-    copy-webpack-plugin "^9.0.1"
-    css-loader "^6.5.0"
-    css-minimizer-webpack-plugin "^3.0.2"
-    cssnano "^5.0.0"
-    debug "^4.1.1"
-    default-gateway "^6.0.3"
-    dotenv "^10.0.0"
-    dotenv-expand "^5.1.0"
-    fs-extra "^9.1.0"
-    globby "^11.0.2"
-    hash-sum "^2.0.0"
-    html-webpack-plugin "^5.1.0"
-    is-file-esm "^1.0.0"
-    launch-editor-middleware "^2.2.1"
-    lodash.defaultsdeep "^4.6.1"
-    lodash.mapvalues "^4.6.0"
-    mini-css-extract-plugin "^2.5.3"
-    minimist "^1.2.5"
-    module-alias "^2.2.2"
-    portfinder "^1.0.26"
-    postcss "^8.2.6"
-    postcss-loader "^6.1.1"
-    progress-webpack-plugin "^1.0.12"
-    ssri "^8.0.1"
-    terser-webpack-plugin "^5.1.1"
-    thread-loader "^3.0.0"
-    vue-loader "^17.0.0"
-    vue-style-loader "^4.1.3"
-    webpack "^5.54.0"
-    webpack-bundle-analyzer "^4.4.0"
-    webpack-chain "^6.5.1"
-    webpack-dev-server "^4.7.3"
-    webpack-merge "^5.7.3"
-    webpack-virtual-modules "^0.4.2"
-    whatwg-fetch "^3.6.2"
-
-"@vue/cli-shared-utils@^5.0.8":
-  version "5.0.8"
-  resolved "https://registry.npmjs.org/@vue/cli-shared-utils/-/cli-shared-utils-5.0.8.tgz"
-  integrity sha512-uK2YB7bBVuQhjOJF+O52P9yFMXeJVj7ozqJkwYE9PlMHL1LMHjtCYm4cSdOebuPzyP+/9p0BimM/OqxsevIopQ==
-  dependencies:
-    "@achrinza/node-ipc" "^9.2.5"
-    chalk "^4.1.2"
-    execa "^1.0.0"
-    joi "^17.4.0"
-    launch-editor "^2.2.1"
-    lru-cache "^6.0.0"
-    node-fetch "^2.6.7"
-    open "^8.0.2"
-    ora "^5.3.0"
-    read-pkg "^5.1.1"
-    semver "^7.3.4"
-    strip-ansi "^6.0.0"
-
-"@vue/compiler-core@3.4.29":
-  version "3.4.29"
-  resolved "https://registry.npmjs.org/@vue/compiler-core/-/compiler-core-3.4.29.tgz"
-  integrity sha512-TFKiRkKKsRCKvg/jTSSKK7mYLJEQdUiUfykbG49rubC9SfDyvT2JrzTReopWlz2MxqeLyxh9UZhvxEIBgAhtrg==
-  dependencies:
-    "@babel/parser" "^7.24.7"
-    "@vue/shared" "3.4.29"
-    entities "^4.5.0"
-    estree-walker "^2.0.2"
-    source-map-js "^1.2.0"
-
-"@vue/compiler-dom@^3.3.4", "@vue/compiler-dom@^3.4.0", "@vue/compiler-dom@3.4.29":
-  version "3.4.29"
-  resolved "https://registry.npmjs.org/@vue/compiler-dom/-/compiler-dom-3.4.29.tgz"
-  integrity sha512-A6+iZ2fKIEGnfPJejdB7b1FlJzgiD+Y/sxxKwJWg1EbJu6ZPgzaPQQ51ESGNv0CP6jm6Z7/pO6Ia8Ze6IKrX7w==
-  dependencies:
-    "@vue/compiler-core" "3.4.29"
-    "@vue/shared" "3.4.29"
-
-"@vue/compiler-sfc@^3.4.15", "@vue/compiler-sfc@>= 3", "@vue/compiler-sfc@3.4.29":
-  version "3.4.29"
-  resolved "https://registry.npmjs.org/@vue/compiler-sfc/-/compiler-sfc-3.4.29.tgz"
-  integrity sha512-zygDcEtn8ZimDlrEQyLUovoWgKQic6aEQqRXce2WXBvSeHbEbcAsXyCk9oG33ZkyWH4sl9D3tkYc1idoOkdqZQ==
-  dependencies:
-    "@babel/parser" "^7.24.7"
-    "@vue/compiler-core" "3.4.29"
-    "@vue/compiler-dom" "3.4.29"
-    "@vue/compiler-ssr" "3.4.29"
-    "@vue/shared" "3.4.29"
-    estree-walker "^2.0.2"
-    magic-string "^0.30.10"
-    postcss "^8.4.38"
-    source-map-js "^1.2.0"
-
-"@vue/compiler-sfc@2.7.16":
-  version "2.7.16"
-  resolved "https://registry.npmjs.org/@vue/compiler-sfc/-/compiler-sfc-2.7.16.tgz"
-  integrity sha512-KWhJ9k5nXuNtygPU7+t1rX6baZeqOYLEforUPjgNDBnLicfHCoi48H87Q8XyLZOrNNsmhuwKqtpDQWjEFe6Ekg==
+"@typescript-eslint/typescript-estree@npm:7.12.0":
+  version: 7.12.0
+  resolution: "@typescript-eslint/typescript-estree@npm:7.12.0"
   dependencies:
     "@typescript-eslint/types": "npm:7.12.0"
     "@typescript-eslint/visitor-keys": "npm:7.12.0"
