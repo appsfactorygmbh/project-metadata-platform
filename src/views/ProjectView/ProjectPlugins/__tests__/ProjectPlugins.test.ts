@@ -12,8 +12,8 @@ vi.mock('@/services/PluginService', () => ({
   },
 }));
 
-// Define a PluginView component for testing
-const PluginView = defineComponent({
+// Define a ProjectPlugins component for testing
+const ProjectPlugins = defineComponent({
   setup() {
     const pluginStore = usePluginsStore();
     const plugins = computed(() => toRaw(pluginStore.getPlugins));
@@ -22,7 +22,7 @@ const PluginView = defineComponent({
   template: '<div></div>',
 });
 
-describe('PluginView', () => {
+describe('ProjectPlugins', () => {
   beforeEach(() => {
     // Set up a new Pinia store instance before each test
     setActivePinia(createPinia());
@@ -42,7 +42,7 @@ describe('PluginView', () => {
     store.setPlugins(mockPlugins);
 
     // Mount the PluginView component
-    const wrapper = shallowMount(PluginView);
+    const wrapper = shallowMount(ProjectPlugins);
 
     // Access the computed plugins
     const computedPlugins = wrapper.vm.plugins;

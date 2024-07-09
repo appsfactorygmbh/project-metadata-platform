@@ -12,7 +12,9 @@
 
 <template>
   <a-float-button
-    v-if="props.button.status == 'activated'"
+    v-if="
+      props.button.status == 'activated' || props.button.status === undefined
+    "
     :type="props.button.type"
     :shape="props.button.shape"
     :tooltip="props.button.tooltip"

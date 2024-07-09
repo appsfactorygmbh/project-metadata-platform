@@ -35,7 +35,7 @@
         break;
       }
       case 'Global Logs': {
-        router.push(`/settings/global-logs`);
+        router.push(`/settings/global_logs`);
         break;
       }
       default: {
@@ -43,10 +43,6 @@
         break;
       }
     }
-  };
-
-  const placeholder = () => {
-    console.log('Icon clicked');
   };
 </script>
 
@@ -57,7 +53,7 @@
       v-model:collapsed="collapsed"
       class="sideSlider"
       collapsible
-      :width="250"
+      :width="280"
     >
       <!-- return to homepage button-->
       <a-layout-header />
@@ -75,7 +71,7 @@
           <template #title>
             <span>
               <user-outlined class="icons" />
-              <span>User</span>
+              <span>User Management</span>
             </span>
           </template>
           <a-menu-item key="4" @click="clickTab('User')">User 1</a-menu-item>
@@ -96,7 +92,7 @@
       <a-layout-content>
         <!-- breadcrumbs -->
         <a-breadcrumb>
-          <a-breadcrumb-item @click="placeholder">Setting</a-breadcrumb-item>
+          <a-breadcrumb-item>Setting</a-breadcrumb-item>
           <a-breadcrumb-item> {{ tab }} </a-breadcrumb-item>
         </a-breadcrumb>
         <div style="padding: 24px; min-height: 650px">

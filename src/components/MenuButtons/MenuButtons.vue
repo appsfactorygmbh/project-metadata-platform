@@ -14,7 +14,6 @@
     {
       name: 'SettingsButton',
       onClick: () => {
-        console.log('Settings clicked');
         goToSetting();
       },
       icon: SettingOutlined,
@@ -38,7 +37,7 @@
   <FloatingButtonGroup :buttons="buttons" class="menu" />
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
   .menu {
     top: 20px;
   }
