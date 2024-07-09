@@ -1,4 +1,4 @@
-import CreateGlobalPluginView from "./CreateGlobalPluginView.vue";
-import CreateGlobalPluginForm from "./CreateGlobalPluginForm.vue"
+import CreateGlobalPluginView from './CreateGlobalPluginView.vue';
+import CreateGlobalPluginForm from './CreateGlobalPluginForm.vue';
 
-export {CreateGlobalPluginView, CreateGlobalPluginForm}
+export { CreateGlobalPluginView, CreateGlobalPluginForm };

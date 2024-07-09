@@ -37,6 +37,33 @@ class PluginService {
       return [];
     }
   };
+
+  fetchGlobalPluginData = async (pluginId: number) => {
+    //   try {
+    //     const response = await fetch(
+    //       import.meta.env.VITE_BACKEND_URL + '/plugins/' + pluginId.toString(),
+    //     );
+    //     if (!response.ok)
+    //       throw new Error('Error when trying to fetch global Plugin');
+    //     const data = await response.json();
+    //     console.log('data from fetch: ', data);
+    //     return data;
+    //   } catch (error) {
+    //     console.log(error);
+    //     return [];
+    //   }
+    // };
+
+    /* mock of function, actual function body is above */
+    return {
+      id: pluginId,
+      pluginName: 'Test Plugin',
+      keys: [
+        { key: 'value1', archived: false },
+        { key: 'value2', archived: false },
+      ],
+    };
+  };
 }
 
 const pluginService = new PluginService();

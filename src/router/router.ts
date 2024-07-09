@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { SplitView } from '@/views';
 import { CreateGlobalPluginView } from '@/views/GlobalPlugins/CreateGlobalPlugin';
 import { AddGlobalPluginView } from '@/views/GlobalPlugins/AddGlobalPlugin';
+import { EditGlobalPluginView } from '@/views/GlobalPlugins/EditGlobalPlugin';
 import { ProviderCollection } from './Provider';
 
 const router = createRouter({
@@ -21,6 +22,11 @@ const router = createRouter({
           path: '/settings/plugins/create',
           name: 'CreateGlobalPlugin',
           component: CreateGlobalPluginView,
+        },
+        {
+          path: '/settings/plugins/edit/:pluginId',
+          name: 'EditGlobalPlugin',
+          component: EditGlobalPluginView,
         },
         {
           path: '/project/plugins/add',

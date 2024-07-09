@@ -2,9 +2,11 @@
   import { type FormSubmitType } from '@/components/Form';
   import { notification } from 'ant-design-vue';
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
-  import { inject, reactive } from 'vue';
+  import { inject, reactive, onMounted } from 'vue';
   //import type { CreatePluginModel } from '@/models/Plugin';
   import { type FormStore } from '@/components/Form';
+  import { useRoute } from 'vue-router';
+  import { pluginService } from '@/services';
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
   import type { GlobalPluginFormData } from '../GlobalPluginForm';
 
@@ -28,12 +30,29 @@
     }
   };
 
-  formStore.setOnSubmit(onSubmit);
-
   const initialValues = reactive<GlobalPluginFormData>({
     pluginName: '',
     keys: [],
   });
+
+  onMounted(async () => {
+    const route = useRoute();
+    const { pluginId } = route.params;
+    if (typeof pluginId === 'string') {
+      const numericPluginId = parseInt(pluginId, 10);
+      if (!isNaN(numericPluginId)) {
+        const globalPluginData =
+          await pluginService.fetchGlobalPluginData(numericPluginId);
+        initialValues.pluginName = globalPluginData.pluginName;
+        initialValues.keys = globalPluginData.keys.map((keyObj, index) => ({
+          key: index,
+          value: keyObj.key as string,
+        }));
+      }
+    }
+  });
+
+  formStore.setOnSubmit(onSubmit);
 </script>
 
 <template>
