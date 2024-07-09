@@ -53,6 +53,6 @@ describe('SettingView.vue', () => {
     expect(useRouter().push).toHaveBeenCalledWith('/settings/plugins');
 
     await wrapper.find('.item3').trigger('click');
-    expect(useRouter().push).toHaveBeenCalledWith('/settings/global-logs');
+    expect(useRouter().push).toHaveBeenCalledWith('/settings/global_logs');
   });
 });
