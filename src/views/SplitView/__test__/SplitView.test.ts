@@ -14,7 +14,7 @@ describe('SplitView.vue', () => {
           ProjectSearchView: {
             template: '<span />',
           },
-          ProjectInformationView: {
+          ProjectView: {
             template: '<span />',
           },
         },

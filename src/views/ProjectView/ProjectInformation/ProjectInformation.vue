@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-  import { inject, onMounted, toRaw, reactive, onBeforeMount } from 'vue';
+  import { inject, onMounted, toRaw, reactive } from 'vue';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
-  import { pluginStoreSymbol } from '@/store/injectionSymbols';
-  import PluginView from '@/views/PluginView/PluginView.vue';
+  import { useProjectStore } from '@/store';
+  import { storeToRefs } from 'pinia';
+  import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
   import { EditOutlined } from '@ant-design/icons-vue';
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
@@ -11,13 +12,22 @@
   import type { DetailedProjectModel } from '@/models/Project';
   import type { UpdateProjectModel } from '@/models/Project';
 
-  const projectsStore = inject(projectsStoreSymbol);
-
-  const isLoading = computed(() => projectsStore?.getIsLoadingProject);
-
-  onBeforeMount(async () => {
-    projectsStore?.fetchProject(100);
+  const props = defineProps({
+    isTest: {
+      type: Boolean,
+      default: false,
+    },
   });
+
+  const projectsStore = props.isTest
+    ? useProjectStore()
+    : inject(projectsStoreSymbol)!;
+
+  const { getIsLoadingProject } = storeToRefs(projectsStore);
+  const { getIsLoading } = storeToRefs(projectsStore);
+  const isLoading = computed(
+    () => getIsLoadingProject.value || getIsLoading.value,
+  );
 
   const { isEditing, stopEditing, startEditing } = useEditing();
 
@@ -25,11 +35,11 @@
   const pluginStore = inject(pluginStoreSymbol)!;
 
   onMounted(async () => {
-    const project = projectsStore?.getProject;
+    const project = projectsStore.getProject;
     if (project) addData(project);
 
-    const data: ComputedRef<DetailedProjectModel | null | undefined> = computed(
-      () => projectsStore?.getProject,
+    const data: ComputedRef<DetailedProjectModel | null> = computed(
+      () => projectsStore.getProject,
     );
 
     watch(
@@ -190,7 +200,6 @@
       </a-flex>
     </div>
   </div>
-  <PluginView v-model="pluginModel" :project-i-d="100"></PluginView>
 </template>
 
 <script lang="ts">
@@ -321,11 +330,5 @@
     font-size: 1.4em;
     margin: 0 auto 0 1em;
     white-space: nowrap;
-  }
-
-  .pluginView {
-    display: flex;
-    justify-content: center;
-    padding-top: 1em;
   }
 </style>

@@ -1,13 +1,11 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { SearchableTable } from '@/components/Table';
 import { describe, it, expect } from 'vitest';
-import { Button, Input } from 'ant-design-vue';
 import { createTestingPinia } from '@pinia/testing';
-import { useProjectStore, useSearchStore } from '@/store';
+import { useSearchStore } from '@/store';
 import { createPinia, setActivePinia } from 'pinia';
-import _ from 'lodash';
-import { projectsStoreSymbol } from '@/store/injectionSymbols';
-import router from '@/router';
+import type { SearchableColumns } from '../SearchableTableTypes';
+import { Button, Input } from 'ant-design-vue';
 
 const testData = [
   {
@@ -26,6 +24,26 @@ const testData = [
   },
 ];
 
+const testColumns: SearchableColumns = [
+  {
+    title: 'Project Name',
+    dataIndex: 'projectName',
+    key: 'projectName',
+    searchable: true,
+    ellipsis: true,
+    align: 'center' as const,
+    sortMethod: 'string',
+    defaultSortOrder: 'ascend' as const,
+  },
+  {
+    title: 'Team Number',
+    dataIndex: 'teamNumber',
+    key: 'teamNumber',
+    ellipsis: true,
+    align: 'center' as const,
+  },
+];
+
 describe('SearchableTable.vue', () => {
   setActivePinia(createPinia());
   const searchStoreSymbol = Symbol('searchStoreSym');
@@ -35,39 +53,45 @@ describe('SearchableTable.vue', () => {
     plugins: [
       createTestingPinia({
         stubActions: false,
-        initialState: {
-          project: {
-            project: testData,
-          },
-        },
       }),
     ],
     global: {
       provide: {
         [searchStoreSymbol as symbol]: searchStore,
-        [projectsStoreSymbol as symbol]: useProjectStore(),
       },
-      plugins: [router],
     },
     propsData: {
       searchStoreSymbol: searchStoreSymbol,
-      paneWidth: 800,
       paneHeight: 800,
+      columns: testColumns,
+      isLoading: false,
     },
   });
 
-  it('renders correctly with 4 columns', () => {
-    expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
+  const loadData = async () => {
+    searchStore.setBaseSet(testData);
+    searchStore.setSearchQuery('');
+    await flushPromises();
+  };
+
+  it('renders correctly with 2 columns', () => {
+    expect(wrapper.findAll('.ant-table-column-title')).toHaveLength(2);
+  });
+
+  it('show 1 sorter and 1 search filter', () => {
+    expect(wrapper.findAll('.ant-table-column-sorter')).toHaveLength(1);
+    expect(wrapper.findAll('.ant-table-filter-column')).toHaveLength(1);
   });
 
   it('gets the data from the store', async () => {
-    searchStore.setBaseSet(testData);
-    searchStore.setSearchQuery('');
+    await loadData();
 
     expect(searchStore.getSearchResults).toEqual(testData);
   });
 
   it('shows the data entries in alphabetical order', async () => {
+    await loadData();
+
     expect(
       wrapper.findAll('.ant-table-row')[0]?.find('.ant-table-cell').text(),
     ).toBe('A');
@@ -76,7 +100,21 @@ describe('SearchableTable.vue', () => {
     ).toBe('C');
   });
 
+  it('changes the order when clicking the sorter field', async () => {
+    await loadData();
+    await wrapper.find('.ant-table-column-sorters').trigger('click');
+
+    expect(
+      wrapper.findAll('.ant-table-row')[0]?.find('.ant-table-cell').text(),
+    ).toBe('C');
+    expect(
+      wrapper.findAll('.ant-table-row')[1]?.find('.ant-table-cell').text(),
+    ).toBe('A');
+  });
+
   it('filters the table when using the search function', async () => {
+    await loadData();
+
     expect(wrapper.findAll('.ant-table-row')).toHaveLength(2);
     await wrapper.find('.ant-table-filter-trigger').trigger('click');
 
@@ -93,49 +131,11 @@ describe('SearchableTable.vue', () => {
   });
 
   createTestingPinia({});
-  const searchStoreSymbolTest = Symbol('searchStoreSym');
   const searchStoreTest = useSearchStore('test');
-
-  global.innerWidth = 960;
-
-  const wrapper2 = mount(SearchableTable, {
-    plugins: [
-      createTestingPinia({
-        stubActions: false,
-        initialState: {
-          project: {
-            projects: testData,
-          },
-        },
-      }),
-    ],
-    global: {
-      provide: {
-        [searchStoreSymbolTest as symbol]: searchStoreTest,
-        [projectsStoreSymbol as symbol]: useProjectStore(),
-      },
-      plugins: [router],
-    },
-    propsData: {
-      searchStoreSymbol: searchStoreSymbolTest,
-      paneWidth: 300,
-      paneHeight: 800,
-    },
-  });
 
   it('to wont use search store actions that it is not allowed to', async () => {
     await flushPromises();
     expect(searchStoreTest.setBaseSet).toHaveBeenCalledTimes(0);
     expect(searchStoreTest.setSearchQuery).toHaveBeenCalledTimes(0);
-  });
-
-  it('hides columns when the pane width is not large enough', async () => {
-    await flushPromises();
-
-    _.delay(
-      () =>
-        expect(wrapper2.findAll('.ant-table-column-sorters').length).toBe(4),
-      500,
-    );
   });
 });

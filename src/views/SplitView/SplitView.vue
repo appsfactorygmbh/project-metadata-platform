@@ -6,7 +6,7 @@
   import { ProjectSearchView } from '@/views/ProjectSearchView';
   import { MenuButtons } from '@/components/MenuButtons';
   import { CreateProjectView } from '@/views/CreateProject';
-  import { ProjectInformationView } from '@/views/ProjectInformationView';
+  import ProjectView from '../ProjectView/ProjectView.vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { RightOutlined } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
@@ -40,7 +40,7 @@
       </pane>
 
       <pane size="32" min-size="32" class="rightPane">
-        <ProjectInformationView :model-value="null" />
+        <ProjectView />
         <FloatingButton :button="splitButton" class="button" />
         <MenuButtons />
         <CreateProjectView v-if="!isEditing" />

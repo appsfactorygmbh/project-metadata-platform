@@ -1,14 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import ProjectInformation from '../ProjectInformationView.vue';
+import ProjectInformation from '../ProjectInformation.vue';
+import { createTestingPinia } from '@pinia/testing';
 import { projectsStoreSymbol } from '@/store/injectionSymbols';
 import { useProjectStore } from '@/store';
-import { createTestingPinia } from '@pinia/testing';
-import router from '@/router';
 
 const testData = {
-  id: 100,
   projectName: 'Heute Show',
   department: 'IT',
   clientName: 'ZDF',
@@ -37,7 +35,6 @@ describe('ProjectInformationView.vue', () => {
             template: '<span />',
           },
         },
-        plugins: [router],
         provide: {
           [projectsStoreSymbol as symbol]: useProjectStore(),
         },

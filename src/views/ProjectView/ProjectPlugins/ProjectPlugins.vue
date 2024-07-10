@@ -37,9 +37,12 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, computed, toRaw, inject, onMounted } from 'vue';
+  import { computed, toRaw, inject, onMounted } from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
-  import { pluginStoreSymbol } from '@/store/injectionSymbols';
+  import {
+    pluginStoreSymbol,
+    projectsStoreSymbol,
+  } from '@/store/injectionSymbols';
   import type { PluginModel } from '@/models/Plugin';
   import type { ComputedRef } from 'vue';
   import { useEditing } from '@/utils/hooks/useEditing';
@@ -58,18 +61,16 @@
   });
 
   const pluginStore = inject(pluginStoreSymbol)!;
+  const projectsStore = inject(projectsStoreSymbol);
 
-  const loading = computed(() => pluginStore.getIsLoading);
+  let plugins: ComputedRef<PluginModel[]>;
+  const loading = computed(
+    () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
+  );
 
   function setPlugins(newPlugins: PluginModel[]) {
     pluginsModel.value = toRaw(newPlugins);
   }
-
-  onBeforeMount(async () => {
-    pluginStore.setLoadingPlugins(true);
-    await pluginStore.fetchPlugins(props.projectID);
-    console.log(props.projectID);
-  });
 
   onMounted(async () => {
     setPlugins(pluginStore.getPlugins);
