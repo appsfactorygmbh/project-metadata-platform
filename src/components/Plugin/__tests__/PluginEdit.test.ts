@@ -12,6 +12,10 @@ interface PluginComponentInstance {
   isLoading: boolean;
   isEditing: boolean;
   modelValue: PluginModel[];
+  displayNameInput: string;
+  urlInput: string;
+  updateDisplayName: () => void;
+  updateUrl: () => void;
 }
 
 const initialPlugin = {
@@ -102,5 +106,60 @@ describe('PluginComponent', () => {
         lastEmittedValue.find((plugin: PluginModel) => plugin.id === 100),
       ).toBeFalsy();
     }
+  });
+  it('updates the displayName correctly', async () => {
+    const wrapper = generateWrapper(
+      'Test Plugin',
+      'https://example.com/examplePath',
+      'Test Plugin Instance 1',
+      false,
+      true,
+      100,
+      [initialPlugin, initialPlugin2],
+    );
+
+    await wrapper.vm.$nextTick(() => {
+      wrapper.vm.displayNameInput = 'Updated Name';
+    });
+
+    // Trigger any necessary updates or methods after changing the reactive property
+    wrapper.vm.updateDisplayName();
+
+    // Ensure the component's state has been updated
+    await wrapper.vm.$nextTick();
+
+    // Now, verify the change
+    const updatedPlugin = wrapper.vm.modelValue.find(
+      (plugin) => plugin.id === wrapper.vm.id,
+    );
+    expect(updatedPlugin?.displayName).toBe('Updated Name');
+  });
+
+  it('updates the url correctly', async () => {
+    const wrapper = generateWrapper(
+      'Test Plugin',
+      'https://example.com/examplePath',
+      'Test Plugin Instance 1',
+      false,
+      true,
+      100,
+      [initialPlugin, initialPlugin2],
+    );
+
+    await wrapper.vm.$nextTick(() => {
+      wrapper.vm.urlInput = 'https://newURL.com';
+    });
+
+    // Trigger any necessary updates or methods after changing the reactive property
+    wrapper.vm.updateUrl();
+
+    // Ensure the component's state has been updated
+    await wrapper.vm.$nextTick();
+
+    // Now, verify the change
+    const updatedPlugin = wrapper.vm.modelValue.find(
+      (plugin) => plugin.id === wrapper.vm.id,
+    );
+    expect(updatedPlugin?.url).toBe('https://newURL.com');
   });
 });

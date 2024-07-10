@@ -48,13 +48,6 @@
   import { useEditing } from '@/utils/hooks/useEditing';
   const { isEditing } = useEditing();
 
-  const props = defineProps({
-    projectID: {
-      type: Number,
-      required: true,
-    },
-  });
-
   const pluginsModel = defineModel<PluginModel[] | null>({
     required: true,
     type: Array,
@@ -63,7 +56,6 @@
   const pluginStore = inject(pluginStoreSymbol)!;
   const projectsStore = inject(projectsStoreSymbol);
 
-  let plugins: ComputedRef<PluginModel[]>;
   const loading = computed(
     () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
   );

@@ -9,7 +9,6 @@
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { PluginModel } from '@/models/Plugin';
-  import type { DetailedProjectModel } from '@/models/Project';
   import type { UpdateProjectModel } from '@/models/Project';
 
   const props = defineProps({
@@ -30,9 +29,6 @@
   );
 
   const { isEditing, stopEditing, startEditing } = useEditing();
-
-  const projectStore = inject(projectsStoreSymbol)!;
-  const pluginStore = inject(pluginStoreSymbol)!;
 
   onMounted(async () => {
     const project = projectsStore.getProject;
@@ -60,41 +56,9 @@
       startEditing();
     }
   };
-
-  const pluginModel = defineModel<PluginModel[] | null>({
-    required: true,
-    type: Array,
-  });
-
-  const cancelEdit = () => {
-    console.log('plugins:       ', pluginModel.value);
-    pluginModel.value = pluginStore.getPlugins;
-    stopEditing();
-  };
-  const saveEdit = async () => {
-    console.log('plugins:       ', pluginModel.value);
-    const updateProjectInformation: DetailedProjectModel | null =
-      projectStore.getProject || null;
-    const updatedProject: UpdateProjectModel = {
-      projectName: updateProjectInformation?.projectName,
-      businessUnit: updateProjectInformation?.businessUnit,
-      teamNumber: updateProjectInformation?.teamNumber,
-      department: updateProjectInformation?.department,
-      clientName: updateProjectInformation?.clientName,
-      pluginList: pluginModel.value,
-    };
-    console.log('updated Project', updatedProject);
-    const projectID = computed(() => projectStore.getProject?.id);
-    if (projectID.value != null) {
-      await projectStore.updateProject(updatedProject, projectID.value);
-      await pluginStore.fetchPlugins(projectID.value);
-    }
-    stopEditing();
-  };
 </script>
 
 <template>
-  <ProjectEditButtons v-if="isEditing" @cancel="cancelEdit" @save="saveEdit" />
   <div class="pane">
     <div class="main">
       <!-- create box for the project name -->
@@ -235,10 +199,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-
-  .pluginView {
-    padding: 0;
   }
 
   /* Style for the right panel */

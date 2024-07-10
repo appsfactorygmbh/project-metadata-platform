@@ -41,6 +41,7 @@ export const usePluginsStore = defineStore('plugin', {
       } finally {
         this.setLoadingPlugins(false);
       }
+      console.log(this.getPlugins);
     },
   },
 });
