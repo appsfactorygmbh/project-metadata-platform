@@ -1,11 +1,18 @@
 <script setup lang="ts">
-  import { defineProps, onBeforeMount, reactive, ref, toRaw } from 'vue';
-  import type { FormType } from '@/components/Modal/FormTypes.ts';
-  import type { FormInstance, SelectProps } from 'ant-design-vue';
+  import { type FormSubmitType } from '@/components/Form';
+  import { notification } from 'ant-design-vue';
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
-  import { inject } from 'vue';
+  import { type FormStore } from '@/components/Form';
+  import { defineProps, onBeforeMount, ref, toRaw, inject, reactive } from 'vue';
+  import type { SelectProps } from 'ant-design-vue';
   import type { GlobalPluginModel } from '@/models/Plugin';
   import type { LabeledValue, SelectValue } from 'ant-design-vue/lib/select';
+  import type { RulesObject } from '@/components/Form/FormStore.ts';
+
+
+  const { formStore } = defineProps<{
+    formStore: FormStore;
+  }>();
 
   const pluginStore = inject(pluginStoreSymbol);
   const options = ref<SelectProps['options']>([]);
@@ -21,11 +28,18 @@
     });
   });
 
-  const { form } = defineProps<{
-    form: FormType;
-  }>();
+  const [notificationApi, contextHolder] = notification.useNotification();
 
-  const formRef = ref<FormInstance>();
+  const onSubmit: FormSubmitType = (fields) => {
+    try {
+      console.log(fields);
+    } catch {
+      notificationApi.error({
+        message: 'An error occurred. The plugin could not be created',
+      });
+      console.log('fehler');
+    }
+  };
 
   const formItemLayoutWithOutLabel = {
     wrapperCol: {
@@ -41,6 +55,25 @@
     inputsDisabled: true
   });
 
+  const rulesRef = reactive<RulesObject<{ pluginName: string; pluginUrl: string }>>({
+    pluginName: [
+      {
+        required: true,
+        message: 'Please insert the plugin name.',
+        trigger: 'change',
+        type: 'string',
+      },
+    ],
+    pluginUrl: [
+      {
+        required: true,
+        message: 'Please insert the plugin URL.',
+        trigger: 'change',
+        type: 'string',
+      },
+    ],
+  });
+
   const handleChange = (value: SelectValue) => {
     console.log(`selected ${value}`);
     dynamicValidateForm.inputsDisabled = false;
@@ -49,12 +82,15 @@
   const filterOption = (input: string, option: LabeledValue) => {
     return option.value.valueOf().toString().toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
+
+  formStore.setOnSubmit(onSubmit);
+  formStore.setModel(dynamicValidateForm);
+  formStore.setRules(rulesRef);
 </script>
 
 <template>
   <a-form
     ref="formRef"
-    :form="form"
     :model="dynamicValidateForm"
     v-bind="formItemLayoutWithOutLabel"
   >
@@ -108,11 +144,5 @@
       </a-input>
     </a-form-item>
   </a-form>
+  <contextHolder></contextHolder>
 </template>
-
-<style>
-  .inputField {
-    width: 100%;
-    margin: 10px 0 10px 0;
-  }
-</style>
