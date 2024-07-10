@@ -35,7 +35,7 @@ const router = createRouter({
           component: GlobalPluginsView,
         },
         {
-          path: '/settings/global-logs',
+          path: '/settings/global_logs',
           name: 'global-logs',
           component: GlobalPluginsView,
         },

@@ -9,11 +9,12 @@
   const goToSetting = () => {
     router.push('/settings');
   };
+
   const buttons: FloatButtonModel[] = [
     {
       name: 'SettingsButton',
       onClick: () => {
-        goToSetting()
+        goToSetting();
       },
       icon: SettingOutlined,
       status: 'activated',
