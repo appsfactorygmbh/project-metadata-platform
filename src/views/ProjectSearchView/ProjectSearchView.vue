@@ -218,8 +218,8 @@
     const windowSize = useWindowSize().width.value;
     const breakpoint: number[] = [
       0.2 * windowSize,
-      0.3 * windowSize,
       0.35 * windowSize,
+      0.4 * windowSize,
     ];
 
     if (pwidth > breakpoint[2]) {
