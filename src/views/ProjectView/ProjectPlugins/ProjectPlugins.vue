@@ -4,9 +4,8 @@
       <PluginComponent
         v-for="plugin in pluginsModel"
         :id="plugin.id"
-        ref="itemRefs"
         :key="plugin.displayName"
-        v-model="pluginsModel"
+        v-model.lazy="pluginsModel"
         class="plugins"
         :plugin-name="plugin.pluginName"
         :display-name="plugin.displayName"
@@ -48,7 +47,7 @@
   import { useEditing } from '@/utils/hooks/useEditing';
   const { isEditing } = useEditing();
 
-  const pluginsModel = defineModel<PluginModel[] | null>({
+  const pluginsModel = defineModel<PluginModel[] | undefined>({
     required: true,
     type: Array,
   });

@@ -40,7 +40,7 @@
 
   const toggleSkeleton = ref<boolean>(props.isLoading);
 
-  const model = defineModel<PluginModel[]>({
+  const pluginModel = defineModel<PluginModel[] | undefined>({
     required: true,
     type: Array,
   });
@@ -65,23 +65,29 @@
   }
 
   const hidePlugin = () => {
-    model.value = model.value.filter((plugin) => plugin.id !== props.id);
+    pluginModel.value = pluginModel.value?.filter(
+      (plugin) => plugin.id !== props.id,
+    );
   };
 
   const updateDisplayName = () => {
     let currValue = displayNameInput.value;
-    const index = model.value.findIndex(
-      (pluginInArray) => pluginInArray.id === props.id,
-    );
-    model.value[index].displayName = currValue;
+    if (pluginModel.value) {
+      const index = pluginModel.value.findIndex(
+        (pluginInArray) => pluginInArray.id === props.id,
+      );
+      pluginModel.value[index].displayName = currValue;
+    }
   };
 
   const updateUrl = () => {
     let currValue = urlInput.value;
-    const index = model.value.findIndex(
-      (pluginInArray) => pluginInArray.id === props.id,
-    );
-    model.value[index].url = currValue;
+    if (pluginModel.value) {
+      const index = pluginModel.value.findIndex(
+        (pluginInArray) => pluginInArray.id === props.id,
+      );
+      pluginModel.value[index].url = currValue;
+    }
   };
 </script>
 

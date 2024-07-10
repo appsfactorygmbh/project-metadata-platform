@@ -20,10 +20,7 @@
   const { isEditing, stopEditing } = useEditing();
 
   const cancelEdit = () => {
-    console.log('plugins:       ', pluginModel.value);
-    console.log('getplugins: ', pluginStore.getPlugins);
-    pluginModel.value = pluginStore.getPlugins;
-    console.log(pluginModel.value);
+    pluginModel.value = pluginStore?.getPlugins || [];
     stopEditing();
   };
   const saveEdit = async () => {
@@ -47,7 +44,7 @@
     stopEditing();
   };
 
-  const pluginModel = defineModel<PluginModel[] | null>({
+  const pluginModel = defineModel<PluginModel[] | undefined>({
     required: true,
     type: Array,
   });
@@ -56,7 +53,7 @@
 <template>
   <ProjectEditButtons v-if="isEditing" @cancel="cancelEdit" @save="saveEdit" />
   <ProjectInformation />
-  <ProjectPlugins v-model="pluginModel" class="pluginView" />
+  <ProjectPlugins v-model.lazy="pluginModel" class="pluginView" />
 </template>
 
 <style scoped>

@@ -5,12 +5,14 @@ import type { PluginModel } from '@/models/Plugin';
 type StoreState = {
   plugins: PluginModel[];
   isLoadingPlugins: boolean;
+  cachePlugins: PluginModel[];
 };
 
 export const usePluginsStore = defineStore('plugin', {
   state: (): StoreState => {
     return {
       plugins: [],
+      cachePlugins: [],
       isLoadingPlugins: false,
     };
   },
@@ -21,6 +23,9 @@ export const usePluginsStore = defineStore('plugin', {
     },
     getIsLoading(): boolean {
       return this.isLoadingPlugins;
+    },
+    getCachePlugins(): PluginModel[] {
+      return this.cachePlugins;
     },
   },
 
@@ -38,6 +43,7 @@ export const usePluginsStore = defineStore('plugin', {
         const plugins: PluginModel[] =
           await pluginService.fetchPlugins(projectID);
         this.setPlugins(plugins);
+        this.cachePlugins = plugins;
       } finally {
         this.setLoadingPlugins(false);
       }

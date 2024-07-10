@@ -6,5 +6,5 @@ export type UpdateProjectModel = {
   teamNumber: number | undefined;
   department: string | undefined;
   clientName: string | undefined;
-  pluginList: PluginModel[] | null;
+  pluginList: PluginModel[] | undefined;
 };

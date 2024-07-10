@@ -6,10 +6,7 @@
   import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
   import { EditOutlined } from '@ant-design/icons-vue';
-  import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import type { PluginModel } from '@/models/Plugin';
-  import type { UpdateProjectModel } from '@/models/Project';
 
   const props = defineProps({
     isTest: {
@@ -68,10 +65,10 @@
         </h1>
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
         <a-button
-          @click="toggleEditingMode"
           class="button"
           ghost
           style="margin-left: 10px"
+          @click="toggleEditingMode"
         >
           <template #icon><EditOutlined class="icon" /></template>
         </a-button>

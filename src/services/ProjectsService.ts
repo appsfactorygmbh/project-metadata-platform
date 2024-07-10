@@ -85,7 +85,7 @@ class ProjectsService {
       );
       return response;
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Failed to update Project via PUT Request: ', error);
       return null;
     }
   };

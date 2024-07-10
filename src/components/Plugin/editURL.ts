@@ -5,10 +5,10 @@ export const cutAfterTLD = (url: string): string => {
   if (match) {
     return match[0];
   }
-  return 'appsfactory.de';
+  return 'https://appsfactory.de';
 };
 
-// use google entpoint to get favicon of website
+// use google endpoint to get favicon of website
 export const createFaviconURL = (tld: string) => {
   return 'https://www.google.com/s2/favicons?domain=' + tld + '&sz=128';
 };
