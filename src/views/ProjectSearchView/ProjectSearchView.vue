@@ -10,6 +10,7 @@
   import { projectsService } from '@/services';
   import _ from 'lodash';
   import { useWindowSize } from '@vueuse/core';
+  import { useRouter } from 'vue-router';
 
   const props = defineProps({
     paneWidth: {
@@ -22,6 +23,7 @@
     },
   });
 
+  const router = useRouter();
   const projectsStore = inject(projectsStoreSymbol)!;
   const pluginStore = inject(pluginStoreSymbol);
   const searchStore = useSearchStore<ProjectModel>('projects');
@@ -75,12 +77,19 @@
   }
 
   const handleRowClick = (project: ProjectModel) => {
+    router.push({
+      path: router.currentRoute.value.path,
+      query: { ...router.currentRoute.value.query, project: project.id },
+    });
     projectsStore?.fetchProject(project.id);
   };
 
   onMounted(async () => {
     await projectsStore?.fetchProjects();
-    const projectId = projectsStore?.getProjects[0].id || 100;
+    const projectId =
+      Number(router.currentRoute.value.query.project) ||
+      projectsStore?.getProjects[0].id ||
+      100;
 
     await projectsStore?.fetchProject(projectId);
     await pluginStore?.fetchPlugins(projectId);
