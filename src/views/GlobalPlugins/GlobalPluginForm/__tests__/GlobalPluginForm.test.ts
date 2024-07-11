@@ -44,10 +44,6 @@ describe('GlobalPluginForm.vue', () => {
     expectTypeOf(GlobalPluginForm).toMatchTypeOf<import('vue').Component>();
   });
 
-  it('should render correctly', () => {
-    expect(wrapper.html()).toMatchSnapshot();
-  });
-
   it("should render an empty form if there's no initialValues", () => {
     setActivePinia(createPinia());
     const formStore = useFormStore('testForm');

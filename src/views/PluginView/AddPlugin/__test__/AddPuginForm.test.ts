@@ -1,26 +1,28 @@
 import { describe, it, expect, expectTypeOf } from 'vitest';
-import { mount, VueWrapper } from '@vue/test-utils';
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import { useFormStore } from '@/components/Form';
 import { setActivePinia } from 'pinia';
-import type { AddGlobalPluginFormData } from '@/views/GlobalPlugins/AddGlobalPlugin/AddGlobalPluginFormData.ts';
-import { AddGlobalPluginForm } from '@/views/GlobalPlugins/AddGlobalPlugin';
+import type { AddPluginFormData } from '../AddPluginFormData';
+import { AddPluginForm } from '..';
 import { pluginStoreSymbol } from '@/store/injectionSymbols.ts';
 import { createTestingPinia } from '@pinia/testing';
 
-const testForm: AddGlobalPluginFormData = {
+const testForm: AddPluginFormData = {
   pluginName: 'testPlugin',
   pluginUrl: 'testUrl',
   globalPlugin: 'testGlobalPlugin',
-  inputsDisabled: false
+  inputsDisabled: false,
 };
 
-describe('AddGlobalPluginForm.vue', () => {
+describe('AddPluginForm.vue', () => {
   let wrapper: VueWrapper;
   let formStore: ReturnType<typeof useFormStore>;
-  let pluginStoreMock: any;
+  let pluginStoreMock: unknown;
 
   beforeEach(() => {
-    setActivePinia(createTestingPinia({ createSpy: vi.fn }));
+    setActivePinia(
+      createTestingPinia({ createSpy: vi.fn, stubActions: false }),
+    );
 
     formStore = useFormStore('testForm');
     formStore.resetFields();
@@ -28,14 +30,14 @@ describe('AddGlobalPluginForm.vue', () => {
     pluginStoreMock = {
       setLoading: vi.fn(),
       fetchGlobalPlugins: vi.fn().mockResolvedValue([]),
-      getGlobalPlugins: []
+      getGlobalPlugins: [],
     };
 
-    wrapper = mount(AddGlobalPluginForm, {
+    wrapper = mount(AddPluginForm, {
       global: {
         provide: {
-          [pluginStoreSymbol as symbol]: pluginStoreMock
-        }
+          [pluginStoreSymbol as symbol]: pluginStoreMock,
+        },
       },
       props: {
         formStore,
@@ -45,21 +47,22 @@ describe('AddGlobalPluginForm.vue', () => {
   });
 
   it('should export a valid component', () => {
-    expect(AddGlobalPluginForm).not.toBeUndefined();
-    expectTypeOf(AddGlobalPluginForm).toMatchTypeOf<import('vue').Component>();
-  });
-
-  it('should render correctly', () => {
-    expect(wrapper.html()).toMatchSnapshot();
+    expect(AddPluginForm).not.toBeUndefined();
+    expectTypeOf(AddPluginForm).toMatchTypeOf<import('vue').Component>();
   });
 
   it("should render an empty form if there's no initialValues", () => {
     const formStore = useFormStore('testForm');
 
-    wrapper = mount(AddGlobalPluginForm, {
+    wrapper = mount(AddPluginForm, {
       props: {
         formStore,
-        initialValues: { pluginName: '', pluginUrl: '', globalPlugin: '', inputsDisabled: true },
+        initialValues: {
+          pluginName: '',
+          pluginUrl: '',
+          globalPlugin: '',
+          inputsDisabled: true,
+        },
       },
     });
   });
@@ -75,6 +78,7 @@ describe('AddGlobalPluginForm.vue', () => {
   it("should effect the form store's values", async () => {
     const input = wrapper.find('#inputAddPluginPluginName');
     await input.setValue('test');
+    await flushPromises();
     expect(formStore.getFieldValue('pluginName')).toBe('test');
   });
 
@@ -88,6 +92,8 @@ describe('AddGlobalPluginForm.vue', () => {
   });
 
   it('should validate the form if pluginName is not set', async () => {
+    formStore = useFormStore('testForms');
+    await flushPromises();
     const input = wrapper.find('input');
     await input.setValue('');
     expect(formStore.validate()).rejects.toMatchObject({

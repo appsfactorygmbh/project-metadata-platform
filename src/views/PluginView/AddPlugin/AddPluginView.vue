@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { FormModal } from '@/components/Modal';
-  import { AddGlobalPluginForm } from './';
+  import { AddPluginForm } from './index.ts';
   import { useFormStore } from '@/components/Form';
-  import type { AddGlobalPluginFormData } from '@/views/GlobalPlugins/AddGlobalPlugin/AddGlobalPluginFormData.ts';
+  import type { AddPluginFormData } from './AddPluginFormData.ts';
 
   const formStore = useFormStore('addPluginForm');
-  const initialFormValues: AddGlobalPluginFormData = {
+  const initialFormValues: AddPluginFormData = {
     globalPlugin: '',
     inputsDisabled: true,
     pluginName: '',
@@ -15,6 +15,9 @@
 
 <template>
   <FormModal title="Add Plugin" :form-store="formStore">
-    <AddGlobalPluginForm :form-store="formStore" :initial-values="initialFormValues" />
+    <AddPluginForm
+      :form-store="formStore"
+      :initial-values="initialFormValues"
+    />
   </FormModal>
 </template>

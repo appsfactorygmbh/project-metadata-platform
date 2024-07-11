@@ -1,4 +1,4 @@
-export type AddGlobalPluginFormData = {
+export type AddPluginFormData = {
   pluginName: string;
   pluginUrl: string;
   globalPlugin: string;

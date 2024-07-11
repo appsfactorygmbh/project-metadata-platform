@@ -3,17 +3,23 @@
   import { notification } from 'ant-design-vue';
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
   import { type FormStore } from '@/components/Form';
-  import { defineProps, onBeforeMount, ref, toRaw, inject, reactive } from 'vue';
+  import {
+    defineProps,
+    onBeforeMount,
+    ref,
+    toRaw,
+    inject,
+    reactive,
+  } from 'vue';
   import type { SelectProps } from 'ant-design-vue';
   import type { GlobalPluginModel } from '@/models/Plugin';
   import type { LabeledValue, SelectValue } from 'ant-design-vue/lib/select';
   import type { RulesObject } from '@/components/Form/FormStore.ts';
-  import type { AddGlobalPluginFormData } from '@/views/GlobalPlugins/AddGlobalPlugin/AddGlobalPluginFormData.ts';
-
+  import type { AddPluginFormData } from './AddPluginFormData.ts';
 
   const { formStore, initialValues } = defineProps<{
     formStore: FormStore;
-    initialValues: AddGlobalPluginFormData;
+    initialValues: AddPluginFormData;
   }>();
 
   const pluginStore = inject(pluginStoreSymbol);
@@ -22,12 +28,14 @@
   onBeforeMount(async () => {
     pluginStore?.setLoading(true);
     await pluginStore?.fetchGlobalPlugins();
-    options.value = toRaw(pluginStore?.getGlobalPlugins)?.map((plugin: GlobalPluginModel) => {
-      return {
-        value: plugin.name,
-        label: plugin.name
-      }
-    });
+    options.value = toRaw(pluginStore?.getGlobalPlugins)?.map(
+      (plugin: GlobalPluginModel) => {
+        return {
+          value: plugin.name,
+          label: plugin.name,
+        };
+      },
+    );
   });
 
   const [notificationApi, contextHolder] = notification.useNotification();
@@ -50,9 +58,11 @@
     },
   };
 
-  const dynamicValidateForm = reactive<AddGlobalPluginFormData>(initialValues);
+  const dynamicValidateForm = reactive<AddPluginFormData>(initialValues);
 
-  const rulesRef = reactive<RulesObject<{ pluginName: string; pluginUrl: string }>>({
+  const rulesRef = reactive<
+    RulesObject<{ pluginName: string; pluginUrl: string }>
+  >({
     pluginName: [
       {
         required: true,
@@ -77,7 +87,13 @@
   };
 
   const filterOption = (input: string, option: LabeledValue) => {
-    return option.value.valueOf().toString().toLowerCase().indexOf(input.toLowerCase()) >= 0;
+    return (
+      option.value
+        .valueOf()
+        .toString()
+        .toLowerCase()
+        .indexOf(input.toLowerCase()) >= 0
+    );
   };
 
   formStore.setOnSubmit(onSubmit);
