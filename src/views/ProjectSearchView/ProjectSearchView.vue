@@ -80,7 +80,7 @@
 
   onMounted(async () => {
     await projectsStore?.fetchProjects();
-    const projectId = projectsStore?.getProjects[0].id || 100;
+    const projectId = projectsStore?.getProjects[0]?.id || 100;
 
     await projectsStore?.fetchProject(projectId);
     await pluginStore?.fetchPlugins(projectId);
