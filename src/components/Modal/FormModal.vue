@@ -11,9 +11,14 @@
 
   // checks for correct input
   const handleOk = () => {
-    formStore.submit().catch((e) => {
-      console.log(e);
-    });
+    formStore
+      .submit()
+      .then(() => {
+        open.value = false;
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const resetModal = () => {
