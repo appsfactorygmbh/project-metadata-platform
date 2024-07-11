@@ -10,6 +10,7 @@
   import type { SearchableColumn } from './SearchableTableTypes';
   import type { TableColumnType, TableProps } from 'ant-design-vue';
   import type { ArrayElement } from '@/models/ArrayElement';
+  import type { ComputedRef } from 'vue';
   import { useRouter } from 'vue-router';
   import _ from 'lodash';
 
@@ -82,8 +83,8 @@
     return column;
   };
 
-  const columns: TableProps['columns'] = props.columns.map((column) =>
-    mapSearchableColumn(column),
+  const columns: ComputedRef<TableProps['columns']> = computed(() =>
+    props.columns.map((column) => mapSearchableColumn(column)),
   );
 
   /*  Search implementation  */
@@ -159,7 +160,7 @@
 
   onBeforeMount(() => {
     const queries = router.currentRoute.value.query;
-    const columnNames = columns.map((column) => column.key);
+    const columnNames = columns.value!.map((column) => column.key);
     for (const query in queries) {
       if (columnNames.includes(query)) {
         const searchText = queries[query] as string;
