@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { SmileOutlined, SearchOutlined } from '@ant-design/icons-vue';
-  import { reactive, ref, inject } from 'vue';
+  import { reactive, ref, inject, onMounted } from 'vue';
   import type {
     FilterConfirmProps,
     FilterResetProps,
@@ -10,6 +10,7 @@
   import type { SearchableColumn } from './SearchableTableTypes';
   import type { TableColumnType, TableProps } from 'ant-design-vue';
   import type { ArrayElement } from '@/models/ArrayElement';
+  import { useRouter } from 'vue-router';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -31,6 +32,7 @@
     },
   });
 
+  const router = useRouter();
   const searchStore = inject<SearchStore<object>>(props.searchStoreSymbol);
 
   const emit = defineEmits(['row-click']);
@@ -109,6 +111,43 @@
     clearFilters({ confirm: true });
     state.searchText = '';
   }
+
+  const pushColumnFilter = (
+    searchQuery: string | undefined,
+    column: string,
+  ) => {
+    router.push({
+      path: router.currentRoute.value.path,
+      query: { ...router.currentRoute.value.query, [column]: searchQuery },
+    });
+  };
+
+  watch(
+    () => ({ ...state }),
+    (newSeachState) => {
+      console.log(newSeachState);
+
+      if (newSeachState.searchText != '') {
+        pushColumnFilter(
+          newSeachState.searchText,
+          newSeachState.searchedColumn,
+        );
+      } else {
+        pushColumnFilter(undefined, newSeachState.searchedColumn);
+      }
+    },
+  );
+
+  onMounted(() => {
+    const queries = router.currentRoute.value.query;
+    const columnNames = columns.map((column) => column.key);
+    for (const query in queries) {
+      if (columnNames.includes(query)) {
+        state.searchText = queries[query] as string;
+        state.searchedColumn = query;
+      }
+    }
+  });
 </script>
 
 <template>

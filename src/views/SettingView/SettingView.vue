@@ -27,15 +27,15 @@
     tab.value = name;
     switch (name) {
       case 'User': {
-        router.push(`/settings/users`);
+        router.push(`/settings/user-management`);
         break;
       }
       case 'Plugin Creation': {
-        router.push(`/settings/plugins`);
+        router.push(`/settings/global-plugins`);
         break;
       }
       case 'Global Logs': {
-        router.push(`/settings/global_logs`);
+        router.push(`/settings/global-logs`);
         break;
       }
       default: {

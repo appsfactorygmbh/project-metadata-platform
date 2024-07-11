@@ -17,6 +17,11 @@ const router = createRouter({
           name: 'SplitView',
           component: SplitView,
         },
+        {
+          path: '/:projectName/',
+          name: 'project',
+          component: SplitView,
+        },
       ],
     },
     {
@@ -25,17 +30,17 @@ const router = createRouter({
       component: SettingView,
       children: [
         {
-          path: '/settings/users',
+          path: '/settings/user-management',
           name: 'users',
           component: GlobalPluginsView,
         },
         {
-          path: '/settings/plugins',
+          path: '/settings/global-plugins',
           name: 'plugins',
           component: GlobalPluginsView,
         },
         {
-          path: '/settings/global_logs',
+          path: '/settings/global-logs',
           name: 'global-logs',
           component: GlobalPluginsView,
         },
