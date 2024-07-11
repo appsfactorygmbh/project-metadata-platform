@@ -4,7 +4,6 @@
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
   import { type FormStore } from '@/components/Form';
   import {
-    defineProps,
     onBeforeMount,
     ref,
     toRaw,
@@ -61,7 +60,7 @@
   const dynamicValidateForm = reactive<AddPluginFormData>(initialValues);
 
   const rulesRef = reactive<
-    RulesObject<{ pluginName: string; pluginUrl: string }>
+    RulesObject<AddPluginFormData>
   >({
     pluginName: [
       {
@@ -77,6 +76,19 @@
         message: 'Please insert the plugin URL.',
         trigger: 'change',
         type: 'string',
+      },
+    ],
+    globalPlugin: [
+      {
+        required: true,
+        message: 'Please select a global plugin.',
+        trigger: 'change',
+        type: 'string',
+      },
+    ],
+    inputsDisabled: [
+      {
+        required: false,
       },
     ],
   });
@@ -128,35 +140,35 @@
     </a-form-item>
     <a-form-item
       name="pluginName"
-      :rules="[{ required: true, whitespace: true }]"
       class="column"
       :no-style="true"
       :whitespace="true"
+      :rules="rulesRef.pluginName"
     >
       <a-input
         id="inputAddPluginPluginName"
         v-model:value="dynamicValidateForm.pluginName"
         class="inputField"
         placeholder="Plugin Name"
-        :rules="[{ required: true, whitespace: true }]"
         :disabled="dynamicValidateForm.inputsDisabled"
+        :rules="rulesRef.pluginName"
       >
       </a-input>
     </a-form-item>
     <a-form-item
       name="pluginUrl"
-      :rules="[{ required: true, whitespace: true }]"
       class="column"
       :no-style="true"
       :whitespace="true"
+      :rules="rulesRef.pluginName"
     >
       <a-input
         id="inputAddPluginPluginUrl"
         v-model:value="dynamicValidateForm.pluginUrl"
         class="inputField"
         placeholder="Plugin URL"
-        :rules="[{ required: true, whitespace: true }]"
         :disabled="dynamicValidateForm.inputsDisabled"
+        :rules="rulesRef.pluginName"
       >
       </a-input>
     </a-form-item>

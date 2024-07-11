@@ -92,9 +92,22 @@ describe('AddPluginForm.vue', () => {
   });
 
   it('should validate the form if pluginName is not set', async () => {
-    formStore = useFormStore('testForms');
+    formStore = useFormStore('testForm2');
     await flushPromises();
-    const input = wrapper.find('input');
+
+    wrapper = mount(AddPluginForm, {
+      global: {
+        provide: {
+          [pluginStoreSymbol as symbol]: pluginStoreMock,
+        },
+      },
+      props: {
+        formStore,
+        initialValues: testForm,
+      },
+    });
+
+    const input = wrapper.find('#inputAddPluginPluginName');
     await input.setValue('');
     expect(formStore.validate()).rejects.toMatchObject({
       errorFields: [
