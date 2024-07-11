@@ -6,6 +6,7 @@ import { useSearchStore } from '@/store';
 import { createPinia, setActivePinia } from 'pinia';
 import type { SearchableColumns } from '../SearchableTableTypes';
 import { Button, Input } from 'ant-design-vue';
+import router from '@/router';
 
 const testData = [
   {
@@ -59,6 +60,7 @@ describe('SearchableTable.vue', () => {
       provide: {
         [searchStoreSymbol as symbol]: searchStore,
       },
+      plugins: [router],
     },
     propsData: {
       searchStoreSymbol: searchStoreSymbol,

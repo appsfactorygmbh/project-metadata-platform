@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import SearchBar from '../SearchBar.vue';
 import { useSearchStore } from '@/store';
 import { createTestingPinia } from '@pinia/testing';
+import router from '@/router';
 
 describe('SearchBar.vue', () => {
   createTestingPinia();
@@ -13,13 +14,20 @@ describe('SearchBar.vue', () => {
 
   it('renders correctly', () => {
     const wrapper = mount(SearchBar, {
+      global: {
+        plugins: [router],
+      },
       propsData: { searchStoreSymbol: Symbol('searchStoreSym') },
     });
     expect(wrapper.exists()).toBe(true);
   });
 
   it('binds input value correctly to v-model', async () => {
-    const wrapper = mount(SearchBar);
+    const wrapper = mount(SearchBar, {
+      global: {
+        plugins: [router],
+      },
+    });
     const input = wrapper.find('input');
     await input.setValue('Test');
 
@@ -32,7 +40,7 @@ describe('SearchBar.vue', () => {
 
     const wrapper = mount(SearchBar, {
       global: {
-        plugins: [createTestingPinia()],
+        plugins: [createTestingPinia(), router],
         provide: {
           [symbol as symbol]: searchStore,
         },
