@@ -3,14 +3,16 @@
   <a-input-search
     placeholder="Type what you're looking for:"
     enter-button
+    :default-value="defaultSearchQuery"
     @input="onInput"
   />
 </template>
 
 <script lang="ts" setup>
-  import { inject, onMounted } from 'vue';
+  import { inject, onBeforeMount } from 'vue';
   import { type SearchStore } from '@/store/SearchStore';
   import { useRouter } from 'vue-router';
+  import type { Ref } from 'vue';
 
   const props = defineProps({
     searchStoreSymbol: {
@@ -21,6 +23,8 @@
 
   const router = useRouter();
   const searchStore = inject<SearchStore>(props.searchStoreSymbol);
+
+  const defaultSearchQuery: Ref<string> = ref('');
 
   // Input Listener
   const onInput = (e: Event) => {
@@ -40,8 +44,9 @@
     });
   };
 
-  onMounted(() => {
+  onBeforeMount(() => {
     const searchQuery = router.currentRoute.value.query.searchQuery as string;
+    defaultSearchQuery.value = searchQuery || '';
     searchStore?.setSearchQuery(searchQuery);
   });
 </script>

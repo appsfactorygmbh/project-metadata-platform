@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { SmileOutlined, SearchOutlined } from '@ant-design/icons-vue';
-  import { reactive, ref, inject, onMounted } from 'vue';
+  import { reactive, ref, inject, onBeforeMount } from 'vue';
   import type {
     FilterConfirmProps,
     FilterResetProps,
@@ -11,6 +11,7 @@
   import type { TableColumnType, TableProps } from 'ant-design-vue';
   import type { ArrayElement } from '@/models/ArrayElement';
   import { useRouter } from 'vue-router';
+  import _ from 'lodash';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -45,11 +46,19 @@
     };
   };
 
+  interface ColumnSearchState {
+    columnName: string;
+    searchQuery: string | undefined;
+  }
+
+  const columnsSearchState: ColumnSearchState[] = reactive([]);
+
   const mapSearchableColumn = (
     column: ArrayElement<typeof props.columns>,
   ): TableColumnType => {
     const index = column.dataIndex;
     if (column.searchable) {
+      columnsSearchState.push({ columnName: index, searchQuery: undefined });
       column.onFilter = (value, record) =>
         String(record[index])
           .toLowerCase()
@@ -99,6 +108,13 @@
     dataIndex: string,
   ) {
     confirm();
+    console.log(confirm);
+
+    const index = _.findIndex(columnsSearchState, function (o) {
+      return o.columnName == dataIndex;
+    });
+    columnsSearchState[index].searchQuery = selectedKeys[0];
+
     state.searchText = selectedKeys[0];
     state.searchedColumn = dataIndex;
   }
@@ -107,44 +123,48 @@
    * Resets the filtered search in target column.
    * @param {((param?: FilterResetProps) => void)} clearFilters Clears the filter, when confirmed.
    */
-  function handleReset(clearFilters: (param?: FilterResetProps) => void) {
+  function handleReset(
+    clearFilters: (param?: FilterResetProps) => void,
+    dataIndex: string,
+  ) {
     clearFilters({ confirm: true });
+
+    const index = _.findIndex(columnsSearchState, function (o) {
+      return o.columnName == dataIndex;
+    });
+    columnsSearchState[index].searchQuery = undefined;
+
     state.searchText = '';
   }
 
-  const pushColumnFilter = (
+  const pushColumnFilter = async (
     searchQuery: string | undefined,
     column: string,
   ) => {
-    router.push({
+    await router.push({
       path: router.currentRoute.value.path,
       query: { ...router.currentRoute.value.query, [column]: searchQuery },
     });
   };
 
   watch(
-    () => ({ ...state }),
-    (newSeachState) => {
-      console.log(newSeachState);
-
-      if (newSeachState.searchText != '') {
-        pushColumnFilter(
-          newSeachState.searchText,
-          newSeachState.searchedColumn,
-        );
-      } else {
-        pushColumnFilter(undefined, newSeachState.searchedColumn);
+    () => [...columnsSearchState],
+    async () => {
+      for (const column of columnsSearchState) {
+        await pushColumnFilter(column.searchQuery, column.columnName);
       }
     },
+    { deep: true },
   );
 
-  onMounted(() => {
+  onBeforeMount(() => {
     const queries = router.currentRoute.value.query;
     const columnNames = columns.map((column) => column.key);
     for (const query in queries) {
       if (columnNames.includes(query)) {
-        state.searchText = queries[query] as string;
-        state.searchedColumn = query;
+        const searchText = queries[query] as string;
+        const searchedColumn = query;
+        handleSearch([searchText], () => {}, searchedColumn);
       }
     }
   });
@@ -216,7 +236,7 @@
         <a-button
           size="small"
           style="width: 90px"
-          @click="handleReset(clearFilters)"
+          @click="handleReset(clearFilters, column.dataIndex)"
         >
           Reset
         </a-button>
