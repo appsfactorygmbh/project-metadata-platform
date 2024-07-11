@@ -91,6 +91,32 @@ describe('AddPluginForm.vue', () => {
     expect(formStore.getFieldValue('pluginName')).toBe(undefined);
   });
 
+  it('should disable inputs', async () => {
+    wrapper = mount(AddPluginForm, {
+      props: {
+        formStore,
+        initialValues: {
+          pluginName: '',
+          pluginUrl: '',
+          globalPlugin: '',
+          inputsDisabled: true,
+        },
+      },
+    });
+
+    const inputPluginName = wrapper.find('#inputAddPluginPluginName');
+    const inputPluginUrl = wrapper.find('#inputAddPluginPluginUrl');
+    expect(inputPluginName.attributes('disabled')).toBe('');
+    expect(inputPluginUrl.attributes('disabled')).toBe('');
+  });
+
+  it('should enable inputs after plugin select', async () => {
+    const inputPluginName = wrapper.find('#inputAddPluginPluginName');
+    const inputPluginUrl = wrapper.find('#inputAddPluginPluginUrl');
+    expect(inputPluginName.attributes('disabled')).toBe(undefined);
+    expect(inputPluginUrl.attributes('disabled')).toBe(undefined);
+  });
+
   it('should validate the form if pluginName is not set', async () => {
     formStore = useFormStore('testForm2');
     await flushPromises();
