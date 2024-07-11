@@ -22,7 +22,7 @@ class PluginService {
     console.log(plugin);
   };
 
-  fetchGlobalPlugin = async (pluginId: GlobalPluginModel['id']) => {
+  fetchGlobalPluginData = async (pluginId: GlobalPluginModel['id']) => {
     //   try {
     //     const response = await fetch(
     //       import.meta.env.VITE_BACKEND_URL + '/plugins/' + pluginId.toString(),
