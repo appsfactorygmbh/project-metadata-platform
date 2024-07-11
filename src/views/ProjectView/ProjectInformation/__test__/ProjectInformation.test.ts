@@ -14,7 +14,7 @@ const testData = {
   teamNumber: 42,
 };
 
-describe('ProjectInformationView.vue', () => {
+describe('ProjectInformation.vue', () => {
   setActivePinia(createPinia());
 
   it('renders the project information correctly', async () => {
