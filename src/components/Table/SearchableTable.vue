@@ -1,15 +1,15 @@
 <script lang="ts" setup>
   import { SmileOutlined, SearchOutlined } from '@ant-design/icons-vue';
-  import { reactive, ref, watch, onMounted, inject } from 'vue';
-  import { useWindowSize } from '@vueuse/core';
+  import { reactive, ref, inject } from 'vue';
   import type {
     FilterConfirmProps,
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
-  import type { ProjectModel } from '@/models/Project';
-  import { storeToRefs } from 'pinia';
-  import { projectsStoreSymbol } from '@/store/injectionSymbols';
-  import { useProjectStore, type SearchStore } from '@/store';
+  import type { SearchStore } from '@/store';
+  import { numberSorter, stringSorter } from '../../utils/antd/sort';
+  import type { SearchableColumn } from './SearchableTableTypes';
+  import type { TableColumnType, TableProps } from 'ant-design-vue';
+  import type { ArrayElement } from '@/models/ArrayElement';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -17,50 +17,98 @@
       type: Symbol,
       required: true,
     },
-    paneWidth: {
-      type: Number,
-      required: true,
-    },
     paneHeight: {
       type: Number,
       required: true,
     },
-    isTest: {
+    columns: {
+      type: Array<SearchableColumn>,
+      required: true,
+    },
+    isLoading: {
       type: Boolean,
-      default: false,
+      required: true,
     },
   });
 
-  const searchStore = inject<SearchStore<ProjectModel>>(
-    props.searchStoreSymbol,
-  );
+  const searchStore = inject<SearchStore<object>>(props.searchStoreSymbol);
 
-  //update paneWidth when the pane is resized
-  watch(
-    () => props.paneWidth,
-    () => {
-      changeColumns(props.paneWidth);
-    },
-  );
+  const emit = defineEmits(['row-click']);
 
-  const projectsStore = props.isTest
-    ? useProjectStore()
-    : inject(projectsStoreSymbol)!;
-
-  const { getIsLoading } = storeToRefs(projectsStore);
-  const isLoading = computed(() => getIsLoading.value);
-
-  const customRow = (record: ProjectModel) => {
+  const customRow = (record: object) => {
     return {
       onClick: () => {
-        projectsStore.fetchProject(record.id);
+        emit('row-click', record);
       },
     };
   };
 
-  onMounted(async () => {
-    changeColumns(props.paneWidth);
+  const mapSearchableColumn = (
+    column: ArrayElement<typeof props.columns>,
+  ): TableColumnType => {
+    const index = column.dataIndex;
+    if (column.searchable) {
+      column.onFilter = (value, record) =>
+        String(record[index])
+          .toLowerCase()
+          .includes(value.toString().toLowerCase());
+      column.customFilterDropdown = true;
+      column.onFilterDropdownOpenChange = (visible: boolean) => {
+        if (visible) {
+          setTimeout(() => {
+            searchInput.value.focus();
+          }, 100);
+        }
+      };
+    }
+    if (column.sortMethod) {
+      if (column.sortMethod == 'string') {
+        column.sorter = (a, b) => stringSorter(a, b, index);
+      } else {
+        column.sorter = (a, b) => numberSorter(a, b, index);
+      }
+    }
+    return column;
+  };
+
+  const columns: TableProps['columns'] = props.columns.map((column) =>
+    mapSearchableColumn(column),
+  );
+
+  /*  Search implementation  */
+
+  //saves state of searched text and in which column
+  const state = reactive({
+    searchText: '',
+    searchedColumn: '',
   });
+
+  const searchInput = ref();
+
+  /**
+   * Saves the searched string and the target column in state, when search is confirmed.
+   * @param {string[]} selectedKeys Has the searched text in the first position.
+   * @param {((param?: FilterConfirmProps) => void)} confirm Confirms the search.
+   * @param {string} dataIndex Has the target column.
+   */
+  function handleSearch(
+    selectedKeys: string[],
+    confirm: (param?: FilterConfirmProps) => void,
+    dataIndex: string,
+  ) {
+    confirm();
+    state.searchText = selectedKeys[0];
+    state.searchedColumn = dataIndex;
+  }
+
+  /**
+   * Resets the filtered search in target column.
+   * @param {((param?: FilterResetProps) => void)} clearFilters Clears the filter, when confirmed.
+   */
+  function handleReset(clearFilters: (param?: FilterResetProps) => void) {
+    clearFilters({ confirm: true });
+    state.searchText = '';
+  }
 </script>
 
 <template>
@@ -70,12 +118,14 @@
         scroll: sets height of table to ~90% of the window height
     -->
   <a-table
-    :columns="[...columns].filter((item) => !item.hidden)"
+    class="clickable-table"
+    :columns="[...columns]"
     :data-source="[...(searchStore?.getSearchResults || [])]"
     :pagination="false"
     :loading="isLoading"
     :scroll="{ y: props.paneHeight - 155 }"
     :custom-row="customRow"
+    :row-class-name="'row'"
     bordered
   >
     <!-- Header of the table -->
@@ -171,204 +221,13 @@
   </a-table>
 </template>
 
-<script lang="ts">
-  /*  Column implementation  */
-
-  /**
-   * Adds an animation, when the box of the search element opens.
-   * @param {boolean} visible True when the box is visible, False if not.
-   */
-  const filterDropdownAnimation = (visible: boolean) => {
-    if (visible) {
-      setTimeout(() => {
-        searchInput.value.focus();
-      }, 100);
-    }
-  };
-
-  //sets the parameters for every column
-  const columns = [
-    {
-      title: 'Project Name',
-      dataIndex: 'projectName',
-      key: 'projectName',
-      customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: ProjectModel) =>
-        record.projectName
-          .toString()
-          .toLowerCase()
-          .includes(value.toString().toLowerCase()),
-      onFilterDropdownOpenChange: (visible: boolean) => {
-        filterDropdownAnimation(visible);
-      },
-      ellipsis: true,
-      align: 'center' as const,
-      sorter: (a: ProjectModel, b: ProjectModel) =>
-        a.projectName.localeCompare(b.projectName),
-      defaultSortOrder: 'ascend' as const,
-    },
-    {
-      title: 'Client Name',
-      dataIndex: 'clientName',
-      key: 'clientName',
-      customFilterDropdown: true,
-      onFilter: (value: string | number | boolean, record: ProjectModel) =>
-        record.clientName
-          .toString()
-          .toLowerCase()
-          .includes(value.toString().toLowerCase()),
-      onFilterDropdownOpenChange: (visible: boolean) => {
-        filterDropdownAnimation(visible);
-      },
-      ellipsis: true,
-      align: 'center' as const,
-      sorter: (a: ProjectModel, b: ProjectModel) =>
-        a.clientName.localeCompare(b.clientName),
-      defaultSortOrder: 'ascend' as const,
-      hidden: false,
-    },
-    {
-      title: 'Business Unit',
-      dataIndex: 'businessUnit',
-      key: 'businessNumber',
-      ellipsis: true,
-      align: 'center' as const,
-      sorter: (a: ProjectModel, b: ProjectModel) =>
-        a.businessUnit.localeCompare(b.businessUnit),
-      defaultSortOrder: 'ascend' as const,
-      hidden: false,
-    },
-    {
-      title: 'Team Number',
-      dataIndex: 'teamNumber',
-      key: 'teamNumber',
-      ellipsis: true,
-      align: 'center' as const,
-      sorter: (a: ProjectModel, b: ProjectModel) => a.teamNumber - b.teamNumber,
-      defaultSortOrder: 'ascend' as const,
-      hidden: false,
-    },
-  ];
-
-  /*  Search implementation  */
-
-  //saves state of searched text and in which column
-  const state = reactive({
-    searchText: '',
-    searchedColumn: '',
-  });
-
-  const searchInput = ref();
-
-  /**
-   * Saves the searched string and the target column in state, when search is confirmed.
-   * @param {string[]} selectedKeys Has the searched text in the first position.
-   * @param {((param?: FilterConfirmProps) => void)} confirm Confirms the search.
-   * @param {string} dataIndex Has the target column.
-   */
-  function handleSearch(
-    selectedKeys: string[],
-    confirm: (param?: FilterConfirmProps) => void,
-    dataIndex: string,
-  ) {
-    confirm();
-    state.searchText = selectedKeys[0];
-    state.searchedColumn = dataIndex;
-  }
-
-  /**
-   * Resets the filtered search in target column.
-   * @param {((param?: FilterResetProps) => void)} clearFilters Clears the filter, when confirmed.
-   */
-  function handleReset(clearFilters: (param?: FilterResetProps) => void) {
-    clearFilters({ confirm: true });
-    state.searchText = '';
-  }
-
-  /*  Column drop implementation  */
-
-  /**
-   * Changes the visible columns based on the width of the left pane.
-   * @param {number} pwidth Has the width of the left pane.
-   */
-  function changeColumns(pwidth: number) {
-    const breakpoint = getBreakpoint(pwidth);
-    switch (breakpoint) {
-      case 'xs':
-        hideColumn('clientName');
-        hideColumn('businessNumber');
-        hideColumn('teamNumber');
-        break;
-      case 'sm':
-        showColumn('clientName');
-        hideColumn('businessNumber');
-        hideColumn('teamNumber');
-        break;
-      case 'md':
-        showColumn('clientName');
-        showColumn('businessNumber');
-        hideColumn('teamNumber');
-        break;
-      case 'lg':
-        showColumn('clientName');
-        showColumn('businessNumber');
-        showColumn('teamNumber');
-        break;
-    }
-  }
-
-  /**
-   * Hides given column.
-   * @param {number} key Has the key of the column to hide.
-   */
-  function hideColumn(key: string) {
-    columns.forEach((column) => {
-      if (column.key == key) {
-        column.hidden = true;
-      }
-    });
-  }
-
-  /**
-   * Shows given column.
-   * @param {number} key Has the key of the column to show.
-   */
-  function showColumn(key: string) {
-    columns.forEach((column) => {
-      if (column.key == key) {
-        column.hidden = false;
-      }
-    });
-  }
-
-  /**
-   * Calculates the breakpoints based on the width of the window and assigns one based on the width of the left pane.
-   * @param {number} pwidth Has the width of the left pane.
-   * @return {string} Returns a string, which represents the current breakpoint of the pane width.
-   */
-  function getBreakpoint(pwidth: number): string {
-    const windowSize = useWindowSize().width.value;
-    const breakpoint: number[] = [
-      0.25 * windowSize,
-      0.42 * windowSize,
-      0.5 * windowSize,
-    ];
-
-    if (pwidth > breakpoint[2]) {
-      return 'lg';
-    } else if (pwidth > breakpoint[1]) {
-      return 'md';
-    } else if (pwidth > breakpoint[0]) {
-      return 'sm';
-    } else {
-      return 'xs';
-    }
-  }
-</script>
-
-<style>
+<style scoped>
   .highlight {
     background-color: rgb(255, 192, 105);
     padding: 0px;
+  }
+
+  .clickable-table :deep(.row) {
+    cursor: pointer;
   }
 </style>

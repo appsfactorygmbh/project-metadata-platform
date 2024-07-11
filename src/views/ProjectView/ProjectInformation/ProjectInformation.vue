@@ -1,54 +1,35 @@
-<script setup lang="ts">
-  import { onMounted, computed, watch, inject, toRaw, reactive } from 'vue';
-  import type { DetailedProjectModel } from '@/models/Project';
-  import { EditOutlined } from '@ant-design/icons-vue';
+<script lang="ts" setup>
+  import { inject, onMounted, toRaw, reactive } from 'vue';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import { useProjectStore } from '@/store';
-  import type { ComputedRef } from 'vue';
   import { storeToRefs } from 'pinia';
+  import type { DetailedProjectModel } from '@/models/Project';
+  import type { ComputedRef } from 'vue';
+  import { EditOutlined } from '@ant-design/icons-vue';
 
-  //Get the width of the right pane from App.vue
   const props = defineProps({
-    paneWidth: {
-      type: Number,
-      required: true,
-    },
     isTest: {
       type: Boolean,
       default: false,
     },
   });
 
-  watch(
-    () => props.paneWidth,
-    () => {
-      getWidth(props.paneWidth);
-    },
+  const projectsStore = props.isTest
+    ? useProjectStore()
+    : inject(projectsStoreSymbol)!;
+
+  const { getIsLoadingProject } = storeToRefs(projectsStore);
+  const { getIsLoading } = storeToRefs(projectsStore);
+  const isLoading = computed(
+    () => getIsLoadingProject.value || getIsLoading.value,
   );
 
-  let store;
-
-  if (props.isTest) {
-    store = useProjectStore();
-    store.fetchProject(100);
-  } else {
-    store = inject(projectsStoreSymbol)!;
-  }
-
-  const { getIsLoadingProject } = storeToRefs(store);
-  const isLoading = computed(() => getIsLoadingProject.value);
-
-  const profileFieldSize = computed(() => ({
-    width: getWidth(props.paneWidth),
-  }));
-
-  // Fetch data when component is mounted
   onMounted(async () => {
-    const project = store.getProject;
+    const project = projectsStore.getProject;
     if (project) addData(project);
 
     const data: ComputedRef<DetailedProjectModel | null> = computed(
-      () => store.getProject,
+      () => projectsStore.getProject,
     );
 
     watch(
@@ -67,15 +48,16 @@
   <div class="pane">
     <div class="main">
       <!-- create box for the project name -->
-      <div class="projectNameContainer" :loading="isLoading">
-        <h1 class="projectName">
+      <div class="projectNameContainer">
+        <h1 v-if="!isLoading" class="projectName">
           {{ projectData.projectName }}
         </h1>
+        <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
         <a-button
           class="button"
           ghost
           style="margin-left: 10px"
-          @click="placeHolder"
+          @click="() => {}"
         >
           <template #icon><EditOutlined class="icon" /></template>
         </a-button>
@@ -95,13 +77,17 @@
             padding: '5px',
           }"
           class="infoCard"
-          :style="profileFieldSize"
         >
           <label class="label">Business&nbsp;Unit:</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.businessUnit }}
           </p>
-          <a-skeleton v-else active :paragraph="false" />
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="padding-left: 1em"
+          />
         </a-card>
 
         <a-card
@@ -111,13 +97,17 @@
             padding: '5px',
           }"
           class="infoCard"
-          :style="profileFieldSize"
         >
           <label class="label">Team&nbsp;Number:</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.teamNumber }}
           </p>
-          <a-skeleton v-else active :paragraph="false" />
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="padding-left: 1em"
+          />
         </a-card>
         <a-card
           :body-style="{
@@ -126,13 +116,17 @@
             padding: '5px',
           }"
           class="infoCard"
-          :style="profileFieldSize"
         >
           <label class="label">Department:</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.department }}
           </p>
-          <a-skeleton v-else active :paragraph="false" />
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="padding-left: 1em"
+          />
         </a-card>
         <a-card
           :body-style="{
@@ -141,13 +135,17 @@
             padding: '5px',
           }"
           class="infoCard"
-          :style="profileFieldSize"
         >
           <label class="label">Client&nbsp;Name:</label>
           <p v-if="!isLoading" class="projectInfo">
             {{ projectData.clientName }}
           </p>
-          <a-skeleton v-else active :paragraph="false" />
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="padding-left: 1em"
+          />
         </a-card>
       </a-flex>
     </div>
@@ -155,7 +153,6 @@
 </template>
 
 <script lang="ts">
-  // Flag for editable Title
   const projectData: DetailedProjectModel = reactive({
     id: 0,
     projectName: '',
@@ -164,11 +161,6 @@
     department: '',
     clientName: '',
   });
-
-  // Place holder for the buttons for now
-  const placeHolder = () => {
-    console.log('Icon clicked');
-  };
 
   //Function to load the data from projectViewService to projectView
   function addData(loadedData: DetailedProjectModel) {
@@ -179,25 +171,6 @@
     projectData.department = loadedData.department;
     projectData.clientName = loadedData.clientName;
   }
-
-  const getWidth = (pwidth: number) => {
-    switch (getBreakpoint(pwidth)) {
-      case 'lg':
-        return '48%';
-
-      case 'sm':
-        return '100%';
-    }
-  };
-
-  function getBreakpoint(pwidth: number): string {
-    const breakpoint: number[] = [978];
-    if (pwidth >= breakpoint[0]) {
-      return 'lg';
-    } else {
-      return 'sm';
-    }
-  }
 </script>
 
 <style scoped lang="scss">
@@ -206,8 +179,6 @@
     width: 100%;
     max-height: 80vh;
     height: max-content;
-    //margin-top: 10px;
-    //padding-top: 50px;
     padding-right: 5em;
     padding-left: 5em;
 
@@ -260,25 +231,26 @@
 
   .projectInformationBox {
     width: 100%;
-    height: max-content;
-    margin: 10px;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
     padding-top: 1em;
     padding-bottom: 1em;
     border-radius: 10px;
 
     background: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-    display: flex;
-    flex-wrap: wrap;
   }
 
   .infoCard {
     border: none;
-    align-items: center;
-    flex-direction: row;
-    display: flex;
-    justify-content: center;
+    width: 50%;
+    display: table;
+    padding-left: 1em;
+    padding-right: 1em;
   }
 
   .button {
@@ -301,10 +273,12 @@
   .label {
     font-size: 1.4em;
     font-weight: bold;
+    margin: 0 0 0 auto;
   }
 
   .projectInfo {
     font-size: 1.4em;
-    margin: 0;
+    margin: 0 auto 0 1em;
+    white-space: nowrap;
   }
 </style>

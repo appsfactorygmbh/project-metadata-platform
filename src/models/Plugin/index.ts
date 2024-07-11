@@ -1,3 +1,4 @@
-import type { PluginModel, ProjectKey } from './PluginModel';
+import type { PluginModel } from './PluginModel';
+import type { GlobalPluginModel, GlobalPluginKey } from './GlobalPluginModel';
 
-export type { PluginModel, ProjectKey };
+export type { PluginModel, GlobalPluginModel, GlobalPluginKey };

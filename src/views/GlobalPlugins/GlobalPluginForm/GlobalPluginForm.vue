@@ -5,7 +5,7 @@
   import { type FormStore } from '@/components/Form';
   import type { RulesObject } from '@/components/Form/FormStore';
   import type { GlobalPluginFormData } from './';
-  import type { ProjectKey } from '@/models/Plugin';
+  import type { GlobalPluginKey } from '@/models/Plugin';
 
   const { formStore, initialValues } = defineProps<{
     formStore: FormStore;
@@ -64,14 +64,14 @@
     },
   };
 
-  const removeProjectKey = (item: ProjectKey) => {
+  const removePluginKey = (item: GlobalPluginKey) => {
     const index = modelRef.keys.indexOf(item);
     if (index !== -1) {
       modelRef.keys.splice(index, 1);
     }
   };
 
-  const addProjectKey = () => {
+  const addPluginKey = () => {
     modelRef.keys.push({
       value: '',
       key: Date.now(),
@@ -125,14 +125,14 @@
       <MinusCircleOutlined
         v-if="modelRef.keys.length > 1"
         class="dynamic-delete-button"
-        @click="removeProjectKey(key)"
+        @click="removePluginKey(key)"
       />
     </a-form-item>
     <a-row style="display: flex; justify-content: center">
       <a-form-item v-bind="formItemLayoutWithOutLabel">
-        <a-button type="dashed" @click="addProjectKey">
+        <a-button type="dashed" @click="addPluginKey">
           <PlusOutlined />
-          Add ProjectKey
+          Add PluginKey
         </a-button>
       </a-form-item>
     </a-row>
