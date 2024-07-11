@@ -33,7 +33,6 @@
 </script>
 
 <template>
-  <!-- add icons for profile, plugins, global logs, signout -->
   <FloatingButtonGroup :buttons="buttons" class="menu" />
 </template>
 
