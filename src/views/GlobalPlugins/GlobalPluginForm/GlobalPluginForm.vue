@@ -3,7 +3,10 @@
   import { reactive } from 'vue';
   //import type { CreatePluginModel } from '@/models/Plugin';
   import { type FormStore } from '@/components/Form';
-  import type { RulesObject } from '@/components/Form/FormStore';
+  import {
+    type SpecialRulesObject,
+    type RulesObject,
+  } from '@/components/Form/FormStore';
   import type { GlobalPluginFormData } from './';
   import type { GlobalPluginKey } from '@/models/Plugin';
   import _ from 'lodash';
@@ -29,28 +32,32 @@
     ],
     keys: [
       {
-        required: true,
-        message: 'Please insert the plugin key.',
+        required: false,
         trigger: 'change',
         type: 'array',
-        validator: (rule, value: []) => {
-          let error = false;
-          value.forEach((item: GlobalPluginKey) => {
-            if (item.value.length === 0) {
-              error = true;
-            }
-          });
-          if (error) {
-            return Promise.reject('Please insert the plugin key.');
+      },
+    ],
+  });
+
+  const specialRules = reactive<SpecialRulesObject<GlobalPluginFormData>>({
+    keys: [
+      {
+        ruleTarget: 'arrayItem',
+        keyProp: 'key',
+        validator: (rule, value) => {
+          if (value.value.length === 0) {
+            return Promise.reject('Please insert at least one key.');
           }
           return Promise.resolve();
         },
+        message: 'Please insert at least one key.',
       },
     ],
   });
 
   formStore.setModel(modelRef);
   formStore.setRules(rulesRef);
+  formStore.setSpecialRules(specialRules);
 
   const formItemLayout = {
     labelCol: {
@@ -112,7 +119,7 @@
       :label="index === 0 ? 'Project Keys' : ' '"
       :colon="false"
       :name="['keys', index, 'value']"
-      v-bind="_.merge(formStore.validateInfos.keys, formItemLayout)"
+      v-bind="_.merge(formStore.validateInfos[key.key], formItemLayout)"
     >
       <a-input
         v-model:value="key.value"
@@ -122,7 +129,12 @@
       <MinusCircleOutlined
         v-if="modelRef.keys.length > 1"
         class="dynamic-delete-button"
-        @click="removePluginKey(key)"
+        @click="
+          () => {
+            console.log(formStore.validateInfos[key.key]);
+            removePluginKey(key);
+          }
+        "
       />
     </a-form-item>
     <a-row style="display: flex; justify-content: center">
@@ -134,7 +146,6 @@
       </a-form-item>
     </a-row>
   </a-form>
-  <contextHolder></contextHolder>
 </template>
 
 <style>
