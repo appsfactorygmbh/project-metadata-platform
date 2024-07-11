@@ -24,7 +24,7 @@
   });
 
   const router = useRouter();
-  const projectsStore = inject(projectsStoreSymbol)!;
+  const projectsStore = inject(projectsStoreSymbol);
   const pluginStore = inject(pluginStoreSymbol);
   const searchStore = useSearchStore<ProjectModel>('projects');
   const searchStoreSymbol = Symbol('projectSearchStore');
@@ -38,7 +38,7 @@
   console.log('FETCHING_METHOD:', import.meta.env);
 
   watch(
-    () => projectsStore.getProjects,
+    () => projectsStore?.getProjects,
     (newData) => {
       searchStore?.setBaseSet(newData || []);
     },
@@ -93,7 +93,7 @@
 
     await projectsStore?.fetchProject(projectId);
     await pluginStore?.fetchPlugins(projectId);
-    searchStore.setBaseSet(projectsStore.getProjects);
+    searchStore.setBaseSet(projectsStore?.getProjects || []);
     changeColumns(props.paneWidth);
   });
 </script>
@@ -106,7 +106,7 @@
         :search-store-symbol="searchStoreSymbol"
         :pane-height="props.paneHeight"
         :columns="columns.filter((item) => !item.hidden)"
-        :is-loading="isLoading"
+        :is-loading="isLoading!"
         @row-click="handleRowClick"
       />
     </a-flex>

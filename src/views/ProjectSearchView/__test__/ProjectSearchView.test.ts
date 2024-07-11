@@ -10,6 +10,7 @@ import {
   projectsStoreSymbol,
 } from '@/store/injectionSymbols';
 import router from '@/router';
+import type { ProjectModel } from '@/models/Project';
 
 const testProject = [
   {
@@ -32,6 +33,8 @@ const testProjectInfo = {
 
 describe('ProjectSearchView.vue', () => {
   setActivePinia(createPinia());
+  const searchStore = useSearchStore<ProjectModel>('project');
+  const searchStoreSymbol = Symbol('projectSearchStore');
 
   const generateWrapper = (pWidth: number) => {
     return mount(ProjectSearchView, {
@@ -52,6 +55,7 @@ describe('ProjectSearchView.vue', () => {
         provide: {
           [projectsStoreSymbol as symbol]: useProjectStore(),
           [pluginStoreSymbol as symbol]: usePluginsStore(),
+          [searchStoreSymbol as symbol]: searchStore,
         },
         plugins: [router],
       },
@@ -63,8 +67,6 @@ describe('ProjectSearchView.vue', () => {
   };
 
   const wrapper = generateWrapper(800);
-
-  const searchStore = useSearchStore('project');
 
   const loadData = async () => {
     searchStore.setBaseSet(testProject);
