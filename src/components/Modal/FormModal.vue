@@ -9,11 +9,19 @@
 
   const open = ref<boolean>(true); //TODO: set default to false after implementing button
 
+  const emit = defineEmits(['close']);
+
   // checks for correct input
   const handleOk = () => {
-    formStore.submit().catch((e) => {
-      console.log(e);
-    });
+    formStore
+      .submit()
+      .then(() => {
+        open.value = false;
+        emit('close');
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const resetModal = () => {

@@ -2,12 +2,19 @@
   import { FormModal } from '@/components/Modal';
   import { CreateGlobalPluginForm } from './';
   import { useFormStore } from '@/components/Form';
+  import { useRouter } from 'vue-router';
 
   const formStore = useFormStore('createPluginForm');
+
+  const router = useRouter();
+
+  const onClose = () => {
+    router.push('/settings/plugins');
+  };
 </script>
 
 <template>
-  <FormModal title="Create Plugin" :form-store="formStore">
+  <FormModal title="Create Plugin" :form-store="formStore" @close="onClose">
     <CreateGlobalPluginForm :form-store="formStore" />
   </FormModal>
 </template>
