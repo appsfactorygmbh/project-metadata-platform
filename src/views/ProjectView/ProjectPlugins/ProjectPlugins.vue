@@ -2,10 +2,9 @@
   <div>
     <div v-if="!loading" class="container">
       <PluginComponent
-        v-for="plugin in pluginsModel"
+        v-for="plugin in pluginStore.getCachePlugins"
         :id="plugin.id"
         :key="plugin.displayName"
-        v-model.lazy="pluginsModel"
         class="plugins"
         :plugin-name="plugin.pluginName"
         :display-name="plugin.displayName"
@@ -42,15 +41,8 @@
     pluginStoreSymbol,
     projectsStoreSymbol,
   } from '@/store/injectionSymbols';
-  import type { PluginModel } from '@/models/Plugin';
-  import type { ComputedRef } from 'vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   const { isEditing } = useEditing();
-
-  const pluginsModel = defineModel<PluginModel[] | undefined>({
-    required: true,
-    type: Array,
-  });
 
   const pluginStore = inject(pluginStoreSymbol)!;
   const projectsStore = inject(projectsStoreSymbol);
@@ -59,24 +51,6 @@
     () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
   );
 
-  function setPlugins(newPlugins: PluginModel[]) {
-    pluginsModel.value = toRaw(newPlugins);
-  }
-
-  onMounted(async () => {
-    setPlugins(pluginStore.getPlugins);
-
-    const data: ComputedRef<PluginModel[]> = computed(
-      () => pluginStore.getPlugins,
-    );
-
-    watch(
-      () => data.value,
-      (newProject) => {
-        setPlugins(newProject);
-      },
-    );
-  });
 </script>
 
 <style scoped lang="css">

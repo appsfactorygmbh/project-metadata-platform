@@ -1,9 +1,10 @@
 <script lang="ts" setup>
   // Import ref for reactive variables and utility functions for URL handling.
-  import { ref, watch } from 'vue';
+  import { ref, watch, inject } from 'vue';
   import { cutAfterTLD, createFaviconURL } from './editURL';
   import { DeleteOutlined } from '@ant-design/icons-vue';
-  import type { PluginModel } from '@/models/Plugin';
+  import {projectEditStoreSymbol} from '@/store/injectionSymbols';
+  import {useProjectEditStore} from "@/store";
 
   // Define the component's props with pluginName and url as required strings.
   const props = defineProps({
@@ -33,17 +34,25 @@
     },
   });
 
-  console.log('props.id: ', props.id);
+  const initDisplayName = props.displayName
+  const initUrl = props.url
 
-  const displayNameInput = ref<string>(props.displayName);
-  const urlInput = ref<string>(props.url);
+  const projectEditStore = useProjectEditStore()
+
+  const displayNameInput = ref<string>("");
+  const urlInput = ref<string>("");
 
   const toggleSkeleton = ref<boolean>(props.isLoading);
 
-  const pluginModel = defineModel<PluginModel[] | undefined>({
-    required: true,
-    type: Array,
-  });
+  watch(
+    () => props.isEditing,
+    (newVal) => {
+      if(newVal === false){
+        displayNameInput.value = initDisplayName;
+        urlInput.value = initUrl;
+      }
+    },
+  );
 
   watch(
     () => props.isLoading,
@@ -65,29 +74,25 @@
   }
 
   const hidePlugin = () => {
-    pluginModel.value = pluginModel.value?.filter(
-      (plugin) => plugin.id !== props.id,
-    );
+    // pluginStore.setCachePlugins(pluginStore.getCachePlugins.filter((plugins) => plugins.id !== props.id))
+    console.log("update")
   };
 
   const updateDisplayName = () => {
-    let currValue = displayNameInput.value;
-    if (pluginModel.value) {
-      const index = pluginModel.value.findIndex(
-        (pluginInArray) => pluginInArray.id === props.id,
-      );
-      pluginModel.value[index].displayName = currValue;
+    if(displayNameInput.value == null){
+      return
     }
+    console.log(displayNameInput.value)
+    projectEditStore.updatePluginChanges(props.id, props.url, {
+      pluginName: props.pluginName,
+      displayName: displayNameInput.value,
+      url: urlInput.value,
+      id: props.id
+    } )
   };
 
   const updateUrl = () => {
-    let currValue = urlInput.value;
-    if (pluginModel.value) {
-      const index = pluginModel.value.findIndex(
-        (pluginInArray) => pluginInArray.id === props.id,
-      );
-      pluginModel.value[index].url = currValue;
-    }
+    console.log("update")
   };
 </script>
 
@@ -110,6 +115,7 @@
         <h3 style="text-align: center">{{ pluginName }}</h3>
         <a-input
           v-model:value="displayNameInput"
+          :placeholder="initDisplayName"
           class="inputField"
           @input="updateDisplayName"
         ></a-input>

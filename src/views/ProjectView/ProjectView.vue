@@ -20,11 +20,10 @@
   const { isEditing, stopEditing } = useEditing();
 
   const cancelEdit = () => {
-    pluginModel.value = pluginStore?.getPlugins || [];
+    pluginStore?.setCachePlugins(pluginStore?.getPlugins || []);
     stopEditing();
   };
   const saveEdit = async () => {
-    console.log('plugins:       ', pluginModel.value);
     const updateProjectInformation: DetailedProjectModel | null =
       projectStore?.getProject || null;
     const updatedProject: UpdateProjectModel = {
@@ -33,7 +32,7 @@
       teamNumber: updateProjectInformation?.teamNumber,
       department: updateProjectInformation?.department,
       clientName: updateProjectInformation?.clientName,
-      pluginList: pluginModel.value,
+      pluginList: pluginStore?.getPlugins,
     };
     console.log('updated Project', updatedProject);
     const projectID = computed(() => projectStore?.getProject?.id);
@@ -43,17 +42,12 @@
     }
     stopEditing();
   };
-
-  const pluginModel = defineModel<PluginModel[] | undefined>({
-    required: true,
-    type: Array,
-  });
 </script>
 
 <template>
   <ProjectEditButtons v-if="isEditing" @cancel="cancelEdit" @save="saveEdit" />
   <ProjectInformation />
-  <ProjectPlugins v-model.lazy="pluginModel" class="pluginView" />
+  <ProjectPlugins class="pluginView" />
 </template>
 
 <style scoped>

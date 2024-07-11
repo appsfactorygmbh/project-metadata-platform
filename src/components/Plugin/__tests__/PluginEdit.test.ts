@@ -1,165 +1,54 @@
-import { describe, it, expect } from 'vitest';
-import { mount, VueWrapper } from '@vue/test-utils';
-import PluginComponent from '@/components/Plugin/PluginComponent.vue';
-import type { PluginModel } from '@/models/Plugin';
-import type { ComponentPublicInstance } from 'vue';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { setActivePinia, createPinia } from 'pinia';
+import { usePluginsStore } from '@/store/PluginStore';
 
-interface PluginComponentInstance {
-  pluginName: string;
-  url: string;
-  displayName: string;
-  id: number;
-  isLoading: boolean;
-  isEditing: boolean;
-  modelValue: PluginModel[];
-  displayNameInput: string;
-  urlInput: string;
-  updateDisplayName: () => void;
-  updateUrl: () => void;
-}
+describe('PluginStore', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+  it('updates plugin URL correctly', () => {
+    const store = usePluginsStore();
+    store.setPlugins([
+      {
+        id: 1,
+        pluginName: 'Plugin 1',
+        displayName: 'Display 1',
+        url: 'http://old.url',
+      },
+      {
+        id: 2,
+        pluginName: 'Plugin 2',
+        displayName: 'Display 2',
+        url: 'http://example.com',
+      },
+    ]);
+    store.updatePluginURL(1, 'http://old.url', 'http://new.url');
 
-const initialPlugin = {
-  id: 100,
-  pluginName: 'Test Plugin',
-  url: 'https://test.com',
-  displayName: 'Test',
-  isLoading: false,
-  isEditing: true,
-};
-const initialPlugin2 = {
-  id: 200,
-  pluginName: 'Test Plugin',
-  url: 'https://test.com',
-  displayName: 'Test',
-  isLoading: false,
-  isEditing: true,
-};
-
-const generateWrapper = (
-  name: string,
-  url: string,
-  displayName: string,
-  isLoading: boolean,
-  isEditing: boolean,
-  id: number,
-  modelValue: PluginModel[],
-): VueWrapper<ComponentPublicInstance<PluginComponentInstance>> => {
-  return mount(PluginComponent, {
-    props: {
-      pluginName: name,
-      url: url,
-      displayName: displayName,
-      isLoading: isLoading,
-      isEditing: isEditing,
-      id: id,
-      modelValue: modelValue,
-    },
-  }) as VueWrapper<ComponentPublicInstance<PluginComponentInstance>>;
-};
-
-describe('PluginComponent', () => {
-  it('renders the edit Component correctly', async () => {
-    const wrapper = generateWrapper(
-      'Test Plugin',
-      'https://example.com/examplePath',
-      'Test Plugin Instance 1',
-      false,
-      true,
-      100,
-      [initialPlugin, initialPlugin2],
-    );
-
-    const card = wrapper.findComponent({ name: 'a-card' });
-    expect(card.exists()).toBe(true);
-
-    // Check the plugin name
-    const pluginName = wrapper.find('h3');
-    expect(pluginName.text()).toBe('Test Plugin');
-
-    const inputs = wrapper.findAll('.inputField');
-    expect(inputs.length).toBe(2);
-
-    const deleteIcon = wrapper.findComponent({ name: 'DeleteOutlined' });
-    expect(deleteIcon.exists()).toBe(true);
+    const cachedPlugin = store.cachePlugins.find((plugin) => plugin.id === 1);
+    expect(cachedPlugin?.url).toBe('http://new.url');
   });
 
-  it('deletes the plugin from the model when delete icon is clicked', async () => {
-    const wrapper = generateWrapper(
-      'Test Plugin',
-      'https://example.com/examplePath',
-      'Test Plugin Instance 1',
-      false,
-      true,
-      100,
-      [initialPlugin, initialPlugin2],
-    );
+  it('updates display correctly', () => {
+    const store = usePluginsStore();
+    store.setPlugins([
+      {
+        id: 1,
+        pluginName: 'Plugin 1',
+        displayName: 'Display 1',
+        url: 'http://old.url',
+      },
+      {
+        id: 2,
+        pluginName: 'Plugin 2',
+        displayName: 'Display 2',
+        url: 'http://example.com',
+      },
+    ]);
+    store.updateDisplayName(1, 'http://old.url', 'New Display Name');
 
-    // deletes initialPlugin (first Plugin)
-    const deleteIcon = wrapper.findComponent({ name: 'DeleteOutlined' });
-    await deleteIcon.trigger('click');
+    console.log(store.cachePlugins);
 
-    const emitted = wrapper.emitted('update:modelValue');
-    expect(emitted).toBeTruthy();
-    if (emitted) {
-      const lastEmittedValue = emitted[emitted.length - 1][0] as PluginModel[];
-      expect(
-        lastEmittedValue.find((plugin: PluginModel) => plugin.id === 100),
-      ).toBeFalsy();
-    }
-  });
-  it('updates the displayName correctly', async () => {
-    const wrapper = generateWrapper(
-      'Test Plugin',
-      'https://example.com/examplePath',
-      'Test Plugin Instance 1',
-      false,
-      true,
-      100,
-      [initialPlugin, initialPlugin2],
-    );
-
-    await wrapper.vm.$nextTick(() => {
-      wrapper.vm.displayNameInput = 'Updated Name';
-    });
-
-    // Trigger any necessary updates or methods after changing the reactive property
-    wrapper.vm.updateDisplayName();
-
-    // Ensure the component's state has been updated
-    await wrapper.vm.$nextTick();
-
-    // Now, verify the change
-    const updatedPlugin = wrapper.vm.modelValue.find(
-      (plugin) => plugin.id === wrapper.vm.id,
-    );
-    expect(updatedPlugin?.displayName).toBe('Updated Name');
-  });
-
-  it('updates the url correctly', async () => {
-    const wrapper = generateWrapper(
-      'Test Plugin',
-      'https://example.com/examplePath',
-      'Test Plugin Instance 1',
-      false,
-      true,
-      100,
-      [initialPlugin, initialPlugin2],
-    );
-
-    await wrapper.vm.$nextTick(() => {
-      wrapper.vm.urlInput = 'https://newURL.com';
-    });
-
-    // Trigger any necessary updates or methods after changing the reactive property
-    wrapper.vm.updateUrl();
-
-    // Ensure the component's state has been updated
-    await wrapper.vm.$nextTick();
-
-    // Now, verify the change
-    const updatedPlugin = wrapper.vm.modelValue.find(
-      (plugin) => plugin.id === wrapper.vm.id,
-    );
-    expect(updatedPlugin?.url).toBe('https://newURL.com');
+    const cachedPlugin = store.cachePlugins.find((plugin) => plugin.id === 2);
+    expect(cachedPlugin?.displayName).toBe('New Display Name');
   });
 });

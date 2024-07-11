@@ -40,7 +40,7 @@
       </pane>
 
       <pane size="32" min-size="32" class="rightPane">
-        <ProjectView :model-value="undefined" />
+        <ProjectView />
         <FloatingButton :button="splitButton" class="button" />
         <MenuButtons />
         <CreateProjectView v-if="!isEditing" />
