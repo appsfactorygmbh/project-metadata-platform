@@ -1,10 +1,9 @@
 <script lang="ts" setup>
   // Import ref for reactive variables and utility functions for URL handling.
-  import { ref, watch, inject } from 'vue';
+  import { ref, watch, onMounted } from 'vue';
   import { cutAfterTLD, createFaviconURL } from './editURL';
   import { DeleteOutlined } from '@ant-design/icons-vue';
-  import {projectEditStoreSymbol} from '@/store/injectionSymbols';
-  import {useProjectEditStore} from "@/store";
+  import { useProjectEditStore } from '@/store';
 
   // Define the component's props with pluginName and url as required strings.
   const props = defineProps({
@@ -34,22 +33,34 @@
     },
   });
 
-  const initDisplayName = props.displayName
-  const initUrl = props.url
+  const initDisplayName = props.displayName;
+  const initUrl = props.url;
 
-  const projectEditStore = useProjectEditStore()
+  const projectEditStore = useProjectEditStore();
 
-  const displayNameInput = ref<string>("");
-  const urlInput = ref<string>("");
+  const displayNameInput = ref<string>(props.displayName);
+  const urlInput = ref<string>(props.url);
 
   const toggleSkeleton = ref<boolean>(props.isLoading);
+
+  onMounted(() => {
+    if (projectEditStore) {
+      projectEditStore.initialAdd({
+        pluginName: props.pluginName,
+        displayName: props.displayName,
+        url: props.url,
+        id: props.id,
+      });
+    }
+  });
 
   watch(
     () => props.isEditing,
     (newVal) => {
-      if(newVal === false){
+      if (!newVal) {
         displayNameInput.value = initDisplayName;
         urlInput.value = initUrl;
+        hide.value = false;
       }
     },
   );
@@ -73,26 +84,25 @@
     window.open(props.url, '_blank');
   }
 
-  const hidePlugin = () => {
-    // pluginStore.setCachePlugins(pluginStore.getCachePlugins.filter((plugins) => plugins.id !== props.id))
-    console.log("update")
-  };
+  const hide = ref<boolean>(false);
 
-  const updateDisplayName = () => {
-    if(displayNameInput.value == null){
-      return
-    }
-    console.log(displayNameInput.value)
-    projectEditStore.updatePluginChanges(props.id, props.url, {
+  const hidePlugin = () => {
+    hide.value = true;
+    projectEditStore?.addDeletedPlugin({
       pluginName: props.pluginName,
       displayName: displayNameInput.value,
       url: urlInput.value,
-      id: props.id
-    } )
+      id: props.id,
+    });
   };
 
-  const updateUrl = () => {
-    console.log("update")
+  const updateDisplayName = () => {
+    projectEditStore?.updatePluginChanges(props.id.toString() + props.url, {
+      pluginName: props.pluginName,
+      displayName: displayNameInput.value,
+      url: urlInput.value,
+      id: props.id,
+    });
   };
 </script>
 
@@ -109,20 +119,20 @@
         alignItems: 'center',
         padding: '15px',
       }"
+      :style="hide ? 'display: none' : ''"
     >
       <!-- Container for plugin name and URL text. -->
       <div class="textContainerInput">
         <h3 style="text-align: center">{{ pluginName }}</h3>
         <a-input
           v-model:value="displayNameInput"
-          :placeholder="initDisplayName"
           class="inputField"
           @input="updateDisplayName"
         ></a-input>
         <a-input
           v-model:value="urlInput"
           class="inputField"
-          @input="updateUrl"
+          @input="updateDisplayName"
         ></a-input>
       </div>
       <DeleteOutlined class="circleBackground" @click="hidePlugin" />

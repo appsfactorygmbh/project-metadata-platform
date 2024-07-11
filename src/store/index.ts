@@ -12,7 +12,12 @@ export {
   useProjectStore,
   useSearchStore,
   useGlobalPluginsStore,
-  useProjectEditStore
-
+  useProjectEditStore,
 };
-export type { PluginsStore, ProjectStore, SearchStore, GlobalPluginsStore, ProjectEditStore };
+export type {
+  PluginsStore,
+  ProjectStore,
+  SearchStore,
+  GlobalPluginsStore,
+  ProjectEditStore,
+};

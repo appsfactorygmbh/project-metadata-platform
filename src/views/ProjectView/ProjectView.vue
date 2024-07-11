@@ -5,17 +5,18 @@
     DetailedProjectModel,
     UpdateProjectModel,
   } from '@/models/Project';
-  import type { PluginModel } from '@/models/Plugin';
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import {
     pluginStoreSymbol,
     projectsStoreSymbol,
+    projectEditStoreSymbol,
   } from '@/store/injectionSymbols';
   import { inject } from 'vue';
 
   const pluginStore = inject(pluginStoreSymbol);
   const projectStore = inject(projectsStoreSymbol);
+  const projectEditStore = inject(projectEditStoreSymbol);
 
   const { isEditing, stopEditing } = useEditing();
 
@@ -23,16 +24,24 @@
     pluginStore?.setCachePlugins(pluginStore?.getPlugins || []);
     stopEditing();
   };
+
   const saveEdit = async () => {
     const updateProjectInformation: DetailedProjectModel | null =
       projectStore?.getProject || null;
+    // const updatedPluginlist = projectEditStore?.getPluginChanges.filter(
+    //   (plugin) =>
+    //     !projectEditStore.getDeletedPlugins.every(
+    //       (pluginDeleted) =>
+    //         plugin.id === pluginDeleted.id && plugin.url === pluginDeleted.url,
+    //     ),
+    // );
     const updatedProject: UpdateProjectModel = {
       projectName: updateProjectInformation?.projectName,
       businessUnit: updateProjectInformation?.businessUnit,
       teamNumber: updateProjectInformation?.teamNumber,
       department: updateProjectInformation?.department,
       clientName: updateProjectInformation?.clientName,
-      pluginList: pluginStore?.getPlugins,
+      pluginList: projectEditStore?.getPluginChanges,
     };
     console.log('updated Project', updatedProject);
     const projectID = computed(() => projectStore?.getProject?.id);
@@ -41,6 +50,7 @@
       await pluginStore?.fetchPlugins(projectID.value);
     }
     stopEditing();
+    projectEditStore?.resetChanges();
   };
 </script>
 

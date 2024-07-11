@@ -2,7 +2,7 @@
   <div>
     <div v-if="!loading" class="container">
       <PluginComponent
-        v-for="plugin in pluginStore.getCachePlugins"
+        v-for="plugin in pluginStore.getPlugins"
         :id="plugin.id"
         :key="plugin.displayName"
         class="plugins"
@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, toRaw, inject, onMounted } from 'vue';
+  import { computed, inject } from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
   import {
     pluginStoreSymbol,
@@ -50,7 +50,6 @@
   const loading = computed(
     () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
   );
-
 </script>
 
 <style scoped lang="css">

@@ -2,6 +2,10 @@ import { mount, VueWrapper } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { cutAfterTLD, createFaviconURL } from '../editURL';
 import PluginComponent from '../PluginComponent.vue';
+import { projectsStoreSymbol } from '../../../store/injectionSymbols';
+import { useProjectStore } from '../../../store';
+import router from '../../../router';
+import { createTestingPinia } from '@pinia/testing';
 
 interface PluginComponentInstance {
   pluginName: string;
@@ -22,6 +26,11 @@ const generateWrapper = (
   id: number,
 ): VueWrapper<ComponentPublicInstance<PluginComponentInstance>> => {
   return mount(PluginComponent, {
+    plugins: [
+      createTestingPinia({
+        stubActions: false,
+      }),
+    ],
     props: {
       pluginName: name,
       url: url,
@@ -29,7 +38,12 @@ const generateWrapper = (
       isLoading: isLoading,
       isEditing: isEditing,
       id: id,
-      modelValue: [],
+    },
+    global: {
+      provide: {
+        [projectsStoreSymbol as symbol]: useProjectStore(),
+      },
+      plugins: [router],
     },
   }) as VueWrapper<ComponentPublicInstance<PluginComponentInstance>>;
 };
@@ -54,12 +68,6 @@ describe('Plugin.vue', () => {
   });
 
   it('renders loading state correctly when isLoading is true', () => {
-    const examplePluginModel = {
-      pluginName: 'Test Plugin',
-      displayName: 'Test',
-      url: 'https://test.com',
-      id: 100,
-    };
     const wrapper = mount(PluginComponent, {
       props: {
         pluginName: 'Test Plugin',
@@ -68,7 +76,6 @@ describe('Plugin.vue', () => {
         isLoading: true,
         isEditing: false,
         id: 100,
-        modelValue: [examplePluginModel],
       },
     });
     const skeleton = wrapper.find('.ant-skeleton-content');
@@ -76,12 +83,6 @@ describe('Plugin.vue', () => {
   });
 
   it('changes state when isLoading updates', async () => {
-    const examplePluginModel = {
-      pluginName: 'Test Plugin',
-      displayName: 'Test',
-      url: 'https://test.com',
-      id: 100,
-    };
     const wrapper = mount(PluginComponent, {
       props: {
         pluginName: 'Test Plugin',
@@ -90,7 +91,6 @@ describe('Plugin.vue', () => {
         isLoading: true,
         isEditing: false,
         id: 100,
-        modelValue: [examplePluginModel],
       },
     });
     expect(wrapper.find('.ant-skeleton-content').exists()).toBe(true);
