@@ -8,19 +8,21 @@
   import type { GlobalPluginModel } from '@/models/Plugin';
   import type { LabeledValue, SelectValue } from 'ant-design-vue/lib/select';
   import type { RulesObject } from '@/components/Form/FormStore.ts';
+  import type { AddGlobalPluginFormData } from '@/views/GlobalPlugins/AddGlobalPlugin/AddGlobalPluginFormData.ts';
 
 
-  const { formStore } = defineProps<{
+  const { formStore, initialValues } = defineProps<{
     formStore: FormStore;
+    initialValues: AddGlobalPluginFormData;
   }>();
 
   const pluginStore = inject(pluginStoreSymbol);
   const options = ref<SelectProps['options']>([]);
 
   onBeforeMount(async () => {
-    pluginStore!.setLoading(true);
-    await pluginStore!.fetchGlobalPlugins();
-    options.value = toRaw(pluginStore?.getGlobalPlugins)!.map((plugin: GlobalPluginModel) => {
+    pluginStore?.setLoading(true);
+    await pluginStore?.fetchGlobalPlugins();
+    options.value = toRaw(pluginStore?.getGlobalPlugins)?.map((plugin: GlobalPluginModel) => {
       return {
         value: plugin.name,
         label: plugin.name
@@ -48,12 +50,7 @@
     },
   };
 
-  const dynamicValidateForm = reactive<{ pluginName: string; pluginUrl: string, globalPlugin: string, inputsDisabled: boolean }>({
-    pluginName: '',
-    pluginUrl: '',
-    globalPlugin: '',
-    inputsDisabled: true
-  });
+  const dynamicValidateForm = reactive<AddGlobalPluginFormData>(initialValues);
 
   const rulesRef = reactive<RulesObject<{ pluginName: string; pluginUrl: string }>>({
     pluginName: [
@@ -86,6 +83,8 @@
   formStore.setOnSubmit(onSubmit);
   formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
+
+  const formRef = ref();
 </script>
 
 <template>
@@ -119,6 +118,7 @@
       :whitespace="true"
     >
       <a-input
+        id="inputAddPluginPluginName"
         v-model:value="dynamicValidateForm.pluginName"
         class="inputField"
         placeholder="Plugin Name"
@@ -135,6 +135,7 @@
       :whitespace="true"
     >
       <a-input
+        id="inputAddPluginPluginUrl"
         v-model:value="dynamicValidateForm.pluginUrl"
         class="inputField"
         placeholder="Plugin URL"
