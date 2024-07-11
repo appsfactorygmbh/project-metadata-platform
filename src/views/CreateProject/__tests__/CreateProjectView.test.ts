@@ -1,6 +1,6 @@
 import { mount, VueWrapper } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import CreateProjectView from '../createProjectView.vue';
+import CreateProjectView from '../CreateProjectView.vue';
 
 describe('CreateProjectView.vue', () => {
   type CreateProjectViewInstance = {

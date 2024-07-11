@@ -4,14 +4,14 @@ import type { PluginModel } from '@/models/Plugin';
 
 type StoreState = {
   plugins: PluginModel[];
-  isLoading: boolean;
+  isLoadingPlugins: boolean;
 };
 
 export const usePluginsStore = defineStore('plugin', {
   state: (): StoreState => {
     return {
       plugins: [],
-      isLoading: false,
+      isLoadingPlugins: false,
     };
   },
 
@@ -20,7 +20,7 @@ export const usePluginsStore = defineStore('plugin', {
       return this.plugins;
     },
     getIsLoading(): boolean {
-      return this.isLoading;
+      return this.isLoadingPlugins;
     },
   },
 
@@ -28,18 +28,18 @@ export const usePluginsStore = defineStore('plugin', {
     setPlugins(plugins: PluginModel[]): void {
       this.plugins = plugins;
     },
-    setLoading(status: boolean): void {
-      this.isLoading = status;
+    setLoadingPlugins(status: boolean): void {
+      this.isLoadingPlugins = status;
     },
 
     async fetchPlugins(projectID: number) {
       try {
-        this.setLoading(true);
+        this.setLoadingPlugins(true);
         const plugins: PluginModel[] =
           await pluginService.fetchPlugins(projectID);
         this.setPlugins(plugins);
       } finally {
-        this.setLoading(false);
+        this.setLoadingPlugins(false);
       }
     },
 

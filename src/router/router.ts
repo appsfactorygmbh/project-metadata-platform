@@ -3,6 +3,8 @@ import { SplitView } from '@/views';
 import { CreateGlobalPluginView } from '@/views/GlobalPlugins/CreateGlobalPlugin';
 import { EditGlobalPluginView } from '@/views/GlobalPlugins/EditGlobalPlugin';
 import { ProviderCollection } from './Provider';
+import { SettingView } from '@/views/SettingView';
+import { GlobalPluginsView } from '@/views/GlobalPlugins';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +28,28 @@ const router = createRouter({
           path: '/settings/plugins/edit/:pluginId',
           name: 'EditGlobalPlugin',
           component: EditGlobalPluginView,
+        },
+      ],
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: SettingView,
+      children: [
+        {
+          path: '/settings/users',
+          name: 'users',
+          component: GlobalPluginsView,
+        },
+        {
+          path: '/settings/plugins',
+          name: 'plugins',
+          component: GlobalPluginsView,
+        },
+        {
+          path: '/settings/global_logs',
+          name: 'global-logs',
+          component: GlobalPluginsView,
         },
       ],
     },

@@ -1,7 +1,6 @@
-import type { PluginModel } from '@/models/Plugin';
+import type { GlobalPluginModel, PluginModel } from '@/models/Plugin';
 class PluginService {
   fetchPlugins = async (projectID: number): Promise<PluginModel[]> => {
-    console.log(projectID);
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL +
@@ -11,7 +10,6 @@ class PluginService {
       );
       if (!response.ok) throw new Error('Error when trying to fetch Plugins');
       const data = await response.json();
-      console.log('data from fetch: ', data);
       return data;
     } catch (error) {
       console.log(error);
@@ -24,7 +22,7 @@ class PluginService {
     console.log(plugin);
   };
 
-  fetchGlobalPluginData = async (pluginId: number) => {
+  fetchGlobalPlugin = async (pluginId: GlobalPluginModel['id']) => {
     //   try {
     //     const response = await fetch(
     //       import.meta.env.VITE_BACKEND_URL + '/plugins/' + pluginId.toString(),
@@ -49,6 +47,37 @@ class PluginService {
         { key: 'value2', archived: false },
       ],
     };
+  };
+
+  fetchGlobalPlugins = async (): Promise<GlobalPluginModel[]> => {
+    try {
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/Plugins',
+      );
+      if (!response.ok) throw new Error('Network response was not ok');
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      console.error('Error fetching global plugins: ' + err);
+      return [];
+    }
+  };
+
+  removeGlobalPlugin = async (
+    pluginId: GlobalPluginModel['id'],
+  ): Promise<Response | null> => {
+    try {
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/Plugins/' + pluginId.toString(),
+        {
+          method: 'DELETE',
+        },
+      );
+      return response;
+    } catch (err) {
+      console.error('Error deleting global plugin: ' + err);
+      return null;
+    }
   };
 }
 

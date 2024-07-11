@@ -29,32 +29,26 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, computed, toRaw, inject, onMounted } from 'vue';
+  import { computed, toRaw, inject, onMounted } from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
-  import { pluginStoreSymbol } from '@/store/injectionSymbols';
+  import {
+    pluginStoreSymbol,
+    projectsStoreSymbol,
+  } from '@/store/injectionSymbols';
   import type { PluginModel } from '@/models/Plugin';
   import type { ComputedRef } from 'vue';
 
   const pluginStore = inject(pluginStoreSymbol)!;
-
-  const props = defineProps({
-    projectID: {
-      type: Number,
-      required: true,
-    },
-  });
+  const projectsStore = inject(projectsStoreSymbol);
 
   let plugins: ComputedRef<PluginModel[]>;
-  const loading = computed(() => pluginStore.getIsLoading);
+  const loading = computed(
+    () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
+  );
 
   function setPlugins(newPlugins: PluginModel[]) {
     plugins = computed(() => toRaw(newPlugins));
   }
-
-  onBeforeMount(async () => {
-    pluginStore.setLoading(true);
-    await pluginStore.fetchPlugins(props.projectID);
-  });
 
   onMounted(async () => {
     setPlugins(pluginStore.getPlugins);
@@ -92,8 +86,6 @@
     min-width: 200px;
     max-width: 100%;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
-    display: flex;
-    flex-direction: column;
     transition: 0.1s ease-in-out;
   }
   .main {
