@@ -37,7 +37,8 @@
   const initUrl = props.url;
 
   const projectEditStore = useProjectEditStore();
-  const statusRef = ref<'' | 'error' | 'warning' | undefined>('');
+  const urlStatusRef = ref<'' | 'error' | 'warning' | undefined>('');
+  const displayNameStatusRef = ref<'' | 'error' | 'warning' | undefined>('');
 
   const displayNameInput = ref<string>(props.displayName);
   const urlInput = ref<string>(props.url);
@@ -53,7 +54,7 @@
         displayNameInput.value = initDisplayName;
         urlInput.value = initUrl;
         hide.value = false;
-        statusRef.value=""
+        urlStatusRef.value = '';
       }
     },
   );
@@ -64,6 +65,7 @@
       toggleSkeleton.value = newVal;
     },
   );
+
   // Create a reactive variable for the favicon URL based on the given URL.
   const faviconUrl = ref(createFaviconURL(cutAfterTLD(props.url)));
 
@@ -85,17 +87,24 @@
   };
 
   const updatePluginData = () => {
-    if (projectEditStore.checkCorrectInput(props.id, urlInput.value)) {
-      statusRef.value = 'error';
-    } else {
-      projectEditStore?.updatePluginChanges(props.id.toString() + props.url, {
-        pluginName: props.pluginName,
-        displayName: displayNameInput.value,
-        url: urlInput.value,
-        id: props.id,
-      });
-      statusRef.value = '';
+    if (projectEditStore.falseUrlInput(props.id, urlInput.value)) {
+      urlStatusRef.value = 'error';
+      projectEditStore.setCanBeCreated(false);
+      return;
     }
+    if (displayNameInput.value === '' || displayNameInput.value == undefined) {
+      displayNameStatusRef.value = 'error';
+      projectEditStore.setCanBeCreated(false);
+      return;
+    }
+    projectEditStore?.updatePluginChanges(props.id.toString() + props.url, {
+      pluginName: props.pluginName,
+      displayName: displayNameInput.value,
+      url: urlInput.value,
+      id: props.id,
+    });
+    urlStatusRef.value = '';
+    projectEditStore.setCanBeCreated(true);
   };
 </script>
 
@@ -121,13 +130,13 @@
           v-model:value="displayNameInput"
           class="inputField"
           @input="updatePluginData"
-        ></a-input>
+        />
         <a-input
-          :status="statusRef"
           v-model:value="urlInput"
+          :status="urlStatusRef"
           class="inputField"
           @input="updatePluginData"
-        ></a-input>
+        />
       </div>
       <DeleteOutlined class="circleBackground" @click="hidePlugin" />
     </a-card>

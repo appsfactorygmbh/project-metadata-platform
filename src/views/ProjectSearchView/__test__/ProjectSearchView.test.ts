@@ -38,7 +38,7 @@ describe('ProjectSearchView.vue', () => {
   });
 
   createTestingPinia({});
-  const wrapper2 = generateWrapper(300);
+  const wrapper2 = generateWrapper(0);
 
   it('hides columns when the pane width is not large enough', async () => {
     await flushPromises();

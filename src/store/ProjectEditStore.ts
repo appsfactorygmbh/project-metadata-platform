@@ -41,6 +41,10 @@ export const useProjectEditStore = defineStore('projectEdit', {
       this.canBeCreated = true;
     },
 
+    setCanBeCreated(status: boolean): void {
+      this.canBeCreated = status;
+    },
+
     initialAdd(plugin: PluginModel): void {
       this.pluginChanges.set(plugin.id.toString() + plugin.url, plugin);
       console.log(this.pluginChanges);
@@ -54,24 +58,20 @@ export const useProjectEditStore = defineStore('projectEdit', {
       this.pluginChanges.delete(id.toString() + url);
     },
 
-    checkCorrectInput(id: number, url: string): boolean {
-      if(url === "" || url === undefined){
-        this.canBeCreated = false;
+    falseUrlInput(id: number, url: string): boolean {
+      if (url === '' || url === undefined) {
         return true;
       }
       if (this.pluginChanges.has(id.toString() + url)) {
         if (this.pluginChanges.get(id.toString() + url)?.url === url) {
-          this.canBeCreated = false;
           return true;
         }
       }
-      for(let i = 0; i < this.getPluginChanges.length; i++){
-        if (this.getPluginChanges[i]?.url === url){
-          this.canBeCreated = false;
+      for (let i = 0; i < this.getPluginChanges.length; i++) {
+        if (this.getPluginChanges[i]?.url === url) {
           return true;
         }
       }
-      this.canBeCreated = true;
       return false;
     },
   },
