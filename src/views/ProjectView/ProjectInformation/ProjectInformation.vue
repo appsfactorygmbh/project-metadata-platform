@@ -79,9 +79,16 @@
           class="infoCard"
         >
           <label class="label">Business&nbsp;Unit:</label>
-          <p v-if="!isLoading" class="projectInfo">
-            {{ projectData.businessUnit }}
-          </p>
+          <template v-if="!isLoading">
+            <p v-if="!isEditing" class="projectInfo">
+              {{ projectData.businessUnit }}
+            </p>
+            <a-input
+              v-else
+              v-model:value="projectData.businessUnit"
+              class="inputField"
+            />
+          </template>
           <a-skeleton
             v-else
             active
@@ -98,9 +105,16 @@
           class="infoCard"
         >
           <label class="label">Team&nbsp;Number:</label>
-          <p v-if="!isLoading" class="projectInfo">
-            {{ projectData.teamNumber }}
-          </p>
+          <template v-if="!isLoading">
+            <p v-if="!isEditing" class="projectInfo">
+              {{ projectData.teamNumber }}
+            </p>
+            <a-input
+              v-else
+              v-model:value="projectData.teamNumber"
+              class="inputField"
+            />
+          </template>
           <a-skeleton
             v-else
             active
@@ -116,9 +130,16 @@
           class="infoCard"
         >
           <label class="label">Department:</label>
-          <p v-if="!isLoading" class="projectInfo">
-            {{ projectData.department }}
-          </p>
+          <template v-if="!isLoading">
+            <p v-if="!isEditing" class="projectInfo">
+              {{ projectData.department }}
+            </p>
+            <a-input
+              v-else
+              v-model:value="projectData.department"
+              class="inputField"
+            />
+          </template>
           <a-skeleton
             v-else
             active
@@ -126,6 +147,7 @@
             style="padding-left: 1em"
           />
         </a-card>
+
         <a-card
           :body-style="{
             display: 'flex',
@@ -134,9 +156,16 @@
           class="infoCard"
         >
           <label class="label">Client&nbsp;Name:</label>
-          <p v-if="!isLoading" class="projectInfo">
-            {{ projectData.clientName }}
-          </p>
+          <template v-if="!isLoading">
+            <p v-if="!isEditing" class="projectInfo">
+              {{ projectData.clientName }}
+            </p>
+            <a-input
+              v-else
+              v-model:value="projectData.clientName"
+              class="inputField"
+            />
+          </template>
           <a-skeleton
             v-else
             active
@@ -264,5 +293,14 @@
     font-size: 1.4em;
     margin: 0 auto 0 0.5em;
     white-space: nowrap;
+  }
+  .inputField {
+    width: 180px;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1 !important; /* Wichtigkeit setzen, um Inline-Stile zu überschreiben */
+    padding-left: 1em !important; /* Wichtigkeit setzen, um Inline-Stile zu überschreiben */
   }
 </style>
