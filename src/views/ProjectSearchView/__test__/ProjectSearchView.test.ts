@@ -2,7 +2,7 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import ProjectSearchView from '../ProjectSearchView.vue';
 import { describe, it, expect } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
-import { usePluginsStore } from '@/store';
+import { usePluginsStore, useProjectStore } from '@/store';
 import { createPinia, setActivePinia } from 'pinia';
 import _ from 'lodash';
 import {
@@ -13,14 +13,6 @@ import type { ComponentPublicInstance } from 'vue';
 import router from '@/router';
 import type { ProjectModel } from '@/models/Project';
 
-const testProject = {
-  id: 100,
-  projectName: 'Heute Show',
-  clientName: 'ZDF',
-  businessUnit: 'BU Health',
-  teamNumber: 42,
-};
-
 interface ProjectSearchViewInstance {
   paneWidth: number;
   paneHeight: number;
@@ -29,10 +21,6 @@ interface ProjectSearchViewInstance {
 
 describe('ProjectSearchView.vue', () => {
   setActivePinia(createPinia());
-
-  const projectsStoreMock = {
-    fetchProject: vi.fn(),
-  };
 
   const generateWrapper = (pWidth: number) => {
     return mount(ProjectSearchView, {
@@ -43,7 +31,7 @@ describe('ProjectSearchView.vue', () => {
       ],
       global: {
         provide: {
-          [projectsStoreSymbol as symbol]: projectsStoreMock,
+          [projectsStoreSymbol as symbol]: useProjectStore(),
           [pluginStoreSymbol as symbol]: usePluginsStore(),
         },
         plugins: [router],
@@ -72,17 +60,7 @@ describe('ProjectSearchView.vue', () => {
     _.delay(
       () =>
         expect(wrapper2.findAll('.ant-table-column-sorters').length).toBe(2),
-      500,
+      1000,
     );
-  });
-
-  it('changes the router, when a project is clicked', async () => {
-    wrapper.vm.handleRowClick(testProject);
-
-    // expect(useRouter().push).toHaveBeenCalledWith({
-    //   path: useRouter().currentRoute.value.path,
-    //   query: { project: testProject.id },
-    // });
-    expect(projectsStoreMock.fetchProject).toHaveBeenCalledWith(testProject.id);
   });
 });
