@@ -6,6 +6,7 @@
   import type { RulesObject } from '@/components/Form/FormStore';
   import type { GlobalPluginFormData } from './';
   import type { GlobalPluginKey } from '@/models/Plugin';
+  import _ from 'lodash';
 
   const { formStore, initialValues } = defineProps<{
     formStore: FormStore;
@@ -15,7 +16,9 @@
   const modelRef = reactive<GlobalPluginFormData>(initialValues);
 
   // TODO: add validation for keys
-  const rulesRef = reactive<RulesObject<GlobalPluginFormData>>({
+  const rulesRef = reactive<
+    RulesObject<GlobalPluginFormData | Record<string, unknown>>
+  >({
     pluginName: [
       {
         required: true,
@@ -26,25 +29,28 @@
     ],
     keys: [
       {
-        required: false,
+        required: true,
         message: 'Please insert the plugin key.',
         trigger: 'change',
+        type: 'array',
+        validator: (rule, value: []) => {
+          let error = false;
+          value.forEach((item: GlobalPluginKey) => {
+            if (item.value.length === 0) {
+              error = true;
+            }
+          });
+          if (error) {
+            return Promise.reject('Please insert the plugin key.');
+          }
+          return Promise.resolve();
+        },
       },
     ],
   });
 
   formStore.setModel(modelRef);
   formStore.setRules(rulesRef);
-
-  const formRef = ref();
-
-  watch(
-    () => formRef.value,
-    () => {
-      console.log('formRef', formRef);
-    },
-    { immediate: true, deep: true },
-  );
 
   const formItemLayout = {
     labelCol: {
@@ -72,17 +78,18 @@
   };
 
   const addPluginKey = () => {
+    const key = Date.now();
     modelRef.keys.push({
       value: '',
-      key: Date.now(),
+      key: key,
     });
+    formStore.setRules(rulesRef);
   };
 </script>
 
 <template>
   <a-form
     v-bind="formItemLayoutWithOutLabel"
-    ref="formRef"
     :model="modelRef"
     layout="horizontal"
   >
@@ -90,12 +97,7 @@
       name="pluginName"
       :no-style="false"
       :whitespace="true"
-      :rules="{
-        required: true,
-        message: 'Please insert the plugin name.',
-        trigger: 'change',
-        type: 'string',
-      }"
+      v-bind="formStore.validateInfos.pluginName"
     >
       <a-input
         v-model:value="modelRef.pluginName"
@@ -107,15 +109,10 @@
     <a-form-item
       v-for="(key, index) in modelRef.keys"
       :key="key.key"
-      v-bind="formItemLayout"
       :label="index === 0 ? 'Project Keys' : ' '"
       :colon="false"
       :name="['keys', index, 'value']"
-      :rules="{
-        required: true,
-        message: 'Please insert the plugin key.',
-        trigger: 'change',
-      }"
+      v-bind="_.merge(formStore.validateInfos.keys, formItemLayout)"
     >
       <a-input
         v-model:value="key.value"
