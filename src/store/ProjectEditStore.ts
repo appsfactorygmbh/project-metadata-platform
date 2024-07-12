@@ -5,6 +5,7 @@ type StoreState = {
   pluginChanges: Map<string, PluginModel>;
   projectInformationChanges: [];
   deletedPlugin: PluginModel[];
+  canBeCreated: boolean;
 };
 
 export const useProjectEditStore = defineStore('projectEdit', {
@@ -13,6 +14,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
       pluginChanges: new Map(),
       projectInformationChanges: [],
       deletedPlugin: [],
+      canBeCreated: true,
     };
   },
 
@@ -26,13 +28,17 @@ export const useProjectEditStore = defineStore('projectEdit', {
     getDeletedPlugins(): PluginModel[] {
       return this.deletedPlugin;
     },
+    getCanBeCreated(): boolean {
+      return this.canBeCreated;
+    },
   },
 
   actions: {
     resetChanges(): void {
-      this.pluginChanges = new Map<string, PluginModel>();
+      this.pluginChanges.clear();
       this.projectInformationChanges = [];
       this.deletedPlugin = [];
+      this.canBeCreated = true;
     },
 
     initialAdd(plugin: PluginModel): void {
@@ -44,8 +50,18 @@ export const useProjectEditStore = defineStore('projectEdit', {
       this.pluginChanges.set(id, plugin);
     },
 
-    addDeletedPlugin(plugin: PluginModel): void {
-      this.deletedPlugin.push(plugin);
+    deletePlugin(id: number, url: string): void {
+      this.pluginChanges.delete(id.toString() + url);
+    },
+    pluginAlreadyExists(id: number, url: string): boolean {
+      if (this.pluginChanges.has(id.toString() + url)) {
+        if (this.pluginChanges.get(id.toString() + url)?.url === url) {
+          this.canBeCreated = false;
+          return true;
+        }
+      }
+      this.canBeCreated = true;
+      return false;
     },
   },
 });

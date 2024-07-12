@@ -13,6 +13,7 @@
     projectEditStoreSymbol,
   } from '@/store/injectionSymbols';
   import { inject } from 'vue';
+  import { message } from 'ant-design-vue';
 
   const pluginStore = inject(pluginStoreSymbol);
   const projectStore = inject(projectsStoreSymbol);
@@ -20,21 +21,30 @@
 
   const { isEditing, stopEditing } = useEditing();
 
+  const reloadEditStore = () => {
+    if (pluginStore) {
+      for (let i = 0; i < pluginStore?.getPlugins.length; i++) {
+        projectEditStore?.initialAdd(pluginStore?.getPlugins[i]);
+      }
+    }
+  };
+
   const cancelEdit = () => {
-    pluginStore?.setCachePlugins(pluginStore?.getPlugins || []);
+    projectEditStore?.resetChanges();
+    reloadEditStore();
     stopEditing();
   };
 
   const saveEdit = async () => {
+    if (!projectEditStore?.canBeCreated) {
+      message.error(
+        'Could not update Project. There are empty fields or duplicated plugins.',
+        7,
+      );
+      return;
+    }
     const updateProjectInformation: DetailedProjectModel | null =
       projectStore?.getProject || null;
-    // const updatedPluginlist = projectEditStore?.getPluginChanges.filter(
-    //   (plugin) =>
-    //     !projectEditStore.getDeletedPlugins.every(
-    //       (pluginDeleted) =>
-    //         plugin.id === pluginDeleted.id && plugin.url === pluginDeleted.url,
-    //     ),
-    // );
     const updatedProject: UpdateProjectModel = {
       projectName: updateProjectInformation?.projectName,
       businessUnit: updateProjectInformation?.businessUnit,
@@ -45,12 +55,13 @@
     };
     console.log('updated Project', updatedProject);
     const projectID = computed(() => projectStore?.getProject?.id);
-    if (projectID.value != null) {
+    if (projectID.value) {
       await projectStore?.updateProject(updatedProject, projectID.value);
       await pluginStore?.fetchPlugins(projectID.value);
     }
-    stopEditing();
     projectEditStore?.resetChanges();
+    reloadEditStore();
+    stopEditing();
   };
 </script>
 

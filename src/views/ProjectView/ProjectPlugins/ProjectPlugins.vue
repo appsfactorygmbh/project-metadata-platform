@@ -2,7 +2,7 @@
   <div>
     <div v-if="!loading" class="container">
       <PluginComponent
-        v-for="plugin in pluginStore.getPlugins"
+        v-for="plugin in plugins"
         :id="plugin.id"
         :key="plugin.displayName"
         class="plugins"
@@ -12,10 +12,10 @@
         :is-loading="loading"
         :is-editing="isEditing"
       ></PluginComponent>
-      <AddPluginComponent
-        v-if="isEditing"
-        style="height: 100%"
-      ></AddPluginComponent>
+      <!--      <AddPluginComponent-->
+      <!--        v-if="isEditing"-->
+      <!--        style="height: 100%"-->
+      <!--      ></AddPluginComponent>-->
     </div>
 
     <a-card
@@ -35,21 +35,49 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, inject } from 'vue';
+  import { computed, inject, onMounted } from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
   import {
     pluginStoreSymbol,
     projectsStoreSymbol,
+    projectEditStoreSymbol,
   } from '@/store/injectionSymbols';
   import { useEditing } from '@/utils/hooks/useEditing';
+  import type { PluginModel } from '@/models/Plugin';
   const { isEditing } = useEditing();
 
   const pluginStore = inject(pluginStoreSymbol)!;
   const projectsStore = inject(projectsStoreSymbol);
+  const projectEditStore = inject(projectEditStoreSymbol);
 
   const loading = computed(
     () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
   );
+
+  let plugins: PluginModel[];
+
+  watch(
+    () => pluginStore.getPlugins,
+    () => {
+      plugins = pluginStore.getPlugins;
+      if (projectEditStore) {
+        const plugins: PluginModel[] = pluginStore.getPlugins;
+        for (let i = 0; i < plugins.length; i++) {
+          projectEditStore.initialAdd(plugins[i]);
+        }
+      }
+    },
+  );
+
+  onMounted(() => {
+    plugins = pluginStore.getPlugins;
+    if (projectEditStore) {
+      const plugins: PluginModel[] = pluginStore.getPlugins;
+      for (let i = 0; i < plugins.length; i++) {
+        projectEditStore.initialAdd(plugins[i]);
+      }
+    }
+  });
 </script>
 
 <style scoped lang="css">

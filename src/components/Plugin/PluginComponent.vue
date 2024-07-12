@@ -37,22 +37,14 @@
   const initUrl = props.url;
 
   const projectEditStore = useProjectEditStore();
+  const statusRef = ref<'' | 'error' | 'warning' | undefined>('');
 
   const displayNameInput = ref<string>(props.displayName);
   const urlInput = ref<string>(props.url);
 
   const toggleSkeleton = ref<boolean>(props.isLoading);
 
-  onMounted(() => {
-    if (projectEditStore) {
-      projectEditStore.initialAdd({
-        pluginName: props.pluginName,
-        displayName: props.displayName,
-        url: props.url,
-        id: props.id,
-      });
-    }
-  });
+  onMounted(() => {});
 
   watch(
     () => props.isEditing,
@@ -88,21 +80,21 @@
 
   const hidePlugin = () => {
     hide.value = true;
-    projectEditStore?.addDeletedPlugin({
-      pluginName: props.pluginName,
-      displayName: displayNameInput.value,
-      url: urlInput.value,
-      id: props.id,
-    });
+    projectEditStore?.deletePlugin(props.id, props.url);
   };
 
-  const updateDisplayName = () => {
-    projectEditStore?.updatePluginChanges(props.id.toString() + props.url, {
-      pluginName: props.pluginName,
-      displayName: displayNameInput.value,
-      url: urlInput.value,
-      id: props.id,
-    });
+  const updatePluginData = () => {
+    if (projectEditStore.pluginAlreadyExists(props.id, urlInput.value)) {
+      statusRef.value = 'error';
+    } else {
+      projectEditStore?.updatePluginChanges(props.id.toString() + props.url, {
+        pluginName: props.pluginName,
+        displayName: displayNameInput.value,
+        url: urlInput.value,
+        id: props.id,
+      });
+      statusRef.value = '';
+    }
   };
 </script>
 
@@ -127,12 +119,13 @@
         <a-input
           v-model:value="displayNameInput"
           class="inputField"
-          @input="updateDisplayName"
+          @input="updatePluginData"
         ></a-input>
         <a-input
+          :status="statusRef"
           v-model:value="urlInput"
           class="inputField"
-          @input="updateDisplayName"
+          @input="updatePluginData"
         ></a-input>
       </div>
       <DeleteOutlined class="circleBackground" @click="hidePlugin" />
