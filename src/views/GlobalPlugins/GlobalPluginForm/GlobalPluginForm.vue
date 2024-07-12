@@ -6,7 +6,7 @@
   import {
     type SpecialRulesObject,
     type RulesObject,
-  } from '@/components/Form/FormStore';
+  } from '@/components/Form/types';
   import type { GlobalPluginFormData } from './';
   import type { GlobalPluginKey } from '@/models/Plugin';
   import _ from 'lodash';

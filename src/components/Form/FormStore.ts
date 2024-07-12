@@ -1,34 +1,20 @@
 import { defineStore } from 'pinia';
-import { ref, type Ref } from 'vue';
-import type { FormType } from './types';
+import { type Ref } from 'vue';
+import type {
+  FieldRecord,
+  FormState,
+  FormType,
+  RulesObject,
+  SpecialRulesObject,
+} from './types';
 import type { FieldData } from 'ant-design-vue/es/form/interface';
 import { Form } from 'ant-design-vue';
-import type { Rule } from 'ant-design-vue/es/form';
 import type { ArgsType } from '@/models/utils';
 import _ from 'lodash';
-import type { ValidateInfo } from 'ant-design-vue/es/form/useForm';
+import { initRef } from '@/utils/store';
+import { getValidateInfos } from './validation';
 
 const { useForm } = Form;
-
-type FieldValue = string | number | boolean | Date | undefined;
-
-type FieldRecord<T> = Record<string, FieldValue | T>;
-
-type AnyArray = Array<FieldRecord<FieldValue>>;
-
-type FormState = FieldRecord<AnyArray>;
-
-export type RulesObject<T> = Record<keyof T, Rule[]>;
-
-type SpecialRule = {
-  ruleTarget: 'arrayItem' | 'field';
-  keyProp: string | number;
-  validator: NonNullable<Rule['validator']>;
-  message: Rule['message'];
-  required?: Rule['required'];
-};
-
-export type SpecialRulesObject<T> = Partial<Record<keyof T, SpecialRule[]>>;
 
 type FormStoreState<T extends FormState> = {
   form: Ref<FormType>;
@@ -38,53 +24,6 @@ type FormStoreState<T extends FormState> = {
   specialValidateInfos: Ref<FormType['validateInfos']>;
   onSubmit?: (values: T) => void;
   options?: ArgsType<typeof useForm>[2];
-};
-
-const initRef = <T>(
-  param: T | undefined,
-  defaultValue: T | Record<string, never>,
-): Ref<T> =>
-  param !== undefined
-    ? (ref<T>(param) as Ref<T>)
-    : (ref<T>(defaultValue as T) as Ref<T>);
-
-const getValidateInfos = async <
-  T extends SpecialRule['validator'],
-  Args extends Parameters<T>,
->(
-  rule: SpecialRule,
-  value: Args[1],
-): Promise<ValidateInfo> => {
-  const validateObj: ValidateInfo = {
-    autoLink: false,
-    help: [],
-    required: rule.required ?? false,
-    validateStatus: 'success',
-  };
-  try {
-    const result = rule.validator(rule, value, () => {});
-    console.log('result', result);
-    if (result instanceof Promise) {
-      return await result
-        .then(() => {
-          return { ...validateObj };
-        })
-        .catch((error) => {
-          return {
-            ...validateObj,
-            validateStatus: 'error',
-            help: [error ?? rule.message],
-          };
-        });
-    }
-    return validateObj;
-  } catch (error) {
-    return {
-      ...validateObj,
-      validateStatus: 'error',
-      help: [error ?? rule.message],
-    };
-  }
 };
 
 export const useFormStore = <T extends FormState>(
@@ -164,7 +103,7 @@ export const useFormStore = <T extends FormState>(
               if (this.specialValidateInfos[key].validateStatus === 'error')
                 errorsDetected = true;
             } else if (rule.ruleTarget === 'arrayItem') {
-              const arrayValue = value as FieldRecord<FieldValue>[];
+              const arrayValue = value as FieldRecord[];
               for (const item of arrayValue) {
                 console.log('item', item);
                 this.specialValidateInfos[
