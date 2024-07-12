@@ -53,6 +53,7 @@
         displayNameInput.value = initDisplayName;
         urlInput.value = initUrl;
         hide.value = false;
+        statusRef.value=""
       }
     },
   );
@@ -84,7 +85,7 @@
   };
 
   const updatePluginData = () => {
-    if (projectEditStore.pluginAlreadyExists(props.id, urlInput.value)) {
+    if (projectEditStore.checkCorrectInput(props.id, urlInput.value)) {
       statusRef.value = 'error';
     } else {
       projectEditStore?.updatePluginChanges(props.id.toString() + props.url, {

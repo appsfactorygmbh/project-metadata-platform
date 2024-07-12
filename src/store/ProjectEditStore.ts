@@ -53,9 +53,20 @@ export const useProjectEditStore = defineStore('projectEdit', {
     deletePlugin(id: number, url: string): void {
       this.pluginChanges.delete(id.toString() + url);
     },
-    pluginAlreadyExists(id: number, url: string): boolean {
+
+    checkCorrectInput(id: number, url: string): boolean {
+      if(url === "" || url === undefined){
+        this.canBeCreated = false;
+        return true;
+      }
       if (this.pluginChanges.has(id.toString() + url)) {
         if (this.pluginChanges.get(id.toString() + url)?.url === url) {
+          this.canBeCreated = false;
+          return true;
+        }
+      }
+      for(let i = 0; i < this.getPluginChanges.length; i++){
+        if (this.getPluginChanges[i]?.url === url){
           this.canBeCreated = false;
           return true;
         }
