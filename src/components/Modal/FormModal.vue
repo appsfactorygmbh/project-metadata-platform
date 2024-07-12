@@ -25,6 +25,7 @@
   };
 
   const resetModal = () => {
+    emit('close');
     formStore.resetFields();
   };
 </script>
