@@ -175,6 +175,7 @@
             style="padding-left: 1em"
           />
         </a-card>
+
         <a-card
           :body-style="{
             display: 'flex',
@@ -236,6 +237,15 @@
     </div>
   </div>
 </template>
+<script lang="ts" setup>
+  import { inject, onMounted, toRaw, reactive } from 'vue';
+  import { projectsStoreSymbol } from '@/store/injectionSymbols';
+  import { useProjectStore } from '@/store';
+  import { storeToRefs } from 'pinia';
+  import type { DetailedProjectModel } from '@/models/Project';
+  import type { ComputedRef } from 'vue';
+  import { EditOutlined } from '@ant-design/icons-vue';
+  import { useEditing } from '@/utils/hooks/useEditing';
 
 <script lang="ts">
 
