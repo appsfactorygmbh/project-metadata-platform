@@ -45,10 +45,10 @@ export const usePluginsStore = defineStore('plugin', {
 
     async createPlugin(plugin: PluginModel) {
       try {
-        this.setLoading(true);
+        this.setLoadingPlugins(true);
         await pluginService.createPlugin(plugin);
       } finally {
-        this.setLoading(false);
+        this.setLoadingPlugins(false);
       }
     },
   },
