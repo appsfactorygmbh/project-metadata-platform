@@ -27,6 +27,7 @@ const router = createRouter({
     {
       path: '/settings',
       name: 'settings',
+      redirect: '/settings/global-plugins',
       component: SettingView,
       children: [
         {

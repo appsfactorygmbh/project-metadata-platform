@@ -11,8 +11,7 @@
   import type { TableColumnType, TableProps } from 'ant-design-vue';
   import type { ArrayElement } from '@/models/ArrayElement';
   import type { ComputedRef } from 'vue';
-  import { useRouter } from 'vue-router';
-  import _ from 'lodash';
+  import { useQuery } from '@/utils/hooks';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -34,7 +33,6 @@
     },
   });
 
-  const router = useRouter();
   const searchStore = inject<SearchStore<object>>(props.searchStoreSymbol);
 
   const emit = defineEmits(['row-click']);
@@ -47,19 +45,14 @@
     };
   };
 
-  interface ColumnSearchState {
-    columnName: string;
-    searchQuery: string | undefined;
-  }
-
-  const columnsSearchState: ColumnSearchState[] = reactive([]);
+  const columnNames: string[] = reactive([]);
 
   const mapSearchableColumn = (
     column: ArrayElement<typeof props.columns>,
   ): TableColumnType => {
     const index = column.dataIndex;
     if (column.searchable) {
-      columnsSearchState.push({ columnName: index, searchQuery: undefined });
+      columnNames.push(index);
       column.onFilter = (value, record) =>
         String(record[index])
           .toLowerCase()
@@ -89,6 +82,8 @@
 
   /*  Search implementation  */
 
+  const { routerSearchQuery, setSearchQuery } = useQuery(columnNames);
+
   //saves state of searched text and in which column
   const state = reactive({
     searchText: '',
@@ -111,10 +106,7 @@
     confirm();
     console.log(confirm);
 
-    const index = _.findIndex(columnsSearchState, function (o) {
-      return o.columnName == dataIndex;
-    });
-    columnsSearchState[index].searchQuery = selectedKeys[0];
+    setSearchQuery(selectedKeys[0], dataIndex);
 
     state.searchText = selectedKeys[0];
     state.searchedColumn = dataIndex;
@@ -130,37 +122,14 @@
   ) {
     clearFilters({ confirm: true });
 
-    const index = _.findIndex(columnsSearchState, function (o) {
-      return o.columnName == dataIndex;
-    });
-    columnsSearchState[index].searchQuery = undefined;
+    setSearchQuery(undefined, dataIndex);
 
     state.searchText = '';
   }
 
-  const pushColumnFilter = async (
-    searchQuery: string | undefined,
-    column: string,
-  ) => {
-    await router.push({
-      path: router.currentRoute.value.path,
-      query: { ...router.currentRoute.value.query, [column]: searchQuery },
-    });
-  };
-
-  watch(
-    () => [...columnsSearchState],
-    async () => {
-      for (const column of columnsSearchState) {
-        await pushColumnFilter(column.searchQuery, column.columnName);
-      }
-    },
-    { deep: true },
-  );
-
   onBeforeMount(() => {
-    const queries = router.currentRoute.value.query;
-    const columnNames = columns.value!.map((column) => column.key);
+    const queries = routerSearchQuery.value;
+    const columnNames = props.columns!.map((column) => column.dataIndex);
     for (const query in queries) {
       if (columnNames.includes(query)) {
         const searchText = queries[query] as string;

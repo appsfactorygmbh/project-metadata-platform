@@ -10,7 +10,7 @@
   import { projectsService } from '@/services';
   import _ from 'lodash';
   import { useWindowSize } from '@vueuse/core';
-  import { useRouter } from 'vue-router';
+  import { useProjectRouting } from '@/utils/hooks';
 
   const props = defineProps({
     paneWidth: {
@@ -23,7 +23,8 @@
     },
   });
 
-  const router = useRouter();
+  const { routerProjectId, setProjectId } = useProjectRouting();
+
   const projectsStore = inject(projectsStoreSymbol);
   const pluginStore = inject(pluginStoreSymbol);
   const searchStore = useSearchStore<ProjectModel>('projects');
@@ -76,23 +77,28 @@
     );
   }
 
+  watch(
+    () => routerProjectId.value,
+    async () => {
+      await projectsStore?.fetchProject(routerProjectId.value);
+      await pluginStore?.fetchPlugins(routerProjectId.value);
+    },
+  );
+
   const handleRowClick = (project: ProjectModel) => {
-    router.push({
-      path: router.currentRoute.value.path,
-      query: { ...router.currentRoute.value.query, project: project.id },
-    });
-    projectsStore?.fetchProject(project.id);
+    setProjectId(project.id);
   };
 
   onMounted(async () => {
     await projectsStore?.fetchProjects();
-    const projectId =
-      Number(router.currentRoute.value.query.project) ||
-      projectsStore?.getProjects[0].id ||
-      100;
 
-    await projectsStore?.fetchProject(projectId);
-    await pluginStore?.fetchPlugins(projectId);
+    if (routerProjectId.value == 0) {
+      setProjectId(projectsStore?.getProjects[0].id || 100);
+    } else {
+      await projectsStore?.fetchProject(routerProjectId.value);
+      await pluginStore?.fetchPlugins(routerProjectId.value);
+    }
+
     searchStore.setBaseSet(projectsStore?.getProjects || []);
     changeColumns(props.paneWidth);
   });
