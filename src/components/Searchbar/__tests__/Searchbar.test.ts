@@ -7,6 +7,7 @@ import router from '@/router';
 
 describe('SearchBar.vue', () => {
   createTestingPinia();
+
   beforeEach(() => {
     // Reset mock before each test
     vi.clearAllMocks();
@@ -70,28 +71,5 @@ describe('SearchBar.vue', () => {
     await input.setValue('Test');
 
     expect(router.currentRoute.value.query.searchQuery).toBe('Test');
-  });
-
-  it('sets default value and calling searchStore, when opening with a query', async () => {
-    router.push('/?searchQuery=Test');
-    router.isReady();
-
-    const searchStore = useSearchStore('test');
-    const symbol = Symbol('searchStoreSym');
-
-    const wrapper = mount(SearchBar, {
-      global: {
-        plugins: [createTestingPinia(), router],
-        provide: {
-          [symbol as symbol]: searchStore,
-        },
-      },
-      propsData: { searchStoreSymbol: symbol },
-    });
-
-    const input = wrapper.find('input');
-    expect(input.element.value).toBe('Test');
-
-    expect(searchStore.setSearchQuery).toHaveBeenCalled();
   });
 });

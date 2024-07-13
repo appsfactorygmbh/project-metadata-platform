@@ -22,17 +22,20 @@ interface ProjectSearchViewInstance {
 describe('ProjectSearchView.vue', () => {
   setActivePinia(createPinia());
 
+  const projectsStore = useProjectStore();
+  const pluginStore = usePluginsStore();
+
   const generateWrapper = (pWidth: number) => {
     return mount(ProjectSearchView, {
       plugins: [
         createTestingPinia({
-          stubActions: true,
+          stubActions: false,
         }),
       ],
       global: {
         provide: {
-          [projectsStoreSymbol as symbol]: useProjectStore(),
-          [pluginStoreSymbol as symbol]: usePluginsStore(),
+          [projectsStoreSymbol as symbol]: projectsStore,
+          [pluginStoreSymbol as symbol]: pluginStore,
         },
         plugins: [router],
       },
@@ -68,7 +71,7 @@ describe('ProjectSearchView.vue', () => {
     await router.isReady();
 
     const testProject = {
-      id: 100,
+      id: 200,
       projectName: 'test',
       clientName: 'test',
       businessUnit: 'test',
