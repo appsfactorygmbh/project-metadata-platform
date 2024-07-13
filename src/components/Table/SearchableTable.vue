@@ -32,6 +32,8 @@
   });
 
   const searchStore = inject<SearchStore<object>>(props.searchStoreSymbol);
+  const tableRef = ref();
+  const filteredInfo = ref('');
 
   const emit = defineEmits(['row-click']);
 
@@ -47,6 +49,7 @@
     column: ArrayElement<typeof props.columns>,
   ): TableColumnType => {
     const index = column.dataIndex;
+
     if (column.searchable) {
       column.onFilter = (value, record) =>
         String(record[index])
@@ -60,7 +63,9 @@
           }, 100);
         }
       };
+      //column.filteredValue = filteredInfo.value ? [filteredInfo.value] : null;
     }
+
     if (column.sortMethod) {
       if (column.sortMethod == 'string') {
         column.sorter = (a, b) => stringSorter(a, b, index);
@@ -108,7 +113,18 @@
   function handleReset(clearFilters: (param?: FilterResetProps) => void) {
     clearFilters({ confirm: true });
     state.searchText = '';
+    filteredInfo.value = '';
   }
+
+  // Handle clear all filters action
+  const handleClearAll = () => {
+    state.searchText = '';
+    state.searchedColumn = '';
+    filteredInfo.value = '';
+  };
+
+  // Expose handleClearAll method
+  defineExpose({ handleClearAll });
 </script>
 
 <template>
@@ -118,6 +134,7 @@
         scroll: sets height of table to ~90% of the window height
     -->
   <a-table
+    ref="tableRef"
     class="clickable-table"
     :columns="[...columns]"
     :data-source="[...(searchStore?.getSearchResults || [])]"

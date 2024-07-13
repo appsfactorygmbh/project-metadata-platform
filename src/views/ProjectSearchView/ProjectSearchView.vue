@@ -28,6 +28,7 @@
   const searchStoreSymbol = Symbol('projectSearchStore');
 
   const isLoading = computed(() => projectsStore?.getIsLoadingProjects);
+  const searchableTable = ref<InstanceType<typeof SearchableTable>>();
 
   provide<SearchStore>(searchStoreSymbol, searchStore);
 
@@ -87,13 +88,22 @@
     searchStore.setBaseSet(projectsStore.getProjects);
     changeColumns(props.paneWidth);
   });
+
+  const clearAllFilters = () => {
+    if (searchableTable.value && searchableTable.value.handleClearAll) {
+      searchableTable.value.handleClearAll();
+    }
+  };
 </script>
 
 <template>
   <div style="padding: 20px">
     <a-flex vertical gap="middle">
       <SearchBar :search-store-symbol="searchStoreSymbol" />
+      <ResetButton @click="clearAllFilters" />
+
       <SearchableTable
+        ref="searchableTable"
         :search-store-symbol="searchStoreSymbol"
         :pane-height="props.paneHeight"
         :columns="columns.filter((item) => !item.hidden)"

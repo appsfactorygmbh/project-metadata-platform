@@ -3,6 +3,7 @@
   <a-input-search
     placeholder="Type what you're looking for:"
     enter-button
+    style="width: 90%"
     @input="onInput"
   />
 </template>

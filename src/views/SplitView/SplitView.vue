@@ -29,7 +29,7 @@
         size: sets default proportion to 1:4
         min-size: sets smallest possible size to 20% and 1%
       -->
-      <pane ref="tablePane" size="70" min-size="20">
+      <pane ref="tablePane" size="70" min-size="20" class="leftPane">
         <ProjectSearchView
           :pane-width="dimensions.width"
           :pane-height="dimensions.height"
@@ -49,6 +49,10 @@
 <style scoped>
   .splitpanes {
     height: 100vh;
+  }
+
+  .leftPane {
+    position: relative;
   }
 
   .rightPane {
