@@ -45,7 +45,11 @@
 
   const toggleSkeleton = ref<boolean>(props.isLoading);
 
-  onMounted(() => {});
+  let hashmapKey: string;
+
+  onMounted(() => {
+    hashmapKey = props.id.toString() + props.url
+  });
 
   watch(
     () => props.isEditing,
@@ -58,6 +62,23 @@
       }
     },
   );
+
+  watch(
+    () => projectEditStore.getPluginChanges.length,
+    (newVal, oldVal) => {
+      if(newVal < oldVal){
+        if(projectEditStore.isCorrectUrlInput(hashmapKey, {
+          pluginName: props.pluginName,
+          displayName: displayNameInput.value,
+          url: urlInput.value,
+          id: props.id,
+        })){
+          urlStatusRef.value = ""
+          projectEditStore.setCanBeCreated(true)
+        }
+      }
+    }
+  )
 
   watch(
     () => props.isLoading,
@@ -83,27 +104,43 @@
 
   const hidePlugin = () => {
     hide.value = true;
-    projectEditStore?.deletePlugin(props.id, props.url);
+    projectEditStore?.deletePlugin(hashmapKey);
+
   };
 
-  const updatePluginData = () => {
-    if (projectEditStore.falseUrlInput(props.id, urlInput.value)) {
+  const updatePluginData = (): void => {
+    projectEditStore.setCanBeCreated(true);
+    if (
+      displayNameInput.value == '' ||
+      displayNameInput.value == null
+    ) {
+      displayNameStatusRef.value = 'error';
+      projectEditStore.setCanBeCreated(false);
+      return;
+    } else {
+      displayNameStatusRef.value = '';
+    }
+
+    if (
+      !projectEditStore.isCorrectUrlInput(hashmapKey, {
+        pluginName: props.pluginName,
+        displayName: displayNameInput.value,
+        url: urlInput.value,
+        id: props.id,
+      })
+    ) {
       urlStatusRef.value = 'error';
       projectEditStore.setCanBeCreated(false);
       return;
     }
-    if (displayNameInput.value === '' || displayNameInput.value == undefined) {
-      displayNameStatusRef.value = 'error';
-      projectEditStore.setCanBeCreated(false);
-      return;
-    }
-    projectEditStore?.updatePluginChanges(props.id.toString() + props.url, {
+    urlStatusRef.value = ""
+
+    projectEditStore?.updatePluginChanges(hashmapKey, {
       pluginName: props.pluginName,
       displayName: displayNameInput.value,
       url: urlInput.value,
       id: props.id,
     });
-    urlStatusRef.value = '';
     projectEditStore.setCanBeCreated(true);
   };
 </script>
@@ -128,6 +165,7 @@
         <h3 style="text-align: center">{{ pluginName }}</h3>
         <a-input
           v-model:value="displayNameInput"
+          :status="displayNameStatusRef"
           class="inputField"
           @input="updatePluginData"
         />

@@ -178,10 +178,26 @@ describe('projectEditStore', () => {
     projectEditStore.initialAdd(examplePlugin1);
     projectEditStore.initialAdd(examplePlugin2);
 
-    const result = projectEditStore.falseUrlInput(
-      examplePlugin1.id,
-      examplePlugin2.url,
+    // throws error if urls are duplicated
+    const result = projectEditStore.isCorrectUrlInput(
+      {
+        displayName: 'other test instance',
+        url: 'https://example.com/otherPath',
+        id: 100,
+        pluginName: 'Test Plugin',
+      }, "100https://example.com/otherPlugin"
     );
-    expect(result).toBe(true);
+    expect(result).toBe(false);
+
+    //doesn't throw error if it is the same plugin
+    const result2 = projectEditStore.isCorrectUrlInput(
+      {
+        displayName: 'other test instance',
+        url: 'https://example.com/otherPath',
+        id: 200,
+        pluginName: 'Test Plugin',
+      }, "100https://example.com/otherPath"
+    );
+    expect(result2).toBe(true);
   });
 });
