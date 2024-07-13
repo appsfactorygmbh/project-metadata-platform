@@ -2,7 +2,12 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import ProjectSearchView from '../ProjectSearchView.vue';
 import { describe, it, expect } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
-import { usePluginsStore, useProjectStore } from '@/store';
+import {
+  usePluginsStore,
+  useProjectStore,
+  type PluginsStore,
+  type ProjectStore,
+} from '@/store';
 import { createPinia, setActivePinia } from 'pinia';
 import _ from 'lodash';
 import {
@@ -22,10 +27,11 @@ interface ProjectSearchViewInstance {
 describe('ProjectSearchView.vue', () => {
   setActivePinia(createPinia());
 
-  const projectsStore = useProjectStore();
-  const pluginStore = usePluginsStore();
-
-  const generateWrapper = (pWidth: number) => {
+  const generateWrapper = (
+    pWidth: number,
+    projectsStore: ProjectStore,
+    pluginStore: PluginsStore,
+  ) => {
     return mount(ProjectSearchView, {
       plugins: [
         createTestingPinia({
@@ -46,29 +52,36 @@ describe('ProjectSearchView.vue', () => {
     });
   };
 
-  const wrapper = generateWrapper(800) as VueWrapper<
-    ComponentPublicInstance<ProjectSearchViewInstance>
-  >;
-
   it('renders correctly with 4 columns', () => {
+    const projectsStore = useProjectStore();
+    const pluginStore = usePluginsStore();
+    const wrapper = generateWrapper(800, projectsStore, pluginStore);
+
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
   });
 
-  createTestingPinia({});
-  const wrapper2 = generateWrapper(300);
-
   it('hides columns when the pane width is not large enough', async () => {
-    await flushPromises();
+    createTestingPinia({});
+    const projectsStore = useProjectStore();
+    const pluginStore = usePluginsStore();
+    const wrapper = generateWrapper(300, projectsStore, pluginStore);
 
     _.delay(
-      () =>
-        expect(wrapper2.findAll('.ant-table-column-sorters').length).toBe(2),
+      () => expect(wrapper.findAll('.ant-table-column-sorters').length).toBe(2),
       1000,
     );
   });
 
   it('add a query when clicking on a project', async () => {
     await router.isReady();
+
+    const projectsStore = useProjectStore();
+    const pluginStore = usePluginsStore();
+    const wrapper = generateWrapper(
+      800,
+      projectsStore,
+      pluginStore,
+    ) as VueWrapper<ComponentPublicInstance<ProjectSearchViewInstance>>;
 
     const testProject = {
       id: 200,
