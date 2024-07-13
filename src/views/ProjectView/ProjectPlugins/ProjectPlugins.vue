@@ -1,4 +1,5 @@
 <template>
+  <button @click="getMap">GET Map</button>
   <div>
     <div v-if="!loading" class="container">
       <PluginComponent
@@ -11,11 +12,8 @@
         :url="plugin.url"
         :is-loading="loading"
         :is-editing="isEditing"
+        :edit-key="plugin.editKey"
       ></PluginComponent>
-      <!--      <AddPluginComponent-->
-      <!--        v-if="isEditing"-->
-      <!--        style="height: 100%"-->
-      <!--      ></AddPluginComponent>-->
     </div>
 
     <a-card
@@ -35,7 +33,8 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, inject, onMounted } from 'vue';
+  import { computed, inject, onMounted, toRaw, onBeforeMount } from 'vue';
+  import type { ComputedRef } from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
   import {
     pluginStoreSymbol,
@@ -43,31 +42,59 @@
     projectEditStoreSymbol,
   } from '@/store/injectionSymbols';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import type { PluginModel } from '@/models/Plugin';
+  import type { PluginModel, PluginEditModel } from '@/models/Plugin';
   const { isEditing } = useEditing();
 
   const pluginStore = inject(pluginStoreSymbol)!;
   const projectsStore = inject(projectsStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
 
+  const getMap = () => {
+    pluginStore?.setPlugins([...pluginStore.getPlugins, {
+      pluginName: 'Map',
+      displayName: 'Map',
+      url: 'https://www.google.com/maps',
+      id: 100
+    }]);
+    console.log("update: ", projectEditStore?.pluginChanges)
+  }
+
+  let plugins: ComputedRef<PluginModel[]>;
   const loading = computed(
     () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
   );
 
-  let plugins: PluginModel[];
+  function setPlugins(newPlugins: PluginModel[]) {
+    plugins = computed(() => toRaw(newPlugins));
+  }
 
-  watch(
-    () => pluginStore.getPlugins,
-    () => {
-      plugins = pluginStore.getPlugins;
-      if (projectEditStore) {
-        const plugins: PluginModel[] = pluginStore.getPlugins;
-        for (let i = 0; i < plugins.length; i++) {
-          projectEditStore.initialAdd(plugins[i]);
-        }
+  watch(isEditing, (newVal) => {
+    if (newVal) {
+
+      for (let i = 0; i < plugins.value.length; i++) {
+        const index = projectEditStore?.initialAdd(plugins.value[i]);
+        // füge durch spreadoperator ... EditKey hinzu
+        plugins.value[i] = { ...plugins.value[i], editKey: index, isDeleted: false};
+
       }
-    },
-  );
+    }
+  })
+
+  onMounted(async () => {
+    setPlugins(pluginStore.getPlugins);
+
+    const data: ComputedRef<PluginModel[]> = computed(
+      () => pluginStore.getPlugins,
+    );
+
+    watch(
+      () => data.value,
+      (newProject) => {
+        setPlugins(newProject);
+      },
+    );
+  });
+
 
   onMounted(() => {
     plugins = pluginStore.getPlugins;
@@ -78,6 +105,11 @@
       }
     }
   });
+
+
+
+
+
 </script>
 
 <style scoped lang="css">

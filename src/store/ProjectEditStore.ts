@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia';
 import type { PluginModel } from '@/models/Plugin';
+import type { PluginEditModel } from '@/models/Plugin/PluginEditModel.ts';
 
 type StoreState = {
-  pluginChanges: Map<string, PluginModel>;
+  pluginChanges: Map<number, PluginEditModel>;
   projectInformationChanges: [];
-  deletedPlugin: PluginModel[];
   canBeCreated: boolean;
-  gotEdited: boolean
+  pluginsWithUrlConflicts: Map<number, number>;
 };
 
 export const useProjectEditStore = defineStore('projectEdit', {
@@ -14,32 +14,31 @@ export const useProjectEditStore = defineStore('projectEdit', {
     return {
       pluginChanges: new Map(),
       projectInformationChanges: [],
-      deletedPlugin: [],
       canBeCreated: true,
-      gotEdited: false
+      pluginsWithUrlConflicts: new Map(),
     };
   },
 
   getters: {
-    getPluginChanges(): PluginModel[] {
-      return Array.from(this.pluginChanges.values());
+    getPluginChanges(): PluginEditModel[] {
+      return Array.from(this.pluginChanges.values()).filter(plugin => !plugin.isDeleted);
     },
     getProjectInformationChanges(): [] {
       return this.projectInformationChanges;
     },
-    getDeletedPlugins(): PluginModel[] {
-      return this.deletedPlugin;
-    },
     getCanBeCreated(): boolean {
       return this.canBeCreated;
     },
+    getPluginsWithUrlConflicts(): Map<number, number> {
+      // return Array.from(this.pluginsWithUrlConflicts.values());
+      return this.pluginsWithUrlConflicts;
+    }
   },
 
   actions: {
     resetChanges(): void {
       this.pluginChanges.clear();
       this.projectInformationChanges = [];
-      this.deletedPlugin = [];
       this.canBeCreated = true;
     },
 
@@ -47,28 +46,60 @@ export const useProjectEditStore = defineStore('projectEdit', {
       this.canBeCreated = status;
     },
 
-    initialAdd(plugin: PluginModel): void {
-      this.pluginChanges.set(plugin.id.toString() + plugin.url, plugin);
-      console.log(this.pluginChanges);
+    initialAdd(plugin: PluginModel): number {
+      console.log("plugin: ", plugin)
+      const index = this.pluginChanges.size;
+      const editPlugin: PluginEditModel = {
+        ...plugin,
+        editKey: index,
+        isDeleted: false,
+        // hasConflicts: false,
+      };
+      this.pluginChanges.set(index, editPlugin);
+      console.log(this.pluginChanges)
+      return index
     },
 
-    updatePluginChanges(id: string, plugin: PluginModel): void {
+    updatePluginChanges(id: number, plugin: PluginModel): void {
       this.pluginChanges.set(id, plugin);
       this.canBeCreated = true;
-      this.gotEdited = true
     },
 
-    isCorrectUrlInput(id:string, input: PluginModel): boolean {
-      if(input.url === "" || input.url == null) return false
-      if(this.pluginChanges.has(input.id.toString() + input.url) && id !== input.id.toString() + input.url) return false
-      for (let i = 0; i < this.getPluginChanges.length; i++) {
-        if (this.getPluginChanges[i]?.url === input.url) return false;
+    addConflictPlugin(id: number){
+      this.pluginsWithUrlConflicts.set(id, id)
+      console.log("neuer konflikt")
+    },
+
+    deleteConflictPlugin(id: number) {
+      this.pluginsWithUrlConflicts.delete(id)
+    },
+
+    isCorrectUrlInput(id: number, plugin: PluginModel): boolean {
+      for(let i = 0; i < this.getPluginChanges.length; i++) {
+        if(this.getPluginChanges[i].url === plugin.url && this.pluginChanges.get(i).id !== id && !this.getPluginChanges[i].isDeleted){
+            console.log("problem bei url")
+            this.addConflictPlugin(id)
+            return false
+        }
       }
-      return true;
+      this.deleteConflictPlugin(id)
+      return true
     },
 
-    deletePlugin(id: string): void {
-      this.pluginChanges.delete(id);
+    recheckConflicts(): void {
+      const plugins = this.getPluginChanges
+      console.log("pluginChanges: ",plugins)
+      for (let i = 0; i < plugins.length; i++){
+        this.isCorrectUrlInput(this.getPluginChanges[i].editKey, this.getPluginChanges[i])
+      }
+    },
+
+    deletePlugin(id: number): void {
+      const plugin = this.pluginChanges.get(id);
+      if (plugin) {
+        this.pluginChanges.set(id, { ...plugin, isDeleted: true });
+      }
+      this.recheckConflicts()
     },
   },
 });

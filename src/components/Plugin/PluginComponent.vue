@@ -1,9 +1,10 @@
 <script lang="ts" setup>
   // Import ref for reactive variables and utility functions for URL handling.
-  import { ref, watch, onMounted } from 'vue';
+  import { ref, watch, onMounted, type ComputedRef } from 'vue';
   import { cutAfterTLD, createFaviconURL } from './editURL';
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import { useProjectEditStore } from '@/store';
+  import type { PluginModel } from '@/models/Plugin';
 
   // Define the component's props with pluginName and url as required strings.
   const props = defineProps({
@@ -31,6 +32,10 @@
       type: Boolean,
       required: true,
     },
+    editKey: {
+      type: Number,
+      required: false,
+    }
   });
 
   const initDisplayName = props.displayName;
@@ -45,12 +50,6 @@
 
   const toggleSkeleton = ref<boolean>(props.isLoading);
 
-  let hashmapKey: string;
-
-  onMounted(() => {
-    hashmapKey = props.id.toString() + props.url
-  });
-
   watch(
     () => props.isEditing,
     (newVal) => {
@@ -64,21 +63,33 @@
   );
 
   watch(
-    () => projectEditStore.getPluginChanges.length,
-    (newVal, oldVal) => {
-      if(newVal < oldVal){
-        if(projectEditStore.isCorrectUrlInput(hashmapKey, {
-          pluginName: props.pluginName,
-          displayName: displayNameInput.value,
-          url: urlInput.value,
-          id: props.id,
-        })){
-          urlStatusRef.value = ""
-          projectEditStore.setCanBeCreated(true)
-        }
+    () => projectEditStore.getPluginsWithUrlConflicts.size,
+    (newVal) => {
+      console.log("es gibt problewm")
+      if (newVal > 0) {
+        if (projectEditStore.getPluginsWithUrlConflicts.has(props.editKey || -1)){
+          urlStatusRef.value = 'error';
+          projectEditStore.setCanBeCreated(false);}
       }
     }
   )
+
+  // watch(
+  //   () => projectEditStore.getPluginChanges.length,
+  //   (newVal, oldVal) => {
+  //     if(newVal < oldVal){
+  //       if(projectEditStore.isCorrectUrlInput(props.editKey || 0, {
+  //         pluginName: props.pluginName,
+  //         displayName: displayNameInput.value,
+  //         url: urlInput.value,
+  //         id: props.id,
+  //       })){
+  //         urlStatusRef.value = ""
+  //         projectEditStore.setCanBeCreated(true)
+  //       }
+  //     }
+  //   }
+  // )
 
   watch(
     () => props.isLoading,
@@ -104,9 +115,26 @@
 
   const hidePlugin = () => {
     hide.value = true;
-    projectEditStore?.deletePlugin(hashmapKey);
+    projectEditStore?.deletePlugin(props.editKey);
 
   };
+
+  watch(
+    () => projectEditStore.getPluginsWithUrlConflicts.size,
+    (newVal, oldVal) => {
+      console.log('getPluginsWithUrlConflicts changed from', oldVal, 'to', newVal);
+      console.log(projectEditStore.getPluginsWithUrlConflicts);
+      // You can add your own logic here
+      if(projectEditStore.getPluginsWithUrlConflicts.has(props.editKey)){
+        urlStatusRef.value = 'error';
+        projectEditStore.setCanBeCreated(false);
+      }
+      else{
+        urlStatusRef.value = '';
+        projectEditStore.setCanBeCreated(true);
+      }
+    }
+  );
 
   const updatePluginData = (): void => {
     projectEditStore.setCanBeCreated(true);
@@ -120,22 +148,16 @@
     } else {
       displayNameStatusRef.value = '';
     }
+    console.log(props.editKey)
 
-    if (
-      !projectEditStore.isCorrectUrlInput(hashmapKey, {
-        pluginName: props.pluginName,
-        displayName: displayNameInput.value,
-        url: urlInput.value,
-        id: props.id,
-      })
-    ) {
-      urlStatusRef.value = 'error';
-      projectEditStore.setCanBeCreated(false);
-      return;
-    }
-    urlStatusRef.value = ""
+    projectEditStore.isCorrectUrlInput(props.editKey || 0, {
+      pluginName: props.pluginName,
+      displayName: displayNameInput.value,
+      url: urlInput.value,
+      id: props.id,
+    });
 
-    projectEditStore?.updatePluginChanges(hashmapKey, {
+    projectEditStore?.updatePluginChanges(props.editKey || 0, {
       pluginName: props.pluginName,
       displayName: displayNameInput.value,
       url: urlInput.value,
