@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { SearchableTable } from '@/components/Table';
 import { describe, it, expect } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
@@ -7,6 +7,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import type { SearchableColumns } from '../SearchableTableTypes';
 import { Button, Input } from 'ant-design-vue';
 import router from '@/router';
+import _ from 'lodash';
 
 const testData = [
   {
@@ -46,29 +47,32 @@ const testColumns: SearchableColumns = [
 ];
 
 describe('SearchableTable.vue', () => {
+  enableAutoUnmount(afterEach);
   setActivePinia(createPinia());
   const searchStoreSymbol = Symbol('searchStoreSym');
   const searchStore = useSearchStore('test');
 
-  const wrapper = mount(SearchableTable, {
-    plugins: [
-      createTestingPinia({
-        stubActions: false,
-      }),
-    ],
-    global: {
-      provide: {
-        [searchStoreSymbol as symbol]: searchStore,
+  const generateWrapper = () => {
+    return mount(SearchableTable, {
+      plugins: [
+        createTestingPinia({
+          stubActions: false,
+        }),
+      ],
+      global: {
+        provide: {
+          [searchStoreSymbol as symbol]: searchStore,
+        },
+        plugins: [router],
       },
-      plugins: [router],
-    },
-    propsData: {
-      searchStoreSymbol: searchStoreSymbol,
-      paneHeight: 800,
-      columns: testColumns,
-      isLoading: false,
-    },
-  });
+      propsData: {
+        searchStoreSymbol: searchStoreSymbol,
+        paneHeight: 800,
+        columns: testColumns,
+        isLoading: false,
+      },
+    });
+  };
 
   const loadData = async () => {
     searchStore.setBaseSet(testData);
@@ -77,10 +81,14 @@ describe('SearchableTable.vue', () => {
   };
 
   it('renders correctly with 2 columns', () => {
+    const wrapper = generateWrapper();
+
     expect(wrapper.findAll('.ant-table-column-title')).toHaveLength(2);
   });
 
   it('show 1 sorter and 1 search filter', () => {
+    const wrapper = generateWrapper();
+
     expect(wrapper.findAll('.ant-table-column-sorter')).toHaveLength(1);
     expect(wrapper.findAll('.ant-table-filter-column')).toHaveLength(1);
   });
@@ -92,6 +100,7 @@ describe('SearchableTable.vue', () => {
   });
 
   it('shows the data entries in alphabetical order', async () => {
+    const wrapper = generateWrapper();
     await loadData();
 
     expect(
@@ -103,6 +112,7 @@ describe('SearchableTable.vue', () => {
   });
 
   it('changes the order when clicking the sorter field', async () => {
+    const wrapper = generateWrapper();
     await loadData();
     await wrapper.find('.ant-table-column-sorters').trigger('click');
 
@@ -115,6 +125,7 @@ describe('SearchableTable.vue', () => {
   });
 
   it('filters the table when using the search function', async () => {
+    const wrapper = generateWrapper();
     await loadData();
 
     expect(wrapper.findAll('.ant-table-row')).toHaveLength(2);
@@ -130,6 +141,27 @@ describe('SearchableTable.vue', () => {
     expect(wrapper.find('.ant-table-row').find('.ant-table-cell').text()).toBe(
       'A',
     );
+  });
+
+  it('adds a query when searching in a column and deleting it when pressing reset', async () => {
+    const wrapper = generateWrapper();
+
+    await wrapper.find('.ant-table-filter-trigger').trigger('click');
+    const searchInput = wrapper.getComponent(Input);
+    const searchButton = wrapper.getComponent(Button);
+    const resetButton = wrapper.findAllComponents(Button)[1];
+
+    await searchInput.get('.ant-input').setValue('Test');
+    await searchButton.trigger('click');
+
+    _.delay(
+      () => expect(router.currentRoute.value.query.projectName).toBe('Test'),
+      1000,
+    );
+
+    await resetButton.trigger('click');
+
+    expect(router.currentRoute.value.query.projectName).toBe(undefined);
   });
 
   createTestingPinia({});

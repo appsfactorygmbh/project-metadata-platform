@@ -121,9 +121,7 @@
     dataIndex: string,
   ) {
     clearFilters({ confirm: true });
-
     setSearchQuery(undefined, dataIndex);
-
     state.searchText = '';
   }
 

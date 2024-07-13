@@ -63,4 +63,23 @@ describe('ProjectSearchView.vue', () => {
       1000,
     );
   });
+
+  it('add a query when clicking on a project', async () => {
+    await router.isReady();
+
+    const testProject = {
+      id: 100,
+      projectName: 'test',
+      clientName: 'test',
+      businessUnit: 'test',
+      teamNumber: 1,
+    };
+
+    wrapper.vm.handleRowClick(testProject);
+    await flushPromises();
+
+    expect(Number(router.currentRoute.value.query.projectId)).toEqual(
+      testProject.id,
+    );
+  });
 });
