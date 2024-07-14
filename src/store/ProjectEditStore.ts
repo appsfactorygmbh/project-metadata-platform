@@ -34,6 +34,9 @@ export const useProjectEditStore = defineStore('projectEdit', {
       console.log(Array.from(this.pluginsWithUrlConflicts.keys()))
       return Array.from(this.pluginsWithUrlConflicts.keys());
     },
+    getCanBeAdded(): boolean {
+      return this.canBeCreated && this.pluginsWithUrlConflicts.size === 0;
+    }
   },
 
   actions: {
@@ -61,9 +64,10 @@ export const useProjectEditStore = defineStore('projectEdit', {
       return index
     },
 
-    updatePluginChanges(id: number, plugin: PluginEditModel): void {
+    updatePluginChanges(id: number, plugin: PluginModel): void {
       this.pluginChanges.set(id, plugin);
       this.canBeCreated = true;
+      this.isCorrectUrlInput(id, plugin)
     },
 
     addConflictPlugin(currentID: number, conflictID: number): void {
@@ -100,6 +104,11 @@ export const useProjectEditStore = defineStore('projectEdit', {
         this.deleteConflictPlugin(id)
       }
       // this.deleteConflictPlugin(id)
+      this.resolvePotentialConflicts(id)
+      return true
+    },
+
+    resolvePotentialConflicts(id: number): void {
       this.pluginsWithUrlConflicts.forEach((value, key) => {
         console.log('Checking id:', id, 'with value:', value);
         if(value.includes(id)){
@@ -114,15 +123,6 @@ export const useProjectEditStore = defineStore('projectEdit', {
           }
         }
       });
-      return true
-    },
-
-    recheckConflicts(): void {
-      const plugins = this.getPluginChanges
-      console.log("pluginChanges: ",plugins)
-      for (let i = 0; i < plugins.length; i++){
-        this.isCorrectUrlInput(this.getPluginChanges[i].editKey, this.getPluginChanges[i])
-      }
     },
 
     deletePlugin(id: number): void {
@@ -130,7 +130,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
       if (plugin) {
         this.pluginChanges.set(id, { ...plugin, isDeleted: true });
       }
-      this.recheckConflicts()
+      this.resolvePotentialConflicts(id)
     },
   },
 });

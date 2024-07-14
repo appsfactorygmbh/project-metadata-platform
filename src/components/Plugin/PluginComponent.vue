@@ -123,6 +123,7 @@
       return;
     } else {
       displayNameStatusRef.value = '';
+      projectEditStore.canBeCreated = true;
     }
     console.log(props.editKey)
 
@@ -133,13 +134,6 @@
       url: urlInput.value,
       id: props.id,
     });
-    projectEditStore.isCorrectUrlInput(props.editKey || 0, {
-      pluginName: props.pluginName,
-      displayName: displayNameInput.value,
-      url: urlInput.value,
-      id: props.id,
-    });
-    projectEditStore.setCanBeCreated(true);
   };
 </script>
 
