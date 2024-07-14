@@ -3,5 +3,5 @@ export type UpdatePluginModel = {
   displayName: string;
   url: string;
   id: number;
-  hasConflict: boolean
+  hasConflict: boolean;
 };

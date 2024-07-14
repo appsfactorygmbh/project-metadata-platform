@@ -12,7 +12,7 @@
     projectsStoreSymbol,
     projectEditStoreSymbol,
   } from '@/store/injectionSymbols';
-  import { inject } from 'vue';
+  import { inject, watch } from 'vue';
   import { message } from 'ant-design-vue';
 
   const pluginStore = inject(pluginStoreSymbol);
@@ -29,11 +29,23 @@
     }
   };
 
+  watch(
+    () => isEditing,
+(newVal) => {
+      if (newVal) {
+        projectEditStore?.resetChanges();
+      }
+    },
+
+  )
+
   const cancelEdit = () => {
     projectEditStore?.resetChanges();
     reloadEditStore();
     stopEditing();
   };
+
+  const isAdding = computed(() => projectStore?.getIsLoadingAdd);
 
   const saveEdit = async () => {
     if (!projectEditStore?.getCanBeAdded) {
@@ -43,6 +55,17 @@
       );
       return;
     }
+
+    watch(isAdding, (newVal) => {
+      if (newVal == false) {
+        if (projectStore?.getAddedSuccessfully) {
+          message.success('Project updated successfully.', 7);
+        } else {
+          message.error('Could not update Project.', 7);
+        }
+      }
+    });
+
     const updateProjectInformation: DetailedProjectModel | null =
       projectStore?.getProject || null;
     const updatedProject: UpdateProjectModel = {
@@ -60,7 +83,9 @@
       await pluginStore?.fetchPlugins(projectID.value);
     }
     projectEditStore?.resetChanges();
-    reloadEditStore();
+    for (let i = 0; i < pluginStore?.getPlugins.length; i++) {
+      projectEditStore?.initialAdd(pluginStore?.getPlugins[i]);
+    }
     stopEditing();
   };
 </script>

@@ -185,7 +185,8 @@ describe('projectEditStore', () => {
         url: 'https://example.com/otherPath',
         id: 100,
         pluginName: 'Test Plugin',
-      }, "100https://example.com/otherPlugin"
+      },
+      '100https://example.com/otherPlugin',
     );
     expect(result).toBe(false);
 
@@ -196,7 +197,8 @@ describe('projectEditStore', () => {
         url: 'https://example.com/otherPath',
         id: 200,
         pluginName: 'Test Plugin',
-      }, "100https://example.com/otherPath"
+      },
+      '100https://example.com/otherPath',
     );
     expect(result2).toBe(true);
   });

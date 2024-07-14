@@ -6,7 +6,7 @@ type StoreState = {
   pluginChanges: Map<number, PluginEditModel>;
   projectInformationChanges: [];
   canBeCreated: boolean;
-  pluginsWithUrlConflicts: Map<number, number[]>;
+  pluginsWithUrlConflicts: number[][];
 };
 
 export const useProjectEditStore = defineStore('projectEdit', {
@@ -15,13 +15,15 @@ export const useProjectEditStore = defineStore('projectEdit', {
       pluginChanges: new Map(),
       projectInformationChanges: [],
       canBeCreated: true,
-      pluginsWithUrlConflicts: new Map(),
+      pluginsWithUrlConflicts: [],
     };
   },
 
   getters: {
     getPluginChanges(): PluginEditModel[] {
-      return Array.from(this.pluginChanges.values()).filter(plugin => !plugin.isDeleted);
+      return Array.from(this.pluginChanges.values()).filter(
+        (plugin) => !plugin.isDeleted,
+      );
     },
     getProjectInformationChanges(): [] {
       return this.projectInformationChanges;
@@ -30,13 +32,11 @@ export const useProjectEditStore = defineStore('projectEdit', {
       return this.canBeCreated;
     },
     getPluginsWithUrlConflicts(): number[] {
-      // return Array.from(this.pluginsWithUrlConflicts.values());
-      console.log(Array.from(this.pluginsWithUrlConflicts.keys()))
-      return Array.from(this.pluginsWithUrlConflicts.keys());
+      return this.pluginsWithUrlConflicts.map((conflict) => conflict[0]);
     },
     getCanBeAdded(): boolean {
-      return this.canBeCreated && this.pluginsWithUrlConflicts.size === 0;
-    }
+      return this.canBeCreated && this.pluginsWithUrlConflicts.length === 0;
+    },
   },
 
   actions: {
@@ -44,6 +44,39 @@ export const useProjectEditStore = defineStore('projectEdit', {
       this.pluginChanges.clear();
       this.projectInformationChanges = [];
       this.canBeCreated = true;
+      this.pluginsWithUrlConflicts = [];
+    },
+
+    checkForConflicts(id: number): void {
+      for (let i = 0; i < this.getPluginChanges.length; i++) {
+        // add a conflict if the urls are the same and the ids are different and the plugins are not deleted
+        if (
+          this.pluginChanges.get(id).url === this.pluginChanges.get(i).url &&
+          id !== i &&
+          !this.pluginChanges.get(id).isDeleted &&
+          !this.pluginChanges.get(i).isDeleted
+        ) {
+          this.addConflict(id, i);
+        }
+      }
+    },
+
+    checkIfConflictsResolved(): void {
+      for (let i = 0; i < this.pluginsWithUrlConflicts.length; i++) {
+        if (
+          this.pluginChanges.get(this.pluginsWithUrlConflicts[i][0]).url !==
+            this.pluginChanges.get(this.pluginsWithUrlConflicts[i][1]).url ||
+          this.pluginChanges.get(this.pluginsWithUrlConflicts[i][0])
+            .isDeleted ||
+          this.pluginChanges.get(this.pluginsWithUrlConflicts[i][1]).isDeleted
+        ) {
+          this.pluginsWithUrlConflicts.splice(i, 1);
+        }
+      }
+    },
+
+    addConflict(leftID: number, rightID: number): void {
+      this.pluginsWithUrlConflicts.push([leftID, rightID]);
     },
 
     setCanBeCreated(status: boolean): void {
@@ -51,86 +84,28 @@ export const useProjectEditStore = defineStore('projectEdit', {
     },
 
     initialAdd(plugin: PluginModel): number {
-      console.log("plugin: ", plugin)
+      console.log('plugin: ', plugin);
       const index = this.pluginChanges.size;
       const editPlugin: PluginEditModel = {
         ...plugin,
         editKey: index,
         isDeleted: false,
-        // hasConflicts: false,
       };
       this.pluginChanges.set(index, editPlugin);
-      console.log(this.pluginChanges)
-      return index
+      console.log(this.pluginChanges);
+      return index;
     },
 
-    updatePluginChanges(id: number, plugin: PluginModel): void {
+    updatePluginChanges(id: number, plugin: PluginEditModel): void {
       this.pluginChanges.set(id, plugin);
       this.canBeCreated = true;
-      this.isCorrectUrlInput(id, plugin)
-    },
-
-    addConflictPlugin(currentID: number, conflictID: number): void {
-      if(this.pluginsWithUrlConflicts.has(currentID)){
-        const value = this.pluginsWithUrlConflicts.get(currentID)
-        if(value){
-          value.push(conflictID)
-          this.pluginsWithUrlConflicts.set(currentID, value)
-        }
-      }
-      this.pluginsWithUrlConflicts.set(currentID, [conflictID])
-    },
-
-    deleteConflictPlugin(id: number) {
-      this.pluginsWithUrlConflicts.delete(id)
-    },
-
-    isCorrectUrlInput(id: number, plugin: PluginModel): boolean {
-      if(plugin.url === ""){
-        this.addConflictPlugin(id, id)
-        return false
-      }
-      let notFound = true
-      this.pluginChanges.forEach((value, key) => {
-        if(value.url === plugin.url && key !== id && !value.isDeleted){
-          this.addConflictPlugin(id, key)
-          console.log("conflict map: ", this.pluginsWithUrlConflicts)
-          notFound = false
-          return false
-        }
-      });
-      console.log("kein konflikt")
-      if(notFound){
-        this.deleteConflictPlugin(id)
-      }
-      // this.deleteConflictPlugin(id)
-      this.resolvePotentialConflicts(id)
-      return true
-    },
-
-    resolvePotentialConflicts(id: number): void {
-      this.pluginsWithUrlConflicts.forEach((value, key) => {
-        console.log('Checking id:', id, 'with value:', value);
-        if(value.includes(id)){
-          console.log("found conflict that can be resolved");
-          const index = value.indexOf(id);
-          if(index > -1){
-            value.splice(index, 1);
-          }
-          if(value.length === 0){
-            this.pluginsWithUrlConflicts.delete(key);
-            console.log("deleted because no conflicts");
-          }
-        }
-      });
+      this.checkForConflicts(id);
+      this.checkIfConflictsResolved();
     },
 
     deletePlugin(id: number): void {
-      const plugin = this.pluginChanges.get(id);
-      if (plugin) {
-        this.pluginChanges.set(id, { ...plugin, isDeleted: true });
-      }
-      this.resolvePotentialConflicts(id)
+      this.pluginChanges.get(id).isDeleted = true;
+      this.checkIfConflictsResolved()
     },
   },
 });

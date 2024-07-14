@@ -13,6 +13,7 @@
         :is-loading="loading"
         :is-editing="isEditing"
         :edit-key="plugin.editKey"
+        :is-deleted="false"
       ></PluginComponent>
     </div>
 
@@ -50,14 +51,17 @@
   const projectEditStore = inject(projectEditStoreSymbol);
 
   const getMap = () => {
-    pluginStore?.setPlugins([...pluginStore.getPlugins, {
-      pluginName: 'Map',
-      displayName: 'Map',
-      url: 'https://www.google.com/maps',
-      id: 100
-    }]);
-    console.log("update: ", projectEditStore?.pluginChanges)
-  }
+    pluginStore?.setPlugins([
+      ...pluginStore.getPlugins,
+      {
+        pluginName: 'Map',
+        displayName: 'Map',
+        url: 'https://www.google.com/maps',
+        id: 100,
+      },
+    ]);
+    console.log('update: ', projectEditStore?.pluginChanges);
+  };
 
   let plugins: ComputedRef<PluginModel[]>;
   const loading = computed(
@@ -70,15 +74,16 @@
 
   watch(isEditing, (newVal) => {
     if (newVal) {
-
       for (let i = 0; i < plugins.value.length; i++) {
         const index = projectEditStore?.initialAdd(plugins.value[i]);
-        // füge durch spreadoperator ... EditKey hinzu
-        plugins.value[i] = { ...plugins.value[i], editKey: index, isDeleted: false};
-
+        plugins.value[i] = {
+          ...plugins.value[i],
+          editKey: index,
+          isDeleted: false,
+        };
       }
     }
-  })
+  });
 
   onMounted(async () => {
     setPlugins(pluginStore.getPlugins);
@@ -95,7 +100,6 @@
     );
   });
 
-
   onMounted(() => {
     plugins = pluginStore.getPlugins;
     if (projectEditStore) {
@@ -105,11 +109,6 @@
       }
     }
   });
-
-
-
-
-
 </script>
 
 <style scoped lang="css">

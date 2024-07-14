@@ -35,7 +35,11 @@
     editKey: {
       type: Number,
       required: false,
-    }
+    },
+    isDeleted: {
+      type: Boolean,
+      required: false,
+    },
   });
 
   const initDisplayName = props.displayName;
@@ -62,32 +66,22 @@
     },
   );
 
-  onMounted(() => {
-    watch(
-      () => projectEditStore.getPluginsWithUrlConflicts,
-      (newVal, oldVal) => {
-        // This function will be called whenever getPluginsWithUrlConflicts changes
-        console.log('getPluginsWithUrlConflicts changed from', oldVal, 'to', newVal);
-        if(newVal.length > 0) {
-          for (let i = 0; i < newVal.length; i++) {
-            if (newVal[i] == props.editKey) {
-              urlStatusRef.value = "error"
-              projectEditStore.setCanBeCreated(false)
-              return
-            }
-          }
-        } else {
-          urlStatusRef.value = ""
-          projectEditStore.setCanBeCreated(true)
-        }
-      }
-    );
-  });
-
   watch(
     () => props.isLoading,
     (newVal) => {
       toggleSkeleton.value = newVal;
+    },
+  );
+
+  watch(
+    () => projectEditStore.getPluginsWithUrlConflicts,
+    (newVal, oldVal) => {
+      console.log('changes from ', oldVal, ' to ', newVal);
+      if (newVal.includes(props.editKey)) {
+        urlStatusRef.value = 'error';
+      } else {
+        urlStatusRef.value = '';
+      }
     },
   );
 
@@ -109,15 +103,11 @@
   const hidePlugin = () => {
     hide.value = true;
     projectEditStore?.deletePlugin(props.editKey);
-
   };
 
   const updatePluginData = (): void => {
     projectEditStore.setCanBeCreated(true);
-    if (
-      displayNameInput.value == '' ||
-      displayNameInput.value == null
-    ) {
+    if (displayNameInput.value == '' || displayNameInput.value == null) {
       displayNameStatusRef.value = 'error';
       projectEditStore.setCanBeCreated(false);
       return;
@@ -125,14 +115,14 @@
       displayNameStatusRef.value = '';
       projectEditStore.canBeCreated = true;
     }
-    console.log(props.editKey)
-
+    console.log(props.editKey);
 
     projectEditStore?.updatePluginChanges(props.editKey || 0, {
       pluginName: props.pluginName,
       displayName: displayNameInput.value,
       url: urlInput.value,
       id: props.id,
+      editKey: props.editKey,
     });
   };
 </script>

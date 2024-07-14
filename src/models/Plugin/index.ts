@@ -1,6 +1,11 @@
 import type { PluginModel } from './PluginModel';
-import type { PluginEditModel} from './PluginEditModel'
+import type { PluginEditModel } from './PluginEditModel';
 import type { GlobalPluginModel } from './GlobalPluginModel';
-import type { UpdatePluginModel } from './UpdatePluginModel'
+import type { UpdatePluginModel } from './UpdatePluginModel';
 
-export type { PluginModel, GlobalPluginModel, UpdatePluginModel, PluginEditModel };
+export type {
+  PluginModel,
+  GlobalPluginModel,
+  UpdatePluginModel,
+  PluginEditModel,
+};
