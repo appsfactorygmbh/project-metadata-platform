@@ -56,6 +56,8 @@
 
   .rightPane {
     position: relative;
+    max-height: 100vh; /* Set a maximum height */
+    overflow-y: auto; /* Enable vertical scrolling */
   }
 
   .button {

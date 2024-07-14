@@ -36,7 +36,7 @@
   };
 
   const saveEdit = async () => {
-    if (!projectEditStore?.canBeCreated) {
+    if (projectEditStore?.getPluginsWithUrlConflicts.size > 0) {
       message.error(
         'Could not update Project. There are empty fields or duplicated plugins.',
         7,
