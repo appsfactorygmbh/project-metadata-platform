@@ -3,7 +3,6 @@
   import {
     pluginStoreSymbol,
     projectsStoreSymbol,
-    projectEditStoreSymbol,
   } from '@/store/injectionSymbols';
   import { onMounted, inject, provide, reactive } from 'vue';
   import { useSearchStore, type SearchStore } from '@/store/SearchStore';
@@ -28,7 +27,6 @@
 
   const projectsStore = inject(projectsStoreSymbol)!;
   const pluginStore = inject(pluginStoreSymbol);
-  const projectEditStore = inject(projectEditStoreSymbol);
   const searchStore = useSearchStore<ProjectModel>('projects');
   const searchStoreSymbol = Symbol('projectSearchStore');
 

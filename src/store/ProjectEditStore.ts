@@ -4,9 +4,11 @@ import type { PluginEditModel } from '@/models/Plugin/PluginEditModel.ts';
 
 type StoreState = {
   pluginChanges: Map<number, PluginEditModel>;
-  projectInformationChanges: [];
+  projectInformationChanges: string[];
   canBeCreated: boolean;
   pluginsWithUrlConflicts: number[][];
+  duplicatedUrls: Map<string, number[]>;
+  emptyFields: Map<number, number>;
 };
 
 export const useProjectEditStore = defineStore('projectEdit', {
@@ -16,73 +18,76 @@ export const useProjectEditStore = defineStore('projectEdit', {
       projectInformationChanges: [],
       canBeCreated: true,
       pluginsWithUrlConflicts: [],
+      duplicatedUrls: new Map(),
+      emptyFields: new Map(),
     };
   },
 
   getters: {
+    // Returns all Plugins that are not deleted
     getPluginChanges(): PluginEditModel[] {
       return Array.from(this.pluginChanges.values()).filter(
         (plugin) => !plugin.isDeleted,
       );
     },
-    getProjectInformationChanges(): [] {
+    // Return all Projectinformation changes (not implemented in this branch)
+    getProjectInformationChanges(): string[] {
       return this.projectInformationChanges;
     },
-    getCanBeCreated(): boolean {
-      return this.canBeCreated;
-    },
+    // Returns all Plugins that have URL conflicts (two or more Plugins have the same URL)
     getPluginsWithUrlConflicts(): number[] {
-      return this.pluginsWithUrlConflicts.map((conflict) => conflict[0]);
+      return Array.from(this.duplicatedUrls.values())
+        .filter((value) => value.length > 1)
+        .flat();
     },
+    // Returns whether the Project can be created (no URL conflicts and no empty fields)
     getCanBeAdded(): boolean {
-      return this.canBeCreated && this.pluginsWithUrlConflicts.length === 0;
+      console.log('empty fields: ', this.emptyFields);
+      return (
+        this.getPluginsWithUrlConflicts.length === 0 &&
+        this.emptyFields.size === 0
+      );
     },
   },
 
   actions: {
+    // Adds an empty field to the emptyFields Map
+    addEmptyField(id: number): void {
+      this.emptyFields.set(id, id);
+    },
+
+    // Removes an empty field from the emptyFields Map
+    removeEmptyField(id: number): void {
+      this.emptyFields.delete(id);
+      console.log('empty fields: ', this.emptyFields);
+    },
+
+    // Resets all changes made to the Plugins and Projectinformation
     resetChanges(): void {
       this.pluginChanges.clear();
       this.projectInformationChanges = [];
       this.canBeCreated = true;
       this.pluginsWithUrlConflicts = [];
+      this.emptyFields.clear();
     },
 
-    checkForConflicts(id: number): void {
-      for (let i = 0; i < this.getPluginChanges.length; i++) {
-        // add a conflict if the urls are the same and the ids are different and the plugins are not deleted
-        if (
-          this.pluginChanges.get(id).url === this.pluginChanges.get(i).url &&
-          id !== i &&
-          !this.pluginChanges.get(id).isDeleted &&
-          !this.pluginChanges.get(i).isDeleted
-        ) {
-          this.addConflict(id, i);
+    // Checks for URL conflicts between Plugins
+    checkForConflicts(): void {
+      this.pluginsWithUrlConflicts = [];
+      this.duplicatedUrls = new Map();
+
+      this.pluginChanges.forEach((plugin, key) => {
+        if (this.duplicatedUrls.has(plugin.url) && plugin.isDeleted === false) {
+          this.duplicatedUrls.get(plugin.url)?.push(key);
+        } else {
+          this.duplicatedUrls.set(plugin.url, [key]);
         }
-      }
+      });
+      console.log('duplicatedUrls: ', this.duplicatedUrls);
     },
 
-    checkIfConflictsResolved(): void {
-      for (let i = 0; i < this.pluginsWithUrlConflicts.length; i++) {
-        if (
-          this.pluginChanges.get(this.pluginsWithUrlConflicts[i][0]).url !==
-            this.pluginChanges.get(this.pluginsWithUrlConflicts[i][1]).url ||
-          this.pluginChanges.get(this.pluginsWithUrlConflicts[i][0])
-            .isDeleted ||
-          this.pluginChanges.get(this.pluginsWithUrlConflicts[i][1]).isDeleted
-        ) {
-          this.pluginsWithUrlConflicts.splice(i, 1);
-        }
-      }
-    },
-
-    addConflict(leftID: number, rightID: number): void {
-      this.pluginsWithUrlConflicts.push([leftID, rightID]);
-    },
-
-    setCanBeCreated(status: boolean): void {
-      this.canBeCreated = status;
-    },
-
+    // Adds a Plugin to the pluginChanges Map (to sync with the Plugins in "ProjectPlugins")
+    // Return an index to identify the Plugin when one Plugin wants to update or delete it
     initialAdd(plugin: PluginModel): number {
       console.log('plugin: ', plugin);
       const index = this.pluginChanges.size;
@@ -96,16 +101,17 @@ export const useProjectEditStore = defineStore('projectEdit', {
       return index;
     },
 
+    // Updates the Plugin in the pluginChanges Map
     updatePluginChanges(id: number, plugin: PluginEditModel): void {
       this.pluginChanges.set(id, plugin);
-      this.canBeCreated = true;
-      this.checkForConflicts(id);
-      this.checkIfConflictsResolved();
     },
 
+    // Sets isDeleted to true for the Plugin in the pluginChanges Map
     deletePlugin(id: number): void {
-      this.pluginChanges.get(id).isDeleted = true;
-      this.checkIfConflictsResolved()
+      const pluginChange = this.pluginChanges.get(id);
+      if (pluginChange) {
+        this.pluginChanges.set(id, { ...pluginChange, isDeleted: true });
+      }
     },
   },
 });

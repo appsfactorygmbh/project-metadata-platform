@@ -3,6 +3,6 @@ export type PluginEditModel = {
   displayName: string;
   url: string;
   id: number;
-  isDeleted: boolean;
   editKey: number;
+  isDeleted: boolean;
 };

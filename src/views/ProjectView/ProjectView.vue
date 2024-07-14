@@ -31,13 +31,12 @@
 
   watch(
     () => isEditing,
-(newVal) => {
+    (newVal) => {
       if (newVal) {
         projectEditStore?.resetChanges();
       }
     },
-
-  )
+  );
 
   const cancelEdit = () => {
     projectEditStore?.resetChanges();
@@ -48,6 +47,10 @@
   const isAdding = computed(() => projectStore?.getIsLoadingAdd);
 
   const saveEdit = async () => {
+    // Check for empty fields and duplicates
+    projectEditStore?.checkForConflicts();
+
+    // If error occurred, display message and return
     if (!projectEditStore?.getCanBeAdded) {
       message.error(
         'Could not update Project. There are empty fields or duplicated plugins.',
@@ -56,17 +59,21 @@
       return;
     }
 
+    // Watcher to see if fetch was successful
     watch(isAdding, (newVal) => {
       if (newVal == false) {
         if (projectStore?.getAddedSuccessfully) {
           message.success('Project updated successfully.', 7);
+          projectEditStore?.resetChanges();
+          stopEditing();
         } else {
           message.error('Could not update Project.', 7);
         }
       }
     });
 
-    const updateProjectInformation: DetailedProjectModel | null = projectStore?.getProject || null;
+    const updateProjectInformation: DetailedProjectModel | null =
+      projectStore?.getProject || null;
     const updatedProject: UpdateProjectModel = {
       projectName: updateProjectInformation?.projectName,
       businessUnit: updateProjectInformation?.businessUnit,
@@ -80,11 +87,6 @@
     if (projectID.value) {
       await projectStore?.updateProject(updatedProject, projectID.value);
       await pluginStore?.fetchPlugins(projectID.value);
-    }
-    if(projectStore?.getAddedSuccessfully){
-      console.log('Project updated successfully');
-      projectEditStore?.resetChanges();
-      stopEditing();
     }
   };
 </script>

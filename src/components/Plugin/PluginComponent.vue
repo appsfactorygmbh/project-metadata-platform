@@ -1,10 +1,9 @@
 <script lang="ts" setup>
   // Import ref for reactive variables and utility functions for URL handling.
-  import { ref, watch, onMounted, type ComputedRef } from 'vue';
+  import { ref, watch } from 'vue';
   import { cutAfterTLD, createFaviconURL } from './editURL';
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import { useProjectEditStore } from '@/store';
-  import type { PluginModel } from '@/models/Plugin';
 
   // Define the component's props with pluginName and url as required strings.
   const props = defineProps({
@@ -34,7 +33,7 @@
     },
     editKey: {
       type: Number,
-      required: false,
+      required: true,
     },
     isDeleted: {
       type: Boolean,
@@ -62,6 +61,7 @@
         urlInput.value = initUrl;
         hide.value = false;
         urlStatusRef.value = '';
+        displayNameStatusRef.value = '';
       }
     },
   );
@@ -75,9 +75,8 @@
 
   watch(
     () => projectEditStore.getPluginsWithUrlConflicts,
-    (newVal, oldVal) => {
-      console.log('changes from ', oldVal, ' to ', newVal);
-      if (newVal.includes(props.editKey)) {
+    (newVal) => {
+      if (props.editKey !== undefined && newVal.includes(props.editKey)) {
         urlStatusRef.value = 'error';
       } else {
         urlStatusRef.value = '';
@@ -98,32 +97,49 @@
     window.open(props.url, '_blank');
   }
 
+  // Hides the plugin card if set to true
   const hide = ref<boolean>(false);
-
   const hidePlugin = () => {
     hide.value = true;
-    projectEditStore?.deletePlugin(props.editKey);
+    if (props.editKey !== undefined) {
+      projectEditStore?.deletePlugin(props.editKey);
+    }
   };
 
+  // Run on every key press in the input fields to update the plugin data
   const updatePluginData = (): void => {
-    projectEditStore.setCanBeCreated(true);
-    if (displayNameInput.value == '' || displayNameInput.value == null) {
-      displayNameStatusRef.value = 'error';
-      projectEditStore.setCanBeCreated(false);
-      return;
+    if (urlInput.value === '') {
+      urlStatusRef.value = 'error';
+      if (props.editKey !== undefined) {
+        projectEditStore.addEmptyField(props.editKey);
+      }
     } else {
-      displayNameStatusRef.value = '';
-      projectEditStore.canBeCreated = true;
+      if (props.editKey !== undefined) {
+        projectEditStore.removeEmptyField(props.editKey);
+      }
     }
-    console.log(props.editKey);
 
-    projectEditStore?.updatePluginChanges(props.editKey || 0, {
-      pluginName: props.pluginName,
-      displayName: displayNameInput.value,
-      url: urlInput.value,
-      id: props.id,
-      editKey: props.editKey,
-    });
+    if (displayNameInput.value === '') {
+      displayNameStatusRef.value = 'error';
+      if (props.editKey !== undefined) {
+        projectEditStore.addEmptyField(props.editKey);
+      }
+    } else {
+      if (props.editKey !== undefined) {
+        projectEditStore.removeEmptyField(props.editKey);
+      }
+    }
+
+    if (props.editKey !== undefined) {
+      projectEditStore.updatePluginChanges(props.editKey, {
+        pluginName: props.pluginName,
+        displayName: displayNameInput.value,
+        url: urlInput.value,
+        id: props.id,
+        editKey: props.editKey,
+        isDeleted: props.isDeleted || false,
+      });
+    }
   };
 </script>
 
@@ -238,7 +254,7 @@
   }
 
   .textContainerInput {
-    font-family: Manrope;
+    font-family: Manrope, serif;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -259,7 +275,7 @@
 
   // Style for the text container.
   .textContainer {
-    font-family: Manrope;
+    font-family: Manrope, serif;
     display: flex;
     flex-direction: column;
     justify-content: center;
