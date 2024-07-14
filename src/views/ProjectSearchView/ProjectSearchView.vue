@@ -89,7 +89,6 @@
   const handleRowClick = (project: ProjectModel) => {
     projectsStore?.fetchProject(project.id);
     pluginStore?.fetchPlugins(project.id);
-    projectEditStore?.resetChanges();
     if (isEditing) {
       stopEditing();
     }

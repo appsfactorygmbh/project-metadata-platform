@@ -66,8 +66,7 @@
       }
     });
 
-    const updateProjectInformation: DetailedProjectModel | null =
-      projectStore?.getProject || null;
+    const updateProjectInformation: DetailedProjectModel | null = projectStore?.getProject || null;
     const updatedProject: UpdateProjectModel = {
       projectName: updateProjectInformation?.projectName,
       businessUnit: updateProjectInformation?.businessUnit,
@@ -82,8 +81,11 @@
       await projectStore?.updateProject(updatedProject, projectID.value);
       await pluginStore?.fetchPlugins(projectID.value);
     }
-    projectEditStore?.resetChanges();
-    stopEditing();
+    if(projectStore?.getAddedSuccessfully){
+      console.log('Project updated successfully');
+      projectEditStore?.resetChanges();
+      stopEditing();
+    }
   };
 </script>
 

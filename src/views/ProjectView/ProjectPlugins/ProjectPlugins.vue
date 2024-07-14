@@ -1,5 +1,6 @@
 <template>
   <button @click="getMap">GET Map</button>
+  <button @click="addPlugin">addPLugin</button>
   <div>
     <div v-if="!loading" class="container">
       <PluginComponent
@@ -34,14 +35,10 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, inject, onMounted, toRaw, onBeforeMount } from 'vue';
+  import { ref, computed, inject, onMounted, toRaw, onBeforeMount, watch } from 'vue';
   import type { ComputedRef } from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
-  import {
-    pluginStoreSymbol,
-    projectsStoreSymbol,
-    projectEditStoreSymbol,
-  } from '@/store/injectionSymbols';
+  import { pluginStoreSymbol, projectsStoreSymbol, projectEditStoreSymbol } from '@/store/injectionSymbols';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { PluginModel, PluginEditModel } from '@/models/Plugin';
   const { isEditing } = useEditing();
@@ -54,13 +51,51 @@
     console.log('update: ', projectEditStore?.pluginChanges);
   };
 
-  let plugins: ComputedRef<PluginModel[]>;
+  const plugins = ref<PluginModel[]>([]);
   const loading = computed(
     () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
   );
 
+  const addPlugin = () => {
+    // Create a new plugin
+    const index = projectEditStore?.initialAdd({
+      id: 100,
+      pluginName: '',
+      displayName: '',
+      url: '',
+    });
+    const newPlugin: PluginModel = {
+      id: 100,
+      pluginName: '',
+      displayName: '',
+      url: '',
+      editKey: index,
+      isDeleted: false,
+    };
+    pluginStore.setPlugins([...plugins.value, newPlugin]);
+    //
+    // // Add the new plugin to the projectEditStore and get the index
+    // const index = projectEditStore?.initialAdd(newPlugin);
+    //
+    // // Check if index is defined before assigning it to editKey
+    // if (index !== undefined) {
+    //   // Create a new array that includes the new plugin
+    //   const updatedPlugins = [
+    //     ...plugins.value,
+    //     {
+    //       ...newPlugin,
+    //       editKey: index,
+    //       isDeleted: false,
+    //     },
+    //   ];
+    //
+    //   // Assign the new array to plugins.value
+    //   plugins.value = updatedPlugins;
+    // }
+  };
+
   function setPlugins(newPlugins: PluginModel[]) {
-    plugins = computed(() => toRaw(newPlugins));
+    plugins.value = toRaw(newPlugins);
   }
 
   watch(
@@ -79,7 +114,7 @@
         }
       }
     },
-  )
+  );
 
   onMounted(async () => {
     setPlugins(pluginStore.getPlugins);
@@ -95,6 +130,7 @@
       },
     );
   });
+
 </script>
 
 <style scoped lang="css">
