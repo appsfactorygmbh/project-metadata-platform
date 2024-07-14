@@ -51,15 +51,6 @@
   const projectEditStore = inject(projectEditStoreSymbol);
 
   const getMap = () => {
-    pluginStore?.setPlugins([
-      ...pluginStore.getPlugins,
-      {
-        pluginName: 'Map',
-        displayName: 'Map',
-        url: 'https://www.google.com/maps',
-        id: 100,
-      },
-    ]);
     console.log('update: ', projectEditStore?.pluginChanges);
   };
 
@@ -72,18 +63,23 @@
     plugins = computed(() => toRaw(newPlugins));
   }
 
-  watch(isEditing, (newVal) => {
-    if (newVal) {
-      for (let i = 0; i < plugins.value.length; i++) {
-        const index = projectEditStore?.initialAdd(plugins.value[i]);
-        plugins.value[i] = {
-          ...plugins.value[i],
-          editKey: index,
-          isDeleted: false,
-        };
+  watch(
+    () => isEditing.value,
+    (newVal) => {
+      if (!newVal) {
+        projectEditStore?.resetChanges();
+      } else {
+        for (let i = 0; i < plugins.value.length; i++) {
+          const index = projectEditStore?.initialAdd(plugins.value[i]);
+          plugins.value[i] = {
+            ...plugins.value[i],
+            editKey: index,
+            isDeleted: false,
+          };
+        }
       }
-    }
-  });
+    },
+  )
 
   onMounted(async () => {
     setPlugins(pluginStore.getPlugins);
@@ -98,16 +94,6 @@
         setPlugins(newProject);
       },
     );
-  });
-
-  onMounted(() => {
-    plugins = pluginStore.getPlugins;
-    if (projectEditStore) {
-      const plugins: PluginModel[] = pluginStore.getPlugins;
-      for (let i = 0; i < plugins.length; i++) {
-        projectEditStore.initialAdd(plugins[i]);
-      }
-    }
   });
 </script>
 

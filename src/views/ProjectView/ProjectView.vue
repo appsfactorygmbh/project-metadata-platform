@@ -83,9 +83,6 @@
       await pluginStore?.fetchPlugins(projectID.value);
     }
     projectEditStore?.resetChanges();
-    for (let i = 0; i < pluginStore?.getPlugins.length; i++) {
-      projectEditStore?.initialAdd(pluginStore?.getPlugins[i]);
-    }
     stopEditing();
   };
 </script>
