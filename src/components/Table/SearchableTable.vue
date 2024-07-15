@@ -8,7 +8,7 @@
   import type { SearchStore } from '@/store';
   import { numberSorter, stringSorter } from '../../utils/antd/sort';
   import type { SearchableColumn } from './SearchableTableTypes';
-  import type { TableColumnType, TableProps } from 'ant-design-vue';
+  import type { TableColumnType } from 'ant-design-vue';
   import type { ArrayElement } from '@/models/ArrayElement';
 
   //Get the width of the left pane from App.vue
@@ -30,10 +30,13 @@
       required: true,
     },
   });
+  interface FilteredInfo {
+    [key: string]: string;
+  }
 
   const searchStore = inject<SearchStore<object>>(props.searchStoreSymbol);
   const tableRef = ref();
-  const filteredInfo = ref('');
+  const filteredInfo = reactive<FilteredInfo>({}); // Use an object to track filter values for each column
 
   const emit = defineEmits(['row-click']);
 
@@ -63,7 +66,7 @@
           }, 100);
         }
       };
-      //column.filteredValue = filteredInfo.value ? [filteredInfo.value] : null;
+      column.filteredValue = filteredInfo[index] ? [filteredInfo[index]] : null;
     }
 
     if (column.sortMethod) {
@@ -76,9 +79,18 @@
     return column;
   };
 
-  const columns: TableProps['columns'] = props.columns.map((column) =>
-    mapSearchableColumn(column),
+  const reactiveColumns = reactive(
+    props.columns.map((column) => mapSearchableColumn(column)),
   );
+
+  // Watch filteredInfo to update columns' filteredValue reactively
+  watch(filteredInfo, () => {
+    reactiveColumns.forEach((column) => {
+      const key = column.key;
+      if (key)
+        column.filteredValue = filteredInfo[key] ? [filteredInfo[key]] : null;
+    });
+  });
 
   /*  Search implementation  */
 
@@ -104,6 +116,7 @@
     confirm();
     state.searchText = selectedKeys[0];
     state.searchedColumn = dataIndex;
+    filteredInfo[dataIndex] = state.searchText;
   }
 
   /**
@@ -112,15 +125,27 @@
    */
   function handleReset(clearFilters: (param?: FilterResetProps) => void) {
     clearFilters({ confirm: true });
+
+    reactiveColumns.forEach((column) => {
+      const key = column.key;
+      console.log(state.searchedColumn);
+
+      if (key && state.searchedColumn == key) filteredInfo[key] = '';
+    });
+
     state.searchText = '';
-    filteredInfo.value = '';
+    state.searchedColumn = '';
   }
 
   // Handle clear all filters action
   const handleClearAll = () => {
     state.searchText = '';
     state.searchedColumn = '';
-    filteredInfo.value = '';
+
+    reactiveColumns.forEach((column) => {
+      const key = column.key;
+      if (key) filteredInfo[key] = '';
+    });
   };
 
   // Expose handleClearAll method
@@ -136,7 +161,7 @@
   <a-table
     ref="tableRef"
     class="clickable-table"
-    :columns="[...columns]"
+    :columns="[...reactiveColumns]"
     :data-source="[...(searchStore?.getSearchResults || [])]"
     :pagination="false"
     :loading="isLoading"
