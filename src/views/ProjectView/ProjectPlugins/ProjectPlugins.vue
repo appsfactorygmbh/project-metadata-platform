@@ -110,7 +110,6 @@
 </script>
 
 <style scoped lang="css">
-
   /* Styling for the container */
   .container {
     width: 100%;

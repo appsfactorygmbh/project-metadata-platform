@@ -21,7 +21,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
       pluginsWithUrlConflicts: [],
       duplicatedUrls: new Map(),
       emptyUrlFields: new Map(),
-      emptyDisplaynameFields: new Map()
+      emptyDisplaynameFields: new Map(),
     };
   },
 
@@ -47,7 +47,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
       return (
         this.getPluginsWithUrlConflicts.length === 0 &&
         this.emptyUrlFields.size === 0 &&
-          this.emptyDisplaynameFields.size === 0
+        this.emptyDisplaynameFields.size === 0
       );
     },
   },
@@ -61,7 +61,6 @@ export const useProjectEditStore = defineStore('projectEdit', {
     // Removes an empty field from the emptyFields Map
     removeEmptyUrlField(id: number): void {
       this.emptyUrlFields.delete(id);
-      console.log('empty fields: ', this.emptyUrlFields);
     },
 
     addEmptyDisplaynameField(id: number): void {
@@ -95,13 +94,11 @@ export const useProjectEditStore = defineStore('projectEdit', {
           this.duplicatedUrls.set(plugin.url, [key]);
         }
       });
-      console.log('duplicatedUrls: ', this.duplicatedUrls);
     },
 
     // Adds a Plugin to the pluginChanges Map (to sync with the Plugins in "ProjectPlugins")
     // Return an index to identify the Plugin when one Plugin wants to update or delete it
     initialAdd(plugin: PluginModel): number {
-      console.log('plugin: ', plugin);
       const index = this.pluginChanges.size;
       const editPlugin: PluginEditModel = {
         ...plugin,
@@ -109,7 +106,6 @@ export const useProjectEditStore = defineStore('projectEdit', {
         isDeleted: false,
       };
       this.pluginChanges.set(index, editPlugin);
-      console.log(this.pluginChanges);
       return index;
     },
 

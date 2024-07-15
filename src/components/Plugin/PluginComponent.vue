@@ -44,7 +44,7 @@
   const initDisplayName = props.displayName;
   const initUrl = props.url;
 
-  const projectEditStore = inject(projectEditStoreSymbol)
+  const projectEditStore = inject(projectEditStoreSymbol);
   const urlStatusRef = ref<'' | 'error' | 'warning' | undefined>('');
   const displayNameStatusRef = ref<'' | 'error' | 'warning' | undefined>('');
 
@@ -111,13 +111,12 @@
     if (urlInput.value === '') {
       urlStatusRef.value = 'error';
       if (props.editKey !== undefined) {
-        console.log("run add empty field")
         projectEditStore?.addEmptyUrlField(props.editKey);
       }
     } else {
       if (props.editKey !== undefined) {
         projectEditStore?.removeEmptyUrlField(props.editKey);
-        urlStatusRef.value = ''
+        urlStatusRef.value = '';
       }
     }
 
@@ -129,7 +128,7 @@
     } else {
       if (props.editKey !== undefined) {
         projectEditStore?.removeEmptyDisplaynameField(props.editKey);
-        displayNameStatusRef.value = ''
+        displayNameStatusRef.value = '';
       }
     }
 

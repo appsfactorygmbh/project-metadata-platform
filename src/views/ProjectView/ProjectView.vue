@@ -46,6 +46,19 @@
 
   const isAdding = computed(() => projectStore?.getIsLoadingAdd);
 
+  // Watcher to see if fetch was successful
+  watch(isAdding, (newVal) => {
+    if (!newVal) {
+      if (projectStore?.getAddedSuccessfully) {
+        projectEditStore?.resetChanges();
+        message.success('Project updated successfully.', 7);
+        stopEditing();
+      } else {
+        message.error('Could not update Project.', 7);
+      }
+    }
+  });
+
   const saveEdit = async () => {
     // Check for empty fields and duplicates
     projectEditStore?.checkForConflicts();
@@ -58,19 +71,6 @@
       );
       return;
     }
-
-    // Watcher to see if fetch was successful
-    watch(isAdding, (newVal) => {
-      if (newVal == false) {
-        if (projectStore?.getAddedSuccessfully) {
-          message.success('Project updated successfully.', 7);
-          projectEditStore?.resetChanges();
-          stopEditing();
-        } else {
-          message.error('Could not update Project.', 7);
-        }
-      }
-    });
 
     const updateProjectInformation: DetailedProjectModel | null =
       projectStore?.getProject || null;
