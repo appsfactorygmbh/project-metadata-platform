@@ -30,6 +30,7 @@
       required: true,
     },
   });
+
   interface FilteredInfo {
     [key: string]: string;
   }
@@ -66,6 +67,7 @@
           }, 100);
         }
       };
+      // to set the coloumn.filteredValue to filtered.Info
       column.filteredValue = filteredInfo[index] ? [filteredInfo[index]] : null;
     }
 

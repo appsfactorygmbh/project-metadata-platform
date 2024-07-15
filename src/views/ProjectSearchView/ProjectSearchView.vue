@@ -26,7 +26,7 @@
   const pluginStore = inject(pluginStoreSymbol);
   const searchStore = useSearchStore<ProjectModel>('projects');
   const searchStoreSymbol = Symbol('projectSearchStore');
-
+  ``;
   const isLoading = computed(() => projectsStore?.getIsLoadingProjects);
   const searchableTable = ref<InstanceType<typeof SearchableTable>>();
 
@@ -93,13 +93,14 @@
     if (searchableTable.value && searchableTable.value.handleClearAll) {
       searchableTable.value.handleClearAll();
     }
+    searchStore.reset();
   };
 </script>
 
 <template>
   <div style="padding: 20px">
     <a-flex vertical gap="middle">
-      <SearchBar :search-store-symbol="searchStoreSymbol" />
+      <SearchBar ref="SearchBar" :search-store-symbol="searchStoreSymbol" />
       <ResetButton @click="clearAllFilters" />
 
       <SearchableTable
