@@ -29,25 +29,26 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, computed, toRaw, inject, onMounted } from 'vue';
+  import { computed, toRaw, inject, onMounted } from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
-  import { pluginStoreSymbol } from '@/store/injectionSymbols';
+  import {
+    pluginStoreSymbol,
+    projectsStoreSymbol,
+  } from '@/store/injectionSymbols';
   import type { PluginModel } from '@/models/Plugin';
   import type { ComputedRef } from 'vue';
 
   const pluginStore = inject(pluginStoreSymbol)!;
+  const projectsStore = inject(projectsStoreSymbol);
 
   let plugins: ComputedRef<PluginModel[]>;
-  const loading = computed(() => pluginStore.getIsLoading);
+  const loading = computed(
+    () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
+  );
 
   function setPlugins(newPlugins: PluginModel[]) {
     plugins = computed(() => toRaw(newPlugins));
   }
-
-  onBeforeMount(async () => {
-    pluginStore.setLoadingPlugins(true);
-    await pluginStore.fetchPlugins(100);
-  });
 
   onMounted(async () => {
     setPlugins(pluginStore.getPlugins);

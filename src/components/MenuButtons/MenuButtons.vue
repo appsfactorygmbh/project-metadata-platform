@@ -1,12 +1,20 @@
 <script lang="ts" setup>
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { LogoutOutlined, SettingOutlined } from '@ant-design/icons-vue';
+  import { useRouter } from 'vue-router';
+
+  // Router instance
+  const router = useRouter();
+
+  const goToSetting = () => {
+    router.push('/settings');
+  };
 
   const buttons: FloatButtonModel[] = [
     {
       name: 'SettingsButton',
       onClick: () => {
-        console.log('Settings clicked');
+        goToSetting();
       },
       icon: SettingOutlined,
       status: 'activated',
@@ -25,11 +33,10 @@
 </script>
 
 <template>
-  <!-- add icons for profile, plugins, global logs, signout -->
   <FloatingButtonGroup :buttons="buttons" class="menu" />
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
   .menu {
     top: 20px;
   }
