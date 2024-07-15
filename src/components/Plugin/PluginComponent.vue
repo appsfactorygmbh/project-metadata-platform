@@ -1,9 +1,9 @@
 <script lang="ts" setup>
   // Import ref for reactive variables and utility functions for URL handling.
-  import { ref, watch } from 'vue';
+  import { ref, watch, inject } from 'vue';
   import { cutAfterTLD, createFaviconURL } from './editURL';
   import { DeleteOutlined } from '@ant-design/icons-vue';
-  import { useProjectEditStore } from '@/store';
+  import { projectEditStoreSymbol } from '@/store/injectionSymbols';
 
   // Define the component's props with pluginName and url as required strings.
   const props = defineProps({
@@ -44,7 +44,7 @@
   const initDisplayName = props.displayName;
   const initUrl = props.url;
 
-  const projectEditStore = useProjectEditStore();
+  const projectEditStore = inject(projectEditStoreSymbol)
   const urlStatusRef = ref<'' | 'error' | 'warning' | undefined>('');
   const displayNameStatusRef = ref<'' | 'error' | 'warning' | undefined>('');
 
@@ -74,9 +74,9 @@
   );
 
   watch(
-    () => projectEditStore.getPluginsWithUrlConflicts,
+    () => projectEditStore?.getPluginsWithUrlConflicts,
     (newVal) => {
-      if (props.editKey !== undefined && newVal.includes(props.editKey)) {
+      if (props.editKey !== undefined && newVal?.includes(props.editKey)) {
         urlStatusRef.value = 'error';
       } else {
         urlStatusRef.value = '';
@@ -111,27 +111,30 @@
     if (urlInput.value === '') {
       urlStatusRef.value = 'error';
       if (props.editKey !== undefined) {
-        projectEditStore.addEmptyField(props.editKey);
+        console.log("run add empty field")
+        projectEditStore?.addEmptyUrlField(props.editKey);
       }
     } else {
       if (props.editKey !== undefined) {
-        projectEditStore.removeEmptyField(props.editKey);
+        projectEditStore?.removeEmptyUrlField(props.editKey);
+        urlStatusRef.value = ''
       }
     }
 
     if (displayNameInput.value === '') {
       displayNameStatusRef.value = 'error';
       if (props.editKey !== undefined) {
-        projectEditStore.addEmptyField(props.editKey);
+        projectEditStore?.addEmptyDisplaynameField(props.editKey);
       }
     } else {
       if (props.editKey !== undefined) {
-        projectEditStore.removeEmptyField(props.editKey);
+        projectEditStore?.removeEmptyDisplaynameField(props.editKey);
+        displayNameStatusRef.value = ''
       }
     }
 
     if (props.editKey !== undefined) {
-      projectEditStore.updatePluginChanges(props.editKey, {
+      projectEditStore?.updatePluginChanges(props.editKey, {
         pluginName: props.pluginName,
         displayName: displayNameInput.value,
         url: urlInput.value,

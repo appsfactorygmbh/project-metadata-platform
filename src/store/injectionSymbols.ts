@@ -1,6 +1,6 @@
 import { useProjectStore } from './ProjectsStore';
 import { usePluginsStore } from './PluginStore';
-import { useProjectEditStore } from './ProjectEditStore';
+import { useProjectEditStore } from './ProjectEditStore/ProjectEditStore.ts';
 import type { useGlobalPluginsStore } from './GlobalPluginStore';
 import type { InjectionKey } from 'vue';
 

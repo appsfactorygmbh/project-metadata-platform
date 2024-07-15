@@ -110,6 +110,7 @@
 </script>
 
 <style scoped lang="css">
+
   /* Styling for the container */
   .container {
     width: 100%;
@@ -119,6 +120,7 @@
     align-items: center;
     flex-direction: row;
     flex-wrap: wrap;
+    margin-bottom: 10px;
     & > * {
       margin: 10px;
     }

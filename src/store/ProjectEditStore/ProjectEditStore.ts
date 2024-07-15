@@ -8,7 +8,8 @@ type StoreState = {
   canBeCreated: boolean;
   pluginsWithUrlConflicts: number[][];
   duplicatedUrls: Map<string, number[]>;
-  emptyFields: Map<number, number>;
+  emptyUrlFields: Map<number, number>;
+  emptyDisplaynameFields: Map<number, number>;
 };
 
 export const useProjectEditStore = defineStore('projectEdit', {
@@ -19,7 +20,8 @@ export const useProjectEditStore = defineStore('projectEdit', {
       canBeCreated: true,
       pluginsWithUrlConflicts: [],
       duplicatedUrls: new Map(),
-      emptyFields: new Map(),
+      emptyUrlFields: new Map(),
+      emptyDisplaynameFields: new Map()
     };
   },
 
@@ -42,24 +44,33 @@ export const useProjectEditStore = defineStore('projectEdit', {
     },
     // Returns whether the Project can be created (no URL conflicts and no empty fields)
     getCanBeAdded(): boolean {
-      console.log('empty fields: ', this.emptyFields);
       return (
         this.getPluginsWithUrlConflicts.length === 0 &&
-        this.emptyFields.size === 0
+        this.emptyUrlFields.size === 0 &&
+          this.emptyDisplaynameFields.size === 0
       );
     },
   },
 
   actions: {
     // Adds an empty field to the emptyFields Map
-    addEmptyField(id: number): void {
-      this.emptyFields.set(id, id);
+    addEmptyUrlField(id: number): void {
+      this.emptyUrlFields.set(id, id);
     },
 
     // Removes an empty field from the emptyFields Map
-    removeEmptyField(id: number): void {
-      this.emptyFields.delete(id);
-      console.log('empty fields: ', this.emptyFields);
+    removeEmptyUrlField(id: number): void {
+      this.emptyUrlFields.delete(id);
+      console.log('empty fields: ', this.emptyUrlFields);
+    },
+
+    addEmptyDisplaynameField(id: number): void {
+      this.emptyDisplaynameFields.set(id, id);
+    },
+
+    // Removes an empty field from the emptyFields Map
+    removeEmptyDisplaynameField(id: number): void {
+      this.emptyDisplaynameFields.delete(id);
     },
 
     // Resets all changes made to the Plugins and Projectinformation
@@ -68,7 +79,8 @@ export const useProjectEditStore = defineStore('projectEdit', {
       this.projectInformationChanges = [];
       this.canBeCreated = true;
       this.pluginsWithUrlConflicts = [];
-      this.emptyFields.clear();
+      this.emptyUrlFields.clear();
+      this.emptyDisplaynameFields.clear();
     },
 
     // Checks for URL conflicts between Plugins

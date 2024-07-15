@@ -24,6 +24,7 @@ const generateWrapper = (
   isLoading: boolean,
   isEditing: boolean,
   id: number,
+  editKey = -1,
 ): VueWrapper<ComponentPublicInstance<PluginComponentInstance>> => {
   return mount(PluginComponent, {
     plugins: [
@@ -38,6 +39,7 @@ const generateWrapper = (
       isLoading: isLoading,
       isEditing: isEditing,
       id: id,
+      editKey
     },
     global: {
       provide: {
@@ -76,6 +78,8 @@ describe('Plugin.vue', () => {
         isLoading: true,
         isEditing: false,
         id: 100,
+        editKey: -2
+
       },
     });
     const skeleton = wrapper.find('.ant-skeleton-content');
@@ -91,6 +95,7 @@ describe('Plugin.vue', () => {
         isLoading: true,
         isEditing: false,
         id: 100,
+        editKey: -1
       },
     });
     expect(wrapper.find('.ant-skeleton-content').exists()).toBe(true);
