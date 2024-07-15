@@ -4,7 +4,7 @@
     pluginStoreSymbol,
     projectsStoreSymbol,
   } from '@/store/injectionSymbols';
-  import { onMounted, inject, provide } from 'vue';
+  import { onMounted, inject, provide, reactive } from 'vue';
   import { useSearchStore, type SearchStore } from '@/store/SearchStore';
   import type { ProjectModel } from '@/models/Project';
   import { projectsService } from '@/services';
@@ -96,7 +96,7 @@
       <SearchableTable
         :search-store-symbol="searchStoreSymbol"
         :pane-height="props.paneHeight"
-        :columns="columns.filter((item) => !item.hidden)"
+        :columns="[...columns.filter((item) => !item.hidden)]"
         :is-loading="isLoading"
         @row-click="handleRowClick"
       />
@@ -106,7 +106,7 @@
 
 <script lang="ts">
   //sets the parameters for every column
-  const columns: SearchableColumn[] = [
+  const columns: SearchableColumn[] = reactive([
     {
       title: 'Project Name',
       dataIndex: 'projectName',
@@ -116,6 +116,7 @@
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
+      width: '37.5%',
     },
     {
       title: 'Client Name',
@@ -127,6 +128,7 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
+      width: '37.5%',
     },
     {
       title: 'Business Unit',
@@ -137,6 +139,7 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
+      width: '12.5%',
     },
     {
       title: 'Team Number',
@@ -147,8 +150,9 @@
       sortMethod: 'number',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
+      width: '12.5%',
     },
-  ];
+  ]);
 
   /*  Column drop implementation  */
 
@@ -213,9 +217,9 @@
   function getBreakpoint(pwidth: number): string {
     const windowSize = useWindowSize().width.value;
     const breakpoint: number[] = [
-      0.25 * windowSize,
-      0.37 * windowSize,
-      0.5 * windowSize,
+      0.2 * windowSize,
+      0.35 * windowSize,
+      0.4 * windowSize,
     ];
 
     if (pwidth > breakpoint[2]) {

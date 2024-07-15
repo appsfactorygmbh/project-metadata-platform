@@ -10,6 +10,7 @@
   import type { SearchableColumn } from './SearchableTableTypes';
   import type { TableColumnType, TableProps } from 'ant-design-vue';
   import type { ArrayElement } from '@/models/utils';
+  import type { ComputedRef } from 'vue';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -71,8 +72,8 @@
     return column;
   };
 
-  const columns: TableProps['columns'] = props.columns.map((column) =>
-    mapSearchableColumn(column),
+  const columns: ComputedRef<TableProps['columns']> = computed(() =>
+    props.columns.map((column) => mapSearchableColumn(column)),
   );
 
   /*  Search implementation  */
