@@ -10,7 +10,7 @@
   import type { SearchableColumn } from './SearchableTableTypes';
   import type { TableColumnType, TableProps } from 'ant-design-vue';
   import type { ArrayElement } from '@/models/ArrayElement';
-  import type { ComputedRef } from 'vue';
+  import type { ComputedRef, Ref } from 'vue';
   import { useQuery } from '@/utils/hooks';
 
   //Get the width of the left pane from App.vue
@@ -51,7 +51,7 @@
     };
   };
 
-  const columnNames: string[] = reactive([]);
+  const columnNames: Ref<string[]> = ref([]);
 
   const mapSearchableColumn = (
     column: ArrayElement<typeof props.columns>,
@@ -59,7 +59,7 @@
     const index = column.dataIndex;
 
     if (column.searchable) {
-      columnNames.push(index);
+      columnNames.value.push(index);
       column.onFilter = (value, record) =>
         String(record[index])
           .toLowerCase()
@@ -103,8 +103,9 @@
 
   /*  Search implementation  */
 
-  const { routerQueryNames, routerSearchQuery, setSearchQuery } =
-    useQuery(columnNames);
+  const { queryNames, routerSearchQuery, setSearchQuery } = useQuery(
+    columnNames.value,
+  );
 
   //saves state of searched text and in which column
   const state = reactive({
@@ -178,10 +179,10 @@
       const searchQuery = queries[query];
 
       if (
-        columnNames.includes(routerQueryNames[query]) &&
+        columnNames.value.includes(queryNames[query]) &&
         searchQuery !== 'undefined'
       ) {
-        handleSearch(searchQuery as string, () => {}, routerQueryNames[query]);
+        handleSearch(searchQuery as string, () => {}, queryNames[query]);
       }
     }
   });
