@@ -7,7 +7,6 @@ import { createPinia, setActivePinia } from 'pinia';
 import type { SearchableColumns } from '../SearchableTableTypes';
 import { Button, Input } from 'ant-design-vue';
 import router from '@/router';
-import _ from 'lodash';
 
 const testData = [
   {
@@ -151,17 +150,34 @@ describe('SearchableTable.vue', () => {
     const searchButton = wrapper.getComponent(Button);
     const resetButton = wrapper.findAllComponents(Button)[1];
 
-    await searchInput.get('.ant-input').setValue('Test');
+    await searchInput.get('.ant-input').setValue('Test1');
     await searchButton.trigger('click');
 
-    _.delay(
-      () => expect(router.currentRoute.value.query.projectName).toBe('Test'),
-      1000,
-    );
+    await flushPromises();
+    expect(router.currentRoute.value.query.projectName).toBe('Test1');
 
     await resetButton.trigger('click');
-
+    await flushPromises();
     expect(router.currentRoute.value.query.projectName).toBe(undefined);
+  });
+
+  it('filters columns, when providing inital query', async () => {
+    await router.push({
+      path: '/',
+      query: { projectName: 'C' },
+    });
+    await router.isReady();
+
+    const wrapper = generateWrapper();
+
+    await wrapper.find('.ant-table-filter-trigger').trigger('click');
+    const searchInput = wrapper.getComponent(Input);
+
+    expect(searchInput.element.value).toBe('C');
+    expect(wrapper.findAll('.ant-table-row')).toHaveLength(1);
+    expect(wrapper.find('.ant-table-row').find('.ant-table-cell').text()).toBe(
+      'C',
+    );
   });
 
   createTestingPinia({});

@@ -43,6 +43,7 @@
 
   onBeforeMount(() => {
     const routerQuery = routerSearchQuery.value[0];
+
     const searchQuery: string | undefined =
       routerQuery !== 'undefined' ? routerQuery : '';
 

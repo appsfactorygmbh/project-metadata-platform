@@ -95,8 +95,8 @@ describe('SearchBar.vue', () => {
     });
 
     const input = wrapper.find('input');
-    expect(input.element.value).toBe('Test2');
 
+    expect(input.element.value).toBe('Test2');
     expect(searchStore.setSearchQuery).toHaveBeenCalledWith('Test2');
   });
 });

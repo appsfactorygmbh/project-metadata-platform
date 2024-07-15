@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { SmileOutlined, SearchOutlined } from '@ant-design/icons-vue';
-  import { reactive, ref, inject, onBeforeMount } from 'vue';
+  import { reactive, ref, inject, onMounted } from 'vue';
   import type {
     FilterConfirmProps,
     FilterResetProps,
@@ -103,7 +103,8 @@
 
   /*  Search implementation  */
 
-  const { routerSearchQuery, setSearchQuery } = useQuery(columnNames);
+  const { routerQueryNames, routerSearchQuery, setSearchQuery } =
+    useQuery(columnNames);
 
   //saves state of searched text and in which column
   const state = reactive({
@@ -115,21 +116,19 @@
 
   /**
    * Saves the searched string and the target column in state, when search is confirmed.
-   * @param {string[]} selectedKeys Has the searched text in the first position.
+   * @param {string} selectedKey Has the searched text in the first position.
    * @param {((param?: FilterConfirmProps) => void)} confirm Confirms the search.
    * @param {string} dataIndex Has the target column.
    */
   function handleSearch(
-    selectedKeys: string[],
+    selectedKey: string,
     confirm: (param?: FilterConfirmProps) => void,
     dataIndex: string,
   ) {
     confirm();
-    console.log(confirm);
+    setSearchQuery(selectedKey, dataIndex);
 
-    setSearchQuery(selectedKeys[0], dataIndex);
-
-    state.searchText = selectedKeys[0];
+    state.searchText = selectedKey;
     state.searchedColumn = dataIndex;
     filteredInfo[dataIndex] = state.searchText;
   }
@@ -147,9 +146,8 @@
     if (columns.value) {
       columns.value.forEach((column) => {
         const key = column.key;
-        console.log(state.searchedColumn);
 
-        if (key && state.searchedColumn == key) filteredInfo[key] = '';
+        if (key && dataIndex == key) filteredInfo[key] = '';
       });
     }
 
@@ -170,16 +168,20 @@
       });
     }
   };
-
   // Expose handleClearAll method
   defineExpose({ handleClearAll });
 
-  onBeforeMount(() => {
+  onMounted(() => {
     const queries = routerSearchQuery.value;
-    const columnNames = props.columns!.map((column) => column.dataIndex);
+
     for (const query in queries) {
-      if (columnNames.includes(query)) {
-        filteredInfo[query] = queries[query] as string;
+      const searchQuery = queries[query];
+
+      if (
+        columnNames.includes(routerQueryNames[query]) &&
+        searchQuery !== 'undefined'
+      ) {
+        handleSearch(searchQuery as string, () => {}, routerQueryNames[query]);
       }
     }
   });
@@ -243,7 +245,7 @@
           type="primary"
           size="small"
           style="width: 90px; margin-right: 8px"
-          @click="handleSearch(selectedKeys, confirm, column.dataIndex)"
+          @click="handleSearch(selectedKeys[0], confirm, column.dataIndex)"
         >
           <template #icon><SearchOutlined /></template>
           Search

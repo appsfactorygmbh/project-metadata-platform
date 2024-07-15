@@ -5,6 +5,7 @@ import type { ComputedRef } from 'vue';
 export const useQuery = (queryNames: string[]) => {
   const router = useRouter();
 
+  const routerQueryNames = queryNames;
   const routerSearchQuery: ComputedRef<(string | undefined)[]> = computed(
     () => {
       return queryNames.map(
@@ -29,5 +30,5 @@ export const useQuery = (queryNames: string[]) => {
     });
   };
 
-  return { routerSearchQuery, setSearchQuery };
+  return { routerQueryNames, routerSearchQuery, setSearchQuery };
 };
