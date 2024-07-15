@@ -8,8 +8,9 @@
   import type { SearchStore } from '@/store';
   import { numberSorter, stringSorter } from '../../utils/antd/sort';
   import type { SearchableColumn } from './SearchableTableTypes';
-  import type { TableColumnType } from 'ant-design-vue';
+  import type { TableColumnType, TableProps } from 'ant-design-vue';
   import type { ArrayElement } from '@/models/ArrayElement';
+  import type { ComputedRef } from 'vue';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -81,17 +82,19 @@
     return column;
   };
 
-  const reactiveColumns = reactive(
+  const columns: ComputedRef<TableProps['columns']> = computed(() =>
     props.columns.map((column) => mapSearchableColumn(column)),
   );
 
   // Watch filteredInfo to update columns' filteredValue reactively
   watch(filteredInfo, () => {
-    reactiveColumns.forEach((column) => {
-      const key = column.key;
-      if (key)
-        column.filteredValue = filteredInfo[key] ? [filteredInfo[key]] : null;
-    });
+    if (columns.value) {
+      columns.value.forEach((column) => {
+        const key = column.key;
+        if (key)
+          column.filteredValue = filteredInfo[key] ? [filteredInfo[key]] : null;
+      });
+    }
   });
 
   /*  Search implementation  */
@@ -128,12 +131,14 @@
   function handleReset(clearFilters: (param?: FilterResetProps) => void) {
     clearFilters({ confirm: true });
 
-    reactiveColumns.forEach((column) => {
-      const key = column.key;
-      console.log(state.searchedColumn);
+    if (columns.value) {
+      columns.value.forEach((column) => {
+        const key = column.key;
+        console.log(state.searchedColumn);
 
-      if (key && state.searchedColumn == key) filteredInfo[key] = '';
-    });
+        if (key && state.searchedColumn == key) filteredInfo[key] = '';
+      });
+    }
 
     state.searchText = '';
     state.searchedColumn = '';
@@ -144,10 +149,12 @@
     state.searchText = '';
     state.searchedColumn = '';
 
-    reactiveColumns.forEach((column) => {
-      const key = column.key;
-      if (key) filteredInfo[key] = '';
-    });
+    if (columns.value) {
+      columns.value.forEach((column) => {
+        const key = column.key;
+        if (key) filteredInfo[key] = '';
+      });
+    }
   };
 
   // Expose handleClearAll method
@@ -163,7 +170,7 @@
   <a-table
     ref="tableRef"
     class="clickable-table"
-    :columns="[...reactiveColumns]"
+    :columns="[...columns]"
     :data-source="[...(searchStore?.getSearchResults || [])]"
     :pagination="false"
     :loading="isLoading"

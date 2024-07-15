@@ -1,22 +1,12 @@
 <script lang="ts" setup>
   import { inject, onMounted, toRaw, reactive } from 'vue';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
-  import { useProjectStore } from '@/store';
   import { storeToRefs } from 'pinia';
   import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
   import { EditOutlined } from '@ant-design/icons-vue';
 
-  const props = defineProps({
-    isTest: {
-      type: Boolean,
-      default: false,
-    },
-  });
-
-  const projectsStore = props.isTest
-    ? useProjectStore()
-    : inject(projectsStoreSymbol)!;
+  const projectsStore = inject(projectsStoreSymbol)!;
 
   const { getIsLoadingProject } = storeToRefs(projectsStore);
   const { getIsLoading } = storeToRefs(projectsStore);
@@ -73,7 +63,6 @@
         <a-card
           :body-style="{
             display: 'flex',
-            alignItems: 'center',
             padding: '5px',
           }"
           class="infoCard"
@@ -93,7 +82,6 @@
         <a-card
           :body-style="{
             display: 'flex',
-            alignItems: 'center',
             padding: '5px',
           }"
           class="infoCard"
@@ -112,7 +100,6 @@
         <a-card
           :body-style="{
             display: 'flex',
-            alignItems: 'center',
             padding: '5px',
           }"
           class="infoCard"
@@ -131,7 +118,6 @@
         <a-card
           :body-style="{
             display: 'flex',
-            alignItems: 'center',
             padding: '5px',
           }"
           class="infoCard"
@@ -232,13 +218,10 @@
   .projectInformationBox {
     width: 100%;
     height: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: start;
     flex-direction: row;
     flex-wrap: wrap;
-    padding-top: 1em;
-    padding-bottom: 1em;
+    padding: 1em 0;
     border-radius: 10px;
 
     background: white;
@@ -249,36 +232,30 @@
     border: none;
     width: 50%;
     display: table;
-    padding-left: 1em;
-    padding-right: 1em;
+    padding: 0 1em 0 2vw;
   }
 
   .button {
     margin-bottom: 10px;
-    height: 50px;
-    width: 50px;
-    border: none;
-  }
-  .button {
     height: 40px;
     width: 40px;
     border: none;
   }
 
   .icon {
-    color: black; //TODO: change to appsfactory grey
+    color: black;
     font-size: 2.5em;
   }
 
   .label {
     font-size: 1.4em;
     font-weight: bold;
-    margin: 0 0 0 auto;
+    margin: 0;
   }
 
   .projectInfo {
     font-size: 1.4em;
-    margin: 0 auto 0 1em;
+    margin: 0 auto 0 0.5em;
     white-space: nowrap;
   }
 </style>
