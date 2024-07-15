@@ -8,6 +8,7 @@ type SearchStoreState<T> = {
   searchResults: Ref<T[]>;
   baseSet: Ref<T[]>;
   isLoading: boolean;
+  onReset: (() => void) | undefined;
 };
 
 const excludedKeys = ['id', 'createdAt', 'updatedAt'];
@@ -20,6 +21,7 @@ export const useSearchStore = <T extends object>(name: string) =>
         baseSet: ref<T[]>([]) as Ref<T[]>,
         searchResults: ref<T[]>([]) as Ref<T[]>,
         isLoading: false,
+        onReset: undefined,
       };
     },
     getters: {
@@ -61,6 +63,16 @@ export const useSearchStore = <T extends object>(name: string) =>
         );
         this.searchResults = results;
         this.isLoading = false;
+      },
+
+      setOnReset(onReset: () => void) {
+        this.onReset = onReset;
+      },
+
+      reset() {
+        this.searchQuery = '';
+        this.searchResults = this.baseSet;
+        if (this.onReset) this.onReset();
       },
     },
   })();

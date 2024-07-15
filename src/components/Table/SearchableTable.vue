@@ -33,7 +33,13 @@
     },
   });
 
+  interface FilteredInfo {
+    [key: string]: string;
+  }
+
   const searchStore = inject<SearchStore<object>>(props.searchStoreSymbol);
+  const tableRef = ref();
+  const filteredInfo = reactive<FilteredInfo>({}); // Use an object to track filter values for each column
 
   const emit = defineEmits(['row-click']);
 
@@ -51,6 +57,7 @@
     column: ArrayElement<typeof props.columns>,
   ): TableColumnType => {
     const index = column.dataIndex;
+
     if (column.searchable) {
       columnNames.push(index);
       column.onFilter = (value, record) =>
@@ -65,7 +72,10 @@
           }, 100);
         }
       };
+      // to set the coloumn.filteredValue to filtered.Info
+      column.filteredValue = filteredInfo[index] ? [filteredInfo[index]] : null;
     }
+
     if (column.sortMethod) {
       if (column.sortMethod == 'string') {
         column.sorter = (a, b) => stringSorter(a, b, index);
@@ -79,6 +89,17 @@
   const columns: ComputedRef<TableProps['columns']> = computed(() =>
     props.columns.map((column) => mapSearchableColumn(column)),
   );
+
+  // Watch filteredInfo to update columns' filteredValue reactively
+  watch(filteredInfo, () => {
+    if (columns.value) {
+      columns.value.forEach((column) => {
+        const key = column.key;
+        if (key)
+          column.filteredValue = filteredInfo[key] ? [filteredInfo[key]] : null;
+      });
+    }
+  });
 
   /*  Search implementation  */
 
@@ -110,6 +131,7 @@
 
     state.searchText = selectedKeys[0];
     state.searchedColumn = dataIndex;
+    filteredInfo[dataIndex] = state.searchText;
   }
 
   /**
@@ -121,9 +143,36 @@
     dataIndex: string,
   ) {
     clearFilters({ confirm: true });
+
+    if (columns.value) {
+      columns.value.forEach((column) => {
+        const key = column.key;
+        console.log(state.searchedColumn);
+
+        if (key && state.searchedColumn == key) filteredInfo[key] = '';
+      });
+    }
+
     setSearchQuery(undefined, dataIndex);
     state.searchText = '';
+    state.searchedColumn = '';
   }
+
+  // Handle clear all filters action
+  const handleClearAll = () => {
+    state.searchText = '';
+    state.searchedColumn = '';
+
+    if (columns.value) {
+      columns.value.forEach((column) => {
+        const key = column.key;
+        if (key) filteredInfo[key] = '';
+      });
+    }
+  };
+
+  // Expose handleClearAll method
+  defineExpose({ handleClearAll });
 
   onBeforeMount(() => {
     const queries = routerSearchQuery.value;
@@ -145,6 +194,7 @@
         scroll: sets height of table to ~90% of the window height
     -->
   <a-table
+    ref="tableRef"
     class="clickable-table"
     :columns="[...columns]"
     :data-source="[...(searchStore?.getSearchResults || [])]"
