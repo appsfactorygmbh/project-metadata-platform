@@ -1,5 +1,6 @@
 import { Form } from 'ant-design-vue';
-import { useFormStore, type FormStore } from '../FormStore';
+import { useFormStore } from '../FormStore';
+import type { FormStore } from '../FormStore';
 import { createPinia, setActivePinia } from 'pinia';
 import { flushPromises } from '@vue/test-utils';
 import type { RulesObject } from '../types';

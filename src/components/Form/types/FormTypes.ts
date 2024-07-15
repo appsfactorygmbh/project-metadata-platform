@@ -1,5 +1,5 @@
 import { Form } from 'ant-design-vue';
-import type { FieldRecord, FieldRecordArray } from './FieldType';
+import type { FieldRecord, FieldRecordArray } from './FieldTypes';
 
 // ReturnType of the useForm function from ant-design-vue
 export type FormType = ReturnType<typeof Form.useForm>;

@@ -4,7 +4,7 @@
   //import type { CreatePluginModel } from '@/models/Plugin';
   import { type FormStore } from '@/components/Form';
   import {
-    type SpecialRulesObject,
+    type CustomRulesObject,
     type RulesObject,
   } from '@/components/Form/types';
   import type { GlobalPluginFormData } from './';
@@ -39,25 +39,27 @@
     ],
   });
 
-  const specialRules = reactive<SpecialRulesObject<GlobalPluginFormData>>({
-    keys: [
-      {
-        ruleTarget: 'arrayItem',
-        keyProp: 'key',
-        validator: (rule, value) => {
-          if (value.value.length === 0) {
-            return Promise.reject('Please insert at least one key.');
-          }
-          return Promise.resolve();
+  const customRules = reactive<CustomRulesObject<GlobalPluginFormData, 'keys'>>(
+    {
+      keys: [
+        {
+          ruleTarget: 'arrayItem',
+          keyProp: 'key',
+          validator: (_, value) => {
+            if (value.value.length === 0) {
+              return Promise.reject('Please insert the key or remove it.');
+            }
+            return Promise.resolve();
+          },
+          message: 'Please insert the key or remove it.',
         },
-        message: 'Please insert at least one key.',
-      },
-    ],
-  });
+      ],
+    },
+  );
 
   formStore.setModel(modelRef);
   formStore.setRules(rulesRef);
-  formStore.setSpecialRules(specialRules);
+  formStore.setCustomRules(customRules);
 
   const formItemLayout = {
     labelCol: {
@@ -127,7 +129,8 @@
         style="width: 60%; margin-right: 8px"
       />
       <MinusCircleOutlined
-        v-if="modelRef.keys.length > 1"
+        v-if="modelRef.keys.length > 0"
+        data-test="dynamic-delete-button"
         class="dynamic-delete-button"
         @click="
           () => {

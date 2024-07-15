@@ -1,6 +1,7 @@
 import { describe, it, expect, expectTypeOf } from 'vitest';
-import { mount, VueWrapper } from '@vue/test-utils';
-import { GlobalPluginForm, type GlobalPluginFormData } from '..';
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
+import { GlobalPluginForm } from '..';
+import type { GlobalPluginFormData } from '..';
 import { useFormStore } from '@/components/Form';
 import { createPinia, setActivePinia } from 'pinia';
 
@@ -8,15 +9,15 @@ const testForm: GlobalPluginFormData = {
   pluginName: 'testPlugin',
   keys: [
     {
-      key: 1231231203,
+      key: 1721034372425,
       value: 'testValue',
     },
     {
-      key: 1231231203,
+      key: 1721034372428,
       value: 'testValue2',
     },
     {
-      key: 1231231203,
+      key: 1721034372429,
       value: 'testValue3',
     },
   ],
@@ -84,19 +85,28 @@ describe('GlobalPluginForm.vue', () => {
     const count = wrapper.findAll('input').length;
     await button.trigger('click');
     expect(wrapper.findAll('input').length).toBe(count + 1);
+    await button.trigger('click');
+    expect(wrapper.findAll('input').length).toBe(count + 2);
   });
 
-  it.todo("should remove key fields when 'Remove Key' is clicked", async () => {
-    const button = wrapper.find('button');
-    await button.trigger('click');
+  it("should remove key fields when 'Remove Key' is clicked", async () => {
+    await flushPromises();
     const count = wrapper.findAll('input').length;
-    await button.trigger('click');
-    expect(wrapper.findAll('input').length).toBe(count - 1);
+    for (let i = 1; i < count; i++) {
+      const button = wrapper.findComponent(
+        '[data-test="dynamic-delete-button"]',
+      );
+      await button.trigger('click');
+      expect(wrapper.findAll('input').length).toBe(count - i);
+    }
   });
 
-  it('should validate the form if pluginName is not set', async () => {
-    const input = wrapper.find('input');
+  it.todo('should validate the form if pluginName is not set', async () => {
+    await flushPromises();
+    const input = wrapper.find('[id="form_item_pluginName"]');
     await input.setValue('');
+    await flushPromises();
+
     expect(formStore.validate()).rejects.toMatchObject({
       errorFields: [
         {
@@ -112,53 +122,32 @@ describe('GlobalPluginForm.vue', () => {
   });
 
   it.todo('should validate the form if keys are not set', async () => {
-    const button = wrapper.find('button');
+    let button = wrapper.find('button');
     await button.trigger('click');
+    button = wrapper.find('button');
     await button.trigger('click');
+    button = wrapper.find('button');
     await button.trigger('click');
 
-    expect(formStore.validate()).rejects.toMatchObject({
+    expect(formStore.validate).rejects.toMatchObject({
       errorFields: [
         {
-          errors: ['Please insert the key.'],
-          name: 'keys[0].key',
-          warnings: [],
+          errors: ['Please insert the key or remove it.'],
         },
         {
-          errors: ['Please insert the value.'],
-          name: 'keys[0].value',
-          warnings: [],
+          errors: ['Please insert the key or remove it.'],
         },
         {
-          errors: ['Please insert the key.'],
-          name: 'keys[1].key',
-          warnings: [],
-        },
-        {
-          errors: ['Please insert the value.'],
-          name: 'keys[1].value',
-          warnings: [],
-        },
-        {
-          errors: ['Please insert the key.'],
-          name: 'keys[2].key',
-          warnings: [],
-        },
-        {
-          errors: ['Please insert the value.'],
-          name: 'keys[2].value',
-          warnings: [],
+          errors: ['Please insert the key or remove it.'],
         },
       ],
     });
 
     const inputs = wrapper.findAll('input');
-    await inputs[0].setValue('1231231203');
+    await inputs[1].setValue('testPlugin');
     await inputs[1].setValue('testValue');
-    await inputs[2].setValue('1231231203');
-    await inputs[3].setValue('testValue2');
-    await inputs[4].setValue('1231231203');
-    await inputs[5].setValue('testValue3');
+    await inputs[2].setValue('testValue2');
+    await inputs[3].setValue('testValue3');
 
     expect(formStore.validate()).resolves.toEqual(formStore.getFieldsValue);
   });

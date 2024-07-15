@@ -1,11 +1,12 @@
 import type { ValidateInfo } from 'ant-design-vue/es/form/useForm';
-import type { SpecialRule } from '../types';
+import type { CustomRule } from '../types';
 
 export const getValidateInfos = async <
-  T extends SpecialRule['validator'],
-  Args extends Parameters<T>,
+  T extends Record<string | number, unknown>,
+  Validator extends CustomRule<T>['validator'],
+  Args extends Parameters<Validator>,
 >(
-  rule: SpecialRule,
+  rule: CustomRule<T>,
   value: Args[1],
 ): Promise<ValidateInfo> => {
   const validateObj: ValidateInfo = {
@@ -30,7 +31,7 @@ export const getValidateInfos = async <
           };
         });
     }
-    return validateObj;
+    return { ...validateObj };
   } catch (error) {
     return {
       ...validateObj,
