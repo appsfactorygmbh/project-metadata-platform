@@ -179,9 +179,7 @@
     const columnNames = props.columns!.map((column) => column.dataIndex);
     for (const query in queries) {
       if (columnNames.includes(query)) {
-        const searchText = queries[query] as string;
-        const searchedColumn = query;
-        handleSearch([searchText], () => {}, searchedColumn);
+        filteredInfo[query] = queries[query] as string;
       }
     }
   });
