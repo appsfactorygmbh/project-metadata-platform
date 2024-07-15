@@ -92,7 +92,7 @@
   onMounted(async () => {
     await projectsStore?.fetchProjects();
 
-    if (routerProjectId.value == 0) {
+    if (routerProjectId.value === 0) {
       setProjectId(projectsStore?.getProjects[0].id || 100);
     } else {
       await projectsStore?.fetchProject(routerProjectId.value);

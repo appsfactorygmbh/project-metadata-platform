@@ -2,12 +2,7 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import ProjectSearchView from '../ProjectSearchView.vue';
 import { describe, it, expect } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
-import {
-  usePluginsStore,
-  useProjectStore,
-  type PluginsStore,
-  type ProjectStore,
-} from '@/store';
+import { usePluginsStore, useProjectStore } from '@/store';
 import { createPinia, setActivePinia } from 'pinia';
 import _ from 'lodash';
 import {
@@ -27,11 +22,7 @@ interface ProjectSearchViewInstance {
 describe('ProjectSearchView.vue', () => {
   setActivePinia(createPinia());
 
-  const generateWrapper = (
-    pWidth: number,
-    projectsStore: ProjectStore,
-    pluginStore: PluginsStore,
-  ) => {
+  const generateWrapper = (pWidth: number) => {
     return mount(ProjectSearchView, {
       plugins: [
         createTestingPinia({
@@ -40,8 +31,8 @@ describe('ProjectSearchView.vue', () => {
       ],
       global: {
         provide: {
-          [projectsStoreSymbol as symbol]: projectsStore,
-          [pluginStoreSymbol as symbol]: pluginStore,
+          [projectsStoreSymbol as symbol]: useProjectStore(),
+          [pluginStoreSymbol as symbol]: usePluginsStore(),
         },
         plugins: [router],
       },
@@ -53,18 +44,14 @@ describe('ProjectSearchView.vue', () => {
   };
 
   it('renders correctly with 4 columns', () => {
-    const projectsStore = useProjectStore();
-    const pluginStore = usePluginsStore();
-    const wrapper = generateWrapper(800, projectsStore, pluginStore);
+    const wrapper = generateWrapper(800);
 
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
   });
 
   it('hides columns when the pane width is not large enough', async () => {
     createTestingPinia({});
-    const projectsStore = useProjectStore();
-    const pluginStore = usePluginsStore();
-    const wrapper = generateWrapper(300, projectsStore, pluginStore);
+    const wrapper = generateWrapper(300);
 
     _.delay(
       () => expect(wrapper.findAll('.ant-table-column-sorters').length).toBe(2),
@@ -75,14 +62,9 @@ describe('ProjectSearchView.vue', () => {
   it('add a query when clicking on a project', async () => {
     await router.isReady();
 
-    const projectsStore = useProjectStore();
-    const pluginStore = usePluginsStore();
-    const wrapper = generateWrapper(
-      800,
-      projectsStore,
-      pluginStore,
-    ) as VueWrapper<ComponentPublicInstance<ProjectSearchViewInstance>>;
-
+    const wrapper = generateWrapper(700) as VueWrapper<
+      ComponentPublicInstance<ProjectSearchViewInstance>
+    >;
     const testProject = {
       id: 200,
       projectName: 'test',
@@ -94,8 +76,23 @@ describe('ProjectSearchView.vue', () => {
     wrapper.vm.handleRowClick(testProject);
     await flushPromises();
 
-    expect(Number(router.currentRoute.value.query.projectId)).toEqual(
+    expect(Number(router.currentRoute.value.query.projectId)).toBe(
       testProject.id,
     );
+  });
+
+  it('requests data with the project id given in the URL', async () => {
+    await router.push({
+      path: '/',
+      query: { projectId: '300' },
+    });
+    await router.isReady();
+
+    const projectStore = useProjectStore();
+    const pluginStore = usePluginsStore();
+    generateWrapper(800);
+
+    expect(projectStore.fetchProject).toHaveBeenCalledWith(300);
+    expect(pluginStore.fetchPlugins).toHaveBeenCalledWith(300);
   });
 });
