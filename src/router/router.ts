@@ -19,16 +19,6 @@ const router = createRouter({
           name: 'SplitView',
           component: SplitView,
         },
-        {
-          path: '/settings/plugins/create',
-          name: 'CreateGlobalPlugin',
-          component: CreateGlobalPluginView,
-        },
-        {
-          path: '/settings/plugins/edit/:pluginId',
-          name: 'EditGlobalPlugin',
-          component: EditGlobalPluginView,
-        },
       ],
     },
     {
@@ -45,6 +35,18 @@ const router = createRouter({
           path: '/settings/plugins',
           name: 'plugins',
           component: GlobalPluginsView,
+          children: [
+            {
+              path: '/settings/plugins/create',
+              name: 'CreateGlobalPlugin',
+              component: CreateGlobalPluginView,
+            },
+            {
+              path: '/settings/plugins/edit/',
+              name: 'EditGlobalPlugin',
+              component: EditGlobalPluginView,
+            },
+          ],
         },
         {
           path: '/settings/global_logs',
