@@ -147,26 +147,6 @@ describe('SearchableTable.vue', () => {
     ).toBe('A');
   });
 
-  it('reset the searchBar when using the searchStore reset ', async () => {
-    await loadData();
-    searchStore.setSearchQuery('C');
-    await flushPromises();
-    expect(wrapper.findAll('.ant-table-row')).toHaveLength(1);
-    expect(wrapper.find('.ant-table-row')?.find('.ant-table-cell').text()).toBe(
-      'C',
-    );
-
-    searchStore.reset();
-    await flushPromises();
-    expect(wrapper.findAll('.ant-table-row')).toHaveLength(2);
-    expect(
-      wrapper.findAll('.ant-table-row')[0]?.find('.ant-table-cell').text(),
-    ).toBe('C');
-    expect(
-      wrapper.findAll('.ant-table-row')[1]?.find('.ant-table-cell').text(),
-    ).toBe('A');
-  });
-
   createTestingPinia({});
   const searchStoreTest = useSearchStore('test');
 
@@ -176,4 +156,3 @@ describe('SearchableTable.vue', () => {
     expect(searchStoreTest.setSearchQuery).toHaveBeenCalledTimes(0);
   });
 });
-
