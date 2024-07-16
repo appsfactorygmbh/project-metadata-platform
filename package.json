@@ -29,6 +29,7 @@
     "pinia": "^2.1.7",
     "splitpanes": "^3.1.5",
     "vue": "^3.4.29",
+    "vue-auth3": "^1.0.10",
     "vue-router": "^4.4.0"
   },
   "devDependencies": {

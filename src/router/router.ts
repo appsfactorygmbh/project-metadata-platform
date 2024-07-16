@@ -8,10 +8,16 @@ import { GlobalPluginsView } from '@/views/GlobalPlugins';
 import ProjectSlagResolver from './Resolver/ProjectSlagResolver.vue';
 import ComingSoonView from '@/views/Service/ComingSoonView.vue';
 import NotFoundView from '@/views/Service/NotFoundView.vue';
+import { LoginView } from '@/views/Auth';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/login',
+      name: 'Login',
+      component: LoginView,
+    },
     {
       path: '/',
       name: 'Provider',

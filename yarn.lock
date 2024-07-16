@@ -4876,6 +4876,7 @@ __metadata:
     vite-plugin-vue-devtools: "npm:^7.3.0"
     vitest: "npm:^2.0.0"
     vue: "npm:^3.4.29"
+    vue-auth3: "npm:^1.0.10"
     vue-eslint-parser: "npm:^9.4.3"
     vue-router: "npm:^4.4.0"
     vue-tsc: "npm:^2.0.6"
@@ -9798,6 +9799,13 @@ __metadata:
   version: 3.0.8
   resolution: "vscode-uri@npm:3.0.8"
   checksum: 10c0/f7f217f526bf109589969fe6e66b71e70b937de1385a1d7bb577ca3ee7c5e820d3856a86e9ff2fa9b7a0bc56a3dd8c3a9a557d3fedd7df414bc618d5e6b567f9
+  languageName: node
+  linkType: hard
+
+"vue-auth3@npm:^1.0.10":
+  version: 1.0.10
+  resolution: "vue-auth3@npm:1.0.10"
+  checksum: 10c0/95ba9d0fc7dc58ba67d45aac92be26b8d1e381335369521f284e4b8d50f968e96824b3bd1f8e80511550d2a7f8d174cb317ad31f70a2d0f96dd6ed6c0996f321
   languageName: node
   linkType: hard
 
