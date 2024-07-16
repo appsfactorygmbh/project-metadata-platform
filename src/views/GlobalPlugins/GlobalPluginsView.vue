@@ -27,7 +27,7 @@
                 <a-button
                   :loading="isButtonLoading(item.id)"
                   :disabled="isButtonLoading(item.id)"
-                  @click="handleDelete(item.id)"
+                  @click="showDialog(item.id)"
                 >
                   <DeleteOutlined />
                 </a-button>
@@ -45,6 +45,14 @@
     type="error"
     show-icon
   />
+  <ConfirmationDialog
+    :is-open="isDialogOpen"
+    title="Delete confirm"
+    message="Are you sure you want to delete the plugin?"
+    @confirm="handleConfirm"
+    @cancel="handleCancel"
+    @update:is-open="isDialogOpen = $event"
+  />
 </template>
 <script lang="ts" setup>
   import {
@@ -55,6 +63,8 @@
   import type { FloatButtonModel } from '@/components/Button';
   import { globalPluginStoreSymbol } from '@/store/injectionSymbols';
   import { inject, onBeforeMount } from 'vue';
+  import { message } from 'ant-design-vue';
+  import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
 
   const globalPluginsStore = inject(globalPluginStoreSymbol);
 
@@ -83,6 +93,19 @@
   //stores the plugins, that get deleted at the time
   const pluginDeleting = ref<Array<number>>([]);
 
+  // Dialog state and functions
+  const isDialogOpen = ref(false);
+  const pluginIdToDelete = ref<number | null>(null);
+
+  /**
+   * Shows the confirmation dialog for deleting a plugin.
+   * @param {number} pluginId - The ID of the plugin to be deleted.
+   */
+  const showDialog = (pluginId: number) => {
+    pluginIdToDelete.value = pluginId;
+    isDialogOpen.value = true;
+  };
+
   /**
    * Adds the plugin to the deleting plugins, deletes the plugin and removes it again
    * @param pluginId Id of the plugin that should be deleted
@@ -92,6 +115,27 @@
     await globalPluginsStore?.deleteGlobalPlugin(pluginId);
     const index: number = pluginDeleting.value?.indexOf(pluginId);
     pluginDeleting.value.splice(index, 1);
+  };
+
+  /**
+   * Handles the confirmation action for deleting a plugin.
+   * If the plugin ID is valid, it deletes the plugin, updates the state,
+   * and shows a success message.
+   */
+  const handleConfirm = async () => {
+    if (pluginIdToDelete.value !== null) {
+      await handleDelete(pluginIdToDelete.value);
+      isDialogOpen.value = false;
+      message.success('The Plugin has been deleted', 2);
+    }
+  };
+  /**
+   * Handles the cancel action for the delete confirmation dialog.
+   * Closes the dialog and shows an information message.
+   */
+  const handleCancel = () => {
+    isDialogOpen.value = false;
+    message.info('Delete plugin was canceled', 2);
   };
 
   /**
