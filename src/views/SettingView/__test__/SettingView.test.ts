@@ -50,7 +50,7 @@ describe('SettingView.vue', () => {
   it('go to other tab when tab click', async () => {
     const wrapper = mount(SettingView);
     await wrapper.find('.item2').trigger('click');
-    expect(useRouter().push).toHaveBeenCalledWith('/settings/global-plugins');
+    expect(useRouter().push).toHaveBeenCalledWith('/settings/plugins');
 
     await wrapper.find('.item3').trigger('click');
     expect(useRouter().push).toHaveBeenCalledWith('/settings/global-logs');

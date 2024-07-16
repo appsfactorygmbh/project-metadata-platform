@@ -31,7 +31,7 @@
         break;
       }
       case 'Plugin Creation': {
-        router.push(`/settings/global-plugins`);
+        router.push(`/settings/plugins`);
         break;
       }
       case 'Global Logs': {
@@ -67,22 +67,30 @@
         class="menuItem"
         mode="inline"
       >
-        <a-sub-menu key="sub1">
+        <a-sub-menu key="userManagement">
           <template #title>
             <span>
               <user-outlined class="icons" />
               <span>User Management</span>
             </span>
           </template>
-          <a-menu-item key="4" @click="clickTab('User')">User 1</a-menu-item>
+          <!-- <a-menu-item key="4" @click="clickTab('User')">User 1</a-menu-item>
           <a-menu-item key="5" @click="clickTab('User')">User 2</a-menu-item>
-          <a-menu-item key="6" @click="clickTab('User')">User 3</a-menu-item>
+          <a-menu-item key="6" @click="clickTab('User')">User 3</a-menu-item> -->
         </a-sub-menu>
-        <a-menu-item key="2" class="item2" @click="clickTab('Plugin Creation')">
+        <a-menu-item
+          key="2"
+          class="pluginCreation"
+          @click="clickTab('Plugin Creation')"
+        >
           <AppstoreAddOutlined class="icons" />
           <span>Plugin Creation</span>
         </a-menu-item>
-        <a-menu-item key="3" class="item3" @click="clickTab('Global Logs')">
+        <a-menu-item
+          key="3"
+          class="globalLogs"
+          @click="clickTab('Global Logs')"
+        >
           <BarsOutlined class="icons" />
           <span>Global Logs</span>
         </a-menu-item>

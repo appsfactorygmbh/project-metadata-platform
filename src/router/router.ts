@@ -6,6 +6,8 @@ import { ProviderCollection } from './Provider';
 import { SettingView } from '@/views/SettingView';
 import { GlobalPluginsView } from '@/views/GlobalPlugins';
 import ProjectSlagResolver from './Resolver/ProjectSlagResolver.vue';
+import ComingSoonView from '@/views/Service/ComingSoonView.vue';
+import NotFoundView from '@/views/Service/NotFoundView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +23,11 @@ const router = createRouter({
           component: ProjectSlagResolver,
           children: [
             {
+              path: '/',
+              name: 'SplitViewDefault',
+              component: SplitView,
+            },
+            {
               path: '/:projectSlag',
               name: 'SplitView',
               component: SplitView,
@@ -30,16 +37,16 @@ const router = createRouter({
         {
           path: '/settings',
           name: 'settings',
-          redirect: '/settings/global-plugins',
+          redirect: '/settings/plugins',
           component: SettingView,
           children: [
             {
               path: '/settings/user-management',
               name: 'users',
-              component: GlobalPluginsView,
+              component: ComingSoonView,
             },
             {
-              path: '/settings/global-plugins',
+              path: '/settings/plugins',
               name: 'plugins',
               component: GlobalPluginsView,
               children: [
@@ -58,12 +65,13 @@ const router = createRouter({
             {
               path: '/settings/global-logs',
               name: 'global-logs',
-              component: GlobalPluginsView,
+              component: ComingSoonView,
             },
           ],
         },
       ],
     },
+    { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundView },
   ],
 });
 
