@@ -1,17 +1,19 @@
 <script setup lang="ts">
   import { type FormSubmitType } from '@/components/Form';
   import { notification } from 'ant-design-vue';
-  import { globalPluginStoreSymbol, pluginStoreSymbol, projectEditStoreSymbol } from '@/store/injectionSymbols';
-  import { type FormStore } from '@/components/Form';
   import {
-    onBeforeMount,
-    ref,
-    toRaw,
-    inject,
-    reactive,
-  } from 'vue';
+    globalPluginStoreSymbol,
+    pluginStoreSymbol,
+    projectEditStoreSymbol,
+  } from '@/store/injectionSymbols';
+  import { type FormStore } from '@/components/Form';
+  import { onBeforeMount, ref, toRaw, inject, reactive } from 'vue';
   import type { SelectProps } from 'ant-design-vue';
-  import type { GlobalPluginModel, PluginModel, PluginEditModel} from '@/models/Plugin';
+  import type {
+    GlobalPluginModel,
+    PluginModel,
+    PluginEditModel,
+  } from '@/models/Plugin';
   import type { LabeledValue, SelectValue } from 'ant-design-vue/lib/select';
   import type { RulesObject } from '@/components/Form/types';
   import type { AddPluginFormData } from './AddPluginFormData.ts';
@@ -43,7 +45,8 @@
   const onSubmit: FormSubmitType = (fields) => {
     try {
       console.log(fields);
-      const pluginNumber: number | undefined = globalPluginStore?.getGlobalPlugins.find(
+      const pluginNumber: number | undefined =
+        globalPluginStore?.getGlobalPlugins.find(
           (plugin) => plugin.name === toRaw(fields).globalPlugin,
         )?.id;
       if (pluginNumber === undefined) {
@@ -78,7 +81,6 @@
     }
   };
 
-
   const formItemLayoutWithOutLabel = {
     wrapperCol: {
       xs: { span: 24, offset: 0 },
@@ -88,9 +90,7 @@
 
   const dynamicValidateForm = reactive<AddPluginFormData>(initialValues);
 
-  const rulesRef = reactive<
-    RulesObject<AddPluginFormData>
-  >({
+  const rulesRef = reactive<RulesObject<AddPluginFormData>>({
     pluginName: [
       {
         required: true,

@@ -1,5 +1,10 @@
 import { describe, it, expect, expectTypeOf } from 'vitest';
-import { enableAutoUnmount, flushPromises, mount, VueWrapper } from '@vue/test-utils';
+import {
+  enableAutoUnmount,
+  flushPromises,
+  mount,
+  VueWrapper,
+} from '@vue/test-utils';
 import { useFormStore } from '@/components/Form';
 import { setActivePinia } from 'pinia';
 import type { AddPluginFormData } from '../AddPluginFormData';
@@ -120,7 +125,8 @@ describe('AddPluginForm.vue', () => {
   });
 
   it('should validate the form if pluginName is not set', async () => {
-    const formStore2: ReturnType<typeof useFormStore>= useFormStore('testForm3');
+    const formStore2: ReturnType<typeof useFormStore> =
+      useFormStore('testForm3');
 
     wrapper = mount(AddPluginForm, {
       global: {
@@ -135,7 +141,7 @@ describe('AddPluginForm.vue', () => {
           pluginUrl: 'testUrl',
           globalPlugin: 'testGlobalPlugin',
           inputsDisabled: false,
-        }
+        },
       },
     });
 
