@@ -51,7 +51,10 @@
     };
   };
 
+  //saves the column dataIndexes that are searchable to create the useQuery hook with it
   const columnNames: Ref<string[]> = ref([]);
+  //reactive state for the search input of a column
+  const searchInput = ref();
 
   const mapSearchableColumn = (
     column: ArrayElement<typeof props.columns>,
@@ -112,8 +115,6 @@
     searchText: '',
     searchedColumn: '',
   });
-
-  const searchInput = ref();
 
   /**
    * Saves the searched string and the target column in state, when search is confirmed.
