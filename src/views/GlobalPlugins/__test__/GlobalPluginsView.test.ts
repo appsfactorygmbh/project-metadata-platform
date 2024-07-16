@@ -5,6 +5,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import { globalPluginStoreSymbol } from '@/store/injectionSymbols.ts';
 import { useGlobalPluginsStore } from '@/store';
+import { Button } from 'ant-design-vue';
 
 const testData = [
   {
@@ -65,10 +66,10 @@ describe('GlobalPluginsView.vue', () => {
 
   it('sends a delete request when clicking the delete button', async () => {
     const wrapper = generateWrapper();
-    const pluginStore = useGlobalPluginsStore();
-    const spy = vi.spyOn(pluginStore, 'deleteGlobalPlugin');
+    const globalPluginStore = useGlobalPluginsStore();
+    const spy = vi.spyOn(globalPluginStore, 'deleteGlobalPlugin');
     spy.mockImplementation(async () =>
-      pluginStore.setGlobalPlugins(testDataDelete),
+      globalPluginStore.setGlobalPlugins(testDataDelete),
     );
 
     await flushPromises();
@@ -76,6 +77,9 @@ describe('GlobalPluginsView.vue', () => {
     expect(spy).toHaveBeenCalledTimes(0);
 
     await wrapper.find('.anticon-delete').trigger('click');
+    const confirmButton = wrapper.findAllComponents(Button)[3];
+    await confirmButton.trigger('click');
+
     expect(wrapper.findAll('.ant-list-item')).toHaveLength(0);
     expect(spy).toHaveBeenCalledOnce();
   });
