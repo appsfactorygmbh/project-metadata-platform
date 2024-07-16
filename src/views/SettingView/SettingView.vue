@@ -12,8 +12,8 @@
 
   // Component state using refs
   const collapsed = ref<boolean>(false);
-  const selectedKeys = ref<string[]>(['1']);
-  const tab = ref<string>('');
+  const selectedKeys = ref<string[]>(['2']);
+  const tab = ref<string>('Global Plugins');
 
   // Router instance
   const router = useRouter();
@@ -37,8 +37,8 @@
         router.push(`/settings/user-management`);
         break;
       }
-      case 'Plugin Creation': {
-        router.push(`/settings/plugins`);
+      case 'Global Plugins': {
+        router.push(`/settings/global-plugins`);
         break;
       }
       case 'Global Logs': {
@@ -89,11 +89,11 @@
         </a-menu-item>
         <a-menu-item
           key="2"
-          class="pluginCreation"
-          @click="clickTab('Plugin Creation')"
+          class="globalPlugins"
+          @click="clickTab('Global Plugins')"
         >
           <AppstoreAddOutlined class="icons" />
-          <span>Plugin Creation</span>
+          <span>Global Plugins</span>
         </a-menu-item>
         <a-menu-item
           key="3"

@@ -36,8 +36,8 @@ describe('SettingView.vue', () => {
     const wrapper = mount(SettingView);
     const vm = wrapper.vm as unknown as SettingViewObject;
     expect(vm.collapsed).toBe(false);
-    expect(vm.selectedKeys).toEqual(['1']);
-    expect(vm.tab).toBe('');
+    expect(vm.selectedKeys).toEqual(['2']);
+    expect(vm.tab).toBe('Global Plugins');
   });
 
   it('go to main menu when back click', async () => {
@@ -49,10 +49,11 @@ describe('SettingView.vue', () => {
 
   it('go to other tab when tab click', async () => {
     const wrapper = mount(SettingView);
-    await wrapper.find('.item2').trigger('click');
-    expect(useRouter().push).toHaveBeenCalledWith('/settings/plugins');
 
-    await wrapper.find('.item3').trigger('click');
+    await wrapper.find('.userManagement').trigger('click');
+    expect(useRouter().push).toHaveBeenCalledWith('/settings/user-management');
+
+    await wrapper.find('.globalLogs').trigger('click');
     expect(useRouter().push).toHaveBeenCalledWith('/settings/global-logs');
   });
 });
