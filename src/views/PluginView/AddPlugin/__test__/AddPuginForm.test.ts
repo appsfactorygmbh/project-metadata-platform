@@ -1,5 +1,5 @@
 import { describe, it, expect, expectTypeOf } from 'vitest';
-import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
+import { enableAutoUnmount, flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import { useFormStore } from '@/components/Form';
 import { setActivePinia } from 'pinia';
 import type { AddPluginFormData } from '../AddPluginFormData';
@@ -18,6 +18,8 @@ describe('AddPluginForm.vue', () => {
   let wrapper: VueWrapper;
   let formStore: ReturnType<typeof useFormStore>;
   let pluginStoreMock: unknown;
+
+  enableAutoUnmount(afterEach);
 
   beforeEach(() => {
     setActivePinia(
@@ -118,10 +120,8 @@ describe('AddPluginForm.vue', () => {
   });
 
   it('should validate the form if pluginName is not set', async () => {
-    formStore = useFormStore('testForm2');
-    await flushPromises();
+    const formStore2: ReturnType<typeof useFormStore>= useFormStore('testForm3');
 
-    // await formStore.resetFields();
     wrapper = mount(AddPluginForm, {
       global: {
         provide: {
@@ -129,7 +129,7 @@ describe('AddPluginForm.vue', () => {
         },
       },
       props: {
-        formStore,
+        formStore: formStore2,
         initialValues: {
           pluginName: '',
           pluginUrl: 'testUrl',
@@ -139,19 +139,14 @@ describe('AddPluginForm.vue', () => {
       },
     });
 
-    // // await input.setValue('');
-    // expect(formStore.validate()).rejects.toMatchObject({
-    //   errorFields: [
-    //     {
-    //       errors: ['Please insert the plugin name.'],
-    //       name: 'pluginName',
-    //       warnings: [],
-    //     },
-    //   ],
-    // });
-    //
-    // const input = wrapper.find('#inputAddPluginPluginName');
-    // await input.setValue('testPlugin');
-    // expect(formStore.validate()).resolves.toEqual(testForm);
+    expect(formStore2.validate()).rejects.toMatchObject({
+      errorFields: [
+        {
+          errors: ['Please insert the plugin name.'],
+          name: 'pluginName',
+          warnings: [],
+        },
+      ],
+    });
   });
 });
