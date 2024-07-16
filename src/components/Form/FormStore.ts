@@ -140,7 +140,7 @@ export const useFormStore = <T extends FormState>(
           })
           .then((res) => {
             console.log('validateError', validateErrors);
-            if (!_.isEmpty(res)) {
+            if (!_.isEmpty(validateErrors)) {
               return Promise.reject({ ...validateErrors });
             }
             return Promise.resolve(res);
