@@ -37,7 +37,7 @@ const router = createRouter({
         {
           path: '/settings',
           name: 'settings',
-          redirect: '/settings/plugins',
+          redirect: '/settings/global-plugins',
           component: SettingView,
           children: [
             {
@@ -46,17 +46,17 @@ const router = createRouter({
               component: ComingSoonView,
             },
             {
-              path: '/settings/plugins',
+              path: '/settings/global-plugins',
               name: 'plugins',
               component: GlobalPluginsView,
               children: [
                 {
-                  path: '/settings/plugins/create',
+                  path: '/settings/global-plugins/create',
                   name: 'CreateGlobalPlugin',
                   component: CreateGlobalPluginView,
                 },
                 {
-                  path: '/settings/plugins/edit/',
+                  path: '/settings/global-plugins/edit/',
                   name: 'EditGlobalPlugin',
                   component: EditGlobalPluginView,
                 },
