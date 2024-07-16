@@ -18,22 +18,28 @@ const router = createRouter({
           component: SplitView,
         },
         {
+          path: '/:projectSlag',
+          name: 'SplitView',
+          component: SplitView,
+        },
+        {
           path: '/settings',
           name: 'settings',
+          redirect: '/settings/global-plugins',
           component: SettingView,
           children: [
             {
-              path: '/settings/users',
+              path: '/settings/user-management',
               name: 'users',
               component: GlobalPluginsView,
             },
             {
-              path: '/settings/plugins',
+              path: '/settings/global-plugins',
               name: 'plugins',
               component: GlobalPluginsView,
             },
             {
-              path: '/settings/global_logs',
+              path: '/settings/global-logs',
               name: 'global-logs',
               component: GlobalPluginsView,
             },
