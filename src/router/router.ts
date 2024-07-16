@@ -21,11 +21,6 @@ const router = createRouter({
           component: SplitView,
         },
         {
-          path: '/project/plugins/add',
-          name: 'AddPlugin',
-          component: AddPluginView,
-        },
-        {
           path: '/settings',
           name: 'settings',
           component: SettingView,
@@ -49,6 +44,11 @@ const router = createRouter({
                   path: '/settings/plugins/edit/',
                   name: 'EditGlobalPlugin',
                   component: EditGlobalPluginView,
+                },
+                {
+                  path: 'settings/plugins/add',
+                  name: 'AddPlugin',
+                  component: AddPluginView,
                 },
               ],
             },

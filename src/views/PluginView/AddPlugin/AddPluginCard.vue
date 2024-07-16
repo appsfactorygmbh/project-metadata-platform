@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { ref } from 'vue';
-    import AddPluginView from '@/views/PluginView/AddPlugin/AddPluginView.vue';
+    import AddPluginView from './AddPluginView.vue';
 
     // It controls the visibility of the modal.
     const openModal = ref<boolean>(false);

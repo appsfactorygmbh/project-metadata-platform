@@ -36,7 +36,7 @@
   import { ref, computed, inject, onMounted, toRaw, watch } from 'vue';
   import type { ComputedRef } from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
-  import AddPluginCard from '@/components/AddPluginCard/AddPluginCard.vue';
+  import AddPluginCard from '@/views/PluginView/AddPlugin/AddPluginCard.vue';
   import {
     pluginStoreSymbol,
     projectsStoreSymbol,
