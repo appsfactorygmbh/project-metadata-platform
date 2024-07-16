@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { projectsStoreSymbol } from '@/store/injectionSymbols';
 import router from '@/router';
 
+// Fails with: Cannot use 'in' operator to search for 'addEventListener' in undefined
 describe('ProjectSearchView.vue', () => {
   setActivePinia(createPinia());
 
@@ -31,16 +32,14 @@ describe('ProjectSearchView.vue', () => {
     });
   };
 
-  const wrapper = generateWrapper(800);
-
   it('renders correctly with 4 columns', () => {
+    const wrapper = generateWrapper(800);
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
   });
 
-  createTestingPinia({});
-  const wrapper2 = generateWrapper(0);
-
   it('hides columns when the pane width is not large enough', async () => {
+    createTestingPinia({});
+    const wrapper2 = generateWrapper(300);
     await flushPromises();
 
     _.delay(

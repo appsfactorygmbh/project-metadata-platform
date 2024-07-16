@@ -8,4 +8,5 @@ export type GlobalPluginModel = {
 export type GlobalPluginKey = {
   value: string;
   key: number;
+  archived: boolean;
 };

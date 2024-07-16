@@ -78,15 +78,6 @@ export const usePluginsStore = defineStore('plugin', {
         this.setLoadingGlobalPlugins(false);
       }
     },
-
-    async createPlugin(plugin: PluginModel) {
-      try {
-        this.setLoadingPlugins(true);
-        await pluginService.createPlugin(plugin);
-      } finally {
-        this.setLoadingPlugins(false);
-      }
-    },
   },
 });
 

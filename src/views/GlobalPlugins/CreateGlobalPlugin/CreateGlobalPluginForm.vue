@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { type FormSubmitType } from '@/components/Form';
   import { notification } from 'ant-design-vue';
-  import { pluginStoreSymbol } from '@/store/injectionSymbols';
+  import { globalPluginStoreSymbol } from '@/store/injectionSymbols';
   import { inject, reactive } from 'vue';
   //import type { CreatePluginModel } from '@/models/Plugin';
   import { type FormStore } from '@/components/Form';
@@ -12,14 +12,14 @@
     formStore: FormStore;
   }>();
 
-  const pluginStore = inject(pluginStoreSymbol);
+  const globalPluginStore = inject(globalPluginStoreSymbol);
 
   const [notificationApi, contextHolder] = notification.useNotification();
 
   const onSubmit: FormSubmitType = (fields) => {
     try {
       console.log(fields);
-      pluginStore?.createPlugin(fields);
+      globalPluginStore?.createGlobalPlugin(fields);
     } catch {
       notificationApi.error({
         message: 'An error occurred. The plugin could not be created',
