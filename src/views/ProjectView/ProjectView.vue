@@ -79,8 +79,7 @@
       );
       return;
     }
-    const updateProjectInformation: DetailedProjectModel =
-      projectStore?.getProject;
+    const updateProjectInformation: DetailedProjectModel = projectEditStore.getProjectInformationChanges;
     const updatedProject: UpdateProjectModel = {
       projectName: updateProjectInformation?.projectName,
       businessUnit: updateProjectInformation?.businessUnit,
@@ -93,6 +92,7 @@
     const projectID = computed(() => projectStore?.getProject?.id);
     if (projectID.value) {
       await projectStore?.updateProject(updatedProject, projectID.value);
+      await projectStore.fetchProject(projectID.value);
       await pluginStore?.fetchPlugins(projectID.value);
     }
   };

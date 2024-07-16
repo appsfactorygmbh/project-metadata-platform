@@ -1,16 +1,17 @@
 import { defineStore } from 'pinia';
 import type { PluginModel } from '@/models/Plugin';
 import type { PluginEditModel } from '@/models/Plugin/PluginEditModel.ts';
-import type { ProjectModel } from '@/models/Project';
+import type { DetailedProjectModel } from '@/models/Project';
 
 type StoreState = {
   pluginChanges: Map<number, PluginEditModel>;
-  projectInformationChanges: ProjectModel;
+  projectInformationChanges: DetailedProjectModel
   canBeCreated: boolean;
   pluginsWithUrlConflicts: number[][];
   duplicatedUrls: Map<string, number[]>;
   emptyUrlFields: Map<number, number>;
   emptyDisplaynameFields: Map<number, number>;
+  emptyProjectInformationFields: Map<string, number>;
 };
 
 export const useProjectEditStore = defineStore('projectEdit', {
@@ -22,12 +23,14 @@ export const useProjectEditStore = defineStore('projectEdit', {
       duplicatedUrls: new Map(),
       emptyUrlFields: new Map(),
       emptyDisplaynameFields: new Map(),
+      emptyProjectInformationFields: new Map(),
       projectInformationChanges: {
         id: -1,
         projectName: '',
         clientName: '',
         businessUnit: '',
         teamNumber: -1,
+        department: '',
       },
     };
   },
@@ -40,7 +43,8 @@ export const useProjectEditStore = defineStore('projectEdit', {
       );
     },
     // Return all Projectinformation changes (not implemented in this branch)
-    getProjectInformationChanges(): ProjectModel {
+    getProjectInformationChanges(): DetailedProjectModel {
+      console.log("current projectinformation", this.projectInformationChanges)
       return this.projectInformationChanges;
     },
     // Returns all Plugins that have URL conflicts (two or more Plugins have the same URL)
@@ -52,6 +56,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
     // Returns whether the Project can be created (no URL conflicts and no empty fields)
     getCanBeAdded(): boolean {
       console.log("getCanBeAdded", this.getPluginsWithUrlConflicts.length, this.emptyUrlFields.size, this.emptyDisplaynameFields.size, this.projectInformationChanges.projectName, this.projectInformationChanges.clientName, this.projectInformationChanges.businessUnit, this.projectInformationChanges.teamNumber)
+      console.log(this.projectInformationChanges)
       return (
         this.getPluginsWithUrlConflicts.length === 0 &&
         this.emptyUrlFields.size === 0 &&
@@ -59,7 +64,8 @@ export const useProjectEditStore = defineStore('projectEdit', {
         this.projectInformationChanges.projectName !== '' &&
         this.projectInformationChanges.clientName !== '' &&
         this.projectInformationChanges.businessUnit !== '' &&
-        this.projectInformationChanges.teamNumber !== undefined
+        this.projectInformationChanges.teamNumber !== undefined &&
+        this.emptyProjectInformationFields.size === 0
       );
     },
   },
@@ -70,13 +76,23 @@ export const useProjectEditStore = defineStore('projectEdit', {
       this.emptyUrlFields.set(id, id);
     },
 
-    setInitialProjectInformation(project: ProjectModel): void {
-      this.projectInformationChanges = project;
-      console.log("added project information", this.projectInformationChanges)
+    addEmptyProjectInformationField(prop: string): void {
+      this.emptyProjectInformationFields.set(prop, 1);
+    },
+
+    removeEmptyProjectInformationField(prop: string): void {
+      if(this.emptyProjectInformationFields.has(prop)) {
+        this.emptyProjectInformationFields.delete(prop);
+      }
+    },
+
+    setInitialProjectInformation(project: DetailedProjectModel): void {
+      this.projectInformationChanges = {...project}
+      console.log(this.projectInformationChanges.clientName)
     },
 
     // Updates the Projectinformation changes
-    updateProjectInformationChanges(project: ProjectModel): void {
+    updateProjectInformationChanges(project: DetailedProjectModel): void {
       this.projectInformationChanges = project;
     },
 
@@ -103,11 +119,13 @@ export const useProjectEditStore = defineStore('projectEdit', {
         clientName: '',
         businessUnit: '',
         teamNumber: -1,
+        department: '',
       };
       this.canBeCreated = true;
       this.pluginsWithUrlConflicts = [];
       this.emptyUrlFields.clear();
       this.emptyDisplaynameFields.clear();
+      this.emptyProjectInformationFields.clear();
     },
 
     // Checks for URL conflicts between Plugins

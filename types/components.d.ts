@@ -37,7 +37,6 @@ declare module 'vue' {
     ATable: typeof import('ant-design-vue/es')['Table']
     ConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     ConfirmAction: typeof import('./../src/components/Modal/ConfirmAction.vue')['default']
-    ConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
     FloatingButton: typeof import('./../src/components/Button/FloatingButton.vue')['default']
     FloatingButtonGroup: typeof import('./../src/components/Button/FloatingButtonGroup.vue')['default']
     HelloWorld: typeof import('./../src/components/HelloWorld.vue')['default']

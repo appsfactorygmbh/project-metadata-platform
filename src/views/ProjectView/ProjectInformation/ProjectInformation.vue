@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-  import { inject, onMounted, toRaw, reactive } from 'vue';
+  import { inject, onMounted, toRaw } from 'vue';
   import { projectsStoreSymbol, projectEditStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
   import { EditOutlined } from '@ant-design/icons-vue';
-  import { useEditing } from '@/utils/hooks/useEditing';
+  import { useEditing } from '@/utils/hooks/useEditing.ts';
 
   const projectsStore = inject(projectsStoreSymbol)!;
   const projectEditStore = inject(projectEditStoreSymbol)!;
@@ -37,6 +37,21 @@
     );
   });
 
+  // set watcher for isEditing. if is editing is false reset the inputstatus fields
+  watch(
+    () => isEditing.value,
+    (newVal) => {
+      if (!newVal) {
+        projectEditStore.resetChanges()
+        BUInputStatus.value = '';
+        teamNumberInputStatus.value = '';
+        departmentInputStatus.value = '';
+        clientNameInputStatus.value = '';
+      }
+    },
+  );
+
+
   const toggleEditingMode = () => {
     if (isEditing.value === true) {
       stopEditing();
@@ -45,48 +60,51 @@
     }
   };
 
-  const projectData: DetailedProjectModel = reactive({
-    id: 0,
-    projectName: '',
-    businessUnit: '',
-    teamNumber: 0,
-    department: '',
-    clientName: '',
-  });
+  const projectData = {
+    id: ref<number>(0),
+    projectName: ref<string>(''),
+    businessUnit: ref<string>(''),
+    teamNumber: ref<number>(0),
+    department: ref<string>(''),
+    clientName: ref<string>(''),
+  };
 
   const BUInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
   const teamNumberInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
   const departmentInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
   const clientNameInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
 
-  const BUIInput = ref(projectData.businessUnit)
+  const BUInput = ref(projectData.businessUnit)
   const teamNumberInput = ref(projectData.teamNumber)
   const departmentInput = ref(projectData.department)
   const clientNameInput = ref(projectData.clientName)
 
 
   //Function to update the project information
-  function updateProjectInformation() {
+  function updateProjectInformation(): void {
     const updatedProject: DetailedProjectModel = {
-      id: projectData.id,
-      projectName: projectData.projectName,
-      businessUnit: projectData.businessUnit,
-      teamNumber: projectData.teamNumber,
-      department: projectData.department,
-      clientName: projectData.clientName,
+      id: projectData.id.value,
+      projectName: projectData.projectName.value,
+      businessUnit: BUInput.value,
+      teamNumber: teamNumberInput.value,
+      department: departmentInput.value,
+      clientName: clientNameInput.value,
     };
+    console.log("project updates: ", updatedProject)
     projectEditStore.updateProjectInformationChanges(updatedProject);
   }
 
   //Function to load the data from projectViewService to projectView
   function addData(loadedData: DetailedProjectModel) {
-    projectEditStore.setInitialProjectInformation(loadedData)
-    projectData.id = loadedData.id;
-    projectData.projectName = loadedData.projectName;
-    projectData.businessUnit = loadedData.businessUnit;
-    projectData.teamNumber = loadedData.teamNumber;
-    projectData.department = loadedData.department;
-    projectData.clientName = loadedData.clientName;
+    console.log("running add Data")
+    if(projectsStore.getProject) projectEditStore.setInitialProjectInformation(projectsStore.getProject)
+    console.log("consolelog für information change", projectEditStore.getProjectInformationChanges)
+    projectData.id.value = loadedData.id;
+    projectData.projectName.value = loadedData.projectName;
+    projectData.businessUnit.value = loadedData.businessUnit;
+    projectData.teamNumber.value = loadedData.teamNumber;
+    projectData.department.value = loadedData.department;
+    projectData.clientName.value = loadedData.clientName;
   }
 
 </script>
@@ -97,7 +115,7 @@
       <!-- create box for the project name -->
       <div class="projectNameContainer">
         <h1 v-if="!isLoading" class="projectName">
-          {{ projectData.projectName }}
+          {{ projectData.projectName.value }}
         </h1>
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
         <a-button
@@ -127,15 +145,21 @@
           <label class="label">Business&nbsp;Unit:</label>
           <template v-if="!isLoading">
             <p v-if="!isEditing" class="projectInfo">
-              {{ projectData.businessUnit }}
+              {{ projectData.businessUnit.value }}
             </p>
             <a-input
               v-else
-              v-model:value="BUIInput"
+              v-model:value="BUInput"
               class="inputField"
               :status = "BUInputStatus"
               @input="updateProjectInformation"
-              @change="() => {if(!projectData.businessUnit) BUInputStatus = 'error'; else BUInputStatus = '';}"
+              @change="() => {if(!BUInput){
+                  BUInputStatus = 'error'
+                  projectEditStore.addEmptyProjectInformationField('BU')
+                } else {
+                  BUInputStatus = '';
+                  projectEditStore.removeEmptyProjectInformationField('BU')
+                }}"
             />
           </template>
           <a-skeleton
@@ -156,7 +180,7 @@
           <label class="label">Team&nbsp;Number:</label>
           <template v-if="!isLoading">
             <p v-if="!isEditing" class="projectInfo">
-              {{ projectData.teamNumber }}
+              {{ projectData.teamNumber.value }}
             </p>
             <a-form-item v-else>
               <a-input
@@ -164,7 +188,13 @@
                 class="inputField"
                 :status = "teamNumberInputStatus"
                 @input="updateProjectInformation"
-                @change="() => {if(!projectData.teamNumber) teamNumberInputStatus = 'error'; else teamNumberInputStatus = '';}"
+                @change="() => {if(!teamNumberInput){
+                  teamNumberInputStatus = 'error'
+                  projectEditStore.addEmptyProjectInformationField('teamNumber')
+                } else {
+                  teamNumberInputStatus = '';
+                  projectEditStore.removeEmptyProjectInformationField('teamNumber')
+                }}"
               />
             </a-form-item>
           </template>
@@ -186,15 +216,21 @@
           <label class="label">Department:</label>
           <template v-if="!isLoading">
             <p v-if="!isEditing" class="projectInfo">
-              {{ projectData.department }}
+              {{ projectData.department.value }}
             </p>
             <a-input
               v-else
               v-model:value="departmentInput"
               class="inputField"
               :status = "departmentInputStatus"
-              @change="() => {if(!projectData.department) departmentInputStatus = 'error'; else departmentInputStatus = '';}"
               @input="updateProjectInformation"
+              @change="() => {if(!departmentInput){
+                  departmentInputStatus = 'error'
+                  projectEditStore.addEmptyProjectInformationField('department')
+                } else {
+                  departmentInputStatus = '';
+                  projectEditStore.removeEmptyProjectInformationField('department')
+                }}"
             />
           </template>
           <a-skeleton
@@ -215,7 +251,7 @@
           <label class="label">Client&nbsp;Name:</label>
           <template v-if="!isLoading">
             <p v-if="!isEditing" class="projectInfo">
-              {{ projectData.clientName }}
+              {{ projectData.clientName.value }}
             </p>
             <a-input
               v-else
@@ -223,7 +259,13 @@
               class="inputField"
               :status = "clientNameInputStatus"
               @input="updateProjectInformation"
-              @change="() => {if(!projectData.clientName) clientNameInputStatus = 'error'; else clientNameInputStatus = '';}"
+              @change="() => {if(!clientNameInput){
+                  clientNameInputStatus = 'error'
+                  projectEditStore.addEmptyProjectInformationField('clientName')
+                } else {
+                  clientNameInputStatus = '';
+                  projectEditStore.removeEmptyProjectInformationField('clientName')
+                }}"
             />
           </template>
           <a-skeleton
@@ -237,19 +279,6 @@
     </div>
   </div>
 </template>
-<script lang="ts" setup>
-  import { inject, onMounted, toRaw, reactive } from 'vue';
-  import { projectsStoreSymbol } from '@/store/injectionSymbols';
-  import { useProjectStore } from '@/store';
-  import { storeToRefs } from 'pinia';
-  import type { DetailedProjectModel } from '@/models/Project';
-  import type { ComputedRef } from 'vue';
-  import { EditOutlined } from '@ant-design/icons-vue';
-  import { useEditing } from '@/utils/hooks/useEditing';
-
-<script lang="ts">
-
-</script>
 
 <style scoped lang="scss">
   /* Style for the middle section */
