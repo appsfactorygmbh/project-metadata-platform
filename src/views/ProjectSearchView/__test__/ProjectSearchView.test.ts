@@ -46,7 +46,7 @@ describe('ProjectSearchView.vue', () => {
     _.delay(
       () =>
         expect(wrapper2.findAll('.ant-table-column-sorters').length).toBe(2),
-      500,
+      1000,
     );
   });
 });

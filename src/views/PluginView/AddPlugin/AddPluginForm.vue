@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { type FormSubmitType } from '@/components/Form';
   import { notification } from 'ant-design-vue';
-  import { pluginStoreSymbol } from '@/store/injectionSymbols';
+  import { pluginStoreSymbol, projectEditStoreSymbol } from '@/store/injectionSymbols';
   import { type FormStore } from '@/components/Form';
   import {
     onBeforeMount,
@@ -11,7 +11,7 @@
     reactive,
   } from 'vue';
   import type { SelectProps } from 'ant-design-vue';
-  import type { GlobalPluginModel } from '@/models/Plugin';
+  import type { GlobalPluginModel, PluginModel, PluginEditModel} from '@/models/Plugin';
   import type { LabeledValue, SelectValue } from 'ant-design-vue/lib/select';
   import type { RulesObject } from '@/components/Form/FormStore.ts';
   import type { AddPluginFormData } from './AddPluginFormData.ts';
@@ -21,11 +21,13 @@
     initialValues: AddPluginFormData;
   }>();
 
+  const emit = defineEmits(['closeModal']);
+
   const pluginStore = inject(pluginStoreSymbol);
+  const projectEditStore = inject(projectEditStoreSymbol);
   const options = ref<SelectProps['options']>([]);
 
   onBeforeMount(async () => {
-    pluginStore?.setLoading(true);
     await pluginStore?.fetchGlobalPlugins();
     options.value = toRaw(pluginStore?.getGlobalPlugins)?.map(
       (plugin: GlobalPluginModel) => {
@@ -42,6 +44,21 @@
   const onSubmit: FormSubmitType = (fields) => {
     try {
       console.log(fields);
+      const pluginNumber: number | undefined = pluginStore?.getGlobalPlugins.find(
+          (plugin) => plugin.name === toRaw(fields).globalPlugin,
+        )?.id;
+      if (pluginNumber === undefined) {
+        return;
+      }
+
+      const pluginDef: PluginModel = {
+        id: pluginNumber,
+        pluginName: toRaw(fields).globalPlugin,
+        displayName: toRaw(fields).pluginName,
+        url: toRaw(fields).pluginUrl,
+      };
+      addPlugin(pluginDef);
+      emit("closeModal");
     } catch {
       notificationApi.error({
         message: 'An error occurred. The plugin could not be created',
@@ -49,6 +66,20 @@
       console.log('fehler');
     }
   };
+
+  const addPlugin = (pluginDef: PluginModel) => {
+    const index = projectEditStore?.initialAdd(pluginDef);
+
+    if (index !== undefined) {
+      const newPlugin: PluginEditModel = {
+        ...pluginDef,
+        editKey: index,
+        isDeleted: false,
+      };
+      pluginStore?.setPlugins([...pluginStore.getPlugins, newPlugin]);
+    }
+  };
+
 
   const formItemLayoutWithOutLabel = {
     wrapperCol: {
@@ -109,6 +140,9 @@
   };
 
   formStore.setOnSubmit(onSubmit);
+  formStore.resetFields = () => {
+    emit("closeModal");
+  };
   formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
 

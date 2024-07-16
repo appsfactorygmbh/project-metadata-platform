@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { ref } from 'vue';
-    import AddGlobalPluginView from '@/views/GlobalPlugins/AddGlobalPlugin/AddGlobalPluginView.vue';
+    import AddPluginView from '@/views/PluginView/AddPlugin/AddPluginView.vue';
 
     // It controls the visibility of the modal.
     const openModal = ref<boolean>(false);
@@ -10,6 +10,13 @@
         openModal.value = true;
         console.log('Open modal');
     };
+
+    const closeModal = () => {
+        openModal.value = false;
+        console.log('Close modal');
+    }
+
+
 </script>
 
 <template>
@@ -30,7 +37,7 @@
     </a-card>
 
     <!-- Opens modal for adding new Plugin when openModal has value "true" -->
-    <AddGlobalPluginView v-if="openModal" />
+    <AddPluginView v-if="openModal" :show-modal="openModal" @actually-close-modal="closeModal"/>
 </template>
 
 <style scoped lang="scss">

@@ -5,6 +5,7 @@ import type { PluginModel, GlobalPluginModel } from '@/models/Plugin';
 type StoreState = {
   plugins: PluginModel[];
   isLoadingPlugins: boolean;
+  isLoadingGlobalPlugins: boolean;
   cachePlugins: PluginModel[];
   changedPlugins: PluginModel[];
   globalPlugins: GlobalPluginModel[];
@@ -17,6 +18,7 @@ export const usePluginsStore = defineStore('plugin', {
       cachePlugins: [],
       changedPlugins: [],
       isLoadingPlugins: false,
+      isLoadingGlobalPlugins: false,
       globalPlugins: [],
     };
   },
@@ -46,6 +48,9 @@ export const usePluginsStore = defineStore('plugin', {
     setLoadingPlugins(status: boolean): void {
       this.isLoadingPlugins = status;
     },
+    setLoadingGlobalPlugins(status: boolean): void {
+      this.isLoadingGlobalPlugins = status;
+    },
     setCachePlugins(plugins: PluginModel[]): void {
       this.cachePlugins = plugins;
     },
@@ -65,21 +70,21 @@ export const usePluginsStore = defineStore('plugin', {
 
     async fetchGlobalPlugins() {
       try {
-        this.setLoading(true);
+        this.setLoadingGlobalPlugins(true);
         const plugins: GlobalPluginModel[] =
           await pluginService.fetchGlobalPlugins();
         this.setGlobalPlugins(plugins);
       } finally {
-        this.setLoading(false);
+        this.setLoadingGlobalPlugins(false);
       }
     },
 
     async createPlugin(plugin: PluginModel) {
       try {
-        this.setLoading(true);
+        this.setLoadingPlugins(true);
         await pluginService.createPlugin(plugin);
       } finally {
-        this.setLoading(false);
+        this.setLoadingPlugins(false);
       }
     },
   },

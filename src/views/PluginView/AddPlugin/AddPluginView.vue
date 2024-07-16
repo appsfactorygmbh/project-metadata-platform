@@ -11,6 +11,9 @@
     pluginName: '',
     pluginUrl: '',
   };
+
+  const emit = defineEmits(['actuallyCloseModal']);
+
 </script>
 
 <template>
@@ -18,6 +21,7 @@
     <AddPluginForm
       :form-store="formStore"
       :initial-values="initialFormValues"
+      @close-modal="emit('actuallyCloseModal')"
     />
   </FormModal>
 </template>
