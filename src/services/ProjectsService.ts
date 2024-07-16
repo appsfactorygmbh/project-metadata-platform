@@ -2,6 +2,7 @@ import type {
   ProjectModel,
   DetailedProjectModel,
   CreateProjectModel,
+  UpdateProjectModel,
 } from '@/models/Project';
 
 class ProjectsService {
@@ -27,7 +28,6 @@ class ProjectsService {
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/Projects/' + id.toString(),
-        //'src/components/ProjectInformation/test.json',
         {
           headers: {
             Accept: 'text/plain',
@@ -63,6 +63,29 @@ class ProjectsService {
       return response;
     } catch (error) {
       console.error('Error:', error);
+      return null;
+    }
+  };
+
+  updateProject = async (
+    projectData: UpdateProjectModel,
+    id: number,
+  ): Promise<Response | null> => {
+    try {
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/Projects?projectId=' + id,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(projectData),
+          mode: 'cors',
+        },
+      );
+      return response;
+    } catch (error) {
+      console.error('Failed to update Project via PUT Request: ', error);
       return null;
     }
   };

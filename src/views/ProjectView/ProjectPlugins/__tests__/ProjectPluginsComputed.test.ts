@@ -24,6 +24,7 @@ describe('usePluginsStore', () => {
         pluginName: 'testPlugin',
         displayName: 'Test Plugin',
         url: 'http://example.com/',
+        id: 1,
       },
     ];
 
@@ -33,19 +34,19 @@ describe('usePluginsStore', () => {
     );
 
     // Before the call: isLoading should be false
-    expect(store.isLoading).toBe(false);
+    expect(store.getIsLoading).toBe(false);
 
     // Call the fetchPlugins action
     const fetchPromise = store.fetchPlugins(1);
 
     // During the API call: isLoading should be true
-    expect(store.isLoading).toBe(true);
+    expect(store.getIsLoading).toBe(true);
 
     await fetchPromise;
 
     // Check if the store state is updated correctly
     expect(store.plugins).toEqual(mockPlugins);
-    expect(store.isLoading).toBe(false);
+    expect(store.getIsLoading).toBe(false);
     expect(pluginService.fetchPlugins).toHaveBeenCalledWith(1);
   });
 });

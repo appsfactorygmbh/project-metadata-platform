@@ -1,37 +1,44 @@
 <script lang="ts" setup>
-  import {
-    UserOutlined,
-    LogoutOutlined,
-    BarsOutlined,
-    AppstoreAddOutlined,
-  } from '@ant-design/icons-vue';
+  import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
+  import { LogoutOutlined, SettingOutlined } from '@ant-design/icons-vue';
+  import { useRouter } from 'vue-router';
 
-  // Place holder for the buttons for now
-  const placeHolder = () => {
-    console.log('Icon clicked');
+  // Router instance
+  const router = useRouter();
+
+  const goToSetting = () => {
+    router.push('/settings');
   };
+
+  const buttons: FloatButtonModel[] = [
+    {
+      name: 'SettingsButton',
+      onClick: () => {
+        goToSetting();
+      },
+      icon: SettingOutlined,
+      status: 'activated',
+      tooltip: 'Click here to navigate to the settings page',
+    },
+    {
+      name: 'LogoutButton',
+      onClick: () => {
+        console.log('Logout clicked');
+      },
+      icon: LogoutOutlined,
+      status: 'activated',
+      tooltip: 'Click here to log out',
+    },
+  ];
 </script>
 
 <template>
-  <!-- add icons for profile, plugins, global logs, signout -->
-  <a-float-button-group class="menu">
-    <a-float-button class="button" ghost @click="placeHolder">
-      <template #icon><UserOutlined class="icon" /> </template>
-    </a-float-button>
-    <a-float-button class="button" ghost @click="placeHolder">
-      <template #icon><AppstoreAddOutlined class="icon" /> </template>
-    </a-float-button>
-    <a-float-button class="button" ghost @click="placeHolder">
-      <template #icon><BarsOutlined class="icon" /> </template>
-    </a-float-button>
-    <a-float-button class="button" ghost @click="placeHolder">
-      <template #icon><LogoutOutlined class="icon" /> </template>
-    </a-float-button>
-  </a-float-button-group>
+  <FloatingButtonGroup :buttons="buttons" class="menu" />
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
   .menu {
     top: 20px;
+    height: max-content;
   }
 </style>

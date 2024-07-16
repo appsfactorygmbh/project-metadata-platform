@@ -5,14 +5,24 @@
   import { useElementSize } from '@vueuse/core';
   import { ProjectSearchView } from '@/views/ProjectSearchView';
   import { MenuButtons } from '@/components/MenuButtons';
-  import CreateProjectView from '@/views/CreateProject/createProjectView.vue';
-  import { ProjectInformationView } from '@/views/ProjectInformationView';
+  import { CreateProjectView } from '@/views/CreateProject';
+  import ProjectView from '../ProjectView/ProjectView.vue';
+  import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
+  import { RightOutlined } from '@ant-design/icons-vue';
+  import { useEditing } from '@/utils/hooks/useEditing';
+
+  const { isEditing } = useEditing();
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
 
-  const projectInformationPane = ref(null);
-  const infoSize = reactive(useElementSize(projectInformationPane));
+  const splitButton: FloatButtonModel = {
+    name: 'SplitButton',
+    onClick: () => {},
+    icon: RightOutlined,
+    status: 'activated',
+    tooltip: 'Click here to expand the table',
+  };
 </script>
 
 <template>
@@ -22,22 +32,18 @@
         size: sets default proportion to 1:4
         min-size: sets smallest possible size to 20% and 1%
       -->
-      <pane ref="tablePane" size="68" min-size="20">
+      <pane ref="tablePane" size="70" min-size="20">
         <ProjectSearchView
           :pane-width="dimensions.width"
           :pane-height="dimensions.height"
         />
       </pane>
 
-      <pane size="32" min-size="32">
-        <div ref="projectInformationPane">
-          <ProjectInformationView
-            :pane-width="infoSize.width"
-            :project-id="100"
-          />
-          <MenuButtons />
-        </div>
-        <CreateProjectView />
+      <pane size="32" min-size="32" class="rightPane">
+        <ProjectView />
+        <FloatingButton :button="splitButton" class="button" />
+        <MenuButtons />
+        <CreateProjectView v-if="!isEditing" />
       </pane>
     </splitpanes>
   </div>
@@ -46,5 +52,17 @@
 <style scoped>
   .splitpanes {
     height: 100vh;
+  }
+
+  .rightPane {
+    position: relative;
+    max-height: 100vh; /* Set a maximum height */
+    overflow-y: auto; /* Enable vertical scrolling */
+  }
+
+  .button {
+    position: absolute;
+    top: 2.5em;
+    left: 1em;
   }
 </style>
