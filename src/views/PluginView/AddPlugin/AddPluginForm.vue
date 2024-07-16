@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { type FormSubmitType } from '@/components/Form';
   import { notification } from 'ant-design-vue';
-  import { pluginStoreSymbol, projectEditStoreSymbol } from '@/store/injectionSymbols';
+  import { globalPluginStoreSymbol, pluginStoreSymbol, projectEditStoreSymbol } from '@/store/injectionSymbols';
   import { type FormStore } from '@/components/Form';
   import {
     onBeforeMount,
@@ -21,13 +21,14 @@
     initialValues: AddPluginFormData;
   }>();
 
+  const globalPluginStore = inject(globalPluginStoreSymbol);
   const pluginStore = inject(pluginStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
   const options = ref<SelectProps['options']>([]);
 
   onBeforeMount(async () => {
-    await pluginStore?.fetchGlobalPlugins();
-    options.value = toRaw(pluginStore?.getGlobalPlugins)?.map(
+    await globalPluginStore?.fetchGlobalPlugins();
+    options.value = toRaw(globalPluginStore?.getGlobalPlugins)?.map(
       (plugin: GlobalPluginModel) => {
         return {
           value: plugin.name,
@@ -42,7 +43,7 @@
   const onSubmit: FormSubmitType = (fields) => {
     try {
       console.log(fields);
-      const pluginNumber: number | undefined = pluginStore?.getGlobalPlugins.find(
+      const pluginNumber: number | undefined = globalPluginStore?.getGlobalPlugins.find(
           (plugin) => plugin.name === toRaw(fields).globalPlugin,
         )?.id;
       if (pluginNumber === undefined) {
