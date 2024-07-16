@@ -19,6 +19,7 @@ interface ProjectSearchViewInstance {
   handleRowClick: (project: ProjectModel) => void;
 }
 
+// Fails with: Cannot use 'in' operator to search for 'addEventListener' in undefined
 describe('ProjectSearchView.vue', () => {
   setActivePinia(createPinia());
 
@@ -44,8 +45,8 @@ describe('ProjectSearchView.vue', () => {
   };
 
   it('renders correctly with 4 columns', () => {
-    const wrapper = generateWrapper(800);
-
+    createTestingPinia({});
+    const wrapper = generateWrapper(300);
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
   });
 
