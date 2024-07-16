@@ -67,17 +67,6 @@ export const usePluginsStore = defineStore('plugin', {
       }
       console.log(this.getPlugins);
     },
-
-    async fetchGlobalPlugins() {
-      try {
-        this.setLoadingGlobalPlugins(true);
-        const plugins: GlobalPluginModel[] =
-          await pluginService.fetchGlobalPlugins();
-        this.setGlobalPlugins(plugins);
-      } finally {
-        this.setLoadingGlobalPlugins(false);
-      }
-    },
   },
 });
 
