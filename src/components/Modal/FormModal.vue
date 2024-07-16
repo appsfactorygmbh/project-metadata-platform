@@ -1,14 +1,23 @@
 <script setup lang="ts">
-  import { ref, toRaw } from 'vue';
+  import { ref, toRaw, type PropType } from 'vue';
   import { type FormStore } from '@/components/Form/FormStore';
 
-  const { formStore, title, initiallyOpen } = defineProps<{
-    formStore: FormStore;
-    title: string;
-    initiallyOpen?: boolean;
-  }>();
+  const { formStore, title, initiallyOpen } = defineProps({
+    formStore: {
+      type: Object as PropType<FormStore>,
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    initiallyOpen: {
+      type: Boolean,
+      default: true,
+    },
+  });
 
-  const open = ref<boolean>(initiallyOpen ?? true);
+  const open = ref<boolean>(initiallyOpen);
 
   const emit = defineEmits(['close']);
 
