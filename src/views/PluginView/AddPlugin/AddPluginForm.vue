@@ -21,8 +21,6 @@
     initialValues: AddPluginFormData;
   }>();
 
-  const emit = defineEmits(['closeModal']);
-
   const pluginStore = inject(pluginStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
   const options = ref<SelectProps['options']>([]);
@@ -140,9 +138,6 @@
   };
 
   formStore.setOnSubmit(onSubmit);
-  formStore.resetFields = () => {
-    emit("closeModal");
-  };
   formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
 

@@ -37,7 +37,7 @@
     </a-card>
 
     <!-- Opens modal for adding new Plugin when openModal has value "true" -->
-    <AddPluginView v-if="openModal" :show-modal="openModal" @actually-close-modal="closeModal"/>
+    <AddPluginView v-if="openModal" :show-modal="openModal" @close="closeModal"/>
 </template>
 
 <style scoped lang="scss">
