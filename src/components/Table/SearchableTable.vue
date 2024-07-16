@@ -276,38 +276,13 @@
       <span
         v-if="state.searchText && state.searchedColumn === column.dataIndex"
       >
-        <!-- splits the string from the data entries, so i can be highlighted -->
-        <template
-          v-for="(fragment, i) in text
-            .toString()
-            .split(
-              new RegExp(
-                `(?<=${state.searchText})|(?=${state.searchText})`,
-                'i',
-              ),
-            )"
-        >
-          <!-- string that is searched gets highlighted in the table entries-->
-          <mark
-            v-if="fragment.toLowerCase() === state.searchText.toLowerCase()"
-            :key="i"
-            class="highlight"
-          >
-            {{ fragment }}
-          </mark>
-          <template v-else>{{ fragment }}</template>
-        </template>
+        {{ text }}
       </span>
     </template>
   </a-table>
 </template>
 
 <style scoped>
-  .highlight {
-    background-color: rgb(255, 192, 105);
-    padding: 0px;
-  }
-
   .clickable-table :deep(.row) {
     cursor: pointer;
   }
