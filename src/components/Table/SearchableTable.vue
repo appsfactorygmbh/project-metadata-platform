@@ -32,13 +32,12 @@
     },
   });
 
-  interface FilteredInfo {
+  interface FilteredInfoModel {
     [key: string]: string;
   }
 
   const searchStore = inject<SearchStore<object>>(props.searchStoreSymbol);
-  const tableRef = ref();
-  const filteredInfo = reactive<FilteredInfo>({}); // Use an object to track filter values for each column
+  const filteredInfo = reactive<FilteredInfoModel>({}); // Use an object to track filter values for each column
 
   const emit = defineEmits(['row-click']);
 
@@ -128,20 +127,21 @@
    * Resets the filtered search in target column.
    * @param {((param?: FilterResetProps) => void)} clearFilters Clears the filter, when confirmed.
    */
-  function handleReset(clearFilters: (param?: FilterResetProps) => void) {
+  function handleReset(
+    clearFilters: (param?: FilterResetProps) => void,
+    dataIndex: string,
+  ) {
     clearFilters({ confirm: true });
 
     if (columns.value) {
       columns.value.forEach((column) => {
         const key = column.key;
-        console.log(state.searchedColumn);
 
-        if (key && state.searchedColumn == key) filteredInfo[key] = '';
+        if (key && dataIndex == key) filteredInfo[key] = '';
       });
     }
 
     state.searchText = '';
-    state.searchedColumn = '';
   }
 
   // Handle clear all filters action
@@ -157,8 +157,7 @@
     }
   };
 
-  // Expose handleClearAll method
-  defineExpose({ handleClearAll });
+  searchStore?.setOnReset(handleClearAll);
 </script>
 
 <template>
@@ -168,7 +167,6 @@
         scroll: sets height of table to ~90% of the window height
     -->
   <a-table
-    ref="tableRef"
     class="clickable-table"
     :columns="[...columns]"
     :data-source="[...(searchStore?.getSearchResults || [])]"
@@ -228,7 +226,7 @@
         <a-button
           size="small"
           style="width: 90px"
-          @click="handleReset(clearFilters)"
+          @click="handleReset(clearFilters, column.dataIndex)"
         >
           Reset
         </a-button>

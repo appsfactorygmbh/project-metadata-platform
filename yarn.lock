@@ -323,6 +323,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/helper-string-parser@npm:^7.24.8":
+  version: 7.24.8
+  resolution: "@babel/helper-string-parser@npm:7.24.8"
+  checksum: 10c0/6361f72076c17fabf305e252bf6d580106429014b3ab3c1f5c4eb3e6d465536ea6b670cc0e9a637a77a9ad40454d3e41361a2909e70e305116a23d68ce094c08
+  languageName: node
+  linkType: hard
+
 "@babel/helper-validator-identifier@npm:^7.24.7":
   version: 7.24.7
   resolution: "@babel/helper-validator-identifier@npm:7.24.7"
@@ -609,7 +616,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.0.0, @babel/types@npm:^7.20.7, @babel/types@npm:^7.22.15, @babel/types@npm:^7.23.9, @babel/types@npm:^7.24.0, @babel/types@npm:^7.24.7, @babel/types@npm:^7.3.3, @babel/types@npm:^7.8.3":
+"@babel/types@npm:^7.0.0, @babel/types@npm:^7.20.7, @babel/types@npm:^7.22.15, @babel/types@npm:^7.23.9, @babel/types@npm:^7.24.0, @babel/types@npm:^7.24.7, @babel/types@npm:^7.3.3":
   version: 7.24.7
   resolution: "@babel/types@npm:7.24.7"
   dependencies:
@@ -617,6 +624,17 @@ __metadata:
     "@babel/helper-validator-identifier": "npm:^7.24.7"
     to-fast-properties: "npm:^2.0.0"
   checksum: 10c0/d9ecbfc3eb2b05fb1e6eeea546836ac30d990f395ef3fe3f75ced777a222c3cfc4489492f72e0ce3d9a5a28860a1ce5f81e66b88cf5088909068b3ff4fab72c1
+  languageName: node
+  linkType: hard
+
+"@babel/types@npm:^7.8.3":
+  version: 7.24.9
+  resolution: "@babel/types@npm:7.24.9"
+  dependencies:
+    "@babel/helper-string-parser": "npm:^7.24.8"
+    "@babel/helper-validator-identifier": "npm:^7.24.7"
+    to-fast-properties: "npm:^2.0.0"
+  checksum: 10c0/4970b3481cab39c5c3fdb7c28c834df5c7049f3c7f43baeafe121bb05270ebf0da7c65b097abf314877f213baa591109c82204f30d66cdd46c22ece4a2f32415
   languageName: node
   linkType: hard
 
@@ -3141,8 +3159,8 @@ __metadata:
   linkType: hard
 
 "cacache@npm:^18.0.0":
-  version: 18.0.3
-  resolution: "cacache@npm:18.0.3"
+  version: 18.0.4
+  resolution: "cacache@npm:18.0.4"
   dependencies:
     "@npmcli/fs": "npm:^3.1.0"
     fs-minipass: "npm:^3.0.0"
@@ -3156,7 +3174,7 @@ __metadata:
     ssri: "npm:^10.0.0"
     tar: "npm:^6.1.11"
     unique-filename: "npm:^3.0.0"
-  checksum: 10c0/dfda92840bb371fb66b88c087c61a74544363b37a265023223a99965b16a16bbb87661fe4948718d79df6e0cc04e85e62784fbcf1832b2a5e54ff4c46fbb45b7
+  checksum: 10c0/6c055bafed9de4f3dcc64ac3dc7dd24e863210902b7c470eb9ce55a806309b3efff78033e3d8b4f7dcc5d467f2db43c6a2857aaaf26f0094b8a351d44c42179f
   languageName: node
   linkType: hard
 
@@ -7266,8 +7284,8 @@ __metadata:
   linkType: hard
 
 "node-gyp@npm:latest":
-  version: 10.1.0
-  resolution: "node-gyp@npm:10.1.0"
+  version: 10.2.0
+  resolution: "node-gyp@npm:10.2.0"
   dependencies:
     env-paths: "npm:^2.2.0"
     exponential-backoff: "npm:^3.1.1"
@@ -7275,13 +7293,13 @@ __metadata:
     graceful-fs: "npm:^4.2.6"
     make-fetch-happen: "npm:^13.0.0"
     nopt: "npm:^7.0.0"
-    proc-log: "npm:^3.0.0"
+    proc-log: "npm:^4.1.0"
     semver: "npm:^7.3.5"
-    tar: "npm:^6.1.2"
+    tar: "npm:^6.2.1"
     which: "npm:^4.0.0"
   bin:
     node-gyp: bin/node-gyp.js
-  checksum: 10c0/9cc821111ca244a01fb7f054db7523ab0a0cd837f665267eb962eb87695d71fb1e681f9e21464cc2fd7c05530dc4c81b810bca1a88f7d7186909b74477491a3c
+  checksum: 10c0/00630d67dbd09a45aee0a5d55c05e3916ca9e6d427ee4f7bc392d2d3dc5fad7449b21fc098dd38260a53d9dcc9c879b36704a1994235d4707e7271af7e9a835b
   languageName: node
   linkType: hard
 
@@ -7893,14 +7911,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proc-log@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "proc-log@npm:3.0.0"
-  checksum: 10c0/f66430e4ff947dbb996058f6fd22de2c66612ae1a89b097744e17fb18a4e8e7a86db99eda52ccf15e53f00b63f4ec0b0911581ff2aac0355b625c8eac509b0dc
-  languageName: node
-  linkType: hard
-
-"proc-log@npm:^4.2.0":
+"proc-log@npm:^4.1.0, proc-log@npm:^4.2.0":
   version: 4.2.0
   resolution: "proc-log@npm:4.2.0"
   checksum: 10c0/17db4757c2a5c44c1e545170e6c70a26f7de58feb985091fb1763f5081cab3d01b181fb2dd240c9f4a4255a1d9227d163d5771b7e69c9e49a561692db865efb9
@@ -9114,7 +9125,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar@npm:^6.1.11, tar@npm:^6.1.2":
+"tar@npm:^6.1.11, tar@npm:^6.2.1":
   version: 6.2.1
   resolution: "tar@npm:6.2.1"
   dependencies:

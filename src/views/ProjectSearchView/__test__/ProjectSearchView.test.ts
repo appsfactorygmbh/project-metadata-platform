@@ -35,6 +35,10 @@ describe('ProjectSearchView.vue', () => {
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
   });
 
+  it('renders correctly with reset button', async () => {
+    expect(wrapper.find('.reset').exists()).toBe(true);
+  });
+
   createTestingPinia({});
   const wrapper2 = generateWrapper(300);
 

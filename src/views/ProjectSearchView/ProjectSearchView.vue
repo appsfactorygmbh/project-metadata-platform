@@ -10,6 +10,7 @@
   import { projectsService } from '@/services';
   import _ from 'lodash';
   import { useWindowSize } from '@vueuse/core';
+  import { UndoOutlined } from '@ant-design/icons-vue';
 
   const props = defineProps({
     paneWidth: {
@@ -28,8 +29,6 @@
   const searchStoreSymbol = Symbol('projectSearchStore');
   ``;
   const isLoading = computed(() => projectsStore?.getIsLoadingProjects);
-  const searchableTable = ref<InstanceType<typeof SearchableTable>>();
-
   provide<SearchStore>(searchStoreSymbol, searchStore);
 
   const FETCHING_METHOD: 'FRONTEND' | 'BACKEND' = import.meta.env
@@ -90,9 +89,6 @@
   });
 
   const clearAllFilters = () => {
-    if (searchableTable.value && searchableTable.value.handleClearAll) {
-      searchableTable.value.handleClearAll();
-    }
     searchStore.reset();
   };
 </script>
@@ -100,11 +96,15 @@
 <template>
   <div style="padding: 20px">
     <a-flex vertical gap="middle">
-      <SearchBar ref="SearchBar" :search-store-symbol="searchStoreSymbol" />
-      <ResetButton @click="clearAllFilters" />
-
+      <a-span>
+        <SearchBar :search-store-symbol="searchStoreSymbol" />
+        <a-button class="reset" @click="clearAllFilters">
+          <template #icon>
+            <UndoOutlined class="icons" />
+          </template>
+        </a-button>
+      </a-span>
       <SearchableTable
-        ref="searchableTable"
         :search-store-symbol="searchStoreSymbol"
         :pane-height="props.paneHeight"
         :columns="[...columns.filter((item) => !item.hidden)]"
@@ -244,3 +244,12 @@
     }
   }
 </script>
+<style scoped>
+  .reset {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 2.5em;
+    height: 2.5em;
+  }
+</style>
