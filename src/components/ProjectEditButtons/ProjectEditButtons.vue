@@ -1,17 +1,32 @@
 <script setup lang="ts">
   import { CloseOutlined, SaveOutlined } from '@ant-design/icons-vue';
+  import type { FloatButtonModel } from '../Button';
   const emit = defineEmits(['cancel', 'save']);
+
+  const buttons: FloatButtonModel[] = [
+    {
+      name: 'CancelButton',
+      onClick: () => {
+        emit('cancel');
+      },
+      icon: CloseOutlined,
+      status: 'activated',
+      tooltip: 'Click to cancel editing',
+    },
+    {
+      name: 'SaveButton',
+      onClick: () => {
+        emit('save');
+      },
+      icon: SaveOutlined,
+      status: 'activated',
+      tooltip: 'Click to save changes',
+    },
+  ];
 </script>
 
 <template>
-  <a-float-button-group class="menu">
-    <a-float-button class="button" ghost @click="() => emit('cancel')">
-      <template #icon><CloseOutlined class="icon" /> </template>
-    </a-float-button>
-    <a-float-button class="button" ghost @click="() => emit('save')">
-      <template #icon><SaveOutlined class="icon" /> </template>
-    </a-float-button>
-  </a-float-button-group>
+  <FloatingButtonGroup :buttons="buttons" />
 </template>
 
 <style scoped></style>
