@@ -1,6 +1,6 @@
 import type { PluginModel, ProjectKey } from './PluginModel';
 import type { PluginEditModel } from './PluginEditModel';
-import type { GlobalPluginModel } from './GlobalPluginModel';
+import type { GlobalPluginModel, GlobalPluginKey } from './GlobalPluginModel';
 import type { UpdatePluginModel } from './UpdatePluginModel';
 
 export type {
@@ -9,4 +9,5 @@ export type {
   UpdatePluginModel,
   PluginEditModel,
   ProjectKey,
+  GlobalPluginKey,
 };

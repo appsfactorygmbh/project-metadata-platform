@@ -36,7 +36,9 @@ class PluginService {
     }
   };
 
-  removeGlobalPlugin = async (pluginId: number): Promise<Response | null> => {
+  removeGlobalPlugin = async (
+    pluginId: GlobalPluginModel['id'],
+  ): Promise<Response | null> => {
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/Plugins/' + pluginId.toString(),

@@ -3,8 +3,8 @@
     ProjectProvider,
     PluginProvider,
     ProjectEditProvider,
+    GlobalPluginProvider,
   } from '@/router/Provider';
-  import GlobalPluginProvider from './GlobalPluginProvider.vue';
 </script>
 
 <template>

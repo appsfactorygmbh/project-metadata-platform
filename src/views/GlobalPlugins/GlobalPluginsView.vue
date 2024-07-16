@@ -1,5 +1,5 @@
 <template>
-  <FloatingButton :button="button" />
+  <FloatingButton :button="addButton" />
 
   <a-list
     class="plugin-list"
@@ -45,7 +45,9 @@
     type="error"
     show-icon
   />
+  <RouterView />
 </template>
+
 <script lang="ts" setup>
   import {
     EditOutlined,
@@ -55,6 +57,7 @@
   import type { FloatButtonModel } from '@/components/Button';
   import { globalPluginStoreSymbol } from '@/store/injectionSymbols';
   import { inject, onBeforeMount } from 'vue';
+  import { useRouter } from 'vue-router';
 
   const globalPluginsStore = inject(globalPluginStoreSymbol);
 
@@ -72,9 +75,13 @@
     await globalPluginsStore?.fetchGlobalPlugins();
   });
 
-  const button: FloatButtonModel = {
+  const router = useRouter();
+
+  const addButton: FloatButtonModel = {
     name: 'CreatePluginButton',
-    onClick: () => {},
+    onClick: () => {
+      router.push('/settings/plugins/create');
+    },
     icon: PlusOutlined,
     status: 'activated',
     tooltip: 'Click here to create a new global plugin',

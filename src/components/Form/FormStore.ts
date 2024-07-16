@@ -1,27 +1,29 @@
 import { defineStore } from 'pinia';
-import { ref, type Ref } from 'vue';
-import type { FormType } from './types';
-import type { FieldData } from 'ant-design-vue/es/form/interface';
+import { type Ref } from 'vue';
+import type {
+  FormState,
+  FormType,
+  RulesObject,
+  CustomRulesObject,
+} from './types';
+import type {
+  FieldData,
+  ValidateErrorEntity,
+} from 'ant-design-vue/es/form/interface';
 import { Form } from 'ant-design-vue';
-import type { Rule } from 'ant-design-vue/es/form';
 import type { ArgsType } from '@/models/utils';
+import _ from 'lodash';
+import { initRef } from '@/utils/store';
+import { getValidateErrors, validateArray, validateField } from './validation/';
 
 const { useForm } = Form;
-
-type FieldValue = string | number | boolean | Date | undefined;
-
-type FieldRecord<T> = Record<string, FieldValue | T>;
-
-type AnyArray = Array<FieldRecord<FieldValue>>;
-
-type FormState = FieldRecord<AnyArray>;
-
-export type RulesObject<T> = Record<keyof T, Rule[]>;
 
 type FormStoreState<T extends FormState> = {
   form: Ref<FormType>;
   modelRef: Ref<T>;
   rulesRef: Ref<RulesObject<T>>;
+  customRulesRef: Ref<CustomRulesObject<T>>;
+  specialValidateInfos: Ref<FormType['validateInfos']>;
   onSubmit?: (values: T) => void;
   options?: ArgsType<typeof useForm>[2];
 };
@@ -31,19 +33,16 @@ export const useFormStore = <T extends FormState>(
   form?: FormType,
   modelRef?: T,
   rulesRef?: RulesObject<T>,
+  customRulesRef?: CustomRulesObject<T>,
   options?: ArgsType<typeof useForm>[2],
 ) =>
   defineStore(`${name}_form`, {
     state: (): FormStoreState<T> => ({
-      modelRef: modelRef
-        ? (ref<T>(modelRef) as Ref<T>)
-        : (ref<T>({} as T) as Ref<T>),
-      rulesRef: rulesRef
-        ? (ref<RulesObject<T>>(rulesRef) as Ref<RulesObject<T>>)
-        : (ref<RulesObject<T>>({} as RulesObject<T>) as Ref<RulesObject<T>>),
-      form: form
-        ? (ref<FormType>(form) as Ref<FormType>)
-        : (ref<FormType>({} as FormType) as Ref<FormType>),
+      modelRef: initRef(modelRef, {}),
+      rulesRef: initRef(rulesRef, {}),
+      customRulesRef: initRef(customRulesRef, {}),
+      specialValidateInfos: initRef({}, {}),
+      form: initRef(form, {}),
       options: options,
     }),
     actions: {
@@ -62,6 +61,10 @@ export const useFormStore = <T extends FormState>(
       },
       setRules(rulesRef: RulesObject<T>) {
         this.rulesRef = rulesRef;
+        this.updateForm();
+      },
+      setCustomRules(customRulesRef: CustomRulesObject<T>) {
+        this.customRulesRef = customRulesRef;
         this.updateForm();
       },
       setOptions(options: ArgsType<typeof useForm>[2]) {
@@ -86,9 +89,62 @@ export const useFormStore = <T extends FormState>(
       getFieldValue(key: keyof T): T[keyof T] {
         return this.modelRef[key];
       },
-      validate(): Promise<void> {
+      async validateCustomRules(): Promise<void> {
+        let errorsDetected = false;
+        this.specialValidateInfos = {};
+        for (const key in this.customRulesRef) {
+          const rules = this.customRulesRef[key];
+          if (!rules) continue;
+          const value = this.modelRef[key];
+          for (const rule of rules) {
+            if (!rule.ruleTarget) continue;
+            else if (rule.ruleTarget === 'field') {
+              if (!value) continue;
+              // @ts-expect-error type mismatch
+              const [val, err] = await validateField(value, rule);
+              _.merge(this.specialValidateInfos, { [key]: val });
+              if (err) errorsDetected = true;
+            } else if (
+              rule.ruleTarget === 'arrayItem' &&
+              Array.isArray(value)
+            ) {
+              const [val, err] = await validateArray(value, rule);
+              _.merge(this.specialValidateInfos, val);
+              if (err) errorsDetected = true;
+            }
+          }
+        }
+        const validateErrors = getValidateErrors(this.specialValidateInfos);
+        return errorsDetected
+          ? Promise.reject(validateErrors)
+          : Promise.resolve();
+      },
+      validate(): ReturnType<typeof this.form.validate> {
         this.updateForm();
-        return this.form.validate();
+        const validateErrors: Partial<ValidateErrorEntity> = {};
+        return this.validateCustomRules()
+          .catch((rej) => {
+            _.merge(validateErrors, rej);
+            return Promise.resolve();
+          })
+          .then(() => this.form.validate())
+          .catch((rej) => {
+            validateErrors.outOfDate = rej.outOfDate;
+            validateErrors.values = rej.values;
+            if (!validateErrors.errorFields) {
+              validateErrors.errorFields = [];
+            }
+            validateErrors.errorFields.push(...rej.errorFields);
+            console.log('validateError', validateErrors);
+            return Promise.reject({ ...validateErrors });
+          })
+          .then((res) => {
+            console.log('validateError', validateErrors);
+            if (!_.isEmpty(res)) {
+              return Promise.reject({ ...validateErrors });
+            }
+            return Promise.resolve(res);
+          });
       },
       clearValidate() {
         this.form.clearValidate();
@@ -97,7 +153,7 @@ export const useFormStore = <T extends FormState>(
         if (!this.rulesRef) {
           console.warn('Form rules are not defined before submitting.');
         }
-        return this.form.validate().then(() => {
+        return this.validate().then(() => {
           if (this.onSubmit) {
             return this.onSubmit(this.modelRef);
           }
@@ -118,7 +174,7 @@ export const useFormStore = <T extends FormState>(
         return this.modelRef;
       },
       validateInfos(): FormType['validateInfos'] {
-        return this.form.validateInfos;
+        return _.merge(this.form.validateInfos, this.specialValidateInfos);
       },
     },
   })();

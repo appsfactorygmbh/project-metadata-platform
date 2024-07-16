@@ -3,9 +3,13 @@
   import { reactive } from 'vue';
   //import type { CreatePluginModel } from '@/models/Plugin';
   import { type FormStore } from '@/components/Form';
-  import type { RulesObject } from '@/components/Form/FormStore';
+  import {
+    type CustomRulesObject,
+    type RulesObject,
+  } from '@/components/Form/types';
   import type { GlobalPluginFormData } from './';
-  import type { ProjectKey } from '@/models/Plugin';
+  import type { GlobalPluginKey } from '@/models/Plugin';
+  import _ from 'lodash';
 
   const { formStore, initialValues } = defineProps<{
     formStore: FormStore;
@@ -15,7 +19,9 @@
   const modelRef = reactive<GlobalPluginFormData>(initialValues);
 
   // TODO: add validation for keys
-  const rulesRef = reactive<RulesObject<GlobalPluginFormData>>({
+  const rulesRef = reactive<
+    RulesObject<GlobalPluginFormData | Record<string, unknown>>
+  >({
     pluginName: [
       {
         required: true,
@@ -27,24 +33,33 @@
     keys: [
       {
         required: false,
-        message: 'Please insert the plugin key.',
         trigger: 'change',
+        type: 'array',
       },
     ],
   });
 
+  const customRules = reactive<CustomRulesObject<GlobalPluginFormData, 'keys'>>(
+    {
+      keys: [
+        {
+          ruleTarget: 'arrayItem',
+          keyProp: 'key',
+          validator: (_, value) => {
+            if (value.value.length === 0) {
+              return Promise.reject('Please insert the key or remove it.');
+            }
+            return Promise.resolve();
+          },
+          message: 'Please insert the key or remove it.',
+        },
+      ],
+    },
+  );
+
   formStore.setModel(modelRef);
   formStore.setRules(rulesRef);
-
-  const formRef = ref();
-
-  watch(
-    () => formRef.value,
-    () => {
-      console.log('formRef', formRef);
-    },
-    { immediate: true, deep: true },
-  );
+  formStore.setCustomRules(customRules);
 
   const formItemLayout = {
     labelCol: {
@@ -64,25 +79,26 @@
     },
   };
 
-  const removeProjectKey = (item: ProjectKey) => {
+  const removePluginKey = (item: GlobalPluginKey) => {
     const index = modelRef.keys.indexOf(item);
     if (index !== -1) {
       modelRef.keys.splice(index, 1);
     }
   };
 
-  const addProjectKey = () => {
+  const addPluginKey = () => {
+    const key = Date.now();
     modelRef.keys.push({
       value: '',
-      key: Date.now(),
+      key: key,
     });
+    formStore.setRules(rulesRef);
   };
 </script>
 
 <template>
   <a-form
     v-bind="formItemLayoutWithOutLabel"
-    ref="formRef"
     :model="modelRef"
     layout="horizontal"
   >
@@ -90,12 +106,7 @@
       name="pluginName"
       :no-style="false"
       :whitespace="true"
-      :rules="{
-        required: true,
-        message: 'Please insert the plugin name.',
-        trigger: 'change',
-        type: 'string',
-      }"
+      v-bind="formStore.validateInfos.pluginName"
     >
       <a-input
         v-model:value="modelRef.pluginName"
@@ -107,15 +118,10 @@
     <a-form-item
       v-for="(key, index) in modelRef.keys"
       :key="key.key"
-      v-bind="formItemLayout"
       :label="index === 0 ? 'Project Keys' : ' '"
       :colon="false"
       :name="['keys', index, 'value']"
-      :rules="{
-        required: true,
-        message: 'Please insert the plugin key.',
-        trigger: 'change',
-      }"
+      v-bind="_.merge(formStore.validateInfos[key.key], formItemLayout)"
     >
       <a-input
         v-model:value="key.value"
@@ -123,21 +129,26 @@
         style="width: 60%; margin-right: 8px"
       />
       <MinusCircleOutlined
-        v-if="modelRef.keys.length > 1"
+        v-if="modelRef.keys.length > 0"
+        data-test="dynamic-delete-button"
         class="dynamic-delete-button"
-        @click="removeProjectKey(key)"
+        @click="
+          () => {
+            console.log(formStore.validateInfos[key.key]);
+            removePluginKey(key);
+          }
+        "
       />
     </a-form-item>
     <a-row style="display: flex; justify-content: center">
       <a-form-item v-bind="formItemLayoutWithOutLabel">
-        <a-button type="dashed" @click="addProjectKey">
+        <a-button type="dashed" @click="addPluginKey">
           <PlusOutlined />
-          Add ProjectKey
+          Add PluginKey
         </a-button>
       </a-form-item>
     </a-row>
   </a-form>
-  <contextHolder></contextHolder>
 </template>
 
 <style>

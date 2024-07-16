@@ -1,35 +1,43 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, toRaw, type PropType } from 'vue';
   import { type FormStore } from '@/components/Form/FormStore';
 
-  const { formStore, title } = defineProps<{
-    formStore: FormStore;
-    title: string;
-  }>();
+  const { formStore, title, initiallyOpen } = defineProps({
+    formStore: {
+      type: Object as PropType<FormStore>,
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    initiallyOpen: {
+      type: Boolean,
+      default: true,
+    },
+  });
 
-  const open = ref<boolean>(true); //TODO: set default to false after implementing button
-  const cancelFetch = ref<boolean>();
+  const open = ref<boolean>(initiallyOpen);
 
-  const fetchError = ref<boolean>(false);
+  const emit = defineEmits(['close']);
 
   // checks for correct input
   const handleOk = () => {
-    cancelFetch.value = false;
     formStore
-      .validate()
+      .submit()
       .then(() => {
-        console.log('formStore.getFieldsValue', formStore.getFieldsValue);
-        console.log('formStore validateInfos', formStore.form.validateInfos);
-        formStore.submit();
+        open.value = false;
+        emit('close');
       })
-      .catch((error: unknown) => {
-        console.log('error', error);
+      .catch((e) => {
+        console.log(e);
+        console.log(toRaw(formStore.validateInfos));
       });
   };
 
   const resetModal = () => {
+    emit('close');
     formStore.resetFields();
-    fetchError.value = false;
   };
 </script>
 

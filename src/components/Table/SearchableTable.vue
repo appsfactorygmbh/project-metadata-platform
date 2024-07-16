@@ -9,7 +9,7 @@
   import { numberSorter, stringSorter } from '../../utils/antd/sort';
   import type { SearchableColumn } from './SearchableTableTypes';
   import type { TableColumnType, TableProps } from 'ant-design-vue';
-  import type { ArrayElement } from '@/models/ArrayElement';
+  import type { ArrayElement } from '@/models/utils';
   import type { ComputedRef } from 'vue';
 
   //Get the width of the left pane from App.vue

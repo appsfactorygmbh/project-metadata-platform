@@ -3,5 +3,10 @@ export type GlobalPluginModel = {
   id: number;
   name: string;
   archived: boolean;
-  keys?: Array<string>;
+  keys?: GlobalPluginKey[];
+};
+
+export type GlobalPluginKey = {
+  value: string;
+  key: number;
 };

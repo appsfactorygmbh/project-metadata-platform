@@ -4,8 +4,3 @@ export type PluginModel = {
   url: string;
   id: number;
 };
-
-export type ProjectKey = {
-  value: string;
-  key: number;
-};
