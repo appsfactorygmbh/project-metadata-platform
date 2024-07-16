@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { inject, onMounted, toRaw, reactive } from 'vue';
-  import { projectsStoreSymbol } from '@/store/injectionSymbols';
+  import { projectsStoreSymbol, projectEditStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
@@ -8,6 +8,7 @@
   import { useEditing } from '@/utils/hooks/useEditing';
 
   const projectsStore = inject(projectsStoreSymbol)!;
+  const projectEditStore = inject(projectEditStoreSymbol)!;
 
   const { getIsLoadingProject } = storeToRefs(projectsStore);
   const { getIsLoading } = storeToRefs(projectsStore);
@@ -43,6 +44,51 @@
       startEditing();
     }
   };
+
+  const projectData: DetailedProjectModel = reactive({
+    id: 0,
+    projectName: '',
+    businessUnit: '',
+    teamNumber: 0,
+    department: '',
+    clientName: '',
+  });
+
+  const BUInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
+  const teamNumberInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
+  const departmentInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
+  const clientNameInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
+
+  const BUIInput = ref(projectData.businessUnit)
+  const teamNumberInput = ref(projectData.teamNumber)
+  const departmentInput = ref(projectData.department)
+  const clientNameInput = ref(projectData.clientName)
+
+
+  //Function to update the project information
+  function updateProjectInformation() {
+    const updatedProject: DetailedProjectModel = {
+      id: projectData.id,
+      projectName: projectData.projectName,
+      businessUnit: projectData.businessUnit,
+      teamNumber: projectData.teamNumber,
+      department: projectData.department,
+      clientName: projectData.clientName,
+    };
+    projectEditStore.updateProjectInformationChanges(updatedProject);
+  }
+
+  //Function to load the data from projectViewService to projectView
+  function addData(loadedData: DetailedProjectModel) {
+    projectEditStore.setInitialProjectInformation(loadedData)
+    projectData.id = loadedData.id;
+    projectData.projectName = loadedData.projectName;
+    projectData.businessUnit = loadedData.businessUnit;
+    projectData.teamNumber = loadedData.teamNumber;
+    projectData.department = loadedData.department;
+    projectData.clientName = loadedData.clientName;
+  }
+
 </script>
 
 <template>
@@ -85,8 +131,11 @@
             </p>
             <a-input
               v-else
-              v-model:value="projectData.businessUnit"
+              v-model:value="BUIInput"
               class="inputField"
+              :status = "BUInputStatus"
+              @input="updateProjectInformation"
+              @change="() => {if(!projectData.businessUnit) BUInputStatus = 'error'; else BUInputStatus = '';}"
             />
           </template>
           <a-skeleton
@@ -109,11 +158,15 @@
             <p v-if="!isEditing" class="projectInfo">
               {{ projectData.teamNumber }}
             </p>
-            <a-input
-              v-else
-              v-model:value="projectData.teamNumber"
-              class="inputField"
-            />
+            <a-form-item v-else>
+              <a-input
+                v-model:value="teamNumberInput"
+                class="inputField"
+                :status = "teamNumberInputStatus"
+                @input="updateProjectInformation"
+                @change="() => {if(!projectData.teamNumber) teamNumberInputStatus = 'error'; else teamNumberInputStatus = '';}"
+              />
+            </a-form-item>
           </template>
           <a-skeleton
             v-else
@@ -136,8 +189,11 @@
             </p>
             <a-input
               v-else
-              v-model:value="projectData.department"
+              v-model:value="departmentInput"
               class="inputField"
+              :status = "departmentInputStatus"
+              @change="() => {if(!projectData.department) departmentInputStatus = 'error'; else departmentInputStatus = '';}"
+              @input="updateProjectInformation"
             />
           </template>
           <a-skeleton
@@ -162,8 +218,11 @@
             </p>
             <a-input
               v-else
-              v-model:value="projectData.clientName"
+              v-model:value="clientNameInput"
               class="inputField"
+              :status = "clientNameInputStatus"
+              @input="updateProjectInformation"
+              @change="() => {if(!projectData.clientName) clientNameInputStatus = 'error'; else clientNameInputStatus = '';}"
             />
           </template>
           <a-skeleton
@@ -179,24 +238,7 @@
 </template>
 
 <script lang="ts">
-  const projectData: DetailedProjectModel = reactive({
-    id: 0,
-    projectName: '',
-    businessUnit: '',
-    teamNumber: 0,
-    department: '',
-    clientName: '',
-  });
 
-  //Function to load the data from projectViewService to projectView
-  function addData(loadedData: DetailedProjectModel) {
-    projectData.id = loadedData.id;
-    projectData.projectName = loadedData.projectName;
-    projectData.businessUnit = loadedData.businessUnit;
-    projectData.teamNumber = loadedData.teamNumber;
-    projectData.department = loadedData.department;
-    projectData.clientName = loadedData.clientName;
-  }
 </script>
 
 <style scoped lang="scss">

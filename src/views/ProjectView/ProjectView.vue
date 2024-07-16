@@ -52,6 +52,7 @@
       if (projectStore?.getAddedSuccessfully) {
         projectEditStore?.resetChanges();
         message.success('Project updated successfully.', 7);
+        projectStore.fetchProject(projectStore.getProject?.id || 0);
         stopEditing();
       } else {
         message.error('Could not update Project.', 7);

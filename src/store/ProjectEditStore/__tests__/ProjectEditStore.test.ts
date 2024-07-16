@@ -151,4 +151,18 @@ describe('ProjectEditStore', () => {
 
     expect(store.getCanBeAdded).toBe(false);
   });
+  // Add test to check for updating project information
+  it('updates project information correctly', () => {
+    const project = {
+      id: 1,
+      projectName: 'Test Project',
+      clientName: 'Test Client',
+      businessUnit: 'Test Business Unit',
+      teamNumber: 1,
+    };
+    store.updateProjectInformationChanges(project);
+    expect(store.getProjectInformationChanges).toEqual(project);
+  });
+
+  // write tests for the getCanBeAdded getter
 });

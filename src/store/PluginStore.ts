@@ -41,28 +41,6 @@ export const usePluginsStore = defineStore('plugin', {
     setCachePlugins(plugins: PluginModel[]): void {
       this.cachePlugins = plugins;
     },
-    updatePluginURL(
-      pluginID: number,
-      oldPluginURL: string,
-      newPluginURL: string,
-    ): void {
-      const pluginIndex = this.cachePlugins.findIndex(
-        (plugin) => plugin.id === pluginID && plugin.url === oldPluginURL,
-      );
-      this.cachePlugins[pluginIndex].url = newPluginURL;
-    },
-
-    updateDisplayName(
-      pluginID: number,
-      pluginUrl: string,
-      newDisplayName: string,
-    ): void {
-      const pluginIndex = this.cachePlugins.findIndex(
-        (plugin) => plugin.id === pluginID && plugin.url === pluginUrl,
-      );
-      this.cachePlugins[pluginIndex].displayName = newDisplayName;
-    },
-
     async fetchPlugins(projectID: number) {
       try {
         this.setLoadingPlugins(true);

@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia';
 import type { PluginModel } from '@/models/Plugin';
 import type { PluginEditModel } from '@/models/Plugin/PluginEditModel.ts';
+import type { ProjectModel } from '@/models/Project';
 
 type StoreState = {
   pluginChanges: Map<number, PluginEditModel>;
-  projectInformationChanges: string[];
+  projectInformationChanges: ProjectModel;
   canBeCreated: boolean;
   pluginsWithUrlConflicts: number[][];
   duplicatedUrls: Map<string, number[]>;
@@ -16,12 +17,18 @@ export const useProjectEditStore = defineStore('projectEdit', {
   state: (): StoreState => {
     return {
       pluginChanges: new Map(),
-      projectInformationChanges: [],
       canBeCreated: true,
       pluginsWithUrlConflicts: [],
       duplicatedUrls: new Map(),
       emptyUrlFields: new Map(),
       emptyDisplaynameFields: new Map(),
+      projectInformationChanges: {
+        id: -1,
+        projectName: '',
+        clientName: '',
+        businessUnit: '',
+        teamNumber: -1,
+      },
     };
   },
 
@@ -33,7 +40,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
       );
     },
     // Return all Projectinformation changes (not implemented in this branch)
-    getProjectInformationChanges(): string[] {
+    getProjectInformationChanges(): ProjectModel {
       return this.projectInformationChanges;
     },
     // Returns all Plugins that have URL conflicts (two or more Plugins have the same URL)
@@ -44,10 +51,15 @@ export const useProjectEditStore = defineStore('projectEdit', {
     },
     // Returns whether the Project can be created (no URL conflicts and no empty fields)
     getCanBeAdded(): boolean {
+      console.log("getCanBeAdded", this.getPluginsWithUrlConflicts.length, this.emptyUrlFields.size, this.emptyDisplaynameFields.size, this.projectInformationChanges.projectName, this.projectInformationChanges.clientName, this.projectInformationChanges.businessUnit, this.projectInformationChanges.teamNumber)
       return (
         this.getPluginsWithUrlConflicts.length === 0 &&
         this.emptyUrlFields.size === 0 &&
-        this.emptyDisplaynameFields.size === 0
+        this.emptyDisplaynameFields.size === 0 &&
+        this.projectInformationChanges.projectName !== '' &&
+        this.projectInformationChanges.clientName !== '' &&
+        this.projectInformationChanges.businessUnit !== '' &&
+        this.projectInformationChanges.teamNumber !== undefined
       );
     },
   },
@@ -56,6 +68,16 @@ export const useProjectEditStore = defineStore('projectEdit', {
     // Adds an empty field to the emptyFields Map
     addEmptyUrlField(id: number): void {
       this.emptyUrlFields.set(id, id);
+    },
+
+    setInitialProjectInformation(project: ProjectModel): void {
+      this.projectInformationChanges = project;
+      console.log("added project information", this.projectInformationChanges)
+    },
+
+    // Updates the Projectinformation changes
+    updateProjectInformationChanges(project: ProjectModel): void {
+      this.projectInformationChanges = project;
     },
 
     // Removes an empty field from the emptyFields Map
@@ -75,7 +97,13 @@ export const useProjectEditStore = defineStore('projectEdit', {
     // Resets all changes made to the Plugins and Projectinformation
     resetChanges(): void {
       this.pluginChanges.clear();
-      this.projectInformationChanges = [];
+      this.projectInformationChanges = {
+        id: -1,
+        projectName: '',
+        clientName: '',
+        businessUnit: '',
+        teamNumber: -1,
+      };
       this.canBeCreated = true;
       this.pluginsWithUrlConflicts = [];
       this.emptyUrlFields.clear();
