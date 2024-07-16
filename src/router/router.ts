@@ -9,6 +9,7 @@ import ProjectSlagResolver from './Resolver/ProjectSlagResolver.vue';
 import ComingSoonView from '@/views/Service/ComingSoonView.vue';
 import NotFoundView from '@/views/Service/NotFoundView.vue';
 import { LoginView } from '@/views/Auth';
+import { useAuth } from 'vue-auth3';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,6 +23,12 @@ const router = createRouter({
       path: '/',
       name: 'Provider',
       component: ProviderCollection,
+      beforeEnter: (to, from, next) => {
+        const auth = useAuth();
+        if (!auth.check()) {
+          next({ name: 'Login' });
+        } else next();
+      },
       children: [
         {
           name: 'ProjectNameResolver',

@@ -13,11 +13,13 @@
   type LoginFormData = {
     email: string;
     password: string;
+    remember: boolean;
   };
 
   const modelRef = reactive<LoginFormData>({
     email: '',
     password: '',
+    remember: false,
   });
 
   const rulesRef = reactive<
@@ -108,7 +110,9 @@
     </a-form-item>
     <a-form-item>
       <a-form-item name="remember" value-prop-name="checked" no-style>
-        <a-checkbox>Stay logged in</a-checkbox>
+        <a-checkbox v-model:checked="modelRef.remember"
+          >Stay logged in</a-checkbox
+        >
       </a-form-item>
       <RouterLink :style="styles.forgotPassword" to="/forgot-password">
         Forgot password?

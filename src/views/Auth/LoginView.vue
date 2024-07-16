@@ -4,11 +4,28 @@
   import { computed } from 'vue';
   import { useToken } from 'ant-design-vue/es/theme/internal';
   import useBreakpoint from 'ant-design-vue/es/_util/hooks/useBreakpoint';
+  import { useAuth } from 'vue-auth3';
+
+  const auth = useAuth();
 
   const formStore = useFormStore('loginForm');
 
   const onSubmit: FormSubmitType = (fields) => {
     console.log(fields);
+    auth
+      .login({
+        body: {
+          email: fields.email,
+          password: fields.password,
+        },
+        staySignedIn: fields.remember,
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   formStore.setOnSubmit(onSubmit);
