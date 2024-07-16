@@ -53,12 +53,15 @@ describe('SearchBar.vue', () => {
 
   it('reset the searchBar when using the searchStore reset ', async () => {
     const input = wrapper.find('input');
+
     await input.setValue('C');
     await flushPromises();
+    expect(searchStore.getSearchQuery).toEqual('C');
     expect(input.element.value).toBe('C');
 
     searchStore.reset();
     await flushPromises();
+    expect(searchStore.getSearchQuery).toEqual('');
     expect(input.element.value).toBe('');
   });
 });
