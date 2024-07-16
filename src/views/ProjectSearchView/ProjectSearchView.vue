@@ -27,7 +27,7 @@
   const pluginStore = inject(pluginStoreSymbol);
   const searchStore = useSearchStore<ProjectModel>('projects');
   const searchStoreSymbol = Symbol('projectSearchStore');
-  ``;
+
   const isLoading = computed(() => projectsStore?.getIsLoadingProjects);
   provide<SearchStore>(searchStoreSymbol, searchStore);
 
