@@ -13,7 +13,7 @@
   import type { SelectProps } from 'ant-design-vue';
   import type { GlobalPluginModel, PluginModel, PluginEditModel} from '@/models/Plugin';
   import type { LabeledValue, SelectValue } from 'ant-design-vue/lib/select';
-  import type { RulesObject } from '@/components/Form/FormStore.ts';
+  import type { RulesObject } from '@/components/Form/types';
   import type { AddPluginFormData } from './AddPluginFormData.ts';
 
   const { formStore, initialValues } = defineProps<{
@@ -56,7 +56,6 @@
         url: toRaw(fields).pluginUrl,
       };
       addPlugin(pluginDef);
-      emit("closeModal");
     } catch {
       notificationApi.error({
         message: 'An error occurred. The plugin could not be created',
