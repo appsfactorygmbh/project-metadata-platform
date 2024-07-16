@@ -5,6 +5,7 @@ import { EditGlobalPluginView } from '@/views/GlobalPlugins/EditGlobalPlugin';
 import { ProviderCollection } from './Provider';
 import { SettingView } from '@/views/SettingView';
 import { GlobalPluginsView } from '@/views/GlobalPlugins';
+import ProjectSlagResolver from './Resolver/ProjectSlagResolver.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,14 +16,16 @@ const router = createRouter({
       component: ProviderCollection,
       children: [
         {
+          name: 'ProjectNameResolver',
           path: '/',
-          name: 'SplitView',
-          component: SplitView,
-        },
-        {
-          path: '/:projectSlag',
-          name: 'SplitView',
-          component: SplitView,
+          component: ProjectSlagResolver,
+          children: [
+            {
+              path: '/:projectSlag',
+              name: 'SplitView',
+              component: SplitView,
+            },
+          ],
         },
         {
           path: '/settings',
@@ -63,4 +66,5 @@ const router = createRouter({
     },
   ],
 });
+
 export default router;

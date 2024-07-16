@@ -114,6 +114,33 @@ export const useProjectStore = defineStore('project', {
         this.setLoadingProject(false);
       }
     },
+
+    async getProjectSlagById(id: number): Promise<string> {
+      let targetProject: DetailedProjectModel | ProjectModel | null = null;
+      targetProject =
+        this.projects.find((project) => project.id === id) ?? null;
+      if (targetProject) return targetProject.projectName.replace(/ /g, '-');
+
+      targetProject = await projectsService.fetchProject(id);
+      if (targetProject) return targetProject.projectName.replace(/ /g, '-');
+
+      return '';
+    },
+
+    async getProjectBySlag(slag: string): Promise<ProjectModel | null> {
+      let targetProject: ProjectModel | null = null;
+      try {
+        this.setLoadingProject(true);
+        targetProject =
+          this.projects.find(
+            (project) => project.projectName.replace(/ /g, '-') === slag,
+          ) ?? null;
+        if (targetProject) return targetProject;
+        return null;
+      } finally {
+        this.setLoadingProject(false);
+      }
+    },
   },
 });
 
