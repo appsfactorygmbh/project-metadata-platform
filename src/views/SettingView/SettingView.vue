@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   //import icons for navigation buttons
+  import type { FloatButtonModel } from '@/components/Button';
   import {
     AppstoreAddOutlined,
     BarsOutlined,
@@ -20,6 +21,12 @@
   // Method to go back to the mainpage
   const goToMain = () => {
     router.push('/');
+  };
+
+  const backButton: FloatButtonModel = {
+    icon: LeftOutlined,
+    onClick: goToMain,
+    name: 'Back',
   };
 
   //Methods for URL link  by clickin the navigation buttons
@@ -56,10 +63,8 @@
       :width="280"
     >
       <!-- return to homepage button-->
-      <a-layout-header />
-      <a-float-button class="iconBack" ghost @click="goToMain">
-        <template #icon><LeftOutlined /> </template>
-      </a-float-button>
+      <a-layout-header style="height: 80px" />
+      <FloatingButton :button="backButton" class="iconBack" />
 
       <!-- navigation elements -->
       <a-menu
@@ -67,17 +72,21 @@
         class="menuItem"
         mode="inline"
       >
-        <a-sub-menu key="userManagement">
+        <!-- <a-sub-menu key="userManagement">
           <template #title>
             <span>
               <user-outlined class="icons" />
               <span>User Management</span>
             </span>
           </template>
-          <!-- <a-menu-item key="4" @click="clickTab('User')">User 1</a-menu-item>
+          <a-menu-item key="4" @click="clickTab('User')">User 1</a-menu-item>
           <a-menu-item key="5" @click="clickTab('User')">User 2</a-menu-item>
-          <a-menu-item key="6" @click="clickTab('User')">User 3</a-menu-item> -->
-        </a-sub-menu>
+          <a-menu-item key="6" @click="clickTab('User')">User 3</a-menu-item>
+        </a-sub-menu> -->
+        <a-menu-item key="1" class="userManagement" @click="clickTab('User')">
+          <UserOutlined class="icons" />
+          <span>User Management</span>
+        </a-menu-item>
         <a-menu-item
           key="2"
           class="pluginCreation"
@@ -100,7 +109,7 @@
       <a-layout-content>
         <!-- breadcrumbs -->
         <a-breadcrumb>
-          <a-breadcrumb-item>Setting</a-breadcrumb-item>
+          <a-breadcrumb-item>Settings</a-breadcrumb-item>
           <a-breadcrumb-item> {{ tab }} </a-breadcrumb-item>
         </a-breadcrumb>
         <div style="padding: 24px; min-height: 650px">
@@ -114,7 +123,7 @@
 <style scoped>
   .iconBack {
     left: 20px;
-    top: 10px;
+    top: 20px;
   }
   /* Style for the sidebar icons */
   .icons * {
