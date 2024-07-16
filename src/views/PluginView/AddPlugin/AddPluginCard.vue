@@ -22,7 +22,7 @@
   <a-card
     class="card"
     :bordered="false"
-    :bodyStyle="{
+    :body-style="{
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
