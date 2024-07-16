@@ -1,12 +1,11 @@
 <script setup lang="ts">
   import { type FormSubmitType } from '@/components/Form';
   import { notification } from 'ant-design-vue';
-  import { pluginStoreSymbol } from '@/store/injectionSymbols';
+  import { globalPluginStoreSymbol } from '@/store/injectionSymbols';
   import { inject, reactive, onMounted } from 'vue';
   //import type { CreatePluginModel } from '@/models/Plugin';
   import { type FormStore } from '@/components/Form';
   import { useRoute } from 'vue-router';
-  import { pluginService } from '@/services';
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
   import type { GlobalPluginFormData } from '../GlobalPluginForm';
 
@@ -14,14 +13,17 @@
     formStore: FormStore;
   }>();
 
-  const pluginStore = inject(pluginStoreSymbol);
+  const globalPluginStore = inject(globalPluginStoreSymbol);
 
   const [notificationApi, contextHolder] = notification.useNotification();
 
   const onSubmit: FormSubmitType = (fields) => {
     try {
       console.log(fields);
-      pluginStore?.createPlugin(fields);
+      globalPluginStore?.updateGlobalPlugin({
+        id: pluginIdRef.value,
+        ...fields,
+      });
     } catch {
       notificationApi.error({
         message: 'An error occurred. The plugin could not be created',
@@ -30,6 +32,8 @@
     }
   };
 
+  const pluginIdRef = ref<number | null>(null);
+
   const initialValues = reactive<GlobalPluginFormData>({
     pluginName: '',
     keys: [],
@@ -37,17 +41,25 @@
 
   onMounted(async () => {
     const route = useRoute();
-    const { pluginId } = route.params;
+    const { pluginId } = route.query;
+    console.log('pluginId', pluginId);
     if (typeof pluginId === 'string') {
       const numericPluginId = parseInt(pluginId, 10);
       if (!isNaN(numericPluginId)) {
+        pluginIdRef.value = numericPluginId;
         const globalPluginData =
-          await pluginService.fetchGlobalPluginData(numericPluginId);
-        initialValues.pluginName = globalPluginData.pluginName;
-        initialValues.keys = globalPluginData.keys.map((keyObj, index) => ({
-          key: index,
-          value: keyObj.key as string,
-        }));
+          await globalPluginStore?.fetchGlobalPlugin(numericPluginId);
+        if (!globalPluginData) {
+          return;
+        }
+        console.log(globalPluginData);
+        initialValues.pluginName = globalPluginData.name;
+        initialValues.keys =
+          globalPluginData.keys?.map((keyObj) => ({
+            key: keyObj.key,
+            value: keyObj.value,
+            archived: keyObj.archived,
+          })) ?? [];
       }
     }
   });

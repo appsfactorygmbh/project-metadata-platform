@@ -22,7 +22,7 @@
               </div>
               <div class="buttons">
                 <a-button style="margin-right: 1em">
-                  <EditOutlined />
+                  <EditOutlined @click="handleEdit(item.id)" />
                 </a-button>
                 <a-button
                   :loading="isButtonLoading(item.id)"
@@ -85,6 +85,10 @@
     icon: PlusOutlined,
     status: 'activated',
     tooltip: 'Click here to create a new global plugin',
+  };
+
+  const handleEdit = (pluginId: number) => {
+    router.push({ path: '/settings/plugins/edit', query: { pluginId } });
   };
 
   //stores the plugins, that get deleted at the time

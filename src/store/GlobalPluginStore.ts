@@ -59,6 +59,13 @@ export const useGlobalPluginsStore = defineStore('globalPlugin', {
       }
     },
 
+    async fetchGlobalPlugin(pluginId: number) {
+      if (this.globalPlugins.length === 0) {
+        await this.fetchGlobalPlugins();
+      }
+      return this.globalPlugins.find((plugin) => plugin.id === pluginId);
+    },
+
     async deleteGlobalPlugin(pluginId: number) {
       try {
         this.setLoadingDelete(true);
@@ -70,6 +77,28 @@ export const useGlobalPluginsStore = defineStore('globalPlugin', {
         } else this.setRemovedSuccessfully(false);
       } finally {
         this.setLoadingDelete(false);
+      }
+    },
+
+    async createGlobalPlugin(plugin: Omit<GlobalPluginModel, 'id'>) {
+      try {
+        const response = await globalPluginService.createGlobalPlugin(plugin);
+        if (response && response.ok) {
+          this.fetchGlobalPlugins();
+        }
+      } catch (err) {
+        console.error('Error creating global plugin: ' + err);
+      }
+    },
+
+    async updateGlobalPlugin(plugin: GlobalPluginModel) {
+      try {
+        const response = await globalPluginService.updateGlobalPlugin(plugin);
+        if (response && response.ok) {
+          this.fetchGlobalPlugins();
+        }
+      } catch (err) {
+        console.error('Error updating global plugin: ' + err);
       }
     },
   },
