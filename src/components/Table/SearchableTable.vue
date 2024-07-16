@@ -239,7 +239,9 @@
           @change="
             (e: any) => setSelectedKeys(e.target.value ? [e.target.value] : [])
           "
-          @press-enter="handleSearch(selectedKeys, confirm, column.dataIndex)"
+          @press-enter="
+            handleSearch(selectedKeys[0], confirm, column.dataIndex)
+          "
         />
         <!-- Search button, filters table from input when clicked -->
         <a-button
