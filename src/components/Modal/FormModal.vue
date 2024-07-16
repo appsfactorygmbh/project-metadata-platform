@@ -2,12 +2,13 @@
   import { ref, toRaw } from 'vue';
   import { type FormStore } from '@/components/Form/FormStore';
 
-  const { formStore, title } = defineProps<{
+  const { formStore, title, initiallyOpen } = defineProps<{
     formStore: FormStore;
     title: string;
+    initiallyOpen?: boolean;
   }>();
 
-  const open = ref<boolean>(true); //TODO: set default to false after implementing button
+  const open = ref<boolean>(initiallyOpen ?? true);
 
   const emit = defineEmits(['close']);
 
