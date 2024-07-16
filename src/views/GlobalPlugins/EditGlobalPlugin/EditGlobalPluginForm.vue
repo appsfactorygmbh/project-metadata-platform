@@ -3,7 +3,6 @@
   import { notification } from 'ant-design-vue';
   import { globalPluginStoreSymbol } from '@/store/injectionSymbols';
   import { inject, reactive, onMounted } from 'vue';
-  //import type { CreatePluginModel } from '@/models/Plugin';
   import { type FormStore } from '@/components/Form';
   import { useRoute } from 'vue-router';
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
