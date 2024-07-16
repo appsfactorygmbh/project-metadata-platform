@@ -23,9 +23,9 @@
 
   const reloadEditStore = () => {
     if (pluginStore) {
-      for (let i = 0; i < pluginStore?.getPlugins.length; i++) {
-        projectEditStore?.initialAdd(pluginStore?.getPlugins[i]);
-      }
+      pluginStore?.getPlugins.forEach((plugin) => {
+        projectEditStore?.initialAdd(plugin);
+      });
     }
   };
 
@@ -72,8 +72,14 @@
       return;
     }
 
-    const updateProjectInformation: DetailedProjectModel | null =
-      projectStore?.getProject || null;
+    if (!projectStore?.getProject) {
+      console.log(
+        'Error when trying to get ProjectInformation. getProject is undefined',
+      );
+      return;
+    }
+    const updateProjectInformation: DetailedProjectModel =
+      projectStore?.getProject;
     const updatedProject: UpdateProjectModel = {
       projectName: updateProjectInformation?.projectName,
       businessUnit: updateProjectInformation?.businessUnit,

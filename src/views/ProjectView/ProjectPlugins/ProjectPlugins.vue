@@ -4,7 +4,7 @@
       <PluginComponent
         v-for="plugin in plugins"
         :id="plugin.id"
-        :key="plugin.displayName"
+        :key="plugin.id"
         class="plugins"
         :plugin-name="plugin.pluginName"
         :display-name="plugin.displayName"
@@ -54,11 +54,8 @@
     () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
   );
 
-  function setPlugins(newPlugins: PluginModel[]) {
-    const normalPlugins = toRaw(newPlugins);
-    projectEditStore?.resetChanges();
-    plugins.value = [];
-    // take the normal Plugins initialAdd them to the projectEditStore and add the editKey to the return value of initial Add to the plugin
+  // take the normal Plugins initialAdd them to the projectEditStore and add the editKey to the return value of initial Add to the plugin
+  const syncEditStore = (normalPlugins: PluginModel[]) => {
     for (let i = 0; i < normalPlugins.length; i++) {
       const index = projectEditStore?.initialAdd(normalPlugins[i]);
       if (index !== undefined) {
@@ -69,6 +66,13 @@
         };
       }
     }
+  };
+
+  function setPlugins(newPlugins: PluginModel[]) {
+    const normalPlugins = toRaw(newPlugins);
+    projectEditStore?.resetChanges();
+    plugins.value = [];
+    syncEditStore(normalPlugins);
   }
 
   watch(
@@ -79,16 +83,7 @@
       } else {
         plugins.value = [];
         projectEditStore?.resetChanges();
-        for (let i = 0; i < pluginStore.getPlugins.length; i++) {
-          const index = projectEditStore?.initialAdd(pluginStore.getPlugins[i]);
-          if (index !== undefined) {
-            plugins.value.push({
-              ...pluginStore.getPlugins[i],
-              editKey: index,
-              isDeleted: false,
-            });
-          }
-        }
+        syncEditStore(pluginStore.getPlugins);
       }
     },
   );

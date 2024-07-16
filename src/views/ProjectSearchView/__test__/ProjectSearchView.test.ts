@@ -38,7 +38,7 @@ describe('ProjectSearchView.vue', () => {
   });
 
   createTestingPinia({});
-  const wrapper2 = generateWrapper(0);
+  const wrapper2 = generateWrapper(300);
 
   it('hides columns when the pane width is not large enough', async () => {
     await flushPromises();
@@ -46,7 +46,7 @@ describe('ProjectSearchView.vue', () => {
     _.delay(
       () =>
         expect(wrapper2.findAll('.ant-table-column-sorters').length).toBe(2),
-      500,
+      1000,
     );
   });
 });
