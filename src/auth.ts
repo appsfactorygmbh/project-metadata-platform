@@ -16,7 +16,7 @@ const auth = createAuth({
     ...authService.refreshRequest,
     enabled: true, // refresh token in goto page
     enabledInBackground: true, // refresh token in background
-    interval: 14 * 60 * 1000, // 14 minutes of max 15 minutes
+    interval: 30, // 30 seconds of max 15 minutes
   },
   authRedirect: {
     path: '/login',

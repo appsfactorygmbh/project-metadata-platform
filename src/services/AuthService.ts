@@ -23,7 +23,7 @@ class AuthService {
       headers: {
         accept: 'text/plain',
         'Content-Type': 'application/json',
-        Authorize: 'Refresh',
+        Authorization: 'Refresh',
       },
       responseType: 'json',
     };
@@ -45,10 +45,7 @@ class AuthService {
     return {
       request(_, options, token) {
         const [accessToken, refreshToken] = (token || '|').split('|');
-        console.log('request', accessToken, refreshToken);
-        console.log('accessToken', accessToken);
-        console.log('refreshToken', refreshToken);
-        if (options.headers['Authorize'] === 'Refresh') {
+        if (options.headers['Authorization'] === 'Refresh') {
           options.headers['Authorization'] = `Refresh ${refreshToken}`;
         } else {
           options.headers['Authorization'] = `Bearer ${accessToken}`;
@@ -57,13 +54,9 @@ class AuthService {
       },
       response(auth, res) {
         let { accessToken, refreshToken } = res.data;
-        // console.log('accessToken', accessToken);
-        // console.log('refreshToken', refreshToken);
         if (!accessToken && !refreshToken) {
           [accessToken, refreshToken] = (auth.token() ?? '|').split('|');
         }
-        console.log('accessToken', accessToken);
-        console.log('refreshToken', refreshToken);
 
         if (accessToken && refreshToken) {
           return extractToken(accessToken) + '|' + extractToken(refreshToken);
