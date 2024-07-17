@@ -23,7 +23,7 @@ class AuthService {
       headers: {
         accept: 'text/plain',
         'Content-Type': 'application/json',
-        Authorization: "Refresh"
+        Authorize: 'Refresh',
       },
       responseType: 'json',
     };
@@ -31,26 +31,20 @@ class AuthService {
 
   get authDriver(): AuthDriver {
     return {
-      request(auth, options, token) {
+      request(_, options, token) {
+        const [accessToken, refreshToken] = (token || '|').split('|');
         if (options.headers['Authorization'] === 'Refresh') {
-          options.headers['Authorization'] = 'Refresh ' + token.split('|')[1];
-          return options;
+          options.headers['Authorization'] = `Refresh ${refreshToken}`;
+        } else {
+          options.headers['Authorization'] = `Bearer ${accessToken}`;
         }
-
-        options.headers['Authorization'] = 'Bearer ' + token.split('|')[0];
-
         return options;
       },
-      response(auth, res) {
-        const token = res.data.accessToken;
-        const refreshToken = res.data.refreshToken;
+      response(_, res) {
+        const { token, refreshToken } = res.data;
 
         if (token && refreshToken) {
-          const i = token.split(/Bearer:?\s?/i);
-
-          const result =  i[i.length > 1 ? 1 : 0].trim();
-
-          return result + "|" + refreshToken;
+          return extractToken(token) + '|' + extractToken(refreshToken);
         }
 
         return null;
@@ -58,6 +52,11 @@ class AuthService {
     };
   }
 }
+
+const extractToken = (token: string): [string, string] => {
+  const i = token.split(/Bearer:?\s?/i);
+  return [i[i.length > 1 ? 1 : 0].trim(), ''];
+};
 
 const authService = new AuthService();
 export type { AuthService };
