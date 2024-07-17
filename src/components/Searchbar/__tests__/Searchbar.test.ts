@@ -72,34 +72,40 @@ describe('SearchBar.vue', () => {
     await flushPromises();
 
     expect(router.currentRoute.value.query.searchQuery).toBe('Test1');
+    wrapper.unmount();
   });
 
-  it.todo(
-    'sets the default value and calls searchStore with query in URL',
-    async () => {
-      await router.push({
-        path: '/',
-        query: { searchQuery: 'Test2' },
-      });
-      await router.isReady();
+  it('sets the default value and calls searchStore with query in URL', async () => {
+    await router.push({
+      path: '/',
+      query: { searchQuery: 'Test2' },
+    });
+    await router.isReady();
 
-      const searchStore = useSearchStore('test');
-      const symbol = Symbol('searchStoreSym');
+    const wrapper = mount(SearchBar, {
+      global: {
+        plugins: [router],
+      },
+    });
 
-      const wrapper = mount(SearchBar, {
-        global: {
-          plugins: [createTestingPinia(), router],
-          provide: {
-            [symbol as symbol]: searchStore,
-          },
+    const input = wrapper.find('input');
+    await flushPromises();
+
+    expect(input.element.value).toBe('Test2');
+
+    const searchStore = useSearchStore('test');
+    const symbol = Symbol('searchStoreSym');
+
+    mount(SearchBar, {
+      global: {
+        plugins: [createTestingPinia(), router],
+        provide: {
+          [symbol as symbol]: searchStore,
         },
-        propsData: { searchStoreSymbol: symbol },
-      });
+      },
+      propsData: { searchStoreSymbol: symbol },
+    });
 
-      const input = wrapper.find('input');
-
-      expect(input.element.value).toBe('Test2');
-      expect(searchStore.setSearchQuery).toHaveBeenCalledWith('Test2');
-    },
-  );
+    expect(searchStore.setSearchQuery).toHaveBeenCalledWith('Test2');
+  });
 });

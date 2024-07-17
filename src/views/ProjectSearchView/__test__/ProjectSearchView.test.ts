@@ -23,7 +23,11 @@ interface ProjectSearchViewInstance {
 describe('ProjectSearchView.vue', () => {
   setActivePinia(createPinia());
 
-  const generateWrapper = (pWidth: number) => {
+  const generateWrapper = (
+    pWidth: number,
+    projectsStore = useProjectStore(),
+    pluginStore = usePluginsStore(),
+  ) => {
     return mount(ProjectSearchView, {
       plugins: [
         createTestingPinia({
@@ -32,8 +36,8 @@ describe('ProjectSearchView.vue', () => {
       ],
       global: {
         provide: {
-          [projectsStoreSymbol as symbol]: useProjectStore(),
-          [pluginStoreSymbol as symbol]: usePluginsStore(),
+          [projectsStoreSymbol as symbol]: projectsStore,
+          [pluginStoreSymbol as symbol]: pluginStore,
         },
         plugins: [router],
       },
@@ -76,22 +80,23 @@ describe('ProjectSearchView.vue', () => {
 
     wrapper.vm.handleRowClick(testProject);
     await flushPromises();
-
     expect(Number(router.currentRoute.value.query.projectId)).toBe(
       testProject.id,
     );
   });
 
-  it.todo('requests data with the project id given in the URL', async () => {
+  it('requests data with the project id given in the URL', async () => {
     await router.push({
       path: '/',
       query: { projectId: '300' },
     });
     await router.isReady();
+    createTestingPinia({});
 
     const projectStore = useProjectStore();
     const pluginStore = usePluginsStore();
     generateWrapper(800);
+    await flushPromises();
 
     expect(projectStore.fetchProject).toHaveBeenCalledWith(300);
     expect(pluginStore.fetchPlugins).toHaveBeenCalledWith(300);
