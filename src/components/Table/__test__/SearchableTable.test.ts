@@ -142,6 +142,24 @@ describe('SearchableTable.vue', () => {
     );
   });
 
+  it('reset the table when using the searchStore reset ', async () => {
+    const wrapper = generateWrapper();
+    await loadData();
+
+    expect(wrapper.findAll('.ant-table-row')).toHaveLength(1);
+    await wrapper.find('.ant-table-filter-trigger').trigger('click');
+
+    searchStore.reset();
+    await flushPromises();
+    expect(wrapper.findAll('.ant-table-row')).toHaveLength(2);
+    expect(
+      wrapper.findAll('.ant-table-row')[0]?.find('.ant-table-cell').text(),
+    ).toBe('C');
+    expect(
+      wrapper.findAll('.ant-table-row')[1]?.find('.ant-table-cell').text(),
+    ).toBe('A');
+  });
+
   it('adds a query when searching in a column and deleting it when pressing reset', async () => {
     const wrapper = generateWrapper();
 

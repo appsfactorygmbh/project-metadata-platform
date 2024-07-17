@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { describe, it, expect, vi } from 'vitest';
 import SearchBar from '../SearchBar.vue';
 import { useSearchStore } from '@/store';
@@ -52,10 +52,91 @@ describe('SearchBar.vue', () => {
     await input.setValue('Test');
 
     // wait for all asynchronous calls to complete
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
+    await flushPromises();
+    expect(searchStore.getSearchQuery).toEqual('Test');
+  });
 
-    expect(searchStore.setSearchQuery).toHaveBeenCalled();
+  it('reset the searchBar when using the searchStore reset ', async () => {
+    const searchStoreSymbol = Symbol('searchStoreSym');
+    const searchStore = useSearchStore('test');
+
+    const wrapper = mount(SearchBar, {
+      plugins: [
+        createTestingPinia({
+          stubActions: false,
+        }),
+      ],
+      global: {
+        provide: {
+          [searchStoreSymbol as symbol]: searchStore,
+        },
+      },
+      propsData: {
+        searchStoreSymbol: searchStoreSymbol,
+      },
+    });
+    const input = wrapper.find('input');
+
+    await input.setValue('C');
+    await flushPromises();
+    expect(searchStore.getSearchQuery).toEqual('C');
+    expect(input.element.value).toBe('C');
+
+    searchStore.reset();
+    await flushPromises();
+    expect(searchStore.getSearchQuery).toEqual('');
+    expect(input.element.value).toBe('');
+  });
+
+  it('add query to router when searching', async () => {
+    await router.isReady();
+
+    const wrapper = mount(SearchBar, {
+      global: {
+        plugins: [router],
+      },
+    });
+
+    const input = wrapper.find('input');
+    await input.setValue('Test1');
+    await flushPromises();
+
+    expect(router.currentRoute.value.query.searchQuery).toBe('Test1');
+    wrapper.unmount();
+  });
+
+  it('sets the default value and calls searchStore with query in URL', async () => {
+    await router.push({
+      path: '/',
+      query: { searchQuery: 'Test2' },
+    });
+    await router.isReady();
+
+    const wrapper = mount(SearchBar, {
+      global: {
+        plugins: [router],
+      },
+    });
+
+    const input = wrapper.find('input');
+    await flushPromises();
+
+    expect(input.element.value).toBe('Test2');
+
+    const searchStore = useSearchStore('test');
+    const symbol = Symbol('searchStoreSym');
+
+    mount(SearchBar, {
+      global: {
+        plugins: [createTestingPinia(), router],
+        provide: {
+          [symbol as symbol]: searchStore,
+        },
+      },
+      propsData: { searchStoreSymbol: symbol },
+    });
+
+    expect(searchStore.setSearchQuery).toHaveBeenCalledWith('Test2');
   });
 
   it('add query to router when searching', async () => {

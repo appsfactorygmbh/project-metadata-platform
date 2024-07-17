@@ -54,6 +54,11 @@ describe('ProjectSearchView.vue', () => {
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
   });
 
+  it('renders correctly with reset button', async () => {
+    const wrapper = generateWrapper(800);
+    expect(wrapper.find('.reset').exists()).toBe(true);
+  });
+
   it('hides columns when the pane width is not large enough', async () => {
     createTestingPinia({});
     const wrapper = generateWrapper(300);
