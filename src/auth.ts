@@ -16,8 +16,12 @@ const auth = createAuth({
     enabledInBackground: true, // refresh token in background
   },
   loginData: {
-    url: import.meta.env.VITE_BACKEND_URL + '/auth/basic',
+    url: import.meta.env.VITE_BACKEND_URL + '/Auth/basic',
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      accept: 'text/plain',
+    },
     fetchUser: false,
     remember: true,
     staySignedIn: false,

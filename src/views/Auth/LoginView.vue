@@ -14,8 +14,8 @@
     console.log(fields);
     auth
       .login({
-        body: {
-          email: fields.email,
+        data: {
+          username: fields.username,
           password: fields.password,
         },
         staySignedIn: fields.remember,
@@ -25,6 +25,7 @@
       })
       .catch((error) => {
         console.error(error);
+        formStore.updateField('password', '');
       });
   };
 

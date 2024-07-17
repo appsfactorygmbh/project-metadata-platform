@@ -2,8 +2,7 @@
   import type { FormStore } from '@/components/Form';
   import type { RulesObject } from '@/components/Form/types';
   import { defineProps, reactive, ref, type StyleValue } from 'vue';
-  import MailOutlined from '@ant-design/icons-vue/MailOutlined';
-  import LockOutlined from '@ant-design/icons-vue/LockOutlined';
+  import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
   import { useToken } from 'ant-design-vue/es/theme/internal';
 
   const { formStore } = defineProps<{
@@ -11,13 +10,13 @@
   }>();
 
   type LoginFormData = {
-    email: string;
+    username: string;
     password: string;
     remember: boolean;
   };
 
   const modelRef = reactive<LoginFormData>({
-    email: '',
+    username: '',
     password: '',
     remember: false,
   });
@@ -25,11 +24,11 @@
   const rulesRef = reactive<
     RulesObject<LoginFormData | Record<string, unknown>>
   >({
-    email: [
+    username: [
       {
-        type: 'string', // or 'email'
+        type: 'string', // or 'username'
         required: true,
-        message: 'Please enter a valid email address!',
+        message: 'Please enter a valid username address!',
         trigger: 'change',
       },
     ],
@@ -71,33 +70,14 @@
     layout="vertical"
     required-mark="optional"
   >
-    <a-form-item
-      name="username"
-      v-bind="formStore.validateInfos.email"
-      :rules="[
-        {
-          type: 'email',
-          required: true,
-          message: 'Please enter a valid email address!',
-        },
-      ]"
-    >
-      <a-input v-model:value="modelRef.email" placeholder="E-Mail">
+    <a-form-item name="username" v-bind="formStore.validateInfos.username">
+      <a-input v-model:value="modelRef.username" placeholder="Username">
         <template #prefix>
-          <MailOutlined />
+          <UserOutlined />
         </template>
       </a-input>
     </a-form-item>
-    <a-form-item
-      name="password"
-      v-bind="formStore.validateInfos.password"
-      :rules="[
-        {
-          required: true,
-          message: 'Please enter your password!',
-        },
-      ]"
-    >
+    <a-form-item name="password" v-bind="formStore.validateInfos.password">
       <a-input-password
         v-model:value="modelRef.password"
         type="password"
