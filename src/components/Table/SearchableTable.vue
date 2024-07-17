@@ -123,6 +123,21 @@
     filteredInfo[dataIndex] = state.searchText;
   }
 
+  // Function to check all columns before reset
+  function checkAllColumn(dataIndex: string | null) {
+    if (columns.value) {
+      columns.value.forEach((column) => {
+        if (column.key) {
+          if (dataIndex) {
+            if (dataIndex == column.key) filteredInfo[dataIndex] = '';
+          } else {
+            filteredInfo[column.key] = '';
+          }
+        }
+      });
+    }
+  }
+
   /**
    * Resets the filtered search in target column.
    * @param {((param?: FilterResetProps) => void)} clearFilters Clears the filter, when confirmed.
@@ -132,15 +147,7 @@
     dataIndex: string,
   ) {
     clearFilters({ confirm: true });
-
-    if (columns.value) {
-      columns.value.forEach((column) => {
-        const key = column.key;
-
-        if (key && dataIndex == key) filteredInfo[key] = '';
-      });
-    }
-
+    checkAllColumn(dataIndex);
     state.searchText = '';
   }
 
@@ -148,13 +155,7 @@
   const handleClearAll = () => {
     state.searchText = '';
     state.searchedColumn = '';
-
-    if (columns.value) {
-      columns.value.forEach((column) => {
-        const key = column.key;
-        if (key) filteredInfo[key] = '';
-      });
-    }
+    checkAllColumn(null);
   };
 
   searchStore?.setOnReset(handleClearAll);

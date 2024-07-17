@@ -98,12 +98,15 @@
     <a-flex vertical gap="middle">
       <a-span>
         <SearchBar :search-store-symbol="searchStoreSymbol" />
-        <a-button class="reset" @click="clearAllFilters">
-          <template #icon>
-            <UndoOutlined class="icons" />
-          </template>
-        </a-button>
+        <a-tooltip placement="left" title="Click here to reset all filters">
+          <a-button class="reset" @click="clearAllFilters">
+            <template #icon>
+              <UndoOutlined class="icons" />
+            </template>
+          </a-button>
+        </a-tooltip>
       </a-span>
+
       <SearchableTable
         :search-store-symbol="searchStoreSymbol"
         :pane-height="props.paneHeight"
