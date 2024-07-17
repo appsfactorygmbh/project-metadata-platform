@@ -9,6 +9,9 @@
   import ProjectView from '../ProjectView/ProjectView.vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { RightOutlined } from '@ant-design/icons-vue';
+  import { useEditing } from '@/utils/hooks/useEditing';
+
+  const { isEditing } = useEditing();
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
@@ -40,7 +43,7 @@
         <ProjectView />
         <FloatingButton :button="splitButton" class="button" />
         <MenuButtons />
-        <CreateProjectView />
+        <CreateProjectView v-if="!isEditing" />
       </pane>
     </splitpanes>
   </div>
@@ -57,6 +60,8 @@
 
   .rightPane {
     position: relative;
+    max-height: 100vh; /* Set a maximum height */
+    overflow-y: auto; /* Enable vertical scrolling */
   }
 
   .button {

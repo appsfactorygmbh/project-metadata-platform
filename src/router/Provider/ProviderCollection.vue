@@ -3,17 +3,20 @@
     ProjectProvider,
     PluginProvider,
     GlobalPluginProvider,
+    ProjectEditProvider,
   } from '@/router/Provider';
 </script>
 
 <template>
-  <GlobalPluginProvider>
-    <PluginProvider>
-      <ProjectProvider>
-        <slot>
-          <RouterView></RouterView>
-        </slot>
-      </ProjectProvider>
-    </PluginProvider>
-  </GlobalPluginProvider>
+  <ProjectEditProvider>
+    <GlobalPluginProvider>
+      <PluginProvider>
+        <ProjectProvider>
+          <slot>
+            <RouterView></RouterView>
+          </slot>
+        </ProjectProvider>
+      </PluginProvider>
+    </GlobalPluginProvider>
+  </ProjectEditProvider>
 </template>
