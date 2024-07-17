@@ -1,27 +1,35 @@
 <script setup lang="ts">
   import { type FormSubmitType } from '@/components/Form';
   import { notification } from 'ant-design-vue';
-  import { pluginStoreSymbol } from '@/store/injectionSymbols';
+  import { globalPluginStoreSymbol } from '@/store/injectionSymbols';
   import { inject, reactive, onMounted } from 'vue';
-  //import type { CreatePluginModel } from '@/models/Plugin';
   import { type FormStore } from '@/components/Form';
   import { useRoute } from 'vue-router';
-  import { pluginService } from '@/services';
+  import type { GlobalPluginKey } from '@/models/Plugin/GlobalPluginModel';
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
   import type { GlobalPluginFormData } from '../GlobalPluginForm';
+  import type { GlobalPluginModel } from '@/models/Plugin';
 
   const { formStore } = defineProps<{
     formStore: FormStore;
   }>();
 
-  const pluginStore = inject(pluginStoreSymbol);
+  const globalPluginStore = inject(globalPluginStoreSymbol);
 
   const [notificationApi, contextHolder] = notification.useNotification();
 
   const onSubmit: FormSubmitType = (fields) => {
     try {
       console.log(fields);
-      pluginStore?.createPlugin(fields);
+      const globalPluginData: GlobalPluginModel = {
+        id: fields.id,
+        name: fields.pluginName,
+        keys: fields.GlobalPluginKeys.map((key: GlobalPluginKey) => ({
+          key: key.value,
+        })),
+        archived: false,
+      };
+      globalPluginStore?.patchGlobalPlugin(globalPluginData);
     } catch {
       notificationApi.error({
         message: 'An error occurred. The plugin could not be created',
@@ -42,12 +50,15 @@
       const numericPluginId = parseInt(pluginId, 10);
       if (!isNaN(numericPluginId)) {
         const globalPluginData =
-          await pluginService.fetchGlobalPluginData(numericPluginId);
-        initialValues.pluginName = globalPluginData.pluginName;
-        initialValues.keys = globalPluginData.keys.map((keyObj, index) => ({
-          key: index,
-          value: keyObj.key as string,
-        }));
+          await globalPluginStore?.getGlobalPluginById(numericPluginId);
+        if (globalPluginData) {
+          initialValues.pluginName = globalPluginData.name;
+          initialValues.keys =
+            globalPluginData.keys?.map((keyObj, index) => ({
+              key: index, // No need to convert to string, but if needed elsewhere, use String(index)
+              value: keyObj.key as unknown as string,
+            })) ?? [];
+        }
       }
     }
   });
