@@ -26,6 +26,7 @@
 
   onMounted(async () => {
     await projectsStore;
+
     if (route.query.projectId) {
       await redirectToSlag(String(route.query.projectId));
     }

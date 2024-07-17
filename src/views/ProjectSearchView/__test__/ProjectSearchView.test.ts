@@ -80,6 +80,7 @@ describe('ProjectSearchView.vue', () => {
 
     wrapper.vm.handleRowClick(testProject);
     await flushPromises();
+
     expect(Number(router.currentRoute.value.query.projectId)).toBe(
       testProject.id,
     );

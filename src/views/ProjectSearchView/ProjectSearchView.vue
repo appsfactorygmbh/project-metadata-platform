@@ -95,10 +95,8 @@
   );
 
   const handleRowClick = (project: ProjectModel) => {
+    if (isEditing) stopEditing();
     setProjectId(project.id);
-    if (isEditing) {
-      stopEditing();
-    }
   };
 
   onMounted(async () => {
