@@ -8,6 +8,7 @@
   import { useSearchStore, type SearchStore } from '@/store/SearchStore';
   import type { ProjectModel } from '@/models/Project';
   import { projectsService } from '@/services';
+  import { useEditing } from '@/utils/hooks/useEditing';
   import _ from 'lodash';
   import { useWindowSize } from '@vueuse/core';
   import { UndoOutlined } from '@ant-design/icons-vue';
@@ -23,6 +24,8 @@
     },
   });
 
+  const { stopEditing, isEditing } = useEditing();
+
   const projectsStore = inject(projectsStoreSymbol)!;
   const pluginStore = inject(pluginStoreSymbol);
   const searchStore = useSearchStore<ProjectModel>('projects');
@@ -30,6 +33,13 @@
 
   const isLoading = computed(() => projectsStore?.getIsLoadingProjects);
   provide<SearchStore>(searchStoreSymbol, searchStore);
+
+  watch(
+    () => projectsStore.getProjects,
+    () => {
+      searchStore.setBaseSet(projectsStore.getProjects);
+    },
+  );
 
   const FETCHING_METHOD: 'FRONTEND' | 'BACKEND' = import.meta.env
     .VITE_PROJECT_SEARCH_METHOD;
@@ -76,6 +86,10 @@
 
   const handleRowClick = (project: ProjectModel) => {
     projectsStore?.fetchProject(project.id);
+    pluginStore?.fetchPlugins(project.id);
+    if (isEditing) {
+      stopEditing();
+    }
   };
 
   onMounted(async () => {

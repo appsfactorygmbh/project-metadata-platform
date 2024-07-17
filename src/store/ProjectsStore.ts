@@ -3,7 +3,9 @@ import type {
   ProjectModel,
   DetailedProjectModel,
   CreateProjectModel,
+  UpdateProjectModel,
 } from '@/models/Project';
+
 import { defineStore } from 'pinia';
 
 type StoreState = {
@@ -92,6 +94,23 @@ export const useProjectStore = defineStore('project', {
           this.fetchProjects();
           this.setAddedSuccessfully(true);
         } else this.setAddedSuccessfully(false);
+      } finally {
+        this.setLoadingAdd(false);
+      }
+    },
+
+    async updateProject(projectData: UpdateProjectModel, id: number) {
+      try {
+        this.setLoadingAdd(true);
+        this.setAddedSuccessfully(false);
+        const response = await projectsService.updateProject(projectData, id);
+        console.log(response);
+        if (response && response?.ok) {
+          this.setAddedSuccessfully(true);
+          await this.fetchProject(id);
+        } else {
+          this.setAddedSuccessfully(false);
+        }
       } finally {
         this.setLoadingAdd(false);
       }

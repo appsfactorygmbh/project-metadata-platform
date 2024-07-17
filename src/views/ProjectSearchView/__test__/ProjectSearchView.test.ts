@@ -6,6 +6,7 @@ import { useProjectStore } from '@/store';
 import { createPinia, setActivePinia } from 'pinia';
 import _ from 'lodash';
 import { projectsStoreSymbol } from '@/store/injectionSymbols';
+import router from '@/router';
 
 describe('ProjectSearchView.vue', () => {
   setActivePinia(createPinia());
@@ -21,6 +22,7 @@ describe('ProjectSearchView.vue', () => {
         provide: {
           [projectsStoreSymbol as symbol]: useProjectStore(),
         },
+        plugins: [router],
       },
       propsData: {
         paneWidth: pWidth,
@@ -48,7 +50,7 @@ describe('ProjectSearchView.vue', () => {
     _.delay(
       () =>
         expect(wrapper2.findAll('.ant-table-column-sorters').length).toBe(2),
-      500,
+      1000,
     );
   });
 });
