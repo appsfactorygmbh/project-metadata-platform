@@ -33,7 +33,7 @@ class AuthService {
     return {
       request(_, options, token) {
         const [accessToken, refreshToken] = (token || '|').split('|');
-        if (options.headers['Authorization'] === 'Refresh') {
+        if (options.headers['Authorize'] === 'Refresh') {
           options.headers['Authorization'] = `Refresh ${refreshToken}`;
         } else {
           options.headers['Authorization'] = `Bearer ${accessToken}`;
@@ -41,10 +41,10 @@ class AuthService {
         return options;
       },
       response(_, res) {
-        const { token, refreshToken } = res.data;
+        const { accessToken, refreshToken } = res.data;
 
-        if (token && refreshToken) {
-          return extractToken(token) + '|' + extractToken(refreshToken);
+        if (accessToken && refreshToken) {
+          return extractToken(accessToken) + '|' + extractToken(refreshToken);
         }
 
         return null;
