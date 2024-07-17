@@ -5,7 +5,6 @@ import type { GlobalPluginModel, GlobalPluginKey } from './GlobalPluginModel';
 export type {
   PluginModel,
   GlobalPluginModel,
-  UpdatePluginModel,
   PluginEditModel,
   GlobalPluginKey,
 };
