@@ -1,6 +1,9 @@
 <script lang="ts" setup>
   import { inject, onMounted, toRaw } from 'vue';
-  import { projectsStoreSymbol, projectEditStoreSymbol } from '@/store/injectionSymbols';
+  import {
+    projectsStoreSymbol,
+    projectEditStoreSymbol,
+  } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
@@ -42,15 +45,15 @@
     () => isEditing.value,
     (newVal) => {
       if (!newVal) {
-        projectEditStore.resetPluginChanges()
+        projectEditStore.resetPluginChanges();
         BUInputStatus.value = '';
         teamNumberInputStatus.value = '';
         departmentInputStatus.value = '';
         clientNameInputStatus.value = '';
+        addData(projectsStore.getProject!);
       }
     },
   );
-
 
   const toggleEditingMode = () => {
     if (isEditing.value === true) {
@@ -74,11 +77,10 @@
   const departmentInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
   const clientNameInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
 
-  const BUInput = ref(projectData.businessUnit)
-  const teamNumberInput = ref(projectData.teamNumber)
-  const departmentInput = ref(projectData.department)
-  const clientNameInput = ref(projectData.clientName)
-
+  const BUInput = ref(projectData.businessUnit);
+  const teamNumberInput = ref(projectData.teamNumber);
+  const departmentInput = ref(projectData.department);
+  const clientNameInput = ref(projectData.clientName);
 
   //Function to update the project information
   function updateProjectInformation(): void {
@@ -90,13 +92,14 @@
       department: departmentInput.value,
       clientName: clientNameInput.value,
     };
-    console.log("project updates: ", updatedProject)
+    console.log('project updates: ', updatedProject);
     projectEditStore.updateProjectInformationChanges(updatedProject);
   }
 
   //Function to load the data from projectViewService to projectView
   function addData(loadedData: DetailedProjectModel) {
-    if(projectsStore.getProject) projectEditStore.setProjectInformation(projectsStore.getProject)
+    if (projectsStore.getProject)
+      projectEditStore.setProjectInformation(projectsStore.getProject);
     projectData.id.value = loadedData.id;
     projectData.projectName.value = loadedData.projectName;
     projectData.businessUnit.value = loadedData.businessUnit;
@@ -104,7 +107,6 @@
     projectData.department.value = loadedData.department;
     projectData.clientName.value = loadedData.clientName;
   }
-
 </script>
 
 <template>
@@ -149,15 +151,19 @@
               v-else
               v-model:value="BUInput"
               class="inputField"
-              :status = "BUInputStatus"
+              :status="BUInputStatus"
               @input="updateProjectInformation"
-              @change="() => {if(!BUInput){
-                  BUInputStatus = 'error'
-                  projectEditStore.addEmptyProjectInformationField('BU')
-                } else {
-                  BUInputStatus = '';
-                  projectEditStore.removeEmptyProjectInformationField('BU')
-                }}"
+              @change="
+                () => {
+                  if (!BUInput) {
+                    BUInputStatus = 'error';
+                    projectEditStore.addEmptyProjectInformationField('BU');
+                  } else {
+                    BUInputStatus = '';
+                    projectEditStore.removeEmptyProjectInformationField('BU');
+                  }
+                }
+              "
             />
           </template>
           <a-skeleton
@@ -184,15 +190,23 @@
               <a-input
                 v-model:value="teamNumberInput"
                 class="inputField"
-                :status = "teamNumberInputStatus"
+                :status="teamNumberInputStatus"
                 @input="updateProjectInformation"
-                @change="() => {if(!teamNumberInput){
-                  teamNumberInputStatus = 'error'
-                  projectEditStore.addEmptyProjectInformationField('teamNumber')
-                } else {
-                  teamNumberInputStatus = '';
-                  projectEditStore.removeEmptyProjectInformationField('teamNumber')
-                }}"
+                @change="
+                  () => {
+                    if (!teamNumberInput || isNaN(teamNumberInput)) {
+                      teamNumberInputStatus = 'error';
+                      projectEditStore.addEmptyProjectInformationField(
+                        'teamNumber',
+                      );
+                    } else {
+                      teamNumberInputStatus = '';
+                      projectEditStore.removeEmptyProjectInformationField(
+                        'teamNumber',
+                      );
+                    }
+                  }
+                "
               />
             </a-form-item>
           </template>
@@ -220,15 +234,23 @@
               v-else
               v-model:value="departmentInput"
               class="inputField"
-              :status = "departmentInputStatus"
+              :status="departmentInputStatus"
               @input="updateProjectInformation"
-              @change="() => {if(!departmentInput){
-                  departmentInputStatus = 'error'
-                  projectEditStore.addEmptyProjectInformationField('department')
-                } else {
-                  departmentInputStatus = '';
-                  projectEditStore.removeEmptyProjectInformationField('department')
-                }}"
+              @change="
+                () => {
+                  if (!departmentInput) {
+                    departmentInputStatus = 'error';
+                    projectEditStore.addEmptyProjectInformationField(
+                      'department',
+                    );
+                  } else {
+                    departmentInputStatus = '';
+                    projectEditStore.removeEmptyProjectInformationField(
+                      'department',
+                    );
+                  }
+                }
+              "
             />
           </template>
           <a-skeleton
@@ -255,15 +277,23 @@
               v-else
               v-model:value="clientNameInput"
               class="inputField"
-              :status = "clientNameInputStatus"
+              :status="clientNameInputStatus"
               @input="updateProjectInformation"
-              @change="() => {if(!clientNameInput){
-                  clientNameInputStatus = 'error'
-                  projectEditStore.addEmptyProjectInformationField('clientName')
-                } else {
-                  clientNameInputStatus = '';
-                  projectEditStore.removeEmptyProjectInformationField('clientName')
-                }}"
+              @change="
+                () => {
+                  if (!clientNameInput) {
+                    clientNameInputStatus = 'error';
+                    projectEditStore.addEmptyProjectInformationField(
+                      'clientName',
+                    );
+                  } else {
+                    clientNameInputStatus = '';
+                    projectEditStore.removeEmptyProjectInformationField(
+                      'clientName',
+                    );
+                  }
+                }
+              "
             />
           </template>
           <a-skeleton

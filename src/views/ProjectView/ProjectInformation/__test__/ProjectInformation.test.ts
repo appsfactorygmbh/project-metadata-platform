@@ -3,10 +3,12 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import ProjectInformation from '../ProjectInformation.vue';
 import { createTestingPinia } from '@pinia/testing';
-import { projectsStoreSymbol } from '@/store/injectionSymbols';
-import { useProjectStore } from '@/store';
+import {
+  projectsStoreSymbol,
+  projectEditStoreSymbol,
+} from '@/store/injectionSymbols';
+import { useProjectStore, useProjectEditStore } from '@/store';
 import router from '@/router';
-import {useEditing} from '@/utils/hooks/useEditing';
 
 const testData = {
   projectName: 'Heute Show',
@@ -18,9 +20,6 @@ const testData = {
 
 describe('ProjectInformationView.vue', () => {
   setActivePinia(createPinia());
-
-  const {stopEditing} = useEditing()
-  stopEditing()
 
   it('renders the project information correctly', async () => {
     const wrapper = mount(ProjectInformation, {
@@ -42,13 +41,12 @@ describe('ProjectInformationView.vue', () => {
         },
         plugins: [router],
         provide: {
+          [projectEditStoreSymbol as symbol]: useProjectEditStore(),
           [projectsStoreSymbol as symbol]: useProjectStore(),
         },
       },
     });
     await flushPromises();
-
-    console.log(wrapper.findAll('.projectInfo'))
 
     expect(wrapper.find('.projectName').text()).toBe('Heute Show');
     expect(wrapper.findAll('.projectInfo')[0].text()).toBe('BU Health');

@@ -5,7 +5,7 @@ import type { DetailedProjectModel } from '@/models/Project';
 
 type StoreState = {
   pluginChanges: Map<number, PluginEditModel>;
-  projectInformationChanges: DetailedProjectModel
+  projectInformationChanges: DetailedProjectModel;
   canBeCreated: boolean;
   pluginsWithUrlConflicts: number[][];
   duplicatedUrls: Map<string, number[]>;
@@ -44,7 +44,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
     },
     // Return all Projectinformation changes (not implemented in this branch)
     getProjectInformationChanges(): DetailedProjectModel {
-      console.log("current projectinformation", this.projectInformationChanges)
+      console.log('current projectinformation', this.projectInformationChanges);
       return this.projectInformationChanges;
     },
     // Returns all Plugins that have URL conflicts (two or more Plugins have the same URL)
@@ -55,8 +55,17 @@ export const useProjectEditStore = defineStore('projectEdit', {
     },
     // Returns whether the Project can be created (no URL conflicts and no empty fields)
     getCanBeAdded(): boolean {
-      console.log("getCanBeAdded", this.getPluginsWithUrlConflicts.length, this.emptyUrlFields.size, this.emptyDisplaynameFields.size, this.projectInformationChanges.projectName, this.projectInformationChanges.clientName, this.projectInformationChanges.businessUnit, this.projectInformationChanges.teamNumber)
-      console.log(this.projectInformationChanges)
+      console.log(
+        'getCanBeAdded',
+        this.getPluginsWithUrlConflicts.length,
+        this.emptyUrlFields.size,
+        this.emptyDisplaynameFields.size,
+        this.projectInformationChanges.projectName,
+        this.projectInformationChanges.clientName,
+        this.projectInformationChanges.businessUnit,
+        this.projectInformationChanges.teamNumber,
+      );
+      console.log(this.projectInformationChanges);
       return (
         this.getPluginsWithUrlConflicts.length === 0 &&
         this.emptyUrlFields.size === 0 &&
@@ -81,15 +90,15 @@ export const useProjectEditStore = defineStore('projectEdit', {
     },
 
     removeEmptyProjectInformationField(prop: string): void {
-      if(this.emptyProjectInformationFields.has(prop)) {
+      if (this.emptyProjectInformationFields.has(prop)) {
         this.emptyProjectInformationFields.delete(prop);
       }
     },
 
     setProjectInformation(project: DetailedProjectModel): void {
       this.emptyProjectInformationFields.clear();
-      this.projectInformationChanges = {...project}
-      console.log(this.projectInformationChanges.clientName)
+      this.projectInformationChanges = { ...project };
+      console.log(this.projectInformationChanges.clientName);
     },
 
     // Updates the Projectinformation changes

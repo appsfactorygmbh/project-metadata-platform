@@ -44,12 +44,12 @@
     stopEditing();
   };
 
-  const isAdding = computed(() => projectStore?.getIsLoadingAdd);
+  const isAdding = computed(() => projectStore?.getIsLoadingUpdate);
 
   // Watcher to see if fetch was successful
   watch(isAdding, (newVal) => {
     if (!newVal) {
-      if (projectStore?.getAddedSuccessfully) {
+      if (projectStore?.getUpdatedSuccessfully) {
         projectEditStore?.resetPluginChanges();
         message.success('Project updated successfully.', 7);
         projectStore.fetchProject(projectStore.getProject?.id || 0);
@@ -79,7 +79,8 @@
       );
       return;
     }
-    const updateProjectInformation: DetailedProjectModel = projectEditStore.getProjectInformationChanges;
+    const updateProjectInformation: DetailedProjectModel =
+      projectEditStore.getProjectInformationChanges;
     const updatedProject: UpdateProjectModel = {
       projectName: updateProjectInformation?.projectName,
       businessUnit: updateProjectInformation?.businessUnit,

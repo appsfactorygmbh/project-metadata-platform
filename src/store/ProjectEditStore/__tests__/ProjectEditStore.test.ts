@@ -145,7 +145,7 @@ describe('ProjectEditStore', () => {
       businessUnit: 'Test Business Unit',
       teamNumber: 1,
       department: 'Test Department',
-    })
+    });
 
     expect(store.getCanBeAdded).toBe(false);
 
@@ -155,8 +155,8 @@ describe('ProjectEditStore', () => {
       clientName: 'Test Client',
       businessUnit: 'Test Business Unit',
       teamNumber: 1,
-      department: 'Test Department'
-    })
+      department: 'Test Department',
+    });
 
     store.setProjectInformation({
       id: 1,
@@ -165,7 +165,7 @@ describe('ProjectEditStore', () => {
       businessUnit: 'Test Business Unit',
       teamNumber: 1,
       department: 'Test Department',
-    })
+    });
 
     expect(store.getCanBeAdded).toBe(true);
 
