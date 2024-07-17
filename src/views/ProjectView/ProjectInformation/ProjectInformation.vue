@@ -42,7 +42,7 @@
     () => isEditing.value,
     (newVal) => {
       if (!newVal) {
-        projectEditStore.resetChanges()
+        projectEditStore.resetPluginChanges()
         BUInputStatus.value = '';
         teamNumberInputStatus.value = '';
         departmentInputStatus.value = '';
@@ -96,9 +96,7 @@
 
   //Function to load the data from projectViewService to projectView
   function addData(loadedData: DetailedProjectModel) {
-    console.log("running add Data")
-    if(projectsStore.getProject) projectEditStore.setInitialProjectInformation(projectsStore.getProject)
-    console.log("consolelog für information change", projectEditStore.getProjectInformationChanges)
+    if(projectsStore.getProject) projectEditStore.setProjectInformation(projectsStore.getProject)
     projectData.id.value = loadedData.id;
     projectData.projectName.value = loadedData.projectName;
     projectData.businessUnit.value = loadedData.businessUnit;

@@ -33,13 +33,13 @@
     () => isEditing,
     (newVal) => {
       if (newVal) {
-        projectEditStore?.resetChanges();
+        projectEditStore?.resetPluginChanges();
       }
     },
   );
 
   const cancelEdit = () => {
-    projectEditStore?.resetChanges();
+    projectEditStore?.resetPluginChanges();
     reloadEditStore();
     stopEditing();
   };
@@ -50,7 +50,7 @@
   watch(isAdding, (newVal) => {
     if (!newVal) {
       if (projectStore?.getAddedSuccessfully) {
-        projectEditStore?.resetChanges();
+        projectEditStore?.resetPluginChanges();
         message.success('Project updated successfully.', 7);
         projectStore.fetchProject(projectStore.getProject?.id || 0);
         stopEditing();

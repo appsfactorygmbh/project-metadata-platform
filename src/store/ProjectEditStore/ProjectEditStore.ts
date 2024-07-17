@@ -86,7 +86,8 @@ export const useProjectEditStore = defineStore('projectEdit', {
       }
     },
 
-    setInitialProjectInformation(project: DetailedProjectModel): void {
+    setProjectInformation(project: DetailedProjectModel): void {
+      this.emptyProjectInformationFields.clear();
       this.projectInformationChanges = {...project}
       console.log(this.projectInformationChanges.clientName)
     },
@@ -111,21 +112,12 @@ export const useProjectEditStore = defineStore('projectEdit', {
     },
 
     // Resets all changes made to the Plugins and Projectinformation
-    resetChanges(): void {
+    resetPluginChanges(): void {
       this.pluginChanges.clear();
-      this.projectInformationChanges = {
-        id: -1,
-        projectName: '',
-        clientName: '',
-        businessUnit: '',
-        teamNumber: -1,
-        department: '',
-      };
       this.canBeCreated = true;
       this.pluginsWithUrlConflicts = [];
       this.emptyUrlFields.clear();
       this.emptyDisplaynameFields.clear();
-      this.emptyProjectInformationFields.clear();
     },
 
     // Checks for URL conflicts between Plugins

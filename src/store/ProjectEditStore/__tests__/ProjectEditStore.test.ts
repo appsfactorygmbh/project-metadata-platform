@@ -13,7 +13,14 @@ describe('ProjectEditStore', () => {
 
   it('initializes with default state', () => {
     expect(store.pluginChanges.size).toBe(0);
-    expect(store.projectInformationChanges).toEqual([]);
+    expect(store.projectInformationChanges).toEqual({
+      id: -1,
+      projectName: '',
+      clientName: '',
+      businessUnit: '',
+      teamNumber: -1,
+      department: '',
+    });
     expect(store.canBeCreated).toBe(true);
     expect(store.pluginsWithUrlConflicts).toEqual([]);
     expect(store.duplicatedUrls.size).toBe(0);
@@ -39,12 +46,11 @@ describe('ProjectEditStore', () => {
     expect(store.emptyDisplaynameFields.has(1)).toBe(false);
   });
 
-  it('resets changes correctly', () => {
+  it('resets plugin changes correctly', () => {
     store.addEmptyUrlField(1);
     store.addEmptyDisplaynameField(1);
-    store.resetChanges();
+    store.resetPluginChanges();
     expect(store.pluginChanges.size).toBe(0);
-    expect(store.projectInformationChanges).toEqual([]);
     expect(store.canBeCreated).toBe(true);
     expect(store.pluginsWithUrlConflicts).toEqual([]);
     expect(store.duplicatedUrls.size).toBe(0);
@@ -108,7 +114,14 @@ describe('ProjectEditStore', () => {
   });
 
   it('computes getters correctly', () => {
-    expect(store.getProjectInformationChanges).toEqual([]);
+    expect(store.getProjectInformationChanges).toEqual({
+      id: -1,
+      projectName: '',
+      clientName: '',
+      businessUnit: '',
+      teamNumber: -1,
+      department: '',
+    });
 
     const plugin: PluginModel = {
       id: 1,
@@ -125,6 +138,35 @@ describe('ProjectEditStore', () => {
   });
 
   it('computes canBeAdded correctly', () => {
+    store.setProjectInformation({
+      id: 1,
+      projectName: '',
+      clientName: '',
+      businessUnit: 'Test Business Unit',
+      teamNumber: 1,
+      department: 'Test Department',
+    })
+
+    expect(store.getCanBeAdded).toBe(false);
+
+    store.updateProjectInformationChanges({
+      id: 1,
+      projectName: 'Test Project',
+      clientName: 'Test Client',
+      businessUnit: 'Test Business Unit',
+      teamNumber: 1,
+      department: 'Test Department'
+    })
+
+    store.setProjectInformation({
+      id: 1,
+      projectName: 'Test Project',
+      clientName: 'Test Client',
+      businessUnit: 'Test Business Unit',
+      teamNumber: 1,
+      department: 'Test Department',
+    })
+
     expect(store.getCanBeAdded).toBe(true);
 
     store.addEmptyUrlField(1);
@@ -159,10 +201,50 @@ describe('ProjectEditStore', () => {
       clientName: 'Test Client',
       businessUnit: 'Test Business Unit',
       teamNumber: 1,
+      department: 'Test Department',
     };
     store.updateProjectInformationChanges(project);
     expect(store.getProjectInformationChanges).toEqual(project);
   });
+  it('sets project information correctly', () => {
+    const store = useProjectEditStore();
+    const projectInfo = {
+      id: 1,
+      projectName: 'New Project',
+      clientName: 'New Client',
+      businessUnit: 'New Unit',
+      teamNumber: 2,
+      department: 'New Department',
+    };
+    store.setProjectInformation(projectInfo);
+    expect(store.projectInformationChanges).toEqual(projectInfo);
+    expect(store.emptyProjectInformationFields.size).toBe(0);
+  });
 
-  // write tests for the getCanBeAdded getter
+  it('updates project information changes correctly', () => {
+    const store = useProjectEditStore();
+    const updatedProjectInfo = {
+      id: 1,
+      projectName: 'Updated Project',
+      clientName: 'Updated Client',
+      businessUnit: 'Updated Unit',
+      teamNumber: 3,
+      department: 'Updated Department',
+    };
+    store.updateProjectInformationChanges(updatedProjectInfo);
+    expect(store.projectInformationChanges).toEqual(updatedProjectInfo);
+  });
+
+  it('adds empty project information field correctly', () => {
+    const store = useProjectEditStore();
+    store.addEmptyProjectInformationField('projectName');
+    expect(store.emptyProjectInformationFields.has('projectName')).toBe(true);
+  });
+
+  it('removes empty project information field correctly', () => {
+    const store = useProjectEditStore();
+    store.addEmptyProjectInformationField('projectName');
+    store.removeEmptyProjectInformationField('projectName');
+    expect(store.emptyProjectInformationFields.has('projectName')).toBe(false);
+  });
 });

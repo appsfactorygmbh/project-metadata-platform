@@ -78,7 +78,7 @@ describe('PluginComponent.vue', () => {
       pluginName: 'Test Plugin',
     };
     const projectEditStore = useProjectEditStore();
-    projectEditStore.resetChanges();
+    projectEditStore.resetPluginChanges();
     const index = projectEditStore.initialAdd(testPlugin);
 
     const wrapper = mount(PluginComponent, {
