@@ -13,6 +13,7 @@ const auth = createAuth({
     http: driverHttpAxios,
   },
   refreshToken: {
+    ...authService.refreshRequest(),
     enabled: false, // refresh token in goto page
     enabledInBackground: true, // refresh token in background
   },
@@ -28,7 +29,6 @@ const auth = createAuth({
     remember: true,
     staySignedIn: false,
   },
-  // cookie: {},
 });
 
 export default auth;

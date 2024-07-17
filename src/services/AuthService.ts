@@ -15,6 +15,17 @@ class AuthService {
       responseType: 'text',
     };
   };
+
+  refreshRequest = (): RequestConfig => {
+    return {
+      url: import.meta.env.VITE_BACKEND_URL + '/Auth/refresh',
+      method: 'GET',
+      headers: {
+        accept: 'text/plain',
+      },
+      responseType: 'text',
+    };
+  };
 }
 
 const authService = new AuthService();
