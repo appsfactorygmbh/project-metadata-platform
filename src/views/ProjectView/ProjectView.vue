@@ -42,6 +42,10 @@
     projectEditStore?.resetChanges();
     reloadEditStore();
     stopEditing();
+    const projectID = computed(() => projectStore?.getProject?.id);
+    if (projectID.value) {
+      pluginStore?.fetchPlugins(projectID.value);
+    }
   };
 
   const isAdding = computed(() => projectStore?.getIsLoadingAdd);
