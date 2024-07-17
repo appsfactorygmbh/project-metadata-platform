@@ -1,7 +1,7 @@
 import { createAuth } from 'vue-auth3';
 import router from '@/router';
 import driverAuthBearer from 'vue-auth3/drivers/auth/bearer';
-import driverHttpFetch from 'vue-auth3/drivers/http/fetch';
+import driverHttpAxios from 'vue-auth3/drivers/http/axios';
 
 const auth = createAuth({
   plugins: {
@@ -9,7 +9,7 @@ const auth = createAuth({
   },
   drivers: {
     auth: driverAuthBearer,
-    http: driverHttpFetch,
+    http: driverHttpAxios,
   },
   refreshToken: {
     enabled: false, // refresh token in goto page
