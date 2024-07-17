@@ -115,7 +115,7 @@
       </a-space>
       <div :style="styles.footer">
         <a-typography-text>Don't have an account? </a-typography-text>
-        <RouterLink to="">Register now</RouterLink>
+        <RouterLink to="/register">Register now</RouterLink>
       </div>
     </a-form-item>
   </a-form>

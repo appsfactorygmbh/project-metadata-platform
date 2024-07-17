@@ -29,6 +29,18 @@ class AuthService {
     };
   }
 
+  get registerRequest(): RequestConfig {
+    return {
+      url: import.meta.env.VITE_BACKEND_URL + '/Auth/register',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        accept: 'text/plain',
+      },
+      responseType: 'json',
+    };
+  }
+
   get authDriver(): AuthDriver {
     return {
       request(_, options, token) {

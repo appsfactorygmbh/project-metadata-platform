@@ -26,8 +26,9 @@
     {
       name: 'LogoutButton',
       onClick: () => {
-        auth.logout();
-        router.push('/login');
+        auth.logout({
+          makeRequest: false,
+        });
       },
       icon: LogoutOutlined,
       status: 'activated',
