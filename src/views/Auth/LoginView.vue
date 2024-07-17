@@ -5,10 +5,13 @@
   import { useToken } from 'ant-design-vue/es/theme/internal';
   import useBreakpoint from 'ant-design-vue/es/_util/hooks/useBreakpoint';
   import { useAuth } from 'vue-auth3';
+  import axios from 'axios';
 
   const auth = useAuth();
 
   const formStore = useFormStore('loginForm');
+
+  const feedbackMessage = ref('');
 
   const onSubmit: FormSubmitType = (fields) => {
     console.log(fields);
@@ -25,6 +28,8 @@
       })
       .catch((error) => {
         console.error(error);
+        if (axios.isAxiosError(error))
+          feedbackMessage.value = error.response?.data || 'An error occurred';
         formStore.updateField('password', '');
       });
   };
@@ -57,6 +62,6 @@
         Welcome back! Please enter your credentials to continue.
       </a-typography-text>
     </div>
-    <LoginForm :form-store="formStore" />
+    <LoginForm :form-store="formStore" :feedback-message="feedbackMessage" />
   </AuthLayout>
 </template>

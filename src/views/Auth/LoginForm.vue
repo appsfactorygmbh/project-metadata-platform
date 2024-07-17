@@ -1,12 +1,13 @@
 <script lang="ts" setup>
   import type { FormStore } from '@/components/Form';
   import type { RulesObject } from '@/components/Form/types';
-  import { defineProps, reactive, ref, type StyleValue } from 'vue';
+  import { defineProps, reactive, type StyleValue } from 'vue';
   import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
   import { useToken } from 'ant-design-vue/es/theme/internal';
 
-  const { formStore } = defineProps<{
+  const { formStore, feedbackMessage } = defineProps<{
     formStore: FormStore;
+    feedbackMessage?: string;
   }>();
 
   type LoginFormData = {
@@ -45,8 +46,11 @@
   formStore.setModel(modelRef);
   formStore.setRules(rulesRef);
 
+  const submit = async () => {
+    formStore.submit().catch(() => {});
+  };
+
   const token = useToken()[1];
-  const loginError = ref(null);
 
   console.log(token);
 
@@ -69,6 +73,7 @@
     :initial-values="{ remember: true }"
     layout="vertical"
     required-mark="optional"
+    @keyup.enter="submit"
   >
     <a-form-item name="username" v-bind="formStore.validateInfos.username">
       <a-input v-model:value="modelRef.username" placeholder="Username">
@@ -99,15 +104,14 @@
       </RouterLink>
     </a-form-item>
     <a-form-item :style="{ marginBottom: '0px' }">
-      <a-button
-        block
-        type="primary"
-        @click="() => formStore.submit().catch(() => {})"
+      <a-button block type="primary" @click="submit"> Login</a-button>
+      <a-space
+        v-if="feedbackMessage && feedbackMessage != ''"
+        :style="{ paddingTop: '10px' }"
       >
-        Login</a-button
-      >
-      <a-space v-if="loginError" :style="{ paddingTop: '10px' }">
-        <a-typography-text type="danger">{{ loginError }}</a-typography-text>
+        <a-typography-text type="danger">{{
+          feedbackMessage
+        }}</a-typography-text>
       </a-space>
       <div :style="styles.footer">
         <a-typography-text>Don't have an account? </a-typography-text>

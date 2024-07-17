@@ -1,10 +1,13 @@
 <script lang="ts" setup>
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { LogoutOutlined, SettingOutlined } from '@ant-design/icons-vue';
+  import { useAuth } from 'vue-auth3';
   import { useRouter } from 'vue-router';
 
   // Router instance
   const router = useRouter();
+
+  const auth = useAuth();
 
   const goToSetting = () => {
     router.push('/settings');
@@ -23,7 +26,8 @@
     {
       name: 'LogoutButton',
       onClick: () => {
-        console.log('Logout clicked');
+        auth.logout();
+        router.push('/login');
       },
       icon: LogoutOutlined,
       status: 'activated',
