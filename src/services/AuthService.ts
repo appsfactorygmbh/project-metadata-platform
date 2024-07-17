@@ -33,6 +33,9 @@ class AuthService {
     return {
       request(_, options, token) {
         const [accessToken, refreshToken] = (token || '|').split('|');
+        console.log('request', accessToken, refreshToken);
+        console.log('accessToken', accessToken);
+        console.log('refreshToken', refreshToken);
         if (options.headers['Authorize'] === 'Refresh') {
           options.headers['Authorization'] = `Refresh ${refreshToken}`;
         } else {
@@ -40,8 +43,15 @@ class AuthService {
         }
         return options;
       },
-      response(_, res) {
-        const { accessToken, refreshToken } = res.data;
+      response(auth, res) {
+        let { accessToken, refreshToken } = res.data;
+        // console.log('accessToken', accessToken);
+        // console.log('refreshToken', refreshToken);
+        if (!accessToken && !refreshToken) {
+          [accessToken, refreshToken] = (auth.token() ?? '|').split('|');
+        }
+        console.log('accessToken', accessToken);
+        console.log('refreshToken', refreshToken);
 
         if (accessToken && refreshToken) {
           return extractToken(accessToken) + '|' + extractToken(refreshToken);
@@ -53,9 +63,9 @@ class AuthService {
   }
 }
 
-const extractToken = (token: string): [string, string] => {
+const extractToken = (token: string): string => {
   const i = token.split(/Bearer:?\s?/i);
-  return [i[i.length > 1 ? 1 : 0].trim(), ''];
+  return i[i.length > 1 ? 1 : 0].trim();
 };
 
 const authService = new AuthService();
