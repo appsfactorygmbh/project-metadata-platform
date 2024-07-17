@@ -1,10 +1,10 @@
-import type { HttpDriver } from 'vue-auth3';
+import { type AuthDriver, type HttpDriver } from 'vue-auth3';
 import type { ArgsType } from '@/models/utils/ArgsType';
 
 type RequestConfig = Omit<ArgsType<HttpDriver['request']>[0], 'data'>;
 
 class AuthService {
-  loginRequest = (): RequestConfig => {
+  get loginRequest(): RequestConfig {
     return {
       url: import.meta.env.VITE_BACKEND_URL + '/Auth/basic',
       method: 'POST',
@@ -12,11 +12,11 @@ class AuthService {
         'Content-Type': 'application/json',
         accept: 'text/plain',
       },
-      responseType: 'text',
+      responseType: 'json',
     };
-  };
+  }
 
-  refreshRequest = (): RequestConfig => {
+  get refreshRequest(): RequestConfig {
     return {
       url: import.meta.env.VITE_BACKEND_URL + '/Auth/refresh',
       method: 'GET',
@@ -25,7 +25,29 @@ class AuthService {
       },
       responseType: 'text',
     };
-  };
+  }
+
+  get authDriver(): AuthDriver {
+    return {
+      request(auth, options, token) {
+        options.headers['Authorization'] = 'Bearer ' + token;
+
+        return options;
+      },
+      response(auth, res) {
+        console.log('authDriver response', res);
+        const token = res.data.accessToken;
+
+        if (token) {
+          const i = token.split(/Bearer:?\s?/i);
+
+          return i[i.length > 1 ? 1 : 0].trim();
+        }
+
+        return null;
+      },
+    };
+  }
 }
 
 const authService = new AuthService();

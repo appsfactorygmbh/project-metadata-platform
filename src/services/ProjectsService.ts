@@ -3,13 +3,14 @@ import type {
   DetailedProjectModel,
   CreateProjectModel,
 } from '@/models/Project';
+import { ApiService } from './ApiService';
 
-class ProjectsService {
+class ProjectsService extends ApiService {
   fetchProjects = async (search?: string): Promise<ProjectModel[] | null> => {
-    let url = `${import.meta.env.VITE_BACKEND_URL}/Projects`;
+    let url = `/Projects`;
     if (search) url += '?search=' + search;
     try {
-      const response = await fetch(url);
+      const response = await this.fetch(url);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -25,16 +26,13 @@ class ProjectsService {
 
   fetchProject = async (id: number): Promise<DetailedProjectModel | null> => {
     try {
-      const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL + '/Projects/' + id.toString(),
-        {
-          headers: {
-            Accept: 'text/plain',
-            'Access-Control-Allow-Origin': '*',
-            cors: 'cors',
-          },
+      const response = await this.fetch('/Projects/' + id.toString(), {
+        headers: {
+          Accept: 'text/plain',
+          'Access-Control-Allow-Origin': '*',
+          cors: 'cors',
         },
-      );
+      });
 
       const data: DetailedProjectModel = await response.json();
       return data;
@@ -48,17 +46,14 @@ class ProjectsService {
     projectData: CreateProjectModel,
   ): Promise<Response | null> => {
     try {
-      const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL + '/projects',
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(projectData),
-          mode: 'cors',
+      const response = await this.fetch('/projects', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify(projectData),
+        mode: 'cors',
+      });
       return response;
     } catch (error) {
       console.error('Error:', error);

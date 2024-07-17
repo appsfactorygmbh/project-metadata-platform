@@ -1,12 +1,10 @@
 import type { PluginModel } from '@/models/Plugin';
-class PluginService {
+import { ApiService } from './ApiService';
+class PluginService extends ApiService {
   fetchPlugins = async (projectID: number): Promise<PluginModel[]> => {
     try {
-      const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL +
-          '/Projects/' +
-          projectID.toString() +
-          '/plugins',
+      const response = await this.fetch(
+        '/Projects/' + projectID.toString() + '/plugins',
       );
       if (!response.ok) throw new Error('Error when trying to fetch Plugins');
       const data = await response.json();

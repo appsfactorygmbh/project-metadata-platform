@@ -1,7 +1,6 @@
 import { createAuth } from 'vue-auth3';
 import { authService } from './services/AuthService';
 import router from '@/router';
-import driverAuthBearer from 'vue-auth3/drivers/auth/bearer';
 import driverHttpAxios from 'vue-auth3/drivers/http/axios';
 
 const auth = createAuth({
@@ -9,11 +8,11 @@ const auth = createAuth({
     router,
   },
   drivers: {
-    auth: driverAuthBearer,
+    auth: authService.authDriver,
     http: driverHttpAxios,
   },
   refreshToken: {
-    ...authService.refreshRequest(),
+    ...authService.refreshRequest,
     enabled: false, // refresh token in goto page
     enabledInBackground: true, // refresh token in background
   },
@@ -24,7 +23,7 @@ const auth = createAuth({
     path: '/404',
   },
   loginData: {
-    ...authService.loginRequest(),
+    ...authService.loginRequest,
     fetchUser: false,
     remember: true,
     staySignedIn: false,
