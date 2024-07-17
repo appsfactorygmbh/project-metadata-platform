@@ -13,7 +13,7 @@ const auth = createAuth({
   },
   refreshToken: {
     ...authService.refreshRequest,
-    enabled: false, // refresh token in goto page
+    enabled: true, // refresh token in goto page
     enabledInBackground: true, // refresh token in background
   },
   authRedirect: {

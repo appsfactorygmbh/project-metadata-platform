@@ -3,9 +3,8 @@ class ApiService {
   authToken: string | null = null;
 
   setAuth = (auth: string | null) => {
-    console.log('setAuth', auth);
     if (!auth) return;
-    this.authToken = auth;
+    this.authToken = auth.split('|')[0];
   };
 
   get authHeader(): HeadersInit {
@@ -13,7 +12,6 @@ class ApiService {
   }
 
   async fetch(url: string, init: RequestInit = {}): Promise<Response> {
-    console.log('authHeader', this.authHeader);
     return fetch(this.apiUrl + url, {
       ...init,
       headers: {

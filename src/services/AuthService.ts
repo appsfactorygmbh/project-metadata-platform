@@ -22,25 +22,35 @@ class AuthService {
       method: 'GET',
       headers: {
         accept: 'text/plain',
+        'Content-Type': 'application/json',
+        Authorization: "Refresh"
       },
-      responseType: 'text',
+      responseType: 'json',
     };
   }
 
   get authDriver(): AuthDriver {
     return {
       request(auth, options, token) {
-        options.headers['Authorization'] = 'Bearer ' + token;
+        if (options.headers['Authorization'] === 'Refresh') {
+          options.headers['Authorization'] = 'Refresh ' + token.split('|')[1];
+          return options;
+        }
+
+        options.headers['Authorization'] = 'Bearer ' + token.split('|')[0];
 
         return options;
       },
       response(auth, res) {
-        const token = auth.token() ?? res.data.accessToken;
+        const token = res.data.accessToken;
+        const refreshToken = res.data.refreshToken;
 
-        if (token) {
+        if (token && refreshToken) {
           const i = token.split(/Bearer:?\s?/i);
 
-          return i[i.length > 1 ? 1 : 0].trim();
+          const result =  i[i.length > 1 ? 1 : 0].trim();
+
+          return result + "|" + refreshToken;
         }
 
         return null;

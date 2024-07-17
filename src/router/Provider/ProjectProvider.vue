@@ -12,7 +12,10 @@ import {projectsService} from '@/services';
   projectsService.setAuth(auth.token());
   watch(
     () => auth.token(),
-    () => projectsService.setAuth(auth.token()),
+    () => {
+      console.log("token change", auth);
+      projectsService.setAuth(auth.token());
+    },
   );
 </script>
 <template>
