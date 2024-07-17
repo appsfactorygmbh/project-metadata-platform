@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { projectsService } from '@/services';
+import {projectsService} from '@/services';
   import { useProjectStore } from '@/store';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import { provide } from 'vue';
@@ -9,9 +9,10 @@
   provide<typeof projectsStore>(projectsStoreSymbol, projectsStore);
 
   const auth = useAuth();
+  projectsService.setAuth(auth.token());
   watch(
-    () => auth.currentToken,
-    () => projectsService.setAuth(auth.currentToken),
+    () => auth.token(),
+    () => projectsService.setAuth(auth.token()),
   );
 </script>
 <template>

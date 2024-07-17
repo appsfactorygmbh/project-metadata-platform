@@ -35,8 +35,7 @@ class AuthService {
         return options;
       },
       response(auth, res) {
-        console.log('authDriver response', res);
-        const token = res.data.accessToken;
+        const token = auth.token() ?? res.data.accessToken;
 
         if (token) {
           const i = token.split(/Bearer:?\s?/i);

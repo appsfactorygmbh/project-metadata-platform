@@ -16,7 +16,7 @@
     const projectSlag = await projectsStore?.getProjectSlagById(projectId);
 
     const newQuery = route.query; // _.omit(route.query, 'projectId');
-    router.replace({
+    await router.replace({
       query: { ...newQuery },
       params: { projectSlag },
       name: 'SplitView',
