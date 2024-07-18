@@ -74,25 +74,19 @@ describe('SearchBar.vue', () => {
     await router.isReady();
 
     const wrapper = mount(SearchBar, {
+      plugins: [
+        createTestingPinia({
+          stubActions: false,
+        }),
+      ],
       global: {
+        provide: {
+          [searchStoreSymbol as symbol]: searchStore,
+        },
         plugins: [router],
       },
-    });
-
-    const input = wrapper.find('input');
-    await input.setValue('Test1');
-    await flushPromises();
-
-    expect(router.currentRoute.value.query.searchQuery).toBe('Test1');
-    wrapper.unmount();
-  });
-
-  it('add query to router when searching', async () => {
-    await router.isReady();
-
-    const wrapper = mount(SearchBar, {
-      global: {
-        plugins: [router],
+      propsData: {
+        searchStoreSymbol: searchStoreSymbol,
       },
     });
 
