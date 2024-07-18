@@ -103,6 +103,8 @@ describe('ProjectSearchView.vue', () => {
     generateWrapper(800);
     await flushPromises();
 
+    await flushPromises();
+
     expect(projectStore.fetchProject).toHaveBeenCalledWith(300);
     expect(pluginStore.fetchPlugins).toHaveBeenCalledWith(300);
   });

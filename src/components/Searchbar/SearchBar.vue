@@ -4,8 +4,8 @@
       placeholder="Type what you're looking for:"
       enter-button
       :value="searchStore?.getSearchQuery"
-      style="flex-grow: 1; margin-right: 50px"
       :default-value="defaultSearchQuery"
+      style="flex-grow: 1; margin-right: 50px"
       @input="onInput"
     />
   </div>

@@ -1,10 +1,9 @@
 import type { GlobalPluginModel } from '@/models/Plugin';
-class GlobalPluginService {
+import { ApiService } from './ApiService';
+class GlobalPluginService extends ApiService {
   fetchGlobalPlugins = async (): Promise<GlobalPluginModel[]> => {
     try {
-      const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL + '/Plugins',
-      );
+      const response = await this.fetch('/Plugins');
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
       return data;
@@ -16,13 +15,10 @@ class GlobalPluginService {
 
   removeGlobalPlugin = async (pluginId: number): Promise<Response | null> => {
     try {
-      const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL + '/Plugins/' + pluginId.toString(),
-        {
-          method: 'DELETE',
-          mode: 'cors',
-        },
-      );
+      const response = await this.fetch('/Plugins/' + pluginId.toString(), {
+        method: 'DELETE',
+        mode: 'cors',
+      });
       return response;
     } catch (err) {
       console.error('Error deleting global plugin: ' + err);
@@ -34,17 +30,14 @@ class GlobalPluginService {
     plugin: Omit<GlobalPluginModel, 'id'>,
   ): Promise<Response | null> => {
     try {
-      const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL + '/Plugins',
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(plugin),
-          mode: 'cors',
+      const response = await this.fetch('/Plugins', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify(plugin),
+        mode: 'cors',
+      });
       return response;
     } catch (error) {
       console.error('Error:', error);
@@ -56,17 +49,14 @@ class GlobalPluginService {
     plugin: GlobalPluginModel,
   ): Promise<Response | null> => {
     try {
-      const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL + '/Plugins/' + plugin.id.toString(),
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(plugin),
-          mode: 'cors',
+      const response = await this.fetch('/Plugins/' + plugin.id.toString(), {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify(plugin),
+        mode: 'cors',
+      });
       return response;
     } catch (error) {
       console.error('Error:', error);

@@ -14,6 +14,13 @@
   ) => {
     const projectId = parseInt(String(id));
     const projectSlag = await projectsStore?.getProjectSlagById(projectId);
+    if (!projectSlag) {
+      return router.replace({
+        query: { ...route.query },
+        name: 'SplitViewDefault',
+        replace,
+      });
+    }
 
     const newQuery = route.query;
     router.replace({

@@ -11,8 +11,8 @@
   import { useEditing } from '@/utils/hooks/useEditing';
   import _ from 'lodash';
   import { useWindowSize } from '@vueuse/core';
-  import { UndoOutlined } from '@ant-design/icons-vue';
   import { useProjectRouting } from '@/utils/hooks';
+  import { UndoOutlined } from '@ant-design/icons-vue';
 
   const props = defineProps({
     paneWidth: {

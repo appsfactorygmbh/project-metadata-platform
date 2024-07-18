@@ -19,10 +19,10 @@ describe('SearchBar.vue', () => {
       }),
     ],
     global: {
+      plugins: [router],
       provide: {
         [searchStoreSymbol as symbol]: searchStore,
       },
-      plugins: [router],
     },
     propsData: {
       searchStoreSymbol: searchStoreSymbol,

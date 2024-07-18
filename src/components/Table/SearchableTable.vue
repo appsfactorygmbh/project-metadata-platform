@@ -173,6 +173,7 @@
   };
   searchStore?.setOnReset(handleClearAll);
 
+  searchStore?.setOnReset(handleClearAll);
   onMounted(() => {
     const queries = routerSearchQuery.value;
 

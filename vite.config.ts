@@ -85,6 +85,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     server: {
       port: 5173,
     },
+    //@ts-expect-error fu🖕
     test: {
       globals: true,
       environment: 'jsdom',
