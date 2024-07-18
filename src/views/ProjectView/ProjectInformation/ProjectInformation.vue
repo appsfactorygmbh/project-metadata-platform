@@ -1,6 +1,9 @@
 <script lang="ts" setup>
-  import { inject, onMounted, toRaw, reactive } from 'vue';
-  import { projectsStoreSymbol } from '@/store/injectionSymbols';
+  import { inject, onMounted, toRaw } from 'vue';
+  import {
+    projectsStoreSymbol,
+    projectEditStoreSymbol,
+  } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
@@ -8,6 +11,15 @@
   import { useEditing } from '@/utils/hooks/useEditing';
 
   const projectsStore = inject(projectsStoreSymbol)!;
+  const projectEditStore = inject(projectEditStoreSymbol)!;
+
+  const editingClass = computed(() => ({
+    'editing-mode': isEditing.value,
+  }));
+
+  const nonEditingClass = computed(() => ({
+    'non-editing-mode': !isEditing.value,
+  }));
 
   const { getIsLoadingProject } = storeToRefs(projectsStore);
   const { getIsLoading } = storeToRefs(projectsStore);
@@ -36,6 +48,21 @@
     );
   });
 
+  // set watcher for isEditing. if is editing is false reset the inputstatus fields
+  watch(
+    () => isEditing.value,
+    (newVal) => {
+      if (!newVal) {
+        projectEditStore.resetPluginChanges();
+        BUInputStatus.value = '';
+        teamNumberInputStatus.value = '';
+        departmentInputStatus.value = '';
+        clientNameInputStatus.value = '';
+        addData(projectsStore.getProject!);
+      }
+    },
+  );
+
   const toggleEditingMode = () => {
     if (isEditing.value === true) {
       stopEditing();
@@ -43,6 +70,51 @@
       startEditing();
     }
   };
+
+  const projectData = {
+    id: ref<number>(0),
+    projectName: ref<string>(''),
+    businessUnit: ref<string>(''),
+    teamNumber: ref<number>(0),
+    department: ref<string>(''),
+    clientName: ref<string>(''),
+  };
+
+  const BUInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
+  const teamNumberInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
+  const departmentInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
+  const clientNameInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
+
+  const BUInput = ref(projectData.businessUnit);
+  const teamNumberInput = ref(projectData.teamNumber);
+  const departmentInput = ref(projectData.department);
+  const clientNameInput = ref(projectData.clientName);
+
+  //Function to update the project information
+  function updateProjectInformation(): void {
+    const updatedProject: DetailedProjectModel = {
+      id: projectData.id.value,
+      projectName: projectData.projectName.value,
+      businessUnit: BUInput.value,
+      teamNumber: teamNumberInput.value,
+      department: departmentInput.value,
+      clientName: clientNameInput.value,
+    };
+    console.log('project updates: ', updatedProject);
+    projectEditStore.updateProjectInformationChanges(updatedProject);
+  }
+
+  //Function to load the data from projectViewService to projectView
+  function addData(loadedData: DetailedProjectModel) {
+    if (projectsStore.getProject)
+      projectEditStore.setProjectInformation(projectsStore.getProject);
+    projectData.id.value = loadedData.id;
+    projectData.projectName.value = loadedData.projectName;
+    projectData.businessUnit.value = loadedData.businessUnit;
+    projectData.teamNumber.value = loadedData.teamNumber;
+    projectData.department.value = loadedData.department;
+    projectData.clientName.value = loadedData.clientName;
+  }
 </script>
 
 <template>
@@ -51,7 +123,7 @@
       <!-- create box for the project name -->
       <div class="projectNameContainer">
         <h1 v-if="!isLoading" class="projectName">
-          {{ projectData.projectName }}
+          {{ projectData.projectName.value }}
         </h1>
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
         <a-button
@@ -77,11 +149,32 @@
             padding: '5px',
           }"
           class="infoCard"
+          :class="[editingClass, nonEditingClass]"
         >
           <label class="label">Business&nbsp;Unit:</label>
-          <p v-if="!isLoading" class="projectInfo">
-            {{ projectData.businessUnit }}
-          </p>
+          <template v-if="!isLoading">
+            <p v-if="!isEditing" class="projectInfo">
+              {{ projectData.businessUnit.value }}
+            </p>
+            <a-input
+              v-else
+              v-model:value="BUInput"
+              class="inputField"
+              :status="BUInputStatus"
+              @input="updateProjectInformation"
+              @change="
+                () => {
+                  if (!BUInput) {
+                    BUInputStatus = 'error';
+                    projectEditStore.addEmptyProjectInformationField('BU');
+                  } else {
+                    BUInputStatus = '';
+                    projectEditStore.removeEmptyProjectInformationField('BU');
+                  }
+                }
+              "
+            />
+          </template>
           <a-skeleton
             v-else
             active
@@ -96,11 +189,36 @@
             padding: '5px',
           }"
           class="infoCard"
+          :class="[editingClass, nonEditingClass]"
         >
           <label class="label">Team&nbsp;Number:</label>
-          <p v-if="!isLoading" class="projectInfo">
-            {{ projectData.teamNumber }}
-          </p>
+          <template v-if="!isLoading">
+            <p v-if="!isEditing" class="projectInfo">
+              {{ projectData.teamNumber.value }}
+            </p>
+            <a-input
+              v-else
+              v-model:value="teamNumberInput"
+              class="inputField"
+              :status="teamNumberInputStatus"
+              @input="updateProjectInformation"
+              @change="
+                () => {
+                  if (!teamNumberInput || isNaN(teamNumberInput)) {
+                    teamNumberInputStatus = 'error';
+                    projectEditStore.addEmptyProjectInformationField(
+                      'teamNumber',
+                    );
+                  } else {
+                    teamNumberInputStatus = '';
+                    projectEditStore.removeEmptyProjectInformationField(
+                      'teamNumber',
+                    );
+                  }
+                }
+              "
+            />
+          </template>
           <a-skeleton
             v-else
             active
@@ -108,17 +226,43 @@
             style="padding-left: 1em"
           />
         </a-card>
+
         <a-card
           :body-style="{
             display: 'flex',
             padding: '5px',
           }"
           class="infoCard"
+          :class="[editingClass, nonEditingClass]"
         >
           <label class="label">Department:</label>
-          <p v-if="!isLoading" class="projectInfo">
-            {{ projectData.department }}
-          </p>
+          <template v-if="!isLoading">
+            <p v-if="!isEditing" class="projectInfo">
+              {{ projectData.department.value }}
+            </p>
+            <a-input
+              v-else
+              v-model:value="departmentInput"
+              class="inputField"
+              :status="departmentInputStatus"
+              @input="updateProjectInformation"
+              @change="
+                () => {
+                  if (!departmentInput) {
+                    departmentInputStatus = 'error';
+                    projectEditStore.addEmptyProjectInformationField(
+                      'department',
+                    );
+                  } else {
+                    departmentInputStatus = '';
+                    projectEditStore.removeEmptyProjectInformationField(
+                      'department',
+                    );
+                  }
+                }
+              "
+            />
+          </template>
           <a-skeleton
             v-else
             active
@@ -126,17 +270,43 @@
             style="padding-left: 1em"
           />
         </a-card>
+
         <a-card
           :body-style="{
             display: 'flex',
             padding: '5px',
           }"
           class="infoCard"
+          :class="[editingClass, nonEditingClass]"
         >
           <label class="label">Client&nbsp;Name:</label>
-          <p v-if="!isLoading" class="projectInfo">
-            {{ projectData.clientName }}
-          </p>
+          <template v-if="!isLoading">
+            <p v-if="!isEditing" class="projectInfo">
+              {{ projectData.clientName.value }}
+            </p>
+            <a-input
+              v-else
+              v-model:value="clientNameInput"
+              class="inputField"
+              :status="clientNameInputStatus"
+              @input="updateProjectInformation"
+              @change="
+                () => {
+                  if (!clientNameInput) {
+                    clientNameInputStatus = 'error';
+                    projectEditStore.addEmptyProjectInformationField(
+                      'clientName',
+                    );
+                  } else {
+                    clientNameInputStatus = '';
+                    projectEditStore.removeEmptyProjectInformationField(
+                      'clientName',
+                    );
+                  }
+                }
+              "
+            />
+          </template>
           <a-skeleton
             v-else
             active
@@ -148,27 +318,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-  const projectData: DetailedProjectModel = reactive({
-    id: 0,
-    projectName: '',
-    businessUnit: '',
-    teamNumber: 0,
-    department: '',
-    clientName: '',
-  });
-
-  //Function to load the data from projectViewService to projectView
-  function addData(loadedData: DetailedProjectModel) {
-    projectData.id = loadedData.id;
-    projectData.projectName = loadedData.projectName;
-    projectData.businessUnit = loadedData.businessUnit;
-    projectData.teamNumber = loadedData.teamNumber;
-    projectData.department = loadedData.department;
-    projectData.clientName = loadedData.clientName;
-  }
-</script>
 
 <style scoped lang="scss">
   /* Style for the middle section */
@@ -230,16 +379,29 @@
     flex-wrap: wrap;
     padding: 1em 0;
     border-radius: 10px;
-
+    container-type: inline-size;
     background: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  @container (max-width: 53vw) {
+    .infoCard.editing-mode {
+      width: 100% !important;
+    }
+  }
+
+  @container (max-width: 45vw) {
+    .infoCard.non-editing-mode {
+      width: 100% !important;
+    }
   }
 
   .infoCard {
     border: none;
     width: 50%;
     display: table;
-    padding: 0 1em 0 2vw;
+    padding: 0 1em 0 1em;
+    max-width: 100%;
   }
 
   .button {
@@ -264,5 +426,14 @@
     font-size: 1.4em;
     margin: 0 auto 0 0.5em;
     white-space: nowrap;
+  }
+  .inputField {
+    margin-left: 1em;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1 !important; /* Wichtigkeit setzen, um Inline-Stile zu überschreiben */
+    padding-left: 1em !important; /* Wichtigkeit setzen, um Inline-Stile zu überschreiben */
   }
 </style>

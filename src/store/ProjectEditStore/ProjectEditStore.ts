@@ -1,27 +1,37 @@
 import { defineStore } from 'pinia';
 import type { PluginModel } from '@/models/Plugin';
 import type { PluginEditModel } from '@/models/Plugin/PluginEditModel.ts';
+import type { DetailedProjectModel } from '@/models/Project';
 
 type StoreState = {
   pluginChanges: Map<number, PluginEditModel>;
-  projectInformationChanges: string[];
+  projectInformationChanges: DetailedProjectModel;
   canBeCreated: boolean;
   pluginsWithUrlConflicts: number[][];
   duplicatedUrls: Map<string, number[]>;
   emptyUrlFields: Map<number, number>;
   emptyDisplaynameFields: Map<number, number>;
+  emptyProjectInformationFields: Map<string, number>;
 };
 
 export const useProjectEditStore = defineStore('projectEdit', {
   state: (): StoreState => {
     return {
       pluginChanges: new Map(),
-      projectInformationChanges: [],
       canBeCreated: true,
       pluginsWithUrlConflicts: [],
       duplicatedUrls: new Map(),
       emptyUrlFields: new Map(),
       emptyDisplaynameFields: new Map(),
+      emptyProjectInformationFields: new Map(),
+      projectInformationChanges: {
+        id: -1,
+        projectName: '',
+        clientName: '',
+        businessUnit: '',
+        teamNumber: -1,
+        department: '',
+      },
     };
   },
 
@@ -33,7 +43,8 @@ export const useProjectEditStore = defineStore('projectEdit', {
       );
     },
     // Return all Projectinformation changes (not implemented in this branch)
-    getProjectInformationChanges(): string[] {
+    getProjectInformationChanges(): DetailedProjectModel {
+      console.log('current projectinformation', this.projectInformationChanges);
       return this.projectInformationChanges;
     },
     // Returns all Plugins that have URL conflicts (two or more Plugins have the same URL)
@@ -47,7 +58,12 @@ export const useProjectEditStore = defineStore('projectEdit', {
       return (
         this.getPluginsWithUrlConflicts.length === 0 &&
         this.emptyUrlFields.size === 0 &&
-        this.emptyDisplaynameFields.size === 0
+        this.emptyDisplaynameFields.size === 0 &&
+        this.projectInformationChanges.projectName !== '' &&
+        this.projectInformationChanges.clientName !== '' &&
+        this.projectInformationChanges.businessUnit !== '' &&
+        this.projectInformationChanges.teamNumber !== undefined &&
+        this.emptyProjectInformationFields.size === 0
       );
     },
   },
@@ -56,6 +72,27 @@ export const useProjectEditStore = defineStore('projectEdit', {
     // Adds an empty field to the emptyFields Map
     addEmptyUrlField(id: number): void {
       this.emptyUrlFields.set(id, id);
+    },
+
+    addEmptyProjectInformationField(prop: string): void {
+      this.emptyProjectInformationFields.set(prop, 1);
+    },
+
+    removeEmptyProjectInformationField(prop: string): void {
+      if (this.emptyProjectInformationFields.has(prop)) {
+        this.emptyProjectInformationFields.delete(prop);
+      }
+    },
+
+    setProjectInformation(project: DetailedProjectModel): void {
+      this.emptyProjectInformationFields.clear();
+      this.projectInformationChanges = { ...project };
+      console.log(this.projectInformationChanges.clientName);
+    },
+
+    // Updates the Projectinformation changes
+    updateProjectInformationChanges(project: DetailedProjectModel): void {
+      this.projectInformationChanges = project;
     },
 
     // Removes an empty field from the emptyFields Map
@@ -73,9 +110,8 @@ export const useProjectEditStore = defineStore('projectEdit', {
     },
 
     // Resets all changes made to the Plugins and Projectinformation
-    resetChanges(): void {
+    resetPluginChanges(): void {
       this.pluginChanges.clear();
-      this.projectInformationChanges = [];
       this.canBeCreated = true;
       this.pluginsWithUrlConflicts = [];
       this.emptyUrlFields.clear();
@@ -118,7 +154,8 @@ export const useProjectEditStore = defineStore('projectEdit', {
     deletePlugin(id: number): void {
       const pluginChange = this.pluginChanges.get(id);
       if (pluginChange) {
-        this.pluginChanges.set(id, { ...pluginChange, isDeleted: true });
+        pluginChange.isDeleted = true;
+        this.pluginChanges.set(id, pluginChange);
       }
     },
   },
