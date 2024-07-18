@@ -121,7 +121,7 @@
 <template>
   <div style="padding: 20px">
     <a-flex vertical gap="middle">
-      <a-span>
+      <span>
         <SearchBar :search-store-symbol="searchStoreSymbol" />
         <a-tooltip placement="left" title="Click here to reset all filters">
           <a-button class="reset" @click="clearAllFilters">
@@ -130,7 +130,7 @@
             </template>
           </a-button>
         </a-tooltip>
-      </a-span>
+      </span>
 
       <SearchableTable
         :search-store-symbol="searchStoreSymbol"

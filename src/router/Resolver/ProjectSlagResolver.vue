@@ -15,7 +15,7 @@
     const projectId = parseInt(String(id));
     const projectSlag = await projectsStore?.getProjectSlagById(projectId);
 
-    const newQuery = route.query; // _.omit(route.query, 'projectId');
+    const newQuery = route.query;
     router.replace({
       query: { ...newQuery },
       params: { projectSlag },
@@ -25,8 +25,6 @@
   };
 
   onMounted(async () => {
-    await projectsStore;
-
     if (route.query.projectId) {
       await redirectToSlag(String(route.query.projectId));
     }

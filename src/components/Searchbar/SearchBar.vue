@@ -32,13 +32,21 @@
   // Input Listener
   const onInput = (e: Event) => {
     const target = e.target as HTMLInputElement;
-    if (target.value != '') {
-      setSearchQuery(target.value, 'searchQuery');
-    } else {
-      setSearchQuery(undefined, 'searchQuery');
-    }
     searchStore?.setSearchQuery(target.value);
   };
+
+  watch(
+    () => searchStore?.getSearchQuery,
+    (newSearch) => {
+      setTimeout(() => {
+        if (newSearch != '') {
+          setSearchQuery(newSearch, 'searchQuery');
+        } else {
+          setSearchQuery(undefined, 'searchQuery');
+        }
+      }, 0);
+    },
+  );
 
   onBeforeMount(() => {
     const routerQuery = routerSearchQuery.value[0];

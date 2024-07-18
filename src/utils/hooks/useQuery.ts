@@ -1,10 +1,8 @@
-import _ from 'lodash';
 import { useRouter } from 'vue-router';
 import type { ComputedRef } from 'vue';
 
 export const useQuery = (queryNames: string[]) => {
   const router = useRouter();
-
   const routerSearchQuery: ComputedRef<(string | undefined)[]> = computed(
     () => {
       return queryNames.map(
@@ -14,13 +12,14 @@ export const useQuery = (queryNames: string[]) => {
     },
   );
 
-  const setSearchQuery = (
+  const setSearchQuery = async (
     searchQuery: string | undefined,
     queryName: string,
   ) => {
-    const index = _.findIndex(queryNames, (name) => name === queryName);
+    const index = queryNames.findIndex((name) => name === queryName);
     routerSearchQuery.value[index] = searchQuery;
-    router.push({
+
+    await router.push({
       path: router.currentRoute.value.path,
       query: {
         ...router.currentRoute.value.query,

@@ -51,7 +51,13 @@
   };
 
   //saves the column dataIndexes that are searchable to create the useQuery hook with it
-  const columnNames: Ref<string[]> = ref([]);
+  const searchableColumnNames: Ref<string[]> = ref([]);
+  props.columns.forEach((column) => {
+    if (column.searchable) {
+      searchableColumnNames.value.push(column.dataIndex);
+    }
+  });
+
   //reactive state for the search input of a column
   const searchInput = ref();
 
@@ -61,7 +67,6 @@
     const index = column.dataIndex;
 
     if (column.searchable) {
-      columnNames.value.push(index);
       column.onFilter = (value, record) =>
         String(record[index])
           .toLowerCase()
@@ -106,7 +111,7 @@
   /*  Search implementation  */
 
   const { queryNames, routerSearchQuery, setSearchQuery } = useQuery(
-    columnNames.value,
+    searchableColumnNames.value,
   );
 
   //saves state of searched text and in which column
@@ -134,18 +139,16 @@
     filteredInfo[dataIndex] = state.searchText;
   }
 
-  // Function to check all columns before reset
-  function checkAllColumn(dataIndex: string | null) {
-    if (columns.value) {
-      columns.value.forEach((column) => {
-        if (column.key) {
-          if (dataIndex) {
-            if (dataIndex == column.key) filteredInfo[dataIndex] = '';
-          } else {
-            filteredInfo[column.key] = '';
-          }
-        }
-      });
+  /**
+   * Function to check all columns before reset
+   * @param {string | null} dataIndex String when resetting one column, null when resetting all columns.
+   */
+  async function resetSearchableColumns(dataIndex: string | null) {
+    for (const columnName of searchableColumnNames.value) {
+      if (!dataIndex || columnName === dataIndex) {
+        filteredInfo[columnName] = '';
+        await setSearchQuery(undefined, columnName);
+      }
     }
   }
 
@@ -158,16 +161,15 @@
     dataIndex: string,
   ) {
     clearFilters({ confirm: true });
-    checkAllColumn(dataIndex);
-    setSearchQuery(undefined, dataIndex);
+    resetSearchableColumns(dataIndex);
     state.searchText = '';
   }
 
   // Handle clear all filters action
-  const handleClearAll = () => {
+  const handleClearAll = async () => {
     state.searchText = '';
     state.searchedColumn = '';
-    checkAllColumn(null);
+    await resetSearchableColumns(null);
   };
   searchStore?.setOnReset(handleClearAll);
 
@@ -176,9 +178,8 @@
 
     for (const query in queries) {
       const searchQuery = queries[query];
-
       if (
-        columnNames.value.includes(queryNames[query]) &&
+        searchableColumnNames.value.includes(queryNames[query]) &&
         searchQuery !== 'undefined'
       ) {
         handleSearch(searchQuery as string, () => {}, queryNames[query]);
