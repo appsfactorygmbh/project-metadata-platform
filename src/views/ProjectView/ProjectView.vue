@@ -93,6 +93,7 @@
     const projectID = computed(() => projectStore?.getProject?.id);
     if (projectID.value) {
       await projectStore?.updateProject(updatedProject, projectID.value);
+      await projectStore.fetchProjects()
       await projectStore.fetchProject(projectID.value);
       await pluginStore?.fetchPlugins(projectID.value);
     }

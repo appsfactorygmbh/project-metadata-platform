@@ -8,7 +8,7 @@
   import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
   import { EditOutlined } from '@ant-design/icons-vue';
-  import { useEditing } from '@/utils/hooks/useEditing.ts';
+  import { useEditing } from '@/utils/hooks/useEditing';
 
   const projectsStore = inject(projectsStoreSymbol)!;
   const projectEditStore = inject(projectEditStoreSymbol)!;
@@ -186,29 +186,28 @@
             <p v-if="!isEditing" class="projectInfo">
               {{ projectData.teamNumber.value }}
             </p>
-            <a-form-item v-else>
-              <a-input
-                v-model:value="teamNumberInput"
-                class="inputField"
-                :status="teamNumberInputStatus"
-                @input="updateProjectInformation"
-                @change="
-                  () => {
-                    if (!teamNumberInput || isNaN(teamNumberInput)) {
-                      teamNumberInputStatus = 'error';
-                      projectEditStore.addEmptyProjectInformationField(
-                        'teamNumber',
-                      );
-                    } else {
-                      teamNumberInputStatus = '';
-                      projectEditStore.removeEmptyProjectInformationField(
-                        'teamNumber',
-                      );
-                    }
+            <a-input
+              v-else
+              v-model:value="teamNumberInput"
+              class="inputField"
+              :status="teamNumberInputStatus"
+              @input="updateProjectInformation"
+              @change="
+                () => {
+                  if (!teamNumberInput || isNaN(teamNumberInput)) {
+                    teamNumberInputStatus = 'error';
+                    projectEditStore.addEmptyProjectInformationField(
+                      'teamNumber',
+                    );
+                  } else {
+                    teamNumberInputStatus = '';
+                    projectEditStore.removeEmptyProjectInformationField(
+                      'teamNumber',
+                    );
                   }
-                "
-              />
-            </a-form-item>
+                }
+              "
+            />
           </template>
           <a-skeleton
             v-else
@@ -368,16 +367,23 @@
     flex-wrap: wrap;
     padding: 1em 0;
     border-radius: 10px;
-
+    container-type: inline-size;
     background: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  @container (max-width: 53vw){
+    .infoCard{
+      width: 100% !important;
+    }
   }
 
   .infoCard {
     border: none;
     width: 50%;
     display: table;
-    padding: 0 1em 0 2vw;
+    padding: 0 1em 0 1em;
+    max-width: 100%;
   }
 
   .button {
@@ -404,6 +410,7 @@
     white-space: nowrap;
   }
   .inputField {
+    margin-left: 1em;
     width: 180px;
     max-width: 100%;
     white-space: nowrap;
