@@ -1,10 +1,16 @@
 <script lang="ts" setup>
   // Import ref for reactive variables and utility functions for URL handling.
-  import { ref, watch } from 'vue';
+  import { ref, watch, inject } from 'vue';
   import { cutAfterTLD, createFaviconURL } from './editURL';
+  import { DeleteOutlined } from '@ant-design/icons-vue';
+  import { projectEditStoreSymbol } from '@/store/injectionSymbols';
 
   // Define the component's props with pluginName and url as required strings.
   const props = defineProps({
+    id: {
+      type: Number,
+      required: true,
+    },
     pluginName: {
       type: String,
       required: true,
@@ -21,9 +27,44 @@
       type: Boolean,
       required: false,
     },
+    isEditing: {
+      type: Boolean,
+      required: true,
+    },
+    editKey: {
+      type: Number,
+      required: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      required: false,
+    },
   });
 
+  const initDisplayName = props.displayName;
+  const initUrl = props.url;
+
+  const projectEditStore = inject(projectEditStoreSymbol);
+  const urlStatusRef = ref<'' | 'error' | 'warning' | undefined>('');
+  const displayNameStatusRef = ref<'' | 'error' | 'warning' | undefined>('');
+
+  const displayNameInput = ref<string>(props.displayName);
+  const urlInput = ref<string>(props.url);
+
   const toggleSkeleton = ref<boolean>(props.isLoading);
+
+  watch(
+    () => props.isEditing,
+    (newVal) => {
+      if (!newVal) {
+        displayNameInput.value = initDisplayName;
+        urlInput.value = initUrl;
+        hide.value = false;
+        urlStatusRef.value = '';
+        displayNameStatusRef.value = '';
+      }
+    },
+  );
 
   watch(
     () => props.isLoading,
@@ -31,6 +72,18 @@
       toggleSkeleton.value = newVal;
     },
   );
+
+  watch(
+    () => projectEditStore?.getPluginsWithUrlConflicts,
+    (newVal) => {
+      if (props.editKey !== undefined && newVal?.includes(props.editKey)) {
+        urlStatusRef.value = 'error';
+      } else {
+        urlStatusRef.value = '';
+      }
+    },
+  );
+
   // Create a reactive variable for the favicon URL based on the given URL.
   const faviconUrl = ref(createFaviconURL(cutAfterTLD(props.url)));
 
@@ -43,31 +96,114 @@
     }
     window.open(props.url, '_blank');
   }
+
+  // Hides the plugin card if set to true
+  const hide = ref<boolean>(false);
+  const hidePlugin = () => {
+    hide.value = true;
+    if (props.editKey !== undefined) {
+      projectEditStore?.deletePlugin(props.editKey);
+    }
+  };
+
+  // Run on every key press in the input fields to update the plugin data
+  const updatePluginData = (): void => {
+    if (urlInput.value === '') {
+      urlStatusRef.value = 'error';
+      if (props.editKey !== undefined) {
+        projectEditStore?.addEmptyUrlField(props.editKey);
+      }
+    } else {
+      if (props.editKey !== undefined) {
+        projectEditStore?.removeEmptyUrlField(props.editKey);
+        urlStatusRef.value = '';
+      }
+    }
+
+    if (displayNameInput.value === '') {
+      displayNameStatusRef.value = 'error';
+      if (props.editKey !== undefined) {
+        projectEditStore?.addEmptyDisplaynameField(props.editKey);
+      }
+    } else {
+      if (props.editKey !== undefined) {
+        projectEditStore?.removeEmptyDisplaynameField(props.editKey);
+        displayNameStatusRef.value = '';
+      }
+    }
+
+    if (props.editKey !== undefined) {
+      projectEditStore?.updatePluginChanges(props.editKey, {
+        pluginName: props.pluginName,
+        displayName: displayNameInput.value,
+        url: urlInput.value,
+        id: props.id,
+        editKey: props.editKey,
+        isDeleted: props.isDeleted || false,
+      });
+    }
+  };
 </script>
 
 <template>
-  <!-- Define the card component, styled as a clickable flex container. -->
-  <a-card
-    class="card"
-    :loading="toggleSkeleton"
-    :bordered="false"
-    toggle="true"
-    :body-style="{
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      padding: '15px',
-    }"
-    @click="handleClick"
-  >
-    <!-- Display the favicon image. -->
-    <a-avatar shape="square" :src="faviconUrl" class="avatar"></a-avatar>
-    <!-- Container for plugin name and URL text. -->
-    <div class="textContainer">
-      <h3>{{ pluginName }}</h3>
-      <p>{{ displayName }}</p>
-    </div>
-  </a-card>
+  <template v-if="isEditing">
+    <a-card
+      class="cardNoHover"
+      :loading="toggleSkeleton"
+      :bordered="false"
+      toggle="true"
+      :body-style="{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: '15px',
+      }"
+      :style="hide ? 'display: none' : ''"
+    >
+      <!-- Container for plugin name and URL text. -->
+      <div class="textContainerInput">
+        <h3 style="text-align: center">{{ pluginName }}</h3>
+        <a-input
+          v-model:value="displayNameInput"
+          :status="displayNameStatusRef"
+          class="inputField"
+          @input="updatePluginData"
+        />
+        <a-input
+          v-model:value="urlInput"
+          :status="urlStatusRef"
+          class="inputField"
+          @input="updatePluginData"
+        />
+      </div>
+      <DeleteOutlined class="circleBackground" @click="hidePlugin" />
+    </a-card>
+  </template>
+
+  <template v-else>
+    <!-- Define the card component, styled as a clickable flex container. -->
+    <a-card
+      class="card"
+      :loading="toggleSkeleton"
+      :bordered="false"
+      toggle="true"
+      :body-style="{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: '15px',
+      }"
+      @click="handleClick"
+    >
+      <!-- Display the favicon image. -->
+      <a-avatar shape="square" :src="faviconUrl" class="avatar"></a-avatar>
+      <!-- Container for plugin name and URL text. -->
+      <div class="textContainer">
+        <h3>{{ pluginName }}</h3>
+        <p>{{ displayName }}</p>
+      </div>
+    </a-card>
+  </template>
 </template>
 
 <style scoped lang="scss">
@@ -79,11 +215,36 @@
   }
 
   // Style for the card container.
+
+  .circleBackground {
+    padding: 3.5%;
+    border-radius: 100%;
+    background-color: white;
+    position: absolute;
+    top: -3%;
+    right: -3%;
+    box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0;
+    &:hover {
+      transition: 0.1s ease-in-out;
+      cursor: pointer;
+      transform: scale(1.1);
+    }
+  }
+
+  .cardNoHover {
+    width: max-content;
+    min-width: 200px;
+    max-width: 300px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0 !important;
+    display: flex;
+    flex-direction: column;
+  }
+
   .card {
     width: max-content;
     min-width: 200px;
     max-width: 300px;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
+    box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0 !important;
     display: flex;
     flex-direction: column;
     transition: 0.1s ease-in-out;
@@ -94,9 +255,8 @@
     }
   }
 
-  // Style for the text container.
-  .textContainer {
-    font-family: Manrope;
+  .textContainerInput {
+    font-family: Manrope, serif;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -105,7 +265,28 @@
     overflow: hidden;
 
     & > * {
-      margin: 0px;
+      margin: 5px 0 5px 0;
+    }
+
+    & p {
+      color: #6d6e6f;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  // Style for the text container.
+  .textContainer {
+    font-family: Manrope, serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+
+    & > * {
+      margin: 0;
     }
 
     & p {

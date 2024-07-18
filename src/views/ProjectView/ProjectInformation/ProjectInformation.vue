@@ -5,6 +5,7 @@
   import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
   import { EditOutlined } from '@ant-design/icons-vue';
+  import { useEditing } from '@/utils/hooks/useEditing';
 
   const projectsStore = inject(projectsStoreSymbol)!;
 
@@ -13,6 +14,8 @@
   const isLoading = computed(
     () => getIsLoadingProject.value || getIsLoading.value,
   );
+
+  const { isEditing, stopEditing, startEditing } = useEditing();
 
   onMounted(async () => {
     const project = projectsStore.getProject;
@@ -32,6 +35,14 @@
       },
     );
   });
+
+  const toggleEditingMode = () => {
+    if (isEditing.value === true) {
+      stopEditing();
+    } else {
+      startEditing();
+    }
+  };
 </script>
 
 <template>
@@ -47,7 +58,7 @@
           class="button"
           ghost
           style="margin-left: 10px"
-          @click="() => {}"
+          @click="toggleEditingMode"
         >
           <template #icon><EditOutlined class="icon" /></template>
         </a-button>
@@ -171,10 +182,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-
-  .pluginView {
-    padding: 0;
   }
 
   /* Style for the right panel */

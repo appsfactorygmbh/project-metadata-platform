@@ -39,5 +39,6 @@
 <style scoped>
   .menu {
     top: 20px;
+    height: max-content;
   }
 </style>

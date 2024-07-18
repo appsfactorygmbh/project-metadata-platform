@@ -1,22 +1,53 @@
-import { mount } from '@vue/test-utils';
+import { mount, VueWrapper } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { cutAfterTLD, createFaviconURL } from '../editURL';
 import PluginComponent from '../PluginComponent.vue';
+import { projectsStoreSymbol } from '../../../store/injectionSymbols';
+import { useProjectStore } from '../../../store';
+import router from '../../../router';
+import { createTestingPinia } from '@pinia/testing';
+
+interface PluginComponentInstance {
+  pluginName: string;
+  url: string;
+  displayName: string;
+  id: number;
+  isLoading: boolean;
+  isEditing: boolean;
+  hide?: boolean;
+}
 
 const generateWrapper = (
   name: string,
   url: string,
   displayName: string,
   isLoading: boolean,
-) => {
+  isEditing: boolean,
+  id: number,
+  editKey = -1,
+): VueWrapper<ComponentPublicInstance<PluginComponentInstance>> => {
   return mount(PluginComponent, {
+    plugins: [
+      createTestingPinia({
+        stubActions: false,
+      }),
+    ],
     props: {
       pluginName: name,
       url: url,
       displayName: displayName,
       isLoading: isLoading,
+      isEditing: isEditing,
+      id: id,
+      editKey,
     },
-  });
+    global: {
+      provide: {
+        [projectsStoreSymbol as symbol]: useProjectStore(),
+      },
+      plugins: [router],
+    },
+  }) as VueWrapper<ComponentPublicInstance<PluginComponentInstance>>;
 };
 
 describe('Plugin.vue', () => {
@@ -26,6 +57,8 @@ describe('Plugin.vue', () => {
       'https://example.com/examplePath',
       'test instance',
       false,
+      false,
+      100,
     );
 
     expect(wrapper.find('h3').text()).toBe('Test Plugin');
@@ -43,6 +76,9 @@ describe('Plugin.vue', () => {
         url: 'https://test.com',
         displayName: 'Test',
         isLoading: true,
+        isEditing: false,
+        id: 100,
+        editKey: -2,
       },
     });
     const skeleton = wrapper.find('.ant-skeleton-content');
@@ -56,6 +92,9 @@ describe('Plugin.vue', () => {
         url: 'https://test.com',
         displayName: 'Test',
         isLoading: true,
+        isEditing: false,
+        id: 100,
+        editKey: -1,
       },
     });
     expect(wrapper.find('.ant-skeleton-content').exists()).toBe(true);
@@ -64,6 +103,8 @@ describe('Plugin.vue', () => {
       url: 'https://test.com',
       displayName: 'Test',
       isLoading: false,
+      isEditing: false,
+      id: 100,
     });
     expect(wrapper.find('.ant-skeleton-content').exists()).toBe(false);
   });
@@ -110,6 +151,8 @@ describe('Plugin.vue', () => {
       'https://example.com/examplePath',
       'test instance',
       false,
+      false,
+      100,
     );
 
     const card = wrapper.findComponent({ name: 'ACard' });
@@ -133,6 +176,8 @@ describe('Plugin.vue', () => {
       'https://example.com/examplePath',
       'Test Plugin Instance 1',
       false,
+      false,
+      100,
     );
     await wrapper.findComponent({ name: 'ACard' }).trigger('click');
     expect(windowOpenMock).toBeCalledWith(

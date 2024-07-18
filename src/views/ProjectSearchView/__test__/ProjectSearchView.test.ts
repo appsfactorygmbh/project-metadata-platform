@@ -6,8 +6,8 @@ import { useProjectStore } from '@/store';
 import { createPinia, setActivePinia } from 'pinia';
 import _ from 'lodash';
 import { projectsStoreSymbol } from '@/store/injectionSymbols';
+import router from '@/router';
 
-// Fails with: Cannot use 'in' operator to search for 'addEventListener' in undefined
 describe('ProjectSearchView.vue', () => {
   setActivePinia(createPinia());
 
@@ -22,6 +22,7 @@ describe('ProjectSearchView.vue', () => {
         provide: {
           [projectsStoreSymbol as symbol]: useProjectStore(),
         },
+        plugins: [router],
       },
       propsData: {
         paneWidth: pWidth,
@@ -30,20 +31,26 @@ describe('ProjectSearchView.vue', () => {
     });
   };
 
+  const wrapper = generateWrapper(800);
+
   it('renders correctly with 4 columns', () => {
-    const wrapper = generateWrapper(800);
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
   });
 
+  it('renders correctly with reset button', async () => {
+    expect(wrapper.find('.reset').exists()).toBe(true);
+  });
+
+  createTestingPinia({});
+  const wrapper2 = generateWrapper(300);
+
   it('hides columns when the pane width is not large enough', async () => {
-    createTestingPinia({});
-    const wrapper2 = generateWrapper(300);
     await flushPromises();
 
     _.delay(
       () =>
         expect(wrapper2.findAll('.ant-table-column-sorters').length).toBe(2),
-      500,
+      1000,
     );
   });
 });

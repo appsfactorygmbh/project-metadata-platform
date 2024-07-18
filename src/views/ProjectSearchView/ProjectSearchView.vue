@@ -8,8 +8,10 @@
   import { useSearchStore, type SearchStore } from '@/store/SearchStore';
   import type { ProjectModel } from '@/models/Project';
   import { projectsService } from '@/services';
+  import { useEditing } from '@/utils/hooks/useEditing';
   import _ from 'lodash';
   import { useWindowSize } from '@vueuse/core';
+  import { UndoOutlined } from '@ant-design/icons-vue';
 
   const props = defineProps({
     paneWidth: {
@@ -22,14 +24,22 @@
     },
   });
 
+  const { stopEditing, isEditing } = useEditing();
+
   const projectsStore = inject(projectsStoreSymbol)!;
   const pluginStore = inject(pluginStoreSymbol);
   const searchStore = useSearchStore<ProjectModel>('projects');
   const searchStoreSymbol = Symbol('projectSearchStore');
 
   const isLoading = computed(() => projectsStore?.getIsLoadingProjects);
-
   provide<SearchStore>(searchStoreSymbol, searchStore);
+
+  watch(
+    () => projectsStore.getProjects,
+    () => {
+      searchStore.setBaseSet(projectsStore.getProjects);
+    },
+  );
 
   const FETCHING_METHOD: 'FRONTEND' | 'BACKEND' = import.meta.env
     .VITE_PROJECT_SEARCH_METHOD;
@@ -76,6 +86,10 @@
 
   const handleRowClick = (project: ProjectModel) => {
     projectsStore?.fetchProject(project.id);
+    pluginStore?.fetchPlugins(project.id);
+    if (isEditing) {
+      stopEditing();
+    }
   };
 
   onMounted(async () => {
@@ -87,12 +101,26 @@
     searchStore.setBaseSet(projectsStore.getProjects);
     changeColumns(props.paneWidth);
   });
+
+  const clearAllFilters = () => {
+    searchStore.reset();
+  };
 </script>
 
 <template>
   <div style="padding: 20px">
     <a-flex vertical gap="middle">
-      <SearchBar :search-store-symbol="searchStoreSymbol" />
+      <a-span>
+        <SearchBar :search-store-symbol="searchStoreSymbol" />
+        <a-tooltip placement="left" title="Click here to reset all filters">
+          <a-button class="reset" @click="clearAllFilters">
+            <template #icon>
+              <UndoOutlined class="icons" />
+            </template>
+          </a-button>
+        </a-tooltip>
+      </a-span>
+
       <SearchableTable
         :search-store-symbol="searchStoreSymbol"
         :pane-height="props.paneHeight"
@@ -233,3 +261,12 @@
     }
   }
 </script>
+<style scoped>
+  .reset {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 2.5em;
+    height: 2.5em;
+  }
+</style>

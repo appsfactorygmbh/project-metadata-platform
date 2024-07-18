@@ -9,6 +9,9 @@
   import ProjectView from '../ProjectView/ProjectView.vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { RightOutlined } from '@ant-design/icons-vue';
+  import { useEditing } from '@/utils/hooks/useEditing';
+
+  const { isEditing } = useEditing();
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
@@ -29,7 +32,7 @@
         size: sets default proportion to 1:4
         min-size: sets smallest possible size to 20% and 1%
       -->
-      <pane ref="tablePane" size="70" min-size="20">
+      <pane ref="tablePane" size="70" min-size="20" class="leftPane">
         <ProjectSearchView
           :pane-width="dimensions.width"
           :pane-height="dimensions.height"
@@ -40,7 +43,7 @@
         <ProjectView />
         <FloatingButton :button="splitButton" class="button" />
         <MenuButtons />
-        <CreateProjectView />
+        <CreateProjectView v-if="!isEditing" />
       </pane>
     </splitpanes>
   </div>
@@ -51,8 +54,14 @@
     height: 100vh;
   }
 
+  .leftPane {
+    position: relative;
+  }
+
   .rightPane {
     position: relative;
+    max-height: 100vh; /* Set a maximum height */
+    overflow-y: auto; /* Enable vertical scrolling */
   }
 
   .button {
