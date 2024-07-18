@@ -2,8 +2,8 @@
   import {
     ProjectProvider,
     PluginProvider,
-    GlobalPluginProvider,
     ProjectEditProvider,
+    GlobalPluginProvider,
   } from '@/router/Provider';
 </script>
 
