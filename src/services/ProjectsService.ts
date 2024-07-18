@@ -67,17 +67,14 @@ class ProjectsService extends ApiService {
     id: number,
   ): Promise<Response | null> => {
     try {
-      const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL + '/Projects?projectId=' + id,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(projectData),
-          mode: 'cors',
+      const response = await this.fetch('/Projects?projectId=' + id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify(projectData),
+        mode: 'cors',
+      });
       return response;
     } catch (error) {
       console.error('Failed to update Project via PUT Request: ', error);
