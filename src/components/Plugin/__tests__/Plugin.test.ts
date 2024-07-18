@@ -185,4 +185,19 @@ describe('Plugin.vue', () => {
       '_blank',
     );
   });
+  it('adds prefix to url before opening if its missing', async () => {
+    // Mock window.open
+    const windowOpenMock = vi.fn();
+    global.window.open = windowOpenMock;
+    const wrapper = generateWrapper(
+      'Test Plugin',
+      'example.com',
+      'Test Plugin Instance 1',
+      false,
+      false,
+      100,
+    );
+    await wrapper.findComponent({ name: 'ACard' }).trigger('click');
+    expect(windowOpenMock).toBeCalledWith('https://example.com', '_blank');
+  })
 });

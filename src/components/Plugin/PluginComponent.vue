@@ -94,7 +94,11 @@
     } catch (err) {
       console.error('Error when trying to copy: ', err);
     }
-    window.open(props.url, '_blank');
+    let url = props.url;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
+    }
+    window.open(url, '_blank');
   }
 
   // Hides the plugin card if set to true
@@ -139,9 +143,7 @@
         url: urlInput.value,
         id: props.id,
         editKey: props.editKey,
-        isDeleted:
-          projectEditStore?.pluginChanges.get(props.editKey)?.isDeleted ||
-          false,
+        isDeleted: false,
       });
     }
   };

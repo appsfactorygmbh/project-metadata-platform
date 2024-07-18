@@ -157,6 +157,8 @@ export const useProjectEditStore = defineStore('projectEdit', {
         pluginChange.isDeleted = true;
         this.pluginChanges.set(id, pluginChange);
       }
+      this.removeEmptyDisplaynameField(id);
+      this.removeEmptyUrlField(id);
     },
   },
 });
