@@ -77,7 +77,7 @@
         editKey: index,
         isDeleted: false,
       };
-      pluginStore?.setPlugins([...pluginStore.getPlugins, newPlugin]);
+      projectEditStore?.addNewPlugin(newPlugin);
     }
   };
 

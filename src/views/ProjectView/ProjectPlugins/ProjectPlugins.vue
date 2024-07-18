@@ -77,6 +77,18 @@
   }
 
   watch(
+    () => projectEditStore?.getAddedPlugins.length,
+    (newVal) => {
+      if (newVal && newVal > 0) {
+        const newPlugin = projectEditStore?.getLastAddedPlugin;
+        if(newPlugin){
+          plugins.value = [...plugins.value, newPlugin];
+        }
+      }
+    },
+  );
+
+  watch(
     () => isEditing.value,
     (newVal) => {
       if (!newVal) {

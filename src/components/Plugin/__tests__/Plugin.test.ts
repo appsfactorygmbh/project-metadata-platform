@@ -199,5 +199,5 @@ describe('Plugin.vue', () => {
     );
     await wrapper.findComponent({ name: 'ACard' }).trigger('click');
     expect(windowOpenMock).toBeCalledWith('https://example.com', '_blank');
-  })
+  });
 });

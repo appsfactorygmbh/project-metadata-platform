@@ -7,11 +7,11 @@ type StoreState = {
   pluginChanges: Map<number, PluginEditModel>;
   projectInformationChanges: DetailedProjectModel;
   canBeCreated: boolean;
-  pluginsWithUrlConflicts: number[][];
   duplicatedUrls: Map<string, number[]>;
   emptyUrlFields: Map<number, number>;
   emptyDisplaynameFields: Map<number, number>;
   emptyProjectInformationFields: Map<string, number>;
+  addedPlugins: PluginEditModel[];
 };
 
 export const useProjectEditStore = defineStore('projectEdit', {
@@ -19,11 +19,11 @@ export const useProjectEditStore = defineStore('projectEdit', {
     return {
       pluginChanges: new Map(),
       canBeCreated: true,
-      pluginsWithUrlConflicts: [],
       duplicatedUrls: new Map(),
       emptyUrlFields: new Map(),
       emptyDisplaynameFields: new Map(),
       emptyProjectInformationFields: new Map(),
+      addedPlugins: [],
       projectInformationChanges: {
         id: -1,
         projectName: '',
@@ -36,6 +36,12 @@ export const useProjectEditStore = defineStore('projectEdit', {
   },
 
   getters: {
+    getAddedPlugins(): PluginEditModel[] {
+      return this.addedPlugins;
+    },
+    getLastAddedPlugin(): PluginEditModel {
+      return this.addedPlugins[this.addedPlugins.length - 1];
+    },
     // Returns all Plugins that are not deleted
     getPluginChanges(): PluginEditModel[] {
       return Array.from(this.pluginChanges.values()).filter(
@@ -69,6 +75,9 @@ export const useProjectEditStore = defineStore('projectEdit', {
   },
 
   actions: {
+    addNewPlugin(plugin: PluginEditModel): void {
+      this.addedPlugins.push(plugin);
+    },
     // Adds an empty field to the emptyFields Map
     addEmptyUrlField(id: number): void {
       this.emptyUrlFields.set(id, id);
@@ -113,21 +122,24 @@ export const useProjectEditStore = defineStore('projectEdit', {
     resetPluginChanges(): void {
       this.pluginChanges.clear();
       this.canBeCreated = true;
-      this.pluginsWithUrlConflicts = [];
       this.emptyUrlFields.clear();
       this.emptyDisplaynameFields.clear();
+      this.addedPlugins = [];
     },
 
     // Checks for URL conflicts between Plugins
+// Checks for URL conflicts between Plugins
     checkForConflicts(): void {
-      this.pluginsWithUrlConflicts = [];
+      console.log("pluginCHanges", this.pluginChanges)
       this.duplicatedUrls = new Map();
 
       this.pluginChanges.forEach((plugin, key) => {
-        if (this.duplicatedUrls.has(plugin.url) && plugin.isDeleted === false) {
-          this.duplicatedUrls.get(plugin.url)?.push(key);
-        } else {
-          this.duplicatedUrls.set(plugin.url, [key]);
+        if (!plugin.isDeleted) {
+          if (this.duplicatedUrls.has(plugin.url)) {
+            this.duplicatedUrls.get(plugin.url)?.push(key);
+          } else {
+            this.duplicatedUrls.set(plugin.url, [key]);
+          }
         }
       });
     },
@@ -142,6 +154,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
         isDeleted: false,
       };
       this.pluginChanges.set(index, editPlugin);
+      console.log('pluginChanges after add ', this.pluginChanges)
       return index;
     },
 
