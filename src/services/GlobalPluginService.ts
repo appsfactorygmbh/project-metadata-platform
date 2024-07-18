@@ -1,25 +1,5 @@
 import type { GlobalPluginModel } from '@/models/Plugin';
 class GlobalPluginService {
-  patchGlobalPlugin = async (plugin: GlobalPluginModel) => {
-    try {
-      const response = await fetch(
-        import.meta.env.VITE_BACKEND_URL + '/Plugins/' + plugin.id.toString(),
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(plugin),
-          mode: 'cors',
-        },
-      );
-      return response;
-    } catch (err) {
-      console.error('Error patching global plugin: ' + err);
-      return null;
-    }
-  };
-
   fetchGlobalPlugins = async (): Promise<GlobalPluginModel[]> => {
     try {
       const response = await fetch(

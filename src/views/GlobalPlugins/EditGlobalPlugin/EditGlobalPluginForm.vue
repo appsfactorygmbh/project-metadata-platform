@@ -5,10 +5,8 @@
   import { inject, reactive, onMounted } from 'vue';
   import { type FormStore } from '@/components/Form';
   import { useRoute } from 'vue-router';
-  import type { GlobalPluginKey } from '@/models/Plugin/GlobalPluginModel';
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
   import type { GlobalPluginFormData } from '../GlobalPluginForm';
-  import type { GlobalPluginModel } from '@/models/Plugin';
 
   const { formStore } = defineProps<{
     formStore: FormStore;
@@ -21,15 +19,10 @@
   const onSubmit: FormSubmitType = (fields) => {
     try {
       console.log(fields);
-      const globalPluginData: GlobalPluginModel = {
-        id: fields.id,
-        name: fields.pluginName,
-        keys: fields.GlobalPluginKeys.map((key: GlobalPluginKey) => ({
-          key: key.value,
-        })),
-        archived: false,
-      };
-      globalPluginStore?.patchGlobalPlugin(globalPluginData);
+      globalPluginStore?.updateGlobalPlugin({
+        id: pluginIdRef.value,
+        ...fields,
+      });
     } catch {
       notificationApi.error({
         message: 'An error occurred. The plugin could not be created',
