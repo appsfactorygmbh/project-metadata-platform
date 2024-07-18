@@ -13,6 +13,14 @@
   const projectsStore = inject(projectsStoreSymbol)!;
   const projectEditStore = inject(projectEditStoreSymbol)!;
 
+  const editingClass = computed(() => ({
+    'editing-mode': isEditing.value,
+  }));
+
+  const nonEditingClass = computed(() => ({
+    'non-editing-mode': !isEditing.value,
+  }));
+
   const { getIsLoadingProject } = storeToRefs(projectsStore);
   const { getIsLoading } = storeToRefs(projectsStore);
   const isLoading = computed(
@@ -141,6 +149,7 @@
             padding: '5px',
           }"
           class="infoCard"
+          :class="[editingClass, nonEditingClass]"
         >
           <label class="label">Business&nbsp;Unit:</label>
           <template v-if="!isLoading">
@@ -180,6 +189,7 @@
             padding: '5px',
           }"
           class="infoCard"
+          :class="[editingClass, nonEditingClass]"
         >
           <label class="label">Team&nbsp;Number:</label>
           <template v-if="!isLoading">
@@ -223,6 +233,7 @@
             padding: '5px',
           }"
           class="infoCard"
+          :class="[editingClass, nonEditingClass]"
         >
           <label class="label">Department:</label>
           <template v-if="!isLoading">
@@ -266,6 +277,7 @@
             padding: '5px',
           }"
           class="infoCard"
+          :class="[editingClass, nonEditingClass]"
         >
           <label class="label">Client&nbsp;Name:</label>
           <template v-if="!isLoading">
@@ -372,8 +384,14 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  @container (max-width: 53vw){
-    .infoCard{
+  @container (max-width: 53vw) {
+    .infoCard.editing-mode {
+      width: 100% !important;
+    }
+  }
+
+  @container (max-width: 45vw) {
+    .infoCard.non-editing-mode {
       width: 100% !important;
     }
   }
@@ -411,7 +429,6 @@
   }
   .inputField {
     margin-left: 1em;
-    width: 180px;
     max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
