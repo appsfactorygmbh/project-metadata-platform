@@ -27,7 +27,7 @@
 
   const { stopEditing, isEditing } = useEditing();
   const { routerProjectId, setProjectId } = useProjectRouting();
-  const projectsStore = inject(projectsStoreSymbol);
+  const projectsStore = inject(projectsStoreSymbol)!;
   const pluginStore = inject(pluginStoreSymbol);
   const searchStore = useSearchStore<ProjectModel>('projects');
   const searchStoreSymbol = Symbol('projectSearchStore');
@@ -36,9 +36,9 @@
   provide<SearchStore>(searchStoreSymbol, searchStore);
 
   watch(
-    () => projectsStore.getProjects,
+    () => projectsStore?.getProjects,
     () => {
-      searchStore.setBaseSet(projectsStore.getProjects);
+      searchStore.setBaseSet(projectsStore!.getProjects);
     },
   );
 

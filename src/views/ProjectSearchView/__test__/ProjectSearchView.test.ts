@@ -50,7 +50,7 @@ describe('ProjectSearchView.vue', () => {
   });
 
   it('renders correctly with reset button', async () => {
-    const wrapper = generateWrapper(800)
+    const wrapper = generateWrapper(800);
     expect(wrapper.find('.reset').exists()).toBe(true);
   });
 
@@ -92,7 +92,7 @@ describe('ProjectSearchView.vue', () => {
       query: { projectId: '300' },
     });
     await router.isReady();
-    createTestingPinia({})
+    createTestingPinia({});
 
     const projectStore = useProjectStore();
     const pluginStore = usePluginsStore();
