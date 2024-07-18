@@ -41,7 +41,6 @@ export const usePluginsStore = defineStore('plugin', {
     setCachePlugins(plugins: PluginModel[]): void {
       this.cachePlugins = plugins;
     },
-
     async fetchPlugins(projectID: number) {
       try {
         this.setLoadingPlugins(true);

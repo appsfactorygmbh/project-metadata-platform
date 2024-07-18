@@ -71,7 +71,7 @@
 
   function setPlugins(newPlugins: PluginModel[]) {
     const normalPlugins = toRaw(newPlugins);
-    projectEditStore?.resetChanges();
+    projectEditStore?.resetPluginChanges();
     plugins.value = [];
     syncEditStore(normalPlugins);
   }
@@ -80,10 +80,10 @@
     () => isEditing.value,
     (newVal) => {
       if (!newVal) {
-        projectEditStore?.resetChanges();
+        projectEditStore?.resetPluginChanges();
       } else {
         plugins.value = [];
-        projectEditStore?.resetChanges();
+        projectEditStore?.resetPluginChanges();
         syncEditStore(pluginStore.getPlugins);
       }
     },
