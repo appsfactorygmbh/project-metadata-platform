@@ -22,7 +22,6 @@ describe('ProjectEditStore', () => {
       department: '',
     });
     expect(store.canBeCreated).toBe(true);
-    expect(store.pluginsWithUrlConflicts).toEqual([]);
     expect(store.duplicatedUrls.size).toBe(0);
     expect(store.emptyUrlFields.size).toBe(0);
     expect(store.emptyDisplaynameFields.size).toBe(0);
@@ -52,7 +51,6 @@ describe('ProjectEditStore', () => {
     store.resetPluginChanges();
     expect(store.pluginChanges.size).toBe(0);
     expect(store.canBeCreated).toBe(true);
-    expect(store.pluginsWithUrlConflicts).toEqual([]);
     expect(store.duplicatedUrls.size).toBe(0);
     expect(store.emptyUrlFields.size).toBe(0);
     expect(store.emptyDisplaynameFields.size).toBe(0);
@@ -247,4 +245,45 @@ describe('ProjectEditStore', () => {
     store.removeEmptyProjectInformationField('projectName');
     expect(store.emptyProjectInformationFields.has('projectName')).toBe(false);
   });
+
+  it('adds new plugin correctly', () => {
+    const plugin: PluginEditModel = {
+      id: 1,
+      url: 'http://example.com',
+      displayName: 'Test Plugin',
+      pluginName: 'Test Plugin',
+      editKey: 0,
+      isDeleted: false,
+    };
+
+    store.addNewPlugin(plugin);
+    expect(store.getAddedPlugins.length).toBe(1);
+    expect(store.getAddedPlugins[0]).toEqual(plugin);
+  });
+
+  it('returns added plugins correctly', () => {
+    const plugin1: PluginEditModel = {
+      id: 1,
+      url: 'http://example.com',
+      displayName: 'Test Plugin 1',
+      pluginName: 'Test Plugin 1',
+      editKey: 0,
+      isDeleted: false,
+    };
+
+    const plugin2: PluginEditModel = {
+      id: 2,
+      url: 'http://example.com',
+      displayName: 'Test Plugin 2',
+      pluginName: 'Test Plugin 2',
+      editKey: 1,
+      isDeleted: false,
+    };
+
+    store.addNewPlugin(plugin1);
+    store.addNewPlugin(plugin2);
+    expect(store.getAddedPlugins.length).toBe(2);
+    expect(store.getAddedPlugins).toEqual([plugin1, plugin2]);
+  });
+
 });

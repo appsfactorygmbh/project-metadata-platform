@@ -82,17 +82,17 @@ export const useProjectEditStore = defineStore('projectEdit', {
     addEmptyUrlField(id: number): void {
       this.emptyUrlFields.set(id, id);
     },
-
+    // Adds an empty field to the emptyFields Map
     addEmptyProjectInformationField(prop: string): void {
       this.emptyProjectInformationFields.set(prop, 1);
     },
-
+    // Removes an empty field from the emptyFields Map
     removeEmptyProjectInformationField(prop: string): void {
       if (this.emptyProjectInformationFields.has(prop)) {
         this.emptyProjectInformationFields.delete(prop);
       }
     },
-
+    // Sets the Projectinformation changes
     setProjectInformation(project: DetailedProjectModel): void {
       this.emptyProjectInformationFields.clear();
       this.projectInformationChanges = { ...project };
@@ -108,7 +108,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
     removeEmptyUrlField(id: number): void {
       this.emptyUrlFields.delete(id);
     },
-
+    // Adds an empty field to the emptyFields Map
     addEmptyDisplaynameField(id: number): void {
       this.emptyDisplaynameFields.set(id, id);
     },
@@ -128,7 +128,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
     },
 
     // Checks for URL conflicts between Plugins
-// Checks for URL conflicts between Plugins
+    // Checks for URL conflicts between Plugins
     checkForConflicts(): void {
       console.log("pluginCHanges", this.pluginChanges)
       this.duplicatedUrls = new Map();
@@ -154,7 +154,6 @@ export const useProjectEditStore = defineStore('projectEdit', {
         isDeleted: false,
       };
       this.pluginChanges.set(index, editPlugin);
-      console.log('pluginChanges after add ', this.pluginChanges)
       return index;
     },
 

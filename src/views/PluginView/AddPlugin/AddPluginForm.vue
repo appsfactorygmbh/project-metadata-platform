@@ -3,7 +3,6 @@
   import { notification } from 'ant-design-vue';
   import {
     globalPluginStoreSymbol,
-    pluginStoreSymbol,
     projectEditStoreSymbol,
   } from '@/store/injectionSymbols';
   import { type FormStore } from '@/components/Form';
@@ -24,7 +23,6 @@
   }>();
 
   const globalPluginStore = inject(globalPluginStoreSymbol);
-  const pluginStore = inject(pluginStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
   const options = ref<SelectProps['options']>([]);
 
