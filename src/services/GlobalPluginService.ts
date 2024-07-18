@@ -49,6 +49,50 @@ class GlobalPluginService {
       return null;
     }
   };
+
+  createGlobalPlugin = async (
+    plugin: Omit<GlobalPluginModel, 'id'>,
+  ): Promise<Response | null> => {
+    try {
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/Plugins',
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(plugin),
+          mode: 'cors',
+        },
+      );
+      return response;
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
+  };
+
+  updateGlobalPlugin = async (
+    plugin: GlobalPluginModel,
+  ): Promise<Response | null> => {
+    try {
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/Plugins/' + plugin.id.toString(),
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(plugin),
+          mode: 'cors',
+        },
+      );
+      return response;
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
+  };
 }
 
 const globalPluginService = new GlobalPluginService();

@@ -2,7 +2,7 @@
   import { ref, toRaw, type PropType } from 'vue';
   import { type FormStore } from '@/components/Form/FormStore';
 
-  const { formStore, title, initiallyOpen } = defineProps({
+  const { formStore, title, initiallyOpen, open } = defineProps({
     formStore: {
       type: Object as PropType<FormStore>,
       required: true,
@@ -15,9 +15,20 @@
       type: Boolean,
       default: true,
     },
+    open: {
+      type: Boolean,
+      default: false,
+    },
   });
 
-  const open = ref<boolean>(initiallyOpen);
+  const isOpen = ref<boolean>(initiallyOpen);
+
+  watch(
+    () => open,
+    (value) => {
+      isOpen.value = value;
+    },
+  );
 
   const emit = defineEmits(['close']);
 
@@ -26,7 +37,7 @@
     formStore
       .submit()
       .then(() => {
-        open.value = false;
+        isOpen.value = false;
         emit('close');
       })
       .catch((e) => {
@@ -36,6 +47,7 @@
   };
 
   const resetModal = () => {
+    isOpen.value = false;
     emit('close');
     formStore.resetFields();
   };
@@ -43,7 +55,7 @@
 
 <template>
   <a-modal
-    v-model:open="open"
+    v-model:open="isOpen"
     width="400px"
     :title="title"
     :ok-button-props="{ disabled: false }"

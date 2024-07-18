@@ -135,12 +135,10 @@ export const useFormStore = <T extends FormState>(
               validateErrors.errorFields = [];
             }
             validateErrors.errorFields.push(...rej.errorFields);
-            console.log('validateError', validateErrors);
             return Promise.reject({ ...validateErrors });
           })
           .then((res) => {
-            console.log('validateError', validateErrors);
-            if (!_.isEmpty(res)) {
+            if (!_.isEmpty(validateErrors)) {
               return Promise.reject({ ...validateErrors });
             }
             return Promise.resolve(res);

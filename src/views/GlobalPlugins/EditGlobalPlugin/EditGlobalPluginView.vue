@@ -2,11 +2,14 @@
   import { FormModal } from '@/components/Modal';
   import { EditGlobalPluginForm } from './';
   import { useFormStore } from '@/components/Form';
+  import { useRouter } from 'vue-router';
 
   const formStore = useFormStore('editPluginForm');
 
+  const router = useRouter();
+
   const onClose = () => {
-    // TODO: implement close function
+    router.push('/settings/plugins');
   };
 </script>
 

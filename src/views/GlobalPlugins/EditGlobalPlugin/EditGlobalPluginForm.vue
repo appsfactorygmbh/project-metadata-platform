@@ -38,6 +38,8 @@
     }
   };
 
+  const pluginIdRef = ref<number | null>(null);
+
   const initialValues = reactive<GlobalPluginFormData>({
     pluginName: '',
     keys: [],
@@ -45,20 +47,25 @@
 
   onMounted(async () => {
     const route = useRoute();
-    const { pluginId } = route.params;
+    const { pluginId } = route.query;
+    console.log('pluginId', pluginId);
     if (typeof pluginId === 'string') {
       const numericPluginId = parseInt(pluginId, 10);
       if (!isNaN(numericPluginId)) {
+        pluginIdRef.value = numericPluginId;
         const globalPluginData =
-          await globalPluginStore?.getGlobalPluginById(numericPluginId);
-        if (globalPluginData) {
-          initialValues.pluginName = globalPluginData.name;
-          initialValues.keys =
-            globalPluginData.keys?.map((keyObj, index) => ({
-              key: index, // No need to convert to string, but if needed elsewhere, use String(index)
-              value: keyObj.key as unknown as string,
-            })) ?? [];
+          await globalPluginStore?.fetchGlobalPlugin(numericPluginId);
+        if (!globalPluginData) {
+          return;
         }
+        console.log(globalPluginData);
+        initialValues.pluginName = globalPluginData.name;
+        initialValues.keys =
+          globalPluginData.keys?.map((keyObj) => ({
+            key: keyObj.key,
+            value: keyObj.value,
+            archived: keyObj.archived,
+          })) ?? [];
       }
     }
   });
