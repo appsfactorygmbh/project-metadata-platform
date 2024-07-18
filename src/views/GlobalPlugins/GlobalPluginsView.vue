@@ -21,8 +21,11 @@
                 {{ item.name }}
               </div>
               <div class="buttons">
-                <a-button style="margin-right: 1em">
-                  <EditOutlined @click="handleEdit(item.id)" />
+                <a-button
+                  style="margin-right: 1em"
+                  @click="handleEdit(item.id)"
+                >
+                  <EditOutlined />
                 </a-button>
                 <a-button
                   :loading="isButtonLoading(item.id)"
