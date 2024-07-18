@@ -1,10 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import router from '@/router/router';
+import auth from '@/auth';
 import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { ProjectSlagResolver } from '..';
 import { useProjectStore } from '@/store';
 import { createTestingPinia } from '@pinia/testing';
 import { projectsStoreSymbol } from '@/store/injectionSymbols';
+import { createRouter, createWebHistory } from 'vue-router';
+import { SplitView } from '@/views';
+import { ProviderCollection } from '@/router/Provider';
 
 const testProjects = [
   {
@@ -27,12 +30,42 @@ describe('ProjectSlagResolver.vue', () => {
   enableAutoUnmount(afterEach);
   createTestingPinia();
 
+  const mockRouter = createRouter({
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes: [
+      {
+        path: '/',
+        name: 'Provider',
+        component: ProviderCollection,
+        children: [
+          {
+            name: 'ProjectNameResolver',
+            path: '/',
+            component: ProjectSlagResolver,
+            children: [
+              {
+                path: '/',
+                name: 'SplitViewDefault',
+                component: SplitView,
+              },
+              {
+                path: '/:projectSlag',
+                name: 'SplitView',
+                component: SplitView,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  });
+
   it('resolves an initial project id query', async () => {
-    await router.push({
+    await mockRouter.push({
       name: 'Provider',
       query: { projectId: '200' },
     });
-    await router.isReady();
+    await mockRouter.isReady();
 
     mount(ProjectSlagResolver, {
       plugins: [
@@ -44,24 +77,24 @@ describe('ProjectSlagResolver.vue', () => {
         provide: {
           [projectsStoreSymbol as symbol]: useProjectStore(),
         },
-        plugins: [router],
+        plugins: [mockRouter, auth],
       },
     });
-    const projectsStore = useProjectStore();
 
+    const projectsStore = useProjectStore();
     projectsStore.setProjects(testProjects);
     await flushPromises();
 
-    expect(router.currentRoute.value.query.projectId).toBe('200');
-    expect(router.currentRoute.value.path).toBe('/test-1');
+    expect(mockRouter.currentRoute.value.query.projectId).toBe('200');
+    expect(mockRouter.currentRoute.value.path).toBe('/test-1');
   });
 
   it('changes the slag when changing the query', async () => {
-    await router.push({
+    await mockRouter.push({
       name: 'Provider',
       query: { projectId: '200' },
     });
-    await router.isReady();
+    await mockRouter.isReady();
 
     mount(ProjectSlagResolver, {
       plugins: [
@@ -73,24 +106,24 @@ describe('ProjectSlagResolver.vue', () => {
         provide: {
           [projectsStoreSymbol as symbol]: useProjectStore(),
         },
-        plugins: [router],
+        plugins: [mockRouter, auth],
       },
     });
-    const projectsStore = useProjectStore();
 
+    const projectsStore = useProjectStore();
     projectsStore.setProjects(testProjects);
     await flushPromises();
 
-    expect(router.currentRoute.value.query.projectId).toBe('200');
-    expect(router.currentRoute.value.path).toBe('/test-1');
+    expect(mockRouter.currentRoute.value.query.projectId).toBe('200');
+    expect(mockRouter.currentRoute.value.path).toBe('/test-1');
 
-    await router.push({
+    await mockRouter.push({
       name: 'Provider',
       query: { projectId: '300' },
     });
     await flushPromises();
 
-    expect(router.currentRoute.value.query.projectId).toBe('300');
-    expect(router.currentRoute.value.path).toBe('/test-2');
+    expect(mockRouter.currentRoute.value.query.projectId).toBe('300');
+    expect(mockRouter.currentRoute.value.path).toBe('/test-2');
   });
 });
