@@ -1,10 +1,13 @@
 <template>
-  <!-- Ant-Design input component -->
-  <a-input-search
-    placeholder="Type what you're looking for:"
-    enter-button
-    @input="onInput"
-  />
+  <div style="display: flex; align-items: center; width: 100%">
+    <a-input-search
+      placeholder="Type what you're looking for:"
+      enter-button
+      :value="searchStore?.getSearchQuery"
+      style="flex-grow: 1; margin-right: 50px"
+      @input="onInput"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>

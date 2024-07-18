@@ -32,7 +32,12 @@
     },
   });
 
+  interface FilteredInfoModel {
+    [key: string]: string;
+  }
+
   const searchStore = inject<SearchStore<object>>(props.searchStoreSymbol);
+  const filteredInfo = reactive<FilteredInfoModel>({}); // Use an object to track filter values for each column
 
   const emit = defineEmits(['row-click']);
 
@@ -48,6 +53,7 @@
     column: ArrayElement<typeof props.columns>,
   ): TableColumnType => {
     const index = column.dataIndex;
+
     if (column.searchable) {
       column.onFilter = (value, record) =>
         String(record[index])
@@ -61,7 +67,10 @@
           }, 100);
         }
       };
+      // to set the coloumn.filteredValue to filtered.Info
+      column.filteredValue = filteredInfo[index] ? [filteredInfo[index]] : null;
     }
+
     if (column.sortMethod) {
       if (column.sortMethod == 'string') {
         column.sorter = (a, b) => stringSorter(a, b, index);
@@ -75,6 +84,17 @@
   const columns: ComputedRef<TableProps['columns']> = computed(() =>
     props.columns.map((column) => mapSearchableColumn(column)),
   );
+
+  // Watch filteredInfo to update columns' filteredValue reactively
+  watch(filteredInfo, () => {
+    if (columns.value) {
+      columns.value.forEach((column) => {
+        const key = column.key;
+        if (key)
+          column.filteredValue = filteredInfo[key] ? [filteredInfo[key]] : null;
+      });
+    }
+  });
 
   /*  Search implementation  */
 
@@ -100,16 +120,45 @@
     confirm();
     state.searchText = selectedKeys[0];
     state.searchedColumn = dataIndex;
+    filteredInfo[dataIndex] = state.searchText;
+  }
+
+  // Function to check all columns before reset
+  function checkAllColumn(dataIndex: string | null) {
+    if (columns.value) {
+      columns.value.forEach((column) => {
+        if (column.key) {
+          if (dataIndex) {
+            if (dataIndex == column.key) filteredInfo[dataIndex] = '';
+          } else {
+            filteredInfo[column.key] = '';
+          }
+        }
+      });
+    }
   }
 
   /**
    * Resets the filtered search in target column.
    * @param {((param?: FilterResetProps) => void)} clearFilters Clears the filter, when confirmed.
    */
-  function handleReset(clearFilters: (param?: FilterResetProps) => void) {
+  function handleReset(
+    clearFilters: (param?: FilterResetProps) => void,
+    dataIndex: string,
+  ) {
     clearFilters({ confirm: true });
+    checkAllColumn(dataIndex);
     state.searchText = '';
   }
+
+  // Handle clear all filters action
+  const handleClearAll = () => {
+    state.searchText = '';
+    state.searchedColumn = '';
+    checkAllColumn(null);
+  };
+
+  searchStore?.setOnReset(handleClearAll);
 </script>
 
 <template>
@@ -178,7 +227,7 @@
         <a-button
           size="small"
           style="width: 90px"
-          @click="handleReset(clearFilters)"
+          @click="handleReset(clearFilters, column.dataIndex)"
         >
           Reset
         </a-button>
