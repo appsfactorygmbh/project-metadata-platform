@@ -55,17 +55,6 @@ export const useProjectEditStore = defineStore('projectEdit', {
     },
     // Returns whether the Project can be created (no URL conflicts and no empty fields)
     getCanBeAdded(): boolean {
-      console.log(
-        'getCanBeAdded',
-        this.getPluginsWithUrlConflicts.length,
-        this.emptyUrlFields.size,
-        this.emptyDisplaynameFields.size,
-        this.projectInformationChanges.projectName,
-        this.projectInformationChanges.clientName,
-        this.projectInformationChanges.businessUnit,
-        this.projectInformationChanges.teamNumber,
-      );
-      console.log(this.projectInformationChanges);
       return (
         this.getPluginsWithUrlConflicts.length === 0 &&
         this.emptyUrlFields.size === 0 &&
@@ -165,7 +154,8 @@ export const useProjectEditStore = defineStore('projectEdit', {
     deletePlugin(id: number): void {
       const pluginChange = this.pluginChanges.get(id);
       if (pluginChange) {
-        this.pluginChanges.set(id, { ...pluginChange, isDeleted: true });
+        pluginChange.isDeleted = true;
+        this.pluginChanges.set(id, pluginChange);
       }
     },
   },
