@@ -9,7 +9,7 @@
   const router = useRouter();
 
   const onClose = () => {
-    router.push('/settings/plugins');
+    router.push('/settings/global-plugins');
   };
 </script>
 
