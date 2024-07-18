@@ -49,8 +49,7 @@ describe('ProjectSearchView.vue', () => {
   };
 
   it('renders correctly with 4 columns', () => {
-    createTestingPinia({});
-    const wrapper = generateWrapper(300);
+    const wrapper = generateWrapper(800);
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
   });
 
@@ -69,7 +68,7 @@ describe('ProjectSearchView.vue', () => {
     );
   });
 
-  it('add a query when clicking on a project', async () => {
+  it('adds a query when clicking on a project', async () => {
     await router.isReady();
 
     const wrapper = generateWrapper(700) as VueWrapper<

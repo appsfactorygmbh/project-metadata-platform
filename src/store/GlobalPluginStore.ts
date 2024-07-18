@@ -96,9 +96,12 @@ export const useGlobalPluginsStore = defineStore('globalPlugin', {
         const response = await globalPluginService.updateGlobalPlugin(plugin);
         if (response && response.ok) {
           this.fetchGlobalPlugins();
+        } else {
+          throw new Error('Failed to update global plugin');
         }
       } catch (err) {
-        console.error('Error updating global plugin: ' + err);
+        console.error('Error updating global plugin:', err);
+        throw err;
       }
     },
   },

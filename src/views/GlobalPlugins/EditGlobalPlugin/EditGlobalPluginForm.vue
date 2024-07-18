@@ -25,7 +25,7 @@
       });
     } catch {
       notificationApi.error({
-        message: 'An error occurred. The plugin could not be created',
+        message: 'The plugin could not be updated.',
       });
       console.log('fehler');
     }
