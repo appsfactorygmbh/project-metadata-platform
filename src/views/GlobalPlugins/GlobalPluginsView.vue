@@ -93,7 +93,7 @@
   const addButton: FloatButtonModel = {
     name: 'CreatePluginButton',
     onClick: () => {
-      router.push('/settings/plugins/create');
+      router.push('/settings/global-plugins/create');
     },
     icon: PlusOutlined,
     status: 'activated',
@@ -101,7 +101,7 @@
   };
 
   const handleEdit = (pluginId: number) => {
-    router.push({ path: '/settings/plugins/edit', query: { pluginId } });
+    router.push({ path: '/settings/global-plugins/edit', query: { pluginId } });
   };
 
   //stores the plugins, that get deleted at the time
