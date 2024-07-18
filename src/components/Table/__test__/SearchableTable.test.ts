@@ -146,6 +146,15 @@ describe('SearchableTable.vue', () => {
     const wrapper = generateWrapper();
     await loadData();
 
+    expect(wrapper.findAll('.ant-table-row')).toHaveLength(2);
+    await wrapper.find('.ant-table-filter-trigger').trigger('click');
+
+    const searchInput = wrapper.getComponent(Input);
+    const searchButton = wrapper.getComponent(Button);
+
+    await searchInput.get('.ant-input').setValue('A');
+    await searchButton.trigger('click');
+
     expect(wrapper.findAll('.ant-table-row')).toHaveLength(1);
     await wrapper.find('.ant-table-filter-trigger').trigger('click');
 
@@ -154,10 +163,10 @@ describe('SearchableTable.vue', () => {
     expect(wrapper.findAll('.ant-table-row')).toHaveLength(2);
     expect(
       wrapper.findAll('.ant-table-row')[0]?.find('.ant-table-cell').text(),
-    ).toBe('C');
+    ).toBe('A');
     expect(
       wrapper.findAll('.ant-table-row')[1]?.find('.ant-table-cell').text(),
-    ).toBe('A');
+    ).toBe('C');
   });
 
   it('adds a query when searching in a column and deleting it when pressing reset', async () => {

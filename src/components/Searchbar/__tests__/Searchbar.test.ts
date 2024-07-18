@@ -4,9 +4,30 @@ import SearchBar from '../SearchBar.vue';
 import { useSearchStore } from '@/store';
 import { createTestingPinia } from '@pinia/testing';
 import router from '@/router';
+import { createPinia, setActivePinia } from 'pinia';
 
 describe('SearchBar.vue', () => {
-  createTestingPinia();
+  setActivePinia(createPinia());
+
+  const searchStoreSymbol = Symbol('searchStoreSym');
+  const searchStore = useSearchStore('test');
+
+  const wrapper = mount(SearchBar, {
+    plugins: [
+      createTestingPinia({
+        stubActions: false,
+      }),
+    ],
+    global: {
+      provide: {
+        [searchStoreSymbol as symbol]: searchStore,
+      },
+      plugins: [router],
+    },
+    propsData: {
+      searchStoreSymbol: searchStoreSymbol,
+    },
+  });
 
   beforeEach(() => {
     // Reset mock before each test
@@ -14,21 +35,10 @@ describe('SearchBar.vue', () => {
   });
 
   it('renders correctly', () => {
-    const wrapper = mount(SearchBar, {
-      global: {
-        plugins: [router],
-      },
-      propsData: { searchStoreSymbol: Symbol('searchStoreSym') },
-    });
     expect(wrapper.exists()).toBe(true);
   });
 
   it('binds input value correctly to v-model', async () => {
-    const wrapper = mount(SearchBar, {
-      global: {
-        plugins: [router],
-      },
-    });
     const input = wrapper.find('input');
     await input.setValue('Test');
 
@@ -36,55 +46,27 @@ describe('SearchBar.vue', () => {
   });
 
   it('calls searchStore when the user provides input', async () => {
-    const searchStore = useSearchStore('test');
-    const symbol = Symbol('searchStoreSym');
-
-    const wrapper = mount(SearchBar, {
-      global: {
-        plugins: [createTestingPinia(), router],
-        provide: {
-          [symbol as symbol]: searchStore,
-        },
-      },
-      propsData: { searchStoreSymbol: symbol },
-    });
     const input = wrapper.find('input');
     await input.setValue('Test');
 
     // wait for all asynchronous calls to complete
-    await flushPromises();
-    expect(searchStore.getSearchQuery).toEqual('Test');
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
+
+    expect(searchStore.getSearchQuery).toBe('Test');
   });
 
   it('reset the searchBar when using the searchStore reset ', async () => {
-    const searchStoreSymbol = Symbol('searchStoreSym');
-    const searchStore = useSearchStore('test');
-
-    const wrapper = mount(SearchBar, {
-      plugins: [
-        createTestingPinia({
-          stubActions: false,
-        }),
-      ],
-      global: {
-        provide: {
-          [searchStoreSymbol as symbol]: searchStore,
-        },
-      },
-      propsData: {
-        searchStoreSymbol: searchStoreSymbol,
-      },
-    });
     const input = wrapper.find('input');
-
-    await input.setValue('C');
+    input.setValue('C');
     await flushPromises();
-    expect(searchStore.getSearchQuery).toEqual('C');
+
+    expect(searchStore.getSearchQuery).toBe('C');
     expect(input.element.value).toBe('C');
 
     searchStore.reset();
     await flushPromises();
-    expect(searchStore.getSearchQuery).toEqual('');
+    expect(searchStore.getSearchQuery).toBe('');
     expect(input.element.value).toBe('');
   });
 
@@ -105,40 +87,6 @@ describe('SearchBar.vue', () => {
     wrapper.unmount();
   });
 
-  it('sets the default value and calls searchStore with query in URL', async () => {
-    await router.push({
-      path: '/',
-      query: { searchQuery: 'Test2' },
-    });
-    await router.isReady();
-
-    const wrapper = mount(SearchBar, {
-      global: {
-        plugins: [router],
-      },
-    });
-
-    const input = wrapper.find('input');
-    await flushPromises();
-
-    expect(input.element.value).toBe('Test2');
-
-    const searchStore = useSearchStore('test');
-    const symbol = Symbol('searchStoreSym');
-
-    mount(SearchBar, {
-      global: {
-        plugins: [createTestingPinia(), router],
-        provide: {
-          [symbol as symbol]: searchStore,
-        },
-      },
-      propsData: { searchStoreSymbol: symbol },
-    });
-
-    expect(searchStore.setSearchQuery).toHaveBeenCalledWith('Test2');
-  });
-
   it('add query to router when searching', async () => {
     await router.isReady();
 
@@ -187,6 +135,6 @@ describe('SearchBar.vue', () => {
       propsData: { searchStoreSymbol: symbol },
     });
 
-    expect(searchStore.setSearchQuery).toHaveBeenCalledWith('Test2');
+    expect(searchStore.getSearchQuery).toBe('Test2');
   });
 });

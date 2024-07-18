@@ -45,7 +45,6 @@ declare module 'vue' {
     MenuButtons: typeof import('./../src/components/MenuButtons/MenuButtons.vue')['default']
     PluginComponent: typeof import('./../src/components/Plugin/PluginComponent.vue')['default']
     ProjectEditButtons: typeof import('./../src/components/ProjectEditButtons/ProjectEditButtons.vue')['default']
-    ResetButton: typeof import('./../src/components/Searchbar/ResetButton.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
