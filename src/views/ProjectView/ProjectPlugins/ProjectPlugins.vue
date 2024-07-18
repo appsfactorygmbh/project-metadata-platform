@@ -1,17 +1,21 @@
 <template>
-  <div class="main">
+  <div>
     <div v-if="!loading" class="container">
       <PluginComponent
         v-for="plugin in plugins"
-        :key="plugin.displayName"
+        :id="plugin.id"
+        :key="plugin.id"
         class="plugins"
         :plugin-name="plugin.pluginName"
         :display-name="plugin.displayName"
         :url="plugin.url"
         :is-loading="loading"
+        :is-editing="isEditing"
+        :edit-key="plugin.editKey"
+        :is-deleted="false"
       ></PluginComponent>
+      <AddPluginCard v-if="isEditing"></AddPluginCard>
     </div>
-
     <a-card
       v-else
       class="dummyCard"
@@ -29,26 +33,61 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, toRaw, inject, onMounted } from 'vue';
+  import { ref, computed, inject, onMounted, toRaw, watch } from 'vue';
+  import type { ComputedRef } from 'vue';
   import PluginComponent from '@/components/Plugin/PluginComponent.vue';
+  import AddPluginCard from '@/views/PluginView/AddPlugin/AddPluginCard.vue';
   import {
     pluginStoreSymbol,
     projectsStoreSymbol,
+    projectEditStoreSymbol,
   } from '@/store/injectionSymbols';
-  import type { PluginModel } from '@/models/Plugin';
-  import type { ComputedRef } from 'vue';
+  import { useEditing } from '@/utils/hooks/useEditing';
+  import type { PluginModel, PluginEditModel } from '@/models/Plugin';
+  const { isEditing } = useEditing();
 
   const pluginStore = inject(pluginStoreSymbol)!;
   const projectsStore = inject(projectsStoreSymbol);
+  const projectEditStore = inject(projectEditStoreSymbol);
 
-  let plugins: ComputedRef<PluginModel[]>;
+  const plugins = ref<PluginEditModel[]>([]);
   const loading = computed(
     () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
   );
 
+  // take the normal Plugins initialAdd them to the projectEditStore and add the editKey to the return value of initial Add to the plugin
+  const syncEditStore = (normalPlugins: PluginModel[]) => {
+    for (let i = 0; i < normalPlugins.length; i++) {
+      const index = projectEditStore?.initialAdd(normalPlugins[i]);
+      if (index !== undefined) {
+        plugins.value[i] = {
+          ...normalPlugins[i],
+          editKey: index,
+          isDeleted: false,
+        };
+      }
+    }
+  };
+
   function setPlugins(newPlugins: PluginModel[]) {
-    plugins = computed(() => toRaw(newPlugins));
+    const normalPlugins = toRaw(newPlugins);
+    projectEditStore?.resetPluginChanges();
+    plugins.value = [];
+    syncEditStore(normalPlugins);
   }
+
+  watch(
+    () => isEditing.value,
+    (newVal) => {
+      if (!newVal) {
+        projectEditStore?.resetPluginChanges();
+      } else {
+        plugins.value = [];
+        projectEditStore?.resetPluginChanges();
+        syncEditStore(pluginStore.getPlugins);
+      }
+    },
+  );
 
   onMounted(async () => {
     setPlugins(pluginStore.getPlugins);
@@ -76,19 +115,18 @@
     align-items: center;
     flex-direction: row;
     flex-wrap: wrap;
-  }
-  /* Styling for each plugin in container */
-  .plugins {
-    margin: 10px;
+    margin-bottom: 10px;
+    & > * {
+      margin: 10px;
+    }
   }
   .dummyCard {
     width: max-content;
     min-width: 200px;
     max-width: 100%;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
+    display: flex;
+    flex-direction: column;
     transition: 0.1s ease-in-out;
-  }
-  .main {
-    width: 100%;
   }
 </style>

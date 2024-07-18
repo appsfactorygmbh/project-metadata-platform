@@ -1,12 +1,32 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { describe, it, expect, vi } from 'vitest';
 import SearchBar from '../SearchBar.vue';
 import { useSearchStore } from '@/store';
+import { createPinia, setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import router from '@/router';
 
 describe('SearchBar.vue', () => {
-  createTestingPinia();
+  setActivePinia(createPinia());
+  const searchStoreSymbol = Symbol('searchStoreSym');
+  const searchStore = useSearchStore('test');
+
+  const wrapper = mount(SearchBar, {
+    plugins: [
+      createTestingPinia({
+        stubActions: false,
+      }),
+    ],
+    global: {
+      plugins: [router],
+      provide: {
+        [searchStoreSymbol as symbol]: searchStore,
+      },
+    },
+    propsData: {
+      searchStoreSymbol: searchStoreSymbol,
+    },
+  });
 
   beforeEach(() => {
     // Reset mock before each test
@@ -14,21 +34,10 @@ describe('SearchBar.vue', () => {
   });
 
   it('renders correctly', () => {
-    const wrapper = mount(SearchBar, {
-      global: {
-        plugins: [router],
-      },
-      propsData: { searchStoreSymbol: Symbol('searchStoreSym') },
-    });
     expect(wrapper.exists()).toBe(true);
   });
 
   it('binds input value correctly to v-model', async () => {
-    const wrapper = mount(SearchBar, {
-      global: {
-        plugins: [router],
-      },
-    });
     const input = wrapper.find('input');
     await input.setValue('Test');
 
@@ -36,26 +45,26 @@ describe('SearchBar.vue', () => {
   });
 
   it('calls searchStore when the user provides input', async () => {
-    const searchStore = useSearchStore('test');
-    const symbol = Symbol('searchStoreSym');
-
-    const wrapper = mount(SearchBar, {
-      global: {
-        plugins: [createTestingPinia(), router],
-        provide: {
-          [symbol as symbol]: searchStore,
-        },
-      },
-      propsData: { searchStoreSymbol: symbol },
-    });
     const input = wrapper.find('input');
     await input.setValue('Test');
 
     // wait for all asynchronous calls to complete
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
+    await flushPromises();
+    expect(searchStore.getSearchQuery).toEqual('Test');
+  });
 
-    expect(searchStore.setSearchQuery).toHaveBeenCalled();
+  it('reset the searchBar when using the searchStore reset ', async () => {
+    const input = wrapper.find('input');
+
+    await input.setValue('C');
+    await flushPromises();
+    expect(searchStore.getSearchQuery).toEqual('C');
+    expect(input.element.value).toBe('C');
+
+    searchStore.reset();
+    await flushPromises();
+    expect(searchStore.getSearchQuery).toEqual('');
+    expect(input.element.value).toBe('');
   });
 
   it('add query to router when searching', async () => {

@@ -33,13 +33,12 @@
     },
   });
 
-  interface FilteredInfo {
+  interface FilteredInfoModel {
     [key: string]: string;
   }
 
   const searchStore = inject<SearchStore<object>>(props.searchStoreSymbol);
-  const tableRef = ref();
-  const filteredInfo = reactive<FilteredInfo>({}); // Use an object to track filter values for each column
+  const filteredInfo = reactive<FilteredInfoModel>({}); // Use an object to track filter values for each column
 
   const emit = defineEmits(['row-click']);
 
@@ -135,6 +134,21 @@
     filteredInfo[dataIndex] = state.searchText;
   }
 
+  // Function to check all columns before reset
+  function checkAllColumn(dataIndex: string | null) {
+    if (columns.value) {
+      columns.value.forEach((column) => {
+        if (column.key) {
+          if (dataIndex) {
+            if (dataIndex == column.key) filteredInfo[dataIndex] = '';
+          } else {
+            filteredInfo[column.key] = '';
+          }
+        }
+      });
+    }
+  }
+
   /**
    * Resets the filtered search in target column.
    * @param {((param?: FilterResetProps) => void)} clearFilters Clears the filter, when confirmed.
@@ -144,6 +158,7 @@
     dataIndex: string,
   ) {
     clearFilters({ confirm: true });
+    checkAllColumn(dataIndex);
 
     if (columns.value) {
       columns.value.forEach((column) => {
@@ -155,24 +170,16 @@
 
     setSearchQuery(undefined, dataIndex);
     state.searchText = '';
-    state.searchedColumn = '';
   }
 
   // Handle clear all filters action
   const handleClearAll = () => {
     state.searchText = '';
     state.searchedColumn = '';
-
-    if (columns.value) {
-      columns.value.forEach((column) => {
-        const key = column.key;
-        if (key) filteredInfo[key] = '';
-      });
-    }
+    checkAllColumn(null);
   };
-  // Expose handleClearAll method
-  defineExpose({ handleClearAll });
 
+  searchStore?.setOnReset(handleClearAll);
   onMounted(() => {
     const queries = routerSearchQuery.value;
 
@@ -196,7 +203,6 @@
         scroll: sets height of table to ~90% of the window height
     -->
   <a-table
-    ref="tableRef"
     class="clickable-table"
     :columns="[...columns]"
     :data-source="[...(searchStore?.getSearchResults || [])]"

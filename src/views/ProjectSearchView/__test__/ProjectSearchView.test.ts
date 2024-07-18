@@ -45,9 +45,13 @@ describe('ProjectSearchView.vue', () => {
   };
 
   it('renders correctly with 4 columns', () => {
-    createTestingPinia({});
-    const wrapper = generateWrapper(300);
+    const wrapper = generateWrapper(800);
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
+  });
+
+  it('renders correctly with reset button', async () => {
+    const wrapper = generateWrapper(800)
+    expect(wrapper.find('.reset').exists()).toBe(true);
   });
 
   it('hides columns when the pane width is not large enough', async () => {
@@ -88,10 +92,13 @@ describe('ProjectSearchView.vue', () => {
       query: { projectId: '300' },
     });
     await router.isReady();
+    createTestingPinia({})
 
     const projectStore = useProjectStore();
     const pluginStore = usePluginsStore();
     generateWrapper(800);
+
+    await flushPromises();
 
     expect(projectStore.fetchProject).toHaveBeenCalledWith(300);
     expect(pluginStore.fetchPlugins).toHaveBeenCalledWith(300);

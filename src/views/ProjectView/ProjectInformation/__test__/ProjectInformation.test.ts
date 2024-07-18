@@ -3,8 +3,12 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import ProjectInformation from '../ProjectInformation.vue';
 import { createTestingPinia } from '@pinia/testing';
-import { projectsStoreSymbol } from '@/store/injectionSymbols';
-import { useProjectStore } from '@/store';
+import {
+  projectsStoreSymbol,
+  projectEditStoreSymbol,
+} from '@/store/injectionSymbols';
+import { useProjectStore, useProjectEditStore } from '@/store';
+import router from '@/router';
 
 const testData = {
   projectName: 'Heute Show',
@@ -35,7 +39,9 @@ describe('ProjectInformation.vue', () => {
             template: '<span />',
           },
         },
+        plugins: [router],
         provide: {
+          [projectEditStoreSymbol as symbol]: useProjectEditStore(),
           [projectsStoreSymbol as symbol]: useProjectStore(),
         },
       },
