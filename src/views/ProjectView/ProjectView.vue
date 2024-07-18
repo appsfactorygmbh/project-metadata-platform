@@ -33,25 +33,26 @@
     () => isEditing,
     (newVal) => {
       if (newVal) {
-        projectEditStore?.resetChanges();
+        projectEditStore?.resetPluginChanges();
       }
     },
   );
 
   const cancelEdit = () => {
-    projectEditStore?.resetChanges();
+    projectEditStore?.resetPluginChanges();
     reloadEditStore();
     stopEditing();
   };
 
-  const isAdding = computed(() => projectStore?.getIsLoadingAdd);
+  const isAdding = computed(() => projectStore?.getIsLoadingUpdate);
 
   // Watcher to see if fetch was successful
   watch(isAdding, (newVal) => {
     if (!newVal) {
-      if (projectStore?.getAddedSuccessfully) {
-        projectEditStore?.resetChanges();
+      if (projectStore?.getUpdatedSuccessfully) {
+        projectEditStore?.resetPluginChanges();
         message.success('Project updated successfully.', 7);
+        projectStore.fetchProject(projectStore.getProject?.id || 0);
         stopEditing();
       } else {
         message.error('Could not update Project.', 7);
@@ -79,7 +80,7 @@
       return;
     }
     const updateProjectInformation: DetailedProjectModel =
-      projectStore?.getProject;
+      projectEditStore.getProjectInformationChanges;
     const updatedProject: UpdateProjectModel = {
       projectName: updateProjectInformation?.projectName,
       businessUnit: updateProjectInformation?.businessUnit,
@@ -92,6 +93,8 @@
     const projectID = computed(() => projectStore?.getProject?.id);
     if (projectID.value) {
       await projectStore?.updateProject(updatedProject, projectID.value);
+      await projectStore.fetchProjects();
+      await projectStore.fetchProject(projectID.value);
       await pluginStore?.fetchPlugins(projectID.value);
     }
   };

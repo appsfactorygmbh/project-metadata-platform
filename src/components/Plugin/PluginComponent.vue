@@ -139,7 +139,9 @@
         url: urlInput.value,
         id: props.id,
         editKey: props.editKey,
-        isDeleted: props.isDeleted || false,
+        isDeleted:
+          projectEditStore?.pluginChanges.get(props.editKey)?.isDeleted ||
+          false,
       });
     }
   };

@@ -12,9 +12,11 @@ type StoreState = {
   projects: ProjectModel[];
   project: DetailedProjectModel | null;
   isLoadingAdd: boolean;
+  isLoadingUpdate: boolean;
   isLoadingProjects: boolean;
   isLoadingProject: boolean;
   addedSuccessfully: boolean;
+  updatedSuccessfully: boolean;
 };
 
 export const useProjectStore = defineStore('project', {
@@ -23,9 +25,11 @@ export const useProjectStore = defineStore('project', {
       projects: [],
       project: null,
       isLoadingAdd: false,
+      isLoadingUpdate: false,
       isLoadingProjects: false,
       isLoadingProject: false,
       addedSuccessfully: false,
+      updatedSuccessfully: false,
     };
   },
   getters: {
@@ -43,6 +47,9 @@ export const useProjectStore = defineStore('project', {
     getIsLoadingAdd(): boolean {
       return this.isLoadingAdd;
     },
+    getIsLoadingUpdate(): boolean {
+      return this.isLoadingUpdate;
+    },
     getIsLoadingProjects(): boolean {
       return this.isLoadingProjects;
     },
@@ -51,6 +58,9 @@ export const useProjectStore = defineStore('project', {
     },
     getAddedSuccessfully(): boolean {
       return this.addedSuccessfully;
+    },
+    getUpdatedSuccessfully(): boolean {
+      return this.updatedSuccessfully;
     },
   },
   actions: {
@@ -63,6 +73,9 @@ export const useProjectStore = defineStore('project', {
     setLoadingAdd(status: boolean) {
       this.isLoadingAdd = status;
     },
+    setLoadingUpdate(status: boolean) {
+      this.isLoadingUpdate = status;
+    },
     setLoadingProjects(status: boolean) {
       this.isLoadingProjects = status;
     },
@@ -71,6 +84,9 @@ export const useProjectStore = defineStore('project', {
     },
     setAddedSuccessfully(status: boolean) {
       this.addedSuccessfully = status;
+    },
+    setUpdatedSuccessfully(status: boolean) {
+      this.updatedSuccessfully = status;
     },
 
     async fetchProjects() {
@@ -101,18 +117,18 @@ export const useProjectStore = defineStore('project', {
 
     async updateProject(projectData: UpdateProjectModel, id: number) {
       try {
-        this.setLoadingAdd(true);
-        this.setAddedSuccessfully(false);
+        this.setLoadingUpdate(true);
+        this.setUpdatedSuccessfully(false);
         const response = await projectsService.updateProject(projectData, id);
         console.log(response);
         if (response && response?.ok) {
-          this.setAddedSuccessfully(true);
+          this.setUpdatedSuccessfully(true);
           await this.fetchProject(id);
         } else {
-          this.setAddedSuccessfully(false);
+          this.setUpdatedSuccessfully(false);
         }
       } finally {
-        this.setLoadingAdd(false);
+        this.setLoadingUpdate(false);
       }
     },
 
