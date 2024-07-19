@@ -14,7 +14,7 @@
 }
 
 @font-face {
-  font-family: Manrope;
+  font-family: Manrope, sans-serif;
   src: url('../public/fonts/manrope/Manrope-VariableFont_wght.woff2');
 }
 

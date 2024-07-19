@@ -7,5 +7,3 @@
     <RouterView />
   </ThemeProvider>
 </template>
-
-<style scoped></style>
