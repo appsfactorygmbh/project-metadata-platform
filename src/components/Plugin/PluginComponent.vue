@@ -79,7 +79,11 @@
       if (props.editKey !== undefined && newVal?.includes(props.editKey)) {
         urlStatusRef.value = 'error';
       } else {
-        urlStatusRef.value = '';
+        if (urlInput.value === '') {
+          urlStatusRef.value = 'error';
+        } else {
+          urlStatusRef.value = '';
+        }
       }
     },
   );
