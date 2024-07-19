@@ -35,8 +35,8 @@
 <script setup lang="ts">
   import { ref, computed, inject, onMounted, toRaw, watch } from 'vue';
   import type { ComputedRef } from 'vue';
-  import PluginComponent from '@/components/Plugin/PluginComponent.vue';
-  import AddPluginCard from '@/views/PluginView/AddPlugin/AddPluginCard.vue';
+  import { PluginComponent } from '@/components/Plugin';
+  import { AddPluginCard } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
   import {
     pluginStoreSymbol,
     projectsStoreSymbol,
