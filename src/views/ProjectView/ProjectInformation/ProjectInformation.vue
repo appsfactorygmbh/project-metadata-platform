@@ -437,7 +437,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex: 1 !important; /* Wichtigkeit setzen, um Inline-Stile zu überschreiben */
-    padding-left: 1em !important; /* Wichtigkeit setzen, um Inline-Stile zu überschreiben */
+    flex: 1 !important; /* Set to important to override inline style */
+    padding-left: 1em !important; /* Set to important to override inline style */
   }
 </style>
