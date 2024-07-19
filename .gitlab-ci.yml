@@ -70,6 +70,7 @@ sonarqube:
     paths:
       - .sonar/cache
   script:
+    - yarn install
     - yarn test
     - yarn add sonarqube-scanner-node --dev
     - yarn sonarqube-scanner-node -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info -Dsonar.token=$SONAR_TOKEN -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.sources=src/ -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.exclusions=**/__tests__/**,**/__mocks__/**,**/*.spec.ts,**/*.test.ts
