@@ -147,6 +147,7 @@
           :body-style="{
             display: 'flex',
             padding: '5px',
+            alignItems: 'center',
           }"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
@@ -187,6 +188,7 @@
           :body-style="{
             display: 'flex',
             padding: '5px',
+            alignItems: 'center',
           }"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
@@ -231,6 +233,7 @@
           :body-style="{
             display: 'flex',
             padding: '5px',
+            alignItems: 'center',
           }"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
@@ -275,6 +278,7 @@
           :body-style="{
             display: 'flex',
             padding: '5px',
+            alignItems: 'center',
           }"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"

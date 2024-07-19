@@ -28,14 +28,14 @@
 
   onBeforeMount(async () => {
     await globalPluginStore?.fetchGlobalPlugins();
-    options.value = toRaw(globalPluginStore?.getGlobalPlugins)?.map(
-      (plugin: GlobalPluginModel) => {
+    options.value = toRaw(globalPluginStore?.getGlobalPlugins)
+      ?.filter((plugin) => !plugin.archived)
+      .map((plugin: GlobalPluginModel) => {
         return {
           value: plugin.name,
           label: plugin.name,
         };
-      },
-    );
+      });
   });
 
   const [notificationApi, contextHolder] = notification.useNotification();
