@@ -285,5 +285,4 @@ describe('ProjectEditStore', () => {
     expect(store.getAddedPlugins.length).toBe(2);
     expect(store.getAddedPlugins).toEqual([plugin1, plugin2]);
   });
-
 });

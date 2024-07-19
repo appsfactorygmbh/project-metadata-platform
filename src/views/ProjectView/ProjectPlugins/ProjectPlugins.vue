@@ -81,7 +81,7 @@
     (newVal) => {
       if (newVal && newVal > 0) {
         const newPlugin = projectEditStore?.getLastAddedPlugin;
-        if(newPlugin){
+        if (newPlugin) {
           plugins.value = [...plugins.value, newPlugin];
         }
       }

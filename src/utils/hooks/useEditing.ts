@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref, computed, inject, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import {
   pluginStoreSymbol,
@@ -24,19 +24,19 @@ export const useEditing = () => {
 
   const startEditing = () => {
     console.log('start editing ', router.currentRoute.value.path);
-    isEditing.value = true;
+    const currentQueries = router.currentRoute.value.query;
     router.push({
       path: router.currentRoute.value.path,
-      query: { ...router.currentRoute.value.query, isEditing: 'true' },
+      query: { ...currentQueries, isEditing: 'true' },
     });
   };
 
-  const stopEditing = () => {
+  const stopEditing = async () => {
     console.log('stop editing');
-    isEditing.value = false;
-    router.push({
+    const currentQueries = router.currentRoute.value.query;
+    await router.push({
       path: router.currentRoute.value.path,
-      query: { ...router.currentRoute.value.query, isEditing: 'false' },
+      query: { ...currentQueries, isEditing: 'false' },
     });
     const projectID = computed(() => projectStore?.getProject?.id);
     if (projectID.value) {

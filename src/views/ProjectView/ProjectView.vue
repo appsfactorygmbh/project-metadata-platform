@@ -55,7 +55,7 @@
         projectStore.fetchProject(projectStore.getProject?.id || 0);
         stopEditing();
       } else {
-        message.error('Could not update Project.', 7);
+        message.error('Could not update Project.', 5);
       }
     }
   });
@@ -68,7 +68,7 @@
     if (!projectEditStore?.getCanBeAdded) {
       message.error(
         'Could not update Project. There are empty fields or duplicated plugins.',
-        7,
+        5,
       );
       return;
     }

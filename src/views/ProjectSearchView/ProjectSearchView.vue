@@ -94,8 +94,8 @@
     },
   );
 
-  const handleRowClick = (project: ProjectModel) => {
-    if (isEditing) stopEditing();
+  const handleRowClick = async (project: ProjectModel) => {
+    if (isEditing) await stopEditing();
     setProjectId(project.id);
   };
 

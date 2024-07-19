@@ -130,7 +130,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
     // Checks for URL conflicts between Plugins
     // Checks for URL conflicts between Plugins
     checkForConflicts(): void {
-      console.log("pluginCHanges", this.pluginChanges)
+      console.log('pluginCHanges', this.pluginChanges);
       this.duplicatedUrls = new Map();
 
       this.pluginChanges.forEach((plugin, key) => {
