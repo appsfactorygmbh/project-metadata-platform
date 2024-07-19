@@ -63,11 +63,11 @@
     },
   );
 
-  const toggleEditingMode = () => {
+  const toggleEditingMode = async () => {
     if (isEditing.value === true) {
-      stopEditing();
+      await stopEditing();
     } else {
-      startEditing();
+      await startEditing();
     }
   };
 
