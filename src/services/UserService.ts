@@ -19,9 +19,9 @@ class UserService extends ApiService {
     }
   };
 
-  fetchUser = async (id: number): Promise<UserModel | null> => {
+  fetchUser = async (userId: number): Promise<UserModel | null> => {
     try {
-      const response = await this.fetch('/Users/' + id.toString(), {
+      const response = await this.fetch('/Users/' + userId.toString(), {
         headers: {
           Accept: 'text/plain',
           'Access-Control-Allow-Origin': '*',
@@ -50,6 +50,19 @@ class UserService extends ApiService {
       return response;
     } catch (error) {
       console.error('Error:', error);
+      return null;
+    }
+  };
+
+  deleteUser = async (userId: number): Promise<Response | null> => {
+    try {
+      const response = await this.fetch('/Users/' + userId.toString(), {
+        method: 'DELETE',
+        mode: 'cors',
+      });
+      return response;
+    } catch (err) {
+      console.error('Error deleting user: ' + err);
       return null;
     }
   };

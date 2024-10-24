@@ -7,7 +7,9 @@ type StoreState = {
   user: UserModel | null;
   isLoadingCreate: boolean;
   isLoadingUsers: boolean;
+  isLoadingDelete: boolean;
   createdSuccessfully: boolean;
+  removedSuccessfully: boolean;
 };
 
 export const useUserStore = defineStore('user', {
@@ -17,7 +19,9 @@ export const useUserStore = defineStore('user', {
       user: null,
       isLoadingCreate: false,
       isLoadingUsers: false,
+      isLoadingDelete: false,
       createdSuccessfully: false,
+      removedSuccessfully: true,
     };
   },
   getters: {
@@ -36,8 +40,14 @@ export const useUserStore = defineStore('user', {
     getIsLoadingUsers(): boolean {
       return this.isLoadingUsers;
     },
+    getisLoadingDelete(): boolean {
+      return this.isLoadingDelete;
+    },
     getCreatedSuccessfully(): boolean {
       return this.createdSuccessfully;
+    },
+    getRemovedSuccessfully(): boolean {
+      return this.removedSuccessfully;
     },
   },
   actions: {
@@ -53,8 +63,14 @@ export const useUserStore = defineStore('user', {
     setIsLoadingUsers(isLoadingUsers: boolean): void {
       this.isLoadingUsers = isLoadingUsers;
     },
+    setIsLoadingDelete(isLoadingDelete: boolean): void {
+      this.isLoadingDelete = isLoadingDelete;
+    },
     setCreatedSuccessfully(createdSuccessfully: boolean): void {
       this.createdSuccessfully = createdSuccessfully;
+    },
+    setRemovedSuccessfully(removedSuccessfully: boolean): void {
+      this.removedSuccessfully = removedSuccessfully;
     },
 
     async fetchUsers(): Promise<void> {
@@ -67,9 +83,9 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    async fetchUser(id: number): Promise<void> {
+    async fetchUser(userId: number): Promise<void> {
       try {
-        const user = (await userService.fetchUser(id)) ?? {
+        const user = (await userService.fetchUser(userId)) ?? {
           id: -1,
           name: '',
           username: '',
@@ -94,6 +110,20 @@ export const useUserStore = defineStore('user', {
         }
       } finally {
         this.setIsLoadingCreate(false);
+      }
+    },
+
+    async deleteUser(userId: number): Promise<void> {
+      try {
+        this.setIsLoadingDelete(true);
+        this.setRemovedSuccessfully(false);
+        const response = await userService.deleteUser(userId);
+        if (response && response.ok) {
+          this.setRemovedSuccessfully(true);
+          this.fetchUsers();
+        }
+      } finally {
+        this.setIsLoadingDelete(false);
       }
     },
   },
