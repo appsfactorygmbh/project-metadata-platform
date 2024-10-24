@@ -23,6 +23,7 @@ export default tseslint.config(
       'dist',
       'html',
       'node_modules',
+      'types',
     ],
   },
   {

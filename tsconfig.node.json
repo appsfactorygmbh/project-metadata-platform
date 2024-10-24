@@ -26,6 +26,7 @@
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
 
     /* Linting */
