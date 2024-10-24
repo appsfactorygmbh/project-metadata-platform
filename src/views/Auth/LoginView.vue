@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { useFormStore, type FormSubmitType } from '@/components/Form';
+  import { type FormSubmitType, useFormStore } from '@/components/Form';
   import { AuthLayout, LoginForm } from '.';
   import { computed } from 'vue';
   import { useToken } from 'ant-design-vue/es/theme/internal';

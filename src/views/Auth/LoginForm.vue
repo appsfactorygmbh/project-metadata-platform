@@ -1,8 +1,8 @@
 <script lang="ts" setup>
   import type { FormStore } from '@/components/Form';
   import type { RulesObject } from '@/components/Form/types';
-  import { defineProps, reactive, type StyleValue } from 'vue';
-  import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
+  import { type StyleValue, defineProps, reactive } from 'vue';
+  import { LockOutlined, UserOutlined } from '@ant-design/icons-vue';
   import { useToken } from 'ant-design-vue/es/theme/internal';
 
   const { formStore, feedbackMessage } = defineProps<{

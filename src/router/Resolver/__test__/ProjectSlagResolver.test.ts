@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import auth from '@/auth';
 import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { ProjectSlagResolver } from '..';

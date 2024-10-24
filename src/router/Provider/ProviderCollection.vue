@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import {
-    ProjectProvider,
+    GlobalPluginProvider,
     PluginProvider,
     ProjectEditProvider,
-    GlobalPluginProvider,
+    ProjectProvider,
   } from '@/router/Provider';
 </script>
 

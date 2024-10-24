@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-  import { watch, inject, onMounted } from 'vue';
-  import { useRoute, useRouter, type LocationQueryValue } from 'vue-router';
+  import { inject, onMounted, watch } from 'vue';
+  import { type LocationQueryValue, useRoute, useRouter } from 'vue-router';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
 
   const route = useRoute();

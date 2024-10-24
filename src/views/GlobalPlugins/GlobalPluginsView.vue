@@ -61,8 +61,8 @@
 
 <script lang="ts" setup>
   import {
-    EditOutlined,
     DeleteOutlined,
+    EditOutlined,
     PlusOutlined,
   } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button';

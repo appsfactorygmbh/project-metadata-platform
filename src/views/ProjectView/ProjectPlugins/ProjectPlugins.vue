@@ -33,17 +33,17 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, inject, onMounted, toRaw, watch } from 'vue';
+  import { computed, inject, onMounted, ref, toRaw, watch } from 'vue';
   import type { ComputedRef } from 'vue';
   import { PluginComponent } from '@/components/Plugin';
   import { AddPluginCard } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
   import {
     pluginStoreSymbol,
-    projectsStoreSymbol,
     projectEditStoreSymbol,
+    projectsStoreSymbol,
   } from '@/store/injectionSymbols';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import type { PluginModel, PluginEditModel } from '@/models/Plugin';
+  import type { PluginEditModel, PluginModel } from '@/models/Plugin';
   const { isEditing } = useEditing();
 
   const pluginStore = inject(pluginStoreSymbol)!;
