@@ -13,7 +13,6 @@ const __dirname = path.dirname(__filename);
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
-  // @ts-expect-error mismatched types
   ...pluginVue.configs['flat/recommended'],
   {
     ignores: [
@@ -41,6 +40,7 @@ export default tseslint.config(
   {
     name: 'custom-config',
     files: ['src/**/*.{ts,tsx,vue}'],
+    ignores: ['src/**/__tests__/**/*.{ts,tsx}'],
     plugins: {
       'typescript-eslint': tseslint.plugin,
     },
@@ -67,7 +67,7 @@ export default tseslint.config(
   },
   {
     name: 'vitest-config',
-    files: ['**/__tests__/**/*.ts'],
+    files: ['src/**/__tests__/**/*.{ts,tsx}'],
     languageOptions: {
       parserOptions: {
         parser: tseslint.parser,

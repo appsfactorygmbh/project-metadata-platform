@@ -1,11 +1,29 @@
 {
-  "extends": "./tsconfig.app.json",
-  "exclude": [],
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": ["./tsconfig.app.json"],
+  "exclude": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    "html/**"
+  ],
+  "include": [
+    "types/**/*.d.ts",
+    "src/**/__tests__/**/*.ts",
+    "src/**/__tests__/**/*.tsx",
+    "tests/**/*.ts",
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "src/**/*.json"
+  ],
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.vitest.tsbuildinfo",
-
-    "lib": [],
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "skipLibCheck": true,
     "types": ["node", "jsdom"]
   }
 }

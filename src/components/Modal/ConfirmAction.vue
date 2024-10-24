@@ -12,7 +12,7 @@
   </a-modal>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref, watch } from 'vue';
 
   const props = defineProps({
@@ -30,7 +30,11 @@
     },
   });
 
-  const emit = defineEmits(['confirm', 'cancel', 'update:isOpen']);
+  const emit = defineEmits<{
+    (e: 'confirm'): void;
+    (e: 'cancel'): void;
+    (e: 'update:isOpen', value: boolean): void;
+  }>();
 
   const localIsOpen = ref(props.isOpen);
 

@@ -68,7 +68,7 @@
 
       <!-- navigation elements -->
       <a-menu
-        v-model:selectedKeys="selectedKeys"
+        v-model:selected-keys="selectedKeys"
         class="menuItem"
         mode="inline"
       >
