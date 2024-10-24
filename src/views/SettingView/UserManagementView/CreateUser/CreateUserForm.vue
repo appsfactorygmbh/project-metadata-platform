@@ -5,6 +5,7 @@
   import { ref, toRaw, reactive } from 'vue';
   import type { CustomRulesObject, RulesObject } from '@/components/Form/types';
   import type { CreateUserFormData } from './CreateUserFormData.ts';
+  import type { Rule } from 'ant-design-vue/es/form/interface';
 
   const { formStore, initialValues } = defineProps<{
     formStore: FormStore;
@@ -17,7 +18,7 @@
     try {
       console.log(fields);
 
-      const userDef: UserModel = {
+      const userDef: CreateUserModel = {
         id: 0,
         name: toRaw(fields).name,
         username: toRaw(fields).username,
@@ -33,7 +34,7 @@
     }
   };
 
-  type UserModel = {
+  type CreateUserModel = {
     id: number;
     name: string;
     username: string;
@@ -41,7 +42,7 @@
     password: string;
   };
 
-  const createUser = (userDef: UserModel) => {
+  const createUser = (userDef: CreateUserModel) => {
     userDef;
     /*const index = projectEditStore?.initialAdd(userDef);
 
@@ -63,6 +64,28 @@
   };
 
   const dynamicValidateForm = reactive<CreateUserFormData>(initialValues);
+
+  const validatePassword = async (_rule: Rule, value: string) => {
+    console.log(value, dynamicValidateForm.confirmPassword);
+
+    if (value === '') {
+      return Promise.reject('Please enter a password.');
+    } else if (dynamicValidateForm.confirmPassword !== '') {
+      formRef.value.validateField('confirmPassword');
+    } else {
+      return Promise.resolve();
+    }
+  };
+
+  const validateConfirmPassword = async (_rule: Rule, value: string) => {
+    if (value === '') {
+      return Promise.reject('Please confirm the password.');
+    } else if (value !== dynamicValidateForm.password) {
+      return Promise.reject("The passwords don't match.");
+    } else {
+      return Promise.resolve();
+    }
+  };
 
   const rulesRef = reactive<RulesObject<CreateUserFormData>>({
     name: [
@@ -93,6 +116,7 @@
       {
         required: true,
         message: 'Please insert a password.',
+        validator: validatePassword,
         trigger: 'change',
         type: 'string',
       },
@@ -101,6 +125,7 @@
       {
         required: true,
         message: 'Please confirm the password.',
+        validator: validateConfirmPassword,
         trigger: 'change',
         type: 'string',
       },
@@ -112,7 +137,7 @@
     ],
   });
 
-  const customRules = reactive<CustomRulesObject<CreateUserFormData, 'email'>>({
+  const customRules = reactive<CustomRulesObject<CreateUserFormData>>({
     email: [
       {
         ruleTarget: 'field',
@@ -124,6 +149,26 @@
           return Promise.resolve();
         },
         message: 'Please enter a valid email.',
+      },
+    ],
+    password: [
+      {
+        ruleTarget: 'field',
+        keyProp: 'password',
+        validator: (_, value) => {
+          validatePassword(_, value);
+        },
+        message: 'The password must be at least 8 characters long.',
+      },
+    ],
+    confirmPassword: [
+      {
+        ruleTarget: 'field',
+        keyProp: 'confirmPassword',
+        validator: (_, value) => {
+          validateConfirmPassword(_, value);
+        },
+        message: 'The password must be at least 8 characters long.',
       },
     ],
   });
