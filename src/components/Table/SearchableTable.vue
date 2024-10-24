@@ -59,7 +59,7 @@
   });
 
   //reactive state for the search input of a column
-  const searchInput = ref();
+  const searchInput = ref<HTMLInputElement>();
 
   const mapSearchableColumn = (
     column: ArrayElement<typeof props.columns>,
@@ -75,7 +75,7 @@
       column.onFilterDropdownOpenChange = (visible: boolean) => {
         if (visible) {
           setTimeout(() => {
-            searchInput.value.focus();
+            searchInput.value?.focus();
           }, 100);
         }
       };
