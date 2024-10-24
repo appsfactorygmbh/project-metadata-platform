@@ -13,6 +13,7 @@ stages:
   key: $CI_COMMIT_REF_SLUG
   paths:
     - .yarn
+    - .yarn-cache
     - node_modules
     - lib
 
@@ -22,6 +23,9 @@ stages:
     - .sonar/cache
 
 .use_cache:
+  # Temporary workaround to ensure the node_modules are there when the job is run
+  extends:
+    - install-job
   cache:
     - <<: *node_dependencies_cache
       policy: pull
@@ -36,6 +40,8 @@ stages:
     # Install yarn as outlined in (https://yarnpkg.com/lang/en/docs/install/#alternatives-stable)
     - npm install -g corepack
     - corepack enable
+    - echo 'yarn-offline-mirror ".yarn-cache/"' >> .yarnrc
+    - echo 'yarn-offline-mirror-pruning true' >> .yarnrc
   cache:
     - <<: *node_dependencies_cache
       policy: push
