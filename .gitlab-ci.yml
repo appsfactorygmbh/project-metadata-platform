@@ -104,7 +104,6 @@ lint-check-job:
 
 unit-test-job:
   stage: test
-  image: node:latest
   extends:
     - .corepack_init
     - .update_cache
