@@ -23,7 +23,7 @@ class UserService extends ApiService {
     try {
       const response = await this.fetch('/Users/' + userId.toString(), {
         headers: {
-          Accept: 'text/plain',
+          Accept: 'application/json',
           'Access-Control-Allow-Origin': '*',
           cors: 'cors',
         },
@@ -49,7 +49,7 @@ class UserService extends ApiService {
       });
       return response;
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error creating user:', error);
       return null;
     }
   };
@@ -63,6 +63,26 @@ class UserService extends ApiService {
       return response;
     } catch (err) {
       console.error('Error deleting user: ' + err);
+      return null;
+    }
+  };
+
+  updateUser = async (
+    userId: number,
+    updatedUser: CreateUserModel,
+  ): Promise<Response | null> => {
+    try {
+      const response = await this.fetch('/Users/' + userId.toString(), {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedUser),
+        mode: 'cors',
+      });
+      return response;
+    } catch (error) {
+      console.error('Error updating user:', error);
       return null;
     }
   };

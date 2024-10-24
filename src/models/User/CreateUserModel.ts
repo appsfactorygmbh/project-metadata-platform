@@ -1,6 +1,6 @@
-export type UserModel = {
-  id: number;
+export type CreateUserModel = {
   name: string;
   username: string;
   email: string;
+  password: string;
 };
