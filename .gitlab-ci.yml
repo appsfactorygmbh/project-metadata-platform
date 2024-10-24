@@ -39,8 +39,7 @@ stages:
     - corepack enable
     - echo 'yarn-offline-mirror ".yarn-cache/"' >> .yarnrc
     - echo 'yarn-offline-mirror-pruning true' >> .yarnrc
-    # Temporary workaround to ensure the node_modules are there when the job is run
-    - yarn install --immutable
+    - yarn install --immutable # Temporary workaround to ensure the node_modules are there when the job is run
   cache:
     - <<: *node_dependencies_cache
       policy: push
