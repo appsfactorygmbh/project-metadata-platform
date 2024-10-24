@@ -5,6 +5,7 @@ stages:
   - install
   - lint
   - test
+  - build
   - deploy
   - release
 
