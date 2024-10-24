@@ -92,6 +92,7 @@ lint-check-job:
     - install-job
   script:
     - echo "Linting code"
+    - npm install -g eslint
     - npx eslint --format gitlab .
   artifacts:
     reports:
