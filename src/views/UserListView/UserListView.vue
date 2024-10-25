@@ -43,8 +43,6 @@
       collapsible
       :width="280"
     >
-      >
-
       <!-- navigation elements -->
       <a-menu
         v-model:selectedKeys="selectedKeys"
@@ -101,7 +99,7 @@
 
   .ant-layout-sider {
     background: #fff;
-    height: 90vh;
+    height: 92vh;
     overflow: auto;
   }
 
