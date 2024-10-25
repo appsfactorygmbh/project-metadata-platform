@@ -10,6 +10,7 @@ import ComingSoonView from '@/views/Service/ComingSoonView.vue';
 import NotFoundView from '@/views/Service/NotFoundView.vue';
 import { LoginView, RegisterView } from '@/views/Auth';
 import ForbiddenView from '@/views/Service/ForbiddenView.vue';
+import UserInformationView from '@/views/UserInformationView/UserInformationView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,7 +57,7 @@ const router = createRouter({
             {
               path: '/settings/user-management',
               name: 'users',
-              component: ComingSoonView,
+              component: UserInformationView,
             },
             {
               path: '/settings/global-plugins',
