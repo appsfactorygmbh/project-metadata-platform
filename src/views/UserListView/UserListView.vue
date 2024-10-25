@@ -1,14 +1,6 @@
 <script lang="ts" setup>
-  //import icons for navigation buttons
-  import type { FloatButtonModel } from '@/components/Button';
-  import {
-    AppstoreAddOutlined,
-    BarsOutlined,
-    UserOutlined,
-    LeftOutlined,
-  } from '@ant-design/icons-vue';
   import { ref } from 'vue';
-  import { useRouter } from 'vue-router';
+  //import { useRouter } from 'vue-router';
 
   // Component state using refs
   const collapsed = ref<boolean>(false);
@@ -16,23 +8,12 @@
   const tab = ref<string>('Global Plugins');
 
   // Router instance
-  const router = useRouter();
-
-  // Method to go back to the mainpage
-  const goToMain = () => {
-    router.push('/');
-  };
-
-  const backButton: FloatButtonModel = {
-    icon: LeftOutlined,
-    onClick: goToMain,
-    name: 'Back',
-  };
+  //const router = useRouter();
 
   //Methods for URL link  by clickin the navigation buttons
   const clickTab = (name: string) => {
     tab.value = name;
-    switch (name) {
+    /*switch (name) {
       case 'User': {
         router.push(`/settings/user-management`);
         break;
@@ -49,7 +30,7 @@
         router.push(`/settings`);
         break;
       }
-    }
+    }*/
   };
 </script>
 
@@ -62,9 +43,7 @@
       collapsible
       :width="280"
     >
-      <!-- return to homepage button-->
-      <a-layout-header style="height: 80px" />
-      <FloatingButton :button="backButton" class="iconBack" />
+      >
 
       <!-- navigation elements -->
       <a-menu
@@ -84,55 +63,35 @@
           <a-menu-item key="6" @click="clickTab('User')">User 3</a-menu-item>
         </a-sub-menu> -->
         <a-menu-item key="1" class="userManagement" @click="clickTab('User')">
-          <UserOutlined class="icons" />
-          <span>User Management</span>
+          <span>User 1</span>
         </a-menu-item>
         <a-menu-item
           key="2"
           class="globalPlugins"
           @click="clickTab('Global Plugins')"
         >
-          <AppstoreAddOutlined class="icons" />
-          <span>Global Plugins</span>
+          <span>User 2</span>
         </a-menu-item>
         <a-menu-item
           key="3"
           class="globalLogs"
           @click="clickTab('Global Logs')"
         >
-          <BarsOutlined class="icons" />
-          <span>Global Logs</span>
+          <span>User 3</span>
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
-    <a-layout class="addressBar">
-      <a-layout-content>
-        <!-- breadcrumbs -->
-        <a-breadcrumb>
-          <a-breadcrumb-item>Settings</a-breadcrumb-item>
-          <a-breadcrumb-item> {{ tab }} </a-breadcrumb-item>
-        </a-breadcrumb>
-        <div style="padding: 10px; min-height: 650px">
-          <RouterView />
-        </div>
-      </a-layout-content>
-    </a-layout>
+    <a-layout-content>
+      <div style="padding: 10px; min-height: 650px">
+        <RouterView />
+      </div>
+    </a-layout-content>
   </a-layout>
 </template>
 
 <style scoped>
-  .iconBack {
-    left: 20px;
-    top: 20px;
-  }
-  /* Style for the sidebar icons */
-  .icons * {
-    width: 1.4em;
-    height: 1.4em;
-  }
-
   .layout {
-    min-height: 100vh;
+    height: 100vh;
   }
 
   .ant-layout-header {
@@ -142,32 +101,22 @@
 
   .ant-layout-sider {
     background: #fff;
-    height: 100vh;
-  }
-  /* Style for the sidebar menu */
-  :deep(.ant-menu-item) {
-    font-size: 1.2em;
+    height: 90vh;
+    overflow: auto;
   }
 
   span {
-    font-size: 1.2em;
+    font-size: 1em;
   }
 
   .ant-layout-content {
-    margin: 0;
-  }
-
-  .ant-breadcrumb {
-    margin: 15px 15px 5px;
-  }
-
-  .addressBar {
-    padding: 0;
+    margin: 0 16px;
   }
 
   /* Style for the expandable button on bottom*/
   :deep(.ant-layout-sider-trigger) {
     background-color: gray !important;
     color: white !important;
+    height: 0;
   }
 </style>
