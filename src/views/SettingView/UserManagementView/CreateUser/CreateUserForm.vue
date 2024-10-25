@@ -6,6 +6,7 @@
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateUserFormData } from './CreateUserFormData.ts';
   import type { Rule } from 'ant-design-vue/es/form/interface';
+  import { message } from 'ant-design-vue';
 
   const { formStore, initialValues } = defineProps<{
     formStore: FormStore;
@@ -25,12 +26,15 @@
         email: toRaw(fields).email,
         password: toRaw(fields).password,
       };
-      createUser(userDef);
+      userDef;
+      //userStore.createUser(userDef);
     } catch {
       notificationApi.error({
-        message: 'An error occurred. The plugin could not be created',
+        message: 'An error occurred. The user could not be created',
       });
       console.log('fehler');
+    } finally {
+      message.success('User created', 2);
     }
   };
 
@@ -40,20 +44,6 @@
     username: string;
     email: string;
     password: string;
-  };
-
-  const createUser = (userDef: CreateUserModel) => {
-    userDef;
-    /*const index = projectEditStore?.initialAdd(userDef);
-
-    if (index !== undefined) {
-      const newUser = {
-        ...userDef,
-        editKey: index,
-        isDeleted: false,
-      };
-      projectEditStore?.addNewPlugin(newUser);
-    }*/
   };
 
   const formItemLayoutWithOutLabel = {
