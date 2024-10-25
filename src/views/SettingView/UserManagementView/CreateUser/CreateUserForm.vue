@@ -3,7 +3,7 @@
   import { notification } from 'ant-design-vue';
   import { type FormStore } from '@/components/Form';
   import { ref, toRaw, reactive } from 'vue';
-  import type { CustomRulesObject, RulesObject } from '@/components/Form/types';
+  import type { RulesObject } from '@/components/Form/types';
   import type { CreateUserFormData } from './CreateUserFormData.ts';
   import type { Rule } from 'ant-design-vue/es/form/interface';
 
@@ -70,9 +70,11 @@
 
     if (value === '') {
       return Promise.reject('Please enter a password.');
-    } else if (dynamicValidateForm.confirmPassword !== '') {
-      formRef.value.validateField('confirmPassword');
     } else {
+      if (dynamicValidateForm.confirmPassword !== '') {
+        formRef.value.validateFields('confirmPassword');
+      }
+
       return Promise.resolve();
     }
   };
@@ -84,6 +86,17 @@
       return Promise.reject("The passwords don't match.");
     } else {
       return Promise.resolve();
+    }
+  };
+
+  // Creates a regex for all possible E-Mail addresses and checks if the given one fits the pattern
+  const validateEmail = (_rule: Rule, value: string) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (emailRegex.test(value)) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('Please enter a valid email.');
     }
   };
 
@@ -108,6 +121,7 @@
       {
         required: true,
         message: 'Please insert an email.',
+        validator: validateEmail,
         trigger: 'change',
         type: 'string',
       },
@@ -137,52 +151,9 @@
     ],
   });
 
-  const customRules = reactive<CustomRulesObject<CreateUserFormData>>({
-    email: [
-      {
-        ruleTarget: 'field',
-        keyProp: 'email',
-        validator: (_, value) => {
-          if (!isValidEmail(value)) {
-            return Promise.reject('Please enter a valid email.');
-          }
-          return Promise.resolve();
-        },
-        message: 'Please enter a valid email.',
-      },
-    ],
-    password: [
-      {
-        ruleTarget: 'field',
-        keyProp: 'password',
-        validator: (_, value) => {
-          validatePassword(_, value);
-        },
-        message: 'The password must be at least 8 characters long.',
-      },
-    ],
-    confirmPassword: [
-      {
-        ruleTarget: 'field',
-        keyProp: 'confirmPassword',
-        validator: (_, value) => {
-          validateConfirmPassword(_, value);
-        },
-        message: 'The password must be at least 8 characters long.',
-      },
-    ],
-  });
-
-  // Creates a regex for all possible E-Mail addresses and checks if the given one fits the pattern
-  const isValidEmail = (email: string) => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
-  };
-
   formStore.setOnSubmit(onSubmit);
   formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
-  formStore.setCustomRules(customRules);
 
   const formRef = ref();
 </script>
@@ -228,6 +199,7 @@
       </a-input>
     </a-form-item>
     <a-form-item
+      has-feedback
       name="email"
       class="column"
       :no-style="true"
@@ -245,42 +217,42 @@
       </a-input>
     </a-form-item>
     <a-form-item
+      has-feedback
       name="password"
       class="column"
       :no-style="true"
       :whitespace="true"
       :rules="rulesRef.password"
     >
-      <a-input-password
+      <a-input
         id="inputCreateUserPassword"
         v-model:value="dynamicValidateForm.password"
         class="inputField"
         placeholder="Password"
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.password"
-        :visibility-toggle="false"
-        style="margin: 10px 0"
+        type="password"
       >
-      </a-input-password>
+      </a-input>
     </a-form-item>
     <a-form-item
+      has-feedback
       name="confirmPassword"
       class="column"
       :no-style="true"
       :whitespace="true"
       :rules="rulesRef.confirmPassword"
     >
-      <a-input-password
+      <a-input
         id="inputCreateUserConfirmPassword"
         v-model:value="dynamicValidateForm.confirmPassword"
         class="inputField"
         placeholder="Confirm Password"
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.confirmPassword"
-        :visibility-toggle="false"
-        style="margin: 10px 0"
+        type="password"
       >
-      </a-input-password>
+      </a-input>
     </a-form-item>
   </a-form>
   <contextHolder></contextHolder>
