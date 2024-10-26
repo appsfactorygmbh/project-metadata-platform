@@ -1850,7 +1850,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^22.7.9":
+"@types/node@npm:*, @types/node@npm:^22.8.1":
   version: 22.8.1
   resolution: "@types/node@npm:22.8.1"
   dependencies:
@@ -5030,7 +5030,7 @@ __metadata:
     "@types/jsdom": "npm:^21.1.7"
     "@types/lodash": "npm:^4.17.12"
     "@types/lodash-es": "npm:^4.17.12"
-    "@types/node": "npm:^22.7.9"
+    "@types/node": "npm:^22.8.1"
     "@types/splitpanes": "npm:^2.2.6"
     "@typescript-eslint/parser": "npm:^8.11.0"
     "@vitejs/plugin-vue": "npm:^5.1.4"
@@ -5076,7 +5076,7 @@ __metadata:
     vue-auth3: "npm:^1.0.11"
     vue-eslint-parser: "npm:^9.4.3"
     vue-router: "npm:^4.4.5"
-    vue-tsc: "npm:^2.1.6"
+    vue-tsc: "npm:^2.1.8"
     yarn-run-all: "npm:^3.1.1"
   languageName: unknown
   linkType: soft
@@ -10091,7 +10091,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-tsc@npm:^2.1.6":
+"vue-tsc@npm:^2.1.8":
   version: 2.1.8
   resolution: "vue-tsc@npm:2.1.8"
   dependencies:
