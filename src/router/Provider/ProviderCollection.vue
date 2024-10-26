@@ -14,7 +14,9 @@
       <PluginProvider>
         <ProjectEditProvider>
           <GlobalPluginProvider>
-            <slot></slot>
+            <slot>
+              <RouterView />
+            </slot>
           </GlobalPluginProvider>
         </ProjectEditProvider>
       </PluginProvider>

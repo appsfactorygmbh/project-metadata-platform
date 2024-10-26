@@ -21,7 +21,7 @@ export const useUserStore = defineStore('user', {
       isLoadingUsers: false,
       isLoadingDelete: false,
       createdSuccessfully: false,
-      removedSuccessfully: true,
+      removedSuccessfully: false,
     };
   },
   getters: {
