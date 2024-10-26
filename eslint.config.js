@@ -7,6 +7,7 @@ import eslintConfigPrettier from 'eslint-config-prettier';
 import unusedImports from 'eslint-plugin-unused-imports';
 import * as tsParser from '@typescript-eslint/parser';
 import * as vueParser from 'vue-eslint-parser';
+import globals from 'globals';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -33,6 +34,14 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   ...pluginVue.configs['flat/base'],
   ...pluginVue.configs['flat/recommended'],
+  {
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+  },
   {
     name: 'linter-config',
     files: ['eslint.config.js', 'vite.config.ts'],
