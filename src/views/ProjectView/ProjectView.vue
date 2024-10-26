@@ -9,8 +9,8 @@
   import { useEditing } from '@/utils/hooks/useEditing';
   import {
     pluginStoreSymbol,
-    projectsStoreSymbol,
     projectEditStoreSymbol,
+    projectsStoreSymbol,
   } from '@/store/injectionSymbols';
   import { inject, watch } from 'vue';
   import { message } from 'ant-design-vue';

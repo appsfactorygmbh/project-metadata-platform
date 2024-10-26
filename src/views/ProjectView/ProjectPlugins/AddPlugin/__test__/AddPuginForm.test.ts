@@ -1,9 +1,9 @@
-import { describe, it, expect, expectTypeOf } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import {
+  VueWrapper,
   enableAutoUnmount,
   flushPromises,
   mount,
-  VueWrapper,
 } from '@vue/test-utils';
 import { useFormStore } from '@/components/Form';
 import { setActivePinia } from 'pinia';

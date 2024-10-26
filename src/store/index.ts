@@ -1,13 +1,13 @@
-import { usePluginsStore, type PluginsStore } from './PluginStore';
+import { type PluginsStore, usePluginsStore } from './PluginStore';
 import {
-  useProjectEditStore,
   type ProjectEditStore,
+  useProjectEditStore,
 } from './ProjectEditStore/ProjectEditStore.ts';
-import { useProjectStore, type ProjectStore } from './ProjectsStore';
-import { useSearchStore, type SearchStore } from './SearchStore';
+import { type ProjectStore, useProjectStore } from './ProjectsStore';
+import { type SearchStore, useSearchStore } from './SearchStore';
 import {
-  useGlobalPluginsStore,
   type GlobalPluginsStore,
+  useGlobalPluginsStore,
 } from './GlobalPluginStore';
 
 export {

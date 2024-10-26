@@ -4,8 +4,8 @@
   import {
     AppstoreAddOutlined,
     BarsOutlined,
-    UserOutlined,
     LeftOutlined,
+    UserOutlined,
   } from '@ant-design/icons-vue';
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';

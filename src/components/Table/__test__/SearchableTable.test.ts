@@ -1,6 +1,6 @@
 import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { SearchableTable } from '@/components/Table';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 import { useSearchStore } from '@/store';
 import { createPinia, setActivePinia } from 'pinia';

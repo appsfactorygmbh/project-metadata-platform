@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, toRaw, type PropType } from 'vue';
+  import { type PropType, ref, toRaw } from 'vue';
   import { type FormStore } from '@/components/Form/FormStore';
 
   const { formStore, title, initiallyOpen, open } = defineProps({
