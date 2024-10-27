@@ -23,6 +23,7 @@
     "@vueuse/core": "^10.10.0",
     "ant-design-vue": "4.x",
     "axios": "^1.7.2",
+    "corepack": "^0.29.4",
     "dayjs": "^1.11.11",
     "jest": "^29.7.0",
     "lodash": "^4.17.21",
