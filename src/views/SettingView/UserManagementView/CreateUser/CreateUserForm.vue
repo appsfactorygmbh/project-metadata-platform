@@ -2,48 +2,39 @@
   import { type FormSubmitType } from '@/components/Form';
   import { notification } from 'ant-design-vue';
   import { type FormStore } from '@/components/Form';
-  import { ref, toRaw, reactive } from 'vue';
+  import { ref, toRaw, reactive, inject } from 'vue';
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateUserFormData } from './CreateUserFormData.ts';
   import type { Rule } from 'ant-design-vue/es/form/interface';
   import { message } from 'ant-design-vue';
+  import { userStoreSymbol } from '@/store/injectionSymbols.ts';
+  import type { CreateUserModel } from '@/models/User';
 
   const { formStore, initialValues } = defineProps<{
     formStore: FormStore;
     initialValues: CreateUserFormData;
   }>();
 
+  const userStore = inject(userStoreSymbol);
   const [notificationApi, contextHolder] = notification.useNotification();
 
   const onSubmit: FormSubmitType = (fields) => {
     try {
-      console.log(fields);
-
       const userDef: CreateUserModel = {
-        id: 0,
         name: toRaw(fields).name,
         username: toRaw(fields).username,
         email: toRaw(fields).email,
         password: toRaw(fields).password,
       };
-      userDef;
-      //userStore.createUser(userDef);
+      userStore?.createUser(userDef);
     } catch {
       notificationApi.error({
         message: 'An error occurred. The user could not be created',
       });
-      console.log('fehler');
+      console.log('Error creating user');
     } finally {
       message.success('User created', 2);
     }
-  };
-
-  type CreateUserModel = {
-    id: number;
-    name: string;
-    username: string;
-    email: string;
-    password: string;
   };
 
   const formItemLayoutWithOutLabel = {
