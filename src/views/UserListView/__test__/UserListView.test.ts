@@ -4,7 +4,7 @@ import UserListView from '@/views/UserListView/UserListView.vue';
 
 describe('UserListView.vue', () => {
   it('renders correctly', async () => {
-    const wrapper = mount(UserListView.test);
+    const wrapper = mount(UserListView);
     expect(wrapper.find('.layout').exists()).toBe(true);
     expect(wrapper.find('.sideSlider').exists()).toBe(true);
     expect(wrapper.find('.menuItem').exists()).toBe(true);
