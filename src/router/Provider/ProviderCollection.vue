@@ -4,19 +4,22 @@
     PluginProvider,
     ProjectEditProvider,
     ProjectProvider,
+    UserProvider,
   } from '@/router/Provider';
 </script>
 
 <template>
-  <ProjectEditProvider>
-    <GlobalPluginProvider>
+  <UserProvider>
+    <ProjectProvider>
       <PluginProvider>
-        <ProjectProvider>
-          <slot>
-            <RouterView></RouterView>
-          </slot>
-        </ProjectProvider>
+        <ProjectEditProvider>
+          <GlobalPluginProvider>
+            <slot>
+              <RouterView />
+            </slot>
+          </GlobalPluginProvider>
+        </ProjectEditProvider>
       </PluginProvider>
-    </GlobalPluginProvider>
-  </ProjectEditProvider>
+    </ProjectProvider>
+  </UserProvider>
 </template>

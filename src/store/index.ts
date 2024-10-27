@@ -9,6 +9,7 @@ import {
   type GlobalPluginsStore,
   useGlobalPluginsStore,
 } from './GlobalPluginStore';
+import { type UserStore, useUserStore } from './UserStore';
 
 export {
   usePluginsStore,
@@ -16,6 +17,7 @@ export {
   useSearchStore,
   useGlobalPluginsStore,
   useProjectEditStore,
+  useUserStore,
 };
 export type {
   PluginsStore,
@@ -23,4 +25,5 @@ export type {
   SearchStore,
   GlobalPluginsStore,
   ProjectEditStore,
+  UserStore,
 };
