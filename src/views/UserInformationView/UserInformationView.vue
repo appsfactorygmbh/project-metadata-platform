@@ -9,6 +9,7 @@
   const isEditingEMail = false;
   const isEditingPass = false;
 
+  //Button for adding new project
   const button: FloatButtonModel = {
     name: 'CreateProjectButton',
     onClick: () => {},
@@ -19,12 +20,14 @@
 </script>
 
 <template>
+  <!-- avatar components -->
   <div class="avatar">
     <a-avatar :size="150">
       <template #icon><UserOutlined /></template>
     </a-avatar>
   </div>
 
+  <!-- User informations components -->
   <a-flex class="userInfo">
     <a-flex
       class="userInfoBox"
@@ -41,8 +44,8 @@
       >
         <label class="label">Name:</label>
         <template v-if="!isLoading">
-          <p v-if="!isEditingName">Test</p>
-          <a-input v-else />
+          <p v-if="!isEditingName" class="text">Test</p>
+          <a-input v-else class="input" />
         </template>
         <a-skeleton
           v-else
@@ -61,8 +64,8 @@
       >
         <label class="label">Username:</label>
         <template v-if="!isLoading">
-          <p v-if="!isEditingUserName">Test Username</p>
-          <a-input v-else />
+          <p v-if="!isEditingUserName" class="text">Test Username</p>
+          <a-input v-else class="input" />
         </template>
         <a-skeleton
           v-else
@@ -81,8 +84,8 @@
       >
         <label class="label">E-Mail:</label>
         <template v-if="!isLoading">
-          <p v-if="!isEditingEMail">Test</p>
-          <a-input v-else />
+          <p v-if="!isEditingEMail" class="text">Test</p>
+          <a-input v-else class="input" />
         </template>
         <a-skeleton
           v-else
@@ -101,8 +104,8 @@
       >
         <label class="label">Password:</label>
         <template v-if="!isLoading">
-          <p v-if="!isEditingPass">Test</p>
-          <a-input v-else />
+          <p v-if="!isEditingPass" class="text">Test</p>
+          <a-input v-else class="input" />
         </template>
         <a-skeleton
           v-else
@@ -112,6 +115,8 @@
         />
       </a-card>
     </a-flex>
+
+    <!-- Edit button components -->
     <a-flex class="editBox">
       <a-button class="edit">Edit</a-button>
       <a-button class="edit">Edit</a-button>
