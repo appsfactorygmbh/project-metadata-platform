@@ -5,15 +5,15 @@
   // Component state using refs
   const collapsed = ref<boolean>(false);
   const selectedKeys = ref<string[]>(['2']);
-  const tab = ref<string>('Global Plugins');
+  /*const tab = ref<string>('');
 
   // Router instance
-  //const router = useRouter();
+  const router = useRouter();
 
   //Methods for URL link  by clickin the navigation buttons
   const clickTab = (name: string) => {
     tab.value = name;
-    /*switch (name) {
+    switch (name) {
       case 'User': {
         router.push(`/settings/user-management`);
         break;
@@ -30,8 +30,8 @@
         router.push(`/settings`);
         break;
       }
-    }*/
-  };
+    }
+  };*/
 </script>
 
 <template>
@@ -41,7 +41,7 @@
       v-model:collapsed="collapsed"
       class="sideSlider"
       collapsible
-      :width="280"
+      :width="250"
     >
       <!-- navigation elements -->
       <a-menu
@@ -49,32 +49,13 @@
         class="menuItem"
         mode="inline"
       >
-        <!-- <a-sub-menu key="userManagement">
-          <template #title>
-            <span>
-              <user-outlined class="icons" />
-              <span>User Management</span>
-            </span>
-          </template>
-          <a-menu-item key="4" @click="clickTab('User')">User 1</a-menu-item>
-          <a-menu-item key="5" @click="clickTab('User')">User 2</a-menu-item>
-          <a-menu-item key="6" @click="clickTab('User')">User 3</a-menu-item>
-        </a-sub-menu> -->
-        <a-menu-item key="1" class="userManagement" @click="clickTab('User')">
+        <a-menu-item key="1" class="user">
           <span>User 1</span>
         </a-menu-item>
-        <a-menu-item
-          key="2"
-          class="globalPlugins"
-          @click="clickTab('Global Plugins')"
-        >
+        <a-menu-item key="2" class="user">
           <span>User 2</span>
         </a-menu-item>
-        <a-menu-item
-          key="3"
-          class="globalLogs"
-          @click="clickTab('Global Logs')"
-        >
+        <a-menu-item key="3" class="user">
           <span>User 3</span>
         </a-menu-item>
       </a-menu>

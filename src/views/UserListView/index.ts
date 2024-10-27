@@ -1,3 +1,3 @@
-import SettingView from './SettingView.vue';
+import UserListView from './UserListView.vue';
 
-export { SettingView };
+export { UserListView };
