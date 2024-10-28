@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./node_modules/@tsconfig/node20/tsconfig.json",
   "include": [
     "vite.config.*",
@@ -8,13 +9,31 @@
     "playwright.config.*",
     "eslint.config.*"
   ],
+  "exclude": [],
   "compilerOptions": {
     "composite": true,
-    "noEmit": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-
+    "target": "ES2022",
+    "lib": ["ES2023"],
     "module": "ESNext",
+    "skipLibCheck": true,
+    "types": ["node", "vitest"],
+    "outDir": "./dist",
+
+    /* Bundler mode */
     "moduleResolution": "Bundler",
-    "types": ["node"]
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
   }
 }

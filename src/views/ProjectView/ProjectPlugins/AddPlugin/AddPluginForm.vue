@@ -6,12 +6,12 @@
     projectEditStoreSymbol,
   } from '@/store/injectionSymbols';
   import { type FormStore } from '@/components/Form';
-  import { onBeforeMount, ref, toRaw, inject, reactive } from 'vue';
+  import { inject, onBeforeMount, reactive, ref, toRaw } from 'vue';
   import type { SelectProps } from 'ant-design-vue';
   import type {
     GlobalPluginModel,
-    PluginModel,
     PluginEditModel,
+    PluginModel,
   } from '@/models/Plugin';
   import type { LabeledValue, SelectValue } from 'ant-design-vue/lib/select';
   import type { RulesObject } from '@/components/Form/types';

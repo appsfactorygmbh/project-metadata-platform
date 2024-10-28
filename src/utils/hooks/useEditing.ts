@@ -1,4 +1,4 @@
-import { ref, computed, inject, watch } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import {
   pluginStoreSymbol,

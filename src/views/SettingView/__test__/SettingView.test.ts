@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
-import { describe, it, expect } from 'vitest';
-import SettingView from '@/views/SettingView/SettingView.vue';
+import { describe, expect, it } from 'vitest';
+import SettingView from '@/views/SettingView/SettingView.vue'; // Adjust the path as necessary
 import { useRouter } from 'vue-router';
 import router from '../../../router';
 

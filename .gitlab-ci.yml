@@ -1,20 +1,48 @@
+default:
+  image: node:20-alpine
+
 stages:
+  - install
+  - lint
   - test
   - build
   - deploy
   - release
 
-default:
-  image: node:20-alpine
+.node_dependencies_cache: &node_dependencies_cache
+  key: $CI_COMMIT_REF_SLUG
+  paths:
+    - .yarn
+    - .yarn-cache
+    - node_modules
+    - lib
+
+.sonar_cache: &sonar_cache
+  key: '${CI_JOB_NAME}'
+  paths:
+    - .sonar/cache
+
+.use_cache:
+  cache:
+    - <<: *node_dependencies_cache
+      policy: pull
+
+.update_cache:
+  cache:
+    - <<: *node_dependencies_cache
+      policy: pull-push
+
+.corepack_init:
   before_script:
     # Install yarn as outlined in (https://yarnpkg.com/lang/en/docs/install/#alternatives-stable)
     - npm install -g corepack
     - corepack enable
-    - yarn install --immutable
+    - echo 'yarn-offline-mirror ".yarn-cache/"' >> .yarnrc
+    - echo 'yarn-offline-mirror-pruning true' >> .yarnrc
+    - yarn install --immutable # Temporary workaround to ensure the node_modules are there when the job is run
   cache:
-    paths:
-      - .yarn
-      - node_modules
+    - <<: *node_dependencies_cache
+      policy: push
 
 variables:
   DEVELOP_BRANCH: develop
@@ -24,47 +52,111 @@ include:
     ref: main
     file: 'pipeline/all.yml'
 
-test:
-  stage: test
-  image: node:latest
+install-job:
+  stage: install
+  extends:
+    - .corepack_init
+    - .update_cache
   script:
-    - yarn test --reporter=junit --outputFile=./junit.xml
+    - echo "Install Dependencies"
+    - yarn install --immutable
+
+style-check-job:
+  stage: lint
+  allow_failure: true
+  extends:
+    - .corepack_init
+    - .use_cache
+  needs:
+    - install-job
+  script:
+    - echo "Checking code style"
+    - npm install -g prettier
+    - prettier --check .
+
+type-check-job:
+  stage: lint
+  allow_failure: true
+  extends:
+    - .corepack_init
+    - .use_cache
+  needs:
+    - install-job
+  script:
+    - echo "Checking types"
+    - yarn type-check
+
+lint-check-job:
+  stage: lint
+  allow_failure: true
+  extends:
+    - .corepack_init
+    - .use_cache
+  needs:
+    - install-job
+  script:
+    - echo "Linting code"
+    - npm install -g eslint
+    - npx eslint --format gitlab .
+  artifacts:
+    reports:
+      codequality: gl-codequality.json
+
+unit-test-job:
+  stage: test
+  extends:
+    - .corepack_init
+    - .update_cache
+  needs:
+    - install-job
+  script:
+    - echo "Running unit tests"
+    - yarn test --reporter=junit --reporter=vitest-sonar-reporter
+  artifacts:
+    when: always
+    paths:
+      - junit-report.xml
+      - sonar-report.xml
+    reports:
+      junit:
+        - junit-report.xml
+
+coverage-test-job:
+  stage: test
+  allow_failure: true
+  extends:
+    - .corepack_init
+    - .update_cache
+  needs:
+    - install-job
+  script:
+    - echo "Running coverage tests"
+    - yarn coverage
   artifacts:
     when: always
     reports:
       coverage_report:
         coverage_format: cobertura
         path: coverage/cobertura-coverage.xml
-      junit:
-        - junit.xml
-
-type-check:
-  stage: test
-  script:
-    - yarn type-check
-
-code-formatting:
-  stage: test
-  allow_failure: true
-  script:
-    - npm install -g prettier
-    - prettier --check .
-
-code-quality:
-  stage: test
-  script:
-    - npx eslint --format gitlab .
-  allow_failure: true
-  artifacts:
-    reports:
-      codequality: gl-codequality.json
+    paths:
+      - coverage/
 
 sonarqube:
   stage: test
   image: node:latest
+  needs:
+    - unit-test-job
+    - coverage-test-job
+  dependencies:
+    - unit-test-job
+    - coverage-test-job
   variables:
     SONAR_USER_HOME: '${CI_PROJECT_DIR}/.sonar'
     GIT_DEPTH: '0'
+  cache:
+    - <<: *node_dependencies_cache
+      policy: pull
+    - <<: *sonar_cache
   script:
     - yarn test --reporter=junit --outputFile=./junit.xml
     - yarn add sonarqube-scanner-node --dev
