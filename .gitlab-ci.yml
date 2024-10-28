@@ -144,6 +144,8 @@ coverage-test-job:
 sonarqube:
   stage: test
   image: node:latest
+  extends:
+    - .corepack_init
   needs:
     - unit-test-job
     - coverage-test-job
