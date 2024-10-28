@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
 import { type Ref } from 'vue';
 import type {
+  CustomRulesObject,
   FormState,
   FormType,
   RulesObject,
-  CustomRulesObject,
 } from './types';
 import type {
   FieldData,

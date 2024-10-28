@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-  import { SearchableTable, type SearchableColumn } from '@/components/Table';
+  import { type SearchableColumn, SearchableTable } from '@/components/Table';
   import {
     pluginStoreSymbol,
     projectsStoreSymbol,
   } from '@/store/injectionSymbols';
-  import { onMounted, inject, provide, reactive } from 'vue';
-  import { useSearchStore, type SearchStore } from '@/store/SearchStore';
+  import { inject, onMounted, provide, reactive } from 'vue';
+  import { type SearchStore, useSearchStore } from '@/store/SearchStore';
   import type { ProjectModel } from '@/models/Project';
   import { projectsService } from '@/services';
   import { useEditing } from '@/utils/hooks/useEditing';

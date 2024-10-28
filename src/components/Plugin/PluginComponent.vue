@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   // Import ref for reactive variables and utility functions for URL handling.
-  import { ref, watch, inject } from 'vue';
-  import { cutAfterTLD, createFaviconURL } from './editURL';
+  import { inject, ref, watch } from 'vue';
+  import { createFaviconURL, cutAfterTLD } from './editURL';
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import { projectEditStoreSymbol } from '@/store/injectionSymbols';
 

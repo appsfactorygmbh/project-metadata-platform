@@ -1,4 +1,4 @@
-import type { UserModel, CreateUserModel } from '@/models/User';
+import type { CreateUserModel, UserModel } from '@/models/User';
 import { ApiService } from './ApiService';
 
 class UserService extends ApiService {

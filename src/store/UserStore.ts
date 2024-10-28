@@ -1,5 +1,5 @@
 import { userService } from '@/services/UserService';
-import type { UserModel, CreateUserModel } from '@/models/User';
+import type { CreateUserModel, UserModel } from '@/models/User';
 import { defineStore } from 'pinia';
 
 type StoreState = {

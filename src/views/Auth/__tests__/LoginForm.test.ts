@@ -82,7 +82,7 @@ describe('LoginForm.vue', () => {
     expect(submit).toHaveBeenCalledTimes(1);
     await flushPromises();
 
-    expect(onSubmit).not.toHaveBeenCalled;
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 
   it("should call the 'login' method when the form is submitted", async () => {

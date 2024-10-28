@@ -1,8 +1,5 @@
-/// <reference types="vitest/globals" />
-/// <reference types="vite/client" />
 import { fileURLToPath } from 'node:url';
-import { defineConfig, ConfigEnv, UserConfig } from 'vite';
-import { configDefaults } from 'vitest/config';
+import { configDefaults, defineConfig, ConfigEnv } from 'vitest/config';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import VueDevTools from 'vite-plugin-vue-devtools';
@@ -14,7 +11,7 @@ const baseSrc = fileURLToPath(new URL('./src', import.meta.url));
 
 // https://vitejs.dev/config/
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
+export default defineConfig(({ mode }: ConfigEnv) => {
   return {
     resolve: {
       alias: [
@@ -85,7 +82,6 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     server: {
       port: 5173,
     },
-    //@ts-expect-error fu🖕
     test: {
       globals: true,
       environment: 'jsdom',
@@ -99,7 +95,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       setupFiles: './tests/setup.ts',
       reporters: ['default', 'html'],
       outputFile: {
-        junit: './junit.xml',
+        junit: './junit-report.xml',
+        'vitest-sonar-reporter': 'sonar-report.xml',
       },
     },
   };

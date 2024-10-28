@@ -1,13 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import ProjectInformation from '../ProjectInformation.vue';
 import { createTestingPinia } from '@pinia/testing';
 import {
-  projectsStoreSymbol,
   projectEditStoreSymbol,
+  projectsStoreSymbol,
 } from '@/store/injectionSymbols';
-import { useProjectStore, useProjectEditStore } from '@/store';
+import { useProjectEditStore, useProjectStore } from '@/store';
 import router from '@/router';
 
 const testData = {
