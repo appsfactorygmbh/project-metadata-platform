@@ -2,12 +2,58 @@
   import { UserOutlined } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { PlusOutlined } from '@ant-design/icons-vue';
+  //import { EditOutlined } from '@ant-design/icons-vue';
+  import { inject, onMounted, toRaw } from 'vue';
+  import { userStoreSymbol } from '@/store/injectionSymbols';
+  import { storeToRefs } from 'pinia';
+  import type { UserModel } from '@/models/User';
+  import type { ComputedRef } from 'vue';
 
-  const isLoading = false;
   const isEditingName = false;
   const isEditingUserName = false;
   const isEditingEMail = false;
   const isEditingPass = false;
+
+  const userStore = inject(userStoreSymbol)!;
+
+  const { getIsLoadingUsers } = storeToRefs(userStore);
+  const { getIsLoading } = storeToRefs(userStore);
+  const isLoading = computed(
+    () => getIsLoadingUsers.value || getIsLoading.value,
+  );
+
+  onMounted(async () => {
+    const user = userStore.getUser;
+    if (user) addData(user);
+
+    const data: ComputedRef<UserModel | null> = computed(
+      () => userStore.getUser,
+    );
+
+    watch(
+      () => data.value,
+      (newProject, oldProject) => {
+        if (!newProject) return;
+        if (newProject.id !== oldProject?.id) {
+          addData(toRaw(newProject));
+        }
+      },
+    );
+  });
+
+  const userData = {
+    id: ref<number>(0),
+    name: ref<string>(''),
+    username: ref<string>(''),
+    email: ref<string>(''),
+  };
+
+  function addData(loadedData: UserModel) {
+    if (userStore.getUser) userData.id.value = loadedData.id;
+    userData.name.value = loadedData.name;
+    userData.username.value = loadedData.username;
+    userData.email.value = loadedData.email;
+  }
 
   //Button for adding new project
   const button: FloatButtonModel = {
@@ -44,14 +90,14 @@
       >
         <label class="label">Name:</label>
         <template v-if="!isLoading">
-          <p v-if="!isEditingName" class="text">Test</p>
+          <p v-if="!isEditingName" class="text">{{ userData.name }}</p>
           <a-input v-else class="input" />
         </template>
         <a-skeleton
           v-else
           active
           :paragraph="false"
-          style="padding-left: 1em"
+          style="margin-left: 1em; width: 10em"
         />
       </a-card>
 
@@ -64,14 +110,14 @@
       >
         <label class="label">Username:</label>
         <template v-if="!isLoading">
-          <p v-if="!isEditingUserName" class="text">Test Username</p>
+          <p v-if="!isEditingUserName" class="text">{{ userData.username }}</p>
           <a-input v-else class="input" />
         </template>
         <a-skeleton
           v-else
           active
           :paragraph="false"
-          style="padding-left: 1em"
+          style="margin-left: 1em; width: 10em"
         />
       </a-card>
 
@@ -84,14 +130,14 @@
       >
         <label class="label">E-Mail:</label>
         <template v-if="!isLoading">
-          <p v-if="!isEditingEMail" class="text">Test</p>
+          <p v-if="!isEditingEMail" class="text">{{ userData.email }}</p>
           <a-input v-else class="input" />
         </template>
         <a-skeleton
           v-else
           active
           :paragraph="false"
-          style="padding-left: 1em"
+          style="margin-left: 1em; width: 10em"
         />
       </a-card>
 
@@ -104,14 +150,14 @@
       >
         <label class="label">Password:</label>
         <template v-if="!isLoading">
-          <p v-if="!isEditingPass" class="text">Test</p>
+          <p v-if="!isEditingPass" class="text"></p>
           <a-input v-else class="input" />
         </template>
         <a-skeleton
           v-else
           active
           :paragraph="false"
-          style="padding-left: 1em"
+          style="margin-left: 1em; width: 10em"
         />
       </a-card>
     </a-flex>
