@@ -3,8 +3,11 @@
   import { CreateUserForm } from './';
   import { useFormStore } from '@/components/Form';
   import type { CreateUserFormData } from './CreateUserFormData.ts';
+  import { userStoreSymbol } from '@/store/injectionSymbols.ts';
+  import { inject } from 'vue';
 
   const formStore = useFormStore('createUserForm');
+  const userStore = inject(userStoreSymbol)!;
   const initialFormValues: CreateUserFormData = {
     name: '',
     username: '',
@@ -20,6 +23,7 @@
     <CreateUserForm
       :form-store="formStore"
       :initial-values="initialFormValues"
+      :user-store="userStore"
     />
   </FormModal>
 </template>

@@ -2,20 +2,20 @@
   import { type FormSubmitType } from '@/components/Form';
   import { notification } from 'ant-design-vue';
   import { type FormStore } from '@/components/Form';
-  import { ref, toRaw, reactive, inject } from 'vue';
+  import { reactive, ref, toRaw } from 'vue';
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateUserFormData } from './CreateUserFormData.ts';
   import type { Rule } from 'ant-design-vue/es/form/interface';
   import { message } from 'ant-design-vue';
-  import { userStoreSymbol } from '@/store/injectionSymbols.ts';
   import type { CreateUserModel } from '@/models/User';
+  import type { UserStore } from '@/store/UserStore.ts';
 
-  const { formStore, initialValues } = defineProps<{
+  const { formStore, initialValues, userStore } = defineProps<{
     formStore: FormStore;
     initialValues: CreateUserFormData;
+    userStore: UserStore;
   }>();
 
-  const userStore = inject(userStoreSymbol);
   const [notificationApi, contextHolder] = notification.useNotification();
 
   const onSubmit: FormSubmitType = (fields) => {
@@ -47,8 +47,6 @@
   const dynamicValidateForm = reactive<CreateUserFormData>(initialValues);
 
   const validatePassword = async (_rule: Rule, value: string) => {
-    console.log(value, dynamicValidateForm.confirmPassword);
-
     if (value === '') {
       return Promise.reject('Please enter a password.');
     } else {
@@ -198,7 +196,6 @@
       </a-input>
     </a-form-item>
     <a-form-item
-      has-feedback
       name="password"
       class="column"
       :no-style="true"
