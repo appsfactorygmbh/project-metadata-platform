@@ -18,11 +18,13 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: LoginView,
+      meta: { title: 'Metadata Platform - Login' },
     },
     {
       path: '/register',
       name: 'Register',
       component: RegisterView,
+      meta: { title: 'Metadata Platform - Register' },
     },
     {
       path: '/',
@@ -52,26 +54,31 @@ const router = createRouter({
           name: 'settings',
           redirect: '/settings/global-plugins',
           component: SettingView,
+          meta: { title: 'Metadata Platform - Settings' },
           children: [
             {
               path: '/settings/user-management',
               name: 'users',
               component: ComingSoonView,
+              meta: { title: 'Metadata Platform - User Management' },
             },
             {
               path: '/settings/global-plugins',
               name: 'plugins',
               component: GlobalPluginsView,
+              meta: { title: 'Metadata Platform - Plugins' },
               children: [
                 {
                   path: '/settings/global-plugins/create',
                   name: 'CreateGlobalPlugin',
                   component: CreateGlobalPluginView,
+                  meta: { title: 'Metadata Platform - Create Plugin' },
                 },
                 {
                   path: '/settings/global-plugins/edit/',
                   name: 'EditGlobalPlugin',
                   component: EditGlobalPluginView,
+                  meta: { title: 'Metadata Platform - Edit Plugin' },
                 },
               ],
             },
@@ -79,6 +86,7 @@ const router = createRouter({
               path: '/settings/global-logs',
               name: 'global-logs',
               component: ComingSoonView,
+              meta: { title: 'Metadata Platform - Global Logs' },
             },
           ],
         },
@@ -93,13 +101,20 @@ const router = createRouter({
       path: '/404',
       name: 'NotFound',
       component: NotFoundView,
+      meta: { title: 'Metadata Platform - Not Found' },
     },
     {
       path: '/403',
       name: 'Forbidden',
       component: ForbiddenView,
+      meta: { title: 'Metadata Platform - Forbidden' },
     },
   ],
+});
+
+// After each navigation, this `afterEach` hook dynamically sets the page title
+router.afterEach((to) => {
+  document.title = to.meta.title || 'Metadata Platform';
 });
 
 export default router;
