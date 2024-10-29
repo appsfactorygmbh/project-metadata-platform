@@ -1,6 +1,6 @@
 import { createPinia, setActivePinia } from 'pinia';
 import GlobalPluginsView from '../GlobalPluginsView.vue';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import { globalPluginStoreSymbol } from '@/store/injectionSymbols.ts';

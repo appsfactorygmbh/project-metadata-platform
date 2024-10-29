@@ -1,7 +1,7 @@
 import type {
-  ProjectModel,
-  DetailedProjectModel,
   CreateProjectModel,
+  DetailedProjectModel,
+  ProjectModel,
   UpdateProjectModel,
 } from '@/models/Project';
 import { ApiService } from './ApiService';

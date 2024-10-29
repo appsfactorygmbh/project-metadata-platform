@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { ref } from 'vue';
-  import { onMounted, inject, reactive } from 'vue';
+  import { inject, onMounted, reactive } from 'vue';
   import { userStoreSymbol } from '@/store/injectionSymbols';
   import type { UserModel } from '@/models/User';
   import { useUserRouting } from '@/utils/hooks';
@@ -45,7 +45,6 @@
     } else {
       await usersStore?.fetchUser(routerUserId.value);
     }
-    addData(dada);
   });
 
   const usersData = reactive<
@@ -63,11 +62,6 @@
       });
     });
   }
-
-  const dada = [
-    { id: 1, name: 'User One', username: 'user1', email: 'user1@example.com' },
-    { id: 2, name: 'User Two', username: 'user2', email: 'user2@example.com' },
-  ];
 </script>
 
 <template>
@@ -81,7 +75,7 @@
     >
       <!-- navigation elements -->
       <a-menu
-        v-model:selectedKeys="selectedKeys"
+        v-model:selected-keys="selectedKeys"
         class="menuItem"
         mode="inline"
       >

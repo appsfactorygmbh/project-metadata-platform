@@ -4,8 +4,8 @@
   import {
     AppstoreAddOutlined,
     BarsOutlined,
-    UserOutlined,
     LeftOutlined,
+    UserOutlined,
   } from '@ant-design/icons-vue';
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
@@ -68,7 +68,7 @@
 
       <!-- navigation elements -->
       <a-menu
-        v-model:selectedKeys="selectedKeys"
+        v-model:selected-keys="selectedKeys"
         class="menuItem"
         mode="inline"
       >
