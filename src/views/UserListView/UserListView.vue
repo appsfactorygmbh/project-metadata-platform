@@ -1,37 +1,73 @@
 <script lang="ts" setup>
   import { ref } from 'vue';
-  //import { useRouter } from 'vue-router';
+  import { onMounted, inject, reactive } from 'vue';
+  import { userStoreSymbol } from '@/store/injectionSymbols';
+  import type { UserModel } from '@/models/User';
+  import { useUserRouting } from '@/utils/hooks';
+  import type { ComputedRef } from 'vue';
 
   // Component state using refs
   const collapsed = ref<boolean>(false);
-  const selectedKeys = ref<string[]>(['2']);
-  /*const tab = ref<string>('');
+  const selectedKeys = ref<string[]>(['']);
+  const usersStore = inject(userStoreSymbol);
+  const { routerUserId, setUserId } = useUserRouting();
 
-  // Router instance
-  const router = useRouter();
+  watch(
+    () => routerUserId.value,
+    async () => {
+      await usersStore?.fetchUser(routerUserId.value);
+    },
+  );
 
-  //Methods for URL link  by clickin the navigation buttons
-  const clickTab = (name: string) => {
-    tab.value = name;
-    switch (name) {
-      case 'User': {
-        router.push(`/settings/user-management`);
-        break;
-      }
-      case 'Global Plugins': {
-        router.push(`/settings/global-plugins`);
-        break;
-      }
-      case 'Global Logs': {
-        router.push(`/settings/global-logs`);
-        break;
-      }
-      default: {
-        router.push(`/settings`);
-        break;
-      }
+  const clickTab = async (userID: number) => {
+    setUserId(userID);
+  };
+
+  onMounted(async () => {
+    await usersStore?.fetchUsers();
+    const users = usersStore?.getUsers;
+    if (users) addData(users);
+
+    const data: ComputedRef<UserModel[]> = computed(
+      () => usersStore?.getUsers ?? [],
+    );
+
+    watch(
+      data,
+      (newData) => {
+        addData(newData);
+      },
+      { deep: true },
+    );
+
+    if (routerUserId.value === 0) {
+      setUserId(usersStore?.getUsers[0]?.id ?? 0);
+    } else {
+      await usersStore?.fetchUser(routerUserId.value);
     }
-  };*/
+    addData(dada);
+  });
+
+  const usersData = reactive<
+    Array<{ id: number; name: string; username: string; email: string }>
+  >([]);
+
+  function addData(loadedData: UserModel[]) {
+    usersData.length = 0;
+    loadedData.forEach((user) => {
+      usersData.push({
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+      });
+    });
+  }
+
+  const dada = [
+    { id: 1, name: 'User One', username: 'user1', email: 'user1@example.com' },
+    { id: 2, name: 'User Two', username: 'user2', email: 'user2@example.com' },
+  ];
 </script>
 
 <template>
@@ -49,14 +85,13 @@
         class="menuItem"
         mode="inline"
       >
-        <a-menu-item key="1" class="user">
-          <span>User 1</span>
-        </a-menu-item>
-        <a-menu-item key="2" class="user">
-          <span>User 2</span>
-        </a-menu-item>
-        <a-menu-item key="3" class="user">
-          <span>User 3</span>
+        <a-menu-item
+          v-for="user in usersData"
+          :key="user.username"
+          :class="['user']"
+          @click="clickTab(user.id)"
+        >
+          <span>{{ user.name }}</span>
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
