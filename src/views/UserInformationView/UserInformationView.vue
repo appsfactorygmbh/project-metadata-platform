@@ -2,7 +2,6 @@
   import { UserOutlined } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { PlusOutlined } from '@ant-design/icons-vue';
-  //import { EditOutlined } from '@ant-design/icons-vue';
   import { inject, onMounted, toRaw } from 'vue';
   import { userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
@@ -15,12 +14,21 @@
   const isEditingPass = false;
 
   const userStore = inject(userStoreSymbol)!;
+  const data = localStorage.getItem('userKey');
+  const currentUser = data ? JSON.parse(data) : '';
 
   const { getIsLoadingUsers } = storeToRefs(userStore);
   const { getIsLoading } = storeToRefs(userStore);
   const isLoading = computed(
     () => getIsLoadingUsers.value || getIsLoading.value,
   );
+
+  const userData = {
+    id: ref<number>(0),
+    name: ref<string>(''),
+    username: ref<string>(''),
+    email: ref<string>(''),
+  };
 
   onMounted(async () => {
     const user = userStore.getUser;
@@ -32,21 +40,14 @@
 
     watch(
       () => data.value,
-      (newProject, oldProject) => {
-        if (!newProject) return;
-        if (newProject.id !== oldProject?.id) {
-          addData(toRaw(newProject));
+      (newUser, oldUser) => {
+        if (!newUser) return;
+        if (newUser.id !== oldUser?.id) {
+          addData(toRaw(newUser));
         }
       },
     );
   });
-
-  const userData = {
-    id: ref<number>(0),
-    name: ref<string>(''),
-    username: ref<string>(''),
-    email: ref<string>(''),
-  };
 
   function addData(loadedData: UserModel) {
     if (userStore.getUser) userData.id.value = loadedData.id;
@@ -55,14 +56,18 @@
     userData.email.value = loadedData.email;
   }
 
-  //Button for adding new project
+  //Button for adding new User
   const button: FloatButtonModel = {
-    name: 'CreateProjectButton',
+    name: 'CreateUserButton',
     onClick: () => {},
     icon: PlusOutlined,
     status: 'activated',
     tooltip: 'Click here to create a new user',
   };
+
+  function checkCurrentUser(): boolean {
+    return currentUser.username === userData.username.value;
+  }
 </script>
 
 <template>
@@ -150,8 +155,11 @@
       >
         <label class="label">Password:</label>
         <template v-if="!isLoading">
-          <p v-if="!isEditingPass" class="text"></p>
-          <a-input v-else class="input" />
+          <template v-if="checkCurrentUser()">
+            <p v-if="!isEditingPass" class="text">Super Secret Password</p>
+            <a-input v-else class="input" />
+          </template>
+          <p v-else class="text">********************</p>
         </template>
         <a-skeleton
           v-else
