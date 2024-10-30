@@ -1,8 +1,8 @@
 import { projectsService } from '@/services';
 import type {
-  ProjectModel,
-  DetailedProjectModel,
   CreateProjectModel,
+  DetailedProjectModel,
+  ProjectModel,
   UpdateProjectModel,
 } from '@/models/Project';
 

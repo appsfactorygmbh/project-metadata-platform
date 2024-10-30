@@ -1,8 +1,8 @@
 <script lang="ts" setup>
   import { inject, onMounted, toRaw } from 'vue';
   import {
-    projectsStoreSymbol,
     projectEditStoreSymbol,
+    projectsStoreSymbol,
   } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import type { DetailedProjectModel } from '@/models/Project';

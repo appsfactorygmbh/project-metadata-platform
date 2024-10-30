@@ -41,7 +41,8 @@ describe('ConfirmationDialog.vue', () => {
 
   it('should emit confirm and close the modal when confirm is clicked', async () => {
     const vm = wrapper.vm;
-    vm.onConfirm();
+    expect(vm.onConfirm).toBeDefined();
+    vm.onConfirm?.();
     await nextTick();
 
     const emittedEvents = wrapper.emitted();
@@ -55,7 +56,8 @@ describe('ConfirmationDialog.vue', () => {
 
   it('should emit cancel and close the modal when cancel is clicked', async () => {
     const vm = wrapper.vm;
-    vm.onCancel();
+    expect(vm.onCancel).toBeDefined();
+    vm.onCancel?.();
     await nextTick();
 
     const emittedEvents = wrapper.emitted();
@@ -87,11 +89,15 @@ describe('ModalComponent open', () => {
 
   it('should open the modal when isOpen prop is true', async () => {
     // Check that the modal is initially closed
+
+    // @ts-expect-error localIsOpen is an internal property
     expect(wrapper.vm.localIsOpen).toBe(false);
     expect(document.querySelector('.ant-modal')).toBeNull();
 
     // Set the isOpen prop to true and check if the modal opens
     await wrapper.setProps({ isOpen: true });
+
+    // @ts-expect-error localIsOpen is an internal property
     expect(wrapper.vm.localIsOpen).toBe(true);
     expect(document.querySelector('.ant-modal')).not.toBeNull();
   });

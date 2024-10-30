@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-  import { ref, inject, computed, watch } from 'vue';
+  import { computed, inject, ref, watch } from 'vue';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import {
+    BankOutlined,
     FontColorsOutlined,
     ShoppingOutlined,
     TeamOutlined,
-    BankOutlined,
     UserOutlined,
   } from '@ant-design/icons-vue';
   import { reactive } from 'vue';

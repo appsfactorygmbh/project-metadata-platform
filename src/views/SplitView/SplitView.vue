@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { Splitpanes, Pane } from 'splitpanes'; //external framework for splitpanes
+  import { Pane, Splitpanes } from 'splitpanes'; //external framework for splitpanes
   import 'splitpanes/dist/splitpanes.css'; //default css for splitpanes
-  import { ref, reactive } from 'vue';
+  import { reactive, ref } from 'vue';
   import { useElementSize } from '@vueuse/core';
   import { ProjectSearchView } from '@/views/ProjectSearchView';
   import { MenuButtons } from '@/components/MenuButtons';

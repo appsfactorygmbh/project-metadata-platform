@@ -1,10 +1,10 @@
 import {
-  orderAsc,
-  orderDesc,
+  dateSorter,
   getNestedProp,
   numberSorter,
+  orderAsc,
+  orderDesc,
   stringSorter,
-  dateSorter,
 } from './sort';
 
 export {

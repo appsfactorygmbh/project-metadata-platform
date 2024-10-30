@@ -1,9 +1,15 @@
-import { pluginService, type PluginService } from './PluginService';
-import { projectsService, type ProjectsService } from './ProjectsService';
+import { type PluginService, pluginService } from './PluginService';
+import { type ProjectsService, projectsService } from './ProjectsService';
+import { type UserService, userService } from './UserService';
 import {
-  globalPluginService,
   type GlobalPluginService,
+  globalPluginService,
 } from './GlobalPluginService';
 
-export { pluginService, projectsService, globalPluginService };
-export type { PluginService, ProjectsService, GlobalPluginService };
+export { pluginService, projectsService, globalPluginService, userService };
+export type {
+  PluginService,
+  ProjectsService,
+  GlobalPluginService,
+  UserService,
+};

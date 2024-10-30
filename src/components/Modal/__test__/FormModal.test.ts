@@ -1,5 +1,5 @@
-import { mount, VueWrapper } from '@vue/test-utils';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { VueWrapper, mount } from '@vue/test-utils';
+import { beforeEach, describe, expect, it } from 'vitest';
 import FormModal from '../FormModal.vue';
 import { type FormStore } from '@/components/Form/FormStore';
 

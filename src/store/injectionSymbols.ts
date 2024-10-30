@@ -1,6 +1,7 @@
 import { useProjectStore } from './ProjectsStore';
 import { usePluginsStore } from './PluginStore';
 import { useProjectEditStore } from './ProjectEditStore/ProjectEditStore.ts';
+import { useUserStore } from './UserStore';
 import type { useGlobalPluginsStore } from './GlobalPluginStore';
 import type { InjectionKey } from 'vue';
 
@@ -16,6 +17,10 @@ const projectEditStoreSymbol = Symbol() as InjectionKey<
   ReturnType<typeof useProjectEditStore>
 >;
 
+const userStoreSymbol = Symbol() as InjectionKey<
+  ReturnType<typeof useUserStore>
+>;
+
 const globalPluginStoreSymbol = Symbol() as InjectionKey<
   ReturnType<typeof useGlobalPluginsStore>
 >;
@@ -25,4 +30,5 @@ export {
   pluginStoreSymbol,
   globalPluginStoreSymbol,
   projectEditStoreSymbol,
+  userStoreSymbol,
 };
