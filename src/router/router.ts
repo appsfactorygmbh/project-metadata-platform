@@ -112,9 +112,11 @@ const router = createRouter({
   ],
 });
 
-// After each navigation, this `afterEach` hook dynamically sets the page title
-router.afterEach((to) => {
-  document.title = (to.meta.title as string) || 'Metadata Platform';
-});
+// Dynamic title changes
+if (process.env.NODE_ENV !== 'test') {
+  router.afterEach((to) => {
+    document.title = (to.meta.title as string) || 'Metadata Platform';
+  });
+}
 
 export default router;
