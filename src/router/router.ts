@@ -18,13 +18,13 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: LoginView,
-      meta: { title: 'Metadata Platform - Login' },
+      meta: { title: 'Project Metadata Platform - Login' },
     },
     {
       path: '/register',
       name: 'Register',
       component: RegisterView,
-      meta: { title: 'Metadata Platform - Register' },
+      meta: { title: 'Project Metadata Platform - Register' },
     },
     {
       path: '/',
@@ -54,31 +54,31 @@ const router = createRouter({
           name: 'settings',
           redirect: '/settings/global-plugins',
           component: SettingView,
-          meta: { title: 'Metadata Platform - Settings' },
+          meta: { title: 'Project Metadata Platform - Settings' },
           children: [
             {
               path: '/settings/user-management',
               name: 'users',
               component: ComingSoonView,
-              meta: { title: 'Metadata Platform - User Management' },
+              meta: { title: 'Project Metadata Platform - User Management' },
             },
             {
               path: '/settings/global-plugins',
               name: 'plugins',
               component: GlobalPluginsView,
-              meta: { title: 'Metadata Platform - Plugins' },
+              meta: { title: 'Project Metadata Platform - Plugins' },
               children: [
                 {
                   path: '/settings/global-plugins/create',
                   name: 'CreateGlobalPlugin',
                   component: CreateGlobalPluginView,
-                  meta: { title: 'Metadata Platform - Create Plugin' },
+                  meta: { title: 'Project Metadata Platform - Create Plugin' },
                 },
                 {
                   path: '/settings/global-plugins/edit/',
                   name: 'EditGlobalPlugin',
                   component: EditGlobalPluginView,
-                  meta: { title: 'Metadata Platform - Edit Plugin' },
+                  meta: { title: 'Project Metadata Platform - Edit Plugin' },
                 },
               ],
             },
@@ -86,7 +86,7 @@ const router = createRouter({
               path: '/settings/global-logs',
               name: 'global-logs',
               component: ComingSoonView,
-              meta: { title: 'Metadata Platform - Global Logs' },
+              meta: { title: 'Project Metadata Platform - Global Logs' },
             },
           ],
         },
@@ -101,13 +101,13 @@ const router = createRouter({
       path: '/404',
       name: 'NotFound',
       component: NotFoundView,
-      meta: { title: 'Metadata Platform - Not Found' },
+      meta: { title: 'Project Metadata Platform - Not Found' },
     },
     {
       path: '/403',
       name: 'Forbidden',
       component: ForbiddenView,
-      meta: { title: 'Metadata Platform - Forbidden' },
+      meta: { title: 'Project Metadata Platform - Forbidden' },
     },
   ],
 });
@@ -115,7 +115,7 @@ const router = createRouter({
 // Dynamic title changes
 if (process.env.NODE_ENV !== 'test') {
   router.afterEach((to) => {
-    document.title = (to.meta.title as string) || 'Metadata Platform';
+    document.title = (to.meta.title as string) || 'Project Metadata Platform';
   });
 }
 

@@ -13,9 +13,6 @@ services:
       - PMP_DB_PASSWORD=postgres
       - PMP_DB_NAME=pmp_db_local
       - PMP_DB_PORT=5432
-      - PMP_MIGRATE_DB_ON_STARTUP=true
-      - JWT_VALID_ISSUER=validIssue
-      - JWT_VALID_AUDIENCE=validAudience
       - JWT_ISSUER_SIGNING_KEY=superSecretKeyThatIsAtLeast257BitLong@345
       - REFRESH_TOKEN_EXPIRATION_HOURS=6
       - ACCESS_TOKEN_EXPIRATION_MINUTES=15
