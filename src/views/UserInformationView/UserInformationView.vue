@@ -2,59 +2,40 @@
   import { UserOutlined } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { PlusOutlined } from '@ant-design/icons-vue';
-  import { inject, onMounted, toRaw } from 'vue';
+  import { inject, onMounted } from 'vue';
   import { userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
-  import type { UserModel } from '@/models/User';
-  import type { ComputedRef } from 'vue';
+  import { useCurrentUserStore } from '@/store/CurrentUserStore';
 
-  const isEditingName = false;
-  const isEditingUserName = false;
-  const isEditingEMail = false;
-  const isEditingPass = false;
+  const isEditing = false; //placeholder for edit flag
 
   const userStore = inject(userStoreSymbol)!;
-  const data = localStorage.getItem('userKey');
-  const currentUser = data ? JSON.parse(data) : '';
+  const currentUserStore = useCurrentUserStore();
+  const { getIsLoadingUsers, getIsLoading, getUser } = storeToRefs(userStore);
+  const { currentUser } = storeToRefs(currentUserStore);
 
-  const { getIsLoadingUsers } = storeToRefs(userStore);
-  const { getIsLoading } = storeToRefs(userStore);
   const isLoading = computed(
     () => getIsLoadingUsers.value || getIsLoading.value,
   );
+  const isUser = computed(() => checkCurrentUser());
+  const userData = computed(() => getUser.value);
 
-  const userData = {
-    id: ref<number>(0),
-    name: ref<string>(''),
-    username: ref<string>(''),
-    email: ref<string>(''),
-  };
+  watch(
+    () => userData.value,
+    async () => {
+      checkCurrentUser();
+    },
+  );
+
+  function checkCurrentUser(): boolean {
+    if (currentUser.value.username) {
+      return currentUser.value.username === userData.value?.username;
+    } else return false;
+  }
 
   onMounted(async () => {
-    const user = userStore.getUser;
-    if (user) addData(user);
-
-    const data: ComputedRef<UserModel | null> = computed(
-      () => userStore.getUser,
-    );
-
-    watch(
-      () => data.value,
-      (newUser, oldUser) => {
-        if (!newUser) return;
-        if (newUser.id !== oldUser?.id) {
-          addData(toRaw(newUser));
-        }
-      },
-    );
+    checkCurrentUser();
   });
-
-  function addData(loadedData: UserModel) {
-    if (userStore.getUser) userData.id.value = loadedData.id;
-    userData.name.value = loadedData.name;
-    userData.username.value = loadedData.username;
-    userData.email.value = loadedData.email;
-  }
 
   //Button for adding new User
   const button: FloatButtonModel = {
@@ -64,124 +45,125 @@
     status: 'activated',
     tooltip: 'Click here to create a new user',
   };
-
-  function checkCurrentUser(): boolean {
-    return currentUser.username === userData.username.value;
-  }
 </script>
 
 <template>
-  <!-- avatar components -->
-  <div class="avatar">
-    <a-avatar :size="150">
-      <template #icon><UserOutlined /></template>
-    </a-avatar>
-  </div>
+  <div class="panel">
+    <!-- avatar components -->
+    <div class="avatar">
+      <a-avatar :size="150">
+        <template #icon><UserOutlined /></template>
+      </a-avatar>
+    </div>
 
-  <!-- User informations components -->
-  <a-flex class="userInfo">
-    <a-flex
-      class="userInfoBox"
-      :body-style="{
-        height: 'fit-content',
-      }"
-    >
-      <a-card
+    <!-- User informations components -->
+    <a-flex class="userInfo">
+      <a-flex
+        class="userInfoBox"
         :body-style="{
-          display: 'flex',
-          alignItems: 'center',
+          height: 'fit-content',
         }"
-        class="info"
       >
-        <label class="label">Name:</label>
-        <template v-if="!isLoading">
-          <p v-if="!isEditingName" class="text">{{ userData.name }}</p>
-          <a-input v-else class="input" />
-        </template>
-        <a-skeleton
-          v-else
-          active
-          :paragraph="false"
-          style="margin-left: 1em; width: 10em"
-        />
-      </a-card>
-
-      <a-card
-        :body-style="{
-          display: 'flex',
-          alignItems: 'center',
-        }"
-        class="info"
-      >
-        <label class="label">Username:</label>
-        <template v-if="!isLoading">
-          <p v-if="!isEditingUserName" class="text">{{ userData.username }}</p>
-          <a-input v-else class="input" />
-        </template>
-        <a-skeleton
-          v-else
-          active
-          :paragraph="false"
-          style="margin-left: 1em; width: 10em"
-        />
-      </a-card>
-
-      <a-card
-        :body-style="{
-          display: 'flex',
-          alignItems: 'center',
-        }"
-        class="info"
-      >
-        <label class="label">E-Mail:</label>
-        <template v-if="!isLoading">
-          <p v-if="!isEditingEMail" class="text">{{ userData.email }}</p>
-          <a-input v-else class="input" />
-        </template>
-        <a-skeleton
-          v-else
-          active
-          :paragraph="false"
-          style="margin-left: 1em; width: 10em"
-        />
-      </a-card>
-
-      <a-card
-        :body-style="{
-          display: 'flex',
-          alignItems: 'center',
-        }"
-        class="info"
-      >
-        <label class="label">Password:</label>
-        <template v-if="!isLoading">
-          <template v-if="checkCurrentUser()">
-            <p v-if="!isEditingPass" class="text">Super Secret Password</p>
+        <a-card
+          :body-style="{
+            display: 'flex',
+            alignItems: 'center',
+          }"
+          class="info"
+        >
+          <label class="label">Name:</label>
+          <template v-if="!isLoading">
+            <p v-if="!isEditing" class="text">{{ userData?.name }}</p>
             <a-input v-else class="input" />
           </template>
-          <p v-else class="text">********************</p>
-        </template>
-        <a-skeleton
-          v-else
-          active
-          :paragraph="false"
-          style="margin-left: 1em; width: 10em"
-        />
-      </a-card>
-    </a-flex>
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="margin-left: 1em; width: 10em"
+          />
+        </a-card>
 
-    <!-- Edit button components -->
-    <a-flex class="editBox">
-      <a-button class="edit">Edit</a-button>
-      <a-button class="edit">Edit</a-button>
-      <a-button class="edit">Edit</a-button>
-      <a-button class="edit">Edit</a-button>
+        <a-card
+          :body-style="{
+            display: 'flex',
+            alignItems: 'center',
+          }"
+          class="info"
+        >
+          <label class="label">Username:</label>
+          <template v-if="!isLoading">
+            <p v-if="!isEditing" class="text">{{ userData?.username }}</p>
+            <a-input v-else class="input" />
+          </template>
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="margin-left: 1em; width: 10em"
+          />
+        </a-card>
+
+        <a-card
+          :body-style="{
+            display: 'flex',
+            alignItems: 'center',
+          }"
+          class="info"
+        >
+          <label class="label">E-Mail:</label>
+          <template v-if="!isLoading">
+            <p v-if="!isEditing" class="text">{{ userData?.email }}</p>
+            <a-input v-else class="input" />
+          </template>
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="margin-left: 1em; width: 10em"
+          />
+        </a-card>
+
+        <a-card
+          :body-style="{
+            display: 'flex',
+            alignItems: 'center',
+          }"
+          class="info"
+        >
+          <label class="label">Password:</label>
+          <template v-if="!isLoading">
+            <template v-if="isUser">
+              <p v-if="!isEditing" class="text">Super Secret Password</p>
+              <a-input v-else class="input" />
+            </template>
+            <p v-else class="text"></p>
+          </template>
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="margin-left: 1em; width: 10em"
+          />
+        </a-card>
+      </a-flex>
+
+      <!-- Edit button components -->
+      <a-flex class="editBox">
+        <a-button class="edit">Edit</a-button>
+        <a-button class="edit">Edit</a-button>
+        <a-button class="edit">Edit</a-button>
+        <a-button class="edit">Edit</a-button>
+      </a-flex>
     </a-flex>
-  </a-flex>
-  <FloatingButton :button="button" />
+    <FloatingButton :button="button" />
+  </div>
 </template>
 
 <style>
+  .panel {
+    min-width: 150px;
+  }
   .userInfo {
     padding: 1em;
     margin-top: 2em;

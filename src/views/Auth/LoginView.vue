@@ -5,10 +5,11 @@
   import { useToken } from 'ant-design-vue/es/theme/internal';
   import useBreakpoint from 'ant-design-vue/es/_util/hooks/useBreakpoint';
   import { useAuth } from 'vue-auth3';
+  import { useCurrentUserStore } from '@/store/CurrentUserStore';
   import axios from 'axios';
 
   const auth = useAuth();
-
+  const currentUserStore = useCurrentUserStore();
   const formStore = useFormStore('loginForm');
 
   const feedbackMessage = ref('');
@@ -24,6 +25,8 @@
         staySignedIn: fields.remember,
       })
       .then((response) => {
+        const userData = { username: fields.username };
+        currentUserStore.setUser(userData);
         console.log(response);
       })
       .catch((error) => {
