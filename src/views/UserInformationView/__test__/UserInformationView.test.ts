@@ -67,7 +67,7 @@ describe('UserInformationView.vue', () => {
     expect(button[0].exists()).toBe(true);
     expect(button[1].exists()).toBe(true);
     expect(button[2].exists()).toBe(true);
-    expect(button[3].exists()).toBe(true);
+    expect(wrapper.find('.name').exists()).toBe(true);
   });
 
   it('should show password', () => {

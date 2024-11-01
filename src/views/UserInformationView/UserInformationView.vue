@@ -50,11 +50,23 @@
 <template>
   <div class="panel">
     <!-- avatar components -->
-    <div class="avatar">
+    <a-flex class="avatar">
       <a-avatar :size="150">
         <template #icon><UserOutlined /></template>
       </a-avatar>
-    </div>
+      <a-row v-if="!isLoading" class="name">
+        <p v-if="!isEditing" class="text">{{ userData?.name }}</p>
+        <a-input v-else class="input" />
+
+        <a-button>Edit</a-button>
+      </a-row>
+      <a-skeleton
+        v-else
+        active
+        :paragraph="false"
+        style="margin-left: 1em; width: 10em"
+      />
+    </a-flex>
 
     <!-- User informations components -->
     <a-flex class="userInfo">
@@ -64,26 +76,6 @@
           height: 'fit-content',
         }"
       >
-        <a-card
-          :body-style="{
-            display: 'flex',
-            alignItems: 'center',
-          }"
-          class="info"
-        >
-          <label class="label">Name:</label>
-          <template v-if="!isLoading">
-            <p v-if="!isEditing" class="text">{{ userData?.name }}</p>
-            <a-input v-else class="input" />
-          </template>
-          <a-skeleton
-            v-else
-            active
-            :paragraph="false"
-            style="margin-left: 1em; width: 10em"
-          />
-        </a-card>
-
         <a-card
           :body-style="{
             display: 'flex',
@@ -153,7 +145,6 @@
         <a-button class="edit">Edit</a-button>
         <a-button class="edit">Edit</a-button>
         <a-button class="edit">Edit</a-button>
-        <a-button class="edit">Edit</a-button>
       </a-flex>
     </a-flex>
     <FloatingButton :button="button" />
@@ -212,7 +203,22 @@
 
   .avatar {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+  }
+
+  .name {
+    font-weight: bold;
+    font-size: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .name button {
+    border: none;
+    background: none;
+    color: blue;
   }
 </style>
