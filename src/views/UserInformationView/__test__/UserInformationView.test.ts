@@ -9,7 +9,6 @@ import { useCurrentUserStore } from '@/store/CurrentUserStore';
 interface UserInformationViewInstance {
   checkCurrentUser: () => boolean;
   isUser: boolean;
-  test: () => string[];
 }
 
 const userData1 = {
