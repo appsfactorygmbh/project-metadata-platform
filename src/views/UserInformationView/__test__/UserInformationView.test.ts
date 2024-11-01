@@ -23,7 +23,7 @@ const userData2 = {
   id: 200,
   name: 'Max Mustermann',
   username: 'Maxmuster2',
-  email: 'maxmuste2r@gmail.com',
+  email: 'maxmuster2@gmail.com',
 };
 
 describe('UserInformationView.vue', () => {

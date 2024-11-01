@@ -2,7 +2,7 @@
   import { UserOutlined } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { PlusOutlined } from '@ant-design/icons-vue';
-  import { inject, onMounted } from 'vue';
+  import { inject } from 'vue';
   import { userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import { useCurrentUserStore } from '@/store/CurrentUserStore';
@@ -33,10 +33,6 @@
     } else return false;
   }
 
-  onMounted(async () => {
-    checkCurrentUser();
-  });
-
   //Button for adding new User
   const button: FloatButtonModel = {
     name: 'CreateUserButton',
@@ -54,18 +50,13 @@
       <a-avatar :size="150">
         <template #icon><UserOutlined /></template>
       </a-avatar>
-      <a-row v-if="!isLoading" class="name">
+      <a-flex v-if="!isLoading" class="name">
         <p v-if="!isEditing" class="text">{{ userData?.name }}</p>
         <a-input v-else class="input" />
 
         <a-button>Edit</a-button>
-      </a-row>
-      <a-skeleton
-        v-else
-        active
-        :paragraph="false"
-        style="margin-left: 1em; width: 10em"
-      />
+      </a-flex>
+      <a-skeleton v-else active :paragraph="false" style="width: 10em" />
     </a-flex>
 
     <!-- User informations components -->
@@ -127,7 +118,7 @@
           <template v-if="!isLoading">
             <template v-if="isUser">
               <p v-if="!isEditing" class="text">Super Secret Password</p>
-              <a-input v-else class="input" />
+              <a-input v-else class="input" type="password" />
             </template>
             <p v-else class="text"></p>
           </template>
@@ -197,7 +188,8 @@
   }
 
   .info label {
-    width: 4em;
+    width: 5em;
+    min-width: 5em;
     margin-right: 3em;
   }
 
@@ -211,14 +203,23 @@
   .name {
     font-weight: bold;
     font-size: 2em;
+    flex-direction: row;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    left: 1em;
   }
 
   .name button {
     border: none;
     background: none;
     color: blue;
+    margin-left: 5px;
+  }
+
+  .name input {
+    font-size: 0.6em;
+    margin: 1.8em 0 1.8em;
   }
 </style>
