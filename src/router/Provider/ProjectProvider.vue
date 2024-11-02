@@ -9,14 +9,16 @@
   provide<typeof projectsStore>(projectsStoreSymbol, projectsStore);
 
   const auth = useAuth();
-  projectsService.setAuth(auth.token());
-  watch(
-    () => auth.token(),
-    () => {
-      console.log('token change', auth);
-      projectsService.setAuth(auth.token());
-    },
-  );
+  if (auth?.token()) {
+    projectsService.setAuth(auth.token());
+    watch(
+      () => auth.token(),
+      () => {
+        console.log('token change', auth);
+        projectsService.setAuth(auth.token());
+      },
+    );
+  }
 </script>
 <template>
   <slot></slot>
