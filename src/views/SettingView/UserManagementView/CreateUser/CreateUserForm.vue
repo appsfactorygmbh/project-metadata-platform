@@ -9,8 +9,8 @@
   import { message } from 'ant-design-vue';
   import type { CreateUserModel } from '@/models/User';
   import type { UserStore } from '@/store/UserStore.ts';
-  
-const { formStore, initialValues, userStore } = defineProps<{
+
+  const { formStore, initialValues, userStore } = defineProps<{
     formStore: FormStore;
     initialValues: CreateUserFormData;
     userStore: UserStore;
