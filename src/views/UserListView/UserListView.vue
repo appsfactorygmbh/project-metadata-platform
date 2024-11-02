@@ -1,21 +1,27 @@
 <script lang="ts" setup>
   import { ref } from 'vue';
-  import { inject, onMounted, reactive } from 'vue';
+  import { inject, onMounted } from 'vue';
   import { userStoreSymbol } from '@/store/injectionSymbols';
-  import type { UserModel } from '@/models/User';
   import { useUserRouting } from '@/utils/hooks';
-  import type { ComputedRef } from 'vue';
+  import { storeToRefs } from 'pinia';
 
   // Component state using refs
   const collapsed = ref<boolean>(false);
-  const selectedKeys = ref<string[]>(['']);
-  const usersStore = inject(userStoreSymbol);
+  const selectedKeys = ref<string[]>(['1']);
+  const userStore = inject(userStoreSymbol)!;
   const { routerUserId, setUserId } = useUserRouting();
+  const { getIsLoadingUsers, getIsLoading, getUsers } = storeToRefs(userStore);
+
+  const isLoading = computed(
+    () => getIsLoadingUsers.value || getIsLoading.value,
+  );
+  const usersData = computed(() => getUsers.value);
+  const routerUser = computed(() => routerUserId.value);
 
   watch(
-    () => routerUserId.value,
+    () => routerUser.value,
     async () => {
-      await usersStore?.fetchUser(routerUserId.value);
+      await userStore?.fetchUser(routerUser.value);
     },
   );
 
@@ -24,44 +30,14 @@
   };
 
   onMounted(async () => {
-    await usersStore?.fetchUsers();
-    const users = usersStore?.getUsers;
-    if (users) addData(users);
+    await userStore?.fetchUsers();
 
-    const data: ComputedRef<UserModel[]> = computed(
-      () => usersStore?.getUsers ?? [],
-    );
-
-    watch(
-      data,
-      (newData) => {
-        addData(newData);
-      },
-      { deep: true },
-    );
-
-    if (routerUserId.value === 0) {
-      setUserId(usersStore?.getUsers[0]?.id ?? 0);
+    if (routerUser.value === 0) {
+      setUserId(userStore?.getUsers[0]?.id ?? 0);
     } else {
-      await usersStore?.fetchUser(routerUserId.value);
+      await userStore?.fetchUser(routerUser.value);
     }
   });
-
-  const usersData = reactive<
-    Array<{ id: number; name: string; username: string; email: string }>
-  >([]);
-
-  function addData(loadedData: UserModel[]) {
-    usersData.length = 0;
-    loadedData.forEach((user) => {
-      usersData.push({
-        id: user.id,
-        name: user.name,
-        username: user.username,
-        email: user.email,
-      });
-    });
-  }
 </script>
 
 <template>
@@ -75,19 +51,26 @@
     >
       <!-- navigation elements -->
       <a-menu
+        v-if="!isLoading"
         v-model:selected-keys="selectedKeys"
         class="menuItem"
         mode="inline"
       >
         <a-menu-item
           v-for="user in usersData"
-          :key="user.username"
-          :class="['user']"
+          :key="user.id"
+          class="users"
           @click="clickTab(user.id)"
         >
           <span>{{ user.name }}</span>
         </a-menu-item>
       </a-menu>
+      <a-skeleton
+        v-else
+        active
+        :paragraph="false"
+        style="margin-left: 1em; width: 15em"
+      />
     </a-layout-sider>
     <a-layout-content>
       <div style="padding: 10px; min-height: 650px">
@@ -109,7 +92,7 @@
 
   .ant-layout-sider {
     background: #fff;
-    height: 92vh;
+    height: 93vh;
     overflow: auto;
   }
 
