@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CreateUserView } from '..';
-import { flushPromises, mount } from '@vue/test-utils';
+import { VueWrapper, flushPromises, mount } from '@vue/test-utils';
 import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import { userStoreSymbol } from '@/store/injectionSymbols';
@@ -11,6 +11,13 @@ import { useFormStore } from '@/components/Form';
 describe('CreateUserView.vue', () => {
   setActivePinia(createTestingPinia({ stubActions: false }));
 
+  let wrapper: VueWrapper;
+  afterEach(() => {
+    if (wrapper) {
+      wrapper.unmount();
+    }
+  });
+
   it('renders correctly', () => {
     const inputFields = [
       'Name',
@@ -20,7 +27,7 @@ describe('CreateUserView.vue', () => {
       'Confirm Password',
     ];
 
-    const wrapper = mount(CreateUserView, {
+    wrapper = mount(CreateUserView, {
       global: {
         provide: {
           [userStoreSymbol as symbol]: useUserStore(),
@@ -64,8 +71,56 @@ describe('CreateUserView.vue', () => {
     ).toBe(true);
   });
 
+  it('verifies the password correctly', async () => {
+    wrapper = mount(CreateUserView, {
+      global: {
+        provide: {
+          [userStoreSymbol as symbol]: useUserStore(),
+        },
+      },
+    });
+
+    const passwordField = wrapper.findAllComponents(FormItem)[3];
+    const passwordInput = passwordField.find('.ant-input');
+
+    // Test a valid password
+    await passwordField.find('.ant-input').setValue('aA&&&&&&');
+    await flushPromises();
+    expect(
+      passwordField.find('.ant-form-item-feedback-icon-success').exists(),
+    ).toBe(true);
+
+    // Password must have lower case letters
+    await passwordField.find('.ant-input').setValue('AAAAAAA&');
+    await flushPromises();
+    expect(
+      passwordField.find('.ant-form-item-feedback-icon-error').exists(),
+    ).toBe(true);
+
+    // Password must have upper case letters
+    await passwordInput.setValue('aaaaaaa&');
+    await flushPromises();
+    expect(
+      passwordField.find('.ant-form-item-feedback-icon-error').exists(),
+    ).toBe(true);
+
+    // Password must have special characters
+    await passwordInput.setValue('AAAAAAAa');
+    await flushPromises();
+    expect(
+      passwordField.find('.ant-form-item-feedback-icon-error').exists(),
+    ).toBe(true);
+
+    // Password must have at least 8 characters
+    await passwordInput.setValue('aA&');
+    await flushPromises();
+    expect(
+      passwordField.find('.ant-form-item-feedback-icon-error').exists(),
+    ).toBe(true);
+  });
+
   it('verifies the password confirm correctly', async () => {
-    const wrapper = mount(CreateUserView, {
+    wrapper = mount(CreateUserView, {
       global: {
         provide: {
           [userStoreSymbol as symbol]: useUserStore(),
@@ -95,12 +150,12 @@ describe('CreateUserView.vue', () => {
   });
 
   it('submits the form correctly', async () => {
-    const testData = ['Name', 'Username', 'E@Ma.il', 'Password', 'Password'];
+    const testData = ['Name', 'Username', 'E@Ma.il', 'Pa$$word', 'Pa$$word'];
 
     const userStore = useUserStore();
     const formStore = useFormStore('createUserForm');
 
-    const wrapper = mount(CreateUserView, {
+    wrapper = mount(CreateUserView, {
       global: {
         provide: {
           [userStoreSymbol as symbol]: userStore,
@@ -122,7 +177,7 @@ describe('CreateUserView.vue', () => {
       name: 'Name',
       username: 'Username',
       email: 'E@Ma.il',
-      password: 'Password',
+      password: 'Pa$$word',
     });
   });
 });

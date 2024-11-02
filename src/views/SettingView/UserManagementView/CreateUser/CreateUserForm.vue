@@ -9,8 +9,8 @@
   import { message } from 'ant-design-vue';
   import type { CreateUserModel } from '@/models/User';
   import type { UserStore } from '@/store/UserStore.ts';
-
-  const { formStore, initialValues, userStore } = defineProps<{
+  
+const { formStore, initialValues, userStore } = defineProps<{
     formStore: FormStore;
     initialValues: CreateUserFormData;
     userStore: UserStore;
@@ -46,10 +46,23 @@
 
   const dynamicValidateForm = reactive<CreateUserFormData>(initialValues);
 
+  const isValidPassword = (pw: string) => {
+    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
+    if (pwRegex.test(pw)) {
+      return true;
+    }
+  };
+
   const validatePassword = async (_rule: Rule, value: string) => {
     if (value === '') {
       return Promise.reject('Please enter a password.');
     } else {
+      if (!isValidPassword(value)) {
+        return Promise.reject(
+          'Please enter a Password, which has upper/lower case letters, special characters and at least 8 characters long.',
+        );
+      }
+
       if (dynamicValidateForm.confirmPassword !== '') {
         formRef.value.validateFields('confirmPassword');
       }
@@ -72,7 +85,7 @@
   const validateEmail = (_rule: Rule, value: string) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    if (emailRegex.test(value)) {
+    if (value && emailRegex.test(value)) {
       return Promise.resolve();
     } else {
       return Promise.reject('Please enter a valid email.');
@@ -99,7 +112,7 @@
     email: [
       {
         required: true,
-        message: 'Please insert an email.',
+        message: 'Please insert a valid email.',
         validator: validateEmail,
         trigger: 'change',
         type: 'string',
@@ -108,7 +121,8 @@
     password: [
       {
         required: true,
-        message: 'Please insert a password.',
+        message:
+          'Please enter a Password, which has upper/lower case letters, special characters and at least 8 characters.',
         validator: validatePassword,
         trigger: 'change',
         type: 'string',
@@ -142,11 +156,11 @@
     ref="formRef"
     :model="dynamicValidateForm"
     v-bind="formItemLayoutWithOutLabel"
+    :wrapper-col="{ span: 24 }"
   >
     <a-form-item
       name="name"
       class="column"
-      :no-style="true"
       :whitespace="true"
       :rules="rulesRef.name"
     >
@@ -163,7 +177,6 @@
     <a-form-item
       name="username"
       class="column"
-      :no-style="true"
       :whitespace="true"
       :rules="rulesRef.username"
     >
@@ -181,7 +194,6 @@
       has-feedback
       name="email"
       class="column"
-      :no-style="true"
       :whitespace="true"
       :rules="rulesRef.email"
     >
@@ -196,10 +208,10 @@
       </a-input>
     </a-form-item>
     <a-form-item
+      has-feedback
       name="password"
       class="column"
-      :no-style="true"
-      :whitespace="true"
+      :whitespace="false"
       :rules="rulesRef.password"
     >
       <a-input
@@ -217,7 +229,6 @@
       has-feedback
       name="confirmPassword"
       class="column"
-      :no-style="true"
       :whitespace="true"
       :rules="rulesRef.confirmPassword"
     >
@@ -235,3 +246,9 @@
   </a-form>
   <contextHolder></contextHolder>
 </template>
+
+<style scoped>
+  .column {
+    margin: 0;
+  }
+</style>
