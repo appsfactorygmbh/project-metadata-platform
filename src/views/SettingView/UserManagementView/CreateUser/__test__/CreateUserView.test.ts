@@ -46,7 +46,7 @@ describe('CreateUserView.vue', () => {
   });
 
   it('verifies the email correctly', async () => {
-    const wrapper = mount(CreateUserView, {
+    wrapper = mount(CreateUserView, {
       global: {
         provide: {
           [userStoreSymbol as symbol]: useUserStore(),
@@ -68,6 +68,48 @@ describe('CreateUserView.vue', () => {
 
     expect(
       emailField.find('.ant-form-item-feedback-icon-success').exists(),
+    ).toBe(true);
+  });
+
+  it('verifies the username correctly', async () => {
+    const testData = [
+      {
+        id: 0,
+        name: 'a',
+        username: 'a',
+      },
+    ];
+
+    wrapper = mount(CreateUserView, {
+      plugins: [
+        createTestingPinia({
+          stubActions: false,
+          initialState: {
+            user: {
+              users: testData,
+            },
+          },
+        }),
+      ],
+      global: {
+        provide: {
+          [userStoreSymbol as symbol]: useUserStore(),
+        },
+      },
+    });
+
+    const usernameField = wrapper.findAllComponents(FormItem)[1];
+
+    await usernameField.find('.ant-input').setValue('b');
+    await flushPromises();
+    expect(
+      usernameField.find('.ant-form-item-feedback-icon-success').exists(),
+    ).toBe(true);
+
+    await usernameField.find('.ant-input').setValue('a');
+    await flushPromises();
+    expect(
+      usernameField.find('.ant-form-item-feedback-icon-error').exists(),
     ).toBe(true);
   });
 

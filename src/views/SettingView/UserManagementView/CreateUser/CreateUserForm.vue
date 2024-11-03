@@ -7,7 +7,7 @@
   import type { CreateUserFormData } from './CreateUserFormData.ts';
   import type { Rule } from 'ant-design-vue/es/form/interface';
   import { message } from 'ant-design-vue';
-  import type { CreateUserModel } from '@/models/User';
+  import type { CreateUserModel, UserModel } from '@/models/User';
   import type { UserStore } from '@/store/UserStore.ts';
 
   const { formStore, initialValues, userStore } = defineProps<{
@@ -92,6 +92,20 @@
     }
   };
 
+  const validateUsername = (_rule: Rule, value: string) => {
+    if (value === '') {
+      return Promise.reject('Please enter a username.');
+    } else {
+      const users: UserModel[] = userStore?.getUsers;
+
+      if (value === users?.find((user) => user.username === value)?.username) {
+        return Promise.reject('Username already exists.');
+      } else {
+        return Promise.resolve();
+      }
+    }
+  };
+
   const rulesRef = reactive<RulesObject<CreateUserFormData>>({
     name: [
       {
@@ -104,7 +118,8 @@
     username: [
       {
         required: true,
-        message: 'Please insert an username.',
+        message: 'Please insert an unique username.',
+        validator: validateUsername,
         trigger: 'change',
         type: 'string',
       },
@@ -122,7 +137,7 @@
       {
         required: true,
         message:
-          'Please enter a Password, which has upper/lower case letters, special characters and at least 8 characters.',
+          'Please insert a Password, which has upper/lower case letters, special characters and at least 8 characters.',
         validator: validatePassword,
         trigger: 'change',
         type: 'string',
@@ -175,6 +190,7 @@
       </a-input>
     </a-form-item>
     <a-form-item
+      has-feedback
       name="username"
       class="column"
       :whitespace="true"
