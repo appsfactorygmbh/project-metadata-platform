@@ -23,7 +23,7 @@ const userData = [
     id: 200,
     name: 'Max Mustermann',
     username: 'Maxmuster2',
-    email: 'maxmuste2r@gmail.com',
+    email: 'maxmuster2@gmail.com',
   },
 ];
 
