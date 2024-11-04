@@ -60,83 +60,80 @@
     </a-flex>
 
     <!-- User informations components -->
-    <a-flex class="userInfo">
-      <a-flex
-        class="userInfoBox"
+    <a-flex
+      class="userInfoBox"
+      :body-style="{
+        height: 'fit-content',
+      }"
+    >
+      <a-card
         :body-style="{
-          height: 'fit-content',
+          display: 'flex',
+          alignItems: 'center',
         }"
+        class="info"
       >
-        <a-card
-          :body-style="{
-            display: 'flex',
-            alignItems: 'center',
-          }"
-          class="info"
-        >
-          <label class="label">Username:</label>
-          <template v-if="!isLoading">
-            <p v-if="!isEditing" class="text">{{ userData?.username }}</p>
-            <a-input v-else class="input" />
-          </template>
-          <a-skeleton
-            v-else
-            active
-            :paragraph="false"
-            style="margin-left: 1em; width: 10em"
-          />
-        </a-card>
+        <label class="label">Username:</label>
+        <template v-if="!isLoading">
+          <p v-if="!isEditing" class="text">{{ userData?.username }}</p>
+          <a-input v-else class="input" />
 
-        <a-card
-          :body-style="{
-            display: 'flex',
-            alignItems: 'center',
-          }"
-          class="info"
-        >
-          <label class="label">E-Mail:</label>
-          <template v-if="!isLoading">
-            <p v-if="!isEditing" class="text">{{ userData?.email }}</p>
-            <a-input v-else class="input" />
-          </template>
-          <a-skeleton
-            v-else
-            active
-            :paragraph="false"
-            style="margin-left: 1em; width: 10em"
-          />
-        </a-card>
+          <a-button class="edit">Edit</a-button>
+        </template>
+        <a-skeleton
+          v-else
+          active
+          :paragraph="false"
+          style="margin-left: 1em; width: 10em"
+        />
+      </a-card>
 
-        <a-card
-          :body-style="{
-            display: 'flex',
-            alignItems: 'center',
-          }"
-          class="info"
-        >
-          <label class="label">Password:</label>
-          <template v-if="!isLoading">
-            <template v-if="isUser">
-              <p v-if="!isEditing" class="text">Super Secret Password</p>
-              <a-input v-else class="input" type="password" />
-            </template>
-            <p v-else class="text"></p>
-          </template>
-          <a-skeleton
-            v-else
-            active
-            :paragraph="false"
-            style="margin-left: 1em; width: 10em"
-          />
-        </a-card>
-      </a-flex>
+      <a-card
+        :body-style="{
+          display: 'flex',
+          alignItems: 'center',
+        }"
+        class="info"
+      >
+        <label class="label">E-Mail:</label>
+        <template v-if="!isLoading">
+          <p v-if="!isEditing" class="text">{{ userData?.email }}</p>
+          <a-input v-else class="input" />
 
-      <!-- Edit button components -->
-      <a-flex class="editBox">
-        <a-button class="edit">Edit</a-button>
-        <a-button class="edit">Edit</a-button>
-        <a-button class="edit">Edit</a-button>
-      </a-flex>
+          <a-button class="edit">Edit</a-button>
+        </template>
+        <a-skeleton
+          v-else
+          active
+          :paragraph="false"
+          style="margin-left: 1em; width: 10em"
+        />
+      </a-card>
+
+      <a-card
+        :body-style="{
+          display: 'flex',
+          alignItems: 'center',
+        }"
+        class="info"
+      >
+        <label class="label">Password:</label>
+        <template v-if="!isLoading">
+          <template v-if="isUser">
+            <p v-if="!isEditing" class="text">Super Secret Password</p>
+            <a-input v-else class="input" type="password" />
+
+            <a-button class="edit">Edit</a-button>
+          </template>
+          <p v-else class="text"></p>
+        </template>
+        <a-skeleton
+          v-else
+          active
+          :paragraph="false"
+          style="margin-left: 1em; width: 10em"
+        />
+      </a-card>
     </a-flex>
     <FloatingButton :button="button" />
   </div>
@@ -146,33 +143,25 @@
   .panel {
     min-width: 150px;
   }
-  .userInfo {
+
+  .userInfoBox {
     padding: 1em;
     margin-top: 2em;
     border-radius: 10px;
     background-color: white;
     min-width: 41ch;
-  }
-
-  .userInfoBox {
     width: 100%;
     height: auto;
     flex-direction: column;
     flex-wrap: wrap;
   }
 
-  .editBox {
-    width: 6em;
-    flex-direction: column;
-    flex-wrap: wrap;
-  }
-
   .edit {
-    height: 4em;
-    width: 4em;
+    margin-left: 4em;
     border: none;
     margin: 0.6em 0 0.6em;
     color: blue;
+    margin-left: auto;
   }
 
   .info {
@@ -183,8 +172,8 @@
     font-size: 1.3em;
     font-weight: bold;
     display: flex;
-    align-items: center;
-    justify-content: left;
+    flex-flow: column wrap;
+    justify-content: center;
   }
 
   .info label {
