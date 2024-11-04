@@ -24,6 +24,7 @@
     "lib": ["ES2023"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "types": ["node", "jsdom"]
+    "types": ["node", "jsdom"],
+    "outDir": "./dist"
   }
 }
