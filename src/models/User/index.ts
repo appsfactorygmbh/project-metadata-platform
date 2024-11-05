@@ -1,4 +1,4 @@
-import type { UserModel } from './UserModel';
+import type { UserListModel, UserModel } from './UserModel';
 import type { CreateUserModel } from './CreateUserModel';
 
-export type { UserModel, CreateUserModel };
+export type { UserModel, CreateUserModel, UserListModel };

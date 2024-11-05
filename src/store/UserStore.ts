@@ -1,9 +1,9 @@
 import { userService } from '@/services/UserService';
-import type { CreateUserModel, UserModel } from '@/models/User';
+import type { CreateUserModel, UserListModel, UserModel } from '@/models/User';
 import { defineStore } from 'pinia';
 
 type StoreState = {
-  users: UserModel[];
+  users: UserListModel[];
   user: UserModel | null;
   isLoadingCreate: boolean;
   isLoadingUsers: boolean;
@@ -25,7 +25,7 @@ export const useUserStore = defineStore('user', {
     };
   },
   getters: {
-    getUsers(): UserModel[] {
+    getUsers(): UserListModel[] {
       return this.users;
     },
     getUser(): UserModel | null {
@@ -51,7 +51,7 @@ export const useUserStore = defineStore('user', {
     },
   },
   actions: {
-    setUsers(users: UserModel[]): void {
+    setUsers(users: UserListModel[]): void {
       this.users = users;
     },
     setUser(user: UserModel): void {
@@ -76,7 +76,7 @@ export const useUserStore = defineStore('user', {
     async fetchUsers(): Promise<void> {
       try {
         this.setIsLoadingUsers(true);
-        const users: UserModel[] = (await userService.fetchUsers()) ?? [];
+        const users: UserListModel[] = (await userService.fetchUsers()) ?? [];
         this.setUsers(users);
       } finally {
         this.setIsLoadingUsers(false);
