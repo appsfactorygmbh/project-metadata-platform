@@ -19,11 +19,13 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: LoginView,
+      meta: { title: 'Project Metadata Platform - Login' },
     },
     {
       path: '/register',
       name: 'Register',
       component: RegisterView,
+      meta: { title: 'Project Metadata Platform - Register' },
     },
     {
       path: '/',
@@ -53,27 +55,31 @@ const router = createRouter({
           name: 'settings',
           redirect: '/settings/global-plugins',
           component: SettingView,
+          meta: { title: 'Project Metadata Platform - Settings' },
           children: [
             {
               path: '/settings/user-management',
               name: 'users',
               component: UserListView,
-              children: [],
+              meta: { title: 'Project Metadata Platform - User Management' },
             },
             {
               path: '/settings/global-plugins',
               name: 'plugins',
               component: GlobalPluginsView,
+              meta: { title: 'Project Metadata Platform - Plugins' },
               children: [
                 {
                   path: '/settings/global-plugins/create',
                   name: 'CreateGlobalPlugin',
                   component: CreateGlobalPluginView,
+                  meta: { title: 'Project Metadata Platform - Create Plugin' },
                 },
                 {
                   path: '/settings/global-plugins/edit/',
                   name: 'EditGlobalPlugin',
                   component: EditGlobalPluginView,
+                  meta: { title: 'Project Metadata Platform - Edit Plugin' },
                 },
               ],
             },
@@ -81,6 +87,7 @@ const router = createRouter({
               path: '/settings/global-logs',
               name: 'global-logs',
               component: ComingSoonView,
+              meta: { title: 'Project Metadata Platform - Global Logs' },
             },
           ],
         },
@@ -95,13 +102,22 @@ const router = createRouter({
       path: '/404',
       name: 'NotFound',
       component: NotFoundView,
+      meta: { title: 'Project Metadata Platform - Not Found' },
     },
     {
       path: '/403',
       name: 'Forbidden',
       component: ForbiddenView,
+      meta: { title: 'Project Metadata Platform - Forbidden' },
     },
   ],
 });
+
+// Dynamic title changes
+if (process.env.NODE_ENV !== 'test') {
+  router.afterEach((to) => {
+    document.title = (to.meta.title as string) || 'Project Metadata Platform';
+  });
+}
 
 export default router;
