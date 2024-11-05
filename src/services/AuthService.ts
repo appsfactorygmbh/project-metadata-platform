@@ -60,10 +60,6 @@ class AuthService {
         }
 
         if (accessToken && refreshToken) {
-          console.log('Tokens', {
-            accessToken,
-            refreshToken,
-          });
           return extractToken(accessToken) + '|' + extractToken(refreshToken);
         }
 
