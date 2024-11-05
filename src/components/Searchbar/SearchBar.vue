@@ -5,7 +5,7 @@
       enter-button
       :value="searchStore?.getSearchQuery"
       :default-value="defaultSearchQuery"
-      style="flex-grow: 1; margin-right: 50px"
+      style="flex-grow: 1"
       @input="onInput"
     />
   </div>

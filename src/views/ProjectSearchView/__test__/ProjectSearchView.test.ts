@@ -81,6 +81,7 @@ describe.skip('ProjectSearchView.vue', () => {
       clientName: 'test',
       businessUnit: 'test',
       teamNumber: 1,
+      isArchived: false,
     };
 
     wrapper.vm.handleRowClick(testProject);
