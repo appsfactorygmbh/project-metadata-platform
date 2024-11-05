@@ -1,5 +1,6 @@
 import { type AuthDriver, type HttpDriver } from 'vue-auth3';
 import type { ArgsType } from '@/models/utils/ArgsType';
+import { extractToken } from '@/utils/api';
 
 type RequestConfig = Omit<ArgsType<HttpDriver['request']>[0], 'data'>;
 
@@ -71,11 +72,6 @@ class AuthService {
     };
   }
 }
-
-const extractToken = (token: string): string => {
-  const i = token.split(/(Bearer)?(Refresh)?:?\s?/i);
-  return i[i.length > 1 ? 1 : 0].trim();
-};
 
 const authService = new AuthService();
 export type { AuthService };
