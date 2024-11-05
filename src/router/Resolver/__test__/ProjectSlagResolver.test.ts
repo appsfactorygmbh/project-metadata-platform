@@ -16,6 +16,7 @@ const testProjects = [
     clientName: 'test',
     businessUnit: 'test',
     teamNumber: 1,
+    isArchived: false,
   },
   {
     id: 300,
@@ -23,6 +24,7 @@ const testProjects = [
     clientName: 'test',
     businessUnit: 'test',
     teamNumber: 1,
+    isArchived: false,
   },
 ];
 
