@@ -1,6 +1,0 @@
-services:
-  frontend:
-    image: gitlab.dit.htwk-leipzig.de:5050/projekt2024_a_appsfactory_project_metadata_platform/frontend/production:latest
-    container_name: frontend-production
-    ports:
-      - 80:80
