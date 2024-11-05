@@ -7,7 +7,7 @@
   import type { CreateUserFormData } from './CreateUserFormData.ts';
   import type { Rule } from 'ant-design-vue/es/form/interface';
   import { message } from 'ant-design-vue';
-  import type { CreateUserModel, UserModel } from '@/models/User';
+  import type { CreateUserModel, UserListModel } from '@/models/User';
   import type { UserStore } from '@/store/UserStore.ts';
 
   const { formStore, initialValues, userStore } = defineProps<{
@@ -27,11 +27,11 @@
         password: toRaw(fields).password,
       };
       userStore?.createUser(userDef);
-    } catch {
+    } catch (error) {
       notificationApi.error({
         message: 'An error occurred. The user could not be created',
       });
-      console.log('Error creating user');
+      console.log('Error creating user:', error);
     } finally {
       message.success('User created', 2);
     }
@@ -96,7 +96,7 @@
     if (value === '') {
       return Promise.reject('Please enter a username.');
     } else {
-      const users: UserModel[] = userStore?.getUsers;
+      const users: UserListModel[] = userStore?.getUsers;
 
       if (value === users?.find((user) => user.username === value)?.username) {
         return Promise.reject('Username already exists.');

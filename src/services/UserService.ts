@@ -1,8 +1,8 @@
-import type { CreateUserModel, UserModel } from '@/models/User';
+import type { CreateUserModel, UserListModel, UserModel } from '@/models/User';
 import { ApiService } from './ApiService';
 
 class UserService extends ApiService {
-  fetchUsers = async (): Promise<UserModel[] | null> => {
+  fetchUsers = async (): Promise<UserListModel[] | null> => {
     const url = `/Users`;
     try {
       const response = await this.fetch(url);
@@ -10,7 +10,7 @@ class UserService extends ApiService {
         throw new Error('Network response was not ok');
       }
 
-      const data: UserModel[] = await response.json();
+      const data: UserListModel[] = await response.json();
 
       return data;
     } catch (err) {
