@@ -78,6 +78,7 @@
     teamNumber: ref<number>(0),
     department: ref<string>(''),
     clientName: ref<string>(''),
+    isArchived: ref<boolean>(false),
   };
 
   const BUInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
@@ -89,6 +90,7 @@
   const teamNumberInput = ref(projectData.teamNumber);
   const departmentInput = ref(projectData.department);
   const clientNameInput = ref(projectData.clientName);
+  const isArchivedInput = ref(projectData.isArchived);
 
   //Function to update the project information
   function updateProjectInformation(): void {
@@ -99,6 +101,7 @@
       teamNumber: teamNumberInput.value,
       department: departmentInput.value,
       clientName: clientNameInput.value,
+      isArchived: isArchivedInput.value,
     };
     console.log('project updates: ', updatedProject);
     projectEditStore.updateProjectInformationChanges(updatedProject);

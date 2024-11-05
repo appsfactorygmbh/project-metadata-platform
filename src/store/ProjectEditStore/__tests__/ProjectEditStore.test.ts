@@ -143,6 +143,7 @@ describe('ProjectEditStore', () => {
       businessUnit: 'Test Business Unit',
       teamNumber: 1,
       department: 'Test Department',
+      isArchived: false,
     });
 
     expect(store.getCanBeAdded).toBe(false);
@@ -154,6 +155,7 @@ describe('ProjectEditStore', () => {
       businessUnit: 'Test Business Unit',
       teamNumber: 1,
       department: 'Test Department',
+      isArchived: false,
     });
 
     store.setProjectInformation({
@@ -163,6 +165,7 @@ describe('ProjectEditStore', () => {
       businessUnit: 'Test Business Unit',
       teamNumber: 1,
       department: 'Test Department',
+      isArchived: false,
     });
 
     expect(store.getCanBeAdded).toBe(true);
@@ -200,6 +203,7 @@ describe('ProjectEditStore', () => {
       businessUnit: 'Test Business Unit',
       teamNumber: 1,
       department: 'Test Department',
+      isArchived: false,
     };
     store.updateProjectInformationChanges(project);
     expect(store.getProjectInformationChanges).toEqual(project);
@@ -213,6 +217,7 @@ describe('ProjectEditStore', () => {
       businessUnit: 'New Unit',
       teamNumber: 2,
       department: 'New Department',
+      isArchived: false,
     };
     store.setProjectInformation(projectInfo);
     expect(store.projectInformationChanges).toEqual(projectInfo);
@@ -228,6 +233,7 @@ describe('ProjectEditStore', () => {
       businessUnit: 'Updated Unit',
       teamNumber: 3,
       department: 'Updated Department',
+      isArchived: false,
     };
     store.updateProjectInformationChanges(updatedProjectInfo);
     expect(store.projectInformationChanges).toEqual(updatedProjectInfo);

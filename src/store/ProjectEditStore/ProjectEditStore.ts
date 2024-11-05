@@ -31,6 +31,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
         businessUnit: '',
         teamNumber: -1,
         department: '',
+        isArchived: false,
       },
     };
   },
