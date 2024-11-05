@@ -9,16 +9,14 @@
   provide<typeof projectEditStore>(projectEditStoreSymbol, projectEditStore);
 
   const auth = useAuth();
-  if (auth?.token()) {
-    projectsService.setAuth(auth.token());
-    watch(
-      () => auth.token(),
-      () => {
-        console.log('token change', auth);
-        projectsService.setAuth(auth.token());
-      },
-    );
-  }
+  projectsService.setAuth(auth?.token());
+  watch(
+    () => auth?.token(),
+    () => {
+      console.log('token change', auth);
+      projectsService.setAuth(auth.token());
+    },
+  );
 </script>
 
 <template>

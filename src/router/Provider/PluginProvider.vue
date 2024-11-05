@@ -9,13 +9,11 @@
   provide<typeof pluginStore>(pluginStoreSymbol, pluginStore);
 
   const auth = useAuth();
-  if (auth?.token()) {
-    pluginService.setAuth(auth.token());
-    watch(
-      () => useAuth().token(),
-      () => pluginService.setAuth(auth.token()),
-    );
-  }
+  pluginService.setAuth(auth?.token());
+  watch(
+    () => auth?.token(),
+    () => pluginService.setAuth(auth.token()),
+  );
 </script>
 
 <template>
