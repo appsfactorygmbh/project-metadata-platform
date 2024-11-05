@@ -143,6 +143,7 @@ export const useProjectStore = defineStore('project', {
             teamNumber: 0,
             department: '',
             clientName: '',
+            isArchived: false,
           };
         this.setProject(project);
       } finally {

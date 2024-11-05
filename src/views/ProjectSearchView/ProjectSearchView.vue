@@ -168,12 +168,17 @@
             </a-tooltip>
           </a-col>
           <a-col :span="2" style="display: flex; justify-content: flex-end">
-            <a-button style="width: 100%" @click="toggleShowFilter">
-              <template #icon>
-                <InboxOutlined v-if="filterType === 'active'" />
-                <BulbOutlined v-else />
-              </template>
-            </a-button>
+            <a-tooltip
+              placement="left"
+              title="Click here to toggle between active and archived projects"
+            >
+              <a-button style="width: 100%" @click="toggleShowFilter">
+                <template #icon>
+                  <InboxOutlined v-if="filterType === 'active'" />
+                  <BulbOutlined v-else />
+                </template>
+              </a-button>
+            </a-tooltip>
           </a-col>
         </a-row>
       </span>
