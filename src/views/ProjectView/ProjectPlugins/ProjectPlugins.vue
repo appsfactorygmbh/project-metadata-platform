@@ -17,6 +17,8 @@
         <div v-else @click="openGroupPopup(plugin)">
           <a-badge :count="plugin.plugins.length">
             <a-card class="grouped-card">
+              <!-- Display the favicon image. -->
+              <a-avatar :src="plugin.faviconUrl" shape="square" class="avatar"></a-avatar>
               <h3>{{ plugin.displayName + ' Plugins'}}</h3>
             </a-card>
           </a-badge>
@@ -74,6 +76,7 @@ import {
 } from '@/store/injectionSymbols';
 import { useEditing } from '@/utils/hooks/useEditing';
 import type { PluginEditModel, PluginModel } from '@/models/Plugin';
+import { createFaviconURL, cutAfterTLD } from '@/components/Plugin/editURL';
 
 const { isEditing } = useEditing();
 
@@ -103,12 +106,14 @@ const groupedPlugins = computed(() => {
   Object.keys(groups).forEach((type) => {
     const group = groups[type];
     if (group.length >= groupThreshold) {
+      const firstPluginUrl = group[0].url;
       result.push({
         id: `group-${type}`, // ID of the group
         pluginName: type, // name of the plugin
         displayName: type, //`${type} (${group.length})`, // showed name: "GitLab (5)"
         plugins: group, // list of plugins in the group
         isGroup: true, // flags that it's a group
+        faviconUrl: createFaviconURL(cutAfterTLD(firstPluginUrl))
       });
     } else {
       result.push(...group);
@@ -224,6 +229,12 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   transition: 0.1s ease-in-out;
+}
+.grouped-card .avatar {
+  margin: 0 auto;
+  width: 80px;
+  height: 80px;
+  display: block;
 }
 .grouped-card:hover {
   transform: scale(1.01);
