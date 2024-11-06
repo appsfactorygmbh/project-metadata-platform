@@ -15,10 +15,11 @@
         ></PluginComponent>
 
         <div v-else @click="openGroupPopup(plugin)">
-          <a-card class="grouped-card">
-            <h3>{{ plugin.displayName }}</h3>
-            <span class="badge">{{ plugin.plugins.length }}</span>
-          </a-card>
+          <a-badge :count="plugin.plugins.length">
+            <a-card class="grouped-card">
+              <h3>{{ plugin.displayName + ' Plugins'}}</h3>
+            </a-card>
+          </a-badge>
         </div>
       </div>
       <AddPluginCard v-if="isEditing"></AddPluginCard>
@@ -101,7 +102,6 @@ const groupedPlugins = computed(() => {
 
   Object.keys(groups).forEach((type) => {
     const group = groups[type];
-
     if (group.length >= groupThreshold) {
       result.push({
         id: `group-${type}`, // ID of the group
@@ -214,21 +214,19 @@ onMounted(async () => {
   transition: 0.1s ease-in-out;
 }
 .grouped-card {
+  width: max-content;
+  min-width: 200px;
+  max-width: 300px;
+  /* max-height: 98px; /* das weiß ich nicht ob es so richtig ist */
+  box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0 !important;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s;
+  transition: 0.1s ease-in-out;
 }
 .grouped-card:hover {
-  transform: scale(1.025);
-}
-.badge {
-  background-color: #f0f0f0;
-  border-radius: 12px;
-  padding: 0 8px;
-  font-size: 0.8em;
-  color: #333;
+  transform: scale(1.01);
 }
 .popup {
   position: absolute;
