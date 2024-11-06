@@ -21,6 +21,7 @@ models/LoginRequest.ts
 models/LoginResponse.ts
 models/PatchGlobalPluginRequest.ts
 models/PatchUserRequest.ts
+models/ProblemDetails.ts
 models/UpdateProjectPluginRequest.ts
 models/index.ts
 runtime.ts

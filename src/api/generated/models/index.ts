@@ -17,4 +17,5 @@ export * from './LoginRequest';
 export * from './LoginResponse';
 export * from './PatchGlobalPluginRequest';
 export * from './PatchUserRequest';
+export * from './ProblemDetails';
 export * from './UpdateProjectPluginRequest';
