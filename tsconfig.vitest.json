@@ -6,7 +6,8 @@
     "dist/**",
     "build/**",
     "coverage/**",
-    "html/**"
+    "html/**",
+    "src/api/generated/**/*"
   ],
   "include": [
     "types/**/*.d.ts",

@@ -28,6 +28,7 @@ export default tseslint.config(
       'html',
       'node_modules',
       'types',
+      'src/api/generated/',
     ],
   },
   eslint.configs.recommended,
@@ -61,7 +62,7 @@ export default tseslint.config(
   {
     name: 'custom-config',
     files: ['src/**/*.{ts,tsx,vue}'],
-    ignores: ['src/**/__tests__/**/*.{ts,tsx}'],
+    ignores: ['src/**/__tests__/**/*.{ts,tsx}', 'src/api/generated/'],
     plugins: {
       'typescript-eslint': tseslint.plugin,
       'unused-imports': unusedImports,
