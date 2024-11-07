@@ -218,8 +218,7 @@
   // Import manrope font family.
   @font-face {
     font-family: 'Manrope';
-    src: url('../../../public/fonts/manrope/Manrope-VariableFont_wght.woff2')
-      format('woff');
+    src: url('/fonts/manrope/Manrope-VariableFont_wght.woff2') format('woff');
   }
 
   // Style for the card container.
