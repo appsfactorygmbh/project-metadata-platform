@@ -68,7 +68,7 @@ describe('UserListView.vue', () => {
     });
   });
 
-  it('adds a query when clicking on a project', () => {
+  it('adds a query when clicking on a user', () => {
     const wrapper = generateWrapper();
 
     const vm = wrapper.vm as unknown as UserListViewInstance;

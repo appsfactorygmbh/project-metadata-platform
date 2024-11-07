@@ -11,6 +11,7 @@ import NotFoundView from '@/views/Service/NotFoundView.vue';
 import { LoginView, RegisterView } from '@/views/Auth';
 import ForbiddenView from '@/views/Service/ForbiddenView.vue';
 import UserListView from '@/views/UserListView/UserListView.vue';
+import { CreateUserView } from '@/views/SettingView/UserManagementView/CreateUser';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,6 +63,16 @@ const router = createRouter({
               name: 'users',
               component: UserListView,
               meta: { title: 'Project Metadata Platform - User Management' },
+              children: [
+                {
+                  path: '/settings/user-management/create',
+                  name: 'createUsers',
+                  component: CreateUserView,
+                  meta: {
+                    title: 'Project Metadata Platform - User Management',
+                  },
+                },
+              ],
             },
             {
               path: '/settings/global-plugins',
