@@ -8,11 +8,6 @@ const auth = createAuth({
   plugins: {
     router,
   },
-  fetchData: {
-    enabled: true, // send a request to `/api/user` if the user information stored in the cookie is not visible
-    cache: true, //save user information to localStorage for use
-    enabledInBackground: true, // refresh user information in the background
-  },
   drivers: {
     auth: authService.authDriver,
     http: driverHttpAxios,
@@ -34,7 +29,7 @@ const auth = createAuth({
   },
   loginData: {
     ...authService.loginRequest,
-    fetchUser: true,
+    fetchUser: false,
     remember: true,
     staySignedIn: false,
   },

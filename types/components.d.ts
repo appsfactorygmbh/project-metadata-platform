@@ -47,6 +47,7 @@ declare module 'vue' {
     ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
     BackgroundContainer: typeof import('./../src/components/Container/BackgroundContainer.vue')['default']
     ConfirmAction: typeof import('./../src/components/Modal/ConfirmAction.vue')['default']
+    EditableTextField: typeof import('./../src/components/EditableTextField/EditableTextField.vue')['default']
     FloatingButton: typeof import('./../src/components/Button/FloatingButton.vue')['default']
     FloatingButtonGroup: typeof import('./../src/components/Button/FloatingButtonGroup.vue')['default']
     FormModal: typeof import('./../src/components/Modal/FormModal.vue')['default']
