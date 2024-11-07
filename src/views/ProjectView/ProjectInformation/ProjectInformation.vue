@@ -9,6 +9,7 @@
   import type { ComputedRef } from 'vue';
   import { EditOutlined } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
+  import type { EditProjectModel } from '@/models/Project/EditProjectModel';
 
   const projectsStore = inject(projectsStoreSymbol)!;
   const projectEditStore = inject(projectEditStoreSymbol)!;
@@ -72,7 +73,6 @@
   };
 
   const projectData = {
-    id: ref<number>(0),
     projectName: ref<string>(''),
     businessUnit: ref<string>(''),
     teamNumber: ref<number>(0),
@@ -90,18 +90,15 @@
   const teamNumberInput = ref(projectData.teamNumber);
   const departmentInput = ref(projectData.department);
   const clientNameInput = ref(projectData.clientName);
-  const isArchivedInput = ref(projectData.isArchived);
 
   //Function to update the project information
   function updateProjectInformation(): void {
-    const updatedProject: DetailedProjectModel = {
-      id: projectData.id.value,
+    const updatedProject: EditProjectModel = {
       projectName: projectData.projectName.value,
       businessUnit: BUInput.value,
       teamNumber: teamNumberInput.value,
       department: departmentInput.value,
       clientName: clientNameInput.value,
-      isArchived: isArchivedInput.value,
     };
     console.log('project updates: ', updatedProject);
     projectEditStore.updateProjectInformationChanges(updatedProject);
@@ -111,7 +108,6 @@
   function addData(loadedData: DetailedProjectModel) {
     if (projectsStore.getProject)
       projectEditStore.setProjectInformation(projectsStore.getProject);
-    projectData.id.value = loadedData.id;
     projectData.projectName.value = loadedData.projectName;
     projectData.businessUnit.value = loadedData.businessUnit;
     projectData.teamNumber.value = loadedData.teamNumber;
