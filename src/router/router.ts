@@ -12,6 +12,7 @@ import { LoginView, RegisterView } from '@/views/Auth';
 import ForbiddenView from '@/views/Service/ForbiddenView.vue';
 import UserListView from '@/views/UserListView/UserListView.vue';
 import { CreateUserView } from '@/views/SettingView/UserManagementView/CreateUser';
+import GlobalLogsView from '@/views/SettingView/GlobalLogsView/GlobalLogsView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -97,7 +98,7 @@ const router = createRouter({
             {
               path: '/settings/global-logs',
               name: 'global-logs',
-              component: ComingSoonView,
+              component: GlobalLogsView,
               meta: { title: 'Project Metadata Platform - Global Logs' },
             },
           ],
