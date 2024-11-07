@@ -232,8 +232,8 @@ onMounted(async () => {
 }
 .grouped-card .avatar {
   margin: 0 auto;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   display: block;
 }
 .grouped-card:hover {
@@ -241,11 +241,11 @@ onMounted(async () => {
 }
 .popup {
   position: absolute;
-  right: 0;
+  width: 80%;
+  margin-top: 10px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  padding: 10px;
 }
 .group-popup {
   display: flex;
