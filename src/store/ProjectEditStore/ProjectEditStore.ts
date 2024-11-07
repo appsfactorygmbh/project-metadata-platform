@@ -2,10 +2,11 @@ import { defineStore } from 'pinia';
 import type { PluginModel } from '@/models/Plugin';
 import type { PluginEditModel } from '@/models/Plugin/PluginEditModel.ts';
 import type { DetailedProjectModel } from '@/models/Project';
+import type { EditProjectModel } from '@/models/Project/EditProjectModel';
 
 type StoreState = {
   pluginChanges: Map<number, PluginEditModel>;
-  projectInformationChanges: DetailedProjectModel;
+  projectInformationChanges: EditProjectModel;
   canBeCreated: boolean;
   duplicatedUrls: Map<string, number[]>;
   emptyUrlFields: Map<number, number>;
@@ -25,13 +26,11 @@ export const useProjectEditStore = defineStore('projectEdit', {
       emptyProjectInformationFields: new Map(),
       addedPlugins: [],
       projectInformationChanges: {
-        id: -1,
         projectName: '',
         clientName: '',
         businessUnit: '',
         teamNumber: -1,
         department: '',
-        isArchived: false,
       },
     };
   },
@@ -50,7 +49,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
       );
     },
     // Return all Projectinformation changes (not implemented in this branch)
-    getProjectInformationChanges(): DetailedProjectModel {
+    getProjectInformationChanges(): EditProjectModel {
       console.log('current projectinformation', this.projectInformationChanges);
       return this.projectInformationChanges;
     },
@@ -101,7 +100,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
     },
 
     // Updates the Projectinformation changes
-    updateProjectInformationChanges(project: DetailedProjectModel): void {
+    updateProjectInformationChanges(project: EditProjectModel): void {
       this.projectInformationChanges = project;
     },
 

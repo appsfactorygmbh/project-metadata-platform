@@ -14,7 +14,6 @@ describe('ProjectEditStore', () => {
   it('initializes with default state', () => {
     expect(store.pluginChanges.size).toBe(0);
     expect(store.projectInformationChanges).toEqual({
-      id: -1,
       projectName: '',
       clientName: '',
       businessUnit: '',
@@ -113,7 +112,6 @@ describe('ProjectEditStore', () => {
 
   it('computes getters correctly', () => {
     expect(store.getProjectInformationChanges).toEqual({
-      id: -1,
       projectName: '',
       clientName: '',
       businessUnit: '',
@@ -149,13 +147,11 @@ describe('ProjectEditStore', () => {
     expect(store.getCanBeAdded).toBe(false);
 
     store.updateProjectInformationChanges({
-      id: 1,
       projectName: 'Test Project',
       clientName: 'Test Client',
       businessUnit: 'Test Business Unit',
       teamNumber: 1,
       department: 'Test Department',
-      isArchived: false,
     });
 
     store.setProjectInformation({
