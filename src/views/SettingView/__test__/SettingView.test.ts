@@ -51,7 +51,9 @@ describe('SettingView.vue', () => {
     const wrapper = mount(SettingView);
 
     await wrapper.find('.userManagement').trigger('click');
-    expect(useRouter().push).toHaveBeenCalledWith('/settings/user-management/user');
+    expect(useRouter().push).toHaveBeenCalledWith(
+      '/settings/user-management/user',
+    );
 
     await wrapper.find('.globalLogs').trigger('click');
     expect(useRouter().push).toHaveBeenCalledWith('/settings/global-logs');
