@@ -126,6 +126,7 @@
         </h1>
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
         <a-button
+          v-if="!projectsStore.getProject?.isArchived"
           class="button"
           ghost
           style="margin-left: 10px"
