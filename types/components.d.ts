@@ -19,14 +19,11 @@ declare module 'vue' {
     ADescriptionsItem: typeof import('ant-design-vue/es')['DescriptionsItem']
     AEmpty: typeof import('ant-design-vue/es')['Empty']
     AFlex: typeof import('ant-design-vue/es')['Flex']
-    AFloatButton: typeof import('ant-design-vue/es')['FloatButton']
-    AFloatButtonGroup: typeof import('ant-design-vue/es')['FloatButtonGroup']
     AForm: typeof import('ant-design-vue/es')['Form']
     AFormItem: typeof import('ant-design-vue/es')['FormItem']
     AInput: typeof import('ant-design-vue/es')['Input']
     AInputNumber: typeof import('ant-design-vue/es')['InputNumber']
     AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
-    AInputSearch: typeof import('ant-design-vue/es')['InputSearch']
     ALayout: typeof import('ant-design-vue/es')['Layout']
     ALayoutContent: typeof import('ant-design-vue/es')['LayoutContent']
     ALayoutHeader: typeof import('ant-design-vue/es')['LayoutHeader']
@@ -57,7 +54,5 @@ declare module 'vue' {
     ProjectEditButtons: typeof import('./../src/components/ProjectEditButtons/ProjectEditButtons.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
-    SearchBar: typeof import('./../src/components/Searchbar/SearchBar.vue')['default']
   }
 }
