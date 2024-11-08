@@ -6,7 +6,9 @@
   import { userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import { useEditing } from '@/utils/hooks/useEditing';
+  import { useRouter } from 'vue-router';
 
+  const router = useRouter();
   const userStore = inject(userStoreSymbol)!;
   const { getIsLoadingUsers, getIsLoading, getMe } = storeToRefs(userStore);
   const { isEditing, startEditing, stopEditing } = useEditing('Name');
@@ -19,7 +21,9 @@
   //Button for adding new User
   const button: FloatButtonModel = {
     name: 'CreateUserButton',
-    onClick: () => {},
+    onClick: () => {
+      router.push('/settings/user-management/create');
+    },
     icon: PlusOutlined,
     status: 'activated',
     tooltip: 'Click here to create a new user',

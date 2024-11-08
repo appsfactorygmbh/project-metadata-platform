@@ -1,7 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
-import UserInformationView from '@/views/UserInformationView/UserInformationView.vue';
+import UserInformationView from '../UserInformationView.vue';
 import { createTestingPinia } from '@pinia/testing';
 import { userStoreSymbol } from '@/store/injectionSymbols';
 import { useUserStore } from '@/store';
