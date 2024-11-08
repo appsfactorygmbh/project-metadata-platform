@@ -9,9 +9,9 @@
   provide<typeof userStore>(userStoreSymbol, userStore);
 
   const auth = useAuth();
-  userService.setAuth(auth.token());
+  userService.setAuth(auth?.token());
   watch(
-    () => auth.token(),
+    () => auth?.token(),
     () => {
       console.log('token change', auth);
       userService.setAuth(auth.token());
