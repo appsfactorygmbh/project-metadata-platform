@@ -5,24 +5,13 @@ import UserInformationView from '@/views/UserInformationView/UserInformationView
 import { createTestingPinia } from '@pinia/testing';
 import { userStoreSymbol } from '@/store/injectionSymbols';
 import { useUserStore } from '@/store';
-import { useCurrentUserStore } from '@/store/CurrentUserStore';
-interface UserInformationViewInstance {
-  checkCurrentUser: () => boolean;
-  isUser: boolean;
-}
+import router from '@/router';
 
 const userData1 = {
   id: 100,
   name: 'Max Musterfrau',
   username: 'Maxmuster1',
   email: 'maxmuster1@gmail.com',
-};
-
-const userData2 = {
-  id: 200,
-  name: 'Max Mustermann',
-  username: 'Maxmuster2',
-  email: 'maxmuster2@gmail.com',
 };
 
 describe('UserInformationView.vue', () => {
@@ -34,24 +23,19 @@ describe('UserInformationView.vue', () => {
       plugins: [
         createTestingPinia({
           stubActions: true,
-          initialState: {
-            currentUser: {
-              currentUser: { username: userData1.username },
-            },
-          },
         }),
       ],
       global: {
         provide: {
           [userStoreSymbol as symbol]: userStore,
-          currentUserStore: useCurrentUserStore(),
         },
+        plugins: [router],
       },
     });
   };
 
   it('renders correctly', async () => {
-    userStore.setUser(userData1);
+    userStore.setMe(userData1);
     const wrapper = generateWrapper();
     await flushPromises();
 
@@ -67,26 +51,5 @@ describe('UserInformationView.vue', () => {
     expect(button[1].exists()).toBe(true);
     expect(button[2].exists()).toBe(true);
     expect(wrapper.find('.name').exists()).toBe(true);
-  });
-
-  it('should show password', () => {
-    const wrapper = generateWrapper();
-    const vm = wrapper.vm as unknown as UserInformationViewInstance;
-
-    const text = wrapper.findAll('.text');
-    expect(text[3].exists()).toBe(true);
-    expect(vm.isUser).toBe(true);
-    expect(text[3].text()).toBe('Super Secret Password');
-  });
-
-  it('should hide password', () => {
-    userStore.setUser(userData2);
-    const wrapper = generateWrapper();
-    const vm = wrapper.vm as unknown as UserInformationViewInstance;
-
-    const text = wrapper.findAll('.text');
-    expect(text[3].exists()).toBe(true);
-    expect(vm.isUser).toBe(false);
-    expect(text[3].text()).toBe('');
   });
 });

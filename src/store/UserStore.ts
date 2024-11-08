@@ -62,6 +62,9 @@ export const useUserStore = defineStore('user', {
     setUser(user: UserModel): void {
       this.user = user;
     },
+    setMe(me: UserModel): void {
+      this.me = me;
+    },
     setIsLoadingCreate(isLoadingCreate: boolean): void {
       this.isLoadingCreate = isLoadingCreate;
     },
