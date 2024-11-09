@@ -1,6 +1,3 @@
-export type CreateUserModel = {
-  name: string;
-  username: string;
-  email: string;
-  password: string;
-};
+import type { CreateUserRequest } from '@/api/generated';
+
+export type CreateUserModel = CreateUserRequest;
