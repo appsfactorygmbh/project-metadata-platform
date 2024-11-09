@@ -42,6 +42,7 @@ export interface ProjectsGetRequest {
     clientName?: string;
     businessUnit?: Array<string>;
     teamNumber?: Array<number>;
+    isArchived?: boolean;
     search?: string;
 }
 
@@ -102,6 +103,7 @@ export interface ProjectsApiInterface {
      * @param {string} [clientName] Optional. The name of the client associated with the project to filter by.
      * @param {Array<string>} [businessUnit] Optional. A list of business units to filter the projects by.
      * @param {Array<number>} [teamNumber] Optional. A list of team numbers to filter the projects by.
+     * @param {boolean} [isArchived] Optional. The archival status of the projects to filter by.
      * @param {string} [search] Search string to filter the projects by.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -251,6 +253,10 @@ export class ProjectsApi extends runtime.BaseAPI implements ProjectsApiInterface
 
         if (requestParameters['teamNumber'] != null) {
             queryParameters['TeamNumber'] = requestParameters['teamNumber'];
+        }
+
+        if (requestParameters['isArchived'] != null) {
+            queryParameters['IsArchived'] = requestParameters['isArchived'];
         }
 
         if (requestParameters['search'] != null) {

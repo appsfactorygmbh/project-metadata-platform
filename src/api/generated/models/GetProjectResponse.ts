@@ -55,6 +55,12 @@ export interface GetProjectResponse {
      * @memberof GetProjectResponse
      */
     department: string;
+    /**
+     * If the project is archived or not.
+     * @type {boolean}
+     * @memberof GetProjectResponse
+     */
+    isArchived: boolean;
 }
 
 /**
@@ -67,6 +73,7 @@ export function instanceOfGetProjectResponse(value: object): value is GetProject
     if (!('businessUnit' in value) || value['businessUnit'] === undefined) return false;
     if (!('teamNumber' in value) || value['teamNumber'] === undefined) return false;
     if (!('department' in value) || value['department'] === undefined) return false;
+    if (!('isArchived' in value) || value['isArchived'] === undefined) return false;
     return true;
 }
 
@@ -86,6 +93,7 @@ export function GetProjectResponseFromJSONTyped(json: any, ignoreDiscriminator: 
         'businessUnit': json['businessUnit'],
         'teamNumber': json['teamNumber'],
         'department': json['department'],
+        'isArchived': json['isArchived'],
     };
 }
 
@@ -106,6 +114,7 @@ export function GetProjectResponseFromJSONTyped(json: any, ignoreDiscriminator: 
         'businessUnit': value['businessUnit'],
         'teamNumber': value['teamNumber'],
         'department': value['department'],
+        'isArchived': value['isArchived'],
     };
 }
 
