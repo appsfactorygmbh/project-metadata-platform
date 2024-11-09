@@ -20,6 +20,7 @@ import type {
   GetPluginResponse,
   GetProjectResponse,
   GetProjectsResponse,
+  ProblemDetails,
 } from '../models/index';
 import {
     CreateProjectRequestFromJSON,
@@ -32,6 +33,8 @@ import {
     GetProjectResponseToJSON,
     GetProjectsResponseFromJSON,
     GetProjectsResponseToJSON,
+    ProblemDetailsFromJSON,
+    ProblemDetailsToJSON,
 } from '../models/index';
 
 export interface ProjectsGetRequest {
@@ -384,16 +387,9 @@ export class ProjectsApi extends runtime.BaseAPI implements ProjectsApiInterface
     /**
      * Creates a new project or updates the one with given id.
      */
-    async projectsPut(requestParameters: ProjectsPutRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateProjectResponse | null | undefined > {
+    async projectsPut(requestParameters: ProjectsPutRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateProjectResponse> {
         const response = await this.projectsPutRaw(requestParameters, initOverrides);
-        switch (response.raw.status) {
-            case 200:
-                return await response.value();
-            case 201:
-                return null;
-            default:
-                return await response.value();
-        }
+        return await response.value();
     }
 
 }

@@ -20,6 +20,7 @@ import type {
   DeleteGlobalPluginResponse,
   GetGlobalPluginResponse,
   PatchGlobalPluginRequest,
+  ProblemDetails,
 } from '../models/index';
 import {
     CreatePluginRequestFromJSON,
@@ -32,6 +33,8 @@ import {
     GetGlobalPluginResponseToJSON,
     PatchGlobalPluginRequestFromJSON,
     PatchGlobalPluginRequestToJSON,
+    ProblemDetailsFromJSON,
+    ProblemDetailsToJSON,
 } from '../models/index';
 
 export interface PluginsPluginIdDeleteRequest {
@@ -256,16 +259,9 @@ export class PluginsApi extends runtime.BaseAPI implements PluginsApiInterface {
     /**
      * Creates a new plugin with the given name.
      */
-    async pluginsPut(requestParameters: PluginsPutRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreatePluginResponse | null | undefined > {
+    async pluginsPut(requestParameters: PluginsPutRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreatePluginResponse> {
         const response = await this.pluginsPutRaw(requestParameters, initOverrides);
-        switch (response.raw.status) {
-            case 200:
-                return await response.value();
-            case 201:
-                return null;
-            default:
-                return await response.value();
-        }
+        return await response.value();
     }
 
 }
