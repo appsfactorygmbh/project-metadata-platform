@@ -6,7 +6,7 @@
     item-layout="horizontal"
     :data-source="[
       ...(globalPluginsStore?.getGlobalPlugins.filter(
-        (item) => !item.archived,
+        (item) => !item.isArchived,
       ) || []),
     ]"
     :loading="isLoading"
@@ -85,7 +85,7 @@
   );
 
   onBeforeMount(async () => {
-    await globalPluginsStore?.fetchGlobalPlugins();
+    await globalPluginsStore?.fetchAll();
   });
 
   const router = useRouter();
@@ -126,7 +126,7 @@
    */
   const handleDelete = async (pluginId: number) => {
     pluginDeleting.value.push(pluginId);
-    await globalPluginsStore?.deleteGlobalPlugin(pluginId);
+    await globalPluginsStore?.delete(pluginId);
     const index: number = pluginDeleting.value?.indexOf(pluginId);
     pluginDeleting.value.splice(index, 1);
   };

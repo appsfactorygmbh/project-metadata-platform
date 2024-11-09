@@ -6,6 +6,7 @@ import { createTestingPinia } from '@pinia/testing';
 import { globalPluginStoreSymbol } from '@/store/injectionSymbols.ts';
 import { useGlobalPluginsStore } from '@/store';
 import { Button } from 'ant-design-vue';
+import type { GlobalPluginModel } from '@/models/Plugin';
 
 const testData = [
   {
@@ -20,16 +21,18 @@ const testData = [
   },
 ];
 
-const testDataDelete = [
+const testDataDelete: GlobalPluginModel[] = [
   {
     id: 0,
     name: 'Plugin 1',
-    archived: true,
+    isArchived: true,
+    keys: [],
   },
   {
     id: 1,
     name: 'Plugin 2',
-    archived: true,
+    isArchived: true,
+    keys: [],
   },
 ];
 
@@ -67,7 +70,7 @@ describe('GlobalPluginsView.vue', () => {
   it('sends a delete request when clicking the delete button', async () => {
     const wrapper = generateWrapper();
     const globalPluginStore = useGlobalPluginsStore();
-    const spy = vi.spyOn(globalPluginStore, 'deleteGlobalPlugin');
+    const spy = vi.spyOn(globalPluginStore, 'delete');
     spy.mockImplementation(async () =>
       globalPluginStore.setGlobalPlugins(testDataDelete),
     );

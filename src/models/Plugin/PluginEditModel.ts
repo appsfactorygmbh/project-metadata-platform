@@ -1,8 +1,6 @@
-export type PluginEditModel = {
-  pluginName: string;
-  displayName: string;
-  url: string;
-  id: number;
+import type { PluginModel } from './PluginModel';
+
+export type PluginEditModel = PluginModel & {
   editKey: number;
   isDeleted: boolean;
 };

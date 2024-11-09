@@ -36,7 +36,7 @@ export interface GetGlobalPluginResponse {
      * @type {boolean}
      * @memberof GetGlobalPluginResponse
      */
-    archived: boolean;
+    isArchived: boolean;
     /**
      * empty array keys
      * @type {Array<string>}
@@ -51,7 +51,7 @@ export interface GetGlobalPluginResponse {
 export function instanceOfGetGlobalPluginResponse(value: object): value is GetGlobalPluginResponse {
     if (!('name' in value) || value['name'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
-    if (!('archived' in value) || value['archived'] === undefined) return false;
+    if (!('isArchived' in value) || value['isArchived'] === undefined) return false;
     if (!('keys' in value) || value['keys'] === undefined) return false;
     return true;
 }
@@ -68,7 +68,7 @@ export function GetGlobalPluginResponseFromJSONTyped(json: any, ignoreDiscrimina
         
         'name': json['name'],
         'id': json['id'],
-        'archived': json['archived'],
+        'isArchived': json['isArchived'],
         'keys': json['keys'],
     };
 }
@@ -86,7 +86,7 @@ export function GetGlobalPluginResponseFromJSONTyped(json: any, ignoreDiscrimina
         
         'name': value['name'],
         'id': value['id'],
-        'archived': value['archived'],
+        'isArchived': value['isArchived'],
         'keys': value['keys'],
     };
 }

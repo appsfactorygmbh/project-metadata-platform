@@ -27,9 +27,9 @@
   const options = ref<SelectProps['options']>([]);
 
   onBeforeMount(async () => {
-    await globalPluginStore?.fetchGlobalPlugins();
+    await globalPluginStore?.fetchAll();
     options.value = toRaw(globalPluginStore?.getGlobalPlugins)
-      ?.filter((plugin) => !plugin.archived)
+      ?.filter((plugin) => !plugin.isArchived)
       .map((plugin: GlobalPluginModel) => {
         return {
           value: plugin.name,

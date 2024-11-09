@@ -1,9 +1,12 @@
-export type GlobalPluginModel = {
-  id: number;
-  name: string;
-  archived: boolean;
-  keys?: GlobalPluginKey[];
-};
+import type { GetGlobalPluginResponse } from '@/api/generated';
+
+export type GlobalPluginModel = GetGlobalPluginResponse;
+// {
+//   name: string;
+//   id: number;
+//   archived: boolean;
+//   keys: string[];
+// };
 
 export type GlobalPluginKey = {
   value: string;

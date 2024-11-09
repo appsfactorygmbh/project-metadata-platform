@@ -19,7 +19,7 @@
   const onSubmit: FormSubmitType = (fields) => {
     try {
       console.log(fields);
-      globalPluginStore?.updateGlobalPlugin({
+      globalPluginStore?.update({
         id: pluginIdRef.value,
         ...fields,
       });
@@ -47,7 +47,7 @@
       if (!isNaN(numericPluginId)) {
         pluginIdRef.value = numericPluginId;
         const globalPluginData =
-          await globalPluginStore?.fetchGlobalPlugin(numericPluginId);
+          await globalPluginStore?.fetch(numericPluginId);
         if (!globalPluginData) {
           return;
         }
