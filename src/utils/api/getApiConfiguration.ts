@@ -5,7 +5,7 @@ export const getApiConfiguration = (accessToken: string) => {
     basePath: import.meta.env.VITE_BACKEND_URL,
     accessToken,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      Accept: 'application/json',
     },
   });
 };

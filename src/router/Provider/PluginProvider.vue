@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { ProjectsApi } from '@/api/generated';
   import { pluginService } from '@/services';
   import { usePluginsStore } from '@/store';
   import { pluginStoreSymbol } from '@/store/injectionSymbols';
@@ -9,10 +10,10 @@
   provide<typeof pluginStore>(pluginStoreSymbol, pluginStore);
 
   const auth = useAuth();
-  pluginService.setAuth(auth.token());
+  pluginService.initApi(auth.token(), ProjectsApi);
   watch(
     () => useAuth().token(),
-    () => pluginService.setAuth(auth.token()),
+    () => pluginService.initApi(auth.token(), ProjectsApi),
   );
 </script>
 

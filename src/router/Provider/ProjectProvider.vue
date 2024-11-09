@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+  import { ProjectsApi } from '@/api/generated';
   import { projectsService } from '@/services';
   import { useProjectStore } from '@/store';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
@@ -9,12 +10,12 @@
   provide<typeof projectsStore>(projectsStoreSymbol, projectsStore);
 
   const auth = useAuth();
-  projectsService.setAuth(auth.token());
+  projectsService.initApi(auth.token(), ProjectsApi);
   watch(
     () => auth.token(),
     () => {
       console.log('token change', auth);
-      projectsService.setAuth(auth.token());
+      projectsService.initApi(auth.token(), ProjectsApi);
     },
   );
 </script>

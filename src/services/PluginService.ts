@@ -1,21 +1,15 @@
-import type { PluginModel } from '@/models/Plugin';
 import { ApiService } from './ApiService';
-class PluginService extends ApiService {
-  fetchPlugins = async (projectID: number): Promise<PluginModel[]> => {
-    try {
-      const response = await this.fetch(
-        '/Projects/' + projectID.toString() + '/plugins',
-      );
-      if (!response.ok) throw new Error('Error when trying to fetch Plugins');
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.log(error);
-      return [];
-    }
+import type { ProjectsApi } from '@/api/generated';
+class PluginService extends ApiService<ProjectsApi> {
+  fetchPlugins = async (projectID: number) => {
+    const plugins = await this.callApi('projectsIdPluginsGet', {
+      id: projectID,
+    });
+    if (!plugins) return [];
+    return plugins;
   };
 }
 
-const pluginService = new PluginService();
+const pluginService = new PluginService('PluginService');
 export { pluginService };
 export type { PluginService };

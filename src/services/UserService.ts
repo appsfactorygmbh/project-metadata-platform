@@ -1,93 +1,49 @@
-import type { CreateUserModel, UserListModel, UserModel } from '@/models/User';
+import type { CreateUserModel } from '@/models/User';
 import { ApiService } from './ApiService';
+import type { UsersApi } from '@/api/generated';
 
-class UserService extends ApiService {
-  fetchUsers = async (): Promise<UserListModel[] | null> => {
-    const url = `/Users`;
-    try {
-      const response = await this.fetch(url);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data: UserListModel[] = await response.json();
-
-      return data;
-    } catch (err) {
-      console.error('Error fetching users: ' + err);
-      return null;
-    }
+class UserService extends ApiService<UsersApi> {
+  fetchUsers = async () => {
+    const response = await this.callApi('usersGet', {});
+    if (!response) return;
+    return response;
   };
 
-  fetchUser = async (userId: number): Promise<UserModel | null> => {
-    try {
-      const response = await this.fetch('/Users/' + userId.toString(), {
-        headers: {
-          Accept: 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          cors: 'cors',
-        },
-      });
-
-      const data: UserModel = await response.json();
-      return data;
-    } catch (err) {
-      console.error('Error fetching user: ' + err);
-      return null;
-    }
+  fetchUser = async (userId: string) => {
+    const user = await this.callApi('usersUserIdGet', {
+      userId,
+    });
+    if (!user) return;
+    return user;
   };
 
-  createUser = async (newUser: CreateUserModel): Promise<Response | null> => {
-    try {
-      const response = await this.fetch('/Users', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newUser),
-        mode: 'cors',
-      });
-      return response;
-    } catch (error) {
-      console.error('Error creating user:', error);
-      return null;
-    }
+  createUser = async (newUser: CreateUserModel) => {
+    const response = await this.callApi('usersPut', {
+      createUserRequest: newUser,
+    });
+    if (!response) return;
+    return response;
   };
 
-  deleteUser = async (userId: number): Promise<Response | null> => {
-    try {
-      const response = await this.fetch('/Users/' + userId.toString(), {
-        method: 'DELETE',
-        mode: 'cors',
-      });
-      return response;
-    } catch (err) {
-      console.error('Error deleting user: ' + err);
-      return null;
-    }
-  };
+  // deleteUser = async (userId: string) => {
+  //   // TODO: need backend support
+  //   const response = await this.callApi("", {
+  //     userId,
+  //   });
+  //   if (!response) return;
+  //   return response;
+  // };
 
-  updateUser = async (
-    userId: number,
-    updatedUser: CreateUserModel,
-  ): Promise<Response | null> => {
-    try {
-      const response = await this.fetch('/Users/' + userId.toString(), {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedUser),
-        mode: 'cors',
-      });
-      return response;
-    } catch (error) {
-      console.error('Error updating user:', error);
-      return null;
-    }
+  updateUser = async (userId: string, updatedUser: CreateUserModel) => {
+    const response = await this.callApi('usersUserIdPatch', {
+      userId,
+      patchUserRequest: updatedUser,
+    });
+    if (!response) return;
+    return response;
   };
 }
 
-const userService = new UserService();
+const userService = new UserService('UserService');
 export { userService };
 export type { UserService };

@@ -1,29 +1,29 @@
-import { useProjectStore } from './ProjectsStore';
-import { usePluginsStore } from './PluginStore';
-import { useProjectEditStore } from './ProjectEditStore/ProjectEditStore.ts';
-import { useUserStore } from './UserStore';
-import type { useGlobalPluginsStore } from './GlobalPluginStore';
+import { type ProjectsStore } from './ProjectsStore';
+import { type PluginsStore } from './PluginStore';
+import { type ProjectEditStore } from './ProjectEditStore/ProjectEditStore.ts';
+import { type UserStore } from './UserStore';
+// import type { useGlobalPluginsStore } from './GlobalPluginStore';
 import type { InjectionKey } from 'vue';
+// import type { useAuthStore } from './AuthStore.ts';
+import type { apiStore } from './ApiStore.ts';
+import type { globalPluginsStore } from './GlobalPluginStore.ts';
+import type { AuthStore } from './AuthStore.ts';
 
-const projectsStoreSymbol = Symbol() as InjectionKey<
-  ReturnType<typeof useProjectStore>
->;
+const projectsStoreSymbol = Symbol() as InjectionKey<ProjectsStore>;
 
-const pluginStoreSymbol = Symbol() as InjectionKey<
-  ReturnType<typeof usePluginsStore>
->;
+const pluginStoreSymbol = Symbol() as InjectionKey<PluginsStore>;
 
-const projectEditStoreSymbol = Symbol() as InjectionKey<
-  ReturnType<typeof useProjectEditStore>
->;
+const projectEditStoreSymbol = Symbol() as InjectionKey<ProjectEditStore>;
 
-const userStoreSymbol = Symbol() as InjectionKey<
-  ReturnType<typeof useUserStore>
->;
+const userStoreSymbol = Symbol() as InjectionKey<UserStore>;
 
 const globalPluginStoreSymbol = Symbol() as InjectionKey<
-  ReturnType<typeof useGlobalPluginsStore>
+  typeof globalPluginsStore
 >;
+
+const authStoreSymbol = Symbol() as InjectionKey<AuthStore>;
+
+const apiStoreSymbol = Symbol() as InjectionKey<ReturnType<typeof apiStore>>;
 
 export {
   projectsStoreSymbol,
@@ -31,4 +31,6 @@ export {
   globalPluginStoreSymbol,
   projectEditStoreSymbol,
   userStoreSymbol,
+  authStoreSymbol,
+  apiStoreSymbol,
 };

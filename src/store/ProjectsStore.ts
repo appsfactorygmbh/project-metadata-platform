@@ -106,7 +106,7 @@ export const useProjectStore = defineStore('project', {
         this.setAddedSuccessfully(false);
         const response = await projectsService.addProject(projectData);
         console.log(response);
-        if (response && response?.ok) {
+        if (response) {
           this.fetchProjects();
           this.setAddedSuccessfully(true);
         } else this.setAddedSuccessfully(false);
@@ -121,7 +121,7 @@ export const useProjectStore = defineStore('project', {
         this.setUpdatedSuccessfully(false);
         const response = await projectsService.updateProject(projectData, id);
         console.log(response);
-        if (response && response?.ok) {
+        if (response) {
           this.setUpdatedSuccessfully(true);
           await this.fetchProject(id);
         } else {
@@ -152,9 +152,10 @@ export const useProjectStore = defineStore('project', {
     },
 
     async getProjectSlagById(id: number): Promise<string> {
-      let targetProject: DetailedProjectModel | ProjectModel | null = null;
+      let targetProject: DetailedProjectModel | ProjectModel | undefined =
+        undefined;
       targetProject =
-        this.projects.find((project) => project.id === id) ?? null;
+        this.projects.find((project) => project.id === id) ?? undefined;
       if (targetProject) return targetProject.projectName.replace(/ /g, '-');
 
       targetProject = await projectsService.fetchProject(id);
@@ -180,5 +181,5 @@ export const useProjectStore = defineStore('project', {
   },
 });
 
-type ProjectStore = ReturnType<typeof useProjectStore>;
-export type { ProjectStore };
+type ProjectsStore = ReturnType<typeof useProjectStore>;
+export type { ProjectsStore };

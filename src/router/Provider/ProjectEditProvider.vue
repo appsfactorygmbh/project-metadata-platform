@@ -4,17 +4,18 @@
   import { provide } from 'vue';
   import { useAuth } from 'vue-auth3';
   import { projectsService } from '@/services';
+  import { ProjectsApi } from '@/api/generated';
 
   const projectEditStore = useProjectEditStore();
   provide<typeof projectEditStore>(projectEditStoreSymbol, projectEditStore);
 
   const auth = useAuth();
-  projectsService.setAuth(auth.token());
+  projectsService.initApi(auth.token(), ProjectsApi);
   watch(
     () => auth.token(),
     () => {
       console.log('token change', auth);
-      projectsService.setAuth(auth.token());
+      projectsService.initApi(auth.token(), ProjectsApi);
     },
   );
 </script>

@@ -5,84 +5,46 @@ import type {
   UpdateProjectModel,
 } from '@/models/Project';
 import { ApiService } from './ApiService';
-
-class ProjectsService extends ApiService {
-  fetchProjects = async (search?: string): Promise<ProjectModel[] | null> => {
-    let url = `/Projects`;
-    if (search) url += '?search=' + search;
-    try {
-      const response = await this.fetch(url);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data: ProjectModel[] = await response.json();
-
-      return data;
-    } catch (err) {
-      console.error('Error fetching projects: ' + err);
-      return null;
-    }
+import type { ProjectsApi } from '@/api/generated';
+class ProjectsService extends ApiService<ProjectsApi> {
+  fetchProjects = async (
+    search?: string,
+  ): Promise<ProjectModel[] | undefined> => {
+    const projects = await this.callApi('projectsGet', {
+      search: search,
+    });
+    if (!projects) return [];
+    return projects;
   };
 
-  fetchProject = async (id: number): Promise<DetailedProjectModel | null> => {
-    try {
-      const response = await this.fetch('/Projects/' + id.toString(), {
-        headers: {
-          Accept: 'text/plain',
-          'Access-Control-Allow-Origin': '*',
-          cors: 'cors',
-        },
-      });
-
-      const data: DetailedProjectModel = await response.json();
-      return data;
-    } catch (err) {
-      console.error('Error fetching project: ' + err);
-      return null;
-    }
-  };
-
-  addProject = async (
-    projectData: CreateProjectModel,
-  ): Promise<Response | null> => {
-    try {
-      const response = await this.fetch('/projects', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(projectData),
-        mode: 'cors',
-      });
-      return response;
-    } catch (error) {
-      console.error('Error:', error);
-      return null;
-    }
-  };
-
-  updateProject = async (
-    projectData: UpdateProjectModel,
+  fetchProject = async (
     id: number,
-  ): Promise<Response | null> => {
-    try {
-      const response = await this.fetch('/Projects?projectId=' + id, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(projectData),
-        mode: 'cors',
-      });
-      return response;
-    } catch (error) {
-      console.error('Failed to update Project via PUT Request: ', error);
-      return null;
-    }
+  ): Promise<DetailedProjectModel | undefined> => {
+    const project = await this.callApi('projectsIdGet', {
+      id,
+    });
+    if (!project) return;
+    return project;
+  };
+
+  addProject = async (projectData: CreateProjectModel) => {
+    const response = await this.callApi('projectsPut', {
+      createProjectRequest: projectData,
+    });
+    if (!response) return;
+    return response;
+  };
+
+  updateProject = async (projectData: UpdateProjectModel, id: number) => {
+    const response = await this.callApi('projectsPut', {
+      createProjectRequest: projectData,
+      id,
+    });
+    if (!response) return;
+    return response;
   };
 }
 
-const projectsService = new ProjectsService();
+const projectsService = new ProjectsService('ProjectsService');
 export { projectsService };
 export type { ProjectsService };

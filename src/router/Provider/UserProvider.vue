@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+  import { UsersApi } from '@/api/generated';
   import { userService } from '@/services';
   import { useUserStore } from '@/store';
   import { userStoreSymbol } from '@/store/injectionSymbols';
@@ -9,12 +10,12 @@
   provide<typeof userStore>(userStoreSymbol, userStore);
 
   const auth = useAuth();
-  userService.setAuth(auth.token());
+  userService.initApi(auth.token(), UsersApi);
   watch(
     () => auth.token(),
     () => {
       console.log('token change', auth);
-      userService.setAuth(auth.token());
+      userService.initApi(auth.token(), UsersApi);
     },
   );
 </script>
