@@ -1,4 +1,3 @@
-import { projectsService } from '@/services';
 import type {
   CreateProjectModel,
   DetailedProjectModel,
@@ -165,7 +164,9 @@ export const projectStore = useStore<Store, ApiStore<ProjectsApi>>(
         try {
           this.setLoadingAdd(true);
           this.setAddedSuccessfully(false);
-          const response = await projectsService.create(projectData);
+          const response = await this.callApi('projectsPut', {
+            createProjectRequest: projectData,
+          });
           if (response) {
             this.fetchAll();
             this.setAddedSuccessfully(true);
@@ -175,11 +176,14 @@ export const projectStore = useStore<Store, ApiStore<ProjectsApi>>(
         }
       },
 
-      async update(projectData: UpdateProjectModel, id: number) {
+      async update(projectData: UpdateProjectModel, id: ProjectModel['id']) {
         try {
           this.setLoadingUpdate(true);
           this.setUpdatedSuccessfully(false);
-          const response = await projectsService.update(projectData, id);
+          const response = await this.callApi('projectsPut', {
+            createProjectRequest: projectData,
+            id,
+          });
           if (response) {
             this.setUpdatedSuccessfully(true);
             await this.fetch(id);

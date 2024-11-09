@@ -4,7 +4,6 @@
     GlobalPluginProvider,
     PluginProvider,
     ProjectEditProvider,
-    ProjectProvider,
     UserProvider,
   } from '@/router/Provider';
 </script>
@@ -12,17 +11,15 @@
 <template>
   <AuthProvider>
     <UserProvider>
-      <ProjectProvider>
-        <PluginProvider>
-          <ProjectEditProvider>
-            <GlobalPluginProvider>
-              <slot>
-                <RouterView />
-              </slot>
-            </GlobalPluginProvider>
-          </ProjectEditProvider>
-        </PluginProvider>
-      </ProjectProvider>
+      <PluginProvider>
+        <ProjectEditProvider>
+          <GlobalPluginProvider>
+            <slot>
+              <RouterView />
+            </slot>
+          </GlobalPluginProvider>
+        </ProjectEditProvider>
+      </PluginProvider>
     </UserProvider>
   </AuthProvider>
 </template>
