@@ -150,5 +150,5 @@ export const globalPluginsStore = useStore<Store, ApiStore<PluginsApi>>(
   apiStore(PluginsApi),
 )(piniaInstance);
 
-// type GlobalPluginsStore = ReturnType<typeof useGlobalPluginsStore>;
-// export type { GlobalPluginsStore };
+type GlobalPluginsStore = typeof globalPluginsStore;
+export type { GlobalPluginsStore };

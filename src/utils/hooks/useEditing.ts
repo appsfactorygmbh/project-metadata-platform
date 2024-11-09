@@ -1,14 +1,11 @@
 import { computed, inject, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import {
-  pluginStoreSymbol,
-  projectsStoreSymbol,
-} from '@/store/injectionSymbols';
+import { pluginStoreSymbol } from '@/store/injectionSymbols';
+import { projectStore } from '@/store';
 
 export const useEditing = () => {
   const router = useRouter();
   const pluginStore = inject(pluginStoreSymbol);
-  const projectStore = inject(projectsStoreSymbol);
 
   const isEditing = ref<boolean>(
     router.currentRoute.value.query.isEditing === 'true',
@@ -38,7 +35,7 @@ export const useEditing = () => {
       path: router.currentRoute.value.path,
       query: { ...currentQueries, isEditing: 'false' },
     });
-    const projectID = computed(() => projectStore?.getProject?.id);
+    const projectID = computed(() => projectStore.getProject?.id);
     if (projectID.value) {
       pluginStore?.fetchPlugins(projectID.value);
     }

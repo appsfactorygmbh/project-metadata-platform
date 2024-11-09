@@ -1,16 +1,13 @@
 <script lang="ts" setup>
   import { inject, onMounted, toRaw } from 'vue';
-  import {
-    projectEditStoreSymbol,
-    projectsStoreSymbol,
-  } from '@/store/injectionSymbols';
-  import { storeToRefs } from 'pinia';
+  import { projectEditStoreSymbol } from '@/store/injectionSymbols';
   import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
   import { EditOutlined } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
+  import { projectStore } from '@/store';
+  import { storeToRefs } from 'pinia';
 
-  const projectsStore = inject(projectsStoreSymbol)!;
   const projectEditStore = inject(projectEditStoreSymbol)!;
 
   const editingClass = computed(() => ({
@@ -21,8 +18,10 @@
     'non-editing-mode': !isEditing.value,
   }));
 
-  const { getIsLoadingProject } = storeToRefs(projectsStore);
-  const { getIsLoading } = storeToRefs(projectsStore);
+  // @ts-expect-error generic pinia store does not match type signature
+  const { getIsLoadingProject } = storeToRefs(projectStore);
+  // @ts-expect-error generic pinia store does not match type signature
+  const { getIsLoading } = storeToRefs(projectStore);
   const isLoading = computed(
     () => getIsLoadingProject.value || getIsLoading.value,
   );
@@ -30,11 +29,11 @@
   const { isEditing, stopEditing, startEditing } = useEditing();
 
   onMounted(async () => {
-    const project = projectsStore.getProject;
+    const project = projectStore.getProject;
     if (project) addData(project);
 
     const data: ComputedRef<DetailedProjectModel | null> = computed(
-      () => projectsStore.getProject,
+      () => projectStore.getProject,
     );
 
     watch(
@@ -58,7 +57,7 @@
         teamNumberInputStatus.value = '';
         departmentInputStatus.value = '';
         clientNameInputStatus.value = '';
-        addData(projectsStore.getProject!);
+        addData(projectStore.getProject!);
       }
     },
   );
@@ -109,8 +108,8 @@
 
   //Function to load the data from projectViewService to projectView
   function addData(loadedData: DetailedProjectModel) {
-    if (projectsStore.getProject)
-      projectEditStore.setProjectInformation(projectsStore.getProject);
+    if (projectStore.getProject)
+      projectEditStore.setProjectInformation(projectStore.getProject);
     projectData.id.value = loadedData.id;
     projectData.projectName.value = loadedData.projectName;
     projectData.businessUnit.value = loadedData.businessUnit;

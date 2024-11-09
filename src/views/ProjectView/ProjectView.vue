@@ -10,13 +10,13 @@
   import {
     pluginStoreSymbol,
     projectEditStoreSymbol,
-    projectsStoreSymbol,
   } from '@/store/injectionSymbols';
   import { inject, watch } from 'vue';
   import { message } from 'ant-design-vue';
+  import { projectStore } from '@/store';
 
   const pluginStore = inject(pluginStoreSymbol);
-  const projectStore = inject(projectsStoreSymbol);
+
   const projectEditStore = inject(projectEditStoreSymbol);
 
   const { isEditing, stopEditing } = useEditing();
@@ -44,15 +44,15 @@
     stopEditing();
   };
 
-  const isAdding = computed(() => projectStore?.getIsLoadingUpdate);
+  const isAdding = computed(() => projectStore.getIsLoadingUpdate);
 
   // Watcher to see if fetch was successful
   watch(isAdding, (newVal) => {
     if (!newVal) {
-      if (projectStore?.getUpdatedSuccessfully) {
+      if (projectStore.getUpdatedSuccessfully) {
         projectEditStore?.resetPluginChanges();
         message.success('Project updated successfully.', 7);
-        projectStore.fetchProject(projectStore.getProject?.id || 0);
+        projectStore.fetch(projectStore.getProject?.id || 0);
         stopEditing();
       } else {
         message.error('Could not update Project.', 5);
@@ -73,7 +73,7 @@
       return;
     }
 
-    if (!projectStore?.getProject) {
+    if (!projectStore.getProject) {
       console.log(
         'Error when trying to get ProjectInformation. getProject is undefined',
       );
@@ -90,11 +90,11 @@
       pluginList: projectEditStore?.getPluginChanges,
     };
     console.log('updated Project', updatedProject);
-    const projectID = computed(() => projectStore?.getProject?.id);
+    const projectID = computed(() => projectStore.getProject?.id);
     if (projectID.value) {
-      await projectStore?.updateProject(updatedProject, projectID.value);
-      await projectStore.fetchProjects();
-      await projectStore.fetchProject(projectID.value);
+      await projectStore.update(updatedProject, projectID.value);
+      await projectStore.fetchAll();
+      await projectStore.fetch(projectID.value);
       await pluginStore?.fetchPlugins(projectID.value);
     }
   };

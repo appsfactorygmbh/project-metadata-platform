@@ -1,14 +1,10 @@
 <script lang="ts" setup>
   import { type SearchableColumn, SearchableTable } from '@/components/Table';
   import { SearchBar } from '@/components/Searchbar';
-  import {
-    pluginStoreSymbol,
-    projectsStoreSymbol,
-  } from '@/store/injectionSymbols';
+  import { pluginStoreSymbol } from '@/store/injectionSymbols';
   import { inject, onMounted, provide, reactive } from 'vue';
   import { type SearchStore, useSearchStore } from '@/store/SearchStore';
   import type { ProjectModel } from '@/models/Project';
-  import { projectsService } from '@/services';
   import { useEditing } from '@/utils/hooks/useEditing';
   import _ from 'lodash';
   import { useToggle, useWindowSize } from '@vueuse/core';
@@ -18,6 +14,7 @@
     InboxOutlined,
     UndoOutlined,
   } from '@ant-design/icons-vue';
+  import { projectStore } from '@/store';
 
   const props = defineProps({
     paneWidth: {
@@ -35,11 +32,10 @@
   const { stopEditing, isEditing } = useEditing();
   const { routerProjectId, setProjectId } = useProjectRouting();
 
-  const projectsStore = inject(projectsStoreSymbol);
   const pluginStore = inject(pluginStoreSymbol);
   const searchStore = useSearchStore<ProjectModel>('projects');
   const searchStoreSymbol = Symbol('projectSearchStore');
-  const isLoading = computed(() => projectsStore?.getIsLoadingProjects);
+  const isLoading = computed(() => projectStore.getIsLoadingProjects);
   provide<ProjectSearchStore>(searchStoreSymbol, searchStore);
 
   const showOnlyArchived: ProjectSearchStore['filter'] = (items) =>
@@ -65,9 +61,9 @@
   searchStore.setFilter(showOnlyActive);
 
   watch(
-    () => projectsStore?.getProjects,
+    () => projectStore.getProjects,
     () => {
-      searchStore.setBaseSet(projectsStore!.getProjects);
+      searchStore.setBaseSet(projectStore!.getProjects);
     },
   );
 
@@ -76,7 +72,7 @@
   console.log('FETCHING_METHOD:', import.meta.env);
 
   watch(
-    () => projectsStore?.getProjects,
+    () => projectStore.getProjects,
     (newData) => {
       searchStore?.setBaseSet(newData || []);
     },
@@ -93,7 +89,7 @@
   if (FETCHING_METHOD === 'BACKEND') {
     const fetchData = async (value: string) => {
       try {
-        return await projectsService.fetchProjects(value);
+        return await projectStore.fetchAll({ search: value });
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -117,7 +113,7 @@
   watch(
     () => routerProjectId.value,
     async () => {
-      await projectsStore?.fetchProject(routerProjectId.value);
+      await projectStore.fetch(routerProjectId.value);
       await pluginStore?.fetchPlugins(routerProjectId.value);
     },
   );
@@ -128,16 +124,16 @@
   };
 
   onMounted(async () => {
-    await projectsStore?.fetchProjects();
+    await projectStore.fetchAll();
 
     if (routerProjectId.value === 0) {
-      setProjectId(projectsStore?.getProjects[0]?.id ?? 100);
+      setProjectId(projectStore.getProjects[0]?.id ?? 100);
     } else {
-      await projectsStore?.fetchProject(routerProjectId.value);
+      await projectStore.fetch(routerProjectId.value);
       await pluginStore?.fetchPlugins(routerProjectId.value);
     }
 
-    searchStore.setBaseSet(projectsStore?.getProjects ?? []);
+    searchStore.setBaseSet(projectStore.getProjects ?? []);
     changeColumns(props.paneWidth);
   });
 

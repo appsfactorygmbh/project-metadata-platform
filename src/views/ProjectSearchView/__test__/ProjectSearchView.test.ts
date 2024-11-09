@@ -2,13 +2,10 @@ import { VueWrapper, flushPromises, mount } from '@vue/test-utils';
 import ProjectSearchView from '../ProjectSearchView.vue';
 import { describe, expect, it } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
-import { usePluginsStore, useProjectStore } from '@/store';
+import { projectStore, usePluginsStore } from '@/store';
 import { createPinia, setActivePinia } from 'pinia';
 import _ from 'lodash';
-import {
-  pluginStoreSymbol,
-  projectsStoreSymbol,
-} from '@/store/injectionSymbols';
+import { pluginStoreSymbol } from '@/store/injectionSymbols';
 import type { ComponentPublicInstance } from 'vue';
 import router from '@/router';
 import type { ProjectModel } from '@/models/Project';
@@ -24,11 +21,7 @@ interface ProjectSearchViewInstance {
 describe.skip('ProjectSearchView.vue', () => {
   setActivePinia(createPinia());
 
-  const generateWrapper = (
-    pWidth: number,
-    projectsStore = useProjectStore(),
-    pluginStore = usePluginsStore(),
-  ) => {
+  const generateWrapper = (pWidth: number, pluginStore = usePluginsStore()) => {
     return mount(ProjectSearchView, {
       plugins: [
         createTestingPinia({
@@ -37,7 +30,6 @@ describe.skip('ProjectSearchView.vue', () => {
       ],
       global: {
         provide: {
-          [projectsStoreSymbol as symbol]: projectsStore,
           [pluginStoreSymbol as symbol]: pluginStore,
         },
         plugins: [router],
@@ -100,14 +92,13 @@ describe.skip('ProjectSearchView.vue', () => {
     await router.isReady();
     createTestingPinia({});
 
-    const projectStore = useProjectStore();
     const pluginStore = usePluginsStore();
     generateWrapper(800);
     await flushPromises();
 
     await flushPromises();
 
-    expect(projectStore.fetchProject).toHaveBeenCalledWith(300);
+    expect(projectStore.fetch).toHaveBeenCalledWith(300);
     expect(pluginStore.fetchPlugins).toHaveBeenCalledWith(300);
   });
 });

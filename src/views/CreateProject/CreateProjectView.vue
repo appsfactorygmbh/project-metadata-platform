@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { computed, inject, ref, watch } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import {
     BankOutlined,
@@ -10,9 +10,9 @@
   } from '@ant-design/icons-vue';
   import { reactive } from 'vue';
   import type { UnwrapRef } from 'vue';
-  import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import type { CreateProjectModel } from '@/models/Project';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
+  import { projectStore } from '@/store';
 
   const open = ref<boolean>(false);
   const formRef = ref();
@@ -21,15 +21,14 @@
   const cancelFetch = ref<boolean>();
 
   // TableStore to refetch Table after Project was added
-  const projectsStore = inject(projectsStoreSymbol);
 
-  const isAdding = computed(() => projectsStore?.getIsLoadingAdd);
+  const isAdding = computed(() => projectStore.getIsLoadingAdd);
   const fetchError = ref<boolean>(false);
 
   const formState: UnwrapRef<CreateProjectModel> = reactive({
     projectName: '',
     businessUnit: '',
-    teamNumber: undefined,
+    teamNumber: -1,
     department: '',
     clientName: '',
   });
@@ -81,8 +80,8 @@
     // wait for project creation and checks whether it has been created correctly
     watch(isAdding, (newVal) => {
       if (newVal == false) {
-        if (projectsStore?.getAddedSuccessfully) {
-          projectsStore.fetchProjects();
+        if (projectStore.getAddedSuccessfully) {
+          projectStore.fetchAll();
           fetchError.value = false;
           open.value = false;
           resetModal();
@@ -100,7 +99,7 @@
       clientName: formState.clientName,
     };
 
-    await projectsStore?.addProject(projectData);
+    await projectStore.create(projectData);
   };
 </script>
 

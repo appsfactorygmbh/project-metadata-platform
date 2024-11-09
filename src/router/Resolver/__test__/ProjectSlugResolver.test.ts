@@ -1,13 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import auth from '@/auth';
 import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
-import { ProjectSlagResolver } from '..';
-import { useProjectStore } from '@/store';
+import { ProjectSlugResolver } from '..';
 import { createTestingPinia } from '@pinia/testing';
-import { projectsStoreSymbol } from '@/store/injectionSymbols';
 import { createRouter, createWebHistory } from 'vue-router';
 import { SplitView } from '@/views';
 import { ProviderCollection } from '@/router/Provider';
+import { projectStore } from '@/store';
 
 const testProjects = [
   {
@@ -29,7 +28,7 @@ const testProjects = [
 ];
 
 // TODO: Fix this test. It lets pipeline fail because of jsdom not implementing window.getComputedStyle and other issues
-describe.skip('ProjectSlagResolver.vue', () => {
+describe.skip('ProjectSlugResolver.vue', () => {
   enableAutoUnmount(afterEach);
   createTestingPinia();
 
@@ -44,7 +43,7 @@ describe.skip('ProjectSlagResolver.vue', () => {
           {
             name: 'ProjectNameResolver',
             path: '/',
-            component: ProjectSlagResolver,
+            component: ProjectSlugResolver,
             children: [
               {
                 path: '/',
@@ -52,7 +51,7 @@ describe.skip('ProjectSlagResolver.vue', () => {
                 component: SplitView,
               },
               {
-                path: '/:projectSlag',
+                path: '/:projectSlug',
                 name: 'SplitView',
                 component: SplitView,
               },
@@ -70,51 +69,43 @@ describe.skip('ProjectSlagResolver.vue', () => {
     });
     await mockRouter.isReady();
 
-    mount(ProjectSlagResolver, {
+    mount(ProjectSlugResolver, {
       plugins: [
         createTestingPinia({
           stubActions: false,
         }),
       ],
       global: {
-        provide: {
-          [projectsStoreSymbol as symbol]: useProjectStore(),
-        },
         plugins: [mockRouter, auth],
       },
     });
 
-    const projectsStore = useProjectStore();
-    projectsStore.setProjects(testProjects);
+    projectStore.setProjects(testProjects);
     await flushPromises();
 
     expect(mockRouter.currentRoute.value.query.projectId).toBe('200');
     expect(mockRouter.currentRoute.value.path).toBe('/test-1');
   });
 
-  it('changes the slag when changing the query', async () => {
+  it('changes the slug when changing the query', async () => {
     await mockRouter.push({
       name: 'Provider',
       query: { projectId: '200' },
     });
     await mockRouter.isReady();
 
-    mount(ProjectSlagResolver, {
+    mount(ProjectSlugResolver, {
       plugins: [
         createTestingPinia({
           stubActions: false,
         }),
       ],
       global: {
-        provide: {
-          [projectsStoreSymbol as symbol]: useProjectStore(),
-        },
         plugins: [mockRouter, auth],
       },
     });
 
-    const projectsStore = useProjectStore();
-    projectsStore.setProjects(testProjects);
+    projectStore.setProjects(testProjects);
     await flushPromises();
 
     expect(mockRouter.currentRoute.value.query.projectId).toBe('200');

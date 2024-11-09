@@ -40,19 +40,18 @@
   import {
     pluginStoreSymbol,
     projectEditStoreSymbol,
-    projectsStoreSymbol,
   } from '@/store/injectionSymbols';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { PluginEditModel, PluginModel } from '@/models/Plugin';
+  import { projectStore } from '@/store';
   const { isEditing } = useEditing();
 
   const pluginStore = inject(pluginStoreSymbol)!;
-  const projectsStore = inject(projectsStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
 
   const plugins = ref<PluginEditModel[]>([]);
   const loading = computed(
-    () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
+    () => pluginStore.getIsLoading || projectStore.getIsLoading,
   );
 
   // take the normal Plugins initialAdd them to the projectEditStore and add the editKey to the return value of initial Add to the plugin

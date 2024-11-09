@@ -3,19 +3,19 @@ import {
   type ProjectEditStore,
   useProjectEditStore,
 } from './ProjectEditStore/ProjectEditStore.ts';
-import { type ProjectsStore, useProjectStore } from './ProjectsStore';
+import { type ProjectsStore, projectStore } from './ProjectsStore';
 import { type SearchStore, useSearchStore } from './SearchStore';
-// import {
-//   type GlobalPluginsStore,
-//   useGlobalPluginsStore,
-// } from './GlobalPluginStore';
+import {
+  type GlobalPluginsStore,
+  globalPluginsStore,
+} from './GlobalPluginStore';
 import { type UserStore, useUserStore } from './UserStore';
 
 export {
   usePluginsStore,
-  useProjectStore,
+  projectStore,
   useSearchStore,
-  // useGlobalPluginsStore,
+  globalPluginsStore,
   useProjectEditStore,
   useUserStore,
 };
@@ -23,7 +23,7 @@ export type {
   PluginsStore,
   ProjectsStore,
   SearchStore,
-  // GlobalPluginsStore,
+  GlobalPluginsStore,
   ProjectEditStore,
   UserStore,
 };

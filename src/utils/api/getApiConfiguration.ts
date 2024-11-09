@@ -1,11 +1,12 @@
 import { Configuration } from '@/api/generated';
+import { API_BASE_PATH } from '@/constants';
 
 export const getApiConfiguration = (accessToken: string) => {
   return new Configuration({
-    basePath: import.meta.env.VITE_BACKEND_URL,
+    basePath: API_BASE_PATH,
     accessToken,
     headers: {
-      Accept: 'application/json',
+      Authorization: `Bearer ${accessToken}`,
     },
   });
 };

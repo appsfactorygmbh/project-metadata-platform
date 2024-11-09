@@ -4,18 +4,21 @@
   import { useAuth } from 'vue-auth3';
   import { authStore } from '@/store/AuthStore';
   import { globalPluginsStore } from '@/store/GlobalPluginStore';
+  import { projectStore } from '@/store';
 
   provide<typeof authStore>(authStoreSymbol, authStore);
 
   const auth = useAuth();
   authStore.setAuth(auth.token());
   globalPluginsStore.refreshAuth();
+  projectStore.refreshAuth();
 
   watch(
     () => auth.token(),
     () => {
       authStore.setAuth(auth.token());
       globalPluginsStore.refreshAuth();
+      projectStore.refreshAuth();
     },
   );
 </script>
