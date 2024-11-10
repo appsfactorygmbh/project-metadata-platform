@@ -19,7 +19,9 @@
             <a-card class="grouped-card">
               <!-- Display the favicon image. -->
               <a-avatar :src="plugin.faviconUrl" shape="square" class="avatar"></a-avatar>
-              <h3>{{ plugin.displayName + ' Plugins'}}</h3>
+              <div class="textContainer">
+                <h3>{{ plugin.displayName + ' Plugins'}}</h3>
+              </div>
             </a-card>
           </a-badge>
         </div>
@@ -222,19 +224,22 @@ onMounted(async () => {
   width: max-content;
   min-width: 200px;
   max-width: 300px;
-  /* max-height: 98px; /* das weiß ich nicht ob es so richtig ist */
   box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0 !important;
-  cursor: pointer;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   transition: 0.1s ease-in-out;
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.01);
+  }
 }
 .grouped-card .avatar {
-  margin: 0 auto;
-  width: 60px;
-  height: 60px;
-  display: block;
+  margin: 10px;
+  width: 40px;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
 }
 .grouped-card:hover {
   transform: scale(1.01);
@@ -251,5 +256,10 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.grouped-card .avatar,
+.grouped-card h3 {
+  margin: 0;
+  padding: 0;
 }
 </style>
