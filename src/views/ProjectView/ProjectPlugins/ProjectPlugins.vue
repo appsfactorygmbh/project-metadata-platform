@@ -16,7 +16,15 @@
 
         <div v-else @click="openGroupPopup(plugin)">
           <a-badge :count="plugin.plugins.length">
-            <a-card class="grouped-card">
+            <a-card
+              class="grouped-card"
+              :body-style="{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            padding: '15px',
+          }"
+            >
               <!-- Display the favicon image. -->
               <a-avatar :src="plugin.faviconUrl" shape="square" class="avatar"></a-avatar>
               <div class="textContainer">
@@ -257,9 +265,22 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
 }
-.grouped-card .avatar,
-.grouped-card h3 {
-  margin: 0;
-  padding: 0;
+.textContainer {
+  font-family: Manrope, serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+
+  & > * {
+    margin: 10px;
+  }
+
+  & p {
+    color: #6d6e6f;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 </style>
