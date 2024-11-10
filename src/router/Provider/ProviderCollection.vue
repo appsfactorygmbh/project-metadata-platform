@@ -6,20 +6,23 @@
     ProjectProvider,
     UserProvider,
   } from '@/router/Provider';
+  import LogsProvider from './LogsProvider.vue';
 </script>
 
 <template>
-  <UserProvider>
-    <ProjectProvider>
-      <PluginProvider>
-        <ProjectEditProvider>
-          <GlobalPluginProvider>
-            <slot>
-              <RouterView />
-            </slot>
-          </GlobalPluginProvider>
-        </ProjectEditProvider>
-      </PluginProvider>
-    </ProjectProvider>
-  </UserProvider>
+  <LogsProvider>
+    <UserProvider>
+      <ProjectProvider>
+        <PluginProvider>
+          <ProjectEditProvider>
+            <GlobalPluginProvider>
+              <slot>
+                <RouterView />
+              </slot>
+            </GlobalPluginProvider>
+          </ProjectEditProvider>
+        </PluginProvider>
+      </ProjectProvider>
+    </UserProvider>
+  </LogsProvider>
 </template>

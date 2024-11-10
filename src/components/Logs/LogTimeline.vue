@@ -14,7 +14,8 @@
     <a-timeline-item
       v-for="(data, index) in props.logEntries"
       :key="index"
-      color="blue"
+      class="timelineItem"
+      color="red"
     >
       <div class="item">
         <p class="label">{{ data.timeStamp }}</p>
@@ -29,13 +30,11 @@
     box-sizing: border-box;
     height: max-content;
     .item {
-      margin: 0;
-      padding: 0;
       display: flex;
       flex-direction: row;
 
       p {
-        margin: 0;
+        margin: 0 20px 0 0;
         width: max-content;
       }
     }
