@@ -176,6 +176,22 @@ export const useProjectStore = defineStore('project', {
         this.setLoadingProject(false);
       }
     },
+
+    async archiveProject(projectId: number | null) {
+      if (!projectId) return;
+      try {
+        const response = await projectsService.archiveProject(projectId);
+        if (response && response.ok) {
+          await this.fetchProjects();
+
+          this.project = this.projects[0] || null;
+        } else {
+          console.error('Archiving failed');
+        }
+      } catch (error) {
+        console.error('Error archiving project:', error.message);
+      }
+    },
   },
 });
 

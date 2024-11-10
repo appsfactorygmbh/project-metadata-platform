@@ -81,6 +81,19 @@ class ProjectsService extends ApiService {
       return null;
     }
   };
+
+  archiveProject = async (id: number): Promise<Response | null> => {
+    try {
+      const response = await this.fetch(`/Projects/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete project');
+      return response;
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      return null;
+    }
+  };
 }
 
 const projectsService = new ProjectsService();

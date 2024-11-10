@@ -7,14 +7,17 @@
   import { MenuButtons } from '@/components/MenuButtons';
   import { CreateProjectView } from '@/views/CreateProject';
   import ProjectView from '../ProjectView/ProjectView.vue';
+  import { ArchiveProjectButton } from '@/components/ArchiveProjectButton';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { RightOutlined } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
+  import { useProjectStore } from '@/store/ProjectsStore.ts';
 
   const { isEditing } = useEditing();
 
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
+  const projectStore = useProjectStore();
 
   const splitButton: FloatButtonModel = {
     name: 'SplitButton',
@@ -43,7 +46,13 @@
         <ProjectView />
         <FloatingButton :button="splitButton" class="button" />
         <MenuButtons />
-        <CreateProjectView v-if="!isEditing" />
+        <CreateProjectView v-if="!isEditing" class="create-project-button" />
+
+        <ArchiveProjectButton
+          v-if="projectStore.getProject"
+          :project-id="projectStore.getProject?.id"
+          class="archive-button"
+        />
       </pane>
     </splitpanes>
   </div>
@@ -68,5 +77,14 @@
     position: absolute;
     top: 2.5em;
     left: 1em;
+  }
+
+  .archive-button {
+    position: relative;
+    margin-top: 1em;
+  }
+  .create-project-button {
+    position: relative;
+    margin-bottom: 1em;
   }
 </style>

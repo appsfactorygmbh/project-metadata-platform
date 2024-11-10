@@ -35,6 +35,7 @@ declare module 'vue' {
     AMenu: typeof import('ant-design-vue/es')['Menu']
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem']
     AModal: typeof import('ant-design-vue/es')['Modal']
+    ArchiveProjectButton: typeof import('./../src/components/ArchiveProjectButton/ArchiveProjectButton.vue')['default']
     ARow: typeof import('ant-design-vue/es')['Row']
     ASelect: typeof import('ant-design-vue/es')['Select']
     ASkeleton: typeof import('ant-design-vue/es')['Skeleton']
