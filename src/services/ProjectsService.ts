@@ -82,18 +82,30 @@ class ProjectsService extends ApiService {
     }
   };
 
-  archiveProject = async (id: number): Promise<Response | null> => {
+  // archiveProject = async (id: number): Promise<Response | null> => {
+  //   try {
+  //     const response = await this.fetch(`/Projects/${id}`, {
+  //       method: 'PUT',
+  //     });
+  //     if (!response.ok) throw new Error('Failed to archive project');
+  //     return response;
+  //   } catch (error) {
+  //     console.error('Error archiving project:', error);
+  //     return null;
+  //   }
+  // };
+  async archiveProject(id: number): Promise<Response | null> {
     try {
-      const response = await this.fetch(`/Projects/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error('Failed to delete project');
-      return response;
+      // Mock-Antwort für die Archivierungsfunktion
+      console.log(`Mocking archive project with ID: ${id}`);
+
+      // Simuliere Erfolg: Rückgabe eines Response-ähnlichen Objekts
+      return new Response(null, { status: 200, statusText: 'OK' });
     } catch (error) {
-      console.error('Error deleting project:', error);
+      console.error('Mock error archiving project:', error);
       return null;
     }
-  };
+  }
 }
 
 const projectsService = new ProjectsService();

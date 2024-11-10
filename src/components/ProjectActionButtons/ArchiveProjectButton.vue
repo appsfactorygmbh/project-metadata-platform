@@ -1,22 +1,13 @@
 <script setup lang="ts">
   import { DeleteOutlined } from '@ant-design/icons-vue';
-  import { defineProps } from 'vue';
   import { useProjectStore } from '@/store/ProjectsStore.ts';
-  import type { FloatButtonModel } from '@/components/Button/FloatButtonModel.ts';
+  import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
 
-  const props = defineProps({
-    projectId: {
-      type: Number,
-      required: true,
-    },
-  });
   const projectStore = useProjectStore();
-
   const confirmAndArchiveProject = async () => {
     const confirmed = confirm('Are you sure you want to archive this project?');
-    if (!confirmed) return;
-
-    await projectStore.archiveProject(props.projectId);
+    if (!confirmed || !projectStore.getProject?.id) return;
+    await projectStore.archiveProject(projectStore.getProject.id);
   };
 
   const archiveButton: FloatButtonModel = {
@@ -31,5 +22,3 @@
 <template>
   <FloatingButton :button="archiveButton" />
 </template>
-
-<style scoped></style>
