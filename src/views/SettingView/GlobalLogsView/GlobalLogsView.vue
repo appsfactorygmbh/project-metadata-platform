@@ -17,130 +17,130 @@
       logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
       timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
     },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
-    {
-      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
-    },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
+    // {
+    //   logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+    //   timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    // },
   ];
 
   const logsStore = inject(logsStoreSymbol);
@@ -170,11 +170,7 @@
               return item.logMessage.includes(searchValue);
             })
           "
-        >
-          <template #label>
-            <h1>This is the header</h1>
-          </template></LogTimeline
-        >
+        />
       </div>
     </a-card>
   </div>
