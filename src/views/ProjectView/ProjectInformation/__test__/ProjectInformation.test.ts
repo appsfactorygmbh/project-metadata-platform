@@ -9,19 +9,20 @@ import {
 } from '@/store/injectionSymbols';
 import { useProjectEditStore, useProjectStore } from '@/store';
 import router from '@/router';
-
-const testData = {
-  projectName: 'Heute Show',
-  department: 'IT',
-  clientName: 'ZDF',
-  businessUnit: 'BU Health',
-  teamNumber: 42,
-};
+import { EditOutlined, UndoOutlined } from '@ant-design/icons-vue';
 
 describe('ProjectInformation.vue', () => {
   setActivePinia(createPinia());
 
   it('renders the project information correctly', async () => {
+    const testData = {
+      projectName: 'Heute Show',
+      department: 'IT',
+      clientName: 'ZDF',
+      businessUnit: 'BU Health',
+      teamNumber: 42,
+    };
+
     const wrapper = mount(ProjectInformation, {
       plugins: [
         createTestingPinia({
@@ -53,5 +54,45 @@ describe('ProjectInformation.vue', () => {
     expect(wrapper.findAll('.projectInfo')[1].text()).toBe('42');
     expect(wrapper.findAll('.projectInfo')[2].text()).toBe('IT');
     expect(wrapper.findAll('.projectInfo')[3].text()).toBe('ZDF');
+  });
+
+  it('doesnt render the edit button, but the reactivate button, when archived', async () => {
+    const testData = {
+      projectName: 'Heute Show',
+      department: 'IT',
+      clientName: 'ZDF',
+      businessUnit: 'BU Health',
+      teamNumber: 42,
+      isArchived: true,
+    };
+
+    const wrapper = mount(ProjectInformation, {
+      plugins: [
+        createTestingPinia({
+          stubActions: true,
+          initialState: {
+            project: {
+              project: { ...testData, isArchived: true },
+            },
+          },
+        }),
+      ],
+      global: {
+        stubs: {
+          PluginView: {
+            template: '<span />',
+          },
+        },
+        plugins: [router],
+        provide: {
+          [projectEditStoreSymbol as symbol]: useProjectEditStore(),
+          [projectsStoreSymbol as symbol]: useProjectStore(),
+        },
+      },
+    });
+    await flushPromises();
+
+    expect(wrapper.findComponent(EditOutlined).exists()).toBeFalsy();
+    expect(wrapper.findComponent(UndoOutlined).exists()).toBeTruthy();
   });
 });
