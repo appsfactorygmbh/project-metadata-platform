@@ -9,11 +9,12 @@ type SearchStoreState<T> = {
   baseSet: Ref<T[]>;
   isLoading: boolean;
   onReset: (() => void) | undefined;
+  filter: (items: T[]) => T[];
 };
 
 const excludedKeys = ['id', 'createdAt', 'updatedAt'];
 
-export const useSearchStore = <T extends object>(name: string) =>
+export const useSearchStore = <T extends AnyObject>(name: string) =>
   defineStore(`${name}_search`, {
     state: (): SearchStoreState<T> => {
       return {
@@ -22,6 +23,7 @@ export const useSearchStore = <T extends object>(name: string) =>
         searchResults: ref<T[]>([]) as Ref<T[]>,
         isLoading: false,
         onReset: undefined,
+        filter: (items: T[]): T[] => items,
       };
     },
     getters: {
@@ -44,24 +46,32 @@ export const useSearchStore = <T extends object>(name: string) =>
         this.baseSet = baseSet;
         this.applySearch();
       },
+      setFilter(filter: (items: T[]) => T[]) {
+        this.filter = filter;
+        this.applySearch();
+      },
       applySearch() {
         if (_.isEmpty(this.baseSet)) return;
         if (_.isEmpty(this.searchQuery)) {
-          this.searchResults = this.baseSet;
+          // filter only by custom filter function
+          this.searchResults = this.filter(this.baseSet);
           return;
         }
         this.isLoading = true;
         const keys = Object.keys(this.baseSet[0]).filter(
           (key) => !excludedKeys.includes(key),
         );
-        const results = this.baseSet.filter((item) =>
+        // filter by search query
+        const searchResults = this.baseSet.filter((item) =>
           keys.some((key) =>
             String(item[key as keyof T])
               .toLowerCase()
               .includes(this.searchQuery.toLowerCase()),
           ),
         );
-        this.searchResults = results;
+        // filter by custom filter function
+        const filteredResults = this.filter(searchResults);
+        this.searchResults = filteredResults;
         this.isLoading = false;
       },
 
@@ -77,7 +87,7 @@ export const useSearchStore = <T extends object>(name: string) =>
     },
   })();
 
-type SearchStore<T extends object = AnyObject> = ReturnType<
+type SearchStore<T extends AnyObject = AnyObject> = ReturnType<
   typeof useSearchStore<T>
 >;
 export type { SearchStore };
