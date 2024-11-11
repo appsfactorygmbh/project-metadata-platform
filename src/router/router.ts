@@ -66,7 +66,7 @@ const router = createRouter({
               meta: { title: 'Project Metadata Platform - User Management' },
               children: [
                 {
-                  path: '/settings/user-management/user',
+                  path: '/settings/user-management',
                   name: 'usersInformation',
                   component: UserInformationView,
                   meta: {

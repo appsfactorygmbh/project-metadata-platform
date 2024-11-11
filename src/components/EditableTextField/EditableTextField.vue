@@ -22,15 +22,15 @@
       type: String as PropType<'text' | 'password' | 'email'>,
       default: 'text',
     },
+    isEditingKey: {
+      type: String,
+      required: true,
+    },
   });
 
-  const item = ref<string>(props.label);
+  const item = ref<string>(props.isEditingKey);
   const fieldValue = ref<string>(props.value);
   const { isEditing, startEditing, stopEditing } = useEditing(item.value);
-
-  const toggleEdit = () => {
-    startEditing();
-  };
 
   const onSave = () => {
     stopEditing();
@@ -57,7 +57,7 @@
         </a-form-item>
       </a-form>
 
-      <a-button v-if="!isEditing" class="edit" @click="toggleEdit"
+      <a-button v-if="!isEditing" class="edit" @click="startEditing"
         >Edit</a-button
       >
       <a-button v-else class="edit" html-type="submit" @click="onSave"

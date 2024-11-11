@@ -34,7 +34,7 @@
     tab.value = name;
     switch (name) {
       case 'User': {
-        router.push(`/settings/user-management/user`);
+        router.push(`/settings/user-management`);
         break;
       }
       case 'Global Plugins': {

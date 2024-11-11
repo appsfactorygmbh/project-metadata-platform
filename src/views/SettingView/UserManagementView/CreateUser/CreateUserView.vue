@@ -8,7 +8,7 @@
   import router from '@/router/router.ts';
 
   const onClose = () => {
-    router.push('/settings/user-management/user');
+    router.push('/settings/user-management');
   };
 
   const formStore = useFormStore('createUserForm');

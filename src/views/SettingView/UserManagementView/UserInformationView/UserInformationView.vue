@@ -11,7 +11,7 @@
   const router = useRouter();
   const userStore = inject(userStoreSymbol)!;
   const { getIsLoadingUsers, getIsLoading, getMe } = storeToRefs(userStore);
-  const { isEditing, startEditing, stopEditing } = useEditing('Name');
+  const { isEditing, startEditing, stopEditing } = useEditing('isEditingName');
   const me = computed(() => getMe.value);
   const isLoading = computed(
     () => getIsLoadingUsers.value || getIsLoading.value,
@@ -27,10 +27,6 @@
     icon: PlusOutlined,
     status: 'activated',
     tooltip: 'Click here to create a new user',
-  };
-
-  const toggleEdit = () => {
-    startEditing();
   };
 
   const onSave = () => {
@@ -55,7 +51,7 @@
           </a-form-item>
         </a-form>
 
-        <a-button v-if="!isEditing" class="edit" @click="toggleEdit"
+        <a-button v-if="!isEditing" class="edit" @click="startEditing"
           >Edit</a-button
         >
         <a-button v-else class="edit" html-type="submit" @click="onSave"
@@ -76,17 +72,20 @@
         :value="me?.username ?? ''"
         :is-loading="isLoading"
         :label="'Username'"
+        :is-editing-key="'isEditingUsername'"
       />
       <EditableTextField
         :value="me?.email ?? ''"
         :is-loading="isLoading"
         :label="'Email'"
+        :is-editing-key="'isEditingEmail'"
         type="email"
       />
       <EditableTextField
         :value="''"
         :is-loading="isLoading"
         :label="'Password'"
+        :is-editing-key="'isEditingPassword'"
         type="password"
       />
     </a-flex>
