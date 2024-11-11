@@ -10,38 +10,36 @@
 </script>
 
 <template>
-  <a-timeline class="timeline">
-    <a-timeline-item
-      v-for="(data, index) in props.logEntries"
-      :key="index"
-      class="timelineItem"
-      color="red"
-    >
-      <div class="item">
-        <p class="label">{{ data.timeStamp }}</p>
-        <p>{{ data.logMessage }}</p>
-      </div>
-    </a-timeline-item>
-  </a-timeline>
+  <div class="container">
+    <a-timeline mode="left" class="timetime">
+      <a-timeline-item
+        v-for="(data, index) in props.logEntries"
+        :key="index"
+        position="left"
+        class="timelineItem"
+      >
+        <template #label>{{ data.timeStamp }}</template>
+        <p class="logMessage">{{ data.logMessage }}</p>
+      </a-timeline-item>
+    </a-timeline>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-  .timeline {
-    box-sizing: border-box;
-    height: max-content;
-    .item {
-      display: flex;
-      flex-direction: row;
+  .logMessage {
+    display: inline-block;
+    white-space: normal;
+    margin: 0;
+  }
 
-      p {
-        margin: 0 20px 0 0;
-        width: max-content;
-      }
-    }
-
-    .label {
-      margin-right: 5em;
-      min-width: 5em;
-    }
+  .timetime {
+    height: 89vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .container {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
   }
 </style>

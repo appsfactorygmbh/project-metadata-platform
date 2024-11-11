@@ -3,35 +3,143 @@
   import { logsStoreSymbol } from '@/store/injectionSymbols';
   import { debounce } from 'lodash';
   import { inject, onMounted } from 'vue';
-  const currentdate = new Date();
   const searchValue = ref('');
   const dummyData: LogEntryModel[] = [
     {
       logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp:
-        currentdate.getDate() +
-        '-' +
-        (currentdate.getMonth() + 1) +
-        '-' +
-        currentdate.getFullYear(),
+      timeStamp: new Date('2024-11-11T18:10:30+00:00').toLocaleString(),
     },
     {
       logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
-      timeStamp:
-        currentdate.getDate() +
-        '-' +
-        (currentdate.getMonth() + 1) +
-        '-' +
-        currentdate.getFullYear(),
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
     },
     {
-      logMessage: 'Das ist ein Logeintrag. Ein Projekt wurde gelöscht.',
-      timeStamp:
-        currentdate.getDate() +
-        '-' +
-        (currentdate.getMonth() + 1) +
-        '-' +
-        currentdate.getFullYear(),
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
+    },
+    {
+      logMessage: 'Das ist ein Logeintrag. Ein nutzer wurde gelöscht.',
+      timeStamp: new Date('2024-11-11T18:10:30Z').toLocaleString(),
     },
   ];
 
@@ -46,37 +154,40 @@
   });
 </script>
 
-<template class="test">
-  <a-card class="card">
+<template>
+  <div class="container">
     <a-input
       v-model:value="searchValue"
-      placeholder="Search global Logs"
+      placeholder="Search global logs"
       class="input"
       @change="updateSearchParam"
     />
-    <LogTimeline
-      :log-entries="
-        dummyData.filter((item) => {
-          return item.logMessage.includes(searchValue);
-        })
-      "
-    ></LogTimeline>
-  </a-card>
+    <a-card class="card">
+      <div class="timeline">
+        <LogTimeline
+          :log-entries="
+            dummyData.filter((item) => {
+              return item.logMessage.includes(searchValue);
+            })
+          "
+        >
+          <template #label>
+            <h1>This is the header</h1>
+          </template></LogTimeline
+        >
+      </div>
+    </a-card>
+  </div>
 </template>
 
 <style lang="css" scoped>
-  .card {
-    height: 90vh;
-    overflow-y: auto;
-    box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0 !important;
-    margin: 20px;
-    padding: 15px;
-  }
   .input {
-    margin-bottom: 20px;
+    margin: 10px;
     width: 30em;
   }
-  .test {
-    display: none;
+  .card {
+    overflow-y: auto;
+    height: 100%;
+    margin: 0 10px 0 10px;
   }
 </style>
