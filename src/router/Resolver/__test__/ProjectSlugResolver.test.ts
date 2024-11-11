@@ -6,7 +6,7 @@ import { createTestingPinia } from '@pinia/testing';
 import { createRouter, createWebHistory } from 'vue-router';
 import { SplitView } from '@/views';
 import { ProviderCollection } from '@/router/Provider';
-import { projectStore } from '@/store';
+import { useProjectStore } from '@/store';
 
 const testProjects = [
   {
@@ -31,6 +31,7 @@ const testProjects = [
 describe.skip('ProjectSlugResolver.vue', () => {
   enableAutoUnmount(afterEach);
   createTestingPinia();
+  const projectStore = useProjectStore();
 
   const mockRouter = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),

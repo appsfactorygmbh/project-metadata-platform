@@ -1,14 +1,10 @@
 <script setup lang="ts">
-  // import { useGlobalPluginsStore } from '@/store';
-  import { globalPluginsStore } from '@/store/GlobalPluginStore';
+  import { type GlobalPluginsStore, useGlobalPluginsStore } from '@/store';
   import { globalPluginStoreSymbol } from '@/store/injectionSymbols';
   import { provide } from 'vue';
 
   // const globalPluginsStore = useGlobalPluginsStore();
-  provide<typeof globalPluginsStore>(
-    globalPluginStoreSymbol,
-    globalPluginsStore,
-  );
+  provide<GlobalPluginsStore>(globalPluginStoreSymbol, useGlobalPluginsStore());
 </script>
 
 <template>

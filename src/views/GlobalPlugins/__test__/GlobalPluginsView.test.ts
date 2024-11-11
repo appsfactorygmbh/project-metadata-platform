@@ -1,23 +1,24 @@
-import { createPinia, setActivePinia } from 'pinia';
+import { setActivePinia } from 'pinia';
 import GlobalPluginsView from '../GlobalPluginsView.vue';
 import { describe, expect, it } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
-import { globalPluginStoreSymbol } from '@/store/injectionSymbols.ts';
 import { useGlobalPluginsStore } from '@/store';
 import { Button } from 'ant-design-vue';
 import type { GlobalPluginModel } from '@/models/Plugin';
 
-const testData = [
+const testData: GlobalPluginModel[] = [
   {
     id: 0,
     name: 'Plugin 1',
-    archived: true,
+    isArchived: true,
+    keys: [],
   },
   {
     id: 1,
     name: 'Plugin 2',
-    archived: false,
+    isArchived: false,
+    keys: [],
   },
 ];
 
@@ -37,31 +38,27 @@ const testDataDelete: GlobalPluginModel[] = [
 ];
 
 describe('GlobalPluginsView.vue', () => {
-  setActivePinia(createPinia());
+  const testingPinia = createTestingPinia({
+    stubActions: false,
+    initialState: {
+      globalPlugin: {
+        globalPlugins: testData,
+        fetchAll: vi.fn(), // prevent call to api
+      },
+    },
+  });
+  setActivePinia(testingPinia);
+
+  const globalPluginStore = useGlobalPluginsStore(testingPinia);
 
   const generateWrapper = () => {
-    return mount(GlobalPluginsView, {
-      plugins: [
-        createTestingPinia({
-          stubActions: false,
-          initialState: {
-            globalPlugin: {
-              globalPlugins: testData,
-            },
-          },
-        }),
-      ],
-      global: {
-        provide: {
-          [globalPluginStoreSymbol as symbol]: useGlobalPluginsStore(),
-        },
-      },
-    });
+    return mount(GlobalPluginsView, { global: { plugins: [testingPinia] } });
   };
 
   it('renders the fetched Plugins, but not the archieved ones', async () => {
     const wrapper = generateWrapper();
     await flushPromises();
+    expect(globalPluginStore.getGlobalPlugins).toMatchObject(testData);
     expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
     expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 2');
     expect(wrapper.findAll('.ant-btn')).toHaveLength(2);

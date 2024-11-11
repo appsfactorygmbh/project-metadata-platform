@@ -2,20 +2,23 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import { defineComponent, computed, toRaw } from 'vue';
 import { setActivePinia, createPinia } from 'pinia';
-import { usePluginsStore } from '@/store';
 import type { PluginModel } from '@/models/Plugin';
+import { usePluginStore } from '@/store';
 
-// Mock the pluginService module
-vi.mock('@/services/PluginService', () => ({
-  pluginService: {
-    fetchPlugins: vi.fn(),
-  },
-}));
+vi.mock('@/api/generated', async () => {
+  const originalModule = await import('@/api/generated');
+  return {
+    ...originalModule,
+    PluginsApi: vi.fn().mockImplementation(() => ({
+      pluginsGet: vi.fn(),
+    })),
+  };
+});
 
 // Define a ProjectPlugins component for testing
 const ProjectPlugins = defineComponent({
   setup() {
-    const pluginStore = usePluginsStore();
+    const pluginStore = usePluginStore();
     const plugins = computed(() => toRaw(pluginStore.getPlugins));
     return { plugins };
   },
@@ -29,7 +32,7 @@ describe('ProjectPlugins', () => {
   });
 
   it('should compute plugins from the store', async () => {
-    const store = usePluginsStore();
+    const pluginStore = usePluginStore();
     const mockPlugins: PluginModel[] = [
       {
         pluginName: 'testPlugin',
@@ -40,7 +43,7 @@ describe('ProjectPlugins', () => {
     ];
 
     // Set the store plugins
-    store.setPlugins(mockPlugins);
+    pluginStore.setPlugins(mockPlugins);
 
     // Mount the PluginView component
     const wrapper = shallowMount(ProjectPlugins);

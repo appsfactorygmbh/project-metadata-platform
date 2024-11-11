@@ -1,6 +1,10 @@
-import { pluginService } from '@/services';
-import { defineStore } from 'pinia';
 import type { PluginModel } from '@/models/Plugin';
+import { type PiniaStore, useStore } from 'pinia-generic';
+import { ProjectsApi } from '@/api/generated';
+import { type ApiStore, useApiStore } from './ApiStore';
+import type { ProjectModel } from '@/models/Project';
+import { piniaInstance } from './piniaInstance';
+import type { Pinia } from 'pinia';
 
 type StoreState = {
   plugins: PluginModel[];
@@ -9,52 +13,70 @@ type StoreState = {
   changedPlugins: PluginModel[];
 };
 
-export const usePluginsStore = defineStore('plugin', {
-  state: (): StoreState => {
-    return {
-      plugins: [],
-      cachePlugins: [],
-      changedPlugins: [],
-      isLoadingPlugins: false,
-    };
-  },
+type StoreGetters = {
+  getPlugins: () => PluginModel[];
+  getIsLoading: () => boolean;
+};
 
-  getters: {
-    getPlugins(): PluginModel[] {
-      return this.plugins;
-    },
-    getIsLoading(): boolean {
-      return this.isLoadingPlugins;
-    },
-    getCachePlugins(): PluginModel[] {
-      return this.cachePlugins;
-    },
-  },
+type StoreActions = {
+  refreshAuth: () => void;
+  setPlugins: (plugins: PluginModel[]) => void;
+  setLoadingPlugins: (status: boolean) => void;
+  fetch: (projectID: number) => Promise<void>;
+};
 
-  actions: {
-    setPlugins(plugins: PluginModel[]): void {
-      this.plugins = plugins;
-    },
-    setLoadingPlugins(status: boolean): void {
-      this.isLoadingPlugins = status;
-    },
-    setCachePlugins(plugins: PluginModel[]): void {
-      this.cachePlugins = plugins;
-    },
-    async fetchPlugins(projectID: number) {
-      try {
-        this.setLoadingPlugins(true);
-        const plugins: PluginModel[] =
-          await pluginService.fetchPlugins(projectID);
-        this.setPlugins(plugins);
-        this.setCachePlugins(plugins);
-      } finally {
-        this.setLoadingPlugins(false);
-      }
-      console.log(this.getPlugins);
-    },
-  },
-});
+type Store = PiniaStore<'plugin', StoreState, StoreGetters, StoreActions>;
 
-type PluginsStore = ReturnType<typeof usePluginsStore>;
-export type { PluginsStore };
+export const usePluginStore = (pinia: Pinia = piniaInstance) => {
+  return useStore<Store, ApiStore<ProjectsApi>>(
+    'plugin',
+    {
+      state: {
+        plugins: [],
+        cachePlugins: [],
+        changedPlugins: [],
+        isLoadingPlugins: false,
+      },
+
+      getters: {
+        getPlugins(): PluginModel[] {
+          return this.plugins;
+        },
+        getIsLoading(): boolean {
+          return this.isLoadingPlugins;
+        },
+      },
+
+      actions: {
+        refreshAuth(): void {
+          this.initApi();
+        },
+        setPlugins(plugins: PluginModel[]): void {
+          this.plugins = plugins;
+        },
+        setLoadingPlugins(status: boolean): void {
+          this.isLoadingPlugins = status;
+        },
+        async fetch(id: ProjectModel['id']) {
+          try {
+            this.setLoadingPlugins(true);
+            const plugins: PluginModel[] = await this.callApi(
+              'projectsIdPluginsGet',
+              {
+                id,
+              },
+            );
+            this.setPlugins(plugins);
+          } finally {
+            this.setLoadingPlugins(false);
+          }
+          console.log(this.getPlugins);
+        },
+      },
+    },
+    useApiStore(ProjectsApi, pinia),
+  )(pinia);
+};
+
+type PluginStore = ReturnType<typeof usePluginStore>;
+export type { PluginStore };

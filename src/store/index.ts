@@ -1,29 +1,32 @@
-import { type PluginsStore, usePluginsStore } from './PluginStore';
+import { type PluginStore, usePluginStore } from './PluginStore';
 import {
   type ProjectEditStore,
   useProjectEditStore,
 } from './ProjectEditStore/ProjectEditStore.ts';
-import { type ProjectsStore, projectStore } from './ProjectsStore';
+import { type ProjectsStore, useProjectStore } from './ProjectsStore';
 import { type SearchStore, useSearchStore } from './SearchStore';
 import {
   type GlobalPluginsStore,
-  globalPluginsStore,
+  useGlobalPluginsStore,
 } from './GlobalPluginStore';
 import { type UserStore, useUserStore } from './UserStore';
+import { type AuthStore, useAuthStore } from './AuthStore';
 
 export {
-  usePluginsStore,
-  projectStore,
+  useAuthStore,
+  useProjectStore,
+  usePluginStore,
   useSearchStore,
-  globalPluginsStore,
+  useGlobalPluginsStore,
   useProjectEditStore,
   useUserStore,
 };
 export type {
-  PluginsStore,
+  PluginStore,
   ProjectsStore,
   SearchStore,
   GlobalPluginsStore,
   ProjectEditStore,
   UserStore,
+  AuthStore,
 };

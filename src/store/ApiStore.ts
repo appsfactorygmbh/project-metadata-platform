@@ -1,8 +1,10 @@
 import type { ApiInstance, ApiTypes } from '@/api/ApiType.type';
 import { callApi, getApiConfiguration } from '@/utils/api';
 import { type PiniaStore, defineGenericStore } from 'pinia-generic';
-import { type AuthStore, authStore } from './AuthStore';
+import { type AuthStore, useAuthStore } from './AuthStore';
 import type { UnwrapRef } from 'vue';
+import type { Pinia } from 'pinia';
+import { piniaInstance } from './piniaInstance';
 
 type ApiStore<Api extends ApiTypes> = PiniaStore<
   'api',
@@ -29,10 +31,13 @@ type ApiStore<Api extends ApiTypes> = PiniaStore<
   }
 >;
 
-export function apiStore<Api extends ApiTypes>(ApiInstance: ApiInstance<Api>) {
-  return defineGenericStore<ApiStore<Api>>({
+export const useApiStore = <Api extends ApiTypes>(
+  ApiInstance: ApiInstance<Api>,
+  pinia: Pinia = piniaInstance,
+) =>
+  defineGenericStore<ApiStore<Api>>({
     state: {
-      auth: authStore,
+      auth: useAuthStore(pinia),
       ApiInstance,
       api: null,
       isLoading: false,
@@ -67,6 +72,5 @@ export function apiStore<Api extends ApiTypes>(ApiInstance: ApiInstance<Api>) {
       },
     },
   });
-}
 
 export type { ApiStore };

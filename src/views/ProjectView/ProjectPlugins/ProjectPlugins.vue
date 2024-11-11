@@ -37,16 +37,14 @@
   import type { ComputedRef } from 'vue';
   import { PluginComponent } from '@/components/Plugin';
   import { AddPluginCard } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
-  import {
-    pluginStoreSymbol,
-    projectEditStoreSymbol,
-  } from '@/store/injectionSymbols';
+  import { projectEditStoreSymbol } from '@/store/injectionSymbols';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { PluginEditModel, PluginModel } from '@/models/Plugin';
-  import { projectStore } from '@/store';
+  import { usePluginStore, useProjectStore } from '@/store';
   const { isEditing } = useEditing();
 
-  const pluginStore = inject(pluginStoreSymbol)!;
+  const pluginStore = usePluginStore();
+  const projectStore = useProjectStore();
   const projectEditStore = inject(projectEditStoreSymbol);
 
   const plugins = ref<PluginEditModel[]>([]);

@@ -5,9 +5,10 @@
   import type { ComputedRef } from 'vue';
   import { EditOutlined } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import { projectStore } from '@/store';
+  import { useProjectStore } from '@/store';
   import { storeToRefs } from 'pinia';
 
+  const projectStore = useProjectStore();
   const projectEditStore = inject(projectEditStoreSymbol)!;
 
   const editingClass = computed(() => ({
@@ -80,10 +81,12 @@
     isArchived: ref<boolean>(false),
   };
 
-  const BUInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
-  const teamNumberInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
-  const departmentInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
-  const clientNameInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
+  type Status = '' | 'error' | 'warning' | undefined;
+
+  const BUInputStatus = ref<Status>('');
+  const teamNumberInputStatus = ref<Status>('');
+  const departmentInputStatus = ref<Status>('');
+  const clientNameInputStatus = ref<Status>('');
 
   const BUInput = ref(projectData.businessUnit);
   const teamNumberInput = ref(projectData.teamNumber);

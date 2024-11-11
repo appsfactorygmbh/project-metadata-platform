@@ -7,8 +7,9 @@ import type {
 
 import { ProjectsApi } from '@/api/generated';
 import { type PiniaStore, useStore } from 'pinia-generic';
-import { type ApiStore, apiStore } from './ApiStore';
+import { type ApiStore, useApiStore } from './ApiStore';
 import { piniaInstance } from './piniaInstance';
+import type { Pinia } from 'pinia';
 
 type StoreState = {
   projects: ProjectModel[];
@@ -59,174 +60,177 @@ type StoreActions = {
 
 type Store = PiniaStore<'project', StoreState, StoreGetters, StoreActions>;
 
-export const projectStore = useStore<Store, ApiStore<ProjectsApi>>(
-  'project',
-  {
-    state: {
-      projects: [],
-      isLoadingAdd: false,
-      isLoadingUpdate: false,
-      isLoadingProjects: false,
-      isLoadingProject: false,
-      addedSuccessfully: false,
-      updatedSuccessfully: false,
-    },
-    getters: {
-      getProjects(): ProjectModel[] {
-        return this.projects;
+export const useProjectStore = (pinia: Pinia = piniaInstance) => {
+  return useStore<Store, ApiStore<ProjectsApi>>(
+    'project',
+    {
+      state: {
+        projects: [],
+        project: null,
+        isLoadingAdd: false,
+        isLoadingUpdate: false,
+        isLoadingProjects: false,
+        isLoadingProject: false,
+        addedSuccessfully: false,
+        updatedSuccessfully: false,
       },
-      getProject(): DetailedProjectModel | null {
-        return this.project;
-      },
-      getIsLoading(): boolean {
-        return (
-          this.isLoadingAdd || this.isLoadingProjects || this.isLoadingProject
-        );
-      },
-      getIsLoadingAdd(): boolean {
-        return this.isLoadingAdd;
-      },
-      getIsLoadingUpdate(): boolean {
-        return this.isLoadingUpdate;
-      },
-      getIsLoadingProjects(): boolean {
-        return this.isLoadingProjects;
-      },
-      getIsLoadingProject(): boolean {
-        return this.isLoadingProject;
-      },
-      getAddedSuccessfully(): boolean {
-        return this.addedSuccessfully;
-      },
-      getUpdatedSuccessfully(): boolean {
-        return this.updatedSuccessfully;
-      },
-    },
-    actions: {
-      refreshAuth(): void {
-        this.initApi();
-      },
-
-      setProjects(projects: ProjectModel[]) {
-        this.projects = projects;
-      },
-      setProject(project: DetailedProjectModel | null) {
-        this.project = project;
-      },
-      setLoadingAdd(status: boolean) {
-        this.isLoadingAdd = status;
-      },
-      setLoadingUpdate(status: boolean) {
-        this.isLoadingUpdate = status;
-      },
-      setLoadingProjects(status: boolean) {
-        this.isLoadingProjects = status;
-      },
-      setLoadingProject(status: boolean) {
-        this.isLoadingProject = status;
-      },
-      setAddedSuccessfully(status: boolean) {
-        this.addedSuccessfully = status;
-      },
-      setUpdatedSuccessfully(status: boolean) {
-        this.updatedSuccessfully = status;
-      },
-
-      async fetchAll({ setCache = true, search } = {}) {
-        try {
-          this.setLoadingProjects(true);
-          const projects: ProjectModel[] =
-            (await this.callApi('projectsGet', { search })) ?? [];
-          if (setCache) this.setProjects(projects);
-          return projects;
-        } finally {
-          this.setLoadingProjects(false);
-        }
-      },
-
-      async fetch(id: ProjectModel['id']) {
-        try {
-          this.setLoadingProject(true);
-          const project: DetailedProjectModel = await this.callApi(
-            'projectsIdGet',
-            {
-              id,
-            },
+      getters: {
+        getProjects(): ProjectModel[] {
+          return this.projects;
+        },
+        getProject(): DetailedProjectModel | null {
+          return this.project;
+        },
+        getIsLoading(): boolean {
+          return (
+            this.isLoadingAdd || this.isLoadingProjects || this.isLoadingProject
           );
-          this.setProject(project);
-          return project;
-        } finally {
-          this.setLoadingProject(false);
-        }
+        },
+        getIsLoadingAdd(): boolean {
+          return this.isLoadingAdd;
+        },
+        getIsLoadingUpdate(): boolean {
+          return this.isLoadingUpdate;
+        },
+        getIsLoadingProjects(): boolean {
+          return this.isLoadingProjects;
+        },
+        getIsLoadingProject(): boolean {
+          return this.isLoadingProject;
+        },
+        getAddedSuccessfully(): boolean {
+          return this.addedSuccessfully;
+        },
+        getUpdatedSuccessfully(): boolean {
+          return this.updatedSuccessfully;
+        },
       },
+      actions: {
+        refreshAuth(): void {
+          this.initApi();
+        },
 
-      async create(projectData: CreateProjectModel) {
-        try {
-          this.setLoadingAdd(true);
-          this.setAddedSuccessfully(false);
-          const response = await this.callApi('projectsPut', {
-            createProjectRequest: projectData,
-          });
-          if (response) {
-            this.fetchAll();
-            this.setAddedSuccessfully(true);
-          } else this.setAddedSuccessfully(false);
-        } finally {
-          this.setLoadingAdd(false);
-        }
-      },
+        setProjects(projects: ProjectModel[]) {
+          this.projects = projects;
+        },
+        setProject(project: DetailedProjectModel | null) {
+          this.project = project;
+        },
+        setLoadingAdd(status: boolean) {
+          this.isLoadingAdd = status;
+        },
+        setLoadingUpdate(status: boolean) {
+          this.isLoadingUpdate = status;
+        },
+        setLoadingProjects(status: boolean) {
+          this.isLoadingProjects = status;
+        },
+        setLoadingProject(status: boolean) {
+          this.isLoadingProject = status;
+        },
+        setAddedSuccessfully(status: boolean) {
+          this.addedSuccessfully = status;
+        },
+        setUpdatedSuccessfully(status: boolean) {
+          this.updatedSuccessfully = status;
+        },
 
-      async update(projectData: UpdateProjectModel, id: ProjectModel['id']) {
-        try {
-          this.setLoadingUpdate(true);
-          this.setUpdatedSuccessfully(false);
-          const response = await this.callApi('projectsPut', {
-            createProjectRequest: projectData,
-            id,
-          });
-          if (response) {
-            this.setUpdatedSuccessfully(true);
-            await this.fetch(id);
-          } else {
-            this.setUpdatedSuccessfully(false);
+        async fetchAll({ setCache = true, search } = {}) {
+          try {
+            this.setLoadingProjects(true);
+            const projects: ProjectModel[] =
+              (await this.callApi('projectsGet', { search })) ?? [];
+            if (setCache) this.setProjects(projects);
+            return projects;
+          } finally {
+            this.setLoadingProjects(false);
           }
-        } finally {
-          this.setLoadingUpdate(false);
-        }
-      },
+        },
 
-      async getSlugById(id: number): Promise<string> {
-        let targetProject: DetailedProjectModel | ProjectModel | null = null;
-        targetProject =
-          this.projects.find((project) => project.id === id) ?? null;
-        if (targetProject) return generateSlug(targetProject.projectName);
+        async fetch(id: ProjectModel['id']) {
+          try {
+            this.setLoadingProject(true);
+            const project: DetailedProjectModel = await this.callApi(
+              'projectsIdGet',
+              {
+                id,
+              },
+            );
+            this.setProject(project);
+            return project;
+          } finally {
+            this.setLoadingProject(false);
+          }
+        },
 
-        targetProject = await this.fetch(id);
-        if (targetProject) return generateSlug(targetProject.projectName);
+        async create(projectData: CreateProjectModel) {
+          try {
+            this.setLoadingAdd(true);
+            this.setAddedSuccessfully(false);
+            const response = await this.callApi('projectsPut', {
+              createProjectRequest: projectData,
+            });
+            if (response) {
+              this.fetchAll();
+              this.setAddedSuccessfully(true);
+            } else this.setAddedSuccessfully(false);
+          } finally {
+            this.setLoadingAdd(false);
+          }
+        },
 
-        return '';
-      },
+        async update(projectData: UpdateProjectModel, id: ProjectModel['id']) {
+          try {
+            this.setLoadingUpdate(true);
+            this.setUpdatedSuccessfully(false);
+            const response = await this.callApi('projectsPut', {
+              createProjectRequest: projectData,
+              id,
+            });
+            if (response) {
+              this.setUpdatedSuccessfully(true);
+              await this.fetch(id);
+            } else {
+              this.setUpdatedSuccessfully(false);
+            }
+          } finally {
+            this.setLoadingUpdate(false);
+          }
+        },
 
-      async getBySlug(slug: string): Promise<ProjectModel | null> {
-        let targetProject: ProjectModel | null = null;
-        try {
-          this.setLoadingProject(true);
+        async getSlugById(id: number): Promise<string> {
+          let targetProject: DetailedProjectModel | ProjectModel | null = null;
           targetProject =
-            this.projects.find(
-              (project) => generateSlug(project.projectName) === slug,
-            ) ?? null;
-          if (targetProject) return targetProject;
-          return null;
-        } finally {
-          this.setLoadingProject(false);
-        }
+            this.projects.find((project) => project.id === id) ?? null;
+          if (targetProject) return generateSlug(targetProject.projectName);
+
+          targetProject = await this.fetch(id);
+          if (targetProject) return generateSlug(targetProject.projectName);
+
+          return '';
+        },
+
+        async getBySlug(slug: string): Promise<ProjectModel | null> {
+          let targetProject: ProjectModel | null = null;
+          try {
+            this.setLoadingProject(true);
+            targetProject =
+              this.projects.find(
+                (project) => generateSlug(project.projectName) === slug,
+              ) ?? null;
+            if (targetProject) return targetProject;
+            return null;
+          } finally {
+            this.setLoadingProject(false);
+          }
+        },
       },
     },
-  },
-  apiStore(ProjectsApi),
-)(piniaInstance);
-
-type ProjectsStore = typeof projectStore;
-export type { ProjectsStore };
+    useApiStore(ProjectsApi, pinia),
+  )(pinia);
+};
 
 const generateSlug = (name: string) => name.replace(/ /g, '-');
+
+type ProjectsStore = ReturnType<typeof useProjectStore>;
+export type { ProjectsStore };

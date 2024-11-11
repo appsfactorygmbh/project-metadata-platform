@@ -66,13 +66,13 @@
     PlusOutlined,
   } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button';
-  import { globalPluginStoreSymbol } from '@/store/injectionSymbols';
-  import { inject, onBeforeMount } from 'vue';
+  import { onBeforeMount } from 'vue';
   import { useRouter } from 'vue-router';
   import { message } from 'ant-design-vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
+  import { useGlobalPluginsStore } from '@/store';
 
-  const globalPluginsStore = inject(globalPluginStoreSymbol);
+  const globalPluginsStore = useGlobalPluginsStore();
 
   const isLoading = computed(
     () => globalPluginsStore?.getIsLoadingGlobalPlugins,

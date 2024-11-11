@@ -1,18 +1,17 @@
 <script lang="ts" setup>
-  import { computed, ref, watch } from 'vue';
-  import { PlusOutlined } from '@ant-design/icons-vue';
+  import { computed, reactive, ref, watch } from 'vue';
   import {
     BankOutlined,
     FontColorsOutlined,
+    PlusOutlined,
     ShoppingOutlined,
     TeamOutlined,
     UserOutlined,
   } from '@ant-design/icons-vue';
-  import { reactive } from 'vue';
   import type { UnwrapRef } from 'vue';
   import type { CreateProjectModel } from '@/models/Project';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
-  import { projectStore } from '@/store';
+  import { useProjectStore } from '@/store';
 
   const open = ref<boolean>(false);
   const formRef = ref();
@@ -21,6 +20,8 @@
   const cancelFetch = ref<boolean>();
 
   // TableStore to refetch Table after Project was added
+
+  const projectStore = useProjectStore();
 
   const isAdding = computed(() => projectStore.getIsLoadingAdd);
   const fetchError = ref<boolean>(false);

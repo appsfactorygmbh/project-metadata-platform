@@ -1,20 +1,19 @@
 <script lang="ts" setup>
   import { type SearchableColumn, SearchableTable } from '@/components/Table';
   import { SearchBar } from '@/components/Searchbar';
-  import { pluginStoreSymbol } from '@/store/injectionSymbols';
-  import { inject, onMounted, provide, reactive } from 'vue';
+  import { onMounted, provide, reactive } from 'vue';
   import { type SearchStore, useSearchStore } from '@/store/SearchStore';
   import type { ProjectModel } from '@/models/Project';
   import { useEditing } from '@/utils/hooks/useEditing';
   import _ from 'lodash';
-  import { useToggle, useWindowSize } from '@vueuse/core';
   import { useProjectRouting } from '@/utils/hooks';
+  import { useToggle, useWindowSize } from '@vueuse/core';
   import {
     BulbOutlined,
     InboxOutlined,
     UndoOutlined,
   } from '@ant-design/icons-vue';
-  import { projectStore } from '@/store';
+  import { usePluginStore, useProjectStore } from '@/store';
 
   const props = defineProps({
     paneWidth: {
@@ -32,7 +31,8 @@
   const { stopEditing, isEditing } = useEditing();
   const { routerProjectId, setProjectId } = useProjectRouting();
 
-  const pluginStore = inject(pluginStoreSymbol);
+  const pluginStore = usePluginStore();
+  const projectStore = useProjectStore();
   const searchStore = useSearchStore<ProjectModel>('projects');
   const searchStoreSymbol = Symbol('projectSearchStore');
   const isLoading = computed(() => projectStore.getIsLoadingProjects);
@@ -114,7 +114,7 @@
     () => routerProjectId.value,
     async () => {
       await projectStore.fetch(routerProjectId.value);
-      await pluginStore?.fetchPlugins(routerProjectId.value);
+      await pluginStore.fetch(routerProjectId.value);
     },
   );
 
@@ -130,7 +130,7 @@
       setProjectId(projectStore.getProjects[0]?.id ?? 100);
     } else {
       await projectStore.fetch(routerProjectId.value);
-      await pluginStore?.fetchPlugins(routerProjectId.value);
+      await pluginStore.fetch(routerProjectId.value);
     }
 
     searchStore.setBaseSet(projectStore.getProjects ?? []);

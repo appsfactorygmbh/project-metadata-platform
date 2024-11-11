@@ -2,7 +2,6 @@
   import {
     AuthProvider,
     GlobalPluginProvider,
-    PluginProvider,
     ProjectEditProvider,
     UserProvider,
   } from '@/router/Provider';
@@ -11,15 +10,13 @@
 <template>
   <AuthProvider>
     <UserProvider>
-      <PluginProvider>
-        <ProjectEditProvider>
-          <GlobalPluginProvider>
-            <slot>
-              <RouterView />
-            </slot>
-          </GlobalPluginProvider>
-        </ProjectEditProvider>
-      </PluginProvider>
+      <ProjectEditProvider>
+        <GlobalPluginProvider>
+          <slot>
+            <RouterView />
+          </slot>
+        </GlobalPluginProvider>
+      </ProjectEditProvider>
     </UserProvider>
   </AuthProvider>
 </template>

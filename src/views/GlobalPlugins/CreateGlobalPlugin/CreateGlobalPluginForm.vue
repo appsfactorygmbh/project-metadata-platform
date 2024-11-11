@@ -1,8 +1,8 @@
 <script setup lang="ts">
   import { type FormSubmitType } from '@/components/Form';
   import { notification } from 'ant-design-vue';
-  import { globalPluginStoreSymbol } from '@/store/injectionSymbols';
-  import { inject, reactive } from 'vue';
+  import { useGlobalPluginsStore } from '@/store';
+  import { reactive } from 'vue';
   //import type { CreatePluginModel } from '@/models/Plugin';
   import { type FormStore } from '@/components/Form';
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
@@ -12,7 +12,7 @@
     formStore: FormStore;
   }>();
 
-  const globalPluginStore = inject(globalPluginStoreSymbol);
+  const globalPluginStore = useGlobalPluginsStore();
 
   const [notificationApi, contextHolder] = notification.useNotification();
 

@@ -7,23 +7,20 @@
   } from '@/models/Project';
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import {
-    pluginStoreSymbol,
-    projectEditStoreSymbol,
-  } from '@/store/injectionSymbols';
+  import { projectEditStoreSymbol } from '@/store/injectionSymbols';
   import { inject, watch } from 'vue';
   import { message } from 'ant-design-vue';
-  import { projectStore } from '@/store';
-
-  const pluginStore = inject(pluginStoreSymbol);
+  import { usePluginStore, useProjectStore } from '@/store';
 
   const projectEditStore = inject(projectEditStoreSymbol);
+  const pluginStore = usePluginStore();
+  const projectStore = useProjectStore();
 
   const { isEditing, stopEditing } = useEditing();
 
   const reloadEditStore = () => {
     if (pluginStore) {
-      pluginStore?.getPlugins.forEach((plugin) => {
+      pluginStore.getPlugins.forEach((plugin) => {
         projectEditStore?.initialAdd(plugin);
       });
     }
@@ -95,7 +92,7 @@
       await projectStore.update(updatedProject, projectID.value);
       await projectStore.fetchAll();
       await projectStore.fetch(projectID.value);
-      await pluginStore?.fetchPlugins(projectID.value);
+      await pluginStore.fetch(projectID.value);
     }
   };
 </script>

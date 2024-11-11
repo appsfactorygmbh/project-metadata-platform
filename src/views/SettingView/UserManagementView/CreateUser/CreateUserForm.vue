@@ -1,12 +1,10 @@
 <script setup lang="ts">
-  import { type FormSubmitType } from '@/components/Form';
-  import { notification } from 'ant-design-vue';
-  import { type FormStore } from '@/components/Form';
+  import { type FormStore, type FormSubmitType } from '@/components/Form';
+  import { message, notification } from 'ant-design-vue';
   import { reactive, ref, toRaw } from 'vue';
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateUserFormData } from './CreateUserFormData.ts';
   import type { Rule } from 'ant-design-vue/es/form/interface';
-  import { message } from 'ant-design-vue';
   import type { CreateUserModel, UserListModel } from '@/models/User';
   import type { UserStore } from '@/store/UserStore.ts';
 
@@ -98,7 +96,7 @@
     } else {
       const users: UserListModel[] = userStore?.getUsers;
 
-      if (value === users?.find((user) => user.username === value)?.username) {
+      if (value === users?.find((user) => user.name === value)?.name) {
         return Promise.reject('Username already exists.');
       } else {
         return Promise.resolve();

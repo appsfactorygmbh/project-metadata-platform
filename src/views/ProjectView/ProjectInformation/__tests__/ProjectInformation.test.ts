@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
-import { createPinia, setActivePinia } from 'pinia';
+import { setActivePinia } from 'pinia';
 import ProjectInformation from '../ProjectInformation.vue';
 import { createTestingPinia } from '@pinia/testing';
-import {
-  projectEditStoreSymbol,
-  projectsStoreSymbol,
-} from '@/store/injectionSymbols';
+import { projectEditStoreSymbol } from '@/store/injectionSymbols';
 import { useProjectEditStore, useProjectStore } from '@/store';
 import router from '@/router';
+import type { DetailedProjectModel } from '@/models/Project';
 
-const testData = {
+const testData: DetailedProjectModel = {
+  id: 1,
+  isArchived: false,
   projectName: 'Heute Show',
   department: 'IT',
   clientName: 'ZDF',
@@ -19,36 +19,38 @@ const testData = {
 };
 
 describe('ProjectInformation.vue', () => {
-  setActivePinia(createPinia());
+  const testingPinia = createTestingPinia({
+    stubActions: false,
+    initialState: {
+      project: {
+        project: testData,
+      },
+    },
+  });
+  setActivePinia(testingPinia);
+  const projectStore = useProjectStore(testingPinia);
 
-  it('renders the project information correctly', async () => {
-    const wrapper = mount(ProjectInformation, {
-      plugins: [
-        createTestingPinia({
-          stubActions: true,
-          initialState: {
-            project: {
-              project: testData,
-            },
-          },
-        }),
-      ],
+  const generateWrapper = () =>
+    mount(ProjectInformation, {
       global: {
+        plugins: [router, testingPinia],
+        provide: {
+          [projectEditStoreSymbol as symbol]: useProjectEditStore(),
+        },
         stubs: {
           PluginView: {
             template: '<span />',
           },
         },
-        plugins: [router],
-        provide: {
-          [projectEditStoreSymbol as symbol]: useProjectEditStore(),
-          [projectsStoreSymbol as symbol]: useProjectStore(),
-        },
       },
     });
+
+  it('renders the project information correctly', async () => {
+    const wrapper = generateWrapper();
     await flushPromises();
 
-    expect(wrapper.find('.projectName').text()).toBe('Heute Show');
+    expect(projectStore.project).toMatchObject(testData);
+    expect(wrapper.find('.projectName').text()).toEqual('Heute Show');
     expect(wrapper.findAll('.projectInfo')[0].text()).toBe('BU Health');
     expect(wrapper.findAll('.projectInfo')[1].text()).toBe('42');
     expect(wrapper.findAll('.projectInfo')[2].text()).toBe('IT');

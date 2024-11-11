@@ -1,10 +1,11 @@
 <script lang="ts" setup>
   import { onMounted, watch } from 'vue';
   import { type LocationQueryValue, useRoute, useRouter } from 'vue-router';
-  import { projectStore } from '@/store';
+  import { useProjectStore } from '@/store';
 
   const route = useRoute();
   const router = useRouter();
+  const projectStore = useProjectStore();
 
   const redirectToSlug = async (
     id: LocationQueryValue | LocationQueryValue[],
@@ -30,8 +31,6 @@
   };
 
   onMounted(async () => {
-    await projectStore;
-
     if (route.query.projectId) {
       await redirectToSlug(String(route.query.projectId));
     }
