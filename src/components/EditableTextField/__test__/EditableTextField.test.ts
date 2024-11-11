@@ -18,7 +18,7 @@ describe('EditableTextField', () => {
       props: {
         value: 'Maxmuster1',
         label: 'Username',
-        isEditingKey: 'isEditingUsername',
+        isEditingKey: 'isEditingPassword',
         isLoading: false,
       },
     });
@@ -34,15 +34,15 @@ describe('EditableTextField', () => {
     expect(wrapper.find('.edit').text()).toBe('Edit');
   });
 
-  it('add isEditingUsername to URL when click edit', async () => {
+  it('add isEditingPassword to URL when click edit', () => {
     const wrapper = generateWrapper() as VueWrapper<
       ComponentPublicInstance<EditableTextFieldInstance>
     >;
     const routerPushSpy = vi.spyOn(router, 'push');
-    await wrapper.find('button').trigger('click');
+    wrapper.find('button').trigger('click');
 
     const url = routerPushSpy.mock.calls[0][0];
     const queryObject = (url as { query: Record<string, string> }).query;
-    expect(queryObject).toEqual({ isEditingUsername: 'true' });
+    expect(queryObject).toEqual({ isEditingPassword: 'true' });
   });
 });

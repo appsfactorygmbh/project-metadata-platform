@@ -46,7 +46,7 @@
         <p v-if="!isEditing" class="text">{{ user?.name ?? '' }}</p>
 
         <a-form v-else name="user" autocomplete="off">
-          <a-form-item class="input">
+          <a-form-item class="inputName">
             <a-input v-model:value="fieldValue" type="text" />
           </a-form-item>
         </a-form>
@@ -82,7 +82,7 @@
         type="email"
       />
       <EditableTextField
-        :value="''"
+        :value="'**********'"
         :is-loading="isLoading"
         :label="'Password'"
         :is-editing-key="'isEditingPassword'"
@@ -140,7 +140,7 @@
     margin: 0.5em 0 0.5em;
   }
 
-  .input {
+  .inputName {
     font-size: 0.6em;
     margin: 2.2em 0 2.3em;
   }

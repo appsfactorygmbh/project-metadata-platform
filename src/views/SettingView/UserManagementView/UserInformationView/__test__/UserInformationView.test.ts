@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import UserInformationView from '../UserInformationView.vue';
@@ -7,7 +7,7 @@ import { userStoreSymbol } from '@/store/injectionSymbols';
 import { useUserStore } from '@/store';
 import router from '@/router';
 
-const userData1 = {
+const userData = {
   id: 100,
   name: 'Max Musterfrau',
   username: 'Maxmuster1',
@@ -16,35 +16,37 @@ const userData1 = {
 
 describe('UserInformationView.vue', () => {
   setActivePinia(createPinia());
-  const userStore = useUserStore();
 
   const generateWrapper = () => {
     return mount(UserInformationView, {
       plugins: [
         createTestingPinia({
           stubActions: true,
+          initialState: {
+            user: {
+              user: userData,
+            },
+          },
         }),
       ],
       global: {
         provide: {
-          [userStoreSymbol as symbol]: userStore,
+          [userStoreSymbol as symbol]: useUserStore(),
         },
         plugins: [router],
       },
     });
   };
 
-  it('renders correctly', async () => {
-    userStore.setUser(userData1);
+  it('renders correctly', () => {
     const wrapper = generateWrapper();
-    await flushPromises();
 
     expect(wrapper.find('.avatar').exists()).toBe(true);
     expect(wrapper.find('.label').exists()).toBe(true);
     const text = wrapper.findAll('.text');
-    expect(text[0].text()).toBe(userData1.name);
-    expect(text[1].text()).toBe(userData1.username);
-    expect(text[2].text()).toBe(userData1.email);
+    expect(text[0].text()).toBe(userData.name);
+    expect(text[1].text()).toBe(userData.username);
+    expect(text[2].text()).toBe(userData.email);
 
     const button = wrapper.findAll('.edit');
     expect(button[0].exists()).toBe(true);

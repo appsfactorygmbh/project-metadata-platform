@@ -28,14 +28,21 @@
     },
   });
 
-  const item = ref<string>(props.isEditingKey);
-  const fieldValue = ref<string>(props.value);
-  const { isEditing, startEditing, stopEditing } = useEditing(item.value);
+  const confirmPassword = ref<string>('');
+  const fieldValue = ref<string>('');
+  const { isEditing, startEditing, stopEditing } = useEditing(
+    props.isEditingKey,
+  );
+  const isEdit = computed(() => isEditing.value);
+  const passwordsMatch = computed(() => {
+    return fieldValue.value === confirmPassword.value;
+  });
 
   const onSave = () => {
     stopEditing();
     console.log('Success:', fieldValue.value);
     emit('update', fieldValue);
+    confirmPassword.value = '';
   };
 </script>
 
@@ -49,18 +56,38 @@
   >
     <label class="label">{{ label }}:</label>
     <template v-if="!isLoading">
-      <p v-if="!isEditing" class="text">{{ value }}</p>
+      <p v-if="!isEdit" class="text">{{ value }}</p>
 
       <a-form v-else name="user" autocomplete="off">
         <a-form-item class="input">
           <a-input v-model:value="fieldValue" :type="type" />
         </a-form-item>
+        <a-form-item v-if="type === 'password'" class="input">
+          <a-input
+            v-model:value="confirmPassword"
+            :type="type"
+            placeholder="Confirm Password"
+            style="margin-top: 5px"
+          />
+        </a-form-item>
+        <p
+          v-if="type === 'password' && !passwordsMatch"
+          class="error"
+          style="color: red"
+        >
+          Passwords do not match
+        </p>
       </a-form>
 
       <a-button v-if="!isEditing" class="edit" @click="startEditing"
         >Edit</a-button
       >
-      <a-button v-else class="edit" html-type="submit" @click="onSave"
+      <a-button
+        v-else
+        class="edit"
+        html-type="submit"
+        :disabled="!passwordsMatch && type === 'password'"
+        @click="onSave"
         >Save</a-button
       >
     </template>
@@ -84,13 +111,17 @@
   .info {
     border: none;
     width: 100%;
-    height: 4em;
+    height: auto;
     max-width: 100%;
     font-size: 1.3em;
     font-weight: bold;
     display: flex;
     flex-flow: column wrap;
     justify-content: center;
+  }
+
+  .ant-card-body {
+    padding: 12px !important;
   }
 
   .info label {
@@ -100,6 +131,6 @@
   }
 
   .input {
-    margin: 0;
+    margin: 0 !important;
   }
 </style>
