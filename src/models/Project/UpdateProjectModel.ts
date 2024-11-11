@@ -6,5 +6,6 @@ export type UpdateProjectModel = {
   teamNumber: number;
   department: string;
   clientName: string;
-  pluginList: PluginModel[] | [];
+  isArchived?: boolean;
+  pluginList?: PluginModel[] | [];
 };

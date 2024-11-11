@@ -4,6 +4,7 @@ export type ProjectModel = {
   clientName: string;
   businessUnit: string;
   teamNumber: number;
+  isArchived: boolean;
 };
 
 export type DetailedProjectModel = ProjectModel & {

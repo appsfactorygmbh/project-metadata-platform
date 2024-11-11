@@ -1,10 +1,7 @@
 <script lang="ts" setup>
   import { ProjectPlugins } from './ProjectPlugins';
   import { ProjectInformation } from './ProjectInformation';
-  import type {
-    DetailedProjectModel,
-    UpdateProjectModel,
-  } from '@/models/Project';
+  import type { UpdateProjectModel } from '@/models/Project';
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import {
@@ -79,7 +76,7 @@
       );
       return;
     }
-    const updateProjectInformation: DetailedProjectModel =
+    const updateProjectInformation =
       projectEditStore.getProjectInformationChanges;
     const updatedProject: UpdateProjectModel = {
       projectName: updateProjectInformation?.projectName,

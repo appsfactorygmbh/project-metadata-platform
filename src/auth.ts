@@ -1,8 +1,8 @@
-import { createAuth } from 'vue-auth3';
+import { createAuth, defineHttpDriver } from 'vue-auth3';
 import { authService } from './services/AuthService';
 import router from '@/router';
-//@ts-expect-error types/file not found
-import driverHttpAxios from 'vue-auth3/drivers/http/axios';
+import axios from 'axios';
+import { REFRESH_TOKEN_EXPIRATION, TOKEN_REFRESH_INTERVAL } from './constants';
 
 const auth = createAuth({
   plugins: {
@@ -10,13 +10,13 @@ const auth = createAuth({
   },
   drivers: {
     auth: authService.authDriver,
-    http: driverHttpAxios,
+    http: defineHttpDriver({ request: axios }),
   },
   refreshToken: {
     ...authService.refreshRequest,
     enabled: true, // refresh token in goto page
     enabledInBackground: true, // refresh token in background
-    interval: 30, // 30 seconds of max 15 minutes
+    interval: TOKEN_REFRESH_INTERVAL, // in minutes
   },
   authRedirect: {
     path: '/login',
@@ -46,7 +46,7 @@ const auth = createAuth({
   stores: ['storage', 'cookie'], // ['storage', 'cookie']
   cookie: {
     secure: true,
-    expires: 6 * 60 * 60 * 1000, // 6h of max 6 hours
+    expires: REFRESH_TOKEN_EXPIRATION * 60 * 1000, // in milliseconds
   },
 });
 

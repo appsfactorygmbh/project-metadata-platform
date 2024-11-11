@@ -7,8 +7,9 @@
   import { storeToRefs } from 'pinia';
   import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
-  import { EditOutlined } from '@ant-design/icons-vue';
+  import { EditOutlined, UndoOutlined } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
+  import type { EditProjectModel } from '@/models/Project/EditProjectModel';
 
   const projectsStore = inject(projectsStoreSymbol)!;
   const projectEditStore = inject(projectEditStoreSymbol)!;
@@ -71,13 +72,19 @@
     }
   };
 
+  const reactivateProject = async () => {
+    const currentProject = projectsStore.getProject!;
+    const projectId = currentProject.id;
+    await projectsStore.activateProject(currentProject, projectId);
+  };
+
   const projectData = {
-    id: ref<number>(0),
     projectName: ref<string>(''),
     businessUnit: ref<string>(''),
     teamNumber: ref<number>(0),
     department: ref<string>(''),
     clientName: ref<string>(''),
+    isArchived: ref<boolean>(false),
   };
 
   const BUInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
@@ -92,8 +99,7 @@
 
   //Function to update the project information
   function updateProjectInformation(): void {
-    const updatedProject: DetailedProjectModel = {
-      id: projectData.id.value,
+    const updatedProject: EditProjectModel = {
       projectName: projectData.projectName.value,
       businessUnit: BUInput.value,
       teamNumber: teamNumberInput.value,
@@ -108,7 +114,6 @@
   function addData(loadedData: DetailedProjectModel) {
     if (projectsStore.getProject)
       projectEditStore.setProjectInformation(projectsStore.getProject);
-    projectData.id.value = loadedData.id;
     projectData.projectName.value = loadedData.projectName;
     projectData.businessUnit.value = loadedData.businessUnit;
     projectData.teamNumber.value = loadedData.teamNumber;
@@ -127,6 +132,7 @@
         </h1>
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
         <a-button
+          v-if="!projectsStore.getProject?.isArchived"
           class="button"
           ghost
           style="margin-left: 10px"
@@ -134,6 +140,21 @@
         >
           <template #icon><EditOutlined class="icon" /></template>
         </a-button>
+        <a-tooltip
+          v-else
+          position="left"
+          title="Click here to reactivate the project"
+          style="padding-left: 0; padding-right: 0"
+        >
+          <a-button
+            class="button"
+            ghost
+            style="margin-left: 10px"
+            @click="reactivateProject"
+          >
+            <template #icon><UndoOutlined class="icon" /></template>
+          </a-button>
+        </a-tooltip>
       </div>
 
       <!-- create box for project description (BU, Team Nr, Department, Client Name) -->

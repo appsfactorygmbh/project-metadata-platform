@@ -143,6 +143,7 @@ export const useProjectStore = defineStore('project', {
             teamNumber: 0,
             department: '',
             clientName: '',
+            isArchived: false,
           };
         this.setProject(project);
       } finally {
@@ -177,19 +178,37 @@ export const useProjectStore = defineStore('project', {
       }
     },
 
-    async archiveProject(projectId: number | null) {
-      if (!projectId) return;
+    async archiveProject(projectData: UpdateProjectModel, id: number) {
       try {
-        const response = await projectsService.archiveProject(projectId);
-        if (response && response.ok) {
-          await this.fetchProjects();
-
-          this.project = this.projects[0] || null;
+        this.setLoadingUpdate(true);
+        this.setUpdatedSuccessfully(false);
+        const response = await projectsService.archiveProject(projectData, id);
+        console.log(response);
+        if (response && response?.ok) {
+          this.setUpdatedSuccessfully(true);
+          await this.fetchProject(id);
         } else {
-          console.error('Archiving failed');
+          this.setUpdatedSuccessfully(false);
         }
-      } catch (error) {
-        console.error('Error archiving project:', error.message);
+      } finally {
+        this.setLoadingUpdate(false);
+      }
+    },
+
+    async activateProject(projectData: UpdateProjectModel, id: number) {
+      try {
+        this.setLoadingUpdate(true);
+        this.setUpdatedSuccessfully(false);
+        const response = await projectsService.activateProject(projectData, id);
+        console.log(response);
+        if (response && response?.ok) {
+          this.setUpdatedSuccessfully(true);
+          await this.fetchProject(id);
+        } else {
+          this.setUpdatedSuccessfully(false);
+        }
+      } finally {
+        this.setLoadingUpdate(false);
       }
     },
   },
