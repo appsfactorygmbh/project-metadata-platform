@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import type { LogEntryModel } from '@/models/Log/LogEntryModel';
   import { logsStoreSymbol } from '@/store/injectionSymbols';
-  import { debounce } from 'lodash';
   import { inject, onMounted } from 'vue';
   const searchValue = ref('');
   const dummyData: LogEntryModel[] = [
@@ -146,10 +145,10 @@
 
   const logsStore = inject(logsStoreSymbol);
 
-  const updateSearchParam = debounce(async () => {
+  const updateSearchParam = async () => {
     console.log('update');
     await logsStore?.fetchGlobalLogs(searchValue.value);
-  }, 500);
+  };
   onMounted(async () => {
     await logsStore?.fetchGlobalLogs();
   });

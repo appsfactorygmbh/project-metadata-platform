@@ -20,8 +20,8 @@
   <div class="container">
     <p class="text timeStamp">{{ props.timeStamp }}</p>
     <div class="line-container">
-      <div class="circle"></div>
-      <div v-if="!isLast" class="line"></div>
+      <div class="circle" />
+      <div v-if="!isLast" class="line" />
     </div>
     <p class="text">{{ props.logMessage }}</p>
   </div>
@@ -52,6 +52,7 @@
   .container {
     display: flex;
     flex-direction: row;
+    height: max-content;
   }
   .text {
     margin: 0;

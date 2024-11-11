@@ -6,7 +6,6 @@ import { ProviderCollection } from './Provider';
 import { SettingView } from '@/views/SettingView';
 import { GlobalPluginsView } from '@/views/GlobalPlugins';
 import ProjectSlagResolver from './Resolver/ProjectSlagResolver.vue';
-import ComingSoonView from '@/views/Service/ComingSoonView.vue';
 import NotFoundView from '@/views/Service/NotFoundView.vue';
 import { LoginView, RegisterView } from '@/views/Auth';
 import ForbiddenView from '@/views/Service/ForbiddenView.vue';

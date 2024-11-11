@@ -21,9 +21,3 @@
     />
   </div>
 </template>
-
-<style scoped>
-  .container {
-    overflow-y: auto;
-  }
-</style>
