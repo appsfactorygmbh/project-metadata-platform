@@ -72,13 +72,16 @@ const router = createRouter({
                   meta: {
                     title: 'Project Metadata Platform - User Information',
                   },
-                  children: [],
-                },
-                {
-                  path: '/settings/user-management/create',
-                  name: 'createUsers',
-                  component: CreateUserView,
-                  meta: { title: 'Project Metadata Platform - User Creation' },
+                  children: [
+                    {
+                      path: '/settings/user-management/create',
+                      name: 'createUsers',
+                      component: CreateUserView,
+                      meta: {
+                        title: 'Project Metadata Platform - User Creation',
+                      },
+                    },
+                  ],
                 },
               ],
             },

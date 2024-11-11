@@ -10,13 +10,13 @@
 
   const router = useRouter();
   const userStore = inject(userStoreSymbol)!;
-  const { getIsLoadingUsers, getIsLoading, getMe } = storeToRefs(userStore);
+  const { getIsLoadingUsers, getIsLoading, getUser } = storeToRefs(userStore);
   const { isEditing, startEditing, stopEditing } = useEditing('isEditingName');
-  const me = computed(() => getMe.value);
+  const user = computed(() => getUser.value);
   const isLoading = computed(
     () => getIsLoadingUsers.value || getIsLoading.value,
   );
-  const fieldValue = ref<string>('');
+  const fieldValue = ref<string>(user.value?.name ?? '');
 
   //Button for adding new User
   const button: FloatButtonModel = {
@@ -43,7 +43,7 @@
         <template #icon><UserOutlined /></template>
       </a-avatar>
       <a-flex v-if="!isLoading" class="name">
-        <p v-if="!isEditing" class="text">{{ me?.name ?? '' }}</p>
+        <p v-if="!isEditing" class="text">{{ user?.name ?? '' }}</p>
 
         <a-form v-else name="user" autocomplete="off">
           <a-form-item class="input">
@@ -69,13 +69,13 @@
       }"
     >
       <EditableTextField
-        :value="me?.username ?? ''"
+        :value="user?.username ?? ''"
         :is-loading="isLoading"
         :label="'Username'"
         :is-editing-key="'isEditingUsername'"
       />
       <EditableTextField
-        :value="me?.email ?? ''"
+        :value="user?.email ?? ''"
         :is-loading="isLoading"
         :label="'Email'"
         :is-editing-key="'isEditingEmail'"
@@ -89,8 +89,9 @@
         type="password"
       />
     </a-flex>
-    <FloatingButton :button="button" />
   </div>
+  <RouterView />
+  <FloatingButton :button="button" />
 </template>
 
 <style>

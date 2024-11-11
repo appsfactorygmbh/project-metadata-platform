@@ -35,7 +35,7 @@ describe('UserInformationView.vue', () => {
   };
 
   it('renders correctly', async () => {
-    userStore.setMe(userData1);
+    userStore.setUser(userData1);
     const wrapper = generateWrapper();
     await flushPromises();
 

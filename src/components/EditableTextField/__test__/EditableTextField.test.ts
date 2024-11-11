@@ -34,7 +34,7 @@ describe('EditableTextField', () => {
     expect(wrapper.find('.edit').text()).toBe('Edit');
   });
 
-  it('navigates to a new URL when the button is pressed', async () => {
+  it('add isEditingUsername to URL when click edit', async () => {
     const wrapper = generateWrapper() as VueWrapper<
       ComponentPublicInstance<EditableTextFieldInstance>
     >;
