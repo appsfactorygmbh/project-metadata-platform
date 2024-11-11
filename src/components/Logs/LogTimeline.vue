@@ -10,14 +10,20 @@
 </script>
 
 <template>
-  <LogItem
-    v-for="(entry, index) in props.logEntries"
-    :key="index"
-    class="timeLine"
-    :log-message="entry.logMessage"
-    :time-stamp="entry.timeStamp"
-    :is-last="index === props.logEntries.length - 1"
-  />
+  <div class="container">
+    <LogItem
+      v-for="(entry, index) in props.logEntries"
+      :key="index"
+      class="timeLine"
+      :log-message="entry.logMessage"
+      :time-stamp="entry.timeStamp"
+      :is-last="index === props.logEntries.length - 1"
+    />
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+  .container {
+    overflow-y: auto;
+  }
+</style>

@@ -18,7 +18,7 @@
 
 <template>
   <div class="container">
-    <p class="text">{{ props.timeStamp }}</p>
+    <p class="text timeStamp">{{ props.timeStamp }}</p>
     <div class="line-container">
       <div class="circle"></div>
       <div v-if="!isLast" class="line"></div>
@@ -59,5 +59,9 @@
   }
   .hide {
     display: none;
+  }
+  .timeStamp {
+    min-width: 150px;
+    text-align: end;
   }
 </style>
