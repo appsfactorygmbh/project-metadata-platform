@@ -22,5 +22,5 @@
 </script>
 
 <template>
-  <FloatingButton :button="createButton" @click="showModal" />
+  <FloatingButton :button="createButton" />
 </template>

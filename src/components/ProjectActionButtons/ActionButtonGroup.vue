@@ -23,8 +23,11 @@
 
 <style scoped>
   .button-group {
+    display: flex;
+    justify-content: flex-end;
     position: absolute;
     bottom: 20px;
-    right: 20px;
+    width: 100%;
+    gap: 10px;
   }
 </style>
