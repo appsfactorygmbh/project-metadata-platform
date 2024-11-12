@@ -1,15 +1,25 @@
 <script lang="ts" setup>
-  import { UserOutlined } from '@ant-design/icons-vue';
+  import { DeleteOutlined, UserOutlined } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { inject, ref } from 'vue';
   import { userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
-  import { useEditing } from '@/utils/hooks/useEditing';
   import { useRouter } from 'vue-router';
+  import { userService } from '@/services';
+  import { useEditing } from '@/utils/hooks';
+  import {
+    CheckOutlined,
+    CloseOutlined,
+    EditOutlined,
+  } from '@ant-design/icons-vue';
+  import notification from 'ant-design-vue/es/notification';
+  import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
+  import { useUserRouting } from '@/utils/hooks';
 
   const router = useRouter();
   const userStore = inject(userStoreSymbol)!;
+  const { setUserId } = useUserRouting();
   const { getIsLoadingUsers, getIsLoading, getUser, getMe } =
     storeToRefs(userStore);
   const { isEditing, startEditing, stopEditing } = useEditing('isEditingName');
@@ -18,22 +28,72 @@
   const isLoading = computed(
     () => getIsLoadingUsers.value || getIsLoading.value,
   );
-  const fieldValue = ref<string>('');
+  const nameValue = ref<string>('');
 
   //Button for adding new User
-  const button: FloatButtonModel = {
-    name: 'CreateUserButton',
-    onClick: () => {
-      router.push('/settings/user-management/create');
+  const buttons: FloatButtonModel[] = [
+    {
+      name: 'CreateUserButton',
+      onClick: () => {
+        router.push('/settings/user-management/create');
+      },
+      icon: PlusOutlined,
+      status: 'activated',
+      tooltip: 'Click here to create a new user',
     },
-    icon: PlusOutlined,
-    status: 'activated',
-    tooltip: 'Click here to create a new user',
+    {
+      name: 'DeleteUserButton',
+      onClick: () => {
+        deleteUser();
+      },
+      icon: DeleteOutlined,
+      status: 'activated',
+      tooltip: 'Click here to delete this user',
+    },
+  ];
+
+  const [notificationApi] = notification.useNotification();
+
+  const onSave = async (fieldValue: string, fieldType: string) => {
+    console.log(fieldValue);
+    if (!user.value) return;
+    let reponse;
+    switch (fieldType) {
+      case 'name':
+        reponse = await userService.updateUser(user.value?.id, {
+          name: fieldValue,
+        });
+        break;
+      case 'username':
+        reponse = await userService.updateUser(user.value?.id, {
+          username: fieldValue,
+        });
+        break;
+      case 'email':
+        reponse = await userService.updateUser(user.value?.id, {
+          email: fieldValue,
+        });
+        break;
+      case 'password':
+        reponse = await userService.updateUser(user.value?.id, {
+          email: fieldValue,
+        });
+        break;
+    }
+    console.log('res status: ', reponse?.status);
+    if (reponse?.status !== 200 || reponse.status === undefined)
+      notificationApi.error({
+        message: 'An error occurred. Could not update the Userinformation',
+      });
+    userStore.fetchUser(user.value.id);
+    stopEditing();
   };
 
-  const onSave = () => {
-    stopEditing();
-    console.log('Success:', fieldValue.value);
+  const deleteUser = async () => {
+    if (!user.value) return;
+    await userService.deleteUser(user.value?.id);
+    await userStore.fetchUsers();
+    setUserId(1);
   };
 </script>
 
@@ -44,22 +104,35 @@
       <a-avatar :size="150">
         <template #icon><UserOutlined /></template>
       </a-avatar>
-      <a-flex v-if="!isLoading" class="name">
+      <div v-if="!isLoading" class="name">
         <p v-if="!isEditing" class="text">{{ user?.name ?? '' }}</p>
 
         <a-form v-else name="user" autocomplete="off">
           <a-form-item class="inputName">
-            <a-input v-model:value="fieldValue" type="text" />
+            <a-input v-model:value="nameValue" type="text" />
           </a-form-item>
         </a-form>
 
-        <a-button v-if="!isEditing" class="edit" @click="startEditing"
-          >Edit</a-button
-        >
-        <a-button v-else class="edit" html-type="submit" @click="onSave"
-          >Save</a-button
-        >
-      </a-flex>
+        <a-button v-if="!isEditing" class="edit" @click="startEditing">
+          <EditOutlined class="icon" />
+        </a-button>
+        <div v-else class="buttonGroup">
+          <a-button
+            class="edit check"
+            :disabled="nameValue === '' ? true : false"
+            @click="
+              () => {
+                onSave(nameValue, 'name');
+              }
+            "
+          >
+            <CheckOutlined class="icon" />
+          </a-button>
+          <a-button class="edit abort" @click="stopEditing">
+            <CloseOutlined class="icon" />
+          </a-button>
+        </div>
+      </div>
       <a-skeleton v-else active :paragraph="false" style="width: 10em" />
     </a-flex>
 
@@ -75,6 +148,11 @@
         :is-loading="isLoading"
         :label="'Username'"
         :is-editing-key="'isEditingUsername'"
+        @update="
+          (fieldValue: string) => {
+            onSave(fieldValue, 'username');
+          }
+        "
       />
       <EditableTextField
         :value="user?.email ?? ''"
@@ -82,6 +160,11 @@
         :label="'Email'"
         :is-editing-key="'isEditingEmail'"
         type="email"
+        @update="
+          (fieldValue: string) => {
+            onSave(fieldValue, 'email');
+          }
+        "
       />
       <EditableTextField
         v-if="me?.id && me.id === user?.id"
@@ -91,14 +174,19 @@
         :label="'Password'"
         :is-editing-key="'isEditingPassword'"
         type="password"
+        @update="
+          (fieldValue: string) => {
+            onSave(fieldValue, 'password');
+          }
+        "
       />
     </a-flex>
   </div>
   <RouterView />
-  <FloatingButton :button="button" />
+  <FloatingButtonGroup :buttons="buttons" />
 </template>
 
-<style>
+<style scoped>
   .panel {
     min-width: 150px;
   }
@@ -130,7 +218,6 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    left: 1em;
   }
 
   .name button {
@@ -138,6 +225,7 @@
     background: none;
     color: blue;
     margin-left: 5px;
+    gap: 10px;
   }
 
   .text {
@@ -147,5 +235,9 @@
   .inputName {
     font-size: 0.6em;
     margin: 2.2em 0 2.3em;
+  }
+
+  .edit {
+    background-color: icon !important;
   }
 </style>

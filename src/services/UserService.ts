@@ -1,4 +1,9 @@
-import type { CreateUserModel, UserListModel, UserModel } from '@/models/User';
+import type {
+  CreateUserModel,
+  UpdateUserModel,
+  UserListModel,
+  UserModel,
+} from '@/models/User';
 import { ApiService } from './ApiService';
 
 class UserService extends ApiService {
@@ -87,7 +92,7 @@ class UserService extends ApiService {
 
   updateUser = async (
     userId: number,
-    updatedUser: CreateUserModel,
+    updatedUser: UpdateUserModel,
   ): Promise<Response | null> => {
     try {
       const response = await this.fetch('/Users/' + userId.toString(), {
