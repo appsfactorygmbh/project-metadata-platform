@@ -84,7 +84,7 @@
         type="email"
       />
       <EditableTextField
-        v-if="me.id === user?.id"
+        v-if="me?.id && me.id === user?.id"
         class="password"
         :value="'**********'"
         :is-loading="isLoading"
