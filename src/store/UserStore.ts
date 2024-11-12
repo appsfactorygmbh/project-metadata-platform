@@ -105,6 +105,20 @@ export const useUserStore = defineStore('user', {
       }
     },
 
+    async fetchMe(): Promise<void> {
+      try {
+        const user = (await userService.fetchMe()) ?? {
+          id: -1,
+          name: '',
+          username: '',
+          email: '',
+        };
+        this.setMe(user);
+      } finally {
+        this.setIsLoadingUsers(false);
+      }
+    },
+
     async createUser(newUser: CreateUserModel): Promise<void> {
       try {
         this.setIsLoadingCreate(true);

@@ -10,9 +10,11 @@
 
   const router = useRouter();
   const userStore = inject(userStoreSymbol)!;
-  const { getIsLoadingUsers, getIsLoading, getUser } = storeToRefs(userStore);
+  const { getIsLoadingUsers, getIsLoading, getUser, getMe } =
+    storeToRefs(userStore);
   const { isEditing, startEditing, stopEditing } = useEditing('isEditingName');
   const user = computed(() => getUser.value);
+  const me = computed(() => getMe.value);
   const isLoading = computed(
     () => getIsLoadingUsers.value || getIsLoading.value,
   );
@@ -82,6 +84,8 @@
         type="email"
       />
       <EditableTextField
+        v-if="me.id === user?.id"
+        class="password"
         :value="'**********'"
         :is-loading="isLoading"
         :label="'Password'"
