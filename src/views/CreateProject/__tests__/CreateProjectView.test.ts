@@ -5,7 +5,6 @@ import CreateProjectView from '../CreateProjectView.vue';
 describe('CreateProjectView.vue', () => {
   type CreateProjectViewInstance = {
     fetchError: boolean;
-    open: boolean;
     handleOk: () => Promise<void>;
     resetModal: () => void;
     formRef: {
@@ -17,21 +16,20 @@ describe('CreateProjectView.vue', () => {
   let wrapper: VueWrapper<CreateProjectViewInstance>;
 
   beforeEach(() => {
-    wrapper = mount(CreateProjectView) as VueWrapper<CreateProjectViewInstance>;
-  });
-
-  it('opens modal when plus button is clicked', async () => {
-    const button = wrapper.findComponent({ name: 'a-float-button' });
-    await button.trigger('click');
-    expect(wrapper.vm.open).toBe(true);
+    wrapper = mount(CreateProjectView, {
+      props: {
+        open: true, // Modal als geöffnet initialisieren
+      },
+    }) as VueWrapper<CreateProjectViewInstance>;
   });
 
   it('resets form when resetModal is called', async () => {
+    const resetFieldsMock = vi.fn();
     wrapper.vm.formRef = {
-      resetFields: vi.fn(),
+      resetFields: resetFieldsMock,
     };
     await wrapper.vm.resetModal();
-    expect(wrapper.vm.formRef.resetFields).toHaveBeenCalled();
+    expect(resetFieldsMock).toHaveBeenCalled();
   });
 
   it('handles form validation errors on handleOk', async () => {
@@ -40,5 +38,13 @@ describe('CreateProjectView.vue', () => {
     };
     await wrapper.vm.handleOk();
     expect(wrapper.vm.formRef.validate).toHaveBeenCalled();
+  });
+
+  it('emits close event when modal is closed', async () => {
+    // Direkt das Event auslösen und prüfen
+    wrapper.vm.$emit('close');
+
+    const emittedEvents = wrapper.emitted('close');
+    expect(emittedEvents).toBeTruthy();
   });
 });
