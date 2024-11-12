@@ -33,7 +33,6 @@
   const { isEditing, startEditing, stopEditing } = useEditing(
     props.isEditingKey,
   );
-  const isEdit = computed(() => isEditing.value);
   const passwordsMatch = computed(() => {
     return fieldValue.value === confirmPassword.value;
   });
@@ -56,7 +55,7 @@
   >
     <label class="label">{{ label }}:</label>
     <template v-if="!isLoading">
-      <p v-if="!isEdit" class="text">{{ value }}</p>
+      <p v-if="!isEditing" class="text">{{ value }}</p>
 
       <a-form v-else name="user" autocomplete="off">
         <a-form-item class="input">

@@ -16,7 +16,7 @@
   const isLoading = computed(
     () => getIsLoadingUsers.value || getIsLoading.value,
   );
-  const fieldValue = ref<string>(user.value?.name ?? '');
+  const fieldValue = ref<string>('');
 
   //Button for adding new User
   const button: FloatButtonModel = {
