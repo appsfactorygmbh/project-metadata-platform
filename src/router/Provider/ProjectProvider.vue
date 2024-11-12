@@ -9,9 +9,9 @@
   provide<typeof projectsStore>(projectsStoreSymbol, projectsStore);
 
   const auth = useAuth();
-  projectsService.setAuth(auth.token());
+  projectsService.setAuth(auth?.token());
   watch(
-    () => auth.token(),
+    () => auth?.token(),
     () => {
       console.log('token change', auth);
       projectsService.setAuth(auth.token());

@@ -105,14 +105,14 @@
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
-    <a-layout class="addressBar" style="padding: 0 24px 24px">
+    <a-layout class="addressBar">
       <a-layout-content>
         <!-- breadcrumbs -->
         <a-breadcrumb>
           <a-breadcrumb-item>Settings</a-breadcrumb-item>
           <a-breadcrumb-item> {{ tab }} </a-breadcrumb-item>
         </a-breadcrumb>
-        <div style="padding: 24px; min-height: 650px">
+        <div style="padding: 10px; min-height: 650px">
           <RouterView />
         </div>
       </a-layout-content>
@@ -142,6 +142,7 @@
 
   .ant-layout-sider {
     background: #fff;
+    height: 100vh;
   }
   /* Style for the sidebar menu */
   :deep(.ant-menu-item) {
@@ -153,15 +154,15 @@
   }
 
   .ant-layout-content {
-    margin: 0 16px;
+    margin: 0;
   }
 
   .ant-breadcrumb {
-    margin: 16px 0;
+    margin: 15px 15px 5px;
   }
 
   .addressBar {
-    padding: 0 24px 24px;
+    padding: 0;
   }
 
   /* Style for the expandable button on bottom*/

@@ -12,10 +12,9 @@
   );
 
   const auth = useAuth();
-  globalPluginService.setAuth(auth.token());
-
+  globalPluginService.setAuth(auth?.token());
   watch(
-    () => auth.token(),
+    () => auth?.token(),
     () => globalPluginService.setAuth(auth.token()),
   );
 </script>

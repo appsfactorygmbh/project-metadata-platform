@@ -1,3 +1,3 @@
-// import SearchBar from './SearchBar.vue';
+import SearchBar from './SearchBar.vue';
 
-// export { SearchBar };
+export { SearchBar };
