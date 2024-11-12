@@ -1,8 +1,12 @@
 import ActionButtonGroup from '../ActionButtonGroup.vue';
 import { mount } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
 import { describe, expect, it, vi } from 'vitest';
+import CreateProjectButton from '../CreateProjectButton.vue';
+import ArchiveProjectButton from '../ArchiveProjectButton.vue';
 
 describe('ActionButtonGroup.vue', () => {
+  setActivePinia(createPinia());
   it('renders both create and archive buttons correctly', () => {
     const wrapper = mount(ActionButtonGroup);
     const buttons = wrapper.findAll('.ant-float-btn');
@@ -20,7 +24,7 @@ describe('ActionButtonGroup.vue', () => {
       },
     });
 
-    const createButton = wrapper.findComponent({ name: 'CreateProjectButton' });
+    const createButton = wrapper.findComponent(CreateProjectButton);
     await createButton.trigger('click');
 
     expect(mockShowModal).toHaveBeenCalled();
@@ -36,9 +40,7 @@ describe('ActionButtonGroup.vue', () => {
       },
     });
 
-    const archiveButton = wrapper.findComponent({
-      name: 'ArchiveProjectButton',
-    });
+    const archiveButton = wrapper.findComponent(ArchiveProjectButton);
     await archiveButton.trigger('click');
 
     expect(mockArchiveProject).toHaveBeenCalled();

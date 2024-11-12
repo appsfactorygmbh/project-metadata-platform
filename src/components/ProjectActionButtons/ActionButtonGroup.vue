@@ -5,7 +5,7 @@
 
   const openCreateModal = ref(false);
 
-  const handleOpenUpdate = (status) => {
+  const handleOpenUpdate = (status: boolean) => {
     console.log('update:open event received with status:', status); // Debugging Log
     openCreateModal.value = status;
   };
