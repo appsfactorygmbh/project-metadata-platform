@@ -56,19 +56,21 @@
     <div v-if="selectedGroup" class="popup">
       <a-card class="group-popup">
         <h3>Plugins in {{ selectedGroup.pluginName }}</h3>
-        <PluginComponent
-          v-for="plugin in selectedGroup.plugins"
-          :key="plugin.id"
-          :id="plugin.id"
-          :plugin-name="plugin.pluginName"
-          :display-name="plugin.displayName"
-          :url="plugin.url"
-          :is-loading="loading"
-          :is-editing="isEditing"
-          :edit-key="plugin.editKey"
-          :is-deleted="false"
-        ></PluginComponent>
-        <a-button @click="closeGroupPopup">Close</a-button>
+        <div class="plugin-grid">
+          <PluginComponent
+            v-for="plugin in selectedGroup.plugins"
+            :key="plugin.id"
+            :id="plugin.id"
+            :plugin-name="plugin.pluginName"
+            :display-name="plugin.displayName"
+            :url="plugin.url"
+            :is-loading="loading"
+            :is-editing="isEditing"
+            :edit-key="plugin.editKey"
+            :is-deleted="false"
+          ></PluginComponent>
+        </div>
+        <a-button @click="closeGroupPopup" style="margin-top: 25px;">Close</a-button>
       </a-card>
     </div>
   </div>
@@ -120,7 +122,7 @@ const groupedPlugins = computed(() => {
       result.push({
         id: `group-${type}`, // ID of the group
         pluginName: type, // name of the plugin
-        displayName: type, //`${type} (${group.length})`, // showed name: "GitLab (5)"
+        displayName: type, // type of plugin
         plugins: group, // list of plugins in the group
         isGroup: true, // flags that it's a group
         faviconUrl: createFaviconURL(cutAfterTLD(firstPluginUrl))
@@ -264,6 +266,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
 }
 .textContainer {
   font-family: Manrope, serif;
@@ -282,5 +285,11 @@ onMounted(async () => {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+.plugin-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
 }
 </style>
