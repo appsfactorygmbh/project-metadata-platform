@@ -1,12 +1,16 @@
 <script lang="ts" setup>
+  import { userStoreSymbol } from '@/store/injectionSymbols';
   import { useEditing } from '@/utils/hooks/useEditing';
   import {
     CheckOutlined,
     CloseOutlined,
     EditOutlined,
   } from '@ant-design/icons-vue';
-  import { defineEmits, defineProps, ref } from 'vue';
+  import { defineEmits, defineProps, inject, ref } from 'vue';
   import type { PropType } from 'vue';
+
+  const userStore = inject(userStoreSymbol)!;
+
   const emit = defineEmits(['update']);
 
   const props = defineProps({
@@ -23,7 +27,7 @@
       required: true,
     },
     type: {
-      type: String as PropType<'text' | 'password' | 'email'>,
+      type: String as PropType<'username' | 'email'>,
       default: 'text',
     },
     isEditingKey: {
@@ -54,8 +58,14 @@
     console.log('type:_ ', props.type);
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    if (props.type === 'text') {
-      inputState.value = fieldValue.value !== '' ? undefined : 'error';
+    if (props.type === 'username') {
+      const alreadyExists = userStore.getUsers.some(
+        (user) => user.username === fieldValue.value,
+      );
+      console.log();
+      console.log('already exists: ', alreadyExists);
+      inputState.value =
+        fieldValue.value && !alreadyExists ? undefined : 'error';
       console.log(inputState.value);
     }
 
@@ -65,28 +75,7 @@
         : 'error';
     }
   };
-
-  const checkCorrectPasswordInput = () => {
-    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-
-    if (pwRegex.test(newPassword.value)) {
-      newPasswordInputState.value = undefined;
-    } else {
-      newPasswordInputState.value = 'error';
-    }
-    if (newPassword.value === confirmedPassword.value) {
-      confirmedPasswordInputState.value = undefined;
-    } else {
-      confirmedPasswordInputState.value = 'error';
-    }
-  };
-
   const inputState = ref<undefined | 'error'>(undefined);
-  const oldPassword = ref<string>('');
-  const newPassword = ref<string>('');
-  const newPasswordInputState = ref<undefined | 'error'>(undefined);
-  const confirmedPassword = ref<string>('');
-  const confirmedPasswordInputState = ref<undefined | 'error'>(undefined);
 </script>
 
 <template>
@@ -102,36 +91,12 @@
       <p v-if="!isEditing" class="text">{{ value }}</p>
 
       <a-form v-else name="user" autocomplete="off">
-        <a-form-item v-if="type !== 'password'" class="input">
+        <a-form-item class="input">
           <a-input
             v-model:value="fieldValue"
-            :placeholder="fieldValue"
-            :type="type"
+            :placeholder="props.value"
             :status="inputState"
             @change="checkCorrectInput"
-          />
-        </a-form-item>
-        <a-form-item v-else class="input">
-          <a-input
-            v-model:value="oldPassword"
-            :type="type"
-            placeholder="Input your current Password"
-            class="password"
-          />
-          <a-input
-            v-model:value="newPassword"
-            :type="type"
-            placeholder="Enter a new Password"
-            :status="newPasswordInputState"
-            class="password"
-            @change="checkCorrectPasswordInput"
-          />
-          <a-input
-            v-model:value="confirmedPassword"
-            :type="type"
-            placeholder="Confirm the new Password"
-            :status="confirmedPasswordInputState"
-            @change="checkCorrectPasswordInput"
           />
         </a-form-item>
       </a-form>

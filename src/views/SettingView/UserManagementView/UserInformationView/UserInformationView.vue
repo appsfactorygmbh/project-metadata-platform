@@ -166,19 +166,12 @@
           }
         "
       />
-      <EditableTextField
+      <EditablePasswordField
         v-if="me?.id && me.id === user?.id"
-        class="password"
-        :value="'**********'"
-        :is-loading="isLoading"
-        :label="'Password'"
+        value="**********"
+        label="Password"
         :is-editing-key="'isEditingPassword'"
-        type="password"
-        @update="
-          (fieldValue: string) => {
-            onSave(fieldValue, 'password');
-          }
-        "
+        :is-loading="isLoading"
       />
     </a-flex>
   </div>
