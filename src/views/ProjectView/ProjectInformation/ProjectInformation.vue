@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { inject, onMounted, toRaw } from 'vue';
+  import { computed, inject, onMounted, ref, toRaw } from 'vue';
   import {
     projectEditStoreSymbol,
     projectsStoreSymbol,
@@ -7,9 +7,14 @@
   import { storeToRefs } from 'pinia';
   import type { DetailedProjectModel } from '@/models/Project';
   import type { ComputedRef } from 'vue';
-  import { EditOutlined, UndoOutlined } from '@ant-design/icons-vue';
+  import {
+    DeleteOutlined,
+    EditOutlined,
+    UndoOutlined,
+  } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
+  import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
 
   const projectsStore = inject(projectsStoreSymbol)!;
   const projectEditStore = inject(projectEditStoreSymbol)!;
@@ -120,6 +125,28 @@
     projectData.department.value = loadedData.department;
     projectData.clientName.value = loadedData.clientName;
   }
+
+  const isModalOpen = ref(false);
+
+  const handleArchive = () => {
+    isModalOpen.value = true;
+  };
+
+  const confirmArchive = async () => {
+    const projectID = projectsStore?.getProject?.id;
+    const projectData = { ...projectsStore?.getProject, isArchived: true };
+
+    if (projectID) {
+      try {
+        await projectsStore.archiveProject(projectData, projectID);
+        if (projectsStore.getUpdatedSuccessfully) {
+          await projectsStore.fetchProjects();
+        }
+      } finally {
+        isModalOpen.value = false;
+      }
+    }
+  };
 </script>
 
 <template>
@@ -155,6 +182,22 @@
             <template #icon><UndoOutlined class="icon" /></template>
           </a-button>
         </a-tooltip>
+        <a-button
+          class="button"
+          ghost
+          style="margin-left: 10px"
+          @click="handleArchive"
+        >
+          <template #icon><DeleteOutlined class="icon" /></template>
+        </a-button>
+        <ConfirmAction
+          :is-open="isModalOpen"
+          title="Archive Project"
+          message="Are you sure you want to archive this project?"
+          @confirm="confirmArchive"
+          @cancel="isModalOpen = false"
+          @update:is-open="(value) => (isModalOpen = value)"
+        />
       </div>
 
       <!-- create box for project description (BU, Team Nr, Department, Client Name) -->
