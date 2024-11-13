@@ -67,7 +67,7 @@ describe('GlobalPluginsView.vue', () => {
   it('sends a delete request when clicking the delete button', async () => {
     const wrapper = generateWrapper();
     const globalPluginStore = useGlobalPluginsStore();
-    const spy = vi.spyOn(globalPluginStore, 'deleteGlobalPlugin');
+    const spy = vi.spyOn(globalPluginStore, 'archiveGlobalPlugin');
     spy.mockImplementation(async () =>
       globalPluginStore.setGlobalPlugins(testDataDelete),
     );

@@ -126,7 +126,7 @@
    */
   const handleDelete = async (pluginId: number) => {
     pluginDeleting.value.push(pluginId);
-    await globalPluginsStore?.deleteGlobalPlugin(pluginId);
+    await globalPluginsStore?.archiveGlobalPlugin(pluginId);
     const index: number = pluginDeleting.value?.indexOf(pluginId);
     pluginDeleting.value.splice(index, 1);
   };
