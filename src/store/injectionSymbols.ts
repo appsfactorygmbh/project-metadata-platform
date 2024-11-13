@@ -25,10 +25,15 @@ const globalPluginStoreSymbol = Symbol() as InjectionKey<
   ReturnType<typeof useGlobalPluginsStore>
 >;
 
+const archiveButtonSymbol = Symbol() as InjectionKey<
+  ReturnType<typeof ProjectArchiveButton>
+>;
+
 export {
   projectsStoreSymbol,
   pluginStoreSymbol,
   globalPluginStoreSymbol,
   projectEditStoreSymbol,
   userStoreSymbol,
+  archiveButtonSymbol,
 };
