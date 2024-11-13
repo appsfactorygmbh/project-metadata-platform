@@ -9,7 +9,11 @@ import {
 } from '@/store/injectionSymbols';
 import { useProjectEditStore, useProjectStore } from '@/store';
 import router from '@/router';
-import { EditOutlined, UndoOutlined } from '@ant-design/icons-vue';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  UndoOutlined,
+} from '@ant-design/icons-vue';
 
 describe('ProjectInformation.vue', () => {
   setActivePinia(createPinia());
@@ -94,5 +98,6 @@ describe('ProjectInformation.vue', () => {
 
     expect(wrapper.findComponent(EditOutlined).exists()).toBeFalsy();
     expect(wrapper.findComponent(UndoOutlined).exists()).toBeTruthy();
+    expect(wrapper.findComponent(DeleteOutlined).exists()).toBeFalsy();
   });
 });

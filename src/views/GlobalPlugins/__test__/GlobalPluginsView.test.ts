@@ -11,12 +11,12 @@ const testData = [
   {
     id: 0,
     name: 'Plugin 1',
-    archived: true,
+    isArchived: true,
   },
   {
     id: 1,
     name: 'Plugin 2',
-    archived: false,
+    isArchived: false,
   },
 ];
 
@@ -24,12 +24,12 @@ const testDataDelete = [
   {
     id: 0,
     name: 'Plugin 1',
-    archived: true,
+    isArchived: true,
   },
   {
     id: 1,
     name: 'Plugin 2',
-    archived: true,
+    isArchived: true,
   },
 ];
 

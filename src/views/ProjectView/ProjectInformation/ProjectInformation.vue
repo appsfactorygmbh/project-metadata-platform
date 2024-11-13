@@ -187,21 +187,6 @@
           <template #icon><EditOutlined class="icon" /></template>
         </a-button>
         <a-tooltip
-          v-if="!projectsStore.getProject?.isArchived"
-          position="left"
-          title="Click here to archive the project"
-          style="padding-left: 0; padding-right: 0"
-        >
-          <a-button
-            class="button"
-            ghost
-            style="margin-left: 10px"
-            @click="handleArchive"
-          >
-            <template #icon><DeleteOutlined class="icon" /></template>
-          </a-button>
-        </a-tooltip>
-        <a-tooltip
           v-else
           position="left"
           title="Click here to reactivate the project"
@@ -216,6 +201,22 @@
             <template #icon><UndoOutlined class="icon" /></template>
           </a-button>
         </a-tooltip>
+        <a-tooltip
+          v-if="!projectsStore.getProject?.isArchived"
+          position="left"
+          title="Click here to archive the project"
+          style="padding-left: 0; padding-right: 0"
+        >
+          <a-button
+            class="button"
+            ghost
+            style="margin-left: 10px"
+            @click="handleArchive"
+          >
+            <template #icon><DeleteOutlined class="icon" /></template>
+          </a-button>
+        </a-tooltip>
+
         <ConfirmAction
           :is-open="isModalOpen"
           title="Archive Project"
