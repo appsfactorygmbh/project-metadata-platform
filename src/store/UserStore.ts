@@ -5,6 +5,7 @@ import { defineStore } from 'pinia';
 type StoreState = {
   users: UserListModel[];
   user: UserModel | null;
+  me: UserModel | null;
   isLoadingCreate: boolean;
   isLoadingUsers: boolean;
   isLoadingDelete: boolean;
@@ -17,6 +18,7 @@ export const useUserStore = defineStore('user', {
     return {
       users: [],
       user: null,
+      me: null,
       isLoadingCreate: false,
       isLoadingUsers: false,
       isLoadingDelete: false,
@@ -30,6 +32,9 @@ export const useUserStore = defineStore('user', {
     },
     getUser(): UserModel | null {
       return this.user;
+    },
+    getMe(): UserModel | null {
+      return this.me;
     },
     getIsLoading(): boolean {
       return this.isLoadingCreate || this.isLoadingUsers;
@@ -56,6 +61,9 @@ export const useUserStore = defineStore('user', {
     },
     setUser(user: UserModel): void {
       this.user = user;
+    },
+    setMe(me: UserModel): void {
+      this.me = me;
     },
     setIsLoadingCreate(isLoadingCreate: boolean): void {
       this.isLoadingCreate = isLoadingCreate;
@@ -92,6 +100,20 @@ export const useUserStore = defineStore('user', {
           email: '',
         };
         this.setUser(user);
+      } finally {
+        this.setIsLoadingUsers(false);
+      }
+    },
+
+    async fetchMe(): Promise<void> {
+      try {
+        const user = (await userService.fetchMe()) ?? {
+          id: -1,
+          name: '',
+          username: '',
+          email: '',
+        };
+        this.setMe(user);
       } finally {
         this.setIsLoadingUsers(false);
       }

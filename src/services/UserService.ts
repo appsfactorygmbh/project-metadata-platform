@@ -37,6 +37,24 @@ class UserService extends ApiService {
     }
   };
 
+  fetchMe = async (): Promise<UserModel | null> => {
+    try {
+      const response = await this.fetch('/Users/Me', {
+        headers: {
+          Accept: 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          cors: 'cors',
+        },
+      });
+
+      const data: UserModel = await response.json();
+      return data;
+    } catch (err) {
+      console.error('Error fetching me: ' + err);
+      return null;
+    }
+  };
+
   createUser = async (newUser: CreateUserModel): Promise<Response | null> => {
     try {
       const response = await this.fetch('/Users', {
