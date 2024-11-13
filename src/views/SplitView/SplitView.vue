@@ -7,10 +7,11 @@
   import { MenuButtons } from '@/components/MenuButtons';
   import { CreateProjectView } from '@/views/CreateProject';
   import ProjectView from '../ProjectView/ProjectView.vue';
-  import ActionButtonGroup from '@/components/ProjectActionButtons/ActionButtonGroup.vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { RightOutlined } from '@ant-design/icons-vue';
+  import { useEditing } from '@/utils/hooks';
 
+  const { isEditing } = useEditing();
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
 
@@ -41,10 +42,7 @@
         <ProjectView />
         <FloatingButton :button="splitButton" class="button" />
         <MenuButtons />
-
-        <ActionButtonGroup v-slot="{ openCreateModal: openCreateModal }">
-          <CreateProjectView :open="openCreateModal" />
-        </ActionButtonGroup>
+        <CreateProjectView v-if="!isEditing" />
       </pane>
     </splitpanes>
   </div>

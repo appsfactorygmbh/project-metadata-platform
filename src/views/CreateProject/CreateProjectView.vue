@@ -1,8 +1,9 @@
 <script setup lang="ts">
-  import { computed, defineProps, inject, ref, watch } from 'vue';
+  import { computed, inject, ref, watch } from 'vue';
   import {
     BankOutlined,
     FontColorsOutlined,
+    PlusOutlined,
     ShoppingOutlined,
     TeamOutlined,
     UserOutlined,
@@ -11,23 +12,9 @@
   import type { UnwrapRef } from 'vue';
   import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import type { CreateProjectModel } from '@/models/Project';
+  import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
 
-  // Props definieren
-  const props = defineProps({
-    open: {
-      type: Boolean,
-      default: false,
-    },
-  });
-
-  // Modal-Status von externem Prop steuern
-  const isOpen = ref(props.open);
-  watch(
-    () => props.open,
-    (newVal) => {
-      isOpen.value = newVal;
-    },
-  );
+  const open = ref<boolean>(false);
 
   // Formular- und Zustandskonfiguration
   const formRef = ref();
@@ -58,11 +45,25 @@
     },
   };
 
+  const button: FloatButtonModel = {
+    name: 'CreateProjectButton',
+    onClick: () => {
+      showModal();
+    },
+    icon: PlusOutlined,
+    status: 'activated',
+    tooltip: 'Click here to create a new project',
+  };
+
+  // opens modal when plussign is clicked
+  const showModal = () => {
+    open.value = true;
+  };
+
   // Modal zurücksetzen
   const resetModal = () => {
     formRef.value.resetFields();
     fetchError.value = false;
-    isOpen.value = false;
   };
 
   // Eingaben validieren und dann absenden
@@ -85,6 +86,7 @@
         if (projectsStore?.getAddedSuccessfully) {
           projectsStore.fetchProjects();
           fetchError.value = false;
+          open.value = false;
           resetModal();
         } else {
           fetchError.value = true;
@@ -105,107 +107,111 @@
 </script>
 
 <template>
-  <!-- Modal für die Projekterstellung -->
-  <a-modal
-    v-model:open="isOpen"
-    width="400px"
-    title="Create Project"
-    :ok-button-props="{ disabled: isAdding }"
-    @ok="handleOk"
-    @cancel="resetModal"
-  >
-    <a-form
-      ref="formRef"
-      :model="formState"
-      :validate-messages="validateMessages"
-      :label-col="labelCol"
-      :wrapper-col="wrapperCol"
+  <div>
+    <FloatingButton :button="button" />
+
+    <!-- Modal für die Projekterstellung -->
+    <a-modal
+      v-model:open="open"
+      width="400px"
+      title="Create Project"
+      :ok-button-props="{ disabled: isAdding }"
+      @ok="handleOk"
+      @cancel="resetModal"
     >
-      <a-form-item
-        name="projectName"
-        :rules="[{ required: true, whitespace: true }]"
-        class="column"
-        :no-style="true"
+      <a-form
+        ref="formRef"
+        :model="formState"
+        :validate-messages="validateMessages"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
       >
-        <a-input
-          v-model:value="formState.projectName"
-          class="inputField"
-          placeholder="Project Name"
+        <a-form-item
+          name="projectName"
+          :rules="[{ required: true, whitespace: true }]"
+          class="column"
+          :no-style="true"
         >
-          <template #prefix>
-            <FontColorsOutlined />
-          </template>
-        </a-input>
-      </a-form-item>
-      <a-form-item
-        name="businessUnit"
-        :rules="[{ required: true, whitespace: true }]"
-        :no-style="true"
-      >
-        <a-input
-          v-model:value="formState.businessUnit"
-          class="inputField"
-          placeholder="Business Unit"
+          <a-input
+            v-model:value="formState.projectName"
+            class="inputField"
+            placeholder="Project Name"
+          >
+            <template #prefix>
+              <FontColorsOutlined />
+            </template>
+          </a-input>
+        </a-form-item>
+        <a-form-item
+          name="businessUnit"
+          :rules="[{ required: true, whitespace: true }]"
+          :no-style="true"
         >
-          <template #prefix>
-            <ShoppingOutlined />
-          </template>
-        </a-input>
-      </a-form-item>
-      <a-form-item
-        name="teamNumber"
-        :rules="[{ required: true }, { type: 'number', min: 0 }]"
-        :no-style="true"
-      >
-        <a-input-number
-          v-model:value="formState.teamNumber"
-          class="inputField"
-          placeholder="Team Number"
+          <a-input
+            v-model:value="formState.businessUnit"
+            class="inputField"
+            placeholder="Business Unit"
+          >
+            <template #prefix>
+              <ShoppingOutlined />
+            </template>
+          </a-input>
+        </a-form-item>
+        <a-form-item
+          name="teamNumber"
+          :rules="[{ required: true }, { type: 'number', min: 0 }]"
+          :no-style="true"
         >
-          <template #prefix>
-            <TeamOutlined />
-          </template>
-        </a-input-number>
-      </a-form-item>
-      <a-form-item
-        name="department"
-        :rules="[{ required: true, whitespace: true }]"
-        :no-style="true"
-      >
-        <a-input
-          v-model:value="formState.department"
-          class="inputField"
-          placeholder="Department"
+          <a-input-number
+            v-model:value="formState.teamNumber"
+            class="inputField"
+            placeholder="Team Number"
+          >
+            <template #prefix>
+              <TeamOutlined />
+            </template>
+          </a-input-number>
+        </a-form-item>
+        <a-form-item
+          name="department"
+          :rules="[{ required: true, whitespace: true }]"
+          :no-style="true"
         >
-          <template #prefix>
-            <BankOutlined />
-          </template>
-        </a-input>
-      </a-form-item>
-      <a-form-item
-        name="clientName"
-        :rules="[{ required: true, whitespace: true }]"
-        :no-style="true"
-      >
-        <a-input
-          v-model:value="formState.clientName"
-          class="inputField"
-          placeholder="Client Name"
+          <a-input
+            v-model:value="formState.department"
+            class="inputField"
+            placeholder="Department"
+          >
+            <template #prefix>
+              <BankOutlined />
+            </template>
+          </a-input>
+        </a-form-item>
+        <a-form-item
+          name="clientName"
+          :rules="[{ required: true, whitespace: true }]"
+          :no-style="true"
         >
-          <template #prefix>
-            <UserOutlined />
-          </template>
-        </a-input>
-      </a-form-item>
-      <!-- Error-Meldung bei Fehlschlag -->
-      <a-alert
-        v-if="fetchError"
-        message="Failed to create Project"
-        type="error"
-        show-icon
-      ></a-alert>
-    </a-form>
-  </a-modal>
+          <a-input
+            v-model:value="formState.clientName"
+            class="inputField"
+            placeholder="Client Name"
+          >
+            <template #prefix>
+              <UserOutlined />
+            </template>
+          </a-input>
+        </a-form-item>
+        <!-- Error-Meldung bei Fehlschlag -->
+        <a-alert
+          v-if="fetchError"
+          message="Failed to create Project"
+          type="error"
+          show-icon
+        ></a-alert>
+      </a-form>
+    </a-modal>
+  </div>
 </template>
 
 <style scoped lang="scss">

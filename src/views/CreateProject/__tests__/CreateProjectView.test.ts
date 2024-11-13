@@ -5,6 +5,7 @@ import CreateProjectView from '../CreateProjectView.vue';
 describe('CreateProjectView.vue', () => {
   type CreateProjectViewInstance = {
     fetchError: boolean;
+    open: boolean;
     handleOk: () => Promise<void>;
     resetModal: () => void;
     formRef: {
@@ -16,20 +17,21 @@ describe('CreateProjectView.vue', () => {
   let wrapper: VueWrapper<CreateProjectViewInstance>;
 
   beforeEach(() => {
-    wrapper = mount(CreateProjectView, {
-      props: {
-        open: true, // Modal als geöffnet initialisieren
-      },
-    }) as VueWrapper<CreateProjectViewInstance>;
+    wrapper = mount(CreateProjectView) as VueWrapper<CreateProjectViewInstance>;
+  });
+
+  it('opens modal when plus button is clicked', async () => {
+    const button = wrapper.findComponent({ name: 'a-float-button' });
+    await button.trigger('click');
+    expect(wrapper.vm.open).toBe(true);
   });
 
   it('resets form when resetModal is called', async () => {
-    const resetFieldsMock = vi.fn();
     wrapper.vm.formRef = {
-      resetFields: resetFieldsMock,
+      resetFields: vi.fn(),
     };
-    await wrapper.vm.resetModal();
-    expect(resetFieldsMock).toHaveBeenCalled();
+    wrapper.vm.resetModal();
+    expect(wrapper.vm.formRef.resetFields).toHaveBeenCalled();
   });
 
   it('handles form validation errors on handleOk', async () => {
