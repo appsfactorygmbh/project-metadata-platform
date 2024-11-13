@@ -143,6 +143,7 @@
   const confirmArchive = async () => {
     const projectID = projectsStore?.getProject?.id;
     const projectData = projectsStore?.getProject as UpdateProjectModel;
+    projectData.pluginList = pluginStore?.getPlugins;
 
     if (projectID) {
       try {
@@ -161,9 +162,11 @@
   };
 
   const reactivateProject = async () => {
-    const currentProject = projectsStore.getProject!;
-    const projectId = currentProject.id;
-    await projectsStore.activateProject(currentProject, projectId);
+    const currentProject = projectsStore.getProject! as UpdateProjectModel;
+    const projectId = projectsStore.getProject?.id;
+    currentProject.pluginList = pluginStore.getPlugins;
+
+    await projectsStore.activateProject(currentProject, projectId!);
     await projectsStore.fetchProjects();
   };
 </script>
