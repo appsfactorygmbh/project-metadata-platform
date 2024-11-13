@@ -50,6 +50,7 @@ declare module 'vue' {
     ConfirmAction: typeof import('./../src/components/Modal/ConfirmAction.vue')['default']
     EditablePasswordField: typeof import('./../src/components/EditableTextField/EditablePasswordField.vue')['default']
     EditableTextField: typeof import('./../src/components/EditableTextField/EditableTextField.vue')['default']
+    EditButtons: typeof import('./../src/components/EditableTextField/EditButtons.vue')['default']
     FloatingButton: typeof import('./../src/components/Button/FloatingButton.vue')['default']
     FloatingButtonGroup: typeof import('./../src/components/Button/FloatingButtonGroup.vue')['default']
     FormModal: typeof import('./../src/components/Modal/FormModal.vue')['default']

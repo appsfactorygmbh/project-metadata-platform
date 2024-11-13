@@ -106,7 +106,7 @@ class UserService extends ApiService {
       return response;
     } catch (error) {
       console.error('Error updating user:', error);
-      return null;
+      throw Error;
     }
   };
 }

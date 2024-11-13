@@ -1,21 +1,17 @@
 <script lang="ts" setup>
   import { useEditing } from '@/utils/hooks/useEditing';
-  import {
-    CheckOutlined,
-    CloseOutlined,
-    EditOutlined,
-  } from '@ant-design/icons-vue';
-  import { defineEmits, defineProps, ref } from 'vue';
+  import { defineProps, inject, ref } from 'vue';
   import { useFormStore } from '@/components/Form';
-  import { reactive } from 'vue';
+  import { reactive, toRaw } from 'vue';
   import type { PropType } from 'vue';
   import type { EditPasswordFormData } from './EditPasswordFormData';
+  import { type FormSubmitType } from '@/components/Form';
   import type { RulesObject } from '../Form/types';
   import type { Rule } from 'ant-design-vue/es/form';
+  import { userStoreSymbol } from '@/store/injectionSymbols';
 
   const formStore = useFormStore('createUserForm');
-
-  const emit = defineEmits(['update']);
+  const userStore = inject(userStoreSymbol)!;
 
   const props = defineProps({
     value: {
@@ -38,6 +34,10 @@
       type: String,
       required: true,
     },
+    userId: {
+      type: Number,
+      required: true,
+    },
   });
 
   const fieldValue = ref('');
@@ -52,11 +52,6 @@
   const { isEditing, startEditing, stopEditing } = useEditing(
     props.isEditingKey,
   );
-
-  const saveEdits = () => {
-    stopEditing();
-    emit('update', fieldValue.value);
-  };
 
   const formRef = ref();
 
@@ -129,9 +124,36 @@
       },
     ],
   });
-  // formStore.setOnSubmit()
+
+  const onSubmit: FormSubmitType = (fields) => {
+    const newPassword = {
+      password: toRaw(fields).newPassword,
+    };
+    userStore.patchUser(props.userId, newPassword);
+  };
+
+  const resetFields = () => {
+    dynamicValidateForm.currentPassword = '';
+    dynamicValidateForm.newPassword = '';
+    dynamicValidateForm.confirmPassword = '';
+  };
+
   formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
+  formStore.setOnSubmit(onSubmit);
+
+  const saveChanges = () => {
+    formStore.submit();
+    formStore.resetFields();
+    resetFields();
+    stopEditing();
+  };
+
+  const cancleEdit = () => {
+    formStore.resetFields();
+    resetFields();
+    stopEditing();
+  };
 </script>
 
 <template>
@@ -145,7 +167,7 @@
     <label class="label">{{ label }}:</label>
     <template v-if="!isLoading">
       <p v-if="!isEditing" class="text">{{ value }}</p>
-      <a-form v-else ref="formRef" :model="dynamicValidateForm">
+      <a-form v-else ref="formRef" :model="dynamicValidateForm" class="form">
         <a-form-item
           name="currentPassword"
           class="formItem"
@@ -153,10 +175,11 @@
           :rules="rulesRef.currentPassword"
         >
           <a-input
-            id="inputCreateUserName"
             v-model:value="dynamicValidateForm.currentPassword"
-            placeholder="Name"
+            placeholder="Enter your current password"
             :rules="rulesRef.currentPassword"
+            type="password"
+            class="input"
           >
           </a-input>
         </a-form-item>
@@ -167,10 +190,10 @@
           :rules="rulesRef.newPassword"
         >
           <a-input
-            id="inputCreateUserName"
             v-model:value="dynamicValidateForm.newPassword"
-            placeholder="Name"
+            placeholder="Enter your new password"
             :rules="rulesRef.newPassword"
+            type="password"
           >
           </a-input>
         </a-form-item>
@@ -181,26 +204,23 @@
           :rules="rulesRef.confirmPassword"
         >
           <a-input
-            id="inputCreateUserName"
             v-model:value="dynamicValidateForm.confirmPassword"
-            placeholder="Name"
+            placeholder="Confirm your new password"
             :rules="rulesRef.confirmPassword"
+            type="password"
           >
           </a-input>
         </a-form-item>
       </a-form>
 
-      <a-button v-if="!isEditing" class="edit" @click="startEditing">
-        <EditOutlined class="icon" />
-      </a-button>
-      <div v-else class="buttonGroup">
-        <a-button class="edit check" @click="saveEdits">
-          <CheckOutlined class="icon" />
-        </a-button>
-        <a-button class="edit abort" @click="stopEditing">
-          <CloseOutlined class="icon" />
-        </a-button>
-      </div>
+      <EditButtons
+        :is-editing="isEditing"
+        :safe-disabled="userStore.getIsLoadingUpdate"
+        :is-loading="userStore.getIsLoadingUpdate"
+        @start-editing="startEditing"
+        @cancle-edit="cancleEdit"
+        @safe-edits="saveChanges"
+      />
     </template>
     <a-skeleton
       v-else
@@ -209,6 +229,7 @@
       style="margin-left: 1em; width: 10em"
     />
   </a-card>
+  <contextHolder></contextHolder>
 </template>
 
 <style>
@@ -222,54 +243,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-
-  .password {
-    display: flex;
-    margin-bottom: 10px;
-  }
-
-  .check {
-    background-color: #24c223;
-  }
-
-  .abort {
-    background-color: #ff002e;
-  }
-
-  .buttonGroup {
-    display: flex;
-    flex-direction: row;
-    margin-left: auto;
-    margin-top: 0;
-    margin-bottom: 0;
-    gap: 10px;
-  }
-
-  .icon {
-    color: white;
-  }
-
-  .info {
-    border: none;
-    width: 100%;
-    height: auto;
-    max-width: 100%;
-    font-size: 1.3em;
-    font-weight: bold;
-    display: flex;
-    flex-flow: column wrap;
-    justify-content: center;
-  }
-
-  .ant-card-body {
-    padding: 12px !important;
-  }
-
-  .info label {
-    width: 5em;
-    min-width: 5em;
-    margin-right: 3em;
   }
 
   .input {

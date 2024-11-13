@@ -15,6 +15,7 @@
   } from '@ant-design/icons-vue';
   import notification from 'ant-design-vue/es/notification';
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
+  import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useUserRouting } from '@/utils/hooks';
 
   const router = useRouter();
@@ -30,6 +31,13 @@
   );
   const nameValue = ref<string>('');
 
+  const isConfirmModalOpen = ref<boolean>(false);
+  const openModal = () => {
+    isConfirmModalOpen.value = true;
+  };
+  const clonseModal = () => {
+    isConfirmModalOpen.value = false;
+  };
   //Button for adding new User
   const buttons: FloatButtonModel[] = [
     {
@@ -44,7 +52,7 @@
     {
       name: 'DeleteUserButton',
       onClick: () => {
-        deleteUser();
+        openModal();
       },
       icon: DeleteOutlined,
       status: 'activated',
@@ -70,7 +78,7 @@
         });
         break;
       case 'email':
-        reponse = await userService.updateUser(user.value?.id, {
+        await userStore.patchUser(user.value.id, {
           email: fieldValue,
         });
         break;
@@ -98,6 +106,14 @@
 </script>
 
 <template>
+  <ConfirmationDialog
+    :is-open="isConfirmModalOpen"
+    title="Delete confirm"
+    message="Are you sure you want to delete this user?"
+    @confirm="deleteUser"
+    @cancel="clonseModal"
+    @update:is-open="isConfirmModalOpen = $event"
+  />
   <div class="panel">
     <!-- avatar components -->
     <a-flex class="avatar">
@@ -148,6 +164,7 @@
         :is-loading="isLoading"
         :label="'Username'"
         :is-editing-key="'isEditingUsername'"
+        class="textField"
         @update="
           (fieldValue: string) => {
             onSave(fieldValue, 'username');
@@ -159,6 +176,7 @@
         :is-loading="isLoading"
         :label="'Email'"
         :is-editing-key="'isEditingEmail'"
+        class="textField"
         type="email"
         @update="
           (fieldValue: string) => {
@@ -172,6 +190,8 @@
         label="Password"
         :is-editing-key="'isEditingPassword'"
         :is-loading="isLoading"
+        :user-id="user.id"
+        class="passwordField"
       />
     </a-flex>
   </div>
@@ -184,8 +204,12 @@
     min-width: 150px;
   }
 
+  .passwordField {
+    height: max-content;
+  }
+
   .userInfoBox {
-    padding: 1em;
+    padding: 1em 3em 1em 3em;
     margin-top: 2em;
     border-radius: 10px;
     background-color: white;
@@ -220,16 +244,9 @@
     margin-left: 5px;
     gap: 10px;
   }
-
-  .text {
-    margin: 0.5em 0 0.5em;
+  .textField {
+    height: 5em;
   }
-
-  .inputName {
-    font-size: 0.6em;
-    margin: 2.2em 0 2.3em;
-  }
-
   .edit {
     background-color: icon !important;
   }
