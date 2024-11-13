@@ -139,10 +139,22 @@ const selectedGroup = ref(null);
 
 function openGroupPopup(pluginGroup) {
   selectedGroup.value = pluginGroup;
+  // Delay adding the event listener to prevent immediate closing due to initial click
+  setTimeout(() => {
+    document.addEventListener('click', handleOutsideClick);
+  }, 0);
 }
 
 function closeGroupPopup() {
   selectedGroup.value = null;
+  document.removeEventListener('click', handleOutsideClick);
+}
+
+function handleOutsideClick(event) {
+  const popupElement = document.querySelector('.popup');
+  if (popupElement && !popupElement.contains(event.target)) {
+    closeGroupPopup();
+  }
 }
 
 const syncEditStore = (normalPlugins: PluginModel[]) => {
