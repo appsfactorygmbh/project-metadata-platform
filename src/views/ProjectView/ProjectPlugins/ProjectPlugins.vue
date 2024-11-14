@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!loading" class="container">
+    <div v-if="!loading" class="container" :class="{ blur: selectedGroup }">
       <div v-for="plugin in groupedPlugins" :key="plugin.id" class="plugins">
         <PluginComponent
           v-if="!plugin.isGroup"
@@ -53,26 +53,28 @@
     </a-card>
 
     <!-- Popup to display plugins in the group -->
-    <div v-if="selectedGroup" class="popup">
-      <a-card class="group-popup">
-        <h3>Plugins in {{ selectedGroup.pluginName }}</h3>
-        <div class="plugin-grid">
-          <PluginComponent
-            v-for="plugin in selectedGroup.plugins"
-            :key="plugin.id"
-            :id="plugin.id"
-            :plugin-name="plugin.pluginName"
-            :display-name="plugin.displayName"
-            :url="plugin.url"
-            :is-loading="loading"
-            :is-editing="isEditing"
-            :edit-key="plugin.editKey"
-            :is-deleted="false"
-          ></PluginComponent>
-        </div>
-        <a-button @click="closeGroupPopup" style="margin-top: 25px;">Close</a-button>
-      </a-card>
-    </div>
+    <transition name="fade-popup">
+      <div v-if="selectedGroup" class="popup">
+        <a-card class="group-popup">
+          <h3>Plugins in {{ selectedGroup.pluginName }}</h3>
+          <div class="plugin-grid">
+            <PluginComponent
+              v-for="plugin in selectedGroup.plugins"
+              :key="plugin.id"
+              :id="plugin.id"
+              :plugin-name="plugin.pluginName"
+              :display-name="plugin.displayName"
+              :url="plugin.url"
+              :is-loading="loading"
+              :is-editing="isEditing"
+              :edit-key="plugin.editKey"
+              :is-deleted="false"
+            ></PluginComponent>
+          </div>
+          <a-button @click="closeGroupPopup" style="margin-top: 25px;">Close</a-button>
+        </a-card>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -274,6 +276,8 @@ onMounted(async () => {
   background: white;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
 }
 .group-popup {
   display: flex;
@@ -281,6 +285,20 @@ onMounted(async () => {
   align-items: center;
   text-align: center;
 }
+
+.blur {
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+.fade-popup-enter-active, .fade-popup-leave-active {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+.fade-popup-enter-from, .fade-popup-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
 .textContainer {
   font-family: Manrope, serif;
   display: flex;
