@@ -56,6 +56,7 @@ declare module 'vue' {
     FloatingButtonGroup: typeof import('./../src/components/Button/FloatingButtonGroup.vue')['default']
     FormModal: typeof import('./../src/components/Modal/FormModal.vue')['default']
     HelloWorld: typeof import('./../src/components/HelloWorld.vue')['default']
+    LogsEntry: typeof import('./../src/components/Logs/Own/LogsEntry.vue')['default']
     MenuButtons: typeof import('./../src/components/MenuButtons/MenuButtons.vue')['default']
     NameInputTextField: typeof import('./../src/components/EditableTextField/InputFields/NameInputTextField.vue')['default']
     PluginComponent: typeof import('./../src/components/Plugin/PluginComponent.vue')['default']
@@ -64,6 +65,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
     SearchBar: typeof import('./../src/components/Searchbar/SearchBar.vue')['default']
+    TimeLine: typeof import('./../src/components/Logs/Own/TimeLine.vue')['default']
     UsernameInputTextField: typeof import('./../src/components/EditableTextField/InputFields/UsernameInputTextField.vue')['default']
   }
 }

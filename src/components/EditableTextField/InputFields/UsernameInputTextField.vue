@@ -73,7 +73,7 @@
 </script>
 
 <template>
-  <a-form ref="formRef" :model="dynamicValidateForm">
+  <a-form ref="formRef" :model="dynamicValidateForm" class="form">
     <a-form-item :rules="rulesRef.username" name="username" class="formItem">
       <a-input
         v-model:value="dynamicValidateForm.username"
@@ -88,4 +88,5 @@
   .formItem {
     margin: 0;
   }
+
 </style>

@@ -15,7 +15,7 @@
 
   const router = useRouter();
   const userStore = inject(userStoreSymbol)!;
-  const { setUserId } = useUserRouting();
+  const { routerUserId, setUserId } = useUserRouting();
   const { getIsLoadingUsers, getIsLoading, getUser, getMe } =
     storeToRefs(userStore);
   const { isEditing, startEditing, stopEditing } = useEditing('isEditingName');
@@ -31,9 +31,14 @@
   const openModal = () => {
     isConfirmModalOpen.value = true;
   };
-  const clonseModal = () => {
+  const closeModal = () => {
     isConfirmModalOpen.value = false;
   };
+
+  watch(routerUserId , () => {
+    userStore.fetchUser(routerUserId.value)
+  })
+
   //Button for adding new User
   const buttons: FloatButtonModel[] = [
     {
@@ -68,6 +73,7 @@
     await nameFormStore.submit();
     nameFormStore.resetFields();
     stopEditing();
+    userStore.fetchUser(user.value!.id)
   };
 
   const cancleNameEdit = () => {
@@ -82,7 +88,7 @@
     title="Delete confirm"
     message="Are you sure you want to delete this user?"
     @confirm="deleteUser"
-    @cancel="clonseModal"
+    @cancel="closeModal"
     @update:is-open="isConfirmModalOpen = $event"
   />
   <div class="panel">
@@ -211,5 +217,8 @@
   }
   .edit {
     background-color: icon !important;
+  }
+  .panel{
+    overflow-y: auto
   }
 </style>

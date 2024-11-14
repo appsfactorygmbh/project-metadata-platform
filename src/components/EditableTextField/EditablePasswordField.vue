@@ -117,7 +117,7 @@
       {
         required: true,
         message:
-          'Please insert a Password, which has upper/lower case letters, special characters, a digit and at least 8 characters.',
+          'Please insert a Password, that meets the requirements',
         validator: validatePassword,
         trigger: 'change',
         type: 'string',
@@ -149,7 +149,7 @@
     <label class="label">{{ label }}:</label>
     <template v-if="!isLoading">
       <p v-if="!isEditing" class="text">{{ value }}</p>
-      <a-form v-else ref="formRef" :model="dynamicValidateForm">
+      <a-form v-else ref="formRef" :model="dynamicValidateForm" class="form">
         <a-form-item
           name="currentPassword"
           class="formItem"
@@ -159,6 +159,7 @@
           <a-input
             id="inputCreateUserName"
             v-model:value="dynamicValidateForm.currentPassword"
+            type="password"
             placeholder="Enter your current password"
             :rules="rulesRef.currentPassword"
           >
@@ -173,6 +174,7 @@
           <a-input
             id="inputCreateUserName"
             v-model:value="dynamicValidateForm.newPassword"
+            type="password"
             placeholder="Enter your new password"
             :rules="rulesRef.newPassword"
           >
@@ -183,10 +185,11 @@
           class="lastFormItem"
           :whitespace="true"
           :rules="rulesRef.confirmPassword"
-        >
+          >
           <a-input
             id="inputCreateUserName"
             v-model:value="dynamicValidateForm.confirmPassword"
+            type="password"
             placeholder="Confirm your new password"
             :rules="rulesRef.confirmPassword"
             class="password"
@@ -265,10 +268,14 @@
   }
 
   .formItem {
-    margin-bottom: 1em;
+    margin-bottom: 2em;
   }
 
   .lastFormItem {
     margin: 0;
+  }
+
+  .form{
+    max-width: 400px;
   }
 </style>
