@@ -18,6 +18,10 @@
       type: String,
       required: true,
     },
+    default: {
+      type: String,
+      required: true
+    }
   });
 
   type FormType = {
@@ -37,7 +41,7 @@
   };
 
   const dynamicValidateForm = reactive<FormType>({
-    email: '',
+    email: props.default,
   });
 
   const rulesRef = reactive<RulesObject<FormType>>({

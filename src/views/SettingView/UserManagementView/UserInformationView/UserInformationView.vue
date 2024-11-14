@@ -65,7 +65,7 @@
     if (!user.value) return;
     await userService.deleteUser(user.value?.id);
     await userStore.fetchUsers();
-    const firstId = userStore.getUsers[0].id;
+    const firstId: number = userStore.getUsers[0].id;
     setUserId(firstId);
   };
 
@@ -105,6 +105,7 @@
           :form-store="nameFormStore"
           :placeholder="user?.name ?? ''"
           :user-id="user?.id ?? -1"
+          :default="user?.name ?? ''"
           class="nameInput"
         />
         <EditButtons
