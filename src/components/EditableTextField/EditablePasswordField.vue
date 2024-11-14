@@ -143,7 +143,8 @@
     newPassword: [
       {
         required: true,
-        message: 'Please enter a Password, which has upper/lower case letters, special characters, a digit and at least 8 characters.',
+        message:
+          'Please enter a Password, which has upper/lower case letters, special characters, a digit and at least 8 characters.',
         validator: validatePassword,
         trigger: 'change',
         type: 'string',

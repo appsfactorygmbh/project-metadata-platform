@@ -20,8 +20,8 @@
     },
     default: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   });
 
   type FormType = {
