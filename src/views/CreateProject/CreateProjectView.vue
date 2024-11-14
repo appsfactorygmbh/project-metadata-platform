@@ -1,9 +1,9 @@
-<script lang="ts" setup>
+<script setup lang="ts">
   import { computed, inject, ref, watch } from 'vue';
-  import { PlusOutlined } from '@ant-design/icons-vue';
   import {
     BankOutlined,
     FontColorsOutlined,
+    PlusOutlined,
     ShoppingOutlined,
     TeamOutlined,
     UserOutlined,
@@ -15,14 +15,15 @@
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
 
   const open = ref<boolean>(false);
+
+  // Formular- und Zustandskonfiguration
   const formRef = ref();
   const labelCol = { style: { width: '150px' } };
   const wrapperCol = { span: 14 };
   const cancelFetch = ref<boolean>();
 
-  // TableStore to refetch Table after Project was added
+  // TableStore für das Aktualisieren der Tabelle nach Hinzufügen eines Projekts
   const projectsStore = inject(projectsStoreSymbol);
-
   const isAdding = computed(() => projectsStore?.getIsLoadingAdd);
   const fetchError = ref<boolean>(false);
 
@@ -33,6 +34,7 @@
     department: '',
     clientName: '',
   });
+
   const validateMessages = {
     required: 'Please enter valid input.',
     types: {
@@ -58,12 +60,13 @@
     open.value = true;
   };
 
+  // Modal zurücksetzen
   const resetModal = () => {
     formRef.value.resetFields();
     fetchError.value = false;
   };
 
-  // checks for correct input
+  // Eingaben validieren und dann absenden
   const handleOk = () => {
     cancelFetch.value = false;
     formRef.value
@@ -76,11 +79,10 @@
       });
   };
 
-  // sends PUT request to the backend
+  // Projekt anlegen und nach erfolgreicher Validierung Modal schließen
   const submit = async () => {
-    // wait for project creation and checks whether it has been created correctly
     watch(isAdding, (newVal) => {
-      if (newVal == false) {
+      if (newVal === false) {
         if (projectsStore?.getAddedSuccessfully) {
           projectsStore.fetchProjects();
           fetchError.value = false;
@@ -108,6 +110,7 @@
   <div>
     <FloatingButton :button="button" />
 
+    <!-- Modal für die Projekterstellung -->
     <a-modal
       v-model:open="open"
       width="400px"
@@ -128,7 +131,6 @@
           :rules="[{ required: true, whitespace: true }]"
           class="column"
           :no-style="true"
-          :whitespace="true"
         >
           <a-input
             v-model:value="formState.projectName"
@@ -200,7 +202,7 @@
             </template>
           </a-input>
         </a-form-item>
-        <!--shows error if the PUT request failed-->
+        <!-- Error-Meldung bei Fehlschlag -->
         <a-alert
           v-if="fetchError"
           message="Failed to create Project"

@@ -17,6 +17,7 @@
   );
   const usersData = computed(() => getUsers.value);
   const routerUser = computed(() => routerUserId.value);
+  userStore.fetchMe(); // fetch me for information
 
   watch(
     () => routerUser.value,

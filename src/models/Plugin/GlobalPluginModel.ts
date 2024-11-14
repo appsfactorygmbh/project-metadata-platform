@@ -1,7 +1,7 @@
 export type GlobalPluginModel = {
   id: number;
   name: string;
-  archived: boolean;
+  isArchived: boolean;
   keys?: GlobalPluginKey[];
 };
 

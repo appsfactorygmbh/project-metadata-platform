@@ -9,14 +9,11 @@ import {
 } from '@/store/injectionSymbols';
 import { useProjectEditStore, useProjectStore } from '@/store';
 import router from '@/router';
-
-const testData = {
-  projectName: 'Heute Show',
-  department: 'IT',
-  clientName: 'ZDF',
-  businessUnit: 'BU Health',
-  teamNumber: 42,
-};
+import {
+  DeleteOutlined,
+  EditOutlined,
+  UndoOutlined,
+} from '@ant-design/icons-vue';
 
 describe('ProjectInformation.vue', () => {
   beforeEach(() => {
@@ -24,6 +21,14 @@ describe('ProjectInformation.vue', () => {
   });
 
   it('renders the project information correctly', async () => {
+    const testData = {
+      projectName: 'Heute Show',
+      department: 'IT',
+      clientName: 'ZDF',
+      businessUnit: 'BU Health',
+      teamNumber: 42,
+    };
+
     const wrapper = mount(ProjectInformation, {
       plugins: [
         createTestingPinia({
@@ -58,45 +63,64 @@ describe('ProjectInformation.vue', () => {
   });
 
   it('opens the confirmation modal when DeleteOutlined button is clicked', async () => {
-    const wrapper = mount(ProjectInformation, {
-      plugins: [
-        createTestingPinia({
-          stubActions: true,
-          initialState: {
-            project: {
-              project: { ...testData, isArchived: false },
+    it('doesnt render the edit button, but the reactivate button, when archived', async () => {
+      const testData = {
+        projectName: 'Heute Show',
+        department: 'IT',
+        clientName: 'ZDF',
+        businessUnit: 'BU Health',
+        teamNumber: 42,
+        isArchived: true,
+      };
+
+      const wrapper = mount(ProjectInformation, {
+        plugins: [
+          createTestingPinia({
+            stubActions: true,
+            initialState: {
+              project: {
+                project: { ...testData, isArchived: false },
+
+                project: { ...testData, isArchived: true },
+              },
+            },
+          }),
+        ],
+        global: {
+          stubs: {
+            PluginView: {
+              template: '<span />',
             },
           },
-        }),
-      ],
-      global: {
-        stubs: {
-          PluginView: {
-            template: '<span />',
+          plugins: [router],
+          provide: {
+            [projectEditStoreSymbol as symbol]: useProjectEditStore(),
+            [projectsStoreSymbol as symbol]: useProjectStore(),
           },
         },
-        plugins: [router],
-        provide: {
-          [projectEditStoreSymbol as symbol]: useProjectEditStore(),
-          [projectsStoreSymbol as symbol]: useProjectStore(),
-        },
-      },
+      });
+
+      await flushPromises();
+
+      // Confirm Modal sollte zunächst geschlossen sein
+      expect(
+        wrapper.findComponent({ name: 'ConfirmAction' }).props('isOpen'),
+      ).toBe(false);
+
+      // Delete Button finden und klicken
+      await wrapper.find('.button .anticon-delete').trigger('click');
+      await flushPromises();
+
+      // Erwartung: Confirm Modal ist nun geöffnet
+      expect(
+        wrapper.findComponent({ name: 'ConfirmAction' }).props('isOpen'),
+      ).toBe(true);
+
+      await flushPromises();
+
+      expect(wrapper.findComponent(EditOutlined).exists()).toBeFalsy();
+      expect(wrapper.findComponent(UndoOutlined).exists()).toBeTruthy();
+      expect(wrapper.findComponent(DeleteOutlined).exists()).toBeFalsy();
     });
-
-    await flushPromises();
-
-    // Confirm Modal sollte zunächst geschlossen sein
-    expect(
-      wrapper.findComponent({ name: 'ConfirmAction' }).props('isOpen'),
-    ).toBe(false);
-
-    // Delete Button finden und klicken
-    await wrapper.find('.button .anticon-delete').trigger('click');
-    await flushPromises();
-
-    // Erwartung: Confirm Modal ist nun geöffnet
-    expect(
-      wrapper.findComponent({ name: 'ConfirmAction' }).props('isOpen'),
-    ).toBe(true);
   });
 });

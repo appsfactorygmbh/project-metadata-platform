@@ -6,7 +6,7 @@
     item-layout="horizontal"
     :data-source="[
       ...(globalPluginsStore?.getGlobalPlugins.filter(
-        (item) => !item.archived,
+        (item) => !item.isArchived,
       ) || []),
     ]"
     :loading="isLoading"
@@ -125,8 +125,12 @@
    * @param pluginId Id of the plugin that should be deleted
    */
   const handleDelete = async (pluginId: number) => {
+    console.log(
+      globalPluginsStore?.getGlobalPlugins.filter((item) => !item.isArchived),
+    );
+
     pluginDeleting.value.push(pluginId);
-    await globalPluginsStore?.deleteGlobalPlugin(pluginId);
+    await globalPluginsStore?.archiveGlobalPlugin(pluginId);
     const index: number = pluginDeleting.value?.indexOf(pluginId);
     pluginDeleting.value.splice(index, 1);
   };

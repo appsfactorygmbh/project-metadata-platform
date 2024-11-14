@@ -66,11 +66,14 @@ export const useGlobalPluginsStore = defineStore('globalPlugin', {
       return this.globalPlugins.find((plugin) => plugin.id === pluginId);
     },
 
-    async deleteGlobalPlugin(pluginId: number) {
+    async archiveGlobalPlugin(pluginId: number) {
+      console.log('deleting', pluginId);
       try {
         this.setLoadingDelete(true);
         this.setRemovedSuccessfully(false);
-        const response = await globalPluginService.removeGlobalPlugin(pluginId);
+        const response = await globalPluginService.archiveGlobalPlugin(
+          pluginId,
+        );
         if (response && response?.ok) {
           this.setRemovedSuccessfully(true);
           this.fetchGlobalPlugins();

@@ -1,11 +1,15 @@
 <script lang="ts" setup>
   import { computed, inject, onMounted, ref, toRaw } from 'vue';
   import {
+    pluginStoreSymbol,
     projectEditStoreSymbol,
     projectsStoreSymbol,
   } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
-  import type { DetailedProjectModel } from '@/models/Project';
+  import type {
+    DetailedProjectModel,
+    UpdateProjectModel,
+  } from '@/models/Project';
   import type { ComputedRef } from 'vue';
   import {
     DeleteOutlined,
@@ -15,9 +19,12 @@
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
+  import { useProjectRouting } from '@/utils/hooks';
 
   const projectsStore = inject(projectsStoreSymbol)!;
   const projectEditStore = inject(projectEditStoreSymbol)!;
+  const pluginStore = inject(pluginStoreSymbol)!;
+  const { setProjectId } = useProjectRouting();
 
   const editingClass = computed(() => ({
     'editing-mode': isEditing.value,
@@ -77,12 +84,6 @@
     }
   };
 
-  const reactivateProject = async () => {
-    const currentProject = projectsStore.getProject!;
-    const projectId = currentProject.id;
-    await projectsStore.activateProject(currentProject, projectId);
-  };
-
   const projectData = {
     projectName: ref<string>(''),
     businessUnit: ref<string>(''),
@@ -132,9 +133,17 @@
     isModalOpen.value = true;
   };
 
+  const getNextActiveProject = (currentProjectId: number): number => {
+    const projects = projectsStore.getProjects;
+    const nextProject = projects.find((project) => project.isArchived == false);
+    if (!nextProject) return currentProjectId;
+    return nextProject.id;
+  };
+
   const confirmArchive = async () => {
     const projectID = projectsStore?.getProject?.id;
-    const projectData = { ...projectsStore?.getProject, isArchived: true };
+    const projectData = projectsStore?.getProject as UpdateProjectModel;
+    projectData.pluginList = pluginStore?.getPlugins;
 
     if (projectID) {
       try {
@@ -144,8 +153,21 @@
         }
       } finally {
         isModalOpen.value = false;
+        const newProjectId = getNextActiveProject(projectID);
+        setProjectId(newProjectId);
+        await projectsStore?.fetchProject(newProjectId);
+        await pluginStore?.fetchPlugins(newProjectId);
       }
     }
+  };
+
+  const reactivateProject = async () => {
+    const currentProject = projectsStore.getProject! as UpdateProjectModel;
+    const projectId = projectsStore.getProject?.id;
+    currentProject.pluginList = pluginStore.getPlugins;
+
+    await projectsStore.activateProject(currentProject, projectId!);
+    await projectsStore.fetchProjects();
   };
 </script>
 
@@ -182,14 +204,22 @@
             <template #icon><UndoOutlined class="icon" /></template>
           </a-button>
         </a-tooltip>
-        <a-button
-          class="button"
-          ghost
-          style="margin-left: 10px"
-          @click="handleArchive"
+        <a-tooltip
+          v-if="!projectsStore.getProject?.isArchived"
+          position="left"
+          title="Click here to archive the project"
+          style="padding-left: 0; padding-right: 0"
         >
-          <template #icon><DeleteOutlined class="icon" /></template>
-        </a-button>
+          <a-button
+            class="button"
+            ghost
+            style="margin-left: 10px"
+            @click="handleArchive"
+          >
+            <template #icon><DeleteOutlined class="icon" /></template>
+          </a-button>
+        </a-tooltip>
+
         <ConfirmAction
           :is-open="isModalOpen"
           title="Archive Project"

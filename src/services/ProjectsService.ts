@@ -88,7 +88,7 @@ class ProjectsService extends ApiService {
   ): Promise<Response | null> => {
     projectData.isArchived = true;
     try {
-      const response = this.updateProject(projectData, id);
+      const response = await this.updateProject(projectData, id);
       return response;
     } catch (error) {
       console.error('Failed to archive Project via PUT Request: ', error);
@@ -102,7 +102,7 @@ class ProjectsService extends ApiService {
   ): Promise<Response | null> => {
     projectData.isArchived = false;
     try {
-      const response = this.updateProject(projectData, id);
+      const response = await this.updateProject(projectData, id);
       return response;
     } catch (error) {
       console.error('Failed to activate Project via PUT Request: ', error);
