@@ -2,10 +2,12 @@
   import { useEditing } from '@/utils/hooks/useEditing';
   import { defineProps, ref } from 'vue';
   import { useFormStore } from '@/components/Form';
-  import { reactive } from 'vue';
+  import { reactive, toRaw, inject } from 'vue';
   import type { PropType } from 'vue';
-  import type { RulesObject } from '../Form/types';
+  import type { FormSubmitType, RulesObject } from '../Form/types';
   import type { Rule } from 'ant-design-vue/es/form';
+import { userStoreSymbol } from '@/store/injectionSymbols';
+import useNotification from 'ant-design-vue/es/notification/useNotification';
 
   type EditPasswordFormData = {
     currentPassword: string;
@@ -13,7 +15,8 @@
     confirmPassword: string;
   };
 
-  const formStore = useFormStore('createUserForm');
+  const formStore = useFormStore('patchPasswordForm');
+  const userStore = inject(userStoreSymbol)!
 
   const props = defineProps({
     value: {
@@ -36,6 +39,10 @@
       type: String,
       required: true,
     },
+    userId: {
+      type: Number,
+      required: true
+    }
   });
 
   const fieldValue = ref('');
@@ -51,11 +58,31 @@
     props.isEditingKey,
   );
 
+  const [notificationApi, contextHolder] = useNotification()
+
+  const onSubmit:FormSubmitType = (fields) => {
+    try {
+      const password = {
+        password: toRaw(fields).newPassword,
+      };
+      userStore?.patchUser(props.userId, password);
+    } catch (error) {
+      notificationApi.error({
+        message: 'An error occurred. The user could not be created',
+      });
+      console.log('Error creating user:', error);
+    } finally {
+      notificationApi.success({
+        message: 'Password updated',
+      });
+    }
+  }
+
   const safeEdits = async () => {
-    await formStore.submit();
-    formStore.resetFields();
-    stopEditing();
-  };
+    await formStore.submit()
+    formStore.resetFields()
+    stopEditing()
+  }
 
   const cancleEdit = () => {
     formStore.resetFields();
@@ -133,12 +160,14 @@
       },
     ],
   });
-  // formStore.setOnSubmit()
+
+  formStore.setOnSubmit(onSubmit)
   formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
 </script>
 
 <template>
+  <contextHolder></contextHolder>
   <a-card
     :body-style="{
       display: 'flex',
@@ -201,7 +230,7 @@
       <EditButtons
         :is-editing="isEditing"
         :is-loading="isLoading"
-        :safe-disabled="isLoading"
+        :safe-disabled="dynamicValidateForm.confirmPassword == '' || dynamicValidateForm.currentPassword == '' || dynamicValidateForm.newPassword == ''"
         @cancle-edit="cancleEdit"
         @safe-edits="safeEdits"
         @start-editing="startEditing"

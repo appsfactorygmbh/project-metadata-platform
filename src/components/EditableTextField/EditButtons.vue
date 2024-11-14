@@ -4,7 +4,7 @@
     CloseOutlined,
     EditOutlined,
   } from '@ant-design/icons-vue';
-  defineProps({
+  const props = defineProps({
     isEditing: {
       type: Boolean,
       required: true,
@@ -29,7 +29,7 @@
     <EditOutlined class="icon" />
   </a-button>
   <div v-else class="buttonGroup">
-    <a-button class="check button" @click="emit('safeEdits')">
+    <a-button class="check button" @click="emit('safeEdits')" :disabled="props.safeDisabled">
       <CheckOutlined class="icon" />
     </a-button>
     <a-button class="abort button" @click="emit('cancleEdit')">

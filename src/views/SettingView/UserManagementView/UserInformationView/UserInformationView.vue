@@ -188,6 +188,7 @@
     height: auto;
     flex-direction: column;
     flex-wrap: wrap;
+    margin-bottom: 100px
   }
 
   .avatar {
@@ -219,6 +220,8 @@
     background-color: icon !important;
   }
   .panel{
-    overflow-y: auto
+    position: relative;
+    max-height: 100vh; /* Set a maximum height */
+    overflow-y: auto; /* Enable vertical scrolling */
   }
 </style>
