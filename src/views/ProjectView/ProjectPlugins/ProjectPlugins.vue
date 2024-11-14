@@ -16,9 +16,9 @@
 
         <GroupedCard
           v-else
-          :pluginCount="plugin.plugins.length"
-          :displayName="plugin.displayName"
-          :faviconUrl="plugin.faviconUrl"
+          :plugin-count="plugin.plugins.length"
+          :display-name="plugin.displayName"
+          :favicon-url="plugin.faviconUrl"
           @open="openGroupPopup(plugin)"
         />
       </div>
@@ -43,9 +43,9 @@
     <transition name="fade-popup">
       <Popup
         v-if="selectedGroup"
-        :selectedGroup="selectedGroup"
+        :selected-group="selectedGroup"
         :loading="loading"
-        :isEditing="isEditing"
+        :is-editing="isEditing"
         @close="closeGroupPopup"
       />
     </transition>
@@ -53,175 +53,175 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, ref, toRaw, watch } from 'vue';
-import type { ComputedRef } from 'vue';
-import { PluginComponent } from '@/components/Plugin';
-import { AddPluginCard } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
-import {
-  pluginStoreSymbol,
-  projectEditStoreSymbol,
-  projectsStoreSymbol,
-} from '@/store/injectionSymbols';
-import { useEditing } from '@/utils/hooks/useEditing';
-import type { PluginEditModel, PluginModel } from '@/models/Plugin';
-import { createFaviconURL, cutAfterTLD } from '@/components/Plugin/editURL';
-import GroupedCard from '@/components/GroupedCard/GroupedCard.vue';
-import Popup from '@/components/Popup/Popup.vue';
+  import { computed, inject, onMounted, ref, toRaw, watch } from 'vue';
+  import type { ComputedRef } from 'vue';
+  import { PluginComponent } from '@/components/Plugin';
+  import { AddPluginCard } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
+  import {
+    pluginStoreSymbol,
+    projectEditStoreSymbol,
+    projectsStoreSymbol,
+  } from '@/store/injectionSymbols';
+  import { useEditing } from '@/utils/hooks/useEditing';
+  import type { PluginEditModel, PluginModel } from '@/models/Plugin';
+  import { createFaviconURL, cutAfterTLD } from '@/components/Plugin/editURL';
+  import GroupedCard from '@/components/GroupedCard/GroupedCard.vue';
+  import Popup from '@/components/Popup/Popup.vue';
 
-const { isEditing } = useEditing();
+  const { isEditing } = useEditing();
 
-const pluginStore = inject(pluginStoreSymbol)!;
-const projectsStore = inject(projectsStoreSymbol);
-const projectEditStore = inject(projectEditStoreSymbol);
+  const pluginStore = inject(pluginStoreSymbol)!;
+  const projectsStore = inject(projectsStoreSymbol);
+  const projectEditStore = inject(projectEditStoreSymbol);
 
-const plugins = ref<PluginEditModel[]>([]);
-const loading = computed(
-  () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
-);
+  const plugins = ref<PluginEditModel[]>([]);
+  const loading = computed(
+    () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
+  );
 
-// groups plugin of same kind when they are more than 3
-const groupThreshold = 3; // limit for grouping
-const groupedPlugins = computed(() => {
-  const groups = {};
-  plugins.value.forEach((plugin) => {
-    const type = plugin.pluginName;
-    if (!groups[type]) {
-      groups[type] = [];
-    }
-    groups[type].push(plugin);
+  // groups plugin of same kind when they are more than 3
+  const groupThreshold = 3; // limit for grouping
+  const groupedPlugins = computed(() => {
+    const groups = {};
+    plugins.value.forEach((plugin) => {
+      const type = plugin.pluginName;
+      if (!groups[type]) {
+        groups[type] = [];
+      }
+      groups[type].push(plugin);
+    });
+
+    const result = [];
+
+    Object.keys(groups).forEach((type) => {
+      const group = groups[type];
+      if (group.length >= groupThreshold) {
+        const firstPluginUrl = group[0].url;
+        result.push({
+          id: `group-${type}`, // ID of the group
+          pluginName: type, // name of the plugin
+          displayName: type, // type of plugin
+          plugins: group, // list of plugins in the group
+          isGroup: true, // flags that it's a group
+          faviconUrl: createFaviconURL(cutAfterTLD(firstPluginUrl)),
+        });
+      } else {
+        result.push(...group);
+      }
+    });
+    return result;
   });
 
-  const result = [];
+  // selected group for popup
+  const selectedGroup = ref(null);
 
-  Object.keys(groups).forEach((type) => {
-    const group = groups[type];
-    if (group.length >= groupThreshold) {
-      const firstPluginUrl = group[0].url;
-      result.push({
-        id: `group-${type}`, // ID of the group
-        pluginName: type, // name of the plugin
-        displayName: type, // type of plugin
-        plugins: group, // list of plugins in the group
-        isGroup: true, // flags that it's a group
-        faviconUrl: createFaviconURL(cutAfterTLD(firstPluginUrl))
-      });
-    } else {
-      result.push(...group);
-    }
-  });
-  return result;
-});
-
-// selected group for popup
-const selectedGroup = ref(null);
-
-function openGroupPopup(pluginGroup) {
-  selectedGroup.value = pluginGroup;
-  // Delay adding the event listener to prevent immediate closing due to initial click
-  setTimeout(() => {
-    document.addEventListener('click', handleOutsideClick);
-  }, 0);
-}
-
-function closeGroupPopup() {
-  selectedGroup.value = null;
-  document.removeEventListener('click', handleOutsideClick);
-}
-
-function handleOutsideClick(event) {
-  const popupElement = document.querySelector('.popup');
-  if (popupElement && !popupElement.contains(event.target)) {
-    closeGroupPopup();
+  function openGroupPopup(pluginGroup) {
+    selectedGroup.value = pluginGroup;
+    // Delay adding the event listener to prevent immediate closing due to initial click
+    setTimeout(() => {
+      document.addEventListener('click', handleOutsideClick);
+    }, 0);
   }
-}
 
-const syncEditStore = (normalPlugins: PluginModel[]) => {
-  for (let i = 0; i < normalPlugins.length; i++) {
-    const index = projectEditStore?.initialAdd(normalPlugins[i]);
-    if (index !== undefined) {
-      plugins.value[i] = {
-        ...normalPlugins[i],
-        editKey: index,
-        isDeleted: false,
-      };
+  function closeGroupPopup() {
+    selectedGroup.value = null;
+    document.removeEventListener('click', handleOutsideClick);
+  }
+
+  function handleOutsideClick(event) {
+    const popupElement = document.querySelector('.popup');
+    if (popupElement && !popupElement.contains(event.target)) {
+      closeGroupPopup();
     }
   }
-};
 
-function setPlugins(newPlugins: PluginModel[]) {
-  const normalPlugins = toRaw(newPlugins);
-  projectEditStore?.resetPluginChanges();
-  plugins.value = [];
-  syncEditStore(normalPlugins);
-}
-
-watch(
-  () => projectEditStore?.getAddedPlugins.length,
-  (newVal) => {
-    if (newVal && newVal > 0) {
-      const newPlugin = projectEditStore?.getLastAddedPlugin;
-      if (newPlugin) {
-        plugins.value = [...plugins.value, newPlugin];
+  const syncEditStore = (normalPlugins: PluginModel[]) => {
+    for (let i = 0; i < normalPlugins.length; i++) {
+      const index = projectEditStore?.initialAdd(normalPlugins[i]);
+      if (index !== undefined) {
+        plugins.value[i] = {
+          ...normalPlugins[i],
+          editKey: index,
+          isDeleted: false,
+        };
       }
     }
-  },
-);
+  };
 
-watch(
-  () => isEditing.value,
-  (newVal) => {
-    if (!newVal) {
-      projectEditStore?.resetPluginChanges();
-    } else {
-      plugins.value = [];
-      projectEditStore?.resetPluginChanges();
-      syncEditStore(pluginStore.getPlugins);
-    }
-  },
-);
+  function setPlugins(newPlugins: PluginModel[]) {
+    const normalPlugins = toRaw(newPlugins);
+    projectEditStore?.resetPluginChanges();
+    plugins.value = [];
+    syncEditStore(normalPlugins);
+  }
 
-onMounted(async () => {
-  setPlugins(pluginStore.getPlugins);
-
-  const data: ComputedRef<PluginModel[]> = computed(
-    () => pluginStore.getPlugins,
+  watch(
+    () => projectEditStore?.getAddedPlugins.length,
+    (newVal) => {
+      if (newVal && newVal > 0) {
+        const newPlugin = projectEditStore?.getLastAddedPlugin;
+        if (newPlugin) {
+          plugins.value = [...plugins.value, newPlugin];
+        }
+      }
+    },
   );
 
   watch(
-    () => data.value,
-    (newProject) => {
-      setPlugins(newProject);
+    () => isEditing.value,
+    (newVal) => {
+      if (!newVal) {
+        projectEditStore?.resetPluginChanges();
+      } else {
+        plugins.value = [];
+        projectEditStore?.resetPluginChanges();
+        syncEditStore(pluginStore.getPlugins);
+      }
     },
   );
-});
+
+  onMounted(async () => {
+    setPlugins(pluginStore.getPlugins);
+
+    const data: ComputedRef<PluginModel[]> = computed(
+      () => pluginStore.getPlugins,
+    );
+
+    watch(
+      () => data.value,
+      (newProject) => {
+        setPlugins(newProject);
+      },
+    );
+  });
 </script>
 
 <style scoped lang="css">
-/* Styling for the container */
-.container {
-  width: 100%;
-  height: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-  & > * {
-    margin: 10px;
+  /* Styling for the container */
+  .container {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    & > * {
+      margin: 10px;
+    }
   }
-}
-.dummyCard {
-  width: max-content;
-  min-width: 200px;
-  max-width: 100%;
-  box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0 !important;
-  display: flex;
-  flex-direction: column;
-  transition: 0.1s ease-in-out;
-}
-.blur {
-  filter: blur(5px);
-  pointer-events: none;
-}
+  .dummyCard {
+    width: max-content;
+    min-width: 200px;
+    max-width: 100%;
+    box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0 !important;
+    display: flex;
+    flex-direction: column;
+    transition: 0.1s ease-in-out;
+  }
+  .blur {
+    filter: blur(5px);
+    pointer-events: none;
+  }
 </style>

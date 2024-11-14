@@ -6,8 +6,8 @@
         <div class="plugin-grid">
           <PluginComponent
             v-for="plugin in selectedGroup.plugins"
-            :key="plugin.id"
             :id="plugin.id"
+            :key="plugin.id"
             :plugin-name="plugin.pluginName"
             :display-name="plugin.displayName"
             :url="plugin.url"
@@ -17,72 +17,74 @@
             :is-deleted="false"
           ></PluginComponent>
         </div>
-        <a-button @click="closePopup" style="margin-top: 25px;">Close</a-button>
+        <a-button style="margin-top: 25px" @click="closePopup">Close</a-button>
       </a-card>
     </div>
   </transition>
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
-import { PluginComponent } from '@/components/Plugin';
+  import { defineEmits, defineProps } from 'vue';
+  import { PluginComponent } from '@/components/Plugin';
 
-const props = defineProps({
-  selectedGroup: {
-    type: Object,
-    required: true
-  },
-  loading: {
-    type: Boolean,
-    default: false
-  },
-  isEditing: {
-    type: Boolean,
-    default: false
+  const props = defineProps({
+    selectedGroup: {
+      type: Object,
+      required: true,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+    isEditing: {
+      type: Boolean,
+      default: false,
+    },
+  });
+
+  const emit = defineEmits(['close']);
+
+  function closePopup() {
+    emit('close');
   }
-});
-
-const emit = defineEmits(['close']);
-
-function closePopup() {
-  emit('close');
-}
 </script>
 
 <style scoped>
-.popup {
-  position: absolute;
-  width: 80%;
-  margin-top: 10px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
-}
+  .popup {
+    position: absolute;
+    width: 80%;
+    margin-top: 10px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+  }
 
-.group-popup {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-height: 500px;
-}
+  .group-popup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-height: 500px;
+  }
 
-.fade-popup-enter-active,
-.fade-popup-leave-active {
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-.fade-popup-enter-from,
-.fade-popup-leave-to {
-  opacity: 0;
-  transform: scale(0.95);
-}
+  .fade-popup-enter-active,
+  .fade-popup-leave-active {
+    transition:
+      opacity 0.3s ease-in-out,
+      transform 0.3s ease-in-out;
+  }
+  .fade-popup-enter-from,
+  .fade-popup-leave-to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
 
-.plugin-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-}
+  .plugin-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
 </style>

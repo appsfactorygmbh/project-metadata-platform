@@ -1,42 +1,50 @@
 import { describe, it, expect } from 'vitest';
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import GroupedCard from '@/components/GroupedCard/GroupedCard.vue';
 
 describe('GroupedCard.vue', () => {
   it('renders correctly with provided props', () => {
-    const wrapper = shallowMount(GroupedCard, {
+    const wrapper = mount(GroupedCard, {
       props: {
         pluginCount: 5,
         displayName: 'Test Plugin',
-        faviconUrl: 'https://example.com/favicon.ico'
-      }
+        faviconUrl: 'https://example.com/favicon.ico',
+      },
     });
 
-    // Check if it renders the group name correctly
-    expect(wrapper.find('h3').text()).toBe('Test Plugin Plugins');
+    console.log(wrapper.html()); // Debuging to see what is rendered
 
-    // Check if the a-badge component received the correct value of `pluginCount`
+    // Checking if `h3` exists
+    const heading = wrapper.find('h3');
+    expect(heading.exists()).toBe(true);
+    expect(heading.text()).toBe('Test Plugin Plugins');
+
+    // Checking if `a-badge` exists
     const badge = wrapper.findComponent({ name: 'a-badge' });
+    expect(badge.exists()).toBe(true);
     expect(badge.props('count')).toBe(5);
 
-    // Check if the faviconUrl image is set correctly
+    // Checking if `a-avatar` exists
     const avatar = wrapper.findComponent({ name: 'a-avatar' });
+    expect(avatar.exists()).toBe(true);
     expect(avatar.props('src')).toBe('https://example.com/favicon.ico');
   });
 
   it('emits "open" event when clicked', async () => {
-    const wrapper = shallowMount(GroupedCard, {
+    const wrapper = mount(GroupedCard, {
       props: {
         pluginCount: 5,
         displayName: 'Test Plugin',
-        faviconUrl: 'https://example.com/favicon.ico'
-      }
+        faviconUrl: 'https://example.com/favicon.ico',
+      },
     });
 
-    // Clicks at the main div-component
-    await wrapper.trigger('click');
+    // Finding and clicking the clickable element
+    const clickableElement = wrapper.find('.grouped-card');
+    expect(clickableElement.exists()).toBe(true);
+    await clickableElement.trigger('click');
 
-    // Check if the `open` event has been emitted.
+    // Checking if the `open` event was emitted
     expect(wrapper.emitted()).toHaveProperty('open');
   });
 });
