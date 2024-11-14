@@ -1,17 +1,9 @@
 <script lang="ts" setup>
-  import { userStoreSymbol } from '@/store/injectionSymbols';
+  import EmailInputTextField from './InputFields/EmailInputTextField.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import {
-    CheckOutlined,
-    CloseOutlined,
-    EditOutlined,
-  } from '@ant-design/icons-vue';
-  import { defineEmits, defineProps, inject, ref } from 'vue';
+  import { defineProps } from 'vue';
   import type { PropType } from 'vue';
-
-  const userStore = inject(userStoreSymbol)!;
-
-  const emit = defineEmits(['update']);
+  import { useFormStore } from '../Form/FormStore';
 
   const props = defineProps({
     value: {
@@ -34,48 +26,33 @@
       type: String,
       required: true,
     },
+    userId: {
+      type: Number,
+      required: true,
+    },
   });
 
-  const fieldValue = ref('');
+  const emailFormStore = useFormStore('editEmailForm');
+  const usernameFormStore = useFormStore('editUsernameForm');
 
-  watch(
-    () => props.value,
-    (newValue) => {
-      fieldValue.value = newValue;
-    },
-  );
+  const emit = defineEmits(['safedChanges']);
 
   const { isEditing, startEditing, stopEditing } = useEditing(
     props.isEditingKey,
   );
 
-  const saveEdits = () => {
-    stopEditing();
-    emit('update', fieldValue.value);
-  };
-
-  const checkCorrectInput = () => {
-    console.log('type:_ ', props.type);
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-    if (props.type === 'username') {
-      const alreadyExists = userStore.getUsers.some(
-        (user) => user.username === fieldValue.value,
-      );
-      console.log();
-      console.log('already exists: ', alreadyExists);
-      inputState.value =
-        fieldValue.value && !alreadyExists ? undefined : 'error';
-      console.log(inputState.value);
-    }
-
+  const safeEdit = async () => {
     if (props.type === 'email') {
-      inputState.value = emailRegex.test(fieldValue.value)
-        ? undefined
-        : 'error';
+      await emailFormStore.submit();
+      emailFormStore.resetFields();
     }
+    if (props.type === 'username') {
+      await usernameFormStore.submit();
+      usernameFormStore.resetFields();
+    }
+    stopEditing();
+    emit('safedChanges');
   };
-  const inputState = ref<undefined | 'error'>(undefined);
 </script>
 
 <template>
@@ -90,32 +67,29 @@
     <template v-if="!isLoading">
       <p v-if="!isEditing" class="text">{{ value }}</p>
 
-      <a-form v-else name="user" autocomplete="off">
-        <a-form-item class="input">
-          <a-input
-            v-model:value="fieldValue"
-            :placeholder="props.value"
-            :status="inputState"
-            @change="checkCorrectInput"
-          />
-        </a-form-item>
-      </a-form>
-
-      <a-button v-if="!isEditing" class="edit" @click="startEditing">
-        <EditOutlined class="icon" />
-      </a-button>
-      <div v-else class="buttonGroup">
-        <a-button
-          class="edit check"
-          :disabled="inputState === 'error' || inputState === '' ? true : false"
-          @click="saveEdits"
-        >
-          <CheckOutlined class="icon" />
-        </a-button>
-        <a-button class="edit abort" @click="stopEditing">
-          <CloseOutlined class="icon" />
-        </a-button>
+      <div v-else>
+        <EmailInputTextField
+          v-if="props.type === 'email'"
+          :form-store="emailFormStore"
+          :user-id="props.userId"
+          :placeholder="props.value"
+        />
+        <UsernameInputTextField
+          v-if="props.type === 'username'"
+          :form-store="usernameFormStore"
+          :user-id="props.userId"
+          :placeholder="props.value"
+        />
       </div>
+
+      <EditButtons
+        :is-editing="isEditing"
+        :is-loading="isLoading"
+        :safe-disabled="isLoading"
+        @start-editing="startEditing"
+        @cancle-edit="stopEditing"
+        @safe-edits="safeEdit"
+      />
     </template>
     <a-skeleton
       v-else
@@ -127,18 +101,6 @@
 </template>
 
 <style>
-  .edit {
-    border: none;
-    margin: 0.6em 0 0.6em;
-    margin-left: auto;
-    background-color: rgba(0, 0, 0, 0.88);
-    width: 2em;
-    height: 2em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
   .password {
     display: flex;
     margin-bottom: 10px;

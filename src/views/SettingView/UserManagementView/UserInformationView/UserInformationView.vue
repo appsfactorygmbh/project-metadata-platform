@@ -1,5 +1,9 @@
 <script lang="ts" setup>
-  import { DeleteOutlined, UserOutlined } from '@ant-design/icons-vue';
+  import {
+    DeleteOutlined,
+    PropertySafetyFilled,
+    UserOutlined,
+  } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { inject, ref } from 'vue';
@@ -8,15 +12,10 @@
   import { useRouter } from 'vue-router';
   import { userService } from '@/services';
   import { useEditing } from '@/utils/hooks';
-  import {
-    CheckOutlined,
-    CloseOutlined,
-    EditOutlined,
-  } from '@ant-design/icons-vue';
-  import notification from 'ant-design-vue/es/notification';
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useUserRouting } from '@/utils/hooks';
+  import { useFormStore } from '@/components/Form';
 
   const router = useRouter();
   const userStore = inject(userStoreSymbol)!;
@@ -29,7 +28,8 @@
   const isLoading = computed(
     () => getIsLoadingUsers.value || getIsLoading.value,
   );
-  const nameValue = ref<string>('');
+
+  const nameFormStore = useFormStore('editNameForm');
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
@@ -60,48 +60,22 @@
     },
   ];
 
-  const [notificationApi] = notification.useNotification();
-
-  const onSave = async (fieldValue: string, fieldType: string) => {
-    console.log(fieldValue);
-    if (!user.value) return;
-    let reponse;
-    switch (fieldType) {
-      case 'name':
-        reponse = await userService.updateUser(user.value?.id, {
-          name: fieldValue,
-        });
-        break;
-      case 'username':
-        reponse = await userService.updateUser(user.value?.id, {
-          username: fieldValue,
-        });
-        break;
-      case 'email':
-        await userStore.patchUser(user.value.id, {
-          email: fieldValue,
-        });
-        break;
-      case 'password':
-        reponse = await userService.updateUser(user.value?.id, {
-          email: fieldValue,
-        });
-        break;
-    }
-    console.log('res status: ', reponse?.status);
-    if (reponse?.status !== 200 || reponse.status === undefined)
-      notificationApi.error({
-        message: 'An error occurred. Could not update the Userinformation',
-      });
-    userStore.fetchUser(user.value.id);
-    stopEditing();
-  };
-
   const deleteUser = async () => {
     if (!user.value) return;
     await userService.deleteUser(user.value?.id);
     await userStore.fetchUsers();
     setUserId(1);
+  };
+
+  const safeNameEdit = async () => {
+    await nameFormStore.submit();
+    nameFormStore.resetFields();
+    stopEditing();
+  };
+
+  const cancleNameEdit = () => {
+    nameFormStore.resetFields();
+    stopEditing();
   };
 </script>
 
@@ -120,34 +94,24 @@
       <a-avatar :size="150">
         <template #icon><UserOutlined /></template>
       </a-avatar>
-      <div v-if="!isLoading" class="name">
-        <p v-if="!isEditing" class="text">{{ user?.name ?? '' }}</p>
+      <div v-if="!isLoading" class="nameContainer">
+        <p v-if="!isEditing" class="text name">{{ user?.name ?? '' }}</p>
 
-        <a-form v-else name="user" autocomplete="off">
-          <a-form-item class="inputName">
-            <a-input v-model:value="nameValue" type="text" />
-          </a-form-item>
-        </a-form>
-
-        <a-button v-if="!isEditing" class="edit" @click="startEditing">
-          <EditOutlined class="icon" />
-        </a-button>
-        <div v-else class="buttonGroup">
-          <a-button
-            class="edit check"
-            :disabled="nameValue === '' ? true : false"
-            @click="
-              () => {
-                onSave(nameValue, 'name');
-              }
-            "
-          >
-            <CheckOutlined class="icon" />
-          </a-button>
-          <a-button class="edit abort" @click="stopEditing">
-            <CloseOutlined class="icon" />
-          </a-button>
-        </div>
+        <NameInputTextField
+          v-else
+          :form-store="nameFormStore"
+          :placeholder="user?.name ?? ''"
+          :user-id="user?.id ?? -1"
+          class="nameInput"
+        />
+        <EditButtons
+          :is-editing="isEditing"
+          :is-loading="isLoading"
+          :safe-disabled="isLoading"
+          @start-editing="startEditing"
+          @cancle-edit="cancleNameEdit"
+          @safe-edits="safeNameEdit"
+        />
       </div>
       <a-skeleton v-else active :paragraph="false" style="width: 10em" />
     </a-flex>
@@ -164,11 +128,12 @@
         :is-loading="isLoading"
         :label="'Username'"
         :is-editing-key="'isEditingUsername'"
+        :user-id="user ? user.id : -1"
+        type="username"
         class="textField"
-        @update="
-          (fieldValue: string) => {
-            onSave(fieldValue, 'username');
-          }
+        :placeholder="user?.email"
+        @safed-changes="
+          async () => user && (await userStore.fetchUser(user.id))
         "
       />
       <EditableTextField
@@ -178,10 +143,10 @@
         :is-editing-key="'isEditingEmail'"
         class="textField"
         type="email"
-        @update="
-          (fieldValue: string) => {
-            onSave(fieldValue, 'email');
-          }
+        :user-id="user ? user.id : -1"
+        :placeholder="user?.email"
+        @safed-changes="
+          async () => user && (await userStore.fetchUser(user.id))
         "
       />
       <EditablePasswordField
@@ -203,9 +168,11 @@
   .panel {
     min-width: 150px;
   }
-
-  .passwordField {
-    height: max-content;
+  .nameContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
   }
 
   .userInfoBox {
@@ -235,15 +202,13 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    margin-right: 10px;
   }
 
-  .name button {
-    border: none;
-    background: none;
-    color: blue;
-    margin-left: 5px;
-    gap: 10px;
+  .nameInput {
+    margin-right: 10px;
   }
+
   .textField {
     height: 5em;
   }

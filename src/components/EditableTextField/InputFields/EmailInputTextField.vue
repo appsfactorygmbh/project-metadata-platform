@@ -1,0 +1,85 @@
+<script lang="ts" setup>
+  import type { FormSubmitType, RulesObject } from '@/components/Form/types';
+  import { userStoreSymbol } from '@/store/injectionSymbols';
+  import type { Rule } from 'ant-design-vue/es/form';
+  import { type FormStore } from '@/components/Form';
+  import { defineProps, inject, reactive, toRaw, type PropType } from 'vue';
+
+  const props = defineProps({
+    userId: {
+      type: Number,
+      required: true,
+    },
+    formStore: {
+      type: Object as PropType<FormStore>,
+      required: true,
+    },
+    placeholder: {
+      type: String,
+      required: true,
+    },
+  });
+
+  type FormType = {
+    email: string;
+  };
+
+  const userStore = inject(userStoreSymbol)!;
+
+  const validateEmail = (_rule: Rule, value: string) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (value && emailRegex.test(value)) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('Please enter a valid email.');
+    }
+  };
+
+  const dynamicValidateForm = reactive<FormType>({
+    email: '',
+  });
+
+  const rulesRef = reactive<RulesObject<FormType>>({
+    email: [
+      {
+        required: true,
+        validator: validateEmail,
+        message: 'Please enter a valid E-Mail adress',
+        trigger: 'change',
+        type: 'string',
+      },
+    ],
+  });
+
+  const onSubmit: FormSubmitType = (fields) => {
+    const newEmail = {
+      email: toRaw(fields).email,
+    };
+    userStore.patchUser(props.userId, newEmail);
+  };
+
+  props.formStore.setModel(dynamicValidateForm);
+  props.formStore.setRules(rulesRef);
+  props.formStore.setOnSubmit(onSubmit);
+
+  const formRef = ref();
+</script>
+
+<template>
+  <a-form ref="formRef" :model="dynamicValidateForm">
+    <a-form-item :rules="rulesRef.email" name="email" class="formItem">
+      <a-input
+        v-model:value="dynamicValidateForm.email"
+        :placeholder="props.placeholder"
+        :rules="rulesRef.email"
+      ></a-input>
+    </a-form-item>
+  </a-form>
+</template>
+
+<style lang="css" scoped>
+  .formItem {
+    margin: 0;
+  }
+</style>

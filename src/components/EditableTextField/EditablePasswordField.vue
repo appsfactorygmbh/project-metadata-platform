@@ -1,17 +1,14 @@
 <script lang="ts" setup>
   import { useEditing } from '@/utils/hooks/useEditing';
-  import { defineProps, inject, ref } from 'vue';
+  import { defineProps, ref } from 'vue';
   import { useFormStore } from '@/components/Form';
-  import { reactive, toRaw } from 'vue';
+  import { reactive } from 'vue';
   import type { PropType } from 'vue';
   import type { EditPasswordFormData } from './EditPasswordFormData';
-  import { type FormSubmitType } from '@/components/Form';
   import type { RulesObject } from '../Form/types';
   import type { Rule } from 'ant-design-vue/es/form';
-  import { userStoreSymbol } from '@/store/injectionSymbols';
 
   const formStore = useFormStore('createUserForm');
-  const userStore = inject(userStoreSymbol)!;
 
   const props = defineProps({
     value: {
@@ -34,10 +31,6 @@
       type: String,
       required: true,
     },
-    userId: {
-      type: Number,
-      required: true,
-    },
   });
 
   const fieldValue = ref('');
@@ -52,6 +45,17 @@
   const { isEditing, startEditing, stopEditing } = useEditing(
     props.isEditingKey,
   );
+
+  const safeEdits = async () => {
+    await formStore.submit();
+    formStore.resetFields();
+    stopEditing();
+  };
+
+  const cancleEdit = () => {
+    formStore.resetFields();
+    stopEditing();
+  };
 
   const formRef = ref();
 
@@ -124,36 +128,9 @@
       },
     ],
   });
-
-  const onSubmit: FormSubmitType = (fields) => {
-    const newPassword = {
-      password: toRaw(fields).newPassword,
-    };
-    userStore.patchUser(props.userId, newPassword);
-  };
-
-  const resetFields = () => {
-    dynamicValidateForm.currentPassword = '';
-    dynamicValidateForm.newPassword = '';
-    dynamicValidateForm.confirmPassword = '';
-  };
-
+  // formStore.setOnSubmit()
   formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
-  formStore.setOnSubmit(onSubmit);
-
-  const saveChanges = () => {
-    formStore.submit();
-    formStore.resetFields();
-    resetFields();
-    stopEditing();
-  };
-
-  const cancleEdit = () => {
-    formStore.resetFields();
-    resetFields();
-    stopEditing();
-  };
 </script>
 
 <template>
@@ -167,7 +144,7 @@
     <label class="label">{{ label }}:</label>
     <template v-if="!isLoading">
       <p v-if="!isEditing" class="text">{{ value }}</p>
-      <a-form v-else ref="formRef" :model="dynamicValidateForm" class="form">
+      <a-form v-else ref="formRef" :model="dynamicValidateForm">
         <a-form-item
           name="currentPassword"
           class="formItem"
@@ -175,11 +152,10 @@
           :rules="rulesRef.currentPassword"
         >
           <a-input
+            id="inputCreateUserName"
             v-model:value="dynamicValidateForm.currentPassword"
             placeholder="Enter your current password"
             :rules="rulesRef.currentPassword"
-            type="password"
-            class="input"
           >
           </a-input>
         </a-form-item>
@@ -190,10 +166,10 @@
           :rules="rulesRef.newPassword"
         >
           <a-input
+            id="inputCreateUserName"
             v-model:value="dynamicValidateForm.newPassword"
             placeholder="Enter your new password"
             :rules="rulesRef.newPassword"
-            type="password"
           >
           </a-input>
         </a-form-item>
@@ -204,10 +180,10 @@
           :rules="rulesRef.confirmPassword"
         >
           <a-input
+            id="inputCreateUserName"
             v-model:value="dynamicValidateForm.confirmPassword"
             placeholder="Confirm your new password"
             :rules="rulesRef.confirmPassword"
-            type="password"
           >
           </a-input>
         </a-form-item>
@@ -215,11 +191,11 @@
 
       <EditButtons
         :is-editing="isEditing"
-        :safe-disabled="userStore.getIsLoadingUpdate"
-        :is-loading="userStore.getIsLoadingUpdate"
-        @start-editing="startEditing"
+        :is-loading="isLoading"
+        :safe-disabled="isLoading"
         @cancle-edit="cancleEdit"
-        @safe-edits="saveChanges"
+        @safe-edits="safeEdits"
+        @start-editing="startEditing"
       />
     </template>
     <a-skeleton
@@ -229,7 +205,6 @@
       style="margin-left: 1em; width: 10em"
     />
   </a-card>
-  <contextHolder></contextHolder>
 </template>
 
 <style>
@@ -243,6 +218,37 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .password {
+    display: flex;
+    margin-bottom: 10px;
+  }
+
+  .icon {
+    color: white;
+  }
+
+  .info {
+    border: none;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    font-size: 1.3em;
+    font-weight: bold;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+  }
+
+  .ant-card-body {
+    padding: 12px !important;
+  }
+
+  .info label {
+    width: 5em;
+    min-width: 5em;
+    margin-right: 3em;
   }
 
   .input {
