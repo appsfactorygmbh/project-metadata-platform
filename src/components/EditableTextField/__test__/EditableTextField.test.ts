@@ -2,6 +2,10 @@ import { VueWrapper, mount } from '@vue/test-utils';
 import { EditableTextField } from '@/components/EditableTextField';
 import { describe, expect, it, vi } from 'vitest';
 import router from '@/router';
+import { createTestingPinia } from '@pinia/testing';
+import { useUserStore } from '@/store';
+import { createPinia, setActivePinia } from 'pinia';
+import { userStoreSymbol } from '@/store/injectionSymbols';
 
 interface EditableTextFieldInstance {
   value: string;
@@ -11,8 +15,18 @@ interface EditableTextFieldInstance {
 
 describe('EditableTextField', () => {
   const generateWrapper = () => {
+    setActivePinia(createPinia());
+    const userStore = useUserStore();
     return mount(EditableTextField, {
+      plugins: [
+        createTestingPinia({
+          stubActions: true,
+        }),
+      ],
       global: {
+        provide: {
+          [userStoreSymbol as symbol]: userStore,
+        },
         plugins: [router],
       },
       props: {
@@ -20,6 +34,8 @@ describe('EditableTextField', () => {
         label: 'Username',
         isEditingKey: 'isEditingPassword',
         isLoading: false,
+        type: 'username',
+        userId: 100,
       },
     });
   };
@@ -31,7 +47,7 @@ describe('EditableTextField', () => {
 
     expect(wrapper.find('.label').text()).toBe(`Username:`);
     expect(wrapper.find('.text').text()).toBe('Maxmuster1');
-    expect(wrapper.find('.edit').text()).toBe('Edit');
+    expect(wrapper.find('.editButton').exists()).toBe(true);
   });
 
   it('add isEditingPassword to URL when click edit', () => {
@@ -39,7 +55,7 @@ describe('EditableTextField', () => {
       ComponentPublicInstance<EditableTextFieldInstance>
     >;
     const routerPushSpy = vi.spyOn(router, 'push');
-    wrapper.find('button').trigger('click');
+    wrapper.find('.editButton').trigger('click');
 
     const url = routerPushSpy.mock.calls[0][0];
     const queryObject = (url as { query: Record<string, string> }).query;

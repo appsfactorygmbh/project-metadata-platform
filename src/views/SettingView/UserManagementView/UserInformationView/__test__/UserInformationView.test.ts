@@ -28,7 +28,7 @@ describe('UserInformationView.vue', () => {
     return mount(UserInformationView, {
       plugins: [
         createTestingPinia({
-          stubActions: true,
+          stubActions: false,
         }),
       ],
       global: {
@@ -60,15 +60,18 @@ describe('UserInformationView.vue', () => {
   });
 
   it('should show password', () => {
+    userStore.setMe(userData1);
+    userStore.setUser(userData1);
     const wrapper = generateWrapper();
-    const textField = wrapper.find('.password');
+    const textField = wrapper.find('.passwordLabel');
     expect(textField.exists()).toBe(true);
   });
 
   it('should hide password', () => {
-    userStore.setUser(userData2);
+    userStore.setMe(userData2);
+    userStore.setUser(userData1);
     const wrapper = generateWrapper();
-    const textField = wrapper.find('.password');
+    const textField = wrapper.find('.passwordLabel');
     expect(textField.exists()).toBe(false);
   });
 });

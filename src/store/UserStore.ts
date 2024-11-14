@@ -1,5 +1,10 @@
 import { userService } from '@/services/UserService';
-import type { CreateUserModel, UserListModel, UserModel } from '@/models/User';
+import type {
+  CreateUserModel,
+  UpdateUserModel,
+  UserListModel,
+  UserModel,
+} from '@/models/User';
 import { defineStore } from 'pinia';
 
 type StoreState = {
@@ -9,8 +14,10 @@ type StoreState = {
   isLoadingCreate: boolean;
   isLoadingUsers: boolean;
   isLoadingDelete: boolean;
+  isLoadingUpdate: boolean;
   createdSuccessfully: boolean;
   removedSuccessfully: boolean;
+  updatedSuccessfully: boolean;
 };
 
 export const useUserStore = defineStore('user', {
@@ -22,8 +29,10 @@ export const useUserStore = defineStore('user', {
       isLoadingCreate: false,
       isLoadingUsers: false,
       isLoadingDelete: false,
+      isLoadingUpdate: false,
       createdSuccessfully: false,
       removedSuccessfully: false,
+      updatedSuccessfully: false,
     };
   },
   getters: {
@@ -48,11 +57,17 @@ export const useUserStore = defineStore('user', {
     getisLoadingDelete(): boolean {
       return this.isLoadingDelete;
     },
+    getIsLoadingUpdate(): boolean {
+      return this.isLoadingUpdate;
+    },
     getCreatedSuccessfully(): boolean {
       return this.createdSuccessfully;
     },
     getRemovedSuccessfully(): boolean {
       return this.removedSuccessfully;
+    },
+    getUpdatedSuccessfully(): boolean {
+      return this.updatedSuccessfully;
     },
   },
   actions: {
@@ -74,11 +89,17 @@ export const useUserStore = defineStore('user', {
     setIsLoadingDelete(isLoadingDelete: boolean): void {
       this.isLoadingDelete = isLoadingDelete;
     },
+    setIsLoadingUpdate(isLoadingUpdate: boolean): void {
+      this.isLoadingUpdate = isLoadingUpdate;
+    },
     setCreatedSuccessfully(createdSuccessfully: boolean): void {
       this.createdSuccessfully = createdSuccessfully;
     },
     setRemovedSuccessfully(removedSuccessfully: boolean): void {
       this.removedSuccessfully = removedSuccessfully;
+    },
+    setUpdatedSuccessfully(updatedSuccessfully: boolean): void {
+      this.updatedSuccessfully = updatedSuccessfully;
     },
 
     async fetchUsers(): Promise<void> {
@@ -132,6 +153,24 @@ export const useUserStore = defineStore('user', {
         }
       } finally {
         this.setIsLoadingCreate(false);
+      }
+    },
+
+    async patchUser(userId: number, userPatch: UpdateUserModel): Promise<void> {
+      try {
+        this.setIsLoadingUpdate(true);
+        this.setUpdatedSuccessfully(false);
+        const response = await userService.updateUser(userId, userPatch);
+        if (response && response.ok) {
+          this.fetchUsers();
+          this.setUpdatedSuccessfully(true);
+        } else {
+          this.setUpdatedSuccessfully(false);
+        }
+      } catch {
+        this.setUpdatedSuccessfully(false);
+      } finally {
+        this.setIsLoadingUpdate(false);
       }
     },
 

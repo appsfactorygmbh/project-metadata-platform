@@ -1,9 +1,9 @@
 <script lang="ts" setup>
+  import EmailInputTextField from './InputFields/EmailInputTextField.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import { defineEmits, defineProps, ref } from 'vue';
+  import { defineProps } from 'vue';
   import type { PropType } from 'vue';
-
-  const emit = defineEmits(['update']);
+  import { useFormStore } from '../Form/FormStore';
 
   const props = defineProps({
     value: {
@@ -19,29 +19,39 @@
       required: true,
     },
     type: {
-      type: String as PropType<'text' | 'password' | 'email'>,
+      type: String as PropType<'username' | 'email'>,
       default: 'text',
     },
     isEditingKey: {
       type: String,
       required: true,
     },
+    userId: {
+      type: Number,
+      required: true,
+    },
   });
 
-  const confirmPassword = ref<string>('');
-  const fieldValue = ref<string>('');
+  const emailFormStore = useFormStore('editEmailForm');
+  const usernameFormStore = useFormStore('editUsernameForm');
+
+  const emit = defineEmits(['safedChanges']);
+
   const { isEditing, startEditing, stopEditing } = useEditing(
     props.isEditingKey,
   );
-  const passwordsMatch = computed(() => {
-    return fieldValue.value === confirmPassword.value;
-  });
 
-  const onSave = () => {
+  const safeEdit = async () => {
+    if (props.type === 'email') {
+      await emailFormStore.submit();
+      emailFormStore.resetFields();
+    }
+    if (props.type === 'username') {
+      await usernameFormStore.submit();
+      usernameFormStore.resetFields();
+    }
     stopEditing();
-    console.log('Success:', fieldValue.value);
-    emit('update', fieldValue);
-    confirmPassword.value = '';
+    emit('safedChanges');
   };
 </script>
 
@@ -57,38 +67,32 @@
     <template v-if="!isLoading">
       <p v-if="!isEditing" class="text">{{ value }}</p>
 
-      <a-form v-else name="user" autocomplete="off">
-        <a-form-item class="input">
-          <a-input v-model:value="fieldValue" :type="type" />
-        </a-form-item>
-        <a-form-item v-if="type === 'password'" class="input">
-          <a-input
-            v-model:value="confirmPassword"
-            :type="type"
-            placeholder="Confirm Password"
-            style="margin-top: 5px"
-          />
-        </a-form-item>
-        <p
-          v-if="type === 'password' && !passwordsMatch"
-          class="error"
-          style="color: red"
-        >
-          Passwords do not match
-        </p>
-      </a-form>
+      <div v-else>
+        <EmailInputTextField
+          v-if="props.type === 'email'"
+          :form-store="emailFormStore"
+          :user-id="props.userId"
+          :placeholder="props.value"
+          :default="props.value"
+        />
+        <UsernameInputTextField
+          v-if="props.type === 'username'"
+          :form-store="usernameFormStore"
+          :user-id="props.userId"
+          :placeholder="props.value"
+          :default="props.value"
+        />
+      </div>
 
-      <a-button v-if="!isEditing" class="edit" @click="startEditing"
-        >Edit</a-button
-      >
-      <a-button
-        v-else
-        class="edit"
-        html-type="submit"
-        :disabled="!passwordsMatch && type === 'password'"
-        @click="onSave"
-        >Save</a-button
-      >
+      <EditButtons
+        :is-editing="isEditing"
+        :is-loading="isLoading"
+        :safe-disabled="isLoading"
+        class="editButton"
+        @start-editing="startEditing"
+        @cancle-edit="stopEditing"
+        @safe-edits="safeEdit"
+      />
     </template>
     <a-skeleton
       v-else
@@ -100,11 +104,30 @@
 </template>
 
 <style>
-  .edit {
-    border: none;
-    margin: 0.6em 0 0.6em;
-    color: blue;
+  .password {
+    display: flex;
+    margin-bottom: 10px;
+  }
+
+  .check {
+    background-color: #24c223;
+  }
+
+  .abort {
+    background-color: #ff002e;
+  }
+
+  .buttonGroup {
+    display: flex;
+    flex-direction: row;
     margin-left: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+    gap: 10px;
+  }
+
+  .icon {
+    color: white;
   }
 
   .info {
@@ -131,5 +154,8 @@
 
   .input {
     margin: 0 !important;
+  }
+  .text {
+    font-weight: 400;
   }
 </style>
