@@ -177,6 +177,40 @@ export const useProjectStore = defineStore('project', {
         this.setLoadingProject(false);
       }
     },
+
+    async archiveProject(projectData: UpdateProjectModel, id: number) {
+      try {
+        this.setLoadingUpdate(true);
+        this.setUpdatedSuccessfully(false);
+        const response = await projectsService.archiveProject(projectData, id);
+        console.log(response);
+        if (response && response?.ok) {
+          this.setUpdatedSuccessfully(true);
+          await this.fetchProject(id);
+        } else {
+          this.setUpdatedSuccessfully(false);
+        }
+      } finally {
+        this.setLoadingUpdate(false);
+      }
+    },
+
+    async activateProject(projectData: UpdateProjectModel, id: number) {
+      try {
+        this.setLoadingUpdate(true);
+        this.setUpdatedSuccessfully(false);
+        const response = await projectsService.activateProject(projectData, id);
+        console.log(response);
+        if (response && response?.ok) {
+          this.setUpdatedSuccessfully(true);
+          await this.fetchProject(id);
+        } else {
+          this.setUpdatedSuccessfully(false);
+        }
+      } finally {
+        this.setLoadingUpdate(false);
+      }
+    },
   },
 });
 
