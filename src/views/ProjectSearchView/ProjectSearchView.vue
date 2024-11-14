@@ -73,7 +73,6 @@
 
   const FETCHING_METHOD: 'FRONTEND' | 'BACKEND' = import.meta.env
     .VITE_PROJECT_SEARCH_METHOD;
-  console.log('FETCHING_METHOD:', import.meta.env);
 
   watch(
     () => projectsStore?.getProjects,

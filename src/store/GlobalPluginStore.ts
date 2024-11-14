@@ -67,7 +67,6 @@ export const useGlobalPluginsStore = defineStore('globalPlugin', {
     },
 
     async archiveGlobalPlugin(pluginId: number) {
-      console.log('deleting', pluginId);
       try {
         this.setLoadingDelete(true);
         this.setRemovedSuccessfully(false);

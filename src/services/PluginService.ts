@@ -10,7 +10,7 @@ class PluginService extends ApiService {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.log(error);
+      console.error('Error when trying to fetch Plugins' + error);
       return [];
     }
   };

@@ -70,7 +70,7 @@
       notificationApi.error({
         message: 'An error occurred. The user could not be created',
       });
-      console.log('Error creating user:', error);
+      console.error('Error creating user:', error);
     } finally {
       notificationApi.success({
         message: 'Password updated',

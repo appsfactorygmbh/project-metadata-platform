@@ -31,8 +31,6 @@ describe('Popup.vue', () => {
       },
     });
 
-    console.log(wrapper.html()); // Debuging to see what is rendered
-
     // Checking if `h3` exists
     const heading = wrapper.find('h3');
     expect(heading.exists()).toBe(true);

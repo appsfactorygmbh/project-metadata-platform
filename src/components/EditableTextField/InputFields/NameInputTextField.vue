@@ -57,7 +57,6 @@
   });
 
   const onSubmit: FormSubmitType = async (fields) => {
-    console.log(fields);
     const newName = {
       name: toRaw(fields).name,
     };

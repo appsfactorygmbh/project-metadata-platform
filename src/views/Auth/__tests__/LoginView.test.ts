@@ -15,6 +15,13 @@ describe('LoginView.vue', () => {
     );
     wrapper = mount(LoginView, {
       plugins: [router],
+      global: {
+        stubs: {
+          RouterLink: {
+            template: '<span />',
+          },
+        },
+      },
     });
   });
 

@@ -134,7 +134,6 @@
         class="dynamic-delete-button"
         @click="
           () => {
-            console.log(formStore.validateInfos[key.key]);
             removePluginKey(key);
           }
         "

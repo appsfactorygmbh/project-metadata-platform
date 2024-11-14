@@ -112,7 +112,6 @@
       department: departmentInput.value,
       clientName: clientNameInput.value,
     };
-    console.log('project updates: ', updatedProject);
     projectEditStore.updateProjectInformationChanges(updatedProject);
   }
 

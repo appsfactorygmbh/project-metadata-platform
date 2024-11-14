@@ -71,7 +71,7 @@
     }
 
     if (!projectStore?.getProject) {
-      console.log(
+      console.error(
         'Error when trying to get ProjectInformation. getProject is undefined',
       );
       return;
@@ -86,7 +86,6 @@
       clientName: updateProjectInformation?.clientName,
       pluginList: projectEditStore?.getPluginChanges,
     };
-    console.log('updated Project', updatedProject);
     const projectID = computed(() => projectStore?.getProject?.id);
     if (projectID.value) {
       await projectStore?.updateProject(updatedProject, projectID.value);
