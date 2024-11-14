@@ -86,6 +86,7 @@
         :is-editing="isEditing"
         :is-loading="isLoading"
         :safe-disabled="isLoading"
+        class="editButton"
         @start-editing="startEditing"
         @cancle-edit="stopEditing"
         @safe-edits="safeEdit"

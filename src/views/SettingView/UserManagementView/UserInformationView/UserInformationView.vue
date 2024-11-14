@@ -1,9 +1,5 @@
 <script lang="ts" setup>
-  import {
-    DeleteOutlined,
-    PropertySafetyFilled,
-    UserOutlined,
-  } from '@ant-design/icons-vue';
+  import { DeleteOutlined, UserOutlined } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { inject, ref } from 'vue';

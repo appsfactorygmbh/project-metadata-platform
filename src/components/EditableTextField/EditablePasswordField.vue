@@ -4,9 +4,14 @@
   import { useFormStore } from '@/components/Form';
   import { reactive } from 'vue';
   import type { PropType } from 'vue';
-  import type { EditPasswordFormData } from './EditPasswordFormData';
   import type { RulesObject } from '../Form/types';
   import type { Rule } from 'ant-design-vue/es/form';
+
+  type EditPasswordFormData = {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  };
 
   const formStore = useFormStore('createUserForm');
 
@@ -184,6 +189,7 @@
             v-model:value="dynamicValidateForm.confirmPassword"
             placeholder="Confirm your new password"
             :rules="rulesRef.confirmPassword"
+            class="password"
           >
           </a-input>
         </a-form-item>

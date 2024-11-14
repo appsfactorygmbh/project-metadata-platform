@@ -60,15 +60,18 @@ describe('UserInformationView.vue', () => {
   });
 
   it('should show password', () => {
+    userStore.setMe(userData1);
+    userStore.setUser(userData1);
     const wrapper = generateWrapper();
-    const textField = wrapper.find('.password');
+    const textField = wrapper.find('.passwordField');
     expect(textField.exists()).toBe(true);
   });
 
   it('should hide password', () => {
+    userStore.setMe(userData1);
     userStore.setUser(userData2);
     const wrapper = generateWrapper();
-    const textField = wrapper.find('.password');
+    const textField = wrapper.find('.passwordField');
     expect(textField.exists()).toBe(false);
   });
 });
