@@ -84,23 +84,23 @@
   const groupedPlugins = computed(() => {
     const groups = {};
     plugins.value.forEach((plugin) => {
-      const type = plugin.pluginName;
-      if (!groups[type]) {
-        groups[type] = [];
+      const pluginName = plugin.pluginName;
+      if (!groups[pluginName]) {
+        groups[pluginName] = [];
       }
-      groups[type].push(plugin);
+      groups[pluginName].push(plugin);
     });
 
     const result = [];
 
-    Object.keys(groups).forEach((type) => {
-      const group = groups[type];
+    Object.keys(groups).forEach((pluginName) => {
+      const group = groups[pluginName];
       if (group.length >= groupThreshold) {
         const firstPluginUrl = group[0].url;
         result.push({
-          id: `group-${type}`, // ID of the group
-          pluginName: type, // name of the plugin
-          displayName: type, // type of plugin
+          id: `group-${pluginName}`, // ID of the group
+          pluginName: pluginName, // name of the plugin
+          displayName: pluginName, // type of plugin
           plugins: group, // list of plugins in the group
           isGroup: true, // flags that it's a group
           faviconUrl: createFaviconURL(cutAfterTLD(firstPluginUrl)),
