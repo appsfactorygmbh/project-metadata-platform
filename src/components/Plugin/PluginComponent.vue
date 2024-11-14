@@ -14,6 +14,7 @@
     pluginName: {
       type: String,
       required: false,
+      default: '',
     },
     url: {
       type: String,
@@ -208,7 +209,12 @@
       @click="handleClick"
     >
       <!-- Display the favicon image. -->
-      <a-avatar v-if="showFavicon" shape="square" :src="faviconUrl" class="avatar"></a-avatar>
+      <a-avatar
+        v-if="showFavicon"
+        shape="square"
+        :src="faviconUrl"
+        class="avatar"
+      ></a-avatar>
       <!-- Container for plugin name and URL text. -->
       <div class="textContainer">
         <h3>{{ pluginName }}</h3>
