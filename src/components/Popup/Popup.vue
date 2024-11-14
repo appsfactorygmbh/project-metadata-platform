@@ -66,7 +66,6 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    max-height: 500px;
   }
 
   .fade-popup-enter-active,
