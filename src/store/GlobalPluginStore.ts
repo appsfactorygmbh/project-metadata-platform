@@ -71,9 +71,8 @@ export const useGlobalPluginsStore = defineStore('globalPlugin', {
       try {
         this.setLoadingDelete(true);
         this.setRemovedSuccessfully(false);
-        const response = await globalPluginService.archiveGlobalPlugin(
-          pluginId,
-        );
+        const response =
+          await globalPluginService.archiveGlobalPlugin(pluginId);
         if (response && response?.ok) {
           this.setRemovedSuccessfully(true);
           this.fetchGlobalPlugins();
