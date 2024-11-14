@@ -80,7 +80,7 @@
   );
 
   // groups plugin of same kind when they are more than 3
-  const groupThreshold = 3; // limit for grouping
+  const groupThreshold = parseInt(import.meta.env.VITE_GROUP_THRESHOLD) || 3; // limit for grouping
   const groupedPlugins = computed(() => {
     const groups = {};
     plugins.value.forEach((plugin) => {
