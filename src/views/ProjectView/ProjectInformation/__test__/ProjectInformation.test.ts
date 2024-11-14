@@ -63,64 +63,97 @@ describe('ProjectInformation.vue', () => {
   });
 
   it('opens the confirmation modal when DeleteOutlined button is clicked', async () => {
-    it('doesnt render the edit button, but the reactivate button, when archived', async () => {
-      const testData = {
-        projectName: 'Heute Show',
-        department: 'IT',
-        clientName: 'ZDF',
-        businessUnit: 'BU Health',
-        teamNumber: 42,
-        isArchived: true,
-      };
+    const testData = {
+      projectName: 'Heute Show',
+      department: 'IT',
+      clientName: 'ZDF',
+      businessUnit: 'BU Health',
+      teamNumber: 42,
+      isArchived: false,
+    };
 
-      const wrapper = mount(ProjectInformation, {
-        plugins: [
-          createTestingPinia({
-            stubActions: true,
-            initialState: {
-              project: {
-                project: { ...testData, isArchived: false },
-
-                project: { ...testData, isArchived: true },
-              },
-            },
-          }),
-        ],
-        global: {
-          stubs: {
-            PluginView: {
-              template: '<span />',
+    const wrapper = mount(ProjectInformation, {
+      plugins: [
+        createTestingPinia({
+          stubActions: true,
+          initialState: {
+            project: {
+              project: testData,
             },
           },
-          plugins: [router],
-          provide: {
-            [projectEditStoreSymbol as symbol]: useProjectEditStore(),
-            [projectsStoreSymbol as symbol]: useProjectStore(),
+        }),
+      ],
+      global: {
+        stubs: {
+          PluginView: {
+            template: '<span />',
           },
         },
-      });
-
-      await flushPromises();
-
-      // Confirm Modal sollte zunächst geschlossen sein
-      expect(
-        wrapper.findComponent({ name: 'ConfirmAction' }).props('isOpen'),
-      ).toBe(false);
-
-      // Delete Button finden und klicken
-      await wrapper.find('.button .anticon-delete').trigger('click');
-      await flushPromises();
-
-      // Erwartung: Confirm Modal ist nun geöffnet
-      expect(
-        wrapper.findComponent({ name: 'ConfirmAction' }).props('isOpen'),
-      ).toBe(true);
-
-      await flushPromises();
-
-      expect(wrapper.findComponent(EditOutlined).exists()).toBeFalsy();
-      expect(wrapper.findComponent(UndoOutlined).exists()).toBeTruthy();
-      expect(wrapper.findComponent(DeleteOutlined).exists()).toBeFalsy();
+        plugins: [router],
+        provide: {
+          [projectEditStoreSymbol as symbol]: useProjectEditStore(),
+          [projectsStoreSymbol as symbol]: useProjectStore(),
+        },
+      },
     });
+
+    await flushPromises();
+
+    // Confirm Modal sollte zunächst geschlossen sein
+    expect(
+      wrapper.findComponent({ name: 'ConfirmAction' }).props('isOpen'),
+    ).toBe(false);
+
+    // Delete Button finden und klicken
+    await wrapper.find('.button .anticon-delete').trigger('click');
+    await flushPromises();
+
+    // Erwartung: Confirm Modal ist nun geöffnet
+    expect(
+      wrapper.findComponent({ name: 'ConfirmAction' }).props('isOpen'),
+    ).toBe(true);
+  });
+
+  it('does not render the edit button but shows the reactivate button when archived', async () => {
+    const testData = {
+      projectName: 'Deutsche Bahn',
+      department: 'IT',
+      clientName: 'DB',
+      businessUnit: 'DB Rail',
+      teamNumber: 45,
+      isArchived: true,
+    };
+
+    const wrapper = mount(ProjectInformation, {
+      plugins: [
+        createTestingPinia({
+          stubActions: true,
+          initialState: {
+            project: {
+              project: testData,
+            },
+          },
+        }),
+      ],
+      global: {
+        stubs: {
+          PluginView: {
+            template: '<span />',
+          },
+        },
+        plugins: [router],
+        provide: {
+          [projectEditStoreSymbol as symbol]: useProjectEditStore(),
+          [projectsStoreSymbol as symbol]: useProjectStore(),
+        },
+      },
+    });
+
+    await flushPromises();
+
+    // Erwartung: Keine Bearbeitungsschaltfläche, aber die Reaktivierungsschaltfläche
+    expect(wrapper.findComponent(EditOutlined).exists()).toBeFalsy();
+    expect(wrapper.findComponent(UndoOutlined).exists()).toBeTruthy();
+    expect(wrapper.findComponent(DeleteOutlined).exists()).toBeFalsy();
   });
 });
