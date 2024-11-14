@@ -4,7 +4,7 @@
       <div v-for="plugin in groupedPlugins" :key="plugin.id" class="plugins">
         <PluginComponent
           v-if="!plugin.isGroup"
-          :id="plugin.id"
+          :id="Number(plugin.id)"
           :plugin-name="plugin.pluginName"
           :display-name="plugin.displayName"
           :url="plugin.url"
@@ -79,11 +79,22 @@
     () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
   );
 
+  interface GroupedPlugin {
+    id: string | number;
+    pluginName: string;
+    displayName: string;
+    plugins: PluginEditModel[];
+    isGroup: boolean;
+    faviconUrl: string;
+    url: string;
+    editKey: number;
+  }
+
   // groups plugin of same kind when they are more than 3
   const groupThreshold = parseInt(import.meta.env.VITE_GROUP_THRESHOLD) || 3; // limit for grouping
   const groupedPlugins = computed(() => {
-    const groups = {};
-    plugins.value.forEach((plugin) => {
+    const groups: Record<string, PluginEditModel[]> = {};
+    plugins.value.forEach((plugin: PluginEditModel) => {
       const pluginName = plugin.pluginName;
       if (!groups[pluginName]) {
         groups[pluginName] = [];
@@ -91,9 +102,9 @@
       groups[pluginName].push(plugin);
     });
 
-    const result = [];
+    const result: GroupedPlugin[] = [];
 
-    Object.keys(groups).forEach((pluginName) => {
+    Object.keys(groups).forEach((pluginName: string) => {
       const group = groups[pluginName];
       if (group.length >= groupThreshold) {
         const firstPluginUrl = group[0].url;
@@ -104,18 +115,29 @@
           plugins: group, // list of plugins in the group
           isGroup: true, // flags that it's a group
           faviconUrl: createFaviconURL(cutAfterTLD(firstPluginUrl)),
-        });
+        } as GroupedPlugin);
       } else {
-        result.push(...group);
+        result.push(
+          ...group.map((plugin) => ({
+            id: plugin.id,
+            pluginName: plugin.pluginName,
+            displayName: plugin.displayName,
+            plugins: [],
+            isGroup: false,
+            faviconUrl: '',
+            url: plugin.url,
+            editKey: plugin.editKey,
+          })),
+        );
       }
     });
     return result;
   });
 
   // selected group for popup
-  const selectedGroup = ref(null);
+  const selectedGroup = ref<GroupedPlugin | null>(null);
 
-  function openGroupPopup(pluginGroup) {
+  function openGroupPopup(pluginGroup: GroupedPlugin) {
     selectedGroup.value = pluginGroup;
     // Delay adding the event listener to prevent immediate closing due to initial click
     setTimeout(() => {
@@ -128,9 +150,12 @@
     document.removeEventListener('click', handleOutsideClick);
   }
 
-  function handleOutsideClick(event) {
+  function handleOutsideClick(event: Event) {
     const popupElement = document.querySelector('.popup');
-    if (popupElement && !popupElement.contains(event.target)) {
+    if (
+      popupElement &&
+      !popupElement.contains(event.target as HTMLInputElement)
+    ) {
       closeGroupPopup();
     }
   }

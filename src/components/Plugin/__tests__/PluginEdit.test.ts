@@ -16,6 +16,7 @@ interface PluginComponentInstance {
   hide: boolean;
   editKey: number;
   isDeleted: boolean;
+  showFavicon: boolean;
 }
 
 const generateWrapper = (
@@ -31,9 +32,9 @@ const generateWrapper = (
       pluginName: name,
       url: url,
       displayName: displayName,
+      id: id,
       isLoading: isLoading,
       isEditing: isEditing,
-      id: id,
       editKey: -1,
     },
     plugins: [
