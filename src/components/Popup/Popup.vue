@@ -8,16 +8,16 @@
             v-for="plugin in selectedGroup.plugins"
             :id="plugin.id"
             :key="plugin.id"
-            :plugin-name="plugin.pluginName"
             :display-name="plugin.displayName"
             :url="plugin.url"
             :is-loading="loading"
             :is-editing="isEditing"
             :edit-key="plugin.editKey"
             :is-deleted="false"
+            :show-favicon="false"
           ></PluginComponent>
         </div>
-        <a-button style="margin-top: 25px" @click="closePopup">Close</a-button>
+        <a-button style="margin-top: 15px" @click="closePopup">Close</a-button>
       </a-card>
     </div>
   </transition>
@@ -52,8 +52,9 @@
 <style scoped>
   .popup {
     position: absolute;
-    width: 80%;
+    max-width: 80%;
     margin-top: 10px;
+    margin-bottom: 10px;
     background: white;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
