@@ -3,6 +3,7 @@
   import {
     pluginStoreSymbol,
     projectEditStoreSymbol,
+    projectRoutingSymbol,
     projectsStoreSymbol,
   } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
@@ -19,12 +20,11 @@
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
-  import { useProjectRouting } from '@/utils/hooks';
 
   const projectsStore = inject(projectsStoreSymbol)!;
   const projectEditStore = inject(projectEditStoreSymbol)!;
   const pluginStore = inject(pluginStoreSymbol)!;
-  const { setProjectId } = useProjectRouting();
+  const projectRouting = inject(projectRoutingSymbol)!;
 
   const editingClass = computed(() => ({
     'editing-mode': isEditing.value,
@@ -154,9 +154,7 @@
       } finally {
         isModalOpen.value = false;
         const newProjectId = getNextActiveProjectId(projectID);
-        setProjectId(newProjectId);
-        await projectsStore?.fetchProject(newProjectId);
-        await pluginStore?.fetchPlugins(newProjectId);
+        projectRouting.setProjectId(newProjectId);
       }
     }
   };

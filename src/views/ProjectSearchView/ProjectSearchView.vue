@@ -3,6 +3,7 @@
   import { SearchBar } from '@/components/Searchbar';
   import {
     pluginStoreSymbol,
+    projectRoutingSymbol,
     projectsStoreSymbol,
   } from '@/store/injectionSymbols';
   import { inject, onMounted, provide, reactive } from 'vue';
@@ -12,7 +13,6 @@
   import { useEditing } from '@/utils/hooks/useEditing';
   import _ from 'lodash';
   import { useToggle, useWindowSize } from '@vueuse/core';
-  import { useProjectRouting } from '@/utils/hooks';
   import {
     BulbOutlined,
     InboxOutlined,
@@ -33,7 +33,7 @@
   type ProjectSearchStore = SearchStore<ProjectModel>;
 
   const { stopEditing, isEditing } = useEditing();
-  const { routerProjectId, setProjectId } = useProjectRouting();
+  const { routerProjectId, setProjectId } = inject(projectRoutingSymbol)!;
 
   const projectsStore = inject(projectsStoreSymbol);
   const pluginStore = inject(pluginStoreSymbol);
