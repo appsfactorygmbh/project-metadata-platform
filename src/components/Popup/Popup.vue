@@ -27,7 +27,7 @@
   import { defineEmits, defineProps } from 'vue';
   import { PluginComponent } from '@/components/Plugin';
 
-  const props = defineProps({
+  const { selectedGroup, loading, isEditing } = defineProps({
     selectedGroup: {
       type: Object,
       required: true,

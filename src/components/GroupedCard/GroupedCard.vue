@@ -22,7 +22,7 @@
 <script setup lang="ts">
   import { defineEmits, defineProps } from 'vue';
 
-  const props = defineProps({
+  const { pluginCount, displayName, faviconUrl } = defineProps({
     pluginCount: {
       type: Number,
       required: true,
