@@ -2,12 +2,12 @@
   import { useEditing } from '@/utils/hooks/useEditing';
   import { defineProps, ref } from 'vue';
   import { useFormStore } from '@/components/Form';
-  import { reactive, toRaw, inject } from 'vue';
+  import { inject, reactive, toRaw } from 'vue';
   import type { PropType } from 'vue';
   import type { FormSubmitType, RulesObject } from '../Form/types';
   import type { Rule } from 'ant-design-vue/es/form';
-import { userStoreSymbol } from '@/store/injectionSymbols';
-import useNotification from 'ant-design-vue/es/notification/useNotification';
+  import { userStoreSymbol } from '@/store/injectionSymbols';
+  import useNotification from 'ant-design-vue/es/notification/useNotification';
 
   type EditPasswordFormData = {
     currentPassword: string;
@@ -16,7 +16,7 @@ import useNotification from 'ant-design-vue/es/notification/useNotification';
   };
 
   const formStore = useFormStore('patchPasswordForm');
-  const userStore = inject(userStoreSymbol)!
+  const userStore = inject(userStoreSymbol)!;
 
   const props = defineProps({
     value: {
@@ -41,8 +41,8 @@ import useNotification from 'ant-design-vue/es/notification/useNotification';
     },
     userId: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   });
 
   const fieldValue = ref('');
@@ -58,9 +58,9 @@ import useNotification from 'ant-design-vue/es/notification/useNotification';
     props.isEditingKey,
   );
 
-  const [notificationApi, contextHolder] = useNotification()
+  const [notificationApi, contextHolder] = useNotification();
 
-  const onSubmit:FormSubmitType = (fields) => {
+  const onSubmit: FormSubmitType = (fields) => {
     try {
       const password = {
         password: toRaw(fields).newPassword,
@@ -76,13 +76,13 @@ import useNotification from 'ant-design-vue/es/notification/useNotification';
         message: 'Password updated',
       });
     }
-  }
+  };
 
   const safeEdits = async () => {
-    await formStore.submit()
-    formStore.resetFields()
-    stopEditing()
-  }
+    await formStore.submit();
+    formStore.resetFields();
+    stopEditing();
+  };
 
   const cancleEdit = () => {
     formStore.resetFields();
@@ -143,8 +143,7 @@ import useNotification from 'ant-design-vue/es/notification/useNotification';
     newPassword: [
       {
         required: true,
-        message:
-          'Please insert a Password, that meets the requirements',
+        message: 'Please insert a Password, that meets the requirements',
         validator: validatePassword,
         trigger: 'change',
         type: 'string',
@@ -161,7 +160,7 @@ import useNotification from 'ant-design-vue/es/notification/useNotification';
     ],
   });
 
-  formStore.setOnSubmit(onSubmit)
+  formStore.setOnSubmit(onSubmit);
   formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
 </script>
@@ -177,7 +176,7 @@ import useNotification from 'ant-design-vue/es/notification/useNotification';
   >
     <label class="label">{{ label }}:</label>
     <template v-if="!isLoading">
-      <p v-if="!isEditing" class="text">{{ value }}</p>
+      <p v-if="!isEditing" class="text passwordLabel">{{ value }}</p>
       <a-form v-else ref="formRef" :model="dynamicValidateForm" class="form">
         <a-form-item
           name="currentPassword"
@@ -214,7 +213,7 @@ import useNotification from 'ant-design-vue/es/notification/useNotification';
           class="lastFormItem"
           :whitespace="true"
           :rules="rulesRef.confirmPassword"
-          >
+        >
           <a-input
             id="inputCreateUserName"
             v-model:value="dynamicValidateForm.confirmPassword"
@@ -230,7 +229,11 @@ import useNotification from 'ant-design-vue/es/notification/useNotification';
       <EditButtons
         :is-editing="isEditing"
         :is-loading="isLoading"
-        :safe-disabled="dynamicValidateForm.confirmPassword == '' || dynamicValidateForm.currentPassword == '' || dynamicValidateForm.newPassword == ''"
+        :safe-disabled="
+          dynamicValidateForm.confirmPassword == '' ||
+          dynamicValidateForm.currentPassword == '' ||
+          dynamicValidateForm.newPassword == ''
+        "
         @cancle-edit="cancleEdit"
         @safe-edits="safeEdits"
         @start-editing="startEditing"
@@ -304,7 +307,7 @@ import useNotification from 'ant-design-vue/es/notification/useNotification';
     margin: 0;
   }
 
-  .form{
+  .form {
     max-width: 400px;
   }
 </style>

@@ -35,9 +35,9 @@
     isConfirmModalOpen.value = false;
   };
 
-  watch(routerUserId , () => {
-    userStore.fetchUser(routerUserId.value)
-  })
+  watch(routerUserId, () => {
+    userStore.fetchUser(routerUserId.value);
+  });
 
   //Button for adding new User
   const buttons: FloatButtonModel[] = [
@@ -73,7 +73,7 @@
     await nameFormStore.submit();
     nameFormStore.resetFields();
     stopEditing();
-    userStore.fetchUser(user.value!.id)
+    userStore.fetchUser(user.value!.id);
   };
 
   const cancleNameEdit = () => {
@@ -188,7 +188,7 @@
     height: auto;
     flex-direction: column;
     flex-wrap: wrap;
-    margin-bottom: 100px
+    margin-bottom: 100px;
   }
 
   .avatar {
@@ -219,7 +219,7 @@
   .edit {
     background-color: icon !important;
   }
-  .panel{
+  .panel {
     position: relative;
     max-height: 100vh; /* Set a maximum height */
     overflow-y: auto; /* Enable vertical scrolling */
