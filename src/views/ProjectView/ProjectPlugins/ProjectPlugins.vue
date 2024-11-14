@@ -66,7 +66,7 @@
   import type { PluginEditModel, PluginModel } from '@/models/Plugin';
   import { createFaviconURL, cutAfterTLD } from '@/components/Plugin/editURL';
   import GroupedCard from '@/components/GroupedCard/GroupedCard.vue';
-  import Popup from '@/components/Popup/Popup.vue';
+  import Popup from '@/components/Popup/PopupComponent.vue';
 
   const { isEditing } = useEditing();
 
