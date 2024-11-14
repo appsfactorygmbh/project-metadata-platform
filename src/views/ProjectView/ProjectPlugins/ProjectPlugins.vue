@@ -14,25 +14,13 @@
           :is-deleted="false"
         ></PluginComponent>
 
-        <div v-else @click="openGroupPopup(plugin)">
-          <a-badge :count="plugin.plugins.length">
-            <a-card
-              class="grouped-card"
-              :body-style="{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            padding: '15px',
-          }"
-            >
-              <!-- Display the favicon image. -->
-              <a-avatar :src="plugin.faviconUrl" shape="square" class="avatar"></a-avatar>
-              <div class="textContainer">
-                <h3>{{ plugin.displayName + ' Plugins'}}</h3>
-              </div>
-            </a-card>
-          </a-badge>
-        </div>
+        <GroupedCard
+          v-else
+          :pluginCount="plugin.plugins.length"
+          :displayName="plugin.displayName"
+          :faviconUrl="plugin.faviconUrl"
+          @open="openGroupPopup(plugin)"
+        />
       </div>
       <AddPluginCard v-if="isEditing"></AddPluginCard>
     </div>
@@ -52,28 +40,14 @@
       <a-skeleton active></a-skeleton>
     </a-card>
 
-    <!-- Popup to display plugins in the group -->
     <transition name="fade-popup">
-      <div v-if="selectedGroup" class="popup">
-        <a-card class="group-popup">
-          <h3>Plugins in {{ selectedGroup.pluginName }}</h3>
-          <div class="plugin-grid">
-            <PluginComponent
-              v-for="plugin in selectedGroup.plugins"
-              :key="plugin.id"
-              :id="plugin.id"
-              :plugin-name="plugin.pluginName"
-              :display-name="plugin.displayName"
-              :url="plugin.url"
-              :is-loading="loading"
-              :is-editing="isEditing"
-              :edit-key="plugin.editKey"
-              :is-deleted="false"
-            ></PluginComponent>
-          </div>
-          <a-button @click="closeGroupPopup" style="margin-top: 25px;">Close</a-button>
-        </a-card>
-      </div>
+      <Popup
+        v-if="selectedGroup"
+        :selectedGroup="selectedGroup"
+        :loading="loading"
+        :isEditing="isEditing"
+        @close="closeGroupPopup"
+      />
     </transition>
   </div>
 </template>
@@ -91,6 +65,8 @@ import {
 import { useEditing } from '@/utils/hooks/useEditing';
 import type { PluginEditModel, PluginModel } from '@/models/Plugin';
 import { createFaviconURL, cutAfterTLD } from '@/components/Plugin/editURL';
+import GroupedCard from '@/components/GroupedCard/GroupedCard.vue';
+import Popup from '@/components/Popup/Popup.vue';
 
 const { isEditing } = useEditing();
 
@@ -244,83 +220,8 @@ onMounted(async () => {
   flex-direction: column;
   transition: 0.1s ease-in-out;
 }
-.grouped-card {
-  width: max-content;
-  min-width: 200px;
-  max-width: 300px;
-  height: 100px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0 !important;
-  display: flex;
-  flex-direction: column;
-  transition: 0.1s ease-in-out;
-
-  &:hover {
-    cursor: pointer;
-    transform: scale(1.01);
-  }
-}
-.grouped-card .avatar {
-  margin: 10px;
-  width: 40px;
-  height: auto;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-}
-.grouped-card:hover {
-  transform: scale(1.01);
-}
-.popup {
-  position: absolute;
-  width: 80%;
-  margin-top: 10px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
-}
-.group-popup {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
 .blur {
   filter: blur(5px);
   pointer-events: none;
-}
-
-.fade-popup-enter-active, .fade-popup-leave-active {
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-.fade-popup-enter-from, .fade-popup-leave-to {
-  opacity: 0;
-  transform: scale(0.95);
-}
-
-.textContainer {
-  font-family: Manrope, serif;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  white-space: nowrap;
-  overflow: hidden;
-
-  & > * {
-    margin: 10px;
-  }
-
-  & p {
-    color: #6d6e6f;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-.plugin-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
 }
 </style>
