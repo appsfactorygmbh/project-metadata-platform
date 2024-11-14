@@ -29,7 +29,7 @@
   onBeforeMount(async () => {
     await globalPluginStore?.fetchGlobalPlugins();
     options.value = toRaw(globalPluginStore?.getGlobalPlugins)
-      ?.filter((plugin) => !plugin.archived)
+      ?.filter((plugin) => !plugin.isArchived)
       .map((plugin: GlobalPluginModel) => {
         return {
           value: plugin.name,

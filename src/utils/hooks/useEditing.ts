@@ -5,18 +5,18 @@ import {
   projectsStoreSymbol,
 } from '@/store/injectionSymbols';
 
-export const useEditing = () => {
+export const useEditing = (queryKey: string = 'isEditing') => {
   const router = useRouter();
   const pluginStore = inject(pluginStoreSymbol);
   const projectStore = inject(projectsStoreSymbol);
 
   const isEditing = ref<boolean>(
-    router.currentRoute.value.query.isEditing === 'true',
+    router.currentRoute.value.query[queryKey] === 'true',
   );
 
   // Update isEditing when the URL query changes
   watch(
-    () => router.currentRoute.value.query.isEditing,
+    () => router.currentRoute.value.query[queryKey],
     (newQueryIsEditing) => {
       isEditing.value = newQueryIsEditing === 'true';
     },
@@ -27,7 +27,7 @@ export const useEditing = () => {
     const currentQueries = router.currentRoute.value.query;
     await router.push({
       path: router.currentRoute.value.path,
-      query: { ...currentQueries, isEditing: 'true' },
+      query: { ...currentQueries, [queryKey]: 'true' },
     });
   };
 
@@ -36,7 +36,7 @@ export const useEditing = () => {
     const currentQueries = router.currentRoute.value.query;
     await router.push({
       path: router.currentRoute.value.path,
-      query: { ...currentQueries, isEditing: 'false' },
+      query: { ...currentQueries, [queryKey]: 'false' },
     });
     const projectID = computed(() => projectStore?.getProject?.id);
     if (projectID.value) {

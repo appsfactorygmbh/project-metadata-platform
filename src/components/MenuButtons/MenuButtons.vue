@@ -6,7 +6,6 @@
 
   // Router instance
   const router = useRouter();
-
   const auth = useAuth();
 
   const goToSetting = () => {

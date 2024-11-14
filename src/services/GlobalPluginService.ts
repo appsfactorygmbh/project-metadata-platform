@@ -13,10 +13,14 @@ class GlobalPluginService extends ApiService {
     }
   };
 
-  removeGlobalPlugin = async (pluginId: number): Promise<Response | null> => {
+  archiveGlobalPlugin = async (pluginId: number): Promise<Response | null> => {
     try {
       const response = await this.fetch('/Plugins/' + pluginId.toString(), {
-        method: 'DELETE',
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ isArchived: true }),
         mode: 'cors',
       });
       return response;

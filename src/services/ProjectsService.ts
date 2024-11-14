@@ -81,6 +81,34 @@ class ProjectsService extends ApiService {
       return null;
     }
   };
+
+  archiveProject = async (
+    projectData: UpdateProjectModel,
+    id: number,
+  ): Promise<Response | null> => {
+    projectData.isArchived = true;
+    try {
+      const response = await this.updateProject(projectData, id);
+      return response;
+    } catch (error) {
+      console.error('Failed to archive Project via PUT Request: ', error);
+      return null;
+    }
+  };
+
+  activateProject = async (
+    projectData: UpdateProjectModel,
+    id: number,
+  ): Promise<Response | null> => {
+    projectData.isArchived = false;
+    try {
+      const response = await this.updateProject(projectData, id);
+      return response;
+    } catch (error) {
+      console.error('Failed to activate Project via PUT Request: ', error);
+      return null;
+    }
+  };
 }
 
 const projectsService = new ProjectsService();
