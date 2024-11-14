@@ -60,7 +60,8 @@
     if (!user.value) return;
     await userService.deleteUser(user.value?.id);
     await userStore.fetchUsers();
-    setUserId(1);
+    const firstId = userStore.getUsers[0].id;
+    setUserId(firstId);
   };
 
   const safeNameEdit = async () => {
@@ -176,7 +177,7 @@
     margin-top: 2em;
     border-radius: 10px;
     background-color: white;
-    min-width: 41ch;
+    min-width: 450px;
     width: 100%;
     height: auto;
     flex-direction: column;
