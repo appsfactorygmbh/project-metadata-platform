@@ -13,7 +13,7 @@
     },
     pluginName: {
       type: String,
-      required: true,
+      required: false,
     },
     url: {
       type: String,
@@ -38,6 +38,10 @@
     isDeleted: {
       type: Boolean,
       required: false,
+    },
+    showFavicon: {
+      type: Boolean,
+      default: true,
     },
   });
 
@@ -204,7 +208,7 @@
       @click="handleClick"
     >
       <!-- Display the favicon image. -->
-      <a-avatar shape="square" :src="faviconUrl" class="avatar"></a-avatar>
+      <a-avatar v-if="showFavicon" shape="square" :src="faviconUrl" class="avatar"></a-avatar>
       <!-- Container for plugin name and URL text. -->
       <div class="textContainer">
         <h3>{{ pluginName }}</h3>
@@ -249,9 +253,8 @@
 
   .card {
     width: max-content;
-    min-width: 200px;
     max-width: 300px;
-    height: 100px;
+
     box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0 !important;
     display: flex;
     flex-direction: column;

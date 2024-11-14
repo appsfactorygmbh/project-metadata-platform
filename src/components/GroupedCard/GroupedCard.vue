@@ -49,7 +49,7 @@
     width: max-content;
     min-width: 200px;
     max-width: 300px;
-    height: 100px;
+    height: 95px;
     box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0 !important;
     display: flex;
     flex-direction: column;
