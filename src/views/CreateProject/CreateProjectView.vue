@@ -16,13 +16,13 @@
 
   const open = ref<boolean>(false);
 
-  // Formular- und Zustandskonfiguration
+  // Form- and Stateconfiguration
   const formRef = ref();
   const labelCol = { style: { width: '150px' } };
   const wrapperCol = { span: 14 };
   const cancelFetch = ref<boolean>();
 
-  // TableStore für das Aktualisieren der Tabelle nach Hinzufügen eines Projekts
+  // TableStore to refetch Table after Project was added
   const projectsStore = inject(projectsStoreSymbol);
   const isAdding = computed(() => projectsStore?.getIsLoadingAdd);
   const fetchError = ref<boolean>(false);
@@ -55,18 +55,17 @@
     tooltip: 'Click here to create a new project',
   };
 
-  // opens modal when plussign is clicked
+  // opens modal when plus sign is clicked
   const showModal = () => {
     open.value = true;
   };
 
-  // Modal zurücksetzen
   const resetModal = () => {
     formRef.value.resetFields();
     fetchError.value = false;
   };
 
-  // Eingaben validieren und dann absenden
+  // checks for correct input
   const handleOk = () => {
     cancelFetch.value = false;
     formRef.value
@@ -79,7 +78,7 @@
       });
   };
 
-  // Projekt anlegen und nach erfolgreicher Validierung Modal schließen
+  // sends PUT request to the backend
   const submit = async () => {
     watch(isAdding, (newVal) => {
       if (newVal === false) {
@@ -110,7 +109,7 @@
   <div>
     <FloatingButton :button="button" />
 
-    <!-- Modal für die Projekterstellung -->
+    <!-- Modal for project creation -->
     <a-modal
       v-model:open="open"
       width="400px"
@@ -202,7 +201,7 @@
             </template>
           </a-input>
         </a-form-item>
-        <!-- Error-Meldung bei Fehlschlag -->
+        <!--shows error if the PUT request failed-->
         <a-alert
           v-if="fetchError"
           message="Failed to create Project"

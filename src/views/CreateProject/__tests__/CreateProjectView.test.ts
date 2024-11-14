@@ -43,7 +43,7 @@ describe('CreateProjectView.vue', () => {
   });
 
   it('emits close event when modal is closed', async () => {
-    // Direkt das Event auslösen und prüfen
+    // Triggers the event directly
     wrapper.vm.$emit('close');
 
     const emittedEvents = wrapper.emitted('close');

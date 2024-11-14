@@ -133,7 +133,7 @@
     isModalOpen.value = true;
   };
 
-  const getNextActiveProject = (currentProjectId: number): number => {
+  const getNextActiveProjectId = (currentProjectId: number): number => {
     const projects = projectsStore.getProjects;
     const nextProject = projects.find((project) => project.isArchived == false);
     if (!nextProject) return currentProjectId;
@@ -153,7 +153,7 @@
         }
       } finally {
         isModalOpen.value = false;
-        const newProjectId = getNextActiveProject(projectID);
+        const newProjectId = getNextActiveProjectId(projectID);
         setProjectId(newProjectId);
         await projectsStore?.fetchProject(newProjectId);
         await pluginStore?.fetchPlugins(newProjectId);

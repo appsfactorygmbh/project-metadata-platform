@@ -99,16 +99,16 @@ describe('ProjectInformation.vue', () => {
 
     await flushPromises();
 
-    // Confirm Modal sollte zunächst geschlossen sein
+    // Confirm Modal should be closed
     expect(
       wrapper.findComponent({ name: 'ConfirmAction' }).props('isOpen'),
     ).toBe(false);
 
-    // Delete Button finden und klicken
+    // find and clicks delete button
     await wrapper.find('.button .anticon-delete').trigger('click');
     await flushPromises();
 
-    // Erwartung: Confirm Modal ist nun geöffnet
+    // Expectation: Confirm Modal is open
     expect(
       wrapper.findComponent({ name: 'ConfirmAction' }).props('isOpen'),
     ).toBe(true);
@@ -151,7 +151,7 @@ describe('ProjectInformation.vue', () => {
 
     await flushPromises();
 
-    // Erwartung: Keine Bearbeitungsschaltfläche, aber die Reaktivierungsschaltfläche
+    // Expectation: No Edit- or Archive Button, but Reactivate Button
     expect(wrapper.findComponent(EditOutlined).exists()).toBeFalsy();
     expect(wrapper.findComponent(UndoOutlined).exists()).toBeTruthy();
     expect(wrapper.findComponent(DeleteOutlined).exists()).toBeFalsy();
