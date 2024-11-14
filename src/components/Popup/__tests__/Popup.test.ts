@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import Popup from '@/components/Popup/Popup.vue';
+import Popup from '@/components/Popup/PopupComponent.vue';
 import { PluginComponent } from '@/components/Plugin';
 
 describe('Popup.vue', () => {
