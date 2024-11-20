@@ -32,7 +32,7 @@
               <div class="title">
                 {{ item.name }}
               </div>
-              <div class="buttons">
+              <div v-if="filterType" class="buttons">
                 <a-button
                   style="margin-right: 1em"
                   @click="handleEdit(item.id)"
@@ -42,7 +42,22 @@
                 <a-button
                   :loading="isButtonLoading(item.id)"
                   :disabled="isButtonLoading(item.id)"
-                  @click="showDialog(item.id)"
+                  @click="showDialog(item.id, 'archive')"
+                >
+                  <InboxOutlined />
+                </a-button>
+              </div>
+              <div v-else class="buttons">
+                <a-button
+                  style="margin-right: 1em"
+                  @click="handleReactivate(item)"
+                >
+                  <UndoOutlined />
+                </a-button>
+                <a-button
+                  :loading="isButtonLoading(item.id)"
+                  :disabled="isButtonLoading(item.id)"
+                  @click="showDialog(item.id, 'delete')"
                 >
                   <DeleteOutlined />
                 </a-button>
@@ -63,8 +78,8 @@
   <RouterView />
   <ConfirmationDialog
     :is-open="isDialogOpen"
-    title="Delete confirm"
-    message="Are you sure you want to delete the plugin?"
+    :title="confirmAction.title"
+    :message="confirmAction.message"
     @confirm="handleConfirm"
     @cancel="handleCancel"
     @update:is-open="isDialogOpen = $event"
@@ -78,6 +93,7 @@
     EditOutlined,
     InboxOutlined,
     PlusOutlined,
+    UndoOutlined,
   } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button';
   import { globalPluginStoreSymbol } from '@/store/injectionSymbols';
@@ -86,6 +102,7 @@
   import { message } from 'ant-design-vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useToggle } from '@vueuse/core';
+  import type { GlobalPluginModel } from '@/models/Plugin';
 
   const globalPluginsStore = inject(globalPluginStoreSymbol);
 
@@ -131,28 +148,61 @@
   //stores the plugins, that get deleted at the time
   const pluginDeleting = ref<Array<number>>([]);
 
+  type ConfirmActionModel = {
+    type: string;
+    title: string;
+    message: string;
+  };
+
   // Dialog state and functions
   const isDialogOpen = ref(false);
   const pluginIdToDelete = ref<number | null>(null);
+  const confirmAction = ref<ConfirmActionModel>({
+    type: '',
+    title: '',
+    message: '',
+  });
 
   /**
    * Shows the confirmation dialog for deleting a plugin.
    * @param {number} pluginId - The ID of the plugin to be deleted.
+   * @param {string} action - The action to be performed on the plugin.
    */
-  const showDialog = (pluginId: number) => {
+  const showDialog = (pluginId: number, action: string) => {
+    toggleConfirmAction(action);
     pluginIdToDelete.value = pluginId;
     isDialogOpen.value = true;
+  };
+
+  const toggleConfirmAction = (action: string) => {
+    confirmAction.value = {
+      type: action,
+      title: action === 'archive' ? 'Archive Plugin' : 'Delete Plugin',
+      message:
+        action === 'archive'
+          ? 'Are you sure you want to archive this plugin?'
+          : 'Are you sure you want to delete this plugin?',
+    };
   };
 
   /**
    * Adds the plugin to the deleting plugins, deletes the plugin and removes it again
    * @param pluginId Id of the plugin that should be deleted
    */
-  const handleDelete = async (pluginId: number) => {
+  const handleArchive = async (pluginId: number) => {
     pluginDeleting.value.push(pluginId);
-    await globalPluginsStore?.archiveGlobalPlugin(pluginId);
+    const plugin = globalPluginsStore!.getGlobalPlugins.find(
+      (plugin) => plugin.id === pluginId,
+    );
+
+    await globalPluginsStore?.archiveGlobalPlugin(plugin as GlobalPluginModel);
     const index: number = pluginDeleting.value?.indexOf(pluginId);
     pluginDeleting.value.splice(index, 1);
+  };
+
+  const handleReactivate = async (plugin: GlobalPluginModel) => {
+    await globalPluginsStore?.reactivateGlobalPlugin(plugin);
+    message.success('The plugin has been reactivated', 2);
   };
 
   /**
@@ -162,7 +212,10 @@
    */
   const handleConfirm = async () => {
     if (pluginIdToDelete.value !== null) {
-      await handleDelete(pluginIdToDelete.value);
+      if (confirmAction.value.type === 'archive')
+        await handleArchive(pluginIdToDelete.value);
+      else await globalPluginsStore?.deleteGlobalPlugin(pluginIdToDelete.value);
+
       isDialogOpen.value = false;
       message.success('The Plugin has been deleted', 2);
     }
