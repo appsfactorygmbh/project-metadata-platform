@@ -59,9 +59,20 @@ describe('GlobalPluginsView.vue', () => {
   it('renders the fetched Plugins, but not the archieved ones', async () => {
     const wrapper = generateWrapper();
     await flushPromises();
+
     expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
     expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 2');
-    expect(wrapper.findAll('.ant-btn')).toHaveLength(2);
+    expect(wrapper.findAll('.ant-btn')).toHaveLength(3);
+  });
+
+  it('switches to archived plugins when clicking the button', async () => {
+    const wrapper = generateWrapper();
+    const archiveButton = wrapper.findComponent(Button);
+    await archiveButton.trigger('click');
+    await flushPromises();
+
+    expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
+    expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 1');
   });
 
   it('sends a delete request when clicking the delete button', async () => {
@@ -77,7 +88,7 @@ describe('GlobalPluginsView.vue', () => {
     expect(spy).toHaveBeenCalledTimes(0);
 
     await wrapper.find('.anticon-delete').trigger('click');
-    const confirmButton = wrapper.findAllComponents(Button)[3];
+    const confirmButton = wrapper.findAllComponents(Button)[4];
     await confirmButton.trigger('click');
 
     expect(wrapper.findAll('.ant-list-item')).toHaveLength(0);

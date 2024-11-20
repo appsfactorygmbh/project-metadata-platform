@@ -1,12 +1,24 @@
 <template>
   <FloatingButton :button="addButton" />
 
+  <a-tooltip
+    placement="left"
+    title="Click here to toggle between active and archived projects"
+  >
+    <a-button class="archiveButton" @click="toggleShowFilter">
+      <template #icon>
+        <InboxOutlined v-if="filterType === true" />
+        <BulbOutlined v-else />
+      </template>
+    </a-button>
+  </a-tooltip>
+
   <a-list
     class="plugin-list"
     item-layout="horizontal"
     :data-source="[
       ...(globalPluginsStore?.getGlobalPlugins.filter(
-        (item) => !item.isArchived,
+        (item) => !item.isArchived == filterType,
       ) || []),
     ]"
     :loading="isLoading"
@@ -61,8 +73,10 @@
 
 <script lang="ts" setup>
   import {
+    BulbOutlined,
     DeleteOutlined,
     EditOutlined,
+    InboxOutlined,
     PlusOutlined,
   } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button';
@@ -71,6 +85,7 @@
   import { useRouter } from 'vue-router';
   import { message } from 'ant-design-vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
+  import { useToggle } from '@vueuse/core';
 
   const globalPluginsStore = inject(globalPluginStoreSymbol);
 
@@ -98,6 +113,15 @@
     icon: PlusOutlined,
     status: 'activated',
     tooltip: 'Click here to create a new global plugin',
+  };
+
+  // filterType is true for active and false for archived
+  const [filterType, toggleFilterType] = useToggle<true, false>(true, {
+    truthyValue: true,
+    falsyValue: false,
+  });
+  const toggleShowFilter = () => {
+    toggleFilterType();
   };
 
   const handleEdit = (pluginId: number) => {
@@ -168,6 +192,13 @@
 </script>
 
 <style scoped>
+  .archiveButton {
+    width: 5%;
+    position: absolute;
+    top: 1.3em;
+    right: 1.7em;
+  }
+
   .plugin-list {
     margin: 1em;
     background-color: white;
