@@ -1,32 +1,47 @@
+<script lang="ts" setup>
+  </script>
+
 <template>
-  <div>
-    <a-timeline mode="alternate">
-      <a-timeline-item>Create a services site 2015-09-01</a-timeline-item>
-      <a-timeline-item color="green"
-        >Solve initial network problems 2015-09-01</a-timeline-item
-      >
-      <a-timeline-item>
-        <template #dot
-          ><ClockCircleOutlined style="font-size: 16px"
-        /></template>
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-        accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
-        illo inventore veritatis et quasi architecto beatae vitae dicta sunt
-        explicabo.
+  <div style="margin: 2em 5em">
+    <a-timeline mode="alternate" class="localLog">
+      <a-timeline-item class="logItem">
+        <template #dot></template>
+        MMustermann edited Team Number from 2 to 1
       </a-timeline-item>
-      <a-timeline-item color="red"
-        >Network problems being solved 2015-09-01</a-timeline-item
+      <a-timeline-item color="red" class="time"
+        >2024-11-11T18:10:30+00:00</a-timeline-item
       >
-      <a-timeline-item>Create a services site 2015-09-01</a-timeline-item>
-      <a-timeline-item>
-        <template #dot
-          ><ClockCircleOutlined style="font-size: 16px"
-        /></template>
-        Technical testing 2015-09-01
+
+      <a-timeline-item class="logItem">
+        <template #dot></template>
+        MMustermann deleted plugin Jira
       </a-timeline-item>
+      <a-timeline-item color="red" class="time"
+        >2024-11-11T18:10:30+00:00</a-timeline-item
+      >
+
+      <a-timeline-item class="logItem">
+        <template #dot></template>
+        MMustermann edited project name from "DB Apps" to "DB App"
+      </a-timeline-item>
+      <a-timeline-item color="red" class="time"
+        >2024-11-11T18:10:30+00:00</a-timeline-item
+      >
     </a-timeline>
   </div>
 </template>
-<script lang="ts" setup>
-  import { ClockCircleOutlined } from '@ant-design/icons-vue';
-</script>
+<style>
+  .logItem {
+    padding-top: 1em !important;
+    padding-bottom: 0 !important;
+    height: 0;
+  }
+
+  .LocalLog {
+    margin: 1em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    border-radius: 15px;
+    padding: 1em;
+  }
+</style>

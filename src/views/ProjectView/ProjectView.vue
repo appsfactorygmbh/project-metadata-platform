@@ -110,8 +110,4 @@
     justify-content: center;
     padding-top: 1em;
   }
-  .LocalLog {
-    margin-top: 1em;
-    margin-right: 5em;
-  }
 </style>
