@@ -200,16 +200,16 @@
       } else {
         plugins.value = [];
         projectEditStore?.resetPluginChanges();
-        syncEditStore(pluginStore.getPlugins);
+        syncEditStore(pluginStore.getUnarchivedPlugins);
       }
     },
   );
 
   onMounted(async () => {
-    setPlugins(pluginStore.getPlugins);
+    setPlugins(pluginStore.getUnarchivedPlugins);
 
     const data: ComputedRef<PluginModel[]> = computed(
-      () => pluginStore.getPlugins,
+      () => pluginStore.getUnarchivedPlugins,
     );
 
     watch(

@@ -20,7 +20,7 @@ class PluginService extends ApiService {
   ): Promise<PluginModel[]> => {
     try {
       const response = await this.fetch(
-        '/Projects/' + projectId.toString() + '/UnarchivedPlugins',
+        '/Projects/' + projectId.toString() + '/unarchivedPlugins',
       );
       if (!response.ok)
         throw new Error('Error when trying to fetch Unarchived Plugins');

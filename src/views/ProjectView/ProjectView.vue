@@ -91,7 +91,7 @@
       await projectStore?.updateProject(updatedProject, projectID.value);
       await projectStore.fetchProjects();
       await projectStore.fetchProject(projectID.value);
-      await pluginStore?.fetchPlugins(projectID.value);
+      await pluginStore?.fetchUnarchivedPlugins(projectID.value);
     }
   };
 </script>
