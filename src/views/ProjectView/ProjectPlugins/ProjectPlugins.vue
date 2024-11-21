@@ -3,12 +3,7 @@
     <div v-if="!loading" class="container" :class="{ blur: selectedGroup }">
       <div v-for="plugin in groupedPlugins" :key="plugin.id" class="plugins">
         <PluginComponent
-          v-if="
-            !plugin.isGroup &&
-            globalPluginStore?.getGlobalPlugins.find(
-              (item) => item.name === plugin.pluginName && !item.isArchived,
-            )
-          "
+          v-if="!plugin.isGroup"
           :id="Number(plugin.id)"
           :plugin-name="plugin.pluginName"
           :display-name="plugin.displayName"
@@ -20,12 +15,7 @@
         ></PluginComponent>
 
         <GroupedCard
-          v-if="
-            plugin.isGroup &&
-            globalPluginStore?.getGlobalPlugins.find(
-              (item) => item.name === plugin.pluginName && !item.isArchived,
-            )
-          "
+          v-else
           :plugin-count="plugin.plugins.length"
           :display-name="plugin.displayName"
           :favicon-url="plugin.faviconUrl"
@@ -68,7 +58,6 @@
   import { PluginComponent } from '@/components/Plugin';
   import { AddPluginCard } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
   import {
-    globalPluginStoreSymbol,
     pluginStoreSymbol,
     projectEditStoreSymbol,
     projectsStoreSymbol,
@@ -84,7 +73,6 @@
   const pluginStore = inject(pluginStoreSymbol)!;
   const projectsStore = inject(projectsStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
-  const globalPluginStore = inject(globalPluginStoreSymbol);
 
   const plugins = ref<PluginEditModel[]>([]);
   const loading = computed(
