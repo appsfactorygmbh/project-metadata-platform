@@ -7,7 +7,7 @@
 
   // Component state using refs
   const collapsed = ref<boolean>(false);
-  const selectedKeys = ref<string[]>(['1']);
+  const selectedKeys = ref<string[]>([]);
   const userStore = inject(userStoreSymbol)!;
   const { routerUserId, setUserId } = useUserRouting();
   const { getIsLoadingUsers, getIsLoading, getUsers } = storeToRefs(userStore);
@@ -23,6 +23,7 @@
     () => routerUser.value,
     async () => {
       await userStore?.fetchUser(routerUser.value);
+      selectedKeys.value = [routerUser.value.toString()];
     },
   );
 
@@ -32,11 +33,11 @@
 
   onMounted(async () => {
     await userStore?.fetchUsers();
-
     if (routerUser.value === 0) {
       setUserId(userStore?.getUsers[0]?.id ?? 0);
     } else {
       await userStore?.fetchUser(routerUser.value);
+      selectedKeys.value = [routerUser.value.toString()];
     }
   });
 </script>

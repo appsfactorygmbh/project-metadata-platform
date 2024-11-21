@@ -7,12 +7,12 @@
     LeftOutlined,
     UserOutlined,
   } from '@ant-design/icons-vue';
-  import { ref } from 'vue';
+  import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
 
   // Component state using refs
   const collapsed = ref<boolean>(false);
-  const selectedKeys = ref<string[]>(['2']);
+  const selectedKeys = ref<string[]>([]);
   const tab = ref<string>('Global Plugins');
 
   // Router instance
@@ -51,6 +51,28 @@
       }
     }
   };
+
+  onMounted(() => {
+    // set the selected tab based on the current route
+    switch (router.currentRoute.value.path) {
+      case '/settings/user-management': {
+        selectedKeys.value = ['1'];
+        break;
+      }
+      case '/settings/global-plugins': {
+        selectedKeys.value = ['2'];
+        break;
+      }
+      case '/settings/global-logs': {
+        selectedKeys.value = ['3'];
+        break;
+      }
+      default: {
+        selectedKeys.value = ['2'];
+        break;
+      }
+    }
+  });
 </script>
 
 <template>
