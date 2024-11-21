@@ -117,6 +117,7 @@
     () => routerProjectId.value,
     async () => {
       await projectsStore?.fetchProject(routerProjectId.value);
+      await pluginStore?.fetchPlugins(routerProjectId.value);
       await pluginStore?.fetchUnarchivedPlugins(routerProjectId.value);
     },
   );
