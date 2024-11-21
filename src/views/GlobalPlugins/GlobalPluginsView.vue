@@ -195,11 +195,21 @@
    */
   const handleArchive = async (pluginId: number) => {
     pluginDeleting.value.push(pluginId);
+
     const plugin = globalPluginsStore!.getGlobalPlugins.find(
       (plugin) => plugin.id === pluginId,
     );
-
     await globalPluginsStore?.archiveGlobalPlugin(plugin as GlobalPluginModel);
+
+    const index: number = pluginDeleting.value?.indexOf(pluginId);
+    pluginDeleting.value.splice(index, 1);
+  };
+
+  const handleDelete = async (pluginId: number) => {
+    pluginDeleting.value.push(pluginId);
+
+    await globalPluginsStore?.deleteGlobalPlugin(pluginId);
+
     const index: number = pluginDeleting.value?.indexOf(pluginId);
     pluginDeleting.value.splice(index, 1);
   };
@@ -218,7 +228,7 @@
     if (pluginIdToDelete.value !== null) {
       if (confirmAction.value.type === 'archive')
         await handleArchive(pluginIdToDelete.value);
-      else await globalPluginsStore?.deleteGlobalPlugin(pluginIdToDelete.value);
+      else await handleDelete(pluginIdToDelete.value);
 
       isDialogOpen.value = false;
       message.success('The Plugin has been deleted', 2);
