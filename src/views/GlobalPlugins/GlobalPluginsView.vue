@@ -7,7 +7,7 @@
   >
     <a-button class="archiveButton" @click="toggleShowFilter">
       <template #icon>
-        <InboxOutlined v-if="filterType === true" />
+        <InboxOutlined v-if="filterType" />
         <BulbOutlined v-else />
       </template>
     </a-button>
