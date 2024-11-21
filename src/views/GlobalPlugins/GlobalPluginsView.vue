@@ -226,12 +226,17 @@
    */
   const handleConfirm = async () => {
     if (pluginIdToDelete.value !== null) {
-      if (confirmAction.value.type === 'archive')
+      let confirmMessage;
+      if (confirmAction.value.type === 'archive') {
         await handleArchive(pluginIdToDelete.value);
-      else await handleDelete(pluginIdToDelete.value);
+        confirmMessage = 'The plugin has been archived';
+      } else {
+        await handleDelete(pluginIdToDelete.value);
+        confirmMessage = 'The plugin has been deleted';
+      }
 
       isDialogOpen.value = false;
-      message.success('The Plugin has been deleted', 2);
+      message.success(confirmMessage, 2);
     }
   };
   /**
