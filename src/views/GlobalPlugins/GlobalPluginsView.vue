@@ -35,6 +35,7 @@
               <div v-if="filterType" class="buttons">
                 <a-button
                   style="margin-right: 1em"
+                  title="Edit Plugin"
                   @click="handleEdit(item.id)"
                 >
                   <EditOutlined />
@@ -42,6 +43,7 @@
                 <a-button
                   :loading="isButtonLoading(item.id)"
                   :disabled="isButtonLoading(item.id)"
+                  title="Archive Plugin"
                   @click="showDialog(item.id, 'archive')"
                 >
                   <InboxOutlined />
@@ -50,6 +52,7 @@
               <div v-else class="buttons">
                 <a-button
                   style="margin-right: 1em"
+                  title="Reactivate Plugin"
                   @click="handleReactivate(item)"
                 >
                   <UndoOutlined />
@@ -57,6 +60,7 @@
                 <a-button
                   :loading="isButtonLoading(item.id)"
                   :disabled="isButtonLoading(item.id)"
+                  title="Delete Plugin"
                   @click="showDialog(item.id, 'delete')"
                 >
                   <DeleteOutlined />
