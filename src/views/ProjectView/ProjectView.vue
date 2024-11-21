@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   import { ProjectPlugins } from './ProjectPlugins';
+  import { LocalLogView } from './LocalLogView';
   import { ProjectInformation } from './ProjectInformation';
   import type { UpdateProjectModel } from '@/models/Project';
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
@@ -100,6 +101,7 @@
   <ProjectEditButtons v-if="isEditing" @cancel="cancelEdit" @save="saveEdit" />
   <ProjectInformation />
   <ProjectPlugins class="pluginView" />
+  <LocalLogView class="LocalLog" />
 </template>
 
 <style scoped>
@@ -107,5 +109,9 @@
     display: flex;
     justify-content: center;
     padding-top: 1em;
+  }
+  .LocalLog {
+    margin-top: 1em;
+    margin-right: 5em;
   }
 </style>
