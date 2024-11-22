@@ -2,8 +2,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import { defineComponent, computed, toRaw } from 'vue';
 import { setActivePinia, createPinia } from 'pinia';
-import { useGlobalPluginsStore, usePluginsStore } from '@/store';
-import type { GlobalPluginModel, PluginModel } from '@/models/Plugin';
+import { usePluginsStore, useProjectStore } from '@/store';
+import type { PluginModel } from '@/models/Plugin';
+import type { DetailedProjectModel } from '@/models/Project';
+import {
+  pluginStoreSymbol,
+  projectsStoreSymbol,
+} from '@/store/injectionSymbols';
+import { ProjectPlugins } from '..';
+import router from '@/router';
 
 // Mock the pluginService module
 vi.mock('@/services/PluginService', () => ({
@@ -13,7 +20,7 @@ vi.mock('@/services/PluginService', () => ({
 }));
 
 // Define a ProjectPlugins component for testing
-const ProjectPlugins = defineComponent({
+const ProjectPluginsMock = defineComponent({
   setup() {
     const pluginStore = usePluginsStore();
     const plugins = computed(() => toRaw(pluginStore.getPlugins));
@@ -43,7 +50,7 @@ describe('ProjectPlugins', () => {
     store.setPlugins(mockPlugins);
 
     // Mount the PluginView component
-    const wrapper = shallowMount(ProjectPlugins);
+    const wrapper = shallowMount(ProjectPluginsMock);
 
     // Access the computed plugins
     const computedPlugins = wrapper.vm.plugins;
@@ -52,58 +59,65 @@ describe('ProjectPlugins', () => {
     expect(computedPlugins).toEqual(mockPlugins);
   });
 
-  it('should only show local plugins from active global plugins', async () => {
+  it('should get unarchived plugins when on an active project and all plugins on archived project', async () => {
     const pluginStore = usePluginsStore();
-    const globalPluginStore = useGlobalPluginsStore();
+    const projectsStore = useProjectStore();
 
-    const mockPlugins = [
-      {
-        pluginName: 'testPlugin',
-        displayName: 'Test Plugin',
-        url: 'http://example.com/',
-        id: 1,
-      },
-      {
-        pluginName: 'testPlugin2',
-        displayName: 'Test Plugin 2',
-        url: 'http://example.com/',
-        id: 2,
-      },
-    ];
-
-    const mockGlobalPlugins: GlobalPluginModel[] = [
-      {
-        id: 1,
-        name: 'testPlugin',
-        isArchived: false,
-      },
-      {
-        id: 2,
-        name: 'testPlugin2',
-        isArchived: true,
-      },
-    ];
-
-    pluginStore.setPlugins(mockPlugins);
-    globalPluginStore.setGlobalPlugins(mockGlobalPlugins);
-
-    const filteredPlugins: PluginModel[] = [];
-    // uses the same filter as the component
-    const getFilteredPlugins = (plugin: PluginModel) => {
-      if (
-        globalPluginStore.getGlobalPlugins.find(
-          (item) => item.name === plugin.pluginName && !item.isArchived,
-        )
-      ) {
-        filteredPlugins.push(plugin);
-      }
+    const mockActiveProject: DetailedProjectModel = {
+      id: 1,
+      projectName: 'Test Project',
+      clientName: 'Test Client',
+      businessUnit: 'Test Business Unit',
+      teamNumber: 1,
+      department: 'Test Department',
+      isArchived: false,
     };
 
-    const wrapper = shallowMount(ProjectPlugins);
+    const mockArchivedProject: DetailedProjectModel = {
+      id: 2,
+      projectName: 'Test Project',
+      clientName: 'Test Client',
+      businessUnit: 'Test Business Unit',
+      teamNumber: 1,
+      department: 'Test Department',
+      isArchived: true,
+    };
 
-    wrapper.vm.plugins.forEach((plugin) => getFilteredPlugins(plugin));
+    const unarchivedPluginsSpy = vi
+      .spyOn(pluginStore, 'getUnarchivedPlugins', 'get')
+      .mockReturnValue([]);
+    const pluginsSpy = vi
+      .spyOn(pluginStore, 'getPlugins', 'get')
+      .mockReturnValue([]);
 
-    expect(filteredPlugins).toEqual([mockPlugins[0]]);
-    expect(filteredPlugins).toHaveLength(1);
+    // Test for active project
+    projectsStore.setProject(mockActiveProject);
+
+    shallowMount(ProjectPlugins, {
+      global: {
+        provide: {
+          [pluginStoreSymbol]: pluginStore,
+          [projectsStoreSymbol]: projectsStore,
+        },
+        plugins: [router],
+      },
+    });
+
+    expect(unarchivedPluginsSpy).toHaveBeenCalled();
+
+    // Test for archived project
+    projectsStore.setProject(mockArchivedProject);
+
+    shallowMount(ProjectPlugins, {
+      global: {
+        provide: {
+          [pluginStoreSymbol]: pluginStore,
+          [projectsStoreSymbol]: projectsStore,
+        },
+        plugins: [router],
+      },
+    });
+
+    expect(pluginsSpy).toHaveBeenCalled();
   });
 });

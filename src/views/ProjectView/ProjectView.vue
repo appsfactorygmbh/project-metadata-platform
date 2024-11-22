@@ -48,7 +48,7 @@
     if (!newVal) {
       if (projectStore?.getUpdatedSuccessfully) {
         projectEditStore?.resetPluginChanges();
-        message.success('Project updated successfully.', 7);
+        message.success('Project updated successfully.', 2);
         projectStore.fetchProject(projectStore.getProject?.id || 0);
         stopEditing();
       } else {
