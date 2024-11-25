@@ -16,6 +16,7 @@
     DeleteOutlined,
     EditOutlined,
     UndoOutlined,
+    CloseOutlined
   } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
@@ -61,7 +62,7 @@
     );
   });
 
-  // set watcher for isEditing. if is editing is false reset the inputstatus fields
+  // set watcher for isEditing. if isEditing is false reset the input status fields
   watch(
     () => isEditing.value,
     (newVal) => {
@@ -177,6 +178,8 @@
           {{ projectData.projectName.value }}
         </h1>
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
+
+        <!-- Edit Button -->
         <a-button
           v-if="!projectsStore.getProject?.isArchived"
           class="button"
@@ -186,8 +189,10 @@
         >
           <template #icon><EditOutlined class="icon" /></template>
         </a-button>
+
+        <!-- Reactivate Button -->
         <a-tooltip
-          v-else
+          v-if="projectsStore.getProject?.isArchived"
           position="left"
           title="Click here to reactivate the project"
           style="padding-left: 0; padding-right: 0"
@@ -201,6 +206,25 @@
             <template #icon><UndoOutlined class="icon" /></template>
           </a-button>
         </a-tooltip>
+
+        <!-- Delete Button -->
+        <a-tooltip
+          v-if="projectsStore.getProject?.isArchived"
+          position="right"
+          title="Click here to delete the project"
+          style="padding-left: 0; padding-right: 0"
+        >
+          <a-button
+            class="button"
+            ghost
+            style="margin-left: 10px"
+            @click="reactivateProject"
+          >
+            <template #icon><CloseOutlined class="icon" /></template>
+          </a-button>
+        </a-tooltip>
+
+        <!-- Archive Button -->
         <a-tooltip
           v-if="!projectsStore.getProject?.isArchived"
           position="left"
@@ -231,14 +255,14 @@
       <a-flex
         class="projectInformationBox"
         :body-style="{
-          height: 'fit-content',
+          height: 'fit-content'
         }"
       >
         <a-card
           :body-style="{
             display: 'flex',
             padding: '5px',
-            alignItems: 'center',
+            alignItems: 'center'
           }"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
@@ -279,7 +303,7 @@
           :body-style="{
             display: 'flex',
             padding: '5px',
-            alignItems: 'center',
+            alignItems: 'center'
           }"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
@@ -324,7 +348,7 @@
           :body-style="{
             display: 'flex',
             padding: '5px',
-            alignItems: 'center',
+            alignItems: 'center'
           }"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
@@ -369,7 +393,7 @@
           :body-style="{
             display: 'flex',
             padding: '5px',
-            alignItems: 'center',
+            alignItems: 'center'
           }"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
