@@ -1,44 +1,37 @@
 <script lang="ts" setup>
-  </script>
+  import { inject } from 'vue';
+  import {
+    localLogStoreSymbol,
+    projectRoutingSymbol,
+  } from '@/store/injectionSymbols';
+
+  const { routerProjectId } = inject(projectRoutingSymbol)!;
+  const localLogStore = inject(localLogStoreSymbol)!;
+  //const { getLocalLog, getIsLoadingLocalLog } = storeToRefs(localLogStore);
+  //const log = computed(() => getLocalLog?.value);
+
+  //const isLoading = computed(
+  //  () => getIsLoadingLocalLog.value,
+  //);
+
+  watch(
+    () => routerProjectId.value,
+    async () => {
+      await localLogStore?.fetchLocalLog(routerProjectId.value);
+    },
+  );
+</script>
 
 <template>
-  <div style="margin: 2em 5em">
-    <a-timeline mode="alternate" class="localLog">
-      <a-timeline-item class="logItem">
-        <template #dot></template>
-        MMustermann edited Team Number from 2 to 1
-      </a-timeline-item>
-      <a-timeline-item color="red" class="time"
-        >2024-11-11T18:10:30+00:00</a-timeline-item
-      >
-
-      <a-timeline-item class="logItem">
-        <template #dot></template>
-        MMustermann deleted plugin Jira
-      </a-timeline-item>
-      <a-timeline-item color="red" class="time"
-        >2024-11-11T18:10:30+00:00</a-timeline-item
-      >
-
-      <a-timeline-item class="logItem">
-        <template #dot></template>
-        MMustermann edited project name from "DB Apps" to "DB App"
-      </a-timeline-item>
-      <a-timeline-item color="red" class="time"
-        >2024-11-11T18:10:30+00:00</a-timeline-item
-      >
-    </a-timeline>
-  </div>
+  <a-timeline class="LocalLog" style="margin: 2em 5em">
+    <a-timeline-item>Create a services site 2015-09-01</a-timeline-item>
+    <a-timeline-item>Solve initial network problems 2015-09-01</a-timeline-item>
+    <a-timeline-item>Technical testing 2015-09-01</a-timeline-item>
+    <a-timeline-item>Network problems being solved 2015-09-01</a-timeline-item>
+  </a-timeline>
 </template>
 <style>
-  .logItem {
-    padding-top: 1em !important;
-    padding-bottom: 0 !important;
-    height: 0;
-  }
-
   .LocalLog {
-    margin: 1em;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     background-color: white;
     border-radius: 15px;

@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import {
     GlobalPluginProvider,
+    LocalLogProvider,
     PluginProvider,
     ProjectEditProvider,
     ProjectProvider,
@@ -12,17 +13,19 @@
 <template>
   <ProjectRoutingProvider>
     <UserProvider>
-      <ProjectProvider>
-        <PluginProvider>
-          <ProjectEditProvider>
-            <GlobalPluginProvider>
-              <slot>
-                <RouterView />
-              </slot>
-            </GlobalPluginProvider>
-          </ProjectEditProvider>
-        </PluginProvider>
-      </ProjectProvider>
+      <LocalLogProvider>
+        <ProjectProvider>
+          <PluginProvider>
+            <ProjectEditProvider>
+              <GlobalPluginProvider>
+                <slot>
+                  <RouterView />
+                </slot>
+              </GlobalPluginProvider>
+            </ProjectEditProvider>
+          </PluginProvider>
+        </ProjectProvider>
+      </LocalLogProvider>
     </UserProvider>
   </ProjectRoutingProvider>
 </template>
