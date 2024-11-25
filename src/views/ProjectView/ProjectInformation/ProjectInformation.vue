@@ -133,6 +133,37 @@
     isModalOpen.value = true;
   };
 
+  const handleDelete = async () => {
+    const project = projectsStore.getProject;
+
+    if (!project?.id) {
+      alert('Invalid project ID. Cannot delete project.');
+      return;
+    }
+
+    if (!project.isArchived) {
+      alert('Only archived projects can be deleted.');
+      return;
+    }
+
+    const confirmed = confirm('Are you sure you want to delete this project?');
+    if (!confirmed) return;
+
+    try {
+      const response = await projectsStore.deleteProject(project.id);
+
+      if (response?.ok) {
+        alert('Project deleted successfully');
+        projectRouting.setProjectId(null);
+      } else {
+        alert('Failed to delete project. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      alert('An error occurred while trying to delete the project.');
+    }
+  };
+
   const getNextActiveProjectId = (currentProjectId: number): number => {
     const projects = projectsStore.getProjects;
     const nextProject = projects.find((project) => project.isArchived == false);
@@ -218,7 +249,7 @@
             class="button"
             ghost
             style="margin-left: 10px"
-            @click="reactivateProject"
+            @click="handleDelete"
           >
             <template #icon><CloseOutlined class="icon" /></template>
           </a-button>

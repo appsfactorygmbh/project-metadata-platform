@@ -207,6 +207,25 @@ export const useProjectStore = defineStore('project', {
         this.setLoadingUpdate(false);
       }
     },
+
+    async deleteProject(projectId: number): Promise<Response | null> {
+      try {
+        this.setLoadingUpdate(true);
+        const response = await projectsService.deleteProject(projectId);
+
+        if (response?.ok) {
+          this.projects = this.projects.filter((project) => project.id !== projectId);
+          this.project = null;
+        }
+
+        return response;
+      } catch (error) {
+        console.error('Error deleting project:', error);
+        return null;
+      } finally {
+        this.setLoadingUpdate(false);
+      }
+    }
   },
 });
 
