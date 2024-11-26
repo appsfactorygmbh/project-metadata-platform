@@ -33,7 +33,6 @@ export const useLogsStore = defineStore('logs', {
         this.setIsLoadingGlobalLogs(true);
         const globalLogs: LogEntryModel[] =
           await logsService.fetchGlobalLogs(searchParam);
-        console.log('Logs: ', globalLogs);
         this.setGlobalLogs(globalLogs);
       } finally {
         this.setIsLoadingGlobalLogs(false);

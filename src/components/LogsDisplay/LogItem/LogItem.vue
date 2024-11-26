@@ -13,7 +13,6 @@
       required: true,
     },
   });
-  console.log(props.isLast);
 </script>
 
 <template>
@@ -42,7 +41,7 @@
     width: 10px;
     height: 10px;
     background-color: white;
-    border: 3px solid #176fff;
+    border: 3px solid #6d6e6f;
     border-radius: 50%;
   }
   .line {
