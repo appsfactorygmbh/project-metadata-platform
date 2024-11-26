@@ -7,7 +7,7 @@ type StoreState = {
   isLoadingLocalLog: boolean;
 };
 
-export const useLocalLogStore = defineStore('localLog', {
+export const useLocalLogStore = defineStore('localLogs', {
   state: (): StoreState => {
     return {
       localLog: [],
