@@ -116,8 +116,6 @@ export const useUserStore = defineStore('user', {
       try {
         const user = (await userService.fetchUser(userId)) ?? {
           id: -1,
-          name: '',
-          username: '',
           email: '',
         };
         this.setUser(user);
@@ -130,8 +128,6 @@ export const useUserStore = defineStore('user', {
       try {
         const user = (await userService.fetchMe()) ?? {
           id: -1,
-          name: '',
-          username: '',
           email: '',
         };
         this.setMe(user);

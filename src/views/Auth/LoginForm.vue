@@ -11,13 +11,13 @@
   }>();
 
   type LoginFormData = {
-    username: string;
+    email: string;
     password: string;
     remember: boolean;
   };
 
   const modelRef = reactive<LoginFormData>({
-    username: '',
+    email: '',
     password: '',
     remember: false,
   });
@@ -25,11 +25,11 @@
   const rulesRef = reactive<
     RulesObject<LoginFormData | Record<string, unknown>>
   >({
-    username: [
+    email: [
       {
-        type: 'string', // or 'username'
+        type: 'string',
         required: true,
-        message: 'Please enter a valid username address!',
+        message: 'Please enter a valid email address!',
         trigger: 'change',
       },
     ],
@@ -75,8 +75,8 @@
     required-mark="optional"
     @keyup.enter="submit"
   >
-    <a-form-item name="username" v-bind="formStore.validateInfos.username">
-      <a-input v-model:value="modelRef.username" placeholder="Username">
+    <a-form-item name="email" v-bind="formStore.validateInfos.email">
+      <a-input v-model:value="modelRef.email" placeholder="email">
         <template #prefix>
           <UserOutlined />
         </template>

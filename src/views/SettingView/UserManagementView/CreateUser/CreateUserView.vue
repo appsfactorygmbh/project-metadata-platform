@@ -14,8 +14,6 @@
   const formStore = useFormStore('createUserForm');
   const userStore = inject(userStoreSymbol)!;
   const initialFormValues: CreateUserFormData = {
-    name: '',
-    username: '',
     email: '',
     password: '',
     confirmPassword: '',

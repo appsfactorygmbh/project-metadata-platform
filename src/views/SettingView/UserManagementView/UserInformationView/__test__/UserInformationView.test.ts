@@ -9,14 +9,10 @@ import router from '@/router';
 
 const userData1 = {
   id: 100,
-  name: 'Max Musterfrau',
-  username: 'Maxmuster1',
   email: 'maxmuster1@gmail.com',
 };
 const userData2 = {
   id: 200,
-  name: 'Max Mustermann',
-  username: 'Maxmuster2',
   email: 'maxmuster2@gmail.com',
 };
 
@@ -48,15 +44,13 @@ describe('UserInformationView.vue', () => {
     expect(wrapper.find('.avatar').exists()).toBe(true);
     expect(wrapper.find('.label').exists()).toBe(true);
     const text = wrapper.findAll('.text');
-    expect(text[0].text()).toBe(userData1.name);
-    expect(text[1].text()).toBe(userData1.username);
-    expect(text[2].text()).toBe(userData1.email);
+    expect(text[0].text()).toBe(userData1.email);
 
     const button = wrapper.findAll('.edit');
     expect(button[0].exists()).toBe(true);
     expect(button[1].exists()).toBe(true);
     expect(button[2].exists()).toBe(true);
-    expect(wrapper.find('.name').exists()).toBe(true);
+    expect(wrapper.find('.email').exists()).toBe(true);
   });
 
   it('should show password', () => {

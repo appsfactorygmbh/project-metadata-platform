@@ -17,7 +17,7 @@
     auth
       .login({
         data: {
-          username: fields.username,
+          email: fields.email,
           password: fields.password,
         },
         staySignedIn: fields.remember,
