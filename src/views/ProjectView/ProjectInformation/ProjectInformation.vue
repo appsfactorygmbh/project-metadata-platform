@@ -78,7 +78,7 @@
   );
 
   const toggleEditingMode = async () => {
-    if (isEditing.value === true) {
+    if (isEditing.value) {
       await stopEditing();
     } else {
       await startEditing();
@@ -154,7 +154,13 @@
 
       if (response?.ok) {
         alert('Project deleted successfully');
-        projectRouting.setProjectId(null);
+
+        const projects = projectsStore.getProjects;
+        const nextProject = projects.find((p) => p.id !== project.id);
+
+        if (nextProject) {
+          projectRouting.setProjectId(nextProject.id);
+        }
       } else {
         alert('Failed to delete project. Please try again.');
       }
@@ -166,7 +172,7 @@
 
   const getNextActiveProjectId = (currentProjectId: number): number => {
     const projects = projectsStore.getProjects;
-    const nextProject = projects.find((project) => project.isArchived == false);
+    const nextProject = projects.find((project) => !project.isArchived);
     if (!nextProject) return currentProjectId;
     return nextProject.id;
   };
