@@ -1,4 +1,9 @@
-import type { CreateUserModel, UserListModel, UserModel } from '@/models/User';
+import type {
+  CreateUserModel,
+  UpdateUserModel,
+  UserListModel,
+  UserModel,
+} from '@/models/User';
 import { ApiService } from './ApiService';
 
 class UserService extends ApiService {
@@ -37,6 +42,24 @@ class UserService extends ApiService {
     }
   };
 
+  fetchMe = async (): Promise<UserModel | null> => {
+    try {
+      const response = await this.fetch('/Users/Me', {
+        headers: {
+          Accept: 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          cors: 'cors',
+        },
+      });
+
+      const data: UserModel = await response.json();
+      return data;
+    } catch (err) {
+      console.error('Error fetching me: ' + err);
+      return null;
+    }
+  };
+
   createUser = async (newUser: CreateUserModel): Promise<Response | null> => {
     try {
       const response = await this.fetch('/Users', {
@@ -69,7 +92,7 @@ class UserService extends ApiService {
 
   updateUser = async (
     userId: number,
-    updatedUser: CreateUserModel,
+    updatedUser: UpdateUserModel,
   ): Promise<Response | null> => {
     try {
       const response = await this.fetch('/Users/' + userId.toString(), {
@@ -83,7 +106,7 @@ class UserService extends ApiService {
       return response;
     } catch (error) {
       console.error('Error updating user:', error);
-      return null;
+      throw Error;
     }
   };
 }

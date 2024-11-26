@@ -7,12 +7,12 @@
     LeftOutlined,
     UserOutlined,
   } from '@ant-design/icons-vue';
-  import { ref } from 'vue';
+  import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
 
   // Component state using refs
   const collapsed = ref<boolean>(false);
-  const selectedKeys = ref<string[]>(['2']);
+  const selectedKeys = ref<string[]>([]);
   const tab = ref<string>('Global Plugins');
 
   // Router instance
@@ -51,6 +51,30 @@
       }
     }
   };
+
+  onMounted(() => {
+    // set the selected tab based on the current route
+    if (router.currentRoute) {
+      switch (router?.currentRoute.value.path) {
+        case '/settings/user-management': {
+          selectedKeys.value = ['1'];
+          break;
+        }
+        case '/settings/global-plugins': {
+          selectedKeys.value = ['2'];
+          break;
+        }
+        case '/settings/global-logs': {
+          selectedKeys.value = ['3'];
+          break;
+        }
+        default: {
+          selectedKeys.value = ['2'];
+          break;
+        }
+      }
+    }
+  });
 </script>
 
 <template>
@@ -72,17 +96,6 @@
         class="menuItem"
         mode="inline"
       >
-        <!-- <a-sub-menu key="userManagement">
-          <template #title>
-            <span>
-              <user-outlined class="icons" />
-              <span>User Management</span>
-            </span>
-          </template>
-          <a-menu-item key="4" @click="clickTab('User')">User 1</a-menu-item>
-          <a-menu-item key="5" @click="clickTab('User')">User 2</a-menu-item>
-          <a-menu-item key="6" @click="clickTab('User')">User 3</a-menu-item>
-        </a-sub-menu> -->
         <a-menu-item key="1" class="userManagement" @click="clickTab('User')">
           <UserOutlined class="icons" />
           <span>User Management</span>

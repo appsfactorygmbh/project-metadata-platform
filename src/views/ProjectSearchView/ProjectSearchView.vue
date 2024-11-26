@@ -1,7 +1,9 @@
 <script lang="ts" setup>
   import { type SearchableColumn, SearchableTable } from '@/components/Table';
+  import { SearchBar } from '@/components/Searchbar';
   import {
     pluginStoreSymbol,
+    projectRoutingSymbol,
     projectsStoreSymbol,
   } from '@/store/injectionSymbols';
   import { inject, onMounted, provide, reactive } from 'vue';
@@ -10,9 +12,12 @@
   import { projectsService } from '@/services';
   import { useEditing } from '@/utils/hooks/useEditing';
   import _ from 'lodash';
-  import { useWindowSize } from '@vueuse/core';
-  import { useProjectRouting } from '@/utils/hooks';
-  import { UndoOutlined } from '@ant-design/icons-vue';
+  import { useToggle, useWindowSize } from '@vueuse/core';
+  import {
+    BulbOutlined,
+    InboxOutlined,
+    UndoOutlined,
+  } from '@ant-design/icons-vue';
 
   const props = defineProps({
     paneWidth: {
@@ -25,16 +30,39 @@
     },
   });
 
+  type ProjectSearchStore = SearchStore<ProjectModel>;
+
   const { stopEditing, isEditing } = useEditing();
-  const { routerProjectId, setProjectId } = useProjectRouting();
+  const { routerProjectId, setProjectId } = inject(projectRoutingSymbol)!;
 
   const projectsStore = inject(projectsStoreSymbol);
   const pluginStore = inject(pluginStoreSymbol);
   const searchStore = useSearchStore<ProjectModel>('projects');
   const searchStoreSymbol = Symbol('projectSearchStore');
-
   const isLoading = computed(() => projectsStore?.getIsLoadingProjects);
-  provide<SearchStore>(searchStoreSymbol, searchStore);
+  provide<ProjectSearchStore>(searchStoreSymbol, searchStore);
+
+  const showOnlyArchived: ProjectSearchStore['filter'] = (items) =>
+    items.filter((item) => item.isArchived);
+  const showOnlyActive: ProjectSearchStore['filter'] = (items) =>
+    items.filter((item) => !item.isArchived);
+
+  const [filterType, toggleFilterType] = useToggle<'active', 'archived'>(
+    'active',
+    {
+      truthyValue: 'active',
+      falsyValue: 'archived',
+    },
+  );
+  const toggleShowFilter = () => {
+    toggleFilterType();
+    searchStore.setFilter(
+      filterType.value === 'archived' ? showOnlyArchived : showOnlyActive,
+    );
+  };
+
+  // on mount, set the filter to show only active projects
+  searchStore.setFilter(showOnlyActive);
 
   watch(
     () => projectsStore?.getProjects,
@@ -45,7 +73,6 @@
 
   const FETCHING_METHOD: 'FRONTEND' | 'BACKEND' = import.meta.env
     .VITE_PROJECT_SEARCH_METHOD;
-  console.log('FETCHING_METHOD:', import.meta.env);
 
   watch(
     () => projectsStore?.getProjects,
@@ -91,6 +118,7 @@
     async () => {
       await projectsStore?.fetchProject(routerProjectId.value);
       await pluginStore?.fetchPlugins(routerProjectId.value);
+      await pluginStore?.fetchUnarchivedPlugins(routerProjectId.value);
     },
   );
 
@@ -107,6 +135,7 @@
     } else {
       await projectsStore?.fetchProject(routerProjectId.value);
       await pluginStore?.fetchPlugins(routerProjectId.value);
+      await pluginStore?.fetchUnarchivedPlugins(routerProjectId.value);
     }
 
     searchStore.setBaseSet(projectsStore?.getProjects ?? []);
@@ -122,14 +151,37 @@
   <div style="padding: 20px">
     <a-flex vertical gap="middle">
       <span>
-        <SearchBar :search-store-symbol="searchStoreSymbol" />
-        <a-tooltip placement="left" title="Click here to reset all filters">
-          <a-button class="reset" @click="clearAllFilters">
-            <template #icon>
-              <UndoOutlined class="icons" />
-            </template>
-          </a-button>
-        </a-tooltip>
+        <a-row :gutter="16" justify="space-between">
+          <a-col :span="20">
+            <SearchBar :search-store-symbol="searchStoreSymbol" width="100%" />
+          </a-col>
+          <a-col :span="2" style="display: flex; justify-content: flex-end">
+            <a-tooltip
+              placement="left"
+              title="Click here to reset all filters"
+              style="padding-left: 0; padding-right: 0"
+            >
+              <a-button style="width: 100%" @click="clearAllFilters">
+                <template #icon>
+                  <UndoOutlined class="icons" />
+                </template>
+              </a-button>
+            </a-tooltip>
+          </a-col>
+          <a-col :span="2" style="display: flex; justify-content: flex-end">
+            <a-tooltip
+              placement="left"
+              title="Click here to toggle between active and archived projects"
+            >
+              <a-button style="width: 100%" @click="toggleShowFilter">
+                <template #icon>
+                  <InboxOutlined v-if="filterType === 'active'" />
+                  <BulbOutlined v-else />
+                </template>
+              </a-button>
+            </a-tooltip>
+          </a-col>
+        </a-row>
       </span>
 
       <SearchableTable

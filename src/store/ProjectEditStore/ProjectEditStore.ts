@@ -2,10 +2,11 @@ import { defineStore } from 'pinia';
 import type { PluginModel } from '@/models/Plugin';
 import type { PluginEditModel } from '@/models/Plugin/PluginEditModel.ts';
 import type { DetailedProjectModel } from '@/models/Project';
+import type { EditProjectModel } from '@/models/Project/EditProjectModel';
 
 type StoreState = {
   pluginChanges: Map<number, PluginEditModel>;
-  projectInformationChanges: DetailedProjectModel;
+  projectInformationChanges: EditProjectModel;
   canBeCreated: boolean;
   duplicatedUrls: Map<string, number[]>;
   emptyUrlFields: Map<number, number>;
@@ -25,7 +26,6 @@ export const useProjectEditStore = defineStore('projectEdit', {
       emptyProjectInformationFields: new Map(),
       addedPlugins: [],
       projectInformationChanges: {
-        id: -1,
         projectName: '',
         clientName: '',
         businessUnit: '',
@@ -49,8 +49,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
       );
     },
     // Return all Projectinformation changes (not implemented in this branch)
-    getProjectInformationChanges(): DetailedProjectModel {
-      console.log('current projectinformation', this.projectInformationChanges);
+    getProjectInformationChanges(): EditProjectModel {
       return this.projectInformationChanges;
     },
     // Returns all Plugins that have URL conflicts (two or more Plugins have the same URL)
@@ -96,11 +95,10 @@ export const useProjectEditStore = defineStore('projectEdit', {
     setProjectInformation(project: DetailedProjectModel): void {
       this.emptyProjectInformationFields.clear();
       this.projectInformationChanges = { ...project };
-      console.log(this.projectInformationChanges.clientName);
     },
 
     // Updates the Projectinformation changes
-    updateProjectInformationChanges(project: DetailedProjectModel): void {
+    updateProjectInformationChanges(project: EditProjectModel): void {
       this.projectInformationChanges = project;
     },
 
@@ -130,7 +128,6 @@ export const useProjectEditStore = defineStore('projectEdit', {
     // Checks for URL conflicts between Plugins
     // Checks for URL conflicts between Plugins
     checkForConflicts(): void {
-      console.log('pluginCHanges', this.pluginChanges);
       this.duplicatedUrls = new Map();
 
       this.pluginChanges.forEach((plugin, key) => {

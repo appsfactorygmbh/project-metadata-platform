@@ -11,25 +11,38 @@ const testData = [
   {
     id: 0,
     name: 'Plugin 1',
-    archived: true,
+    isArchived: true,
   },
   {
     id: 1,
     name: 'Plugin 2',
-    archived: false,
+    isArchived: false,
   },
 ];
 
-const testDataDelete = [
+const testDataArchive = [
   {
     id: 0,
     name: 'Plugin 1',
-    archived: true,
+    isArchived: true,
   },
   {
     id: 1,
     name: 'Plugin 2',
-    archived: true,
+    isArchived: true,
+  },
+];
+
+const testDataReactivate = [
+  {
+    id: 0,
+    name: 'Plugin 1',
+    isArchived: true,
+  },
+  {
+    id: 1,
+    name: 'Plugin 2',
+    isArchived: true,
   },
 ];
 
@@ -59,28 +72,81 @@ describe('GlobalPluginsView.vue', () => {
   it('renders the fetched Plugins, but not the archieved ones', async () => {
     const wrapper = generateWrapper();
     await flushPromises();
+
     expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
     expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 2');
-    expect(wrapper.findAll('.ant-btn')).toHaveLength(2);
+    expect(wrapper.findAll('.ant-btn')).toHaveLength(3);
   });
 
-  it('sends a delete request when clicking the delete button', async () => {
+  it('switches to archived plugins when clicking the button', async () => {
+    const wrapper = generateWrapper();
+    const archiveButton = wrapper.findComponent(Button);
+    await archiveButton.trigger('click');
+    await flushPromises();
+
+    expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
+    expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 1');
+  });
+
+  it('calls the store when clicking the archive button', async () => {
     const wrapper = generateWrapper();
     const globalPluginStore = useGlobalPluginsStore();
-    const spy = vi.spyOn(globalPluginStore, 'deleteGlobalPlugin');
+    const spy = vi.spyOn(globalPluginStore, 'archiveGlobalPlugin');
     spy.mockImplementation(async () =>
-      globalPluginStore.setGlobalPlugins(testDataDelete),
+      globalPluginStore.setGlobalPlugins(testDataArchive),
     );
 
     await flushPromises();
     expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
     expect(spy).toHaveBeenCalledTimes(0);
 
-    await wrapper.find('.anticon-delete').trigger('click');
-    const confirmButton = wrapper.findAllComponents(Button)[3];
+    await wrapper.findAll('.anticon-inbox')[1].trigger('click');
+    //confirms the action
+    const confirmButton = wrapper.findAllComponents(Button)[4];
     await confirmButton.trigger('click');
 
     expect(wrapper.findAll('.ant-list-item')).toHaveLength(0);
+    expect(spy).toHaveBeenCalledOnce();
+  });
+
+  it('calls the store when clicking the reactivate button', async () => {
+    const wrapper = generateWrapper();
+    const globalPluginStore = useGlobalPluginsStore();
+    const spy = vi.spyOn(globalPluginStore, 'reactivateGlobalPlugin');
+    spy.mockImplementation(async () =>
+      globalPluginStore.setGlobalPlugins(testDataReactivate),
+    );
+
+    await flushPromises();
+    expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
+    expect(spy).toHaveBeenCalledTimes(0);
+
+    //toggles archived plugins and reactivates the first one
+    await wrapper.find('.anticon-inbox').trigger('click');
+    await wrapper.find('.anticon-undo').trigger('click');
+
+    expect(wrapper.findAll('.ant-list-item')).toHaveLength(2);
+    expect(spy).toHaveBeenCalledOnce();
+  });
+
+  it('calls the store when clicking the delete button', async () => {
+    const wrapper = generateWrapper();
+    const globalPluginStore = useGlobalPluginsStore();
+    const spy = vi.spyOn(globalPluginStore, 'deleteGlobalPlugin');
+    spy.mockImplementation(async () =>
+      globalPluginStore.setGlobalPlugins(testData),
+    );
+
+    await flushPromises();
+    expect(spy).toHaveBeenCalledTimes(0);
+
+    //toggles archived plugins and deletes the first one
+    await wrapper.find('.anticon-inbox').trigger('click');
+    await wrapper.find('.anticon-delete').trigger('click');
+    //confirms the action
+    const confirmButton = wrapper.findAllComponents(Button)[4];
+    await confirmButton.trigger('click');
+
     expect(spy).toHaveBeenCalledOnce();
   });
 });

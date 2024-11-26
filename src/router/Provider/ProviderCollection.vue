@@ -6,11 +6,13 @@
     ProjectProvider,
     UserProvider,
   } from '@/router/Provider';
+  import ProjectRoutingProvider from './ProjectRoutingProvider.vue';
   import LogsProvider from './LogsProvider.vue';
 </script>
 
 <template>
-  <LogsProvider>
+  <ProjectRoutingProvider>
+    <LogsProvider>
     <UserProvider>
       <ProjectProvider>
         <PluginProvider>
@@ -25,4 +27,5 @@
       </ProjectProvider>
     </UserProvider>
   </LogsProvider>
+  </ProjectRoutingProvider>
 </template>

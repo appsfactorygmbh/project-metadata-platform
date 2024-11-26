@@ -24,7 +24,7 @@
     />
     <a-card class="cardContainer">
       <LogTimeline
-        v-if="logsStore.getGlobalLogs.length > 0"
+        v-if="logsStore.getGlobalLogs && logsStore.getGlobalLogs.length > 0"
         :log-entries="logsStore.getGlobalLogs"
         class="timeline"
       />
@@ -43,7 +43,7 @@
   }
 
   .input {
-    margin-bottom: 15px;
+    margin-bottom: 15px !important;
     width: 30em;
   }
 

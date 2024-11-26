@@ -1,10 +1,7 @@
 <script lang="ts" setup>
   import { ProjectPlugins } from './ProjectPlugins';
   import { ProjectInformation } from './ProjectInformation';
-  import type {
-    DetailedProjectModel,
-    UpdateProjectModel,
-  } from '@/models/Project';
+  import type { UpdateProjectModel } from '@/models/Project';
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import {
@@ -51,7 +48,7 @@
     if (!newVal) {
       if (projectStore?.getUpdatedSuccessfully) {
         projectEditStore?.resetPluginChanges();
-        message.success('Project updated successfully.', 7);
+        message.success('Project updated successfully.', 2);
         projectStore.fetchProject(projectStore.getProject?.id || 0);
         stopEditing();
       } else {
@@ -74,12 +71,12 @@
     }
 
     if (!projectStore?.getProject) {
-      console.log(
+      console.error(
         'Error when trying to get ProjectInformation. getProject is undefined',
       );
       return;
     }
-    const updateProjectInformation: DetailedProjectModel =
+    const updateProjectInformation =
       projectEditStore.getProjectInformationChanges;
     const updatedProject: UpdateProjectModel = {
       projectName: updateProjectInformation?.projectName,
@@ -89,13 +86,12 @@
       clientName: updateProjectInformation?.clientName,
       pluginList: projectEditStore?.getPluginChanges,
     };
-    console.log('updated Project', updatedProject);
     const projectID = computed(() => projectStore?.getProject?.id);
     if (projectID.value) {
       await projectStore?.updateProject(updatedProject, projectID.value);
       await projectStore.fetchProjects();
       await projectStore.fetchProject(projectID.value);
-      await pluginStore?.fetchPlugins(projectID.value);
+      await pluginStore?.fetchUnarchivedPlugins(projectID.value);
     }
   };
 </script>

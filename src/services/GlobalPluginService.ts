@@ -13,19 +13,6 @@ class GlobalPluginService extends ApiService {
     }
   };
 
-  removeGlobalPlugin = async (pluginId: number): Promise<Response | null> => {
-    try {
-      const response = await this.fetch('/Plugins/' + pluginId.toString(), {
-        method: 'DELETE',
-        mode: 'cors',
-      });
-      return response;
-    } catch (err) {
-      console.error('Error deleting global plugin: ' + err);
-      return null;
-    }
-  };
-
   createGlobalPlugin = async (
     plugin: Omit<GlobalPluginModel, 'id'>,
   ): Promise<Response | null> => {
@@ -60,6 +47,45 @@ class GlobalPluginService extends ApiService {
       return response;
     } catch (error) {
       console.error('Error:', error);
+      return null;
+    }
+  };
+
+  archiveGlobalPlugin = async (
+    plugin: GlobalPluginModel,
+  ): Promise<Response | null> => {
+    plugin.isArchived = true;
+    try {
+      const response = await this.updateGlobalPlugin(plugin);
+      return response;
+    } catch (err) {
+      console.error('Error archiving global plugin: ' + err);
+      return null;
+    }
+  };
+
+  reactivateGlobalPlugin = async (
+    plugin: GlobalPluginModel,
+  ): Promise<Response | null> => {
+    plugin.isArchived = false;
+    try {
+      const response = await this.updateGlobalPlugin(plugin);
+      return response;
+    } catch (err) {
+      console.error('Error reactivating global plugin: ' + err);
+      return null;
+    }
+  };
+
+  deleteGlobalPlugin = async (pluginId: number): Promise<Response | null> => {
+    try {
+      const response = await this.fetch('/Plugins/' + pluginId.toString(), {
+        method: 'DELETE',
+        mode: 'cors',
+      });
+      return response;
+    } catch (error) {
+      console.error('Error deleting global plugin:', error);
       return null;
     }
   };

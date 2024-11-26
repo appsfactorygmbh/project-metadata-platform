@@ -1,9 +1,9 @@
-<script lang="ts" setup>
+<script setup lang="ts">
   import { computed, inject, ref, watch } from 'vue';
-  import { PlusOutlined } from '@ant-design/icons-vue';
   import {
     BankOutlined,
     FontColorsOutlined,
+    PlusOutlined,
     ShoppingOutlined,
     TeamOutlined,
     UserOutlined,
@@ -15,6 +15,8 @@
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
 
   const open = ref<boolean>(false);
+
+  // Form- and Stateconfiguration
   const formRef = ref();
   const labelCol = { style: { width: '150px' } };
   const wrapperCol = { span: 14 };
@@ -22,7 +24,6 @@
 
   // TableStore to refetch Table after Project was added
   const projectsStore = inject(projectsStoreSymbol);
-
   const isAdding = computed(() => projectsStore?.getIsLoadingAdd);
   const fetchError = ref<boolean>(false);
 
@@ -33,6 +34,7 @@
     department: '',
     clientName: '',
   });
+
   const validateMessages = {
     required: 'Please enter valid input.',
     types: {
@@ -53,7 +55,7 @@
     tooltip: 'Click here to create a new project',
   };
 
-  // opens modal when plussign is clicked
+  // opens modal when plus sign is clicked
   const showModal = () => {
     open.value = true;
   };
@@ -72,15 +74,14 @@
         submit();
       })
       .catch((error: unknown) => {
-        console.log('error', error);
+        console.error('error', error);
       });
   };
 
   // sends PUT request to the backend
   const submit = async () => {
-    // wait for project creation and checks whether it has been created correctly
     watch(isAdding, (newVal) => {
-      if (newVal == false) {
+      if (newVal === false) {
         if (projectsStore?.getAddedSuccessfully) {
           projectsStore.fetchProjects();
           fetchError.value = false;
@@ -108,6 +109,7 @@
   <div>
     <FloatingButton :button="button" />
 
+    <!-- Modal for project creation -->
     <a-modal
       v-model:open="open"
       width="400px"
@@ -128,7 +130,6 @@
           :rules="[{ required: true, whitespace: true }]"
           class="column"
           :no-style="true"
-          :whitespace="true"
         >
           <a-input
             v-model:value="formState.projectName"

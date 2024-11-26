@@ -12,7 +12,6 @@ export const useUserRouting = () => {
     router.push({
       path: router.currentRoute.value.path,
       query: {
-        ...router.currentRoute.value.query,
         userId: routerUserId.value,
       },
     });

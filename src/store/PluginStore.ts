@@ -7,6 +7,7 @@ type StoreState = {
   isLoadingPlugins: boolean;
   cachePlugins: PluginModel[];
   changedPlugins: PluginModel[];
+  unarchivedPlugins: PluginModel[];
 };
 
 export const usePluginsStore = defineStore('plugin', {
@@ -15,6 +16,7 @@ export const usePluginsStore = defineStore('plugin', {
       plugins: [],
       cachePlugins: [],
       changedPlugins: [],
+      unarchivedPlugins: [],
       isLoadingPlugins: false,
     };
   },
@@ -29,6 +31,9 @@ export const usePluginsStore = defineStore('plugin', {
     getCachePlugins(): PluginModel[] {
       return this.cachePlugins;
     },
+    getUnarchivedPlugins(): PluginModel[] {
+      return this.unarchivedPlugins;
+    },
   },
 
   actions: {
@@ -41,6 +46,9 @@ export const usePluginsStore = defineStore('plugin', {
     setCachePlugins(plugins: PluginModel[]): void {
       this.cachePlugins = plugins;
     },
+    setUnarchivedPlugins(plugins: PluginModel[]): void {
+      this.unarchivedPlugins = plugins;
+    },
     async fetchPlugins(projectID: number) {
       try {
         this.setLoadingPlugins(true);
@@ -51,7 +59,17 @@ export const usePluginsStore = defineStore('plugin', {
       } finally {
         this.setLoadingPlugins(false);
       }
-      console.log(this.getPlugins);
+    },
+
+    async fetchUnarchivedPlugins(projectID: number) {
+      try {
+        this.setLoadingPlugins(true);
+        const plugins: PluginModel[] =
+          await pluginService.fetchUnarchivedPlugins(projectID);
+        this.setUnarchivedPlugins(plugins);
+      } finally {
+        this.setLoadingPlugins(false);
+      }
     },
   },
 });

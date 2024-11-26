@@ -4,6 +4,7 @@ import { useProjectEditStore } from './ProjectEditStore/ProjectEditStore.ts';
 import { useUserStore } from './UserStore';
 import { useLogsStore } from './LogsStore';
 import type { useGlobalPluginsStore } from './GlobalPluginStore';
+import { useProjectRouting } from '@/utils/hooks/useProjectRouting.ts';
 import type { InjectionKey } from 'vue';
 
 const projectsStoreSymbol = Symbol() as InjectionKey<
@@ -30,6 +31,10 @@ const logsStoreSymbol = Symbol() as InjectionKey<
   ReturnType<typeof useLogsStore>
 >;
 
+const projectRoutingSymbol = Symbol() as InjectionKey<
+  ReturnType<typeof useProjectRouting>
+>;
+
 export {
   projectsStoreSymbol,
   pluginStoreSymbol,
@@ -37,4 +42,5 @@ export {
   projectEditStoreSymbol,
   userStoreSymbol,
   logsStoreSymbol,
+  projectRoutingSymbol,
 };
