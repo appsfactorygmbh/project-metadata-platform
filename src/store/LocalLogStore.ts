@@ -1,5 +1,5 @@
 import { localLogService } from '@/services/LocalLogService';
-import type { LocalLogModel } from '@/models/Logs';
+import type { LocalLogModel } from '@/models/LocalLogs';
 import { defineStore } from 'pinia';
 
 type StoreState = {

@@ -1,4 +1,4 @@
-import type { LocalLogModel } from '@/models/Logs';
+import type { LocalLogModel } from '@/models/LocalLogs';
 import { ApiService } from './ApiService';
 
 class LocalLogService extends ApiService {
