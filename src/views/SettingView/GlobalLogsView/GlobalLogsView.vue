@@ -22,27 +22,40 @@
       class="input"
       @change="updateSearchParam"
     />
-    <a-card
-      class="card"
-      :body-style="{
-        height: '83vh',
-      }"
-    >
-      <div class="timeline">
-        <LogTimeline :log-entries="logsStore.getGlobalLogs" />
-      </div>
+    <a-card class="cardContainer">
+      <LogTimeline
+        v-if="logsStore.getGlobalLogs.length > 0"
+        :log-entries="logsStore.getGlobalLogs"
+        class="timeline"
+      />
+      <a-flex v-else justify="center" align="center" style="height: 80vh">
+        <a-empty description="No results found" />
+      </a-flex>
     </a-card>
   </div>
 </template>
 
 <style lang="css" scoped>
+  .container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
   .input {
-    margin: 15px;
+    margin-bottom: 15px;
     width: 30em;
   }
-  .card {
-    overflow-y: auto;
+
+  .cardContainer {
+    flex: 1;
+    background-color: white;
+    padding: 1em;
+    overflow: auto;
+    margin-bottom: 60px; 
+  }
+
+  .timeline {
     height: 100%;
-    margin: 0 15px 0 15px;
   }
 </style>
