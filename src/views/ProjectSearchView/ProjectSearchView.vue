@@ -120,6 +120,7 @@
     async () => {
       await projectsStore?.fetchProject(routerProjectId.value);
       await pluginStore?.fetchPlugins(routerProjectId.value);
+      await pluginStore?.fetchUnarchivedPlugins(routerProjectId.value);
       await localLogStore?.fetchLocalLog(routerProjectId.value);
     },
   );
@@ -137,6 +138,7 @@
     } else {
       await projectsStore?.fetchProject(routerProjectId.value);
       await pluginStore?.fetchPlugins(routerProjectId.value);
+      await pluginStore?.fetchUnarchivedPlugins(routerProjectId.value);
     }
 
     searchStore.setBaseSet(projectsStore?.getProjects ?? []);

@@ -132,7 +132,7 @@
         :is-loading="isLoading"
         :label="'Username'"
         :is-editing-key="'isEditingUsername'"
-        :user-id="user ? user.id : -1"
+        :user-id="user ? Number(user.id) : -1"
         type="username"
         class="textField"
         :placeholder="user?.email"
@@ -147,7 +147,7 @@
         :is-editing-key="'isEditingEmail'"
         class="textField"
         type="email"
-        :user-id="user ? user.id : -1"
+        :user-id="user ? Number(user.id) : -1"
         :placeholder="user?.email"
         @safed-changes="
           async () => user && (await userStore.fetchUser(user.id))
@@ -159,8 +159,7 @@
         label="Password"
         :is-editing-key="'isEditingPassword'"
         :is-loading="isLoading"
-        :user-id="user.id"
-        class="passwordField"
+        :user-id="Number(user.id)"
       />
     </a-flex>
   </div>
