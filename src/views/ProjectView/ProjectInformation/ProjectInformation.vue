@@ -127,46 +127,40 @@
     projectData.clientName.value = loadedData.clientName;
   }
 
-  const isModalOpen = ref(false);
+  const isArchiveModalOpen = ref(false);
+  const isDeleteModalOpen = ref(false);
 
   const handleArchive = () => {
-    isModalOpen.value = true;
+    isArchiveModalOpen.value = true;
   };
 
   const handleDelete = async () => {
+    isDeleteModalOpen.value = true;
+  };
+
+  const confirmDelete = async () => {
     const project = projectsStore.getProject;
 
     if (!project?.id) {
-      alert('Invalid project ID. Cannot delete project.');
+      isDeleteModalOpen.value = false;
       return;
     }
-
-    if (!project.isArchived) {
-      alert('Only archived projects can be deleted.');
-      return;
-    }
-
-    const confirmed = confirm('Are you sure you want to delete this project?');
-    if (!confirmed) return;
 
     try {
       const response = await projectsStore.deleteProject(project.id);
 
       if (response?.ok) {
-        alert('Project deleted successfully');
-
         const projects = projectsStore.getProjects;
         const nextProject = projects.find((p) => p.id !== project.id);
 
         if (nextProject) {
           projectRouting.setProjectId(nextProject.id);
         }
-      } else {
-        alert('Failed to delete project. Please try again.');
       }
     } catch (error) {
       console.error('Error deleting project:', error);
-      alert('An error occurred while trying to delete the project.');
+    } finally {
+      isDeleteModalOpen.value = false;
     }
   };
 
@@ -189,7 +183,7 @@
           await projectsStore.fetchProjects();
         }
       } finally {
-        isModalOpen.value = false;
+        isArchiveModalOpen.value = false;
         const newProjectId = getNextActiveProjectId(projectID);
         projectRouting.setProjectId(newProjectId);
       }
@@ -259,6 +253,15 @@
           >
             <template #icon><CloseOutlined class="icon" /></template>
           </a-button>
+
+          <ConfirmAction
+            :is-open="isDeleteModalOpen"
+            title="Delete Project"
+            message="Are you sure you want to delete this project permanently?"
+            @confirm="confirmDelete"
+            @cancel="isDeleteModalOpen = false"
+            @update:is-open="(value) => (isDeleteModalOpen = value)"
+          />
         </a-tooltip>
 
         <!-- Archive Button -->
@@ -279,12 +282,12 @@
         </a-tooltip>
 
         <ConfirmAction
-          :is-open="isModalOpen"
+          :is-open="isArchiveModalOpen"
           title="Archive Project"
           message="Are you sure you want to archive this project?"
           @confirm="confirmArchive"
-          @cancel="isModalOpen = false"
-          @update:is-open="(value) => (isModalOpen = value)"
+          @cancel="isArchiveModalOpen = false"
+          @update:is-open="(value) => (isArchiveModalOpen = value)"
         />
       </div>
 
