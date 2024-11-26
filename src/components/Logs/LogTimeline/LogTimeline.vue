@@ -16,7 +16,7 @@
       :key="index"
       class="timeLine"
       :log-message="entry.logMessage"
-      :time-stamp="entry.timeStamp"
+      :time-stamp="entry.timestamp"
       :is-last="index === props.logEntries.length - 1"
     />
   </div>

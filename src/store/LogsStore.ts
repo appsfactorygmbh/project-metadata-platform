@@ -18,7 +18,7 @@ export const useLogsStore = defineStore('logs', {
   },
   getters: {
     getGlobalLogs(): LogEntryModel[] {
-      return this.globalLogEntries;
+      return this.globalLogEntries.reverse();
     },
     getIsLoadingGlobalLogs(): boolean {
       return this.isLoadingGlobalLogs;
@@ -29,11 +29,11 @@ export const useLogsStore = defineStore('logs', {
   },
   actions: {
     async fetchGlobalLogs(searchParam?: string) {
-      console.log(searchParam);
       try {
         this.setIsLoadingGlobalLogs(true);
         const globalLogs: LogEntryModel[] =
           await logsService.fetchGlobalLogs(searchParam);
+        console.log('Logs: ', globalLogs);
         this.setGlobalLogs(globalLogs);
       } finally {
         this.setIsLoadingGlobalLogs(false);

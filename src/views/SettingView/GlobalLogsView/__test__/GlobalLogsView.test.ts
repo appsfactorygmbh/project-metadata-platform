@@ -27,7 +27,6 @@ describe('GlobalLogsView.vue', () => {
       fetchGlobalLogs: fetchGlobalLogsMock,
     };
 
-    // Provide the logsStoreMock using provide/inject mechanism
     const wrapper = mount(GlobalLogsView, {
       global: {
         provide: {
@@ -39,7 +38,7 @@ describe('GlobalLogsView.vue', () => {
     const searchInput = wrapper.find('.input');
     await searchInput.setValue('test search');
     await searchInput.trigger('change');
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     expect(fetchGlobalLogsMock).toHaveBeenCalledWith('test search');
   });
 });
