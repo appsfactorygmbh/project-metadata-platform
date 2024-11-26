@@ -18,7 +18,9 @@
 
 <template>
   <div class="container">
-    <p class="text timeStamp">{{ new Date(props.timeStamp).toLocaleString() }}</p>
+    <p class="text timeStamp">
+      {{ new Date(props.timeStamp).toLocaleString() }}
+    </p>
     <div class="line-container">
       <div class="circle" />
       <div v-if="!isLast" class="line" />

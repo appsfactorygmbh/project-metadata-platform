@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { computed, ref, watch, onMounted } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
   import { inject } from 'vue';
   import { userStoreSymbol } from '@/store/injectionSymbols';
   import { useUserRouting } from '@/utils/hooks';
@@ -92,7 +92,7 @@
 
   .content {
     padding: 10px;
-    min-height: calc(100vh - 20px); /* Adjusted to fit within the viewport */
+    min-height: calc(100vh - 20px);
   }
 
   span {

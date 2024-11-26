@@ -13,19 +13,19 @@
 <template>
   <ProjectRoutingProvider>
     <LogsProvider>
-    <UserProvider>
-      <ProjectProvider>
-        <PluginProvider>
-          <ProjectEditProvider>
-            <GlobalPluginProvider>
-              <slot>
-                <RouterView />
-              </slot>
-            </GlobalPluginProvider>
-          </ProjectEditProvider>
-        </PluginProvider>
-      </ProjectProvider>
-    </UserProvider>
-  </LogsProvider>
+      <UserProvider>
+        <ProjectProvider>
+          <PluginProvider>
+            <ProjectEditProvider>
+              <GlobalPluginProvider>
+                <slot>
+                  <RouterView />
+                </slot>
+              </GlobalPluginProvider>
+            </ProjectEditProvider>
+          </PluginProvider>
+        </ProjectProvider>
+      </UserProvider>
+    </LogsProvider>
   </ProjectRoutingProvider>
 </template>

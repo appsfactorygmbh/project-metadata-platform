@@ -52,7 +52,7 @@
     background-color: white;
     padding: 1em;
     overflow: auto;
-    margin-bottom: 60px; 
+    margin-bottom: 60px;
   }
 
   .timeline {
