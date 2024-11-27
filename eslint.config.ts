@@ -60,6 +60,10 @@ const linterConfig: Linter.Config = {
       sourceType: 'module',
     },
   },
+  rules: {
+    '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+  },
 };
 const vitestConfig: Linter.Config = {
   name: 'vitest-config',
@@ -75,10 +79,6 @@ const vitestConfig: Linter.Config = {
       tsconfigRootDir: __dirname,
       sourceType: 'module',
     },
-  },
-  rules: {
-    '@typescript-eslint/ban-ts-comment': 'off',
-    '@typescript-eslint/no-unused-vars': 'off',
   },
 };
 const vueConfig: Linter.Config = {
@@ -248,7 +248,7 @@ const disableTypeChecked: ConfigWithExtends = {
 export default tseslint.config(
   {
     name: 'typescript-base-config',
-    files: ['src/api/generated/**/*.{ts,tsx}'],
+    files: ['src/**/!(generated)/**/*.{ts,tsx}'],
     extends: [
       eslint.configs.recommended,
       ...tseslint.configs.recommendedTypeChecked,
