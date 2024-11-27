@@ -1,7 +1,7 @@
 import eslint from '@eslint/js';
 import type { Linter } from 'eslint';
 import tseslint, { type ConfigWithExtends } from 'typescript-eslint';
-// import tsParser from '@typescript-eslint/parser';
+import tsParser from '@typescript-eslint/parser';
 // import tsPlugin from '@typescript-eslint/eslint-plugin';
 import vuePlugin from 'eslint-plugin-vue';
 import * as vueParser from 'vue-eslint-parser';
@@ -20,7 +20,7 @@ type Plugin =
     ? T
     : never;
 
-const tsParser = tseslint.parser as Parser;
+// const tsParser = tseslint.parser as Parser;
 const tsPlugin = tseslint.plugin as Plugin;
 
 const ignoreFiles: Linter.Config = {
@@ -34,7 +34,6 @@ const ignoreFiles: Linter.Config = {
     'html',
     'node_modules',
     'types',
-    'src/api/generated/',
   ],
 };
 const globalsConfig: Linter.Config = {
@@ -76,6 +75,10 @@ const vitestConfig: Linter.Config = {
       tsconfigRootDir: __dirname,
       sourceType: 'module',
     },
+  },
+  rules: {
+    '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
   },
 };
 const vueConfig: Linter.Config = {
@@ -123,7 +126,7 @@ const vueConfig: Linter.Config = {
 };
 const typescriptConfig: Linter.Config = {
   name: 'typescript-config',
-  files: ['src/**/*.{ts,tsx}'],
+  files: ['src/**/!(generated)/**/*.{ts,tsx}'],
   ignores: [
     'src/**/__tests__/**/*.{ts,tsx}',
     // 'src/api/generated/**/*.{ts,tsx}',
@@ -171,6 +174,10 @@ const typescriptConfig: Linter.Config = {
   },
 
   rules: {
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    'unused-imports/no-unused-imports': ['warn'],
+
     'sort-imports': [
       'warn',
       {
@@ -187,7 +194,6 @@ const generatedApiConfig: Linter.Config = {
   name: 'generated-api-config',
   files: ['src/api/generated/**/*.{ts,tsx}'],
   plugins: {
-    '@typescript-eslint': tsPlugin,
     'unused-imports': unusedImports,
   },
   languageOptions: {
@@ -196,11 +202,20 @@ const generatedApiConfig: Linter.Config = {
     sourceType: 'module',
 
     parserOptions: {
-      parser: tsParser,
-      project: path.resolve(__dirname, './tsconfig.json'),
+      projectService: {
+        defaultProject: path.resolve(__dirname, './tsconfig.json'),
+        loadTypeScriptPlugins: !!process.env.VSCODE_PID,
+      },
       tsconfigRootDir: __dirname,
       sourceType: 'module',
     },
+  },
+  rules: {
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    'unused-imports/no-unused-imports': ['error'],
+    '@typescript-eslint/no-explicit-any': 'off',
+    'unused-imports/no-unused-vars': ['off'],
   },
 };
 const ruleOverrides: Linter.Config = {
@@ -223,23 +238,6 @@ const ruleOverrides: Linter.Config = {
     '@typescript-eslint/no-misused-promises': 'off',
   },
 };
-const noUnsedImports: Linter.Config = {
-  name: 'no-unused-imports',
-  files: ['src/**/*.{ts,tsx}'],
-  plugins: {
-    'unused-imports': unusedImports,
-    '@typescript-eslint': tsPlugin,
-  },
-  languageOptions: {
-    parser: tsParser,
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-  },
-  rules: {
-    'no-unused-vars': 'off',
-    'unused-imports/no-unused-imports': ['warn'],
-  },
-};
 
 const disableTypeChecked: ConfigWithExtends = {
   name: 'disable-type-checked',
@@ -248,13 +246,21 @@ const disableTypeChecked: ConfigWithExtends = {
 };
 
 export default tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked.map((config) => ({
-    ...config,
-    files: ['src/**/*.{ts,tsx}'],
-  })),
-  ...vuePlugin.configs['flat/base'],
-  ...vuePlugin.configs['flat/recommended'],
+  {
+    name: 'typescript-base-config',
+    files: ['src/api/generated/**/*.{ts,tsx}'],
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommendedTypeChecked,
+    ],
+  },
+  {
+    files: ['src/**/*.{vue}'],
+    extends: [
+      ...vuePlugin.configs['flat/base'],
+      ...vuePlugin.configs['flat/recommended'],
+    ],
+  },
   ignoreFiles,
   globalsConfig,
   linterConfig,
@@ -263,8 +269,8 @@ export default tseslint.config(
   typescriptConfig,
   generatedApiConfig,
   ruleOverrides,
-  noUnsedImports,
+  // noUnsedImports,
   //disableTypeChecked,
   // keep as last item to override conflicting rules
-  { name: 'prettier', ...eslintConfigPrettier },
+  // { name: 'prettier', ...eslintConfigPrettier },
 );

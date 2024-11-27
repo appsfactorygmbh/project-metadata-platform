@@ -14,13 +14,13 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --declaration --emitDeclarationOnly tsconfig.json",
     "type-build": "vue-tsc --build --force tsconfig.json",
-    "lint": "eslint --flag unstable_ts_config --config eslint.config.ts --fix src",
+    "lint": "eslint --flag unstable_ts_config --config eslint.config.ts --fix",
     "format": "prettier --write .",
     "prepare": "husky",
     "upgrade:all": "yarn up \"*\"",
     "clean": "rm -rf coverage dist html cypress.config.js cypress.config.d.ts tsconfig.node.tsbuildinfo tsconfig.tsbuildinfo vite.config.js vite.config.d.ts stats.html",
     "clean:all": "yarn clean && rm -rf node_modules .million && yarn cache clean",
-    "openapi:generate": "openapi-generator-cli generate -i http://localhost:8090/swagger/v1/swagger.json -g typescript-fetch -o ./src/api/generated --additional-properties=typescriptThreePlus=true,withInterfaces=true,withSeparateModelsAndApi=true,apiPackage=apis,modelPackage=models,useSingleRequestParameter=true,fileNaming=PascalCase"
+    "openapi:generate": "openapi-generator-cli generate -i http://localhost:8090/swagger/v1/swagger.json -g typescript-fetch -o ./src/api/generated --additional-properties=typescriptThreePlus=true,withInterfaces=true,withSeparateModelsAndApi=true,apiPackage=apis,modelPackage=models,useSingleRequestParameter=true,fileNaming=PascalCase && yarn lint --no-inline-config src/api/generated"
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.1",

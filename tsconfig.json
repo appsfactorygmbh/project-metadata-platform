@@ -22,24 +22,25 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler", // Resolves module names using a bundler.
+    "emitDeclarationOnly": true,
+    "declaration": true,
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true, // Allows importing JSON files as modules.
     "isolatedModules": true,
-    "noEmit": true, // Disables emitting compiled output files.
+    "noEmit": false, // Disables emitting compiled output files.
     "jsx": "preserve",
     "jsxImportSource": "vue",
 
     /* Linting */
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
 
     /* Strictness */
     "strict": true // Enables all strict type checking options.
     // "noUncheckedIndexedAccess": true // Checks that indexed accesses are not possibly undefined or null.
   },
-  "include": ["types/**/*.d.ts", "src/**/*"],
-  // "exclude": ["src/api/generated/**/*"],
+  "include": ["types/**/*.d.ts", "src/**/**/*"],
   "references": [
     { "path": "./tsconfig.node.json" },
     { "path": "./tsconfig.vitest.json" }
