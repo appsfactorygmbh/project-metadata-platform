@@ -10,7 +10,9 @@ import ComingSoonView from '@/views/Service/ComingSoonView.vue';
 import NotFoundView from '@/views/Service/NotFoundView.vue';
 import { LoginView, RegisterView } from '@/views/Auth';
 import ForbiddenView from '@/views/Service/ForbiddenView.vue';
-import CreateUserView from '@/views/SettingView/UserManagementView/CreateUser/CreateUserView.vue';
+import { UserListView } from '@/views/SettingView/UserManagementView/UserListView';
+import { CreateUserView } from '@/views/SettingView/UserManagementView/CreateUser';
+import { UserInformationView } from '@/views/SettingView/UserManagementView/UserInformationView';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -59,9 +61,29 @@ const router = createRouter({
           children: [
             {
               path: '/settings/user-management',
-              name: 'users',
-              component: CreateUserView,
+              name: 'usersList',
+              component: UserListView,
               meta: { title: 'Project Metadata Platform - User Management' },
+              children: [
+                {
+                  path: '/settings/user-management',
+                  name: 'usersInformation',
+                  component: UserInformationView,
+                  meta: {
+                    title: 'Project Metadata Platform - User Information',
+                  },
+                  children: [
+                    {
+                      path: '/settings/user-management/create',
+                      name: 'createUsers',
+                      component: CreateUserView,
+                      meta: {
+                        title: 'Project Metadata Platform - User Creation',
+                      },
+                    },
+                  ],
+                },
+              ],
             },
             {
               path: '/settings/global-plugins',

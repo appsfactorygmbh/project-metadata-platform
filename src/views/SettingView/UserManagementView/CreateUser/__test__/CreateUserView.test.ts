@@ -126,35 +126,42 @@ describe('CreateUserView.vue', () => {
     const passwordInput = passwordField.find('.ant-input');
 
     // Test a valid password
-    await passwordField.find('.ant-input').setValue('aA&&&&&&');
+    await passwordField.find('.ant-input').setValue('aA6&&&&&');
     await flushPromises();
     expect(
       passwordField.find('.ant-form-item-feedback-icon-success').exists(),
     ).toBe(true);
 
     // Password must have lower case letters
-    await passwordField.find('.ant-input').setValue('AAAAAAA&');
+    await passwordField.find('.ant-input').setValue('AAAAAA6&');
     await flushPromises();
     expect(
       passwordField.find('.ant-form-item-feedback-icon-error').exists(),
     ).toBe(true);
 
     // Password must have upper case letters
-    await passwordInput.setValue('aaaaaaa&');
+    await passwordInput.setValue('aaaaaa6&');
     await flushPromises();
     expect(
       passwordField.find('.ant-form-item-feedback-icon-error').exists(),
     ).toBe(true);
 
     // Password must have special characters
-    await passwordInput.setValue('AAAAAAAa');
+    await passwordInput.setValue('6AAAAAAa');
+    await flushPromises();
+    expect(
+      passwordField.find('.ant-form-item-feedback-icon-error').exists(),
+    ).toBe(true);
+
+    // Password must have numbers
+    await passwordInput.setValue('AAAAAAa&');
     await flushPromises();
     expect(
       passwordField.find('.ant-form-item-feedback-icon-error').exists(),
     ).toBe(true);
 
     // Password must have at least 8 characters
-    await passwordInput.setValue('aA&');
+    await passwordInput.setValue('aA6&');
     await flushPromises();
     expect(
       passwordField.find('.ant-form-item-feedback-icon-error').exists(),
@@ -192,7 +199,7 @@ describe('CreateUserView.vue', () => {
   });
 
   it('submits the form correctly', async () => {
-    const testData = ['Name', 'Username', 'E@Ma.il', 'Pa$$word', 'Pa$$word'];
+    const testData = ['Name', 'Username', 'E@Ma.il', 'Pa$$w0rd', 'Pa$$w0rd'];
 
     const userStore = useUserStore();
     const formStore = useFormStore('createUserForm');
@@ -219,7 +226,7 @@ describe('CreateUserView.vue', () => {
       name: 'Name',
       username: 'Username',
       email: 'E@Ma.il',
-      password: 'Pa$$word',
+      password: 'Pa$$w0rd',
     });
   });
 });

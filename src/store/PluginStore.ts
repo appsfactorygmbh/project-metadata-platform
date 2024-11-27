@@ -11,11 +11,13 @@ type StoreState = {
   isLoadingPlugins: boolean;
   cachePlugins: PluginModel[];
   changedPlugins: PluginModel[];
+  unarchivedPlugins: PluginModel[];
 };
 
 type StoreGetters = {
   getPlugins: () => PluginModel[];
   getIsLoading: () => boolean;
+  getUnarchivedPlugins: () => PluginModel[];
 };
 
 type StoreActions = {
@@ -23,6 +25,8 @@ type StoreActions = {
   setPlugins: (plugins: PluginModel[]) => void;
   setLoadingPlugins: (status: boolean) => void;
   fetch: (projectID: number) => Promise<void>;
+  fetchUnarchivedPlugins: (projectID: number) => Promise<void>;
+  setUnarchivedPlugins: (plugins: PluginModel[]) => void;
 };
 
 type Store = PiniaStore<'plugin', StoreState, StoreGetters, StoreActions>;
@@ -45,6 +49,9 @@ export const usePluginStore = (pinia: Pinia = piniaInstance): Store => {
         getIsLoading(): boolean {
           return this.isLoadingPlugins;
         },
+        getUnarchivedPlugins(): PluginModel[] {
+          return this.unarchivedPlugins;
+        },
       },
 
       actions: {
@@ -56,6 +63,9 @@ export const usePluginStore = (pinia: Pinia = piniaInstance): Store => {
         },
         setLoadingPlugins(status: boolean): void {
           this.isLoadingPlugins = status;
+        },
+        setUnarchivedPlugins(plugins: PluginModel[]): void {
+          this.unarchivedPlugins = plugins;
         },
         async fetch(id: ProjectModel['id']) {
           try {
@@ -71,6 +81,21 @@ export const usePluginStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingPlugins(false);
           }
           console.log(this.getPlugins);
+        },
+        async fetchUnarchivedPlugins(projectID: number) {
+          try {
+            this.setLoadingPlugins(true);
+            const plugins: PluginModel[] = await this.callApi(
+              // TODO: change to unarchived
+              'projectsIdPluginsGet',
+              {
+                id: projectID,
+              },
+            );
+            this.setUnarchivedPlugins(plugins);
+          } finally {
+            this.setLoadingPlugins(false);
+          }
         },
       },
     },

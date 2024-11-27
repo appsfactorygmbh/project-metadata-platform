@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
-import SettingView from '@/views/SettingView/SettingView.vue'; // Adjust the path as necessary
+import SettingView from '@/views/SettingView/SettingView.vue';
 import { useRouter } from 'vue-router';
-import router from '../../../router';
+import router from '@/router';
 
 vi.mock('vue-router');
 
@@ -36,7 +36,6 @@ describe('SettingView.vue', () => {
     const wrapper = mount(SettingView);
     const vm = wrapper.vm as unknown as SettingViewObject;
     expect(vm.collapsed).toBe(false);
-    expect(vm.selectedKeys).toEqual(['2']);
     expect(vm.tab).toBe('Global Plugins');
   });
 

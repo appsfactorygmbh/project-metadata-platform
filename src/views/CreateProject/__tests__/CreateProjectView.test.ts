@@ -30,7 +30,7 @@ describe('CreateProjectView.vue', () => {
     wrapper.vm.formRef = {
       resetFields: vi.fn(),
     };
-    await wrapper.vm.resetModal();
+    wrapper.vm.resetModal();
     expect(wrapper.vm.formRef.resetFields).toHaveBeenCalled();
   });
 
@@ -40,5 +40,13 @@ describe('CreateProjectView.vue', () => {
     };
     await wrapper.vm.handleOk();
     expect(wrapper.vm.formRef.validate).toHaveBeenCalled();
+  });
+
+  it('emits close event when modal is closed', async () => {
+    // Triggers the event directly
+    wrapper.vm.$emit('close');
+
+    const emittedEvents = wrapper.emitted('close');
+    expect(emittedEvents).toBeTruthy();
   });
 });

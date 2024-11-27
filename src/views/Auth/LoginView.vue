@@ -8,13 +8,11 @@
   import axios from 'axios';
 
   const auth = useAuth();
-
   const formStore = useFormStore('loginForm');
 
   const feedbackMessage = ref('');
 
   const onSubmit: FormSubmitType = (fields) => {
-    console.log(fields);
     auth
       .login({
         data: {

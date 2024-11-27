@@ -18,13 +18,12 @@
 
   const onSubmit: FormSubmitType = (fields) => {
     try {
-      console.log(fields);
       globalPluginStore?.create(fields);
     } catch {
       notificationApi.error({
         message: 'An error occurred. The plugin could not be created',
       });
-      console.log('fehler');
+      console.error('error');
     }
   };
 

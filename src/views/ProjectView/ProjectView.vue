@@ -1,10 +1,7 @@
 <script lang="ts" setup>
   import { ProjectPlugins } from './ProjectPlugins';
   import { ProjectInformation } from './ProjectInformation';
-  import type {
-    DetailedProjectModel,
-    UpdateProjectModel,
-  } from '@/models/Project';
+  import type { UpdateProjectModel } from '@/models/Project';
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import { projectEditStoreSymbol } from '@/store/injectionSymbols';
@@ -48,7 +45,7 @@
     if (!newVal) {
       if (projectStore.getUpdatedSuccessfully) {
         projectEditStore?.resetPluginChanges();
-        message.success('Project updated successfully.', 7);
+        message.success('Project updated successfully.', 2);
         projectStore.fetch(projectStore.getProject?.id || 0);
         stopEditing();
       } else {
@@ -71,12 +68,12 @@
     }
 
     if (!projectStore.getProject) {
-      console.log(
+      console.error(
         'Error when trying to get ProjectInformation. getProject is undefined',
       );
       return;
     }
-    const updateProjectInformation: DetailedProjectModel =
+    const updateProjectInformation =
       projectEditStore.getProjectInformationChanges;
     const updatedProject: UpdateProjectModel = {
       projectName: updateProjectInformation?.projectName,
@@ -92,7 +89,7 @@
       await projectStore.update(updatedProject, projectID.value);
       await projectStore.fetchAll();
       await projectStore.fetch(projectID.value);
-      await pluginStore.fetch(projectID.value);
+      await pluginStore.fetchUnarchivedPlugins(projectID.value);
     }
   };
 </script>

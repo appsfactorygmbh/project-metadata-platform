@@ -1,15 +1,30 @@
 <script lang="ts" setup>
-  import { inject, onMounted, toRaw } from 'vue';
-  import { projectEditStoreSymbol } from '@/store/injectionSymbols';
-  import type { DetailedProjectModel } from '@/models/Project';
+  import { computed, inject, onMounted, ref, toRaw } from 'vue';
+  import {
+    pluginStoreSymbol,
+    projectEditStoreSymbol,
+    projectRoutingSymbol,
+  } from '@/store/injectionSymbols';
+  import { storeToRefs } from 'pinia';
+  import type {
+    DetailedProjectModel,
+    UpdateProjectModel,
+  } from '@/models/Project';
   import type { ComputedRef } from 'vue';
-  import { EditOutlined } from '@ant-design/icons-vue';
+  import {
+    DeleteOutlined,
+    EditOutlined,
+    UndoOutlined,
+  } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import { useProjectStore } from '@/store';
-  import { storeToRefs } from 'pinia';
+  import type { EditProjectModel } from '@/models/Project/EditProjectModel';
+  import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
 
   const projectStore = useProjectStore();
   const projectEditStore = inject(projectEditStoreSymbol)!;
+  const pluginStore = inject(pluginStoreSymbol)!;
+  const projectRouting = inject(projectRoutingSymbol)!;
 
   const editingClass = computed(() => ({
     'editing-mode': isEditing.value,
@@ -92,20 +107,16 @@
   const teamNumberInput = ref(projectData.teamNumber);
   const departmentInput = ref(projectData.department);
   const clientNameInput = ref(projectData.clientName);
-  const isArchivedInput = ref(projectData.isArchived);
 
   //Function to update the project information
   function updateProjectInformation(): void {
-    const updatedProject: DetailedProjectModel = {
-      id: projectData.id.value,
+    const updatedProject: EditProjectModel = {
       projectName: projectData.projectName.value,
       businessUnit: BUInput.value,
       teamNumber: teamNumberInput.value,
       department: departmentInput.value,
       clientName: clientNameInput.value,
-      isArchived: isArchivedInput.value,
     };
-    console.log('project updates: ', updatedProject);
     projectEditStore.updateProjectInformationChanges(updatedProject);
   }
 
@@ -120,6 +131,47 @@
     projectData.department.value = loadedData.department;
     projectData.clientName.value = loadedData.clientName;
   }
+
+  const isModalOpen = ref(false);
+
+  const handleArchive = () => {
+    isModalOpen.value = true;
+  };
+
+  const getNextActiveProjectId = (currentProjectId: number): number => {
+    const projects = projectStore.getProjects;
+    const nextProject = projects.find((project) => project.isArchived == false);
+    if (!nextProject) return currentProjectId;
+    return nextProject.id;
+  };
+
+  const confirmArchive = async () => {
+    const projectID = projectStore?.getProject?.id;
+    const projectData = projectStore?.getProject as UpdateProjectModel;
+    projectData.pluginList = pluginStore?.getPlugins;
+
+    if (projectID) {
+      try {
+        await projectStore.archiveProject(projectData, projectID);
+        if (projectStore.getUpdatedSuccessfully) {
+          await projectStore.fetchAll();
+        }
+      } finally {
+        isModalOpen.value = false;
+        const newProjectId = getNextActiveProjectId(projectID);
+        projectRouting.setProjectId(newProjectId);
+      }
+    }
+  };
+
+  const reactivateProject = async () => {
+    const currentProject = projectStore.getProject! as UpdateProjectModel;
+    const projectId = projectStore.getProject?.id;
+    currentProject.pluginList = pluginStore.getPlugins;
+
+    await projectStore.activateProject(currentProject, projectId!);
+    await projectStore.fetchAll();
+  };
 </script>
 
 <template>
@@ -132,6 +184,7 @@
         </h1>
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
         <a-button
+          v-if="!projectStore.getProject?.isArchived"
           class="button"
           ghost
           style="margin-left: 10px"
@@ -139,6 +192,45 @@
         >
           <template #icon><EditOutlined class="icon" /></template>
         </a-button>
+        <a-tooltip
+          v-else
+          position="left"
+          title="Click here to reactivate the project"
+          style="padding-left: 0; padding-right: 0"
+        >
+          <a-button
+            class="button"
+            ghost
+            style="margin-left: 10px"
+            @click="reactivateProject"
+          >
+            <template #icon><UndoOutlined class="icon" /></template>
+          </a-button>
+        </a-tooltip>
+        <a-tooltip
+          v-if="!projectStore.getProject?.isArchived"
+          position="left"
+          title="Click here to archive the project"
+          style="padding-left: 0; padding-right: 0"
+        >
+          <a-button
+            class="button"
+            ghost
+            style="margin-left: 10px"
+            @click="handleArchive"
+          >
+            <template #icon><DeleteOutlined class="icon" /></template>
+          </a-button>
+        </a-tooltip>
+
+        <ConfirmAction
+          :is-open="isModalOpen"
+          title="Archive Project"
+          message="Are you sure you want to archive this project?"
+          @confirm="confirmArchive"
+          @cancel="isModalOpen = false"
+          @update:is-open="(value) => (isModalOpen = value)"
+        />
       </div>
 
       <!-- create box for project description (BU, Team Nr, Department, Client Name) -->

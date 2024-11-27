@@ -29,7 +29,7 @@
       notificationApi.error({
         message: 'An error occurred. The user could not be created',
       });
-      console.log('Error creating user:', error);
+      console.error('Error creating user:', error);
     } finally {
       message.success('User created', 2);
     }
@@ -45,7 +45,7 @@
   const dynamicValidateForm = reactive<CreateUserFormData>(initialValues);
 
   const isValidPassword = (pw: string) => {
-    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
+    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
     if (pwRegex.test(pw)) {
       return true;
     }
@@ -57,7 +57,7 @@
     } else {
       if (!isValidPassword(value)) {
         return Promise.reject(
-          'Please enter a Password, which has upper/lower case letters, special characters and at least 8 characters long.',
+          'Please enter a Password, which has upper/lower case letters, special characters, a digit and at least 8 characters.',
         );
       }
 
@@ -135,7 +135,7 @@
       {
         required: true,
         message:
-          'Please insert a Password, which has upper/lower case letters, special characters and at least 8 characters.',
+          'Please insert a Password, which has upper/lower case letters, special characters, a digit and at least 8 characters.',
         validator: validatePassword,
         trigger: 'change',
         type: 'string',

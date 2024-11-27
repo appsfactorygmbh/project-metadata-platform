@@ -9,10 +9,9 @@
   import ProjectView from '../ProjectView/ProjectView.vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { RightOutlined } from '@ant-design/icons-vue';
-  import { useEditing } from '@/utils/hooks/useEditing';
+  import { useEditing } from '@/utils/hooks';
 
   const { isEditing } = useEditing();
-
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
 

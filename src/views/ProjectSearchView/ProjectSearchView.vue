@@ -1,7 +1,12 @@
 <script lang="ts" setup>
   import { type SearchableColumn, SearchableTable } from '@/components/Table';
   import { SearchBar } from '@/components/Searchbar';
-  import { onMounted, provide, reactive } from 'vue';
+  import {
+    pluginStoreSymbol,
+    projectRoutingSymbol,
+    projectsStoreSymbol,
+  } from '@/store/injectionSymbols';
+  import { inject, onMounted, provide, reactive } from 'vue';
   import { type SearchStore, useSearchStore } from '@/store/SearchStore';
   import type { ProjectModel } from '@/models/Project';
   import { useEditing } from '@/utils/hooks/useEditing';
@@ -29,7 +34,7 @@
   type ProjectSearchStore = SearchStore<ProjectModel>;
 
   const { stopEditing, isEditing } = useEditing();
-  const { routerProjectId, setProjectId } = useProjectRouting();
+  const { routerProjectId, setProjectId } = inject(projectRoutingSymbol)!;
 
   const pluginStore = usePluginStore();
   const projectStore = useProjectStore();
@@ -69,7 +74,6 @@
 
   const FETCHING_METHOD: 'FRONTEND' | 'BACKEND' = import.meta.env
     .VITE_PROJECT_SEARCH_METHOD;
-  console.log('FETCHING_METHOD:', import.meta.env);
 
   watch(
     () => projectStore.getProjects,
@@ -115,6 +119,7 @@
     async () => {
       await projectStore.fetch(routerProjectId.value);
       await pluginStore.fetch(routerProjectId.value);
+      await pluginStore?.fetchUnarchivedPlugins(routerProjectId.value);
     },
   );
 
@@ -131,6 +136,7 @@
     } else {
       await projectStore.fetch(routerProjectId.value);
       await pluginStore.fetch(routerProjectId.value);
+      await pluginStore?.fetchUnarchivedPlugins(routerProjectId.value);
     }
 
     searchStore.setBaseSet(projectStore.getProjects ?? []);

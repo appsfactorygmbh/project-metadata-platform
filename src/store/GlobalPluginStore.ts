@@ -24,6 +24,8 @@ type StoreActions = {
   setLoadingGlobalPlugins: (status: boolean) => void;
   setLoadingDelete: (status: boolean) => void;
   setRemovedSuccessfully: (status: boolean) => void;
+  archiveGlobalPlugin: (plugin: GlobalPluginModel) => Promise<void>;
+  reactivateGlobalPlugin: (plugin: GlobalPluginModel) => Promise<void>;
 };
 
 type StoreGetters = {
@@ -139,12 +141,41 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
             });
             if (response) {
               this.fetchAll();
+              return response;
             } else {
               throw new Error('Failed to update global plugin');
             }
           } catch (err) {
             console.error('Error updating global plugin:', err);
             throw err;
+          }
+        },
+        async archiveGlobalPlugin(plugin: GlobalPluginModel) {
+          try {
+            this.setLoadingDelete(true);
+            this.setRemovedSuccessfully(false);
+            const response = await this.update({
+              ...plugin,
+              isArchived: true,
+            });
+            this.setRemovedSuccessfully(true);
+          } catch (err) {
+            this.setRemovedSuccessfully(false);
+            throw err;
+          } finally {
+            this.setLoadingDelete(false);
+          }
+        },
+
+        async reactivateGlobalPlugin(plugin: GlobalPluginModel) {
+          try {
+            this.setLoadingGlobalPlugins(true);
+            await this.update({
+              ...plugin,
+              isArchived: false,
+            });
+          } finally {
+            this.setLoadingGlobalPlugins(false);
           }
         },
       },

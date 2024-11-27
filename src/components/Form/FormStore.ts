@@ -76,7 +76,6 @@ export const useFormStore = <T extends FormState>(
         this.updateForm();
       },
       updateFields(fields: FieldData[]) {
-        console.log('fields', fields);
         fields.forEach(({ name, value }) => {
           this.modelRef[name as keyof T] = value as T[keyof T];
         });

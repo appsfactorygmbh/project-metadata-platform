@@ -17,7 +17,6 @@ export const getValidateInfos = async <
   };
   try {
     const result = rule.validator(rule, value, () => {});
-    console.log('result', result);
     if (result instanceof Promise) {
       return await result
         .then(() => {

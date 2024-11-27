@@ -5,18 +5,25 @@
     ProjectEditProvider,
     UserProvider,
   } from '@/router/Provider';
+  import ProjectRoutingProvider from './ProjectRoutingProvider.vue';
 </script>
 
 <template>
   <AuthProvider>
-    <UserProvider>
-      <ProjectEditProvider>
-        <GlobalPluginProvider>
-          <slot>
-            <RouterView />
-          </slot>
-        </GlobalPluginProvider>
-      </ProjectEditProvider>
-    </UserProvider>
+    <ProjectRoutingProvider>
+      <UserProvider>
+        <ProjectProvider>
+          <PluginProvider>
+            <ProjectEditProvider>
+              <GlobalPluginProvider>
+                <slot>
+                  <RouterView />
+                </slot>
+              </GlobalPluginProvider>
+            </ProjectEditProvider>
+          </PluginProvider>
+        </ProjectProvider>
+      </UserProvider>
+    </ProjectRoutingProvider>
   </AuthProvider>
 </template>

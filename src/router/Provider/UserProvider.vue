@@ -12,7 +12,7 @@
   const auth = useAuth();
   userService.initApi(auth.token(), UsersApi);
   watch(
-    () => auth.token(),
+    () => auth?.token(),
     () => {
       console.log('token change', auth);
       userService.initApi(auth.token(), UsersApi);

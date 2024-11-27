@@ -56,6 +56,14 @@ type StoreActions = {
   setUpdatedSuccessfully: (status: boolean) => void;
   getSlugById: (id: number) => Promise<string>;
   getBySlug: (slug: string) => Promise<ProjectModel | null>;
+  archiveProject: (
+    projectData: UpdateProjectModel,
+    id: number,
+  ) => Promise<void>;
+  activateProject: (
+    projectData: UpdateProjectModel,
+    id: number,
+  ) => Promise<void>;
 };
 
 type Store = PiniaStore<'project', StoreState, StoreGetters, StoreActions>;
@@ -222,6 +230,46 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
             return null;
           } finally {
             this.setLoadingProject(false);
+          }
+        },
+
+        async archiveProject(projectData: UpdateProjectModel, id: number) {
+          try {
+            this.setLoadingUpdate(true);
+            this.setUpdatedSuccessfully(false);
+            // TODO: change to archiveProject
+            const response = await this.callApi('projectsPut', {
+              createProjectRequest: projectData,
+              id,
+            });
+            if (response) {
+              this.setUpdatedSuccessfully(true);
+              await this.fetch(id);
+            } else {
+              this.setUpdatedSuccessfully(false);
+            }
+          } finally {
+            this.setLoadingUpdate(false);
+          }
+        },
+
+        async activateProject(projectData: UpdateProjectModel, id: number) {
+          try {
+            this.setLoadingUpdate(true);
+            this.setUpdatedSuccessfully(false);
+            // TODO: change to activateProject
+            const response = await this.callApi('projectsPut', {
+              createProjectRequest: projectData,
+              id,
+            });
+            if (response) {
+              this.setUpdatedSuccessfully(true);
+              await this.fetch(id);
+            } else {
+              this.setUpdatedSuccessfully(false);
+            }
+          } finally {
+            this.setLoadingUpdate(false);
           }
         },
       },
