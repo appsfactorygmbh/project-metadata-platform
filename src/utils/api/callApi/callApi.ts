@@ -1,6 +1,3 @@
- 
- 
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import type { BaseAPI } from '@/api/generated';
 import { type CallApiFetch, callApiFetch } from './callApiFetch';
 

@@ -99,7 +99,7 @@
     }
   },
   "lint-staged": {
-    "**/*.{ts,tsx,vue}": "eslint --fix",
+    "**/*.{ts,tsx,vue}": "eslint  --flag unstable_ts_config --fix",
     "**/*": "prettier -w -u"
   }
 }

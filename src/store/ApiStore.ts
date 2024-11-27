@@ -6,6 +6,7 @@ import type { UnwrapRef } from 'vue';
 import type { Pinia } from 'pinia';
 import { piniaInstance } from './piniaInstance';
 import { type CallApiType, callApi } from '@/utils/api';
+import type { GenericStore } from '@/utils/store';
 
 type ApiStore<Api extends ApiTypes> = PiniaStore<
   'api',
@@ -27,7 +28,7 @@ type ApiStore<Api extends ApiTypes> = PiniaStore<
 export const useApiStore = <Api extends ApiTypes>(
   ApiInstance: ApiInstance<Api>,
   pinia: Pinia = piniaInstance,
-) =>
+): GenericStore<ApiStore<Api>> =>
   defineGenericStore<ApiStore<Api>>({
     state: {
       auth: useAuthStore(pinia),

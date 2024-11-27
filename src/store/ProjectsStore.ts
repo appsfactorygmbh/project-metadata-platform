@@ -60,7 +60,7 @@ type StoreActions = {
 
 type Store = PiniaStore<'project', StoreState, StoreGetters, StoreActions>;
 
-export const useProjectStore = (pinia: Pinia = piniaInstance) => {
+export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
   return useStore<Store, ApiStore<ProjectsApi>>(
     'project',
     {
