@@ -101,6 +101,7 @@
       teamNumber: formState.teamNumber,
       department: formState.department,
       clientName: formState.clientName,
+      isArchived: false,
     };
 
     await projectStore.create(projectData);

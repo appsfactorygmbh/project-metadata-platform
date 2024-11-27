@@ -82,6 +82,7 @@
       department: updateProjectInformation?.department,
       clientName: updateProjectInformation?.clientName,
       pluginList: projectEditStore?.getPluginChanges,
+      isArchived: projectStore.getProject.isArchived,
     };
     console.log('updated Project', updatedProject);
     const projectID = computed(() => projectStore.getProject?.id);
