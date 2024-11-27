@@ -5344,6 +5344,7 @@ __metadata:
     happy-dom: "npm:^15.7.4"
     husky: "npm:^9.1.6"
     jest: "npm:^29.7.0"
+    jiti: "npm:^2.4.0"
     jsdom: "npm:^25.0.1"
     lint-staged: "npm:^15.2.10"
     lodash: "npm:^4.17.21"
@@ -6971,6 +6972,15 @@ __metadata:
   bin:
     jest: bin/jest.js
   checksum: 10c0/f40eb8171cf147c617cc6ada49d062fbb03b4da666cb8d39cdbfb739a7d75eea4c3ca150fb072d0d273dce0c753db4d0467d54906ad0293f59c54f9db4a09d8b
+  languageName: node
+  linkType: hard
+
+"jiti@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "jiti@npm:2.4.0"
+  bin:
+    jiti: lib/jiti-cli.mjs
+  checksum: 10c0/f97365a83169e0544b0a6e7f415f1ee69ca9c0bdd55e336035490b4b7a6ff99b63b9df89c70babfc49e924247dfbdc730f9eb0c5ed4771d3db989ac70e49bf18
   languageName: node
   linkType: hard
 

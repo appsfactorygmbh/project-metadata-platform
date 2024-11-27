@@ -7,9 +7,7 @@
     "cypress.config.ts",
     "nightwatch.conf.ts",
     "playwright.config.ts",
-    "eslint.config.ts",
-    "eslint.config.js",
-    "eslint.config.mjs"
+    "eslint.config.ts"
   ],
   "exclude": ["src/api/generated/**/*"],
   "compilerOptions": {
@@ -28,7 +26,7 @@
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    // "noEmit": true,
+    "noEmit": false,
     "emitDeclarationOnly": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
