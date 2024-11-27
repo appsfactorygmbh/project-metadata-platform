@@ -4,13 +4,16 @@ import { ApiService } from './ApiService';
 class LocalLogService extends ApiService {
   fetchLocalLog = async (projectId: number): Promise<LocalLogModel[]> => {
     try {
-      const response = await this.fetch('/logs?projectId=' + projectId.toString(), {
-        headers: {
-          Accept: 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          cors: 'cors',
+      const response = await this.fetch(
+        '/logs?projectId=' + projectId.toString(),
+        {
+          headers: {
+            Accept: 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            cors: 'cors',
+          },
         },
-      });
+      );
       if (!response.ok)
         throw new Error('Error while trying to fetch local logs');
 

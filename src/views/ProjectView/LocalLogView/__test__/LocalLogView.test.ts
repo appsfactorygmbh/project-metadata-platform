@@ -44,7 +44,6 @@ describe('UserListView.vue', () => {
     const wrapper = generateWrapper();
     expect(wrapper.find('.localLog').exists()).toBe(true);
     expect(wrapper.find('.cardContainer').exists()).toBe(true);
-
   });
 
   it('not show when there is no log data', () => {
@@ -53,6 +52,5 @@ describe('UserListView.vue', () => {
     const wrapper = generateWrapper();
     expect(wrapper.find('.localLog').exists()).toBe(false);
     expect(wrapper.find('.cardContainer').exists()).toBe(false);
-
   });
 });

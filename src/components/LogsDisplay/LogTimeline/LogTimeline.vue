@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import type { LogEntryModel } from '@/models/Log/LogEntryModel';
+  import type { LocalLogModel } from '@/models/LocalLogs';
 
   const props = defineProps({
     logEntries: {
-      type: Array<LogEntryModel>,
+      type: Array<LocalLogModel>,
       required: true,
     },
   });
