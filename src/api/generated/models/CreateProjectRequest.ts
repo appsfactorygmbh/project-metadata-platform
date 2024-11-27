@@ -60,6 +60,12 @@ export interface CreateProjectRequest {
      * @memberof CreateProjectRequest
      */
     pluginList?: Array<UpdateProjectPluginRequest> | null;
+    /**
+     * Indicates if the project is archived.
+     * @type {boolean}
+     * @memberof CreateProjectRequest
+     */
+    isArchived: boolean;
 }
 
 /**
@@ -71,6 +77,7 @@ export function instanceOfCreateProjectRequest(value: object): value is CreatePr
     if (!('teamNumber' in value) || value['teamNumber'] === undefined) return false;
     if (!('department' in value) || value['department'] === undefined) return false;
     if (!('clientName' in value) || value['clientName'] === undefined) return false;
+    if (!('isArchived' in value) || value['isArchived'] === undefined) return false;
     return true;
 }
 
@@ -90,6 +97,7 @@ export function CreateProjectRequestFromJSONTyped(json: any, ignoreDiscriminator
         'department': json['department'],
         'clientName': json['clientName'],
         'pluginList': json['pluginList'] == null ? undefined : ((json['pluginList'] as Array<any>).map(UpdateProjectPluginRequestFromJSON)),
+        'isArchived': json['isArchived'],
     };
 }
 
@@ -110,6 +118,7 @@ export function CreateProjectRequestFromJSONTyped(json: any, ignoreDiscriminator
         'department': value['department'],
         'clientName': value['clientName'],
         'pluginList': value['pluginList'] == null ? undefined : ((value['pluginList'] as Array<any>).map(UpdateProjectPluginRequestToJSON)),
+        'isArchived': value['isArchived'],
     };
 }
 

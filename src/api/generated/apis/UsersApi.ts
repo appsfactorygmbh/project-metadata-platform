@@ -33,6 +33,10 @@ export interface UsersPutRequest {
     createUserRequest?: CreateUserRequest;
 }
 
+export interface UsersUserIdDeleteRequest {
+    userId: string;
+}
+
 export interface UsersUserIdGetRequest {
     userId: string;
 }
@@ -65,6 +69,20 @@ export interface UsersApiInterface {
 
     /**
      * 
+     * @summary Gets the current authenticated user\'s information.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApiInterface
+     */
+    usersMeGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetUserResponse>>;
+
+    /**
+     * Gets the current authenticated user\'s information.
+     */
+    usersMeGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetUserResponse>;
+
+    /**
+     * 
      * @summary Creates a new user.
      * @param {CreateUserRequest} [createUserRequest] Request containing user information
      * @param {*} [options] Override http request option.
@@ -77,6 +95,21 @@ export interface UsersApiInterface {
      * Creates a new user.
      */
     usersPut(requestParameters: UsersPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateUserResponse>;
+
+    /**
+     * 
+     * @summary Deletes a user by their userId.
+     * @param {string} userId The userId of the user to delete.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApiInterface
+     */
+    usersUserIdDeleteRaw(requestParameters: UsersUserIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
+
+    /**
+     * Deletes a user by their userId.
+     */
+    usersUserIdDelete(requestParameters: UsersUserIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
      * 
@@ -147,6 +180,36 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
     }
 
     /**
+     * Gets the current authenticated user\'s information.
+     */
+    async usersMeGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetUserResponse>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = await this.configuration.apiKey("Authorization"); // Bearer authentication
+        }
+
+        const response = await this.request({
+            path: `/Users/Me`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => GetUserResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Gets the current authenticated user\'s information.
+     */
+    async usersMeGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetUserResponse> {
+        const response = await this.usersMeGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Creates a new user.
      */
     async usersPutRaw(requestParameters: UsersPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateUserResponse>> {
@@ -177,6 +240,42 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
     async usersPut(requestParameters: UsersPutRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateUserResponse> {
         const response = await this.usersPutRaw(requestParameters, initOverrides);
         return await response.value();
+    }
+
+    /**
+     * Deletes a user by their userId.
+     */
+    async usersUserIdDeleteRaw(requestParameters: UsersUserIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['userId'] == null) {
+            throw new runtime.RequiredError(
+                'userId',
+                'Required parameter "userId" was null or undefined when calling usersUserIdDelete().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = await this.configuration.apiKey("Authorization"); // Bearer authentication
+        }
+
+        const response = await this.request({
+            path: `/Users/{userId}`.replace(`{${"userId"}}`, encodeURIComponent(String(requestParameters['userId']))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Deletes a user by their userId.
+     */
+    async usersUserIdDelete(requestParameters: UsersUserIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.usersUserIdDeleteRaw(requestParameters, initOverrides);
     }
 
     /**

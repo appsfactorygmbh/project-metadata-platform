@@ -13,6 +13,7 @@ export * from './GetPluginResponse';
 export * from './GetProjectResponse';
 export * from './GetProjectsResponse';
 export * from './GetUserResponse';
+export * from './LogResponse';
 export * from './LoginRequest';
 export * from './LoginResponse';
 export * from './PatchGlobalPluginRequest';

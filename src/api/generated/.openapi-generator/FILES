@@ -1,4 +1,5 @@
 apis/AuthApi.ts
+apis/LogsApi.ts
 apis/PluginsApi.ts
 apis/ProjectsApi.ts
 apis/UsersApi.ts
@@ -17,6 +18,7 @@ models/GetPluginResponse.ts
 models/GetProjectResponse.ts
 models/GetProjectsResponse.ts
 models/GetUserResponse.ts
+models/LogResponse.ts
 models/LoginRequest.ts
 models/LoginResponse.ts
 models/PatchGlobalPluginRequest.ts

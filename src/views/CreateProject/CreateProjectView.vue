@@ -34,6 +34,7 @@
     teamNumber: -1,
     department: '',
     clientName: '',
+    isArchived: false,
   });
 
   const validateMessages = {

@@ -38,11 +38,19 @@ export interface ProjectsGetRequest {
     search?: string;
 }
 
+export interface ProjectsIdDeleteRequest {
+    id: number;
+}
+
 export interface ProjectsIdGetRequest {
     id: number;
 }
 
 export interface ProjectsIdPluginsGetRequest {
+    id: number;
+}
+
+export interface ProjectsIdUnarchivedPluginsGetRequest {
     id: number;
 }
 
@@ -110,6 +118,21 @@ export interface ProjectsApiInterface {
 
     /**
      * 
+     * @summary Deletes the project with the given id.
+     * @param {number} id The id of the project to delete.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectsApiInterface
+     */
+    projectsIdDeleteRaw(requestParameters: ProjectsIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
+
+    /**
+     * Deletes the project with the given id.
+     */
+    projectsIdDelete(requestParameters: ProjectsIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
+
+    /**
+     * 
      * @summary Gets the project with the given id.
      * @param {number} id The id of the project.
      * @param {*} [options] Override http request option.
@@ -137,6 +160,21 @@ export interface ProjectsApiInterface {
      * Gets all the plugins of the project with the given id.
      */
     projectsIdPluginsGet(requestParameters: ProjectsIdPluginsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<GetPluginResponse>>;
+
+    /**
+     * 
+     * @summary Gets all the unarchived plugins of the project with the given id.
+     * @param {number} id The id of the project.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectsApiInterface
+     */
+    projectsIdUnarchivedPluginsGetRaw(requestParameters: ProjectsIdUnarchivedPluginsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<GetPluginResponse>>>;
+
+    /**
+     * Gets all the unarchived plugins of the project with the given id.
+     */
+    projectsIdUnarchivedPluginsGet(requestParameters: ProjectsIdUnarchivedPluginsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<GetPluginResponse>>;
 
     /**
      * 
@@ -280,6 +318,42 @@ export class ProjectsApi extends runtime.BaseAPI implements ProjectsApiInterface
     }
 
     /**
+     * Deletes the project with the given id.
+     */
+    async projectsIdDeleteRaw(requestParameters: ProjectsIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling projectsIdDelete().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = await this.configuration.apiKey("Authorization"); // Bearer authentication
+        }
+
+        const response = await this.request({
+            path: `/Projects/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Deletes the project with the given id.
+     */
+    async projectsIdDelete(requestParameters: ProjectsIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.projectsIdDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
      * Gets the project with the given id.
      */
     async projectsIdGetRaw(requestParameters: ProjectsIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetProjectResponse>> {
@@ -350,6 +424,43 @@ export class ProjectsApi extends runtime.BaseAPI implements ProjectsApiInterface
      */
     async projectsIdPluginsGet(requestParameters: ProjectsIdPluginsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<GetPluginResponse>> {
         const response = await this.projectsIdPluginsGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Gets all the unarchived plugins of the project with the given id.
+     */
+    async projectsIdUnarchivedPluginsGetRaw(requestParameters: ProjectsIdUnarchivedPluginsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<GetPluginResponse>>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling projectsIdUnarchivedPluginsGet().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = await this.configuration.apiKey("Authorization"); // Bearer authentication
+        }
+
+        const response = await this.request({
+            path: `/Projects/{id}/unarchivedPlugins`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(GetPluginResponseFromJSON));
+    }
+
+    /**
+     * Gets all the unarchived plugins of the project with the given id.
+     */
+    async projectsIdUnarchivedPluginsGet(requestParameters: ProjectsIdUnarchivedPluginsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<GetPluginResponse>> {
+        const response = await this.projectsIdUnarchivedPluginsGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

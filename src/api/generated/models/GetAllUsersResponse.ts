@@ -30,6 +30,12 @@ export interface GetAllUsersResponse {
      * @memberof GetAllUsersResponse
      */
     name: string;
+    /**
+     * The username of the user.
+     * @type {string}
+     * @memberof GetAllUsersResponse
+     */
+    username: string;
 }
 
 /**
@@ -38,6 +44,7 @@ export interface GetAllUsersResponse {
 export function instanceOfGetAllUsersResponse(value: object): value is GetAllUsersResponse {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
+    if (!('username' in value) || value['username'] === undefined) return false;
     return true;
 }
 
@@ -53,6 +60,7 @@ export function GetAllUsersResponseFromJSONTyped(json: any, ignoreDiscriminator:
         
         'id': json['id'],
         'name': json['name'],
+        'username': json['username'],
     };
 }
 
@@ -69,6 +77,7 @@ export function GetAllUsersResponseFromJSONTyped(json: any, ignoreDiscriminator:
         
         'id': value['id'],
         'name': value['name'],
+        'username': value['username'],
     };
 }
 
