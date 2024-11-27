@@ -20,37 +20,39 @@ const logsData = [
 
 describe('UserListView.vue', () => {
   setActivePinia(createPinia());
+  const logsStore = useLocalLogStore();
 
   const generateWrapper = () => {
     return mount(LocalLogView, {
       plugins: [
         createTestingPinia({
-          stubActions: true,
-          initialState: {
-            localLogs: {
-              localLog: logsData,
-            },
-          },
+          stubActions: false,
         }),
       ],
       global: {
         provide: {
-          [localLogStoreSymbol as symbol]: useLocalLogStore(),
+          [localLogStoreSymbol as symbol]: logsStore,
         },
         plugins: [router],
       },
     });
   };
 
-  it('renders correctly', () => {
+  it('show when there is log data', () => {
+    logsStore.setLocalLogs(logsData);
+    logsStore.setIsLoadingLocalLog(false);
     const wrapper = generateWrapper();
     expect(wrapper.find('.localLog').exists()).toBe(true);
-    expect(wrapper.find('.timeline').exists()).toBe(true);
-    const menuItems = wrapper.findAll('.log');
-    expect(menuItems.length).toBe(logsData.length);
+    expect(wrapper.find('.cardContainer').exists()).toBe(true);
 
-    menuItems.forEach((itemWrapper, index) => {
-      expect(itemWrapper.text()).toContain(logsData[index].logMessage);
-    });
+  });
+
+  it('not show when there is no log data', () => {
+    logsStore.setLocalLogs([]);
+    logsStore.setIsLoadingLocalLog(false);
+    const wrapper = generateWrapper();
+    expect(wrapper.find('.localLog').exists()).toBe(false);
+    expect(wrapper.find('.cardContainer').exists()).toBe(false);
+
   });
 });

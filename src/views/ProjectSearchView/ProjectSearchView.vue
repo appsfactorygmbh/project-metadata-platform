@@ -139,6 +139,7 @@
       await projectsStore?.fetchProject(routerProjectId.value);
       await pluginStore?.fetchPlugins(routerProjectId.value);
       await pluginStore?.fetchUnarchivedPlugins(routerProjectId.value);
+      await localLogStore?.fetchLocalLog(routerProjectId.value);
     }
 
     searchStore.setBaseSet(projectsStore?.getProjects ?? []);

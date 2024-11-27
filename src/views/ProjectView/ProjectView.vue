@@ -6,6 +6,7 @@
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import {
+    localLogStoreSymbol,
     pluginStoreSymbol,
     projectEditStoreSymbol,
     projectsStoreSymbol,
@@ -13,6 +14,7 @@
   import { inject, watch } from 'vue';
   import { message } from 'ant-design-vue';
 
+  const localLogStore = inject(localLogStoreSymbol);
   const pluginStore = inject(pluginStoreSymbol);
   const projectStore = inject(projectsStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
@@ -93,6 +95,7 @@
       await projectStore.fetchProjects();
       await projectStore.fetchProject(projectID.value);
       await pluginStore?.fetchUnarchivedPlugins(projectID.value);
+      await localLogStore?.fetchLocalLog(projectID.value);
     }
   };
 </script>
