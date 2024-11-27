@@ -1,6 +1,8 @@
 import { extractToken } from './extractToken';
-import { handleError } from './handleError';
-import { callApi } from './callApi';
+import { handleFetchError } from './handleError';
+import { callApiFetch } from './callApi/callApiFetch';
 import { getApiConfiguration } from './getApiConfiguration';
 
-export { extractToken, handleError, callApi, getApiConfiguration };
+export * from './callApi';
+
+export { extractToken, handleFetchError, callApiFetch, getApiConfiguration };

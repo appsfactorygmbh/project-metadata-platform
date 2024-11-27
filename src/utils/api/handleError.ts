@@ -1,7 +1,7 @@
-import { getErrorMessage } from './getErrorMessage';
+import { getFetchErrorMessage } from './getErrorMessage';
 
-export const handleError = async (err: unknown): Promise<never> => {
-  const msg = await getErrorMessage(err);
+export const handleFetchError = async (err: unknown): Promise<never> => {
+  const msg = await getFetchErrorMessage(err);
   console.log('Error Message:', msg);
   throw new Error(msg);
 };

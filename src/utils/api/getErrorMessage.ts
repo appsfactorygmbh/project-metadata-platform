@@ -1,6 +1,14 @@
-import { ResponseError } from '@/api/generated';
+class ResponseError extends Error {
+  override name: 'ResponseError' = 'ResponseError' as const;
+  constructor(
+    public response: Response,
+    msg?: string,
+  ) {
+    super(msg);
+  }
+}
 
-export const getErrorMessage = async (
+export const getFetchErrorMessage = async (
   error: unknown,
   defaultMessage: string | undefined = 'Unbekannter Fehler',
 ): Promise<string> => {

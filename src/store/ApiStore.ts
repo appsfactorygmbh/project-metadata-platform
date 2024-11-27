@@ -1,10 +1,11 @@
 import type { ApiInstance, ApiTypes } from '@/api/ApiType.type';
-import { callApi, getApiConfiguration } from '@/utils/api';
+import { getApiConfiguration } from '@/utils/api';
 import { type PiniaStore, defineGenericStore } from 'pinia-generic';
 import { type AuthStore, useAuthStore } from './AuthStore';
 import type { UnwrapRef } from 'vue';
 import type { Pinia } from 'pinia';
 import { piniaInstance } from './piniaInstance';
+import { type CallApiType, callApi } from '@/utils/api';
 
 type ApiStore<Api extends ApiTypes> = PiniaStore<
   'api',
@@ -19,15 +20,7 @@ type ApiStore<Api extends ApiTypes> = PiniaStore<
   {
     initApi: () => void;
     setIsLoading: (isLoading: boolean) => void;
-    callApi: <
-      Endpoint extends keyof Api,
-      // @ts-expect-error false positive
-      Args extends Parameters<Api[Endpoint]>[0],
-    >(
-      apiCall: Endpoint,
-      args: Args extends undefined ? never : Args,
-      // @ts-expect-error false positive
-    ) => Promise<ReturnType<Api[Endpoint]>>;
+    callApi: CallApiType<Api>;
   }
 >;
 

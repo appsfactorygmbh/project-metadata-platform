@@ -25,8 +25,8 @@ class UserService extends ApiService<UsersApi> {
     return response;
   };
 
+  // TODO: need backend support
   // deleteUser = async (userId: string) => {
-  //   // TODO: need backend support
   //   const response = await this.callApi("", {
   //     userId,
   //   });

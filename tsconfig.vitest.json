@@ -1,13 +1,13 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": ["./tsconfig.app.json"],
+  "extends": ["./tsconfig.json"],
   "exclude": [
     "node_modules/**",
     "dist/**",
     "build/**",
     "coverage/**",
-    "html/**",
-    "src/api/generated/**/*"
+    "html/**"
+    // "src/api/generated/**/*"
   ],
   "include": [
     "types/**/*.d.ts",
@@ -26,6 +26,9 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "types": ["node", "jsdom"],
-    "outDir": "./dist"
+    "outDir": "./lib/",
+    "rootDir": ".",
+    "noEmit": false,
+    "emitDeclarationOnly": true
   }
 }

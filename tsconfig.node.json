@@ -20,14 +20,16 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "types": ["node", "vitest"],
-    "outDir": "./dist",
+    "outDir": "./lib/",
+    "rootDir": ".",
 
     /* Bundler mode */
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "noEmit": true,
+    // "noEmit": true,
+    "emitDeclarationOnly": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
 

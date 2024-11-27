@@ -53,10 +53,11 @@
         console.log(globalPluginData);
         initialValues.pluginName = globalPluginData.name;
         initialValues.keys =
-          globalPluginData.keys?.map((keyObj) => ({
-            key: keyObj.key,
-            value: keyObj.value,
-            archived: keyObj.archived,
+          globalPluginData.keys?.map((keyObj, index) => ({
+            // TODO: adapt when feature to archive keys is implemented
+            key: index, //keyObj.key,
+            value: keyObj, //keyObj.value,
+            archived: false, //keyObj.archived,
           })) ?? [];
       }
     }

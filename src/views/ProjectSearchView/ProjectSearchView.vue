@@ -63,7 +63,7 @@
   watch(
     () => projectStore.getProjects,
     () => {
-      searchStore.setBaseSet(projectStore!.getProjects);
+      searchStore.setBaseSet(projectStore.getProjects);
     },
   );
 

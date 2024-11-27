@@ -27,7 +27,7 @@ type StoreActions = {
 
 type Store = PiniaStore<'plugin', StoreState, StoreGetters, StoreActions>;
 
-export const usePluginStore = (pinia: Pinia = piniaInstance) => {
+export const usePluginStore = (pinia: Pinia = piniaInstance): Store => {
   return useStore<Store, ApiStore<ProjectsApi>>(
     'plugin',
     {

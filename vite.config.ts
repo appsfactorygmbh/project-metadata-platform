@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url';
-import { configDefaults, defineConfig, ConfigEnv } from 'vitest/config';
+import { configDefaults, defineConfig, type ConfigEnv } from 'vitest/config';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import VueDevTools from 'vite-plugin-vue-devtools';
@@ -10,6 +10,8 @@ import AntdvResolver from 'antdv-component-resolver';
 const baseSrc = fileURLToPath(new URL('./src', import.meta.url));
 
 // https://vitejs.dev/config/
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default defineConfig(({ mode }: ConfigEnv) => {
   return {

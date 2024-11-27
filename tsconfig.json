@@ -1,8 +1,47 @@
 {
-  "files": [],
+  "$schema": "https://json.schemastore.org/tsconfig",
+  // "extends": "@vue/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    /* Base options */
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2022", // Sets the ECMAScript target version for the compiled JavaScript.
+    "useDefineForClassFields": true, // Allows initializing class fields directly within the class body without a constructor.
+    "module": "ESNext", // Sets the module code generation to ECMAScript modules.
+    "lib": ["ES2020", "DOM", "DOM.Iterable", "ScriptHost"], // Specifies the built-in libraries to include in the compilation.
+    "skipLibCheck": true, // Skips type checking of declaration files.
+    "esModuleInterop": true, // Enables compatibility with CommonJS and AMD modules.
+    "forceConsistentCasingInFileNames": true, // Enforces consistent casing of file names.
+    "verbatimModuleSyntax": true, // Treats all module files as written in ECMAScript modules.
+    "allowJs": true, // Allows JavaScript files to be included in the TypeScript project.
+    "moduleDetection": "force", // Forces TypeScript to always assume modules are present.
+    "baseUrl": ".",
+    "outDir": "./lib/",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
+    /* Bundler mode */
+    "moduleResolution": "bundler", // Resolves module names using a bundler.
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true, // Allows importing JSON files as modules.
+    "isolatedModules": true,
+    "noEmit": true, // Disables emitting compiled output files.
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Strictness */
+    "strict": true // Enables all strict type checking options.
+    // "noUncheckedIndexedAccess": true // Checks that indexed accesses are not possibly undefined or null.
+  },
+  "include": ["types/**/*.d.ts", "src/**/*"],
+  // "exclude": ["src/api/generated/**/*"],
   "references": [
     { "path": "./tsconfig.node.json" },
-    { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.vitest.json" }
   ]
 }

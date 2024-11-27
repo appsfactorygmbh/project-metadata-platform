@@ -54,7 +54,7 @@ export const useUserStore = defineStore('user', {
     setUsers(users: UserListModel[]): void {
       this.users = users;
     },
-    setUser(user: UserModel): void {
+    setUser(user: UserModel | null): void {
       this.user = user;
     },
     setIsLoadingCreate(isLoadingCreate: boolean): void {
@@ -83,14 +83,9 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    async fetchUser(userId: number): Promise<void> {
+    async fetchUser(userId: string): Promise<void> {
       try {
-        const user = (await userService.fetchUser(userId)) ?? {
-          id: -1,
-          name: '',
-          username: '',
-          email: '',
-        };
+        const user = (await userService.fetchUser(userId)) ?? null;
         this.setUser(user);
       } finally {
         this.setIsLoadingUsers(false);
@@ -102,7 +97,7 @@ export const useUserStore = defineStore('user', {
         this.setIsLoadingCreate(true);
         this.setCreatedSuccessfully(false);
         const response = await userService.createUser(newUser);
-        if (response && response.ok) {
+        if (response) {
           this.fetchUsers();
           this.setCreatedSuccessfully(true);
         } else {
@@ -113,19 +108,20 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    async deleteUser(userId: number): Promise<void> {
-      try {
-        this.setIsLoadingDelete(true);
-        this.setRemovedSuccessfully(false);
-        const response = await userService.deleteUser(userId);
-        if (response && response.ok) {
-          this.setRemovedSuccessfully(true);
-          this.fetchUsers();
-        }
-      } finally {
-        this.setIsLoadingDelete(false);
-      }
-    },
+    // TODO: need backend support
+    // async deleteUser(userId: number): Promise<void> {
+    //   try {
+    //     this.setIsLoadingDelete(true);
+    //     this.setRemovedSuccessfully(false);
+    //     const responyse = await userService.deleteUser(userId);
+    //     if (response && response.ok) {
+    //       this.setRemovedSuccessfully(true);
+    //       this.fetchUsers();
+    //     }
+    //   } finally {
+    //     this.setIsLoadingDelete(false);
+    //   }
+    // },
   },
 });
 
