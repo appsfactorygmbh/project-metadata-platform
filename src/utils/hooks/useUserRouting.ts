@@ -3,11 +3,11 @@ import { useRouter } from 'vue-router';
 export const useUserRouting = () => {
   const router = useRouter();
 
-  const routerUserId = ref<number>(
-    Number(router.currentRoute.value.query.userId) || 0,
+  const routerUserId = ref<string>(
+    String(router.currentRoute.value.query.userId) || '',
   );
 
-  const setUserId = (id: number) => {
+  const setUserId = (id: string) => {
     routerUserId.value = id;
     router.push({
       path: router.currentRoute.value.path,

@@ -133,7 +133,7 @@ describe('GlobalPluginsView.vue', () => {
   it('calls the store when clicking the delete button', async () => {
     const wrapper = generateWrapper();
     const globalPluginStore = useGlobalPluginsStore();
-    const spy = vi.spyOn(globalPluginStore, 'deleteGlobalPlugin');
+    const spy = vi.spyOn(globalPluginStore, 'delete');
     spy.mockImplementation(async () =>
       globalPluginStore.setGlobalPlugins(testData),
     );

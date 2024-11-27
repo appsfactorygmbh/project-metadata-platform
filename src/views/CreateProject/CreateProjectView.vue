@@ -1,9 +1,8 @@
 <script setup lang="ts">
-  import { computed, inject, ref, watch } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import {
     BankOutlined,
     FontColorsOutlined,
-    PlusOutlined,
     PlusOutlined,
     ShoppingOutlined,
     TeamOutlined,

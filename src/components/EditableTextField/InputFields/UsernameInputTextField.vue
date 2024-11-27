@@ -8,7 +8,7 @@
 
   const props = defineProps({
     userId: {
-      type: Number,
+      type: String,
       required: true,
     },
     formStore: {
@@ -39,7 +39,7 @@
     } else {
       const users: UserListModel[] = userStore?.getUsers;
 
-      if (value === users?.find((user) => user.username === value)?.username) {
+      if (value === users?.find((user) => user.name === value)?.name) {
         return Promise.reject('Username already exists.');
       } else {
         return Promise.resolve();

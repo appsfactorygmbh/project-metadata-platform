@@ -65,7 +65,7 @@
     if (!user.value) return;
     await userService.deleteUser(user.value?.id);
     await userStore.fetchUsers();
-    const firstId: number = userStore.getUsers[0].id;
+    const firstId: string = userStore.getUsers[0].id;
     setUserId(firstId);
   };
 
@@ -104,7 +104,7 @@
           v-else
           :form-store="nameFormStore"
           :placeholder="user?.name ?? ''"
-          :user-id="user?.id ?? -1"
+          :user-id="user?.id ?? ''"
           :default="user?.name ?? ''"
           class="nameInput"
         />
@@ -132,7 +132,7 @@
         :is-loading="isLoading"
         :label="'Username'"
         :is-editing-key="'isEditingUsername'"
-        :user-id="user ? Number(user.id) : -1"
+        :user-id="user?.id ?? ''"
         type="username"
         class="textField"
         :placeholder="user?.email"
@@ -147,7 +147,7 @@
         :is-editing-key="'isEditingEmail'"
         class="textField"
         type="email"
-        :user-id="user ? Number(user.id) : -1"
+        :user-id="user?.id ?? ''"
         :placeholder="user?.email"
         @safed-changes="
           async () => user && (await userStore.fetchUser(user.id))
@@ -159,7 +159,7 @@
         label="Password"
         :is-editing-key="'isEditingPassword'"
         :is-loading="isLoading"
-        :user-id="Number(user.id)"
+        :user-id="user?.id ?? ''"
       />
     </a-flex>
   </div>

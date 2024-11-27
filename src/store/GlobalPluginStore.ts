@@ -154,7 +154,7 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
           try {
             this.setLoadingDelete(true);
             this.setRemovedSuccessfully(false);
-            const response = await this.update({
+            await this.update({
               ...plugin,
               isArchived: true,
             });

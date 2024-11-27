@@ -7,7 +7,7 @@
 
   const props = defineProps({
     userId: {
-      type: Number,
+      type: String,
       required: true,
     },
     formStore: {

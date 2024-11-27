@@ -204,7 +204,7 @@
 
   onMounted(async () => {
     const data: ComputedRef<PluginModel[]> = computed(() =>
-      projectsStore?.getProject?.isArchived
+      projectStore?.getProject?.isArchived
         ? pluginStore.getPlugins
         : pluginStore.getUnarchivedPlugins,
     );

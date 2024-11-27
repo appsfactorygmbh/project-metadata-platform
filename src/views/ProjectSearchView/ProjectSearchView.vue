@@ -1,17 +1,12 @@
 <script lang="ts" setup>
   import { type SearchableColumn, SearchableTable } from '@/components/Table';
   import { SearchBar } from '@/components/Searchbar';
-  import {
-    pluginStoreSymbol,
-    projectRoutingSymbol,
-    projectsStoreSymbol,
-  } from '@/store/injectionSymbols';
+  import { projectRoutingSymbol } from '@/store/injectionSymbols';
   import { inject, onMounted, provide, reactive } from 'vue';
   import { type SearchStore, useSearchStore } from '@/store/SearchStore';
   import type { ProjectModel } from '@/models/Project';
   import { useEditing } from '@/utils/hooks/useEditing';
   import _ from 'lodash';
-  import { useProjectRouting } from '@/utils/hooks';
   import { useToggle, useWindowSize } from '@vueuse/core';
   import {
     BulbOutlined,

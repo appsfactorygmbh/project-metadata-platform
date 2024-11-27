@@ -6,15 +6,16 @@ import { createTestingPinia } from '@pinia/testing';
 import { userStoreSymbol } from '@/store/injectionSymbols';
 import { useUserStore } from '@/store';
 import router from '@/router';
+import type { UserModel } from '@/models/User';
 
-const userData1 = {
-  id: 100,
+const userData1: UserModel = {
+  id: '100',
   name: 'Max Musterfrau',
   username: 'Maxmuster1',
   email: 'maxmuster1@gmail.com',
 };
-const userData2 = {
-  id: 200,
+const userData2: UserModel = {
+  id: '200',
   name: 'Max Mustermann',
   username: 'Maxmuster2',
   email: 'maxmuster2@gmail.com',

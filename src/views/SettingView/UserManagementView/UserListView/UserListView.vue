@@ -27,13 +27,13 @@
     },
   );
 
-  const clickTab = async (userID: number) => {
+  const clickTab = async (userID: string) => {
     setUserId(userID);
   };
 
   onMounted(async () => {
     await userStore?.fetchUsers();
-    if (routerUser.value === 0) {
+    if (routerUser.value === '0') {
       setUserId(userStore?.getUsers[0]?.id ?? 0);
     } else {
       await userStore?.fetchUser(routerUser.value);
