@@ -110,9 +110,7 @@ class ProjectsService extends ApiService {
     }
   };
 
-  deleteProject = async (
-    id: number
-  ): Promise<Response | null> => {
+  deleteProject = async (id: number): Promise<Response | null> => {
     try {
       const response = await this.fetch(`/Projects/${id}`, {
         method: 'DELETE',
@@ -125,7 +123,7 @@ class ProjectsService extends ApiService {
       console.error('Failed to delete project:', error);
       return null;
     }
-  }
+  };
 }
 
 const projectsService = new ProjectsService();

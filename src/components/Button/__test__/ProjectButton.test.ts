@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 import ProjectButton from '@/components/Button/ProjectButton/ProjectButton.vue';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('ProjectButton.vue', () => {
   it('renders the default button correctly', () => {

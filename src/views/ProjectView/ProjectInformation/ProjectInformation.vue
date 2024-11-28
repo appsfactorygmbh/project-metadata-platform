@@ -13,10 +13,10 @@
   } from '@/models/Project';
   import type { ComputedRef } from 'vue';
   import {
+    CloseOutlined,
     DeleteOutlined,
     EditOutlined,
     UndoOutlined,
-    CloseOutlined
   } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
@@ -227,9 +227,7 @@
           title="Click here to reactivate the project"
           style="padding-left: 0; padding-right: 0"
         >
-          <ProjectButton
-            @click="reactivateProject"
-          >
+          <ProjectButton @click="reactivateProject">
             <template #icon>
               <UndoOutlined class="icon" />
             </template>
@@ -243,9 +241,7 @@
           title="Click here to delete the project"
           style="padding-left: 0; padding-right: 0"
         >
-          <ProjectButton
-            @click="handleDelete"
-          >
+          <ProjectButton @click="handleDelete">
             <template #icon>
               <CloseOutlined class="icon" />
             </template>
@@ -268,15 +264,12 @@
           title="Click here to archive the project"
           style="padding-left: 0; padding-right: 0"
         >
-          <ProjectButton
-            @click="handleArchive"
-          >
+          <ProjectButton @click="handleArchive">
             <template #icon>
               <DeleteOutlined class="icon" />
             </template>
           </ProjectButton>
         </a-tooltip>
-
 
         <ConfirmAction
           :is-open="isArchiveModalOpen"
@@ -292,14 +285,14 @@
       <a-flex
         class="projectInformationBox"
         :body-style="{
-          height: 'fit-content'
+          height: 'fit-content',
         }"
       >
         <a-card
           :body-style="{
             display: 'flex',
             padding: '5px',
-            alignItems: 'center'
+            alignItems: 'center',
           }"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
@@ -340,7 +333,7 @@
           :body-style="{
             display: 'flex',
             padding: '5px',
-            alignItems: 'center'
+            alignItems: 'center',
           }"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
@@ -385,7 +378,7 @@
           :body-style="{
             display: 'flex',
             padding: '5px',
-            alignItems: 'center'
+            alignItems: 'center',
           }"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
@@ -430,7 +423,7 @@
           :body-style="{
             display: 'flex',
             padding: '5px',
-            alignItems: 'center'
+            alignItems: 'center',
           }"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"

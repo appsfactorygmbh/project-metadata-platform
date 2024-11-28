@@ -14,27 +14,27 @@
 </template>
 
 <script lang="ts" setup>
-defineProps({
-  type: {
-    type: String,
-    default: 'text',
-  },
-  shape: {
-    type: String,
-    default: 'circle',
-  },
-  size: {
-    type: String,
-    default: 'large',
-  },
-});
+  defineProps({
+    type: {
+      type: String,
+      default: 'text',
+    },
+    shape: {
+      type: String,
+      default: 'circle',
+    },
+    size: {
+      type: String,
+      default: 'large',
+    },
+  });
 </script>
 
 <style scoped>
-.button {
-  margin-top: 10px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-}
+  .button {
+    margin-top: 10px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
 </style>

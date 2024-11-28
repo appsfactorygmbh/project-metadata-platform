@@ -214,9 +214,13 @@ export const useProjectStore = defineStore('project', {
         const response = await projectsService.deleteProject(projectId);
 
         if (response?.ok) {
-          this.projects = this.projects.filter((project) => project.id !== projectId);
+          this.projects = this.projects.filter(
+            (project) => project.id !== projectId,
+          );
 
-          const nextProject = this.projects.find((project) => !project.isArchived);
+          const nextProject = this.projects.find(
+            (project) => !project.isArchived,
+          );
           this.project = nextProject ?? null;
         }
         return response;
@@ -226,7 +230,7 @@ export const useProjectStore = defineStore('project', {
       } finally {
         this.setLoadingUpdate(false);
       }
-    }
+    },
   },
 });
 
