@@ -61,6 +61,7 @@ declare module 'vue' {
     NameInputTextField: typeof import('./../src/components/EditableTextField/InputFields/NameInputTextField.vue')['default']
     PluginComponent: typeof import('./../src/components/Plugin/PluginComponent.vue')['default']
     PopupComponent: typeof import('./../src/components/Popup/PopupComponent.vue')['default']
+    ProjectButton: typeof import('./../src/components/Button/ProjectButton/ProjectButton.vue')['default']
     ProjectEditButtons: typeof import('./../src/components/ProjectEditButtons/ProjectEditButtons.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

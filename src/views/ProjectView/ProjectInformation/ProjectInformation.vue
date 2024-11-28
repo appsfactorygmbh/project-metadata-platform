@@ -21,6 +21,7 @@
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
+  import ProjectButton from '@/components/Button/ProjectButton/ProjectButton.vue';
 
   const projectsStore = inject(projectsStoreSymbol)!;
   const projectEditStore = inject(projectEditStoreSymbol)!;
@@ -211,15 +212,14 @@
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
 
         <!-- Edit Button -->
-        <a-button
+        <ProjectButton
           v-if="!projectsStore.getProject?.isArchived"
-          class="button"
-          ghost
-          style="margin-left: 10px"
           @click="toggleEditingMode"
         >
-          <template #icon><EditOutlined class="icon" /></template>
-        </a-button>
+          <template #icon>
+            <EditOutlined class="icon" />
+          </template>
+        </ProjectButton>
 
         <!-- Reactivate Button -->
         <a-tooltip
@@ -228,14 +228,13 @@
           title="Click here to reactivate the project"
           style="padding-left: 0; padding-right: 0"
         >
-          <a-button
-            class="button"
-            ghost
-            style="margin-left: 10px"
+          <ProjectButton
             @click="reactivateProject"
           >
-            <template #icon><UndoOutlined class="icon" /></template>
-          </a-button>
+            <template #icon>
+              <UndoOutlined class="icon" />
+            </template>
+          </ProjectButton>
         </a-tooltip>
 
         <!-- Delete Button -->
@@ -245,14 +244,13 @@
           title="Click here to delete the project"
           style="padding-left: 0; padding-right: 0"
         >
-          <a-button
-            class="button"
-            ghost
-            style="margin-left: 10px"
+          <ProjectButton
             @click="handleDelete"
           >
-            <template #icon><CloseOutlined class="icon" /></template>
-          </a-button>
+            <template #icon>
+              <CloseOutlined class="icon" />
+            </template>
+          </ProjectButton>
 
           <ConfirmAction
             :is-open="isDeleteModalOpen"
@@ -271,15 +269,15 @@
           title="Click here to archive the project"
           style="padding-left: 0; padding-right: 0"
         >
-          <a-button
-            class="button"
-            ghost
-            style="margin-left: 10px"
+          <ProjectButton
             @click="handleArchive"
           >
-            <template #icon><DeleteOutlined class="icon" /></template>
-          </a-button>
+            <template #icon>
+              <DeleteOutlined class="icon" />
+            </template>
+          </ProjectButton>
         </a-tooltip>
+
 
         <ConfirmAction
           :is-open="isArchiveModalOpen"
@@ -572,7 +570,7 @@
 
   .icon {
     color: black;
-    font-size: 2.5em;
+    font-size: 1.5em;
   }
 
   .label {
