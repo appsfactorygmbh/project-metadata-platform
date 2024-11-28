@@ -97,7 +97,7 @@ lint-check-job:
   script:
     - echo "Linting code"
     - npm install -g eslint
-    - npx eslint --format gitlab .
+    - npx eslint --flag unstable_ts_config --format gitlab .
   artifacts:
     reports:
       codequality: gl-codequality.json
