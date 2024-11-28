@@ -28,10 +28,9 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     background-color: white;
     border-radius: 15px;
-    padding: 1em;
     overflow: auto;
     margin-bottom: 60px;
-    margin: 1em;
+    padding-top: 0.6em;
     border: none;
   }
 

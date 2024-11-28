@@ -22,7 +22,7 @@
   const size = reactive(useElementSize(timeStampSize));
 
   const minWidth = computed(() => {
-    if (size.width < 340) return '100px';
+    if (size.width < 340) return '90px';
     else return '162px';
   });
 </script>
@@ -46,7 +46,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0 20px 0 20px;
+    margin: 0 1em;
     transform: translateY(7px);
   }
 
@@ -79,11 +79,12 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
-    height: 40px;
+    height: 0em;
+    margin: 0;
   }
 
   .timeStamp p {
-    width: 80px;
+    width: 70px;
     margin: 0;
   }
 </style>
