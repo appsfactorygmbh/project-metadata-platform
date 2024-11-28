@@ -10,12 +10,12 @@
   provide<typeof userStore>(userStoreSymbol, userStore);
 
   const auth = useAuth();
-  userService.initApi(auth.token(), UsersApi);
+  userService.initApi(auth?.token() ?? null, UsersApi);
   watch(
     () => auth?.token(),
-    () => {
+    (token) => {
       console.log('token change', auth);
-      userService.initApi(auth.token(), UsersApi);
+      userService.initApi(token ?? null, UsersApi);
     },
   );
 </script>

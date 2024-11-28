@@ -14,15 +14,15 @@
 
   const auth = useAuth();
 
-  authStore.setAuth(auth.token());
+  authStore.setAuth(auth?.token() ?? null);
   globalPluginStore.refreshAuth();
   projectStore.refreshAuth();
   pluginStore.refreshAuth();
 
   watch(
-    () => auth.token(),
-    () => {
-      authStore.setAuth(auth.token());
+    () => auth?.token(),
+    (token) => {
+      authStore.setAuth(token ?? null);
       globalPluginStore.refreshAuth();
       projectStore.refreshAuth();
       pluginStore.refreshAuth();

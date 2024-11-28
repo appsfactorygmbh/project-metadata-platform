@@ -28,6 +28,7 @@ const auth = createAuth({
     path: '/403',
   },
   fetchData: {
+    ...authService.fetchUserRequest,
     enabled: false,
   },
   loginData: {
