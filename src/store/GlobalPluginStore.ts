@@ -18,14 +18,17 @@ type StoreActions = {
   fetchAll: () => Promise<void>;
   fetch: (pluginId: number) => Promise<GlobalPluginModel | undefined>;
   create: (plugin: Omit<GlobalPluginModel, 'id'>) => Promise<void>;
-  update: (plugin: GlobalPluginModel) => Promise<void>;
+  update: (
+    plugin: GlobalPluginModel,
+    pluginId: GlobalPluginModel['id'],
+  ) => Promise<void>;
   delete: (pluginId: GlobalPluginModel['id']) => Promise<void>;
   setGlobalPlugins: (globalPlugins: GlobalPluginModel[]) => void;
   setLoadingGlobalPlugins: (status: boolean) => void;
   setLoadingDelete: (status: boolean) => void;
   setRemovedSuccessfully: (status: boolean) => void;
-  archiveGlobalPlugin: (plugin: GlobalPluginModel) => Promise<void>;
-  reactivateGlobalPlugin: (plugin: GlobalPluginModel) => Promise<void>;
+  archive: (plugin: GlobalPluginModel) => Promise<void>;
+  unarchive: (plugin: GlobalPluginModel) => Promise<void>;
 };
 
 type StoreGetters = {
@@ -116,11 +119,12 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
         },
 
         async create(plugin: Omit<GlobalPluginModel, 'id'>) {
+          console.log('creating plugin in store', plugin);
           try {
             const response = await this.callApi('pluginsPut', {
               createPluginRequest: {
-                ...plugin,
                 pluginName: plugin.name,
+                ...plugin,
               },
             });
             if (response) {
@@ -131,10 +135,14 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
           }
         },
 
-        async update(plugin: GlobalPluginModel) {
+        async update(
+          plugin: GlobalPluginModel,
+          pluginId: GlobalPluginModel['id'],
+        ) {
           try {
-            const response = await this.callApi('pluginsPut', {
-              createPluginRequest: {
+            const response = await this.callApi('pluginsPluginIdPatch', {
+              pluginId,
+              patchGlobalPluginRequest: {
                 ...plugin,
                 pluginName: plugin.name,
               },
@@ -150,14 +158,17 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
             throw err;
           }
         },
-        async archiveGlobalPlugin(plugin: GlobalPluginModel) {
+        async archive(plugin: GlobalPluginModel) {
           try {
             this.setLoadingDelete(true);
             this.setRemovedSuccessfully(false);
-            await this.update({
-              ...plugin,
-              isArchived: true,
-            });
+            await this.update(
+              {
+                ...plugin,
+                isArchived: true,
+              },
+              plugin.id,
+            );
             this.setRemovedSuccessfully(true);
           } catch (err) {
             this.setRemovedSuccessfully(false);
@@ -167,13 +178,16 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
           }
         },
 
-        async reactivateGlobalPlugin(plugin: GlobalPluginModel) {
+        async unarchive(plugin: GlobalPluginModel) {
           try {
             this.setLoadingGlobalPlugins(true);
-            await this.update({
-              ...plugin,
-              isArchived: false,
-            });
+            await this.update(
+              {
+                ...plugin,
+                isArchived: false,
+              },
+              plugin.id,
+            );
           } finally {
             this.setLoadingGlobalPlugins(false);
           }

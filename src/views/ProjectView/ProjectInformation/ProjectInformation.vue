@@ -152,7 +152,7 @@
 
     if (projectID) {
       try {
-        await projectStore.archiveProject(projectData, projectID);
+        await projectStore.archive(projectData, projectID);
         if (projectStore.getUpdatedSuccessfully) {
           await projectStore.fetchAll();
         }
@@ -169,7 +169,7 @@
     const projectId = projectStore.getProject?.id;
     currentProject.pluginList = pluginStore.getPlugins;
 
-    await projectStore.activateProject(currentProject, projectId!);
+    await projectStore.unarchive(currentProject, projectId!);
     await projectStore.fetchAll();
   };
 </script>

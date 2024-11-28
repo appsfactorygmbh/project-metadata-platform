@@ -92,7 +92,7 @@ describe('GlobalPluginsView.vue', () => {
   it('calls the store when clicking the archive button', async () => {
     const wrapper = generateWrapper();
     const globalPluginStore = useGlobalPluginsStore();
-    const spy = vi.spyOn(globalPluginStore, 'archiveGlobalPlugin');
+    const spy = vi.spyOn(globalPluginStore, 'archive');
     spy.mockImplementation(async () =>
       globalPluginStore.setGlobalPlugins(testDataArchive),
     );
@@ -113,7 +113,7 @@ describe('GlobalPluginsView.vue', () => {
   it('calls the store when clicking the reactivate button', async () => {
     const wrapper = generateWrapper();
     const globalPluginStore = useGlobalPluginsStore();
-    const spy = vi.spyOn(globalPluginStore, 'reactivateGlobalPlugin');
+    const spy = vi.spyOn(globalPluginStore, 'unarchive');
     spy.mockImplementation(async () =>
       globalPluginStore.setGlobalPlugins(testDataReactivate),
     );

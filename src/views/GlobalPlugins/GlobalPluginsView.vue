@@ -199,7 +199,7 @@
     const plugin = globalPluginsStore!.getGlobalPlugins.find(
       (plugin) => plugin.id === pluginId,
     );
-    await globalPluginsStore?.archiveGlobalPlugin(plugin as GlobalPluginModel);
+    await globalPluginsStore?.archive(plugin as GlobalPluginModel);
 
     const index: number = pluginDeleting.value?.indexOf(pluginId);
     pluginDeleting.value.splice(index, 1);
@@ -213,7 +213,7 @@
   };
 
   const handleReactivate = async (plugin: GlobalPluginModel) => {
-    await globalPluginsStore?.reactivateGlobalPlugin(plugin);
+    await globalPluginsStore?.unarchive(plugin);
     message.success('The plugin has been reactivated', 2);
   };
 
