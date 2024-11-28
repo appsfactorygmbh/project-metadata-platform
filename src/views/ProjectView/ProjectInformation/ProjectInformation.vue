@@ -151,8 +151,7 @@
       const response = await projectsStore.deleteProject(project.id);
 
       if (response?.ok) {
-        const projects = projectsStore.getProjects;
-        const nextProject = projects.find((p) => p.id !== project.id);
+        const nextProject = projectsStore.getProject;
 
         if (nextProject) {
           projectRouting.setProjectId(nextProject.id);

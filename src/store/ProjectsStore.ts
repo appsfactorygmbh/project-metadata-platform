@@ -215,9 +215,10 @@ export const useProjectStore = defineStore('project', {
 
         if (response?.ok) {
           this.projects = this.projects.filter((project) => project.id !== projectId);
-          this.project = null;
-        }
 
+          const nextProject = this.projects.find((project) => !project.isArchived);
+          this.project = nextProject ?? null;
+        }
         return response;
       } catch (error) {
         console.error('Error deleting project:', error);
