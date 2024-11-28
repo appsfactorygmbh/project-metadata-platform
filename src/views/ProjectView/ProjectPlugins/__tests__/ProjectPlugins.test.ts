@@ -2,8 +2,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import { defineComponent, computed, toRaw } from 'vue';
 import { setActivePinia, createPinia } from 'pinia';
-import { usePluginsStore } from '@/store';
+import { usePluginsStore, useProjectStore } from '@/store';
 import type { PluginModel } from '@/models/Plugin';
+import type { DetailedProjectModel } from '@/models/Project';
+import {
+  pluginStoreSymbol,
+  projectsStoreSymbol,
+} from '@/store/injectionSymbols';
+import { ProjectPlugins } from '..';
+import router from '@/router';
 
 // Mock the pluginService module
 vi.mock('@/services/PluginService', () => ({
@@ -13,7 +20,7 @@ vi.mock('@/services/PluginService', () => ({
 }));
 
 // Define a ProjectPlugins component for testing
-const ProjectPlugins = defineComponent({
+const ProjectPluginsMock = defineComponent({
   setup() {
     const pluginStore = usePluginsStore();
     const plugins = computed(() => toRaw(pluginStore.getPlugins));
@@ -43,12 +50,74 @@ describe('ProjectPlugins', () => {
     store.setPlugins(mockPlugins);
 
     // Mount the PluginView component
-    const wrapper = shallowMount(ProjectPlugins);
+    const wrapper = shallowMount(ProjectPluginsMock);
 
     // Access the computed plugins
     const computedPlugins = wrapper.vm.plugins;
 
     // Check if the computed plugins match the store plugins
     expect(computedPlugins).toEqual(mockPlugins);
+  });
+
+  it('should get unarchived plugins when on an active project and all plugins on archived project', async () => {
+    const pluginStore = usePluginsStore();
+    const projectsStore = useProjectStore();
+
+    const mockActiveProject: DetailedProjectModel = {
+      id: 1,
+      projectName: 'Test Project',
+      clientName: 'Test Client',
+      businessUnit: 'Test Business Unit',
+      teamNumber: 1,
+      department: 'Test Department',
+      isArchived: false,
+    };
+
+    const mockArchivedProject: DetailedProjectModel = {
+      id: 2,
+      projectName: 'Test Project',
+      clientName: 'Test Client',
+      businessUnit: 'Test Business Unit',
+      teamNumber: 1,
+      department: 'Test Department',
+      isArchived: true,
+    };
+
+    const unarchivedPluginsSpy = vi
+      .spyOn(pluginStore, 'getUnarchivedPlugins', 'get')
+      .mockReturnValue([]);
+    const pluginsSpy = vi
+      .spyOn(pluginStore, 'getPlugins', 'get')
+      .mockReturnValue([]);
+
+    // Test for active project
+    projectsStore.setProject(mockActiveProject);
+
+    shallowMount(ProjectPlugins, {
+      global: {
+        provide: {
+          [pluginStoreSymbol]: pluginStore,
+          [projectsStoreSymbol]: projectsStore,
+        },
+        plugins: [router],
+      },
+    });
+
+    expect(unarchivedPluginsSpy).toHaveBeenCalled();
+
+    // Test for archived project
+    projectsStore.setProject(mockArchivedProject);
+
+    shallowMount(ProjectPlugins, {
+      global: {
+        provide: {
+          [pluginStoreSymbol]: pluginStore,
+          [projectsStoreSymbol]: projectsStore,
+        },
+        plugins: [router],
+      },
+    });
+
+    expect(pluginsSpy).toHaveBeenCalled();
   });
 });

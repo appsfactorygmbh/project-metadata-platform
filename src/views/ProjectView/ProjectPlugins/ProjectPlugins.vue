@@ -200,17 +200,18 @@
       } else {
         plugins.value = [];
         projectEditStore?.resetPluginChanges();
-        syncEditStore(pluginStore.getPlugins);
+        syncEditStore(pluginStore.getUnarchivedPlugins);
       }
     },
   );
 
   onMounted(async () => {
-    setPlugins(pluginStore.getPlugins);
-
-    const data: ComputedRef<PluginModel[]> = computed(
-      () => pluginStore.getPlugins,
+    const data: ComputedRef<PluginModel[]> = computed(() =>
+      projectsStore?.getProject?.isArchived
+        ? pluginStore.getPlugins
+        : pluginStore.getUnarchivedPlugins,
     );
+    setPlugins(data.value);
 
     watch(
       () => data.value,

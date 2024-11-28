@@ -48,7 +48,7 @@
     if (!newVal) {
       if (projectStore?.getUpdatedSuccessfully) {
         projectEditStore?.resetPluginChanges();
-        message.success('Project updated successfully.', 7);
+        message.success('Project updated successfully.', 2);
         projectStore.fetchProject(projectStore.getProject?.id || 0);
         stopEditing();
       } else {
@@ -91,7 +91,7 @@
       await projectStore?.updateProject(updatedProject, projectID.value);
       await projectStore.fetchProjects();
       await projectStore.fetchProject(projectID.value);
-      await pluginStore?.fetchPlugins(projectID.value);
+      await pluginStore?.fetchUnarchivedPlugins(projectID.value);
     }
   };
 </script>
