@@ -34,9 +34,7 @@
     'non-editing-mode': !isEditing.value,
   }));
 
-  // @ts-expect-error generic pinia store does not match type signature
   const { getIsLoadingProject } = storeToRefs(projectStore);
-  // @ts-expect-error generic pinia store does not match type signature
   const { getIsLoading } = storeToRefs(projectStore);
   const isLoading = computed(
     () => getIsLoadingProject.value || getIsLoading.value,
