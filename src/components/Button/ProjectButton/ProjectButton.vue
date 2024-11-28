@@ -14,27 +14,30 @@
 </template>
 
 <script lang="ts" setup>
-  defineProps({
-    type: {
-      type: String,
-      default: 'text',
-    },
-    shape: {
-      type: String,
-      default: 'circle',
-    },
-    size: {
-      type: String,
-      default: 'large',
-    },
-  });
+import type { ButtonType, ButtonShape } from 'ant-design-vue/es/button';
+import type { SizeType } from 'ant-design-vue/es/config-provider';
+
+defineProps({
+  type: {
+    type: String as () => ButtonType,
+    default: 'text',
+  },
+  shape: {
+    type: String as () => ButtonShape,
+    default: 'circle',
+  },
+  size: {
+    type: String as () => SizeType,
+    default: 'large',
+  },
+});
 </script>
 
 <style scoped>
-  .button {
-    margin-top: 10px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-  }
+.button {
+  margin-top: 10px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
 </style>
