@@ -9,8 +9,6 @@ import type { Pinia } from 'pinia';
 type StoreState = {
   plugins: PluginModel[];
   isLoadingPlugins: boolean;
-  cachePlugins: PluginModel[];
-  changedPlugins: PluginModel[];
   unarchivedPlugins: PluginModel[];
 };
 
@@ -37,8 +35,6 @@ export const usePluginStore = (pinia: Pinia = piniaInstance): Store => {
     {
       state: {
         plugins: [],
-        cachePlugins: [],
-        changedPlugins: [],
         isLoadingPlugins: false,
       },
 

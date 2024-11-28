@@ -46,6 +46,8 @@ type StoreActions = {
     project: UpdateProjectModel,
     id: ProjectModel['id'],
   ) => Promise<void>;
+  archive: (projectData: UpdateProjectModel, id: number) => Promise<void>;
+  unarchive: (projectData: UpdateProjectModel, id: number) => Promise<void>;
   setProjects: (projects: ProjectModel[]) => void;
   setProject: (project: DetailedProjectModel | null) => void;
   setLoadingAdd: (status: boolean) => void;
@@ -56,8 +58,6 @@ type StoreActions = {
   setUpdatedSuccessfully: (status: boolean) => void;
   getSlugById: (id: number) => Promise<string>;
   getBySlug: (slug: string) => Promise<ProjectModel | null>;
-  archive: (projectData: UpdateProjectModel, id: number) => Promise<void>;
-  unarchive: (projectData: UpdateProjectModel, id: number) => Promise<void>;
 };
 
 type Store = PiniaStore<'project', StoreState, StoreGetters, StoreActions>;
