@@ -36,7 +36,6 @@ export const useLocalLogStore = defineStore('localLogs', {
         const localLog: LocalLogModel[] =
           await localLogService.fetchLocalLog(projectId);
         this.setLocalLogs(localLog);
-        console.log(localLog);
       } finally {
         this.setIsLoadingLocalLog(false);
       }

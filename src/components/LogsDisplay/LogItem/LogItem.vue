@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import { reactive, ref } from 'vue';
+  import { useElementSize } from '@vueuse/core';
   const props = defineProps({
     timeStamp: {
       type: String,
@@ -13,13 +15,24 @@
       required: true,
     },
   });
+  const dateTime = computed(() =>
+    new Date(props.timeStamp).toLocaleString().split(','),
+  );
+  const timeStampSize = ref(null);
+  const size = reactive(useElementSize(timeStampSize));
+
+  const minWidth = computed(() => {
+    if (size.width < 340) return '100px';
+    else return '162px';
+  });
 </script>
 
 <template>
-  <div class="container">
-    <p class="text timeStamp">
-      {{ new Date(props.timeStamp).toLocaleString() }}
-    </p>
+  <div ref="timeStampSize" class="container">
+    <div class="text timeStamp" :style="{ minWidth }">
+      <p class="date">{{ dateTime[0] }}</p>
+      <p class="time">{{ dateTime[1] }}</p>
+    </div>
     <div class="line-container">
       <div class="circle" />
       <div v-if="!isLast" class="line" />
@@ -63,7 +76,14 @@
     display: none;
   }
   .timeStamp {
-    min-width: 150px;
-    text-align: end;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    height: 40px;
+  }
+
+  .timeStamp p {
+    width: 80px;
+    margin: 0;
   }
 </style>
