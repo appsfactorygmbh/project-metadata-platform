@@ -17,7 +17,7 @@
 defineProps({
   type: {
     type: String,
-    default: 'text', //primary | ghost | dashed | link | text | default
+    default: 'text',
   },
   shape: {
     type: String,
