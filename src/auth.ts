@@ -29,7 +29,7 @@ const auth = createAuth({
   },
   fetchData: {
     ...authService.fetchUserRequest,
-    enabled: false,
+    enabled: true,
   },
   loginData: {
     ...authService.loginRequest,
