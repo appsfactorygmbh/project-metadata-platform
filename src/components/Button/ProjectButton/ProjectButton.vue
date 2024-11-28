@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { ButtonType, ButtonShape } from 'ant-design-vue/es/button';
+import type { ButtonShape, ButtonType } from 'ant-design-vue/es/button';
 import type { SizeType } from 'ant-design-vue/es/config-provider';
 
 defineProps({
@@ -31,6 +31,8 @@ defineProps({
     default: 'large',
   },
 });
+
+defineEmits(['click']);
 </script>
 
 <style scoped>
