@@ -17,10 +17,13 @@
 
   const onSubmit: FormSubmitType = (fields) => {
     try {
-      globalPluginStore.update({
-        id: pluginIdRef.value,
-        ...fields,
-      });
+      if (!pluginIdRef.value) return;
+      globalPluginStore.update(
+        {
+          ...fields,
+        },
+        pluginIdRef.value,
+      );
     } catch {
       notificationApi.error({
         message: 'The plugin could not be updated.',
