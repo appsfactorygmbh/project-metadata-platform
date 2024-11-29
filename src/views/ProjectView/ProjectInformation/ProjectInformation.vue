@@ -1,6 +1,7 @@
 <script lang="ts" setup>
   import { computed, inject, onMounted, ref, toRaw } from 'vue';
   import {
+    localLogStoreSymbol,
     pluginStoreSymbol,
     projectEditStoreSymbol,
     projectRoutingSymbol,
@@ -21,6 +22,7 @@
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
 
+  const localLogStore = inject(localLogStoreSymbol);
   const projectsStore = inject(projectsStoreSymbol)!;
   const projectEditStore = inject(projectEditStoreSymbol)!;
   const pluginStore = inject(pluginStoreSymbol)!;
@@ -152,6 +154,7 @@
         }
       } finally {
         isModalOpen.value = false;
+        await localLogStore?.fetchLocalLog(projectID);
         const newProjectId = getNextActiveProjectId(projectID);
         projectRouting.setProjectId(newProjectId);
       }
@@ -165,6 +168,7 @@
 
     await projectsStore.activateProject(currentProject, projectId!);
     await projectsStore.fetchProjects();
+    await localLogStore?.fetchLocalLog(projectId!);
   };
 </script>
 

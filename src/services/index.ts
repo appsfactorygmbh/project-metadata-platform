@@ -1,6 +1,6 @@
 import { type PluginService, pluginService } from './PluginService';
 import { type ProjectsService, projectsService } from './ProjectsService';
-import { type LocalLogService, localLogService } from './LocalLogService';
+import { type LogsService, logsService } from './LogsService';
 import { type UserService, userService } from './UserService';
 import {
   type GlobalPluginService,
@@ -12,12 +12,12 @@ export {
   projectsService,
   globalPluginService,
   userService,
-  localLogService,
+  logsService,
 };
 export type {
   PluginService,
   ProjectsService,
   GlobalPluginService,
   UserService,
-  LocalLogService,
+  LogsService,
 };

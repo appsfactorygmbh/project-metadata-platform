@@ -6,6 +6,8 @@ import { useLocalLogStore } from '@/store';
 import { createPinia, setActivePinia } from 'pinia';
 import { localLogStoreSymbol } from '@/store/injectionSymbols';
 import router from '@/router';
+setActivePinia(createPinia());
+const logsStore = useLocalLogStore();
 
 const logsData = [
   {
@@ -18,26 +20,23 @@ const logsData = [
   },
 ];
 
-describe('UserListView.vue', () => {
-  setActivePinia(createPinia());
-  const logsStore = useLocalLogStore();
-
-  const generateWrapper = () => {
-    return mount(LocalLogView, {
-      plugins: [
-        createTestingPinia({
-          stubActions: false,
-        }),
-      ],
-      global: {
-        provide: {
-          [localLogStoreSymbol as symbol]: logsStore,
-        },
-        plugins: [router],
+const generateWrapper = () => {
+  return mount(LocalLogView, {
+    plugins: [
+      createTestingPinia({
+        stubActions: false,
+      }),
+    ],
+    global: {
+      provide: {
+        [localLogStoreSymbol as symbol]: logsStore,
       },
-    });
-  };
+      plugins: [router],
+    },
+  });
+};
 
+describe('LocalLogView.vue', () => {
   it('show when there is log data', () => {
     logsStore.setLocalLogs(logsData);
     logsStore.setIsLoadingLocalLog(false);

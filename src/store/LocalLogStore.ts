@@ -1,9 +1,9 @@
-import { localLogService } from '@/services/LocalLogService';
-import type { LocalLogModel } from '@/models/LocalLogs';
+import { logsService } from '@/services/LogsService';
+import type { LogEntryModel } from '@/models/Log';
 import { defineStore } from 'pinia';
 
 type StoreState = {
-  localLog: LocalLogModel[];
+  localLog: LogEntryModel[];
   isLoadingLocalLog: boolean;
 };
 
@@ -15,7 +15,7 @@ export const useLocalLogStore = defineStore('localLogs', {
     };
   },
   getters: {
-    getLocalLog(): LocalLogModel[] {
+    getLocalLog(): LogEntryModel[] {
       return this.localLog;
     },
     getIsLoadingLocalLog(): boolean {
@@ -23,7 +23,7 @@ export const useLocalLogStore = defineStore('localLogs', {
     },
   },
   actions: {
-    setLocalLogs(localLog: LocalLogModel[]): void {
+    setLocalLogs(localLog: LogEntryModel[]): void {
       this.localLog = localLog;
     },
     setIsLoadingLocalLog(isLoading: boolean): void {
@@ -33,8 +33,8 @@ export const useLocalLogStore = defineStore('localLogs', {
     async fetchLocalLog(projectId: number): Promise<void> {
       try {
         this.setIsLoadingLocalLog(true);
-        const localLog: LocalLogModel[] =
-          await localLogService.fetchLocalLog(projectId);
+        const localLog: LogEntryModel[] =
+          await logsService.fetchLocalLog(projectId);
         this.setLocalLogs(localLog);
       } finally {
         this.setIsLoadingLocalLog(false);

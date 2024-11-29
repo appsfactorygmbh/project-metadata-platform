@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { localLogService } from '@/services';
+  import { logsService } from '@/services';
   import { useLocalLogStore } from '@/store';
   import { localLogStoreSymbol } from '@/store/injectionSymbols';
   import { provide } from 'vue';
@@ -9,10 +9,10 @@
   provide<typeof localLogStore>(localLogStoreSymbol, localLogStore);
 
   const auth = useAuth();
-  localLogService.setAuth(auth?.token());
+  logsService.setAuth(auth?.token());
   watch(
     () => auth?.token(),
-    () => localLogService.setAuth(auth.token()),
+    () => logsService.setAuth(auth.token()),
   );
 </script>
 
