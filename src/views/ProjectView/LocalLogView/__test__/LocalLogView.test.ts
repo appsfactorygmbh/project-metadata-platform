@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
 import LocalLogView from '../LocalLogView.vue';
+import LogTimeline from '@/components/LogsDisplay/LogTimeline/LogTimeline.vue';
 import { describe, expect, it } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 import { useLocalLogStore } from '@/store';
@@ -37,6 +38,14 @@ const generateWrapper = () => {
 };
 
 describe('LocalLogView.vue', () => {
+  it('not show when there is no log data', () => {
+    logsStore.setLocalLogs([]);
+    logsStore.setIsLoadingLocalLog(false);
+    const wrapper = generateWrapper();
+    expect(wrapper.find('.localLog').exists()).toBe(false);
+    expect(wrapper.find('.cardContainer').exists()).toBe(false);
+  });
+
   it('show when there is log data', () => {
     logsStore.setLocalLogs(logsData);
     logsStore.setIsLoadingLocalLog(false);
@@ -45,11 +54,11 @@ describe('LocalLogView.vue', () => {
     expect(wrapper.find('.cardContainer').exists()).toBe(true);
   });
 
-  it('not show when there is no log data', () => {
-    logsStore.setLocalLogs([]);
-    logsStore.setIsLoadingLocalLog(false);
+  it('load the correct amount of log data', () => {
     const wrapper = generateWrapper();
-    expect(wrapper.find('.localLog').exists()).toBe(false);
-    expect(wrapper.find('.cardContainer').exists()).toBe(false);
+    const logTimelineComponent = wrapper.findComponent(LogTimeline);
+    expect(logTimelineComponent.props('logEntries')).toHaveLength(
+      logsData.length,
+    );
   });
 });
