@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
 import LogItem from '../LogItem.vue';
 
-describe('CreateUserView.vue', () => {
+describe('LogItem.vue', () => {
   it('renders last Item without line', () => {
     const wrapperIsNotLast = mount(LogItem, {
       props: {
