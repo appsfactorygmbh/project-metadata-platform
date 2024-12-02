@@ -13,10 +13,10 @@
   } from '@/models/Project';
   import type { ComputedRef } from 'vue';
   import {
-    CloseOutlined,
     DeleteOutlined,
     EditOutlined,
     UndoOutlined,
+    InboxOutlined
   } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
@@ -243,7 +243,7 @@
         >
           <ProjectButton @click="handleDelete">
             <template #icon>
-              <CloseOutlined class="icon" />
+              <DeleteOutlined class="icon" />
             </template>
           </ProjectButton>
 
@@ -266,7 +266,7 @@
         >
           <ProjectButton @click="handleArchive">
             <template #icon>
-              <DeleteOutlined class="icon" />
+              <InboxOutlined class="icon"/>
             </template>
           </ProjectButton>
         </a-tooltip>
