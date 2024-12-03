@@ -15,14 +15,10 @@ interface UserListViewInstance {
 const userData = [
   {
     id: 100,
-    name: 'Max Musterfrau',
-    username: 'Maxmuster1',
     email: 'maxmuster1@gmail.com',
   },
   {
     id: 200,
-    name: 'Max Mustermann',
-    username: 'Maxmuster2',
     email: 'maxmuster2@gmail.com',
   },
 ];
@@ -64,7 +60,7 @@ describe('UserListView.vue', () => {
     expect(menuItems.length).toBe(userData.length);
 
     menuItems.forEach((itemWrapper, index) => {
-      expect(itemWrapper.text()).toContain(userData[index].name);
+      expect(itemWrapper.text()).toContain(userData[index].email);
     });
   });
 
