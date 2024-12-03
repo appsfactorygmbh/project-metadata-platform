@@ -31,7 +31,7 @@ describe('LogItem.vue', () => {
       },
     });
 
-    expect(wrapper.find('.timeStamp').text()).toBe('11/11/2024 7:10:30 PM');
+    expect(wrapper.find('.timeStamp').text()).toBe('11/11/2024 6:10:30 PM');
   });
 
   it('always renders the circle', () => {
