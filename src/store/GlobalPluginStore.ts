@@ -66,13 +66,39 @@ export const useGlobalPluginsStore = defineStore('globalPlugin', {
       return this.globalPlugins.find((plugin) => plugin.id === pluginId);
     },
 
-    async archiveGlobalPlugin(pluginId: number) {
-      console.log('deleting', pluginId);
+    async archiveGlobalPlugin(plugin: GlobalPluginModel) {
       try {
         this.setLoadingDelete(true);
         this.setRemovedSuccessfully(false);
-        const response =
-          await globalPluginService.archiveGlobalPlugin(pluginId);
+        const response = await globalPluginService.archiveGlobalPlugin(plugin);
+        if (response && response?.ok) {
+          this.setRemovedSuccessfully(true);
+          this.fetchGlobalPlugins();
+        } else this.setRemovedSuccessfully(false);
+      } finally {
+        this.setLoadingDelete(false);
+      }
+    },
+
+    async reactivateGlobalPlugin(plugin: GlobalPluginModel) {
+      try {
+        this.setLoadingGlobalPlugins(true);
+        const response = await globalPluginService.reactivateGlobalPlugin(
+          plugin,
+        );
+        if (response && response?.ok) {
+          this.fetchGlobalPlugins();
+        }
+      } finally {
+        this.setLoadingGlobalPlugins(false);
+      }
+    },
+
+    async deleteGlobalPlugin(pluginId: number) {
+      try {
+        this.setLoadingDelete(true);
+        this.setRemovedSuccessfully(false);
+        const response = await globalPluginService.deleteGlobalPlugin(pluginId);
         if (response && response?.ok) {
           this.setRemovedSuccessfully(true);
           this.fetchGlobalPlugins();

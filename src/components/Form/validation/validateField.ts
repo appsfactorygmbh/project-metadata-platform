@@ -8,7 +8,6 @@ export const validateField = async <T extends Record<string | number, unknown>>(
 ) => {
   let errorsDetected: boolean = false;
   const validateInfos: validateInfos = {};
-  console.log('item', item);
   // @ts-expect-error type error
   const itemKey = item[rule.keyProp];
   validateInfos[itemKey as keyof validateInfos] = await getValidateInfos(

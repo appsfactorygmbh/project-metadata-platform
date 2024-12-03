@@ -13,7 +13,6 @@
   const feedbackMessage = ref('');
 
   const onSubmit: FormSubmitType = (fields) => {
-    console.log(fields);
     auth
       .login({
         data: {

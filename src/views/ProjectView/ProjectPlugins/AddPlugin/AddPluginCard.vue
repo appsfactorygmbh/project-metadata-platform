@@ -8,12 +8,10 @@
   // Opens the modal.
   const handleClick = () => {
     openModal.value = true;
-    console.log('Open modal');
   };
 
   const closeModal = () => {
     openModal.value = false;
-    console.log('Close modal');
   };
 </script>
 

@@ -105,7 +105,6 @@ export const useProjectStore = defineStore('project', {
         this.setLoadingAdd(true);
         this.setAddedSuccessfully(false);
         const response = await projectsService.addProject(projectData);
-        console.log(response);
         if (response && response?.ok) {
           this.fetchProjects();
           this.setAddedSuccessfully(true);
@@ -120,7 +119,6 @@ export const useProjectStore = defineStore('project', {
         this.setLoadingUpdate(true);
         this.setUpdatedSuccessfully(false);
         const response = await projectsService.updateProject(projectData, id);
-        console.log(response);
         if (response && response?.ok) {
           this.setUpdatedSuccessfully(true);
           await this.fetchProject(id);
@@ -183,7 +181,6 @@ export const useProjectStore = defineStore('project', {
         this.setLoadingUpdate(true);
         this.setUpdatedSuccessfully(false);
         const response = await projectsService.archiveProject(projectData, id);
-        console.log(response);
         if (response && response?.ok) {
           this.setUpdatedSuccessfully(true);
           await this.fetchProject(id);
@@ -200,7 +197,6 @@ export const useProjectStore = defineStore('project', {
         this.setLoadingUpdate(true);
         this.setUpdatedSuccessfully(false);
         const response = await projectsService.activateProject(projectData, id);
-        console.log(response);
         if (response && response?.ok) {
           this.setUpdatedSuccessfully(true);
           await this.fetchProject(id);

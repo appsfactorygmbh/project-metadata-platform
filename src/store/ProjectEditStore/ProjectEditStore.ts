@@ -50,7 +50,6 @@ export const useProjectEditStore = defineStore('projectEdit', {
     },
     // Return all Projectinformation changes (not implemented in this branch)
     getProjectInformationChanges(): EditProjectModel {
-      console.log('current projectinformation', this.projectInformationChanges);
       return this.projectInformationChanges;
     },
     // Returns all Plugins that have URL conflicts (two or more Plugins have the same URL)
@@ -96,7 +95,6 @@ export const useProjectEditStore = defineStore('projectEdit', {
     setProjectInformation(project: DetailedProjectModel): void {
       this.emptyProjectInformationFields.clear();
       this.projectInformationChanges = { ...project };
-      console.log(this.projectInformationChanges.clientName);
     },
 
     // Updates the Projectinformation changes
@@ -130,7 +128,6 @@ export const useProjectEditStore = defineStore('projectEdit', {
     // Checks for URL conflicts between Plugins
     // Checks for URL conflicts between Plugins
     checkForConflicts(): void {
-      console.log('pluginCHanges', this.pluginChanges);
       this.duplicatedUrls = new Map();
 
       this.pluginChanges.forEach((plugin, key) => {

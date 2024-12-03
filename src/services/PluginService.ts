@@ -10,7 +10,24 @@ class PluginService extends ApiService {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.log(error);
+      console.error('Error when trying to fetch Plugins' + error);
+      return [];
+    }
+  };
+
+  fetchUnarchivedPlugins = async (
+    projectId: number,
+  ): Promise<PluginModel[]> => {
+    try {
+      const response = await this.fetch(
+        '/Projects/' + projectId.toString() + '/unarchivedPlugins',
+      );
+      if (!response.ok)
+        throw new Error('Error when trying to fetch Unarchived Plugins');
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error when trying to fetch Unarchived Plugins' + error);
       return [];
     }
   };
