@@ -57,7 +57,6 @@ declare module 'vue' {
     FloatingButtonGroup: typeof import('./../src/components/Button/FloatingButtonGroup.vue')['default']
     FormModal: typeof import('./../src/components/Modal/FormModal.vue')['default']
     GroupedCard: typeof import('./../src/components/GroupedCard/GroupedCard.vue')['default']
-    HelloWorld: typeof import('./../src/components/HelloWorld.vue')['default']
     LogItem: typeof import('./../src/components/LogsDisplay/LogItem/LogItem.vue')['default']
     LogTimeline: typeof import('./../src/components/LogsDisplay/LogTimeline/LogTimeline.vue')['default']
     MenuButtons: typeof import('./../src/components/MenuButtons/MenuButtons.vue')['default']
