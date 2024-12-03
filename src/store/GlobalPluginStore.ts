@@ -83,9 +83,8 @@ export const useGlobalPluginsStore = defineStore('globalPlugin', {
     async reactivateGlobalPlugin(plugin: GlobalPluginModel) {
       try {
         this.setLoadingGlobalPlugins(true);
-        const response = await globalPluginService.reactivateGlobalPlugin(
-          plugin,
-        );
+        const response =
+          await globalPluginService.reactivateGlobalPlugin(plugin);
         if (response && response?.ok) {
           this.fetchGlobalPlugins();
         }
