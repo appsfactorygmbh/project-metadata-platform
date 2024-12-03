@@ -11,6 +11,7 @@ import {
 } from './GlobalPluginStore';
 import { type UserStore, useUserStore } from './UserStore';
 import { type LocalLogStore, useLocalLogStore } from './LocalLogStore';
+import { type LogsStore, useLogsStore } from './LogsStore';
 
 export {
   usePluginsStore,
@@ -20,6 +21,7 @@ export {
   useProjectEditStore,
   useUserStore,
   useLocalLogStore,
+  useLogsStore,
 };
 export type {
   PluginsStore,
@@ -29,4 +31,5 @@ export type {
   ProjectEditStore,
   UserStore,
   LocalLogStore,
+  LogsStore,
 };

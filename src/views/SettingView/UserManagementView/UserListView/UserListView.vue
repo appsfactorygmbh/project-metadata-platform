@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-  import { ref } from 'vue';
-  import { inject, onMounted } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
+  import { inject } from 'vue';
   import { userStoreSymbol } from '@/store/injectionSymbols';
   import { useUserRouting } from '@/utils/hooks';
   import { storeToRefs } from 'pinia';
 
-  // Component state using refs
   const collapsed = ref<boolean>(false);
   const selectedKeys = ref<string[]>([]);
   const userStore = inject(userStoreSymbol)!;
@@ -44,14 +43,12 @@
 
 <template>
   <a-layout class="layout">
-    <!-- sidebar -->
     <a-layout-sider
       v-model:collapsed="collapsed"
       class="sideSlider"
       collapsible
       :width="250"
     >
-      <!-- navigation elements -->
       <a-menu
         v-if="!isLoading"
         v-model:selected-keys="selectedKeys"
@@ -75,7 +72,7 @@
       />
     </a-layout-sider>
     <a-layout-content>
-      <div style="padding: 10px; min-height: 650px">
+      <div class="content">
         <RouterView />
       </div>
     </a-layout-content>
@@ -87,15 +84,15 @@
     height: 100vh;
   }
 
-  .ant-layout-header {
-    background: #fff;
-    padding: 0;
-  }
-
   .ant-layout-sider {
     background: #fff;
-    height: 93vh;
+    height: 100vh;
     overflow: auto;
+  }
+
+  .content {
+    padding: 10px;
+    min-height: calc(100vh - 20px);
   }
 
   span {
@@ -106,7 +103,6 @@
     margin: 0 16px;
   }
 
-  /* Style for the expandable button on bottom*/
   :deep(.ant-layout-sider-trigger) {
     background-color: gray !important;
     color: white !important;
