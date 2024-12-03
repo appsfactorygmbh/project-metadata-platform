@@ -49,7 +49,6 @@ describe('UserInformationView.vue', () => {
     const button = wrapper.findAll('.edit');
     expect(button[0].exists()).toBe(true);
     expect(button[1].exists()).toBe(true);
-    expect(button[2].exists()).toBe(true);
     expect(wrapper.find('.email').exists()).toBe(true);
   });
 

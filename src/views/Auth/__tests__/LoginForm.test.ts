@@ -8,7 +8,7 @@ import { nanoid } from 'nanoid';
 import _ from 'lodash';
 
 const testData = {
-  username: 'testuser',
+  email: 'email@email.email',
   password: 'testpassword',
   remember: true,
 };
@@ -39,12 +39,6 @@ describe('LoginForm.vue', () => {
     expect(wrapper.find('form').exists()).toBe(true);
   });
 
-  it('should have a username input', () => {
-    expect(wrapper.find('input[id="standard_login_username"]').exists()).toBe(
-      true,
-    );
-  });
-
   it('should have a password input', () => {
     expect(wrapper.find('input[id="standard_login_password"]').exists()).toBe(
       true,
@@ -65,11 +59,11 @@ describe('LoginForm.vue', () => {
     const submit = vi.spyOn(formStore, 'submit');
     const onSubmit = vi.fn(() => {});
     formStore.setOnSubmit(onSubmit);
-    const username = wrapper.find('input[id="standard_login_username"]');
+    const email = wrapper.find('input[id="standard_login_email"]');
     const password = wrapper.find('input[id="standard_login_password"]');
     const remember = wrapper.find('input[id="standard_login_remember"]');
 
-    await username.setValue('');
+    await email.setValue('');
     await password.setValue('');
     await remember.setValue('');
 
@@ -89,11 +83,12 @@ describe('LoginForm.vue', () => {
     const submit = vi.spyOn(formStore, 'submit');
     const onSubmit = vi.fn(() => {});
     formStore.setOnSubmit(onSubmit);
-    const username = wrapper.find('input[id="standard_login_username"]');
+
+    const email = wrapper.find('input[id="standard_login_email"]');
     const password = wrapper.find('input[id="standard_login_password"]');
     const remember = wrapper.find('input[id="standard_login_remember"]');
 
-    await username.setValue(testData.username);
+    await email.setValue(testData.email);
     await password.setValue(testData.password);
     await remember.setValue(testData.remember);
 

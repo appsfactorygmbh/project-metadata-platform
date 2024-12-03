@@ -94,7 +94,7 @@
         :is-loading="isLoading"
         :label="'Email'"
         :is-editing-key="'isEditingEmail'"
-        class="textField"
+        class="textField email"
         type="email"
         :user-id="user ? user.id : -1"
         :placeholder="user?.email"

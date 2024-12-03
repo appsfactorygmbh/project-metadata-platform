@@ -72,7 +72,7 @@
 
 <template>
   <a-form ref="formRef" :model="dynamicValidateForm">
-    <a-form-item :rules="rulesRef.email" name="email" class="formItem">
+    <a-form-item :rules="rulesRef.email" name="email" class="formItem email">
       <a-input
         v-model:value="dynamicValidateForm.email"
         :placeholder="props.placeholder"

@@ -19,13 +19,7 @@ describe('CreateUserView.vue', () => {
   });
 
   it('renders correctly', () => {
-    const inputFields = [
-      'Name',
-      'Username',
-      'E-Mail',
-      'Password',
-      'Confirm Password',
-    ];
+    const inputFields = ['E-Mail', 'Password', 'Confirm Password'];
 
     wrapper = mount(CreateUserView, {
       global: {
@@ -36,7 +30,7 @@ describe('CreateUserView.vue', () => {
     });
 
     const formItems = wrapper.findAllComponents(FormItem);
-    expect(formItems).toHaveLength(5);
+    expect(formItems).toHaveLength(3);
 
     for (let i = 0; i < formItems.length; i++) {
       expect(formItems[i].find('input').attributes('placeholder')).toBe(
@@ -54,7 +48,7 @@ describe('CreateUserView.vue', () => {
       },
     });
 
-    const emailField = wrapper.findAllComponents(FormItem)[2];
+    const emailField = wrapper.findAllComponents(FormItem)[0];
 
     await emailField.find('.ant-input').setValue('a');
     await flushPromises();
@@ -71,48 +65,6 @@ describe('CreateUserView.vue', () => {
     ).toBe(true);
   });
 
-  it('verifies the username correctly', async () => {
-    const testData = [
-      {
-        id: 0,
-        name: 'a',
-        username: 'a',
-      },
-    ];
-
-    wrapper = mount(CreateUserView, {
-      plugins: [
-        createTestingPinia({
-          stubActions: false,
-          initialState: {
-            user: {
-              users: testData,
-            },
-          },
-        }),
-      ],
-      global: {
-        provide: {
-          [userStoreSymbol as symbol]: useUserStore(),
-        },
-      },
-    });
-
-    const usernameField = wrapper.findAllComponents(FormItem)[1];
-
-    await usernameField.find('.ant-input').setValue('b');
-    await flushPromises();
-    expect(
-      usernameField.find('.ant-form-item-feedback-icon-success').exists(),
-    ).toBe(true);
-
-    await usernameField.find('.ant-input').setValue('a');
-    await flushPromises();
-    expect(
-      usernameField.find('.ant-form-item-feedback-icon-error').exists(),
-    ).toBe(true);
-  });
-
   it('verifies the password correctly', async () => {
     wrapper = mount(CreateUserView, {
       global: {
@@ -122,7 +74,7 @@ describe('CreateUserView.vue', () => {
       },
     });
 
-    const passwordField = wrapper.findAllComponents(FormItem)[3];
+    const passwordField = wrapper.findAllComponents(FormItem)[1];
     const passwordInput = passwordField.find('.ant-input');
 
     // Test a valid password
@@ -177,8 +129,8 @@ describe('CreateUserView.vue', () => {
       },
     });
 
-    const passwordField = wrapper.findAllComponents(FormItem)[3];
-    const confirmPasswordField = wrapper.findAllComponents(FormItem)[4];
+    const passwordField = wrapper.findAllComponents(FormItem)[1];
+    const confirmPasswordField = wrapper.findAllComponents(FormItem)[2];
 
     await passwordField.find('.ant-input').setValue('a');
     await confirmPasswordField.find('.ant-input').setValue('a');
@@ -199,7 +151,7 @@ describe('CreateUserView.vue', () => {
   });
 
   it('submits the form correctly', async () => {
-    const testData = ['Name', 'Username', 'E@Ma.il', 'Pa$$w0rd', 'Pa$$w0rd'];
+    const testData = ['E@Ma.il', 'Pa$$w0rd', 'Pa$$w0rd'];
 
     const userStore = useUserStore();
     const formStore = useFormStore('createUserForm');
@@ -223,8 +175,6 @@ describe('CreateUserView.vue', () => {
     await flushPromises();
 
     expect(userStore.createUser).toHaveBeenCalledWith({
-      name: 'Name',
-      username: 'Username',
       email: 'E@Ma.il',
       password: 'Pa$$w0rd',
     });
