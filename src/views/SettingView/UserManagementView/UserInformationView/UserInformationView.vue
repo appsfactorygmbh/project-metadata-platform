@@ -90,19 +90,6 @@
       }"
     >
       <EditableTextField
-        :value="user?.username ?? ''"
-        :is-loading="isLoading"
-        :label="'Username'"
-        :is-editing-key="'isEditingUsername'"
-        :user-id="user ? Number(user.id) : -1"
-        type="username"
-        class="textField email"
-        :placeholder="user?.email"
-        @safed-changes="
-          async () => user && (await userStore.fetchUser(user.id))
-        "
-      />
-      <EditableTextField
         :value="user?.email ?? ''"
         :is-loading="isLoading"
         :label="'Email'"

@@ -64,7 +64,7 @@
           class="users"
           @click="clickTab(user.id)"
         >
-          <span>{{ user.name }}</span>
+          <span>{{ user.email }}</span>
         </a-menu-item>
       </a-menu>
       <a-skeleton
