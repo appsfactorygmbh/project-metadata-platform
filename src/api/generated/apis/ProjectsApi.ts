@@ -20,13 +20,21 @@ import type {
   GetPluginResponse,
   GetProjectResponse,
   GetProjectsResponse,
+  ProblemDetails,
 } from '../models/index';
 import {
+    CreateProjectRequestFromJSON,
     CreateProjectRequestToJSON,
     CreateProjectResponseFromJSON,
+    CreateProjectResponseToJSON,
     GetPluginResponseFromJSON,
+    GetPluginResponseToJSON,
     GetProjectResponseFromJSON,
+    GetProjectResponseToJSON,
     GetProjectsResponseFromJSON,
+    GetProjectsResponseToJSON,
+    ProblemDetailsFromJSON,
+    ProblemDetailsToJSON,
 } from '../models/index';
 
 export interface ProjectsGetRequest {

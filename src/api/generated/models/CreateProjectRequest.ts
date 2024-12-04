@@ -12,10 +12,13 @@
  * Do not edit the class manually.
  */
 
+import { mapValues } from '../runtime';
 import type { UpdateProjectPluginRequest } from './UpdateProjectPluginRequest';
 import {
     UpdateProjectPluginRequestFromJSON,
+    UpdateProjectPluginRequestFromJSONTyped,
     UpdateProjectPluginRequestToJSON,
+    UpdateProjectPluginRequestToJSONTyped,
 } from './UpdateProjectPluginRequest';
 
 /**

@@ -19,6 +19,7 @@ import type {
 } from '../models/index';
 import {
     LogResponseFromJSON,
+    LogResponseToJSON,
 } from '../models/index';
 
 export interface LogsGetRequest {

@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 
+import { mapValues } from '../runtime';
 /**
  * Represents a response to the GetProject API call.
  * @export

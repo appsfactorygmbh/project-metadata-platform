@@ -332,7 +332,7 @@ function querystringSingleKey(key: string, value: string | number | null | undef
         return `${encodeURIComponent(fullKey)}=${encodeURIComponent(value.toISOString())}`;
     }
     if (value instanceof Object) {
-        return querystring(value, fullKey);
+        return querystring(value as HTTPQuery, fullKey);
     }
     return `${encodeURIComponent(fullKey)}=${encodeURIComponent(String(value))}`;
 }

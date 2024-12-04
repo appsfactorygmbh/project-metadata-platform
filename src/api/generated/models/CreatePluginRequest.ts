@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 
+import { mapValues } from '../runtime';
 /**
  * Request for creating a new plugin.
  * @export

@@ -19,8 +19,10 @@ import type {
   LoginResponse,
 } from '../models/index';
 import {
+    LoginRequestFromJSON,
     LoginRequestToJSON,
     LoginResponseFromJSON,
+    LoginResponseToJSON,
 } from '../models/index';
 
 export interface AuthBasicPostRequest {
