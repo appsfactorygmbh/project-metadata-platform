@@ -93,7 +93,6 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         exclude: ['node_modules', 'dist', 'coverage', 'html', 'lib', '*.d.ts'],
       },
       setupFiles: ['./tests/setup.ts'],
-      globalSetup: ['./tests/globalSetup.ts'],
       reporters: ['default', 'html'],
       outputFile: {
         junit: './junit-report.xml',
