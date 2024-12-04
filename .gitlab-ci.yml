@@ -112,7 +112,7 @@ unit-test-job:
     - install-job
   script:
     - echo "Running unit tests"
-    - yarn test --reporter=junit --reporter=vitest-sonar-reporter
+    - yarn test run --reporter=junit --reporter=vitest-sonar-reporter
   variables:
     DEBUG: true
   artifacts:
