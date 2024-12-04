@@ -90,6 +90,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       coverage: {
         enabled: true,
         reporter: ['text', 'html', 'cobertura', 'lcov'],
+        reportsDirectory: './coverage',
         exclude: ['node_modules', 'dist', 'coverage', 'html', 'lib', '*.d.ts'],
       },
       setupFiles: ['./tests/setup.ts'],
