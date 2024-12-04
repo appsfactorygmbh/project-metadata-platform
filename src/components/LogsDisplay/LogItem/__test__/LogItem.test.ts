@@ -7,7 +7,7 @@ describe('LogItem.vue', () => {
     const wrapperIsNotLast = mount(LogItem, {
       props: {
         logMessage: 'This is a log message',
-        timeStamp: '2024-11-11T18:10:30+00:00',
+        timeStamp: '2024-11-11T18:10:30+01:00',
         isLast: false,
       },
     });
@@ -15,14 +15,14 @@ describe('LogItem.vue', () => {
     const wrapperIsLast = mount(LogItem, {
       props: {
         logMessage: 'This is a log message',
-        timeStamp: '2024-11-11T18:10:30+00:00',
+        timeStamp: '2024-11-11T18:10:30+01:00',
         isLast: true,
       },
     });
     expect(wrapperIsLast.findAll('.line')).toHaveLength(0);
   });
   it('renders the timestamp as local string', () => {
-    const timeStamp = '2024-11-11T18:10:30+00:00';
+    const timeStamp = '2024-11-11T18:10:30+01:00';
     const wrapper = mount(LogItem, {
       props: {
         logMessage: 'Timestamp test message',
@@ -31,14 +31,14 @@ describe('LogItem.vue', () => {
       },
     });
 
-    expect(wrapper.find('.timeStamp').text()).toBe('11/11/2024 6:10:30 PM');
+    expect(wrapper.find('.timeStamp').text()).toBe('11.11.2024, 18:10:30');
   });
 
   it('always renders the circle', () => {
     const wrapperWithLine = mount(LogItem, {
       props: {
         logMessage: 'Circle test message with line',
-        timeStamp: '2024-11-11T18:10:30+00:00',
+        timeStamp: '2024-11-11T18:10:30+01:00',
         isLast: false,
       },
     });
@@ -46,7 +46,7 @@ describe('LogItem.vue', () => {
     const wrapperWithoutLine = mount(LogItem, {
       props: {
         logMessage: 'Circle test message without line',
-        timeStamp: '2024-11-11T18:10:30+00:00',
+        timeStamp: '2024-11-11T18:10:30+01:00',
         isLast: true,
       },
     });
