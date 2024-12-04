@@ -113,6 +113,8 @@ unit-test-job:
   script:
     - echo "Running unit tests"
     - yarn test --reporter=junit --reporter=vitest-sonar-reporter
+  variables:
+    DEBUG: true
   artifacts:
     when: always
     paths:
@@ -133,6 +135,8 @@ coverage-test-job:
   script:
     - echo "Running coverage tests"
     - yarn coverage
+  variables:
+    DEBUG: true
   artifacts:
     when: always
     reports:
