@@ -2,12 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
 import LogItem from '../LogItem.vue';
 
+const timeStamp = '2024-11-11T18:10:30+00:00';
+
 describe('LogItem.vue', () => {
   it('renders last Item without line', () => {
     const wrapperIsNotLast = mount(LogItem, {
       props: {
         logMessage: 'This is a log message',
-        timeStamp: '2024-11-11T18:10:30+01:00',
+        timeStamp,
         isLast: false,
       },
     });
@@ -15,14 +17,13 @@ describe('LogItem.vue', () => {
     const wrapperIsLast = mount(LogItem, {
       props: {
         logMessage: 'This is a log message',
-        timeStamp: '2024-11-11T18:10:30+01:00',
+        timeStamp,
         isLast: true,
       },
     });
     expect(wrapperIsLast.findAll('.line')).toHaveLength(0);
   });
   it('renders the timestamp as local string', () => {
-    const timeStamp = '2024-11-11T18:10:30+01:00';
     const wrapper = mount(LogItem, {
       props: {
         logMessage: 'Timestamp test message',
@@ -38,7 +39,7 @@ describe('LogItem.vue', () => {
     const wrapperWithLine = mount(LogItem, {
       props: {
         logMessage: 'Circle test message with line',
-        timeStamp: '2024-11-11T18:10:30+01:00',
+        timeStamp,
         isLast: false,
       },
     });
@@ -46,7 +47,7 @@ describe('LogItem.vue', () => {
     const wrapperWithoutLine = mount(LogItem, {
       props: {
         logMessage: 'Circle test message without line',
-        timeStamp: '2024-11-11T18:10:30+01:00',
+        timeStamp,
         isLast: true,
       },
     });

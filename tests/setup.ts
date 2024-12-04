@@ -38,7 +38,3 @@ window.matchMedia =
       dispatchEvent: function () {},
     } as unknown as MediaQueryList;
   };
-
-export const setup = () => {
-  process.env.TZ = 'UTC';
-};
