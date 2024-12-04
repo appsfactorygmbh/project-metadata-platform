@@ -3,7 +3,7 @@
   import { userStoreSymbol } from '@/store/injectionSymbols';
   import type { Rule } from 'ant-design-vue/es/form';
   import { type FormStore } from '@/components/Form';
-  import { type PropType, defineProps, inject, reactive, toRaw } from 'vue';
+  import { type PropType, inject, reactive, toRaw } from 'vue';
 
   const props = defineProps({
     userId: {
