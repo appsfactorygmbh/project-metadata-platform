@@ -24,7 +24,7 @@
         email: toRaw(fields).email,
         password: toRaw(fields).password,
       };
-      userStore?.createUser(userDef);
+      userStore?.create(userDef);
     } catch (error) {
       notificationApi.error({
         message: 'An error occurred. The user could not be created',

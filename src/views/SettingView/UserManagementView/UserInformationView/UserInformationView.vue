@@ -6,7 +6,6 @@
   import { userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import { useRouter } from 'vue-router';
-  import { userService } from '@/services';
   import { useEditing } from '@/utils/hooks';
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
@@ -63,7 +62,7 @@
 
   const deleteUser = async () => {
     if (!user.value) return;
-    await userService.deleteUser(user.value?.id);
+    await userStore.delete(user.value?.id);
     await userStore.fetchUsers();
     const firstId: string = userStore.getUsers[0].id;
     setUserId(firstId);

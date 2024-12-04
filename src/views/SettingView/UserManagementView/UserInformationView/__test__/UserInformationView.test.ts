@@ -10,14 +10,10 @@ import type { UserModel } from '@/models/User';
 
 const userData1: UserModel = {
   id: '100',
-  name: 'Max Musterfrau',
-  username: 'Maxmuster1',
   email: 'maxmuster1@gmail.com',
 };
 const userData2: UserModel = {
   id: '200',
-  name: 'Max Mustermann',
-  username: 'Maxmuster2',
   email: 'maxmuster2@gmail.com',
 };
 
@@ -49,8 +45,6 @@ describe('UserInformationView.vue', () => {
     expect(wrapper.find('.avatar').exists()).toBe(true);
     expect(wrapper.find('.label').exists()).toBe(true);
     const text = wrapper.findAll('.text');
-    expect(text[0].text()).toBe(userData1.name);
-    expect(text[1].text()).toBe(userData1.username);
     expect(text[2].text()).toBe(userData1.email);
 
     const button = wrapper.findAll('.edit');

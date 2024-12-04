@@ -62,10 +62,7 @@
 
   const onSubmit: FormSubmitType = (fields) => {
     try {
-      const password = {
-        password: toRaw(fields).newPassword,
-      };
-      userStore?.patchUser(props.userId, password);
+      userStore?.update(props.userId, { password: toRaw(fields).newPassword });
     } catch (error) {
       notificationApi.error({
         message: 'An error occurred. The user could not be created',
