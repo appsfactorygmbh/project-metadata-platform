@@ -25,7 +25,7 @@ afterEach(() => {
 
 // enable window.matchMedia (maybe needs to be changed)
 window.matchMedia =
-  window.matchMedia ||
+  window.matchMedia ??
   function (query: unknown): MediaQueryList {
     return {
       matches: false,
@@ -38,3 +38,7 @@ window.matchMedia =
       dispatchEvent: function () {},
     } as unknown as MediaQueryList;
   };
+
+export const setup = () => {
+  process.env.TZ = 'UTC';
+};
