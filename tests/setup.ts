@@ -3,6 +3,7 @@ import { cleanup } from '@testing-library/vue';
 import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 
+// See https://github.com/vitest-dev/vitest/issues/821
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({
@@ -25,12 +26,15 @@ afterEach(() => {
 // enable window.matchMedia (maybe needs to be changed)
 window.matchMedia =
   window.matchMedia ||
-  function (): MediaQueryList {
+  function (query: unknown): MediaQueryList {
     return {
       matches: false,
+      media: query,
+      onchange: null,
       addListener: function () {},
       removeListener: function () {},
       addEventListener: function () {},
       removeEventListener: function () {},
+      dispatchEvent: function () {},
     } as unknown as MediaQueryList;
   };

@@ -92,7 +92,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         reporter: ['text', 'html', 'cobertura', 'lcov'],
         exclude: ['node_modules', 'dist', 'coverage', 'html', 'lib', '*.d.ts'],
       },
-      setupFiles: './tests/setup.ts',
+      setupFiles: ['./tests/setup.ts'],
       reporters: ['default', 'html'],
       outputFile: {
         junit: './junit-report.xml',
