@@ -15,7 +15,7 @@
     v-if="
       props.button.status == 'activated' || props.button.status === undefined
     "
-    :class="props.button.specialType"
+    :class="[props.button.size, props.button.specialType]"
     :type="props.button.type"
     :shape="props.button.shape"
     :tooltip="props.button.tooltip"
@@ -47,10 +47,36 @@
     cursor: not-allowed;
     filter: opacity(50%);
   }
-  .danger .ant-float-btn-body {
-    background-color: #ff002e !important;
+
+  .ant-float-btn-body {
+    width: 100% !important;
+    height: 100% !important;
   }
+
+  .ant-float-btn.large {
+    transform: scale(1.2);
+    + .ant-float-btn {
+      margin-top: 1.5em;
+    }
+  }
+  .ant-float-btn.middle {
+    transform: scale(1);
+  }
+  .ant-float-btn.small {
+    transform: scale(0.8);
+  }
+
+  .danger .ant-float-btn-body {
+    background-color: color-mix(in srgb, #6d6e6f, #ff002e 60%) !important;
+  }
+  .danger .ant-float-btn-body:hover {
+    background-color: color-mix(in srgb, #6d6e6f, #ff002e 80%) !important;
+  }
+
   .success .ant-float-btn-body {
-    background-color: #27d157 !important;
+    background-color: color-mix(in srgb, #6d6e6f, #27d157 60%) !important;
+  }
+  .success .ant-float-btn-body:hover {
+    background-color: color-mix(in srgb, #6d6e6f, #27d157 80%) !important;
   }
 </style>

@@ -53,6 +53,7 @@
     type: 'primary',
     icon: PlusOutlined,
     status: 'activated',
+    size: 'large',
     tooltip: 'Click here to create a new project',
   };
 
@@ -108,7 +109,7 @@
 
 <template>
   <div>
-    <FloatingButton :button="button" style="" />
+    <FloatingButton :button="button" />
 
     <!-- Modal for project creation -->
     <a-modal

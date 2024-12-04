@@ -27,6 +27,8 @@
     icon: LeftOutlined,
     onClick: goToMain,
     name: 'Back',
+    size: 'large',
+    type: 'primary',
   };
 
   //Methods for URL link  by clickin the navigation buttons
