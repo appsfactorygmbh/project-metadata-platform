@@ -18,11 +18,6 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-// runs a cleanup after each test case (e.g. clearing jsdom)
-afterEach(() => {
-  cleanup();
-});
-
 // enable window.matchMedia (maybe needs to be changed)
 window.matchMedia =
   // window.matchMedia ??
@@ -38,3 +33,12 @@ window.matchMedia =
       dispatchEvent: function () {},
     } as unknown as MediaQueryList;
   };
+
+// See https://github.com/NickColley/jest-axe/issues/147
+const { getComputedStyle } = window;
+window.getComputedStyle = (elt) => getComputedStyle(elt);
+
+// runs a cleanup after each test case (e.g. clearing jsdom)
+afterEach(() => {
+  cleanup();
+});
