@@ -5,11 +5,11 @@ import type {
   UserListModel,
   UserModel,
 } from '@/models/User';
-import { defineStore, type Pinia } from 'pinia';
-import { useStore, type PiniaStore } from 'pinia-generic';
+import { type Pinia } from 'pinia';
+import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
-import { useApiStore, type ApiStore } from './ApiStore';
-import { UsersApi, type CreateUserRequest } from '@/api/generated';
+import { type ApiStore, useApiStore } from './ApiStore';
+import { UsersApi } from '@/api/generated';
 
 type StoreState = {
   users: UserListModel[];
