@@ -10,9 +10,6 @@ import AntdvResolver from 'antdv-component-resolver';
 const baseSrc = fileURLToPath(new URL('./src', import.meta.url));
 
 // https://vitejs.dev/config/
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default defineConfig(({ mode }: ConfigEnv) => {
   return {
     resolve: {
@@ -92,9 +89,10 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       coverage: {
         enabled: true,
         reporter: ['text', 'html', 'cobertura', 'lcov'],
+        reportsDirectory: './coverage',
         exclude: ['node_modules', 'dist', 'coverage', 'html', 'lib', '*.d.ts'],
       },
-      setupFiles: './tests/setup.ts',
+      setupFiles: ['./tests/setup.ts'],
       reporters: ['default', 'html'],
       outputFile: {
         junit: './junit-report.xml',

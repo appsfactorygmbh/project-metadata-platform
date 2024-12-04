@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": ["./tsconfig.json"],
+  "extends": ["./tsconfig.app.json"],
   "exclude": [
     "node_modules/**",
     "dist/**",
@@ -24,6 +24,7 @@
     "target": "ES2022",
     "lib": ["ES2023"],
     "module": "ESNext",
+
     "skipLibCheck": true,
     "types": ["node", "jsdom"],
     "outDir": "./lib/",

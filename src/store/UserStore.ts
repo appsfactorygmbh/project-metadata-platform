@@ -201,7 +201,7 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
           try {
             this.setIsLoadingUpdate(true);
             this.setUpdatedSuccessfully(false);
-            const response = await this.callApi('usersUserIdPatch', {
+            await this.callApi('usersUserIdPatch', {
               userId,
               patchUserRequest: {
                 email: userUpdate.email ?? null,

@@ -24,7 +24,6 @@
 </template>
 
 <script setup lang="ts">
-  import { defineEmits, defineProps } from 'vue';
   import { PluginComponent } from '@/components/Plugin';
 
   const { selectedGroup, loading, isEditing } = defineProps({

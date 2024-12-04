@@ -2,27 +2,33 @@
   import {
     AuthProvider,
     GlobalPluginProvider,
+    LocalLogProvider,
     ProjectEditProvider,
     UserProvider,
   } from '@/router/Provider';
   import ProjectRoutingProvider from './ProjectRoutingProvider.vue';
+  import LogsProvider from './LogsProvider.vue';
 </script>
 
 <template>
   <AuthProvider>
     <ProjectRoutingProvider>
       <UserProvider>
-        <ProjectProvider>
-          <PluginProvider>
-            <ProjectEditProvider>
-              <GlobalPluginProvider>
-                <slot>
-                  <RouterView />
-                </slot>
-              </GlobalPluginProvider>
-            </ProjectEditProvider>
-          </PluginProvider>
-        </ProjectProvider>
+        <LogsProvider>
+          <LocalLogProvider>
+            <ProjectProvider>
+              <PluginProvider>
+                <ProjectEditProvider>
+                  <GlobalPluginProvider>
+                    <slot>
+                      <RouterView />
+                    </slot>
+                  </GlobalPluginProvider>
+                </ProjectEditProvider>
+              </PluginProvider>
+            </ProjectProvider>
+          </LocalLogProvider>
+        </LogsProvider>
       </UserProvider>
     </ProjectRoutingProvider>
   </AuthProvider>

@@ -132,6 +132,8 @@
       router.push('/settings/global-plugins/create');
     },
     icon: PlusOutlined,
+    size: 'large',
+    type: 'primary',
     status: 'activated',
     tooltip: 'Click here to create a new global plugin',
   };

@@ -1,3 +1,7 @@
+variables:
+  DEVELOP_BRANCH: develop
+  LC_ALL: de_DE.UTF-8
+
 default:
   image: node:20-alpine
 
@@ -43,9 +47,6 @@ stages:
   cache:
     - <<: *node_dependencies_cache
       policy: push
-
-variables:
-  DEVELOP_BRANCH: develop
 
 include:
   - project: 'projekt2024_A_Appsfactory_Project_Metadata_Platform/templates'
@@ -111,7 +112,9 @@ unit-test-job:
     - install-job
   script:
     - echo "Running unit tests"
-    - yarn test --reporter=junit --reporter=vitest-sonar-reporter
+    - yarn test run --reporter=junit --reporter=vitest-sonar-reporter
+  variables:
+    DEBUG: true
   artifacts:
     when: always
     paths:
@@ -132,6 +135,8 @@ coverage-test-job:
   script:
     - echo "Running coverage tests"
     - yarn coverage
+  variables:
+    DEBUG: true
   artifacts:
     when: always
     reports:

@@ -5,7 +5,7 @@
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateUserFormData } from './CreateUserFormData.ts';
   import type { Rule } from 'ant-design-vue/es/form/interface';
-  import type { CreateUserModel, UserListModel } from '@/models/User';
+  import type { CreateUserModel } from '@/models/User';
   import type { UserStore } from '@/store/UserStore.ts';
 
   const { formStore, initialValues, userStore } = defineProps<{
@@ -19,8 +19,6 @@
   const onSubmit: FormSubmitType = (fields) => {
     try {
       const userDef: CreateUserModel = {
-        name: toRaw(fields).name,
-        username: toRaw(fields).username,
         email: toRaw(fields).email,
         password: toRaw(fields).password,
       };
@@ -90,38 +88,7 @@
     }
   };
 
-  const validateUsername = (_rule: Rule, value: string) => {
-    if (value === '') {
-      return Promise.reject('Please enter a username.');
-    } else {
-      const users: UserListModel[] = userStore?.getUsers;
-
-      if (value === users?.find((user) => user.name === value)?.name) {
-        return Promise.reject('Username already exists.');
-      } else {
-        return Promise.resolve();
-      }
-    }
-  };
-
   const rulesRef = reactive<RulesObject<CreateUserFormData>>({
-    name: [
-      {
-        required: true,
-        message: 'Please insert a name.',
-        trigger: 'change',
-        type: 'string',
-      },
-    ],
-    username: [
-      {
-        required: true,
-        message: 'Please insert an unique username.',
-        validator: validateUsername,
-        trigger: 'change',
-        type: 'string',
-      },
-    ],
     email: [
       {
         required: true,
@@ -171,39 +138,6 @@
     v-bind="formItemLayoutWithOutLabel"
     :wrapper-col="{ span: 24 }"
   >
-    <a-form-item
-      name="name"
-      class="column"
-      :whitespace="true"
-      :rules="rulesRef.name"
-    >
-      <a-input
-        id="inputCreateUserName"
-        v-model:value="dynamicValidateForm.name"
-        class="inputField"
-        placeholder="Name"
-        :disabled="dynamicValidateForm.inputsDisabled"
-        :rules="rulesRef.name"
-      >
-      </a-input>
-    </a-form-item>
-    <a-form-item
-      has-feedback
-      name="username"
-      class="column"
-      :whitespace="true"
-      :rules="rulesRef.username"
-    >
-      <a-input
-        id="inputCreateUserUsername"
-        v-model:value="dynamicValidateForm.username"
-        class="inputField"
-        placeholder="Username"
-        :disabled="dynamicValidateForm.inputsDisabled"
-        :rules="rulesRef.username"
-      >
-      </a-input>
-    </a-form-item>
     <a-form-item
       has-feedback
       name="email"

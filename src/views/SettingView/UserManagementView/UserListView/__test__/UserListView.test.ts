@@ -15,46 +15,42 @@ interface UserListViewInstance {
 const userData = [
   {
     id: 100,
-    name: 'Max Musterfrau',
-    username: 'Maxmuster1',
     email: 'maxmuster1@gmail.com',
   },
   {
     id: 200,
-    name: 'Max Mustermann',
-    username: 'Maxmuster2',
     email: 'maxmuster2@gmail.com',
   },
 ];
 
-describe('UserListView.vue', () => {
-  setActivePinia(createPinia());
-
-  const generateWrapper = () => {
-    return mount(UserListView, {
-      plugins: [
-        createTestingPinia({
-          stubActions: true,
-          initialState: {
-            user: {
-              users: userData,
-            },
+const generateWrapper = () => {
+  return mount(UserListView, {
+    plugins: [
+      createTestingPinia({
+        stubActions: true,
+        initialState: {
+          user: {
+            users: userData,
           },
-        }),
-      ],
-      global: {
-        provide: {
-          [userStoreSymbol as symbol]: useUserStore(),
         },
-        plugins: [router],
-        stubs: {
-          'a-menu-item': {
-            template: '<div class="users"><slot /></div>',
-          },
+      }),
+    ],
+    global: {
+      provide: {
+        [userStoreSymbol as symbol]: useUserStore(),
+      },
+      plugins: [router],
+      stubs: {
+        'a-menu-item': {
+          template: '<div class="users"><slot /></div>',
         },
       },
-    });
-  };
+    },
+  });
+};
+
+describe('UserListView.vue', () => {
+  setActivePinia(createPinia());
 
   it('renders correctly', () => {
     const wrapper = generateWrapper();
@@ -64,7 +60,7 @@ describe('UserListView.vue', () => {
     expect(menuItems.length).toBe(userData.length);
 
     menuItems.forEach((itemWrapper, index) => {
-      expect(itemWrapper.text()).toContain(userData[index].name);
+      expect(itemWrapper.text()).toContain(userData[index].email);
     });
   });
 

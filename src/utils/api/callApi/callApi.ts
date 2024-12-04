@@ -8,5 +8,6 @@ export type CallApiType<
   Args extends Parameters<Api[Endpoint]>[0] = Parameters<Api[Endpoint]>[0],
 > = CallApiFetch<Api, Endpoint, Args>;
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const callApi = callApiFetch;

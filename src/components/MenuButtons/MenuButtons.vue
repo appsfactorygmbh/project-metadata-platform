@@ -19,6 +19,7 @@
         goToSetting();
       },
       icon: SettingOutlined,
+      size: 'middle',
       status: 'activated',
       tooltip: 'Click here to navigate to the settings page',
     },
@@ -31,6 +32,7 @@
         window.location.reload();
       },
       icon: LogoutOutlined,
+      size: 'middle',
       status: 'activated',
       tooltip: 'Click here to log out',
     },

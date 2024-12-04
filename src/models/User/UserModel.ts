@@ -1,5 +1,5 @@
-import type { GetAllUsersResponse, GetUserResponse } from '@/api/generated';
+import type { GetUserResponse } from '@/api/generated';
 
-export type UserListModel = GetAllUsersResponse;
+export type UserListModel = Pick<GetUserResponse, 'id' | 'email'>;
 
 export type UserModel = GetUserResponse;

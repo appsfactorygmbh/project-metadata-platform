@@ -99,7 +99,7 @@ const vueConfig: Linter.Config = {
       extraFileExtensions: ['.vue'],
       // project: path.resolve(__dirname, './tsconfig.json'),
       projectService: {
-        defaultProject: path.resolve(__dirname, './tsconfig.json'),
+        defaultProject: path.resolve(__dirname, './tsconfig.app.json'),
         loadTypeScriptPlugins: !!process.env.VSCODE_PID,
       },
       tsconfigRootDir: __dirname,
@@ -150,7 +150,7 @@ const typescriptConfig: Linter.Config = {
         jsx: true,
       },
       projectService: {
-        defaultProject: path.resolve(__dirname, './tsconfig.json'),
+        defaultProject: path.resolve(__dirname, './tsconfig.app.json'),
         loadTypeScriptPlugins: !!process.env.VSCODE_PID,
       },
     },
@@ -269,7 +269,6 @@ export default tseslint.config(
   typescriptConfig,
   generatedApiConfig,
   ruleOverrides,
-  // noUnsedImports,
   //disableTypeChecked,
   // keep as last item to override conflicting rules
   // { name: 'prettier', ...eslintConfigPrettier },

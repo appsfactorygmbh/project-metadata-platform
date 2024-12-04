@@ -1,7 +1,6 @@
 <script lang="ts" setup>
   import EmailInputTextField from './InputFields/EmailInputTextField.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import { defineProps } from 'vue';
   import type { PropType } from 'vue';
   import { useFormStore } from '../Form/FormStore';
 
