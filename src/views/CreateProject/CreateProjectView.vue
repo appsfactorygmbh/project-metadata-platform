@@ -50,6 +50,7 @@
     onClick: () => {
       showModal();
     },
+    type: 'primary',
     icon: PlusOutlined,
     status: 'activated',
     tooltip: 'Click here to create a new project',
@@ -107,7 +108,7 @@
 
 <template>
   <div>
-    <FloatingButton :button="button" />
+    <FloatingButton :button="button" style="" />
 
     <!-- Modal for project creation -->
     <a-modal

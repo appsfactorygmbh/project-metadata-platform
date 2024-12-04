@@ -37,22 +37,25 @@
   //Button for adding new User
   const buttons: FloatButtonModel[] = [
     {
-      name: 'CreateUserButton',
-      onClick: () => {
-        router.push('/settings/user-management/create');
-      },
-      icon: PlusOutlined,
-      status: 'activated',
-      tooltip: 'Click here to create a new user',
-    },
-    {
       name: 'DeleteUserButton',
       onClick: () => {
         openModal();
       },
       icon: DeleteOutlined,
+      type: 'primary',
+      specialType: 'danger',
       status: 'activated',
       tooltip: 'Click here to delete this user',
+    },
+    {
+      name: 'CreateUserButton',
+      onClick: () => {
+        router.push('/settings/user-management/create');
+      },
+      icon: PlusOutlined,
+      type: 'primary',
+      status: 'activated',
+      tooltip: 'Click here to create a new user',
     },
   ];
 

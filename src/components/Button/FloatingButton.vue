@@ -15,6 +15,7 @@
     v-if="
       props.button.status == 'activated' || props.button.status === undefined
     "
+    :class="props.button.specialType"
     :type="props.button.type"
     :shape="props.button.shape"
     :tooltip="props.button.tooltip"
@@ -22,7 +23,10 @@
     @click="props.button.onClick"
   >
     <template #icon>
-      <component :is="props.button.icon"></component>
+      <component
+        :is="props.button.icon"
+        :style="props.button.color"
+      ></component>
     </template>
   </a-float-button>
   <a-float-button
@@ -42,5 +46,11 @@
   .disabled-button {
     cursor: not-allowed;
     filter: opacity(50%);
+  }
+  .danger .ant-float-btn-body {
+    background-color: #ff002e !important;
+  }
+  .success .ant-float-btn-body {
+    background-color: #27d157 !important;
   }
 </style>
