@@ -165,7 +165,11 @@
               title="Click here to reset all filters"
               style="padding-left: 0; padding-right: 0"
             >
-              <a-button style="width: 100%" @click="clearAllFilters">
+              <a-button
+                style="width: 100%"
+                @click="clearAllFilters"
+                name="resetButton"
+              >
                 <template #icon>
                   <UndoOutlined class="icons" />
                 </template>

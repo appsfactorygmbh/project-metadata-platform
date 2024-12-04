@@ -3,7 +3,7 @@ import ProjectSearchView from '../ProjectSearchView.vue';
 import { describe, expect, it } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 import { usePluginsStore, useProjectStore } from '@/store';
-import { createPinia, setActivePinia } from 'pinia';
+import { setActivePinia } from 'pinia';
 import _ from 'lodash';
 import {
   pluginStoreSymbol,
@@ -12,6 +12,8 @@ import {
 import type { ComponentPublicInstance } from 'vue';
 import router from '@/router';
 import type { ProjectModel } from '@/models/Project';
+import { projectRoutingSymbol } from '@/store/injectionSymbols';
+import { useProjectRouting } from '@/utils/hooks';
 
 interface ProjectSearchViewInstance {
   paneWidth: number;
@@ -19,35 +21,34 @@ interface ProjectSearchViewInstance {
   handleRowClick: (project: ProjectModel) => void;
 }
 
-// Fails with: Cannot use 'in' operator to search for 'addEventListener' in undefined
-// TODO: Fix this test. It lets pipeline fail because of jsdom not implementing window.getComputedStyle and other issues
-describe.skip('ProjectSearchView.vue', () => {
-  setActivePinia(createPinia());
+const generateWrapper = (
+  pWidth: number,
+  projectsStore = useProjectStore(),
+  pluginStore = usePluginsStore(),
+) => {
+  return mount(ProjectSearchView, {
+    plugins: [
+      createTestingPinia({
+        stubActions: false,
+      }),
+    ],
+    global: {
+      provide: {
+        [projectsStoreSymbol as symbol]: projectsStore,
+        [pluginStoreSymbol as symbol]: pluginStore,
+        [projectRoutingSymbol as symbol]: useProjectRouting(router),
+      },
+      plugins: [router],
+    },
+    propsData: {
+      paneWidth: pWidth,
+      paneHeight: 800,
+    },
+  });
+};
 
-  const generateWrapper = (
-    pWidth: number,
-    projectsStore = useProjectStore(),
-    pluginStore = usePluginsStore(),
-  ) => {
-    return mount(ProjectSearchView, {
-      plugins: [
-        createTestingPinia({
-          stubActions: false,
-        }),
-      ],
-      global: {
-        provide: {
-          [projectsStoreSymbol as symbol]: projectsStore,
-          [pluginStoreSymbol as symbol]: pluginStore,
-        },
-        plugins: [router],
-      },
-      propsData: {
-        paneWidth: pWidth,
-        paneHeight: 800,
-      },
-    });
-  };
+describe('ProjectSearchView.vue', () => {
+  setActivePinia(createTestingPinia());
 
   it('renders correctly with 4 columns', () => {
     const wrapper = generateWrapper(800);
@@ -56,7 +57,7 @@ describe.skip('ProjectSearchView.vue', () => {
 
   it('renders correctly with reset button', async () => {
     const wrapper = generateWrapper(800);
-    expect(wrapper.find('.reset').exists()).toBe(true);
+    expect(wrapper.find('[name="resetButton"]').exists()).toBe(true);
   });
 
   it('hides columns when the pane width is not large enough', async () => {

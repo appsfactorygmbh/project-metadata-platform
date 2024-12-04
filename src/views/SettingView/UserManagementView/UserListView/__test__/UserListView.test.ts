@@ -23,34 +23,34 @@ const userData = [
   },
 ];
 
-describe('UserListView.vue', () => {
-  setActivePinia(createPinia());
-
-  const generateWrapper = () => {
-    return mount(UserListView, {
-      plugins: [
-        createTestingPinia({
-          stubActions: true,
-          initialState: {
-            user: {
-              users: userData,
-            },
+const generateWrapper = () => {
+  return mount(UserListView, {
+    plugins: [
+      createTestingPinia({
+        stubActions: true,
+        initialState: {
+          user: {
+            users: userData,
           },
-        }),
-      ],
-      global: {
-        provide: {
-          [userStoreSymbol as symbol]: useUserStore(),
         },
-        plugins: [router],
-        stubs: {
-          'a-menu-item': {
-            template: '<div class="users"><slot /></div>',
-          },
+      }),
+    ],
+    global: {
+      provide: {
+        [userStoreSymbol as symbol]: useUserStore(),
+      },
+      plugins: [router],
+      stubs: {
+        'a-menu-item': {
+          template: '<div class="users"><slot /></div>',
         },
       },
-    });
-  };
+    },
+  });
+};
+
+describe('UserListView.vue', () => {
+  setActivePinia(createPinia());
 
   it('renders correctly', () => {
     const wrapper = generateWrapper();

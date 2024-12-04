@@ -25,7 +25,7 @@ afterEach(() => {
 
 // enable window.matchMedia (maybe needs to be changed)
 window.matchMedia =
-  window.matchMedia ??
+  // window.matchMedia ??
   function (query: unknown): MediaQueryList {
     return {
       matches: false,
