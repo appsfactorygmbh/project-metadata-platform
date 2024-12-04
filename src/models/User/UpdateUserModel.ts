@@ -1,6 +1,5 @@
-export type UpdateUserModel = {
-  name?: string | null;
-  username?: string | null;
-  email?: string | null;
-  password?: string | null;
+import type { GetUserResponse } from '@/api/generated';
+
+export type UpdateUserModel = Partial<GetUserResponse> & {
+  password?: string;
 };

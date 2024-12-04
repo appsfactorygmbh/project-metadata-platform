@@ -56,8 +56,8 @@ type StoreActions = {
   fetchMe: () => Promise<void>;
   create: (newUser: CreateUserModel) => Promise<void>;
   update: (
-    userPatch: UpdateUserModel,
     userId: UserModel['id'],
+    userPatch: UpdateUserModel,
   ) => Promise<void>;
   delete: (userId: UserModel['id']) => Promise<void>;
 };
@@ -195,8 +195,8 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         },
 
         async update(
-          userUpdate: UpdateUserModel,
           userId: string,
+          userUpdate: UpdateUserModel,
         ): Promise<void> {
           try {
             this.setIsLoadingUpdate(true);
