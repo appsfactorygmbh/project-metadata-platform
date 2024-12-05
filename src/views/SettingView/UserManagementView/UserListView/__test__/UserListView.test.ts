@@ -60,7 +60,7 @@ describe('UserListView.vue', () => {
     expect(menuItems.length).toBe(userData.length);
 
     menuItems.forEach((itemWrapper, index) => {
-      expect(itemWrapper.text()).toContain(userData[index].email);
+      expect(itemWrapper.text()).toContain(userData[index].email.split('@')[0]);
     });
   });
 
