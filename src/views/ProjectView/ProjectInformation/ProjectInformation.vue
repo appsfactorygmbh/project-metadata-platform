@@ -181,7 +181,7 @@
           {{ projectData.projectName.value }}
         </h1>
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
-        <div v-if="!isEditing">
+        <div v-if="!isEditing" class="buttonBox">
           <a-button
             v-if="!projectsStore.getProject?.isArchived"
             class="button"
