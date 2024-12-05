@@ -1,4 +1,4 @@
-import { useRouter, type Router } from 'vue-router';
+import { type Router, useRouter } from 'vue-router';
 
 export const useProjectRouting = (router: Router = useRouter()) => {
   const routerProjectId = ref<number>(

@@ -14,7 +14,14 @@
   const isLoading = computed(
     () => getIsLoadingUsers.value || getIsLoading.value,
   );
-  const usersData = computed(() => getUsers.value);
+  const usersData = computed(() => {
+    const users = getUsers.value;
+    users.forEach((user) => {
+      user.email = user.email.split('@')[0];
+    });
+    return users;
+  });
+
   const routerUser = computed(() => routerUserId.value);
   userStore.fetchMe(); // fetch me for information
 
@@ -86,8 +93,10 @@
 
   .ant-layout-sider {
     background: #fff;
-    height: 100vh;
+    height: 90vh;
     overflow: auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .content {

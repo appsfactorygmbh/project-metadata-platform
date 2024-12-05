@@ -127,16 +127,15 @@
   }
 
   .userInfoBox {
-    padding: 1em 3em 1em 3em;
-    margin-top: 2em;
+    padding: 1em 3em;
+    margin: 2em 1em 1em 1em;
     border-radius: 10px;
     background-color: white;
     min-width: 450px;
-    width: 100%;
     height: auto;
     flex-direction: column;
     flex-wrap: wrap;
-    margin-bottom: 100px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .avatar {

@@ -160,8 +160,21 @@
     height: 100vh;
   }
   /* Style for the sidebar menu */
+  :deep(.ant-menu-root) {
+    border-inline-end: none !important;
+  }
+
   :deep(.ant-menu-item) {
     font-size: 1.2em;
+  }
+
+  :deep(.ant-menu-item-selected),
+  :deep(.ant-menu-item):active {
+    background-color: color-mix(in srgb, #6d6e6f, white) !important;
+    color: black;
+  }
+  :deep(.ant-menu-item-selected):hover {
+    background-color: color-mix(in srgb, #6d6e6f, white 60%) !important;
   }
 
   span {
@@ -182,7 +195,7 @@
 
   /* Style for the expandable button on bottom*/
   :deep(.ant-layout-sider-trigger) {
-    background-color: gray !important;
+    background-color: #6d6e6f !important;
     color: white !important;
   }
 </style>

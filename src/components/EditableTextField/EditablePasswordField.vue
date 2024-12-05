@@ -136,6 +136,7 @@
     currentPassword: [
       {
         required: true,
+        message: 'Please enter your current password.',
         trigger: 'change',
         type: 'string',
       },
@@ -168,13 +169,7 @@
 
 <template>
   <contextHolder></contextHolder>
-  <a-card
-    :body-style="{
-      display: 'flex',
-      alignItems: 'center',
-    }"
-    class="info"
-  >
+  <a-card class="info">
     <label class="label">{{ label }}:</label>
     <template v-if="!isLoading">
       <p v-if="!isEditing" class="text passwordLabel">{{ value }}</p>
@@ -186,7 +181,6 @@
           :rules="rulesRef.currentPassword"
         >
           <a-input
-            id="inputCreateUserName"
             v-model:value="dynamicValidateForm.currentPassword"
             type="password"
             placeholder="Enter your current password"
@@ -195,13 +189,13 @@
           </a-input>
         </a-form-item>
         <a-form-item
+          has-feedback
           name="newPassword"
           class="formItem"
           :whitespace="true"
           :rules="rulesRef.newPassword"
         >
           <a-input
-            id="inputCreateUserName"
             v-model:value="dynamicValidateForm.newPassword"
             type="password"
             placeholder="Enter your new password"
@@ -210,13 +204,13 @@
           </a-input>
         </a-form-item>
         <a-form-item
+          has-feedback
           name="confirmPassword"
           class="lastFormItem"
           :whitespace="true"
           :rules="rulesRef.confirmPassword"
         >
           <a-input
-            id="inputCreateUserName"
             v-model:value="dynamicValidateForm.confirmPassword"
             type="password"
             placeholder="Confirm your new password"
@@ -254,7 +248,6 @@
     border: none;
     margin: 0.6em 0 0.6em;
     margin-left: auto;
-    background-color: rgba(0, 0, 0, 0.88);
     width: 2em;
     height: 2em;
     display: flex;
@@ -265,10 +258,6 @@
   .password {
     display: flex;
     margin-bottom: 10px;
-  }
-
-  .icon {
-    color: white;
   }
 
   .info {
@@ -285,6 +274,7 @@
 
   .ant-card-body {
     padding: 12px !important;
+    display: flex;
   }
 
   .info label {
@@ -298,6 +288,7 @@
   }
   .text {
     font-weight: 400;
+    margin: 0;
   }
 
   .formItem {

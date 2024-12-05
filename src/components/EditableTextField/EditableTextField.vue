@@ -125,10 +125,6 @@
     gap: 10px;
   }
 
-  .icon {
-    color: white;
-  }
-
   .info {
     border: none;
     width: 100%;
