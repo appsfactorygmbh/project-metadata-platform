@@ -155,7 +155,6 @@ integration-test-job:
     - install-job
   script:
     - yarn build
-    - yarn preview
     - yarn preview &
     - curl http://localhost:4173/
   rules:
