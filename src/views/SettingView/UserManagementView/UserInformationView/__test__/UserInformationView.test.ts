@@ -6,6 +6,7 @@ import { createTestingPinia } from '@pinia/testing';
 import { userStoreSymbol } from '@/store/injectionSymbols';
 import { useUserStore } from '@/store';
 import router from '@/router';
+import { EditOutlined } from '@ant-design/icons-vue';
 
 const userData1 = {
   id: 100,
@@ -46,7 +47,7 @@ describe('UserInformationView.vue', () => {
     const text = wrapper.findAll('.text');
     expect(text[0].text()).toBe(userData1.email);
 
-    const button = wrapper.findAll('.edit');
+    const button = wrapper.findAllComponents(EditOutlined);
     expect(button[0].exists()).toBe(true);
     expect(button[1].exists()).toBe(true);
     expect(wrapper.find('.email').exists()).toBe(true);
