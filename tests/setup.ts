@@ -46,7 +46,7 @@ beforeAll(() => {
     useApiStore: vi.fn(() => {
       return defineGenericStore({
         actions: {
-          callApi: vi.fn(),
+          callApi: vi.fn().mockResolvedValue([]),
           initApi: vi.fn(),
         },
       });
