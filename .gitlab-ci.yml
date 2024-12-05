@@ -146,6 +146,21 @@ coverage-test-job:
     paths:
       - coverage/
 
+integration-test-job:
+  stage: test
+  extends:
+    - .corepack_init
+    - .update_cache
+  needs:
+    - install-job
+  script:
+    - yarn build
+    - yarn preview
+    - yarn preview &
+    - curl http://localhost:4173/
+    rules:
+    - if: $CI_COMMIT_BRANCH != $DEVELOP_BRANCH && $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_TAG == null
+
 sonarqube:
   stage: test
   image: node:latest
