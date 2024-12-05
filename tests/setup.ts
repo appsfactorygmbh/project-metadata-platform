@@ -3,6 +3,7 @@ import { cleanup } from '@testing-library/vue';
 import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 import { config, mount } from '@vue/test-utils';
+import { defineGenericStore } from 'pinia-generic';
 
 // See https://github.com/vitest-dev/vitest/issues/821
 Object.defineProperty(window, 'matchMedia', {
@@ -38,6 +39,20 @@ window.matchMedia =
 // See https://github.com/NickColley/jest-axe/issues/147
 const { getComputedStyle } = window;
 window.getComputedStyle = (elt) => getComputedStyle(elt);
+
+beforeAll(() => {
+  vi.mock('@/store/ApiStore', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('@/store/ApiStore')>()),
+    useApiStore: vi.fn(() => {
+      return defineGenericStore({
+        actions: {
+          callApi: vi.fn(),
+          initApi: vi.fn(),
+        },
+      });
+    }),
+  }));
+});
 
 // runs a cleanup after each test case (e.g. clearing jsdom)
 afterEach(() => {

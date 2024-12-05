@@ -158,6 +158,7 @@
   }
 
   const syncEditStore = (normalPlugins: PluginModel[]) => {
+    if (!normalPlugins?.length) return;
     for (let i = 0; i < normalPlugins.length; i++) {
       const index = projectEditStore?.initialAdd(normalPlugins[i]);
       if (index !== undefined) {
