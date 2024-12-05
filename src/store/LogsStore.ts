@@ -13,7 +13,7 @@ type StoreState = {
 
 type StoreActions = {
   refreshAuth: () => void;
-  fetchGlobalLogs: (searchParam?: string) => Promise<LogEntryModel[]>;
+  fetch: (searchParam?: string) => Promise<LogEntryModel[]>;
   setGlobalLogs: (globalLogEntries: LogEntryModel[]) => void;
   setIsLoadingGlobalLogs: (isLoading: boolean) => void;
   setLoadedGlobalLogsSuccessfully: (state: boolean) => void;
@@ -62,20 +62,20 @@ export const useLogsStore = (pinia: Pinia = piniaInstance): Store => {
           this.loadedGlobalLogsSuccessfully = state;
         },
 
-        async fetchGlobalLogs(searchParam?: string) {
+        async fetch(searchParam?: string) {
           this.setIsLoadingGlobalLogs(true);
           this.setLoadedGlobalLogsSuccessfully(false);
           return await this.callApi('logsGet', {
             search: searchParam,
           })
             .then((logs: LogEntryModel[]) => {
-              console.log('fetchGlobalLogs', logs);
+              console.log('fetch', logs);
               this.setGlobalLogs(logs);
               this.setLoadedGlobalLogsSuccessfully(true);
               return logs;
             })
             .catch((e) => {
-              console.error('fetchGlobalLogs', e);
+              console.error('fetch', e);
               this.setLoadedGlobalLogsSuccessfully(false);
               return [];
             })

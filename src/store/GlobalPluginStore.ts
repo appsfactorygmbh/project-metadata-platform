@@ -19,16 +19,19 @@ type StoreActions = {
   fetch: (pluginId: number) => Promise<GlobalPluginModel | undefined>;
   create: (plugin: Omit<GlobalPluginModel, 'id'>) => Promise<void>;
   update: (
-    plugin: GlobalPluginModel,
     pluginId: GlobalPluginModel['id'],
+    plugin: GlobalPluginModel,
   ) => Promise<GetGlobalPluginResponse>;
   delete: (pluginId: GlobalPluginModel['id']) => Promise<void>;
+  findPlugin: (
+    id: GlobalPluginModel['id'],
+  ) => Promise<GlobalPluginModel | null>;
   setGlobalPlugins: (globalPlugins: GlobalPluginModel[]) => void;
   setLoadingGlobalPlugins: (status: boolean) => void;
   setLoadingDelete: (status: boolean) => void;
   setRemovedSuccessfully: (status: boolean) => void;
-  archive: (plugin: GlobalPluginModel) => Promise<void>;
-  unarchive: (plugin: GlobalPluginModel) => Promise<void>;
+  archive: (pluginId: GlobalPluginModel['id']) => Promise<void>;
+  unarchive: (pluginId: GlobalPluginModel['id']) => Promise<void>;
 };
 
 type StoreGetters = {
@@ -84,6 +87,13 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
           this.removedSuccessfully = status;
         },
 
+        async findPlugin(id: GlobalPluginModel['id']) {
+          let plugin =
+            this.globalPlugins.find((plugin) => plugin.id === id) ?? null;
+          if (!plugin) plugin = (await this.fetch(id)) ?? null;
+          return plugin;
+        },
+
         async fetchAll() {
           try {
             this.setLoadingGlobalPlugins(true);
@@ -136,8 +146,8 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
         },
 
         async update(
-          plugin: GlobalPluginModel,
           pluginId: GlobalPluginModel['id'],
+          plugin: GlobalPluginModel,
         ) {
           try {
             const response = await this.callApi('pluginsPluginIdPatch', {
@@ -158,39 +168,35 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
             throw err;
           }
         },
-        async archive(plugin: GlobalPluginModel) {
-          try {
-            this.setLoadingDelete(true);
+        async archive(pluginId: GlobalPluginModel['id']) {
+          this.setLoadingDelete(true);
+          this.setRemovedSuccessfully(false);
+          const plugin = await this.findPlugin(pluginId);
+          if (!plugin) {
             this.setRemovedSuccessfully(false);
-            await this.update(
-              {
-                ...plugin,
-                isArchived: true,
-              },
-              plugin.id,
-            );
-            this.setRemovedSuccessfully(true);
-          } catch (err) {
-            this.setRemovedSuccessfully(false);
-            throw err;
-          } finally {
-            this.setLoadingDelete(false);
+            throw new Error(`Plugin with id ${pluginId} not found`);
           }
+          await this.update(plugin.id, {
+            ...plugin,
+            isArchived: true,
+          }).catch((e) => {
+            this.setRemovedSuccessfully(false);
+            throw e;
+          });
+          this.setLoadingDelete(false);
+          this.fetchAll();
         },
 
-        async unarchive(plugin: GlobalPluginModel) {
-          try {
-            this.setLoadingGlobalPlugins(true);
-            await this.update(
-              {
-                ...plugin,
-                isArchived: false,
-              },
-              plugin.id,
-            );
-          } finally {
-            this.setLoadingGlobalPlugins(false);
-          }
+        async unarchive(pluginId: GlobalPluginModel['id']) {
+          this.setLoadingGlobalPlugins(true);
+          const plugin = await this.findPlugin(pluginId);
+          if (!plugin) throw new Error(`Plugin with id ${pluginId} not found`);
+          await this.update(plugin.id, {
+            ...plugin,
+            isArchived: false,
+          });
+          this.setLoadingGlobalPlugins(false);
+          this.fetchAll();
         },
       },
     },

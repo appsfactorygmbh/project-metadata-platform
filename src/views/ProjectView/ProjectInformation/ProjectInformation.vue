@@ -152,13 +152,10 @@
 
     if (projectID) {
       try {
-        await projectStore.archive(projectData, projectID);
-        if (projectStore.getUpdatedSuccessfully) {
-          await projectStore.fetchAll();
-        }
+        await projectStore.archive(projectID);
       } finally {
         isModalOpen.value = false;
-        await localLogStore?.fetchLocalLog(projectID);
+        await localLogStore?.fetch(projectID);
         const newProjectId = getNextActiveProjectId(projectID);
         projectRouting.setProjectId(newProjectId);
       }
@@ -170,9 +167,8 @@
     const projectId = projectStore.getProject?.id;
     currentProject.pluginList = pluginStore.getPlugins;
 
-    await projectStore.unarchive(currentProject, projectId!);
-    await projectStore.fetchAll();
-    await localLogStore?.fetchLocalLog(projectId!);
+    await projectStore.unarchive(projectId!);
+    await localLogStore?.fetch(projectId!);
   };
 </script>
 

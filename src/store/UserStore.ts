@@ -51,7 +51,7 @@ type StoreActions = {
   setCreatedSuccessfully: (createdSuccessfully: boolean) => void;
   setRemovedSuccessfully: (removedSuccessfully: boolean) => void;
   setUpdatedSuccessfully: (updatedSuccessfully: boolean) => void;
-  fetchUsers: () => Promise<void>;
+  fetchAll: () => Promise<void>;
   fetchUser: (userId: string) => Promise<void>;
   fetchMe: () => Promise<void>;
   create: (newUser: CreateUserModel) => Promise<void>;
@@ -150,7 +150,7 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
           this.updatedSuccessfully = updatedSuccessfully;
         },
 
-        async fetchUsers(): Promise<void> {
+        async fetchAll(): Promise<void> {
           this.setIsLoadingUsers(true);
           try {
             const users: UserListModel[] =
@@ -189,7 +189,7 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
             await this.callApi('usersPut', {
               createUserRequest: newUser,
             });
-            this.fetchUsers();
+            this.fetchAll();
             this.setCreatedSuccessfully(true);
           } catch (e) {
             this.setCreatedSuccessfully(false);
@@ -213,7 +213,7 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
                 password: userUpdate.password ?? null,
               },
             });
-            this.fetchUsers();
+            this.fetchAll();
             this.setUpdatedSuccessfully(true);
           } catch (e) {
             this.setUpdatedSuccessfully(false);
@@ -229,7 +229,7 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
             this.setRemovedSuccessfully(false);
             await this.callApi('usersUserIdDelete', { userId });
             this.setRemovedSuccessfully(true);
-            this.fetchUsers();
+            this.fetchAll();
           } catch (e) {
             this.setRemovedSuccessfully(false);
             throw e;

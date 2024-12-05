@@ -23,7 +23,7 @@ type StoreActions = {
   setPlugins: (plugins: PluginModel[]) => void;
   setLoadingPlugins: (status: boolean) => void;
   fetch: (projectID: number) => Promise<void>;
-  fetchUnarchivedPlugins: (projectID: number) => Promise<void>;
+  fetchUnarchived: (projectID: number) => Promise<void>;
   setUnarchivedPlugins: (plugins: PluginModel[]) => void;
 };
 
@@ -78,7 +78,7 @@ export const usePluginStore = (pinia: Pinia = piniaInstance): Store => {
           }
           console.log(this.getPlugins);
         },
-        async fetchUnarchivedPlugins(projectID: number) {
+        async fetchUnarchived(projectID: number) {
           try {
             this.setLoadingPlugins(true);
             const plugins: PluginModel[] = await this.callApi(

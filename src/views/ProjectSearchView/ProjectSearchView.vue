@@ -118,8 +118,8 @@
     async () => {
       await projectStore.fetch(routerProjectId.value);
       await pluginStore.fetch(routerProjectId.value);
-      await pluginStore?.fetchUnarchivedPlugins(routerProjectId.value);
-      await localLogStore?.fetchLocalLog(routerProjectId.value);
+      await pluginStore?.fetchUnarchived(routerProjectId.value);
+      await localLogStore?.fetch(routerProjectId.value);
     },
   );
 
@@ -136,8 +136,8 @@
     } else {
       await projectStore.fetch(routerProjectId.value);
       await pluginStore.fetch(routerProjectId.value);
-      await pluginStore?.fetchUnarchivedPlugins(routerProjectId.value);
-      await localLogStore?.fetchLocalLog(routerProjectId.value);
+      await pluginStore?.fetchUnarchived(routerProjectId.value);
+      await localLogStore?.fetch(routerProjectId.value);
     }
 
     searchStore.setBaseSet(projectStore.getProjects ?? []);

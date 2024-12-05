@@ -92,11 +92,11 @@
     console.log('updated Project', updatedProject);
     const projectID = computed(() => projectStore.getProject?.id);
     if (projectID.value) {
-      await projectStore.update(updatedProject, projectID.value);
+      await projectStore.update(projectID.value, updatedProject);
       await projectStore.fetchAll();
       await projectStore.fetch(projectID.value);
-      await pluginStore.fetchUnarchivedPlugins(projectID.value);
-      await localLogStore?.fetchLocalLog(projectID.value);
+      await pluginStore.fetchUnarchived(projectID.value);
+      await localLogStore?.fetch(projectID.value);
     }
   };
 </script>

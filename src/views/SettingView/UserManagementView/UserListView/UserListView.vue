@@ -31,7 +31,7 @@
   };
 
   onMounted(async () => {
-    await userStore?.fetchUsers();
+    await userStore?.fetchAll();
     if (routerUser.value === '0') {
       setUserId(userStore?.getUsers[0]?.id ?? '0');
     } else {

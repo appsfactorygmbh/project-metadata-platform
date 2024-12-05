@@ -53,7 +53,7 @@
                 <a-button
                   style="margin-right: 1em"
                   title="Reactivate Plugin"
-                  @click="handleReactivate(item)"
+                  @click="handleReactivate(item.id)"
                 >
                   <UndoOutlined />
                 </a-button>
@@ -195,27 +195,24 @@
    * Adds the plugin to the deleting plugins, deletes the plugin and removes it again
    * @param pluginId Id of the plugin that should be deleted
    */
-  const handleArchive = async (pluginId: number) => {
+  const handleArchive = async (pluginId: GlobalPluginModel['id']) => {
     pluginDeleting.value.push(pluginId);
 
-    const plugin = globalPluginsStore!.getGlobalPlugins.find(
-      (plugin) => plugin.id === pluginId,
-    );
-    await globalPluginsStore?.archive(plugin as GlobalPluginModel);
+    await globalPluginsStore?.archive(pluginId);
 
     const index: number = pluginDeleting.value?.indexOf(pluginId);
     pluginDeleting.value.splice(index, 1);
   };
 
-  const handleDelete = async (pluginId: number) => {
+  const handleDelete = async (pluginId: GlobalPluginModel['id']) => {
     pluginDeleting.value.push(pluginId);
     await globalPluginsStore?.delete(pluginId);
     const index: number = pluginDeleting.value?.indexOf(pluginId);
     pluginDeleting.value.splice(index, 1);
   };
 
-  const handleReactivate = async (plugin: GlobalPluginModel) => {
-    await globalPluginsStore?.unarchive(plugin);
+  const handleReactivate = async (pluginId: GlobalPluginModel['id']) => {
+    await globalPluginsStore?.unarchive(pluginId);
     message.success('The plugin has been reactivated', 2);
   };
 

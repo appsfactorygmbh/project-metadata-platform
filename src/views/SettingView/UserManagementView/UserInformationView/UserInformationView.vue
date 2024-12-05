@@ -63,7 +63,7 @@
   const deleteUser = async () => {
     if (!user.value) return;
     await userStore.delete(user.value?.id);
-    await userStore.fetchUsers();
+    await userStore.fetchAll();
     const firstId: string = userStore.getUsers[0].id;
     setUserId(firstId);
   };

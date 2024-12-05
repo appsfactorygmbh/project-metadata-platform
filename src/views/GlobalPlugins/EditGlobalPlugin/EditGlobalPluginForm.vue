@@ -18,12 +18,9 @@
   const onSubmit: FormSubmitType = (fields) => {
     try {
       if (!pluginIdRef.value) return;
-      globalPluginStore.update(
-        {
-          ...fields,
-        },
-        pluginIdRef.value,
-      );
+      globalPluginStore.update(pluginIdRef.value, {
+        ...fields,
+      });
     } catch {
       notificationApi.error({
         message: 'The plugin could not be updated.',

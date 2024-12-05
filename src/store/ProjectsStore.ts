@@ -5,7 +5,7 @@ import type {
   UpdateProjectModel,
 } from '@/models/Project';
 
-import { ProjectsApi } from '@/api/generated';
+import { type GetProjectResponse, ProjectsApi } from '@/api/generated';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import { type ApiStore, useApiStore } from './ApiStore';
 import { piniaInstance } from './piniaInstance';
@@ -43,11 +43,17 @@ type StoreActions = {
   fetch: (id: ProjectModel['id']) => Promise<DetailedProjectModel | null>;
   create: (project: CreateProjectModel) => Promise<void>;
   update: (
-    project: UpdateProjectModel,
     id: ProjectModel['id'],
-  ) => Promise<void>;
-  archive: (projectData: UpdateProjectModel, id: number) => Promise<void>;
-  unarchive: (projectData: UpdateProjectModel, id: number) => Promise<void>;
+    project: UpdateProjectModel,
+  ) => Promise<GetProjectResponse | null>;
+  archive: (id: ProjectModel['id']) => Promise<void>;
+  unarchive: (id: ProjectModel['id']) => Promise<void>;
+  findProject: <Full extends boolean>(
+    id: ProjectModel['id'],
+    { fullObjectNeeded }: { fullObjectNeeded?: Full },
+  ) => Promise<
+    (Full extends true ? DetailedProjectModel : ProjectModel) | null
+  >;
   setProjects: (projects: ProjectModel[]) => void;
   setProject: (project: DetailedProjectModel | null) => void;
   setLoadingAdd: (status: boolean) => void;
@@ -137,6 +143,19 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
           this.updatedSuccessfully = status;
         },
 
+        async findProject(
+          id: ProjectModel['id'],
+          { fullObjectNeeded = false },
+        ) {
+          let project: ProjectModel | DetailedProjectModel | null = null;
+          if (!fullObjectNeeded)
+            project =
+              this.projects.find((project) => project.id === id) ?? null;
+          else if (id === this.project?.id) project = this.project;
+          if (!project) project = await this.fetch(id);
+          return project;
+        },
+
         async fetchAll({ setCache = true, search } = {}) {
           try {
             this.setLoadingProjects(true);
@@ -181,7 +200,7 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
           }
         },
 
-        async update(projectData: UpdateProjectModel, id: ProjectModel['id']) {
+        async update(id: ProjectModel['id'], projectData: UpdateProjectModel) {
           try {
             this.setLoadingUpdate(true);
             this.setUpdatedSuccessfully(false);
@@ -191,9 +210,10 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
             });
             if (response) {
               this.setUpdatedSuccessfully(true);
-              await this.fetch(id);
+              return this.fetch(id);
             } else {
               this.setUpdatedSuccessfully(false);
+              return null;
             }
           } finally {
             this.setLoadingUpdate(false);
@@ -227,12 +247,22 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
           }
         },
 
-        async archive(projectData: UpdateProjectModel, id: number) {
-          await this.update({ ...projectData, isArchived: true }, id);
+        async archive(id: ProjectModel['id']) {
+          const project = await this.findProject(id, {
+            fullObjectNeeded: true,
+          });
+          if (!project) throw new Error(`Project with id ${id} not found`);
+          await this.update(id, { ...project, isArchived: true });
+          await this.fetchAll();
         },
 
-        async unarchive(projectData: UpdateProjectModel, id: number) {
-          await this.update({ ...projectData, isArchived: false }, id);
+        async unarchive(id: ProjectModel['id']) {
+          const project = await this.findProject(id, {
+            fullObjectNeeded: true,
+          });
+          if (!project) throw new Error(`Project with id ${id} not found`);
+          await this.update(id, { ...project, isArchived: false });
+          await this.fetchAll();
         },
       },
     },

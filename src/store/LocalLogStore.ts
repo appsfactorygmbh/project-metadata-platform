@@ -14,7 +14,7 @@ type StoreActions = {
   refreshAuth: () => void;
   setLocalLogs: (localLog: LogEntryModel[]) => void;
   setIsLoadingLocalLog: (isLoading: boolean) => void;
-  fetchLocalLog: (projectId: number) => Promise<void>;
+  fetch: (projectId: number) => Promise<void>;
 };
 
 type StoreGetters = {
@@ -52,7 +52,7 @@ export const useLocalLogStore = (pinia: Pinia = piniaInstance): Store => {
           this.isLoadingLocalLog = isLoading;
         },
 
-        async fetchLocalLog(projectId: number): Promise<void> {
+        async fetch(projectId: number): Promise<void> {
           this.setIsLoadingLocalLog(true);
           await this.callApi('logsGet', {
             projectId,
