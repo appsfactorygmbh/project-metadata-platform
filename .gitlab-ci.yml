@@ -157,7 +157,7 @@ integration-test-job:
     - apk add --no-cache chromium
     - yarn build
     - yarn preview --host 127.0.0.1 --port 80 &
-    - chromium --headless --dump-dom http://127.0.0.1:80/login
+    - chromium --headless --no-sandbox --dump-dom http://127.0.0.1:80/login
 
   rules:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEVELOP_BRANCH && $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_TAG == null
