@@ -44,6 +44,12 @@
   const isLoading = computed(() => projectsStore?.getIsLoadingProjects);
   provide<ProjectSearchStore>(searchStoreSymbol, searchStore);
 
+  const highlightButton = computed(() =>
+    searchStore?.getIsFiltering
+      ? { color: '#3e8ee2', width: '100%', borderColor: '#3e8ee2' }
+      : { color: 'black', width: '100%', borderColor: '#d9d9d9' },
+  );
+
   const showOnlyArchived: ProjectSearchStore['filter'] = (items) =>
     items.filter((item) => item.isArchived);
   const showOnlyActive: ProjectSearchStore['filter'] = (items) =>
@@ -165,11 +171,7 @@
               title="Click here to reset all filters"
               style="padding-left: 0; padding-right: 0"
             >
-              <a-button
-                style="width: 100%"
-                @click="clearAllFilters"
-                name="resetButton"
-              >
+              <a-button :style="highlightButton" @click="clearAllFilters">
                 <template #icon>
                   <UndoOutlined class="icons" />
                 </template>
