@@ -3,7 +3,7 @@
 
   <a-tooltip
     placement="left"
-    title="Click here to toggle between active and archived projects"
+    title="Click here to toggle between active and archived global plugins"
   >
     <a-button class="archiveButton" @click="toggleShowFilter">
       <template #icon>
