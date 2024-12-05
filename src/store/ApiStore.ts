@@ -5,7 +5,7 @@ import { type AuthStore, useAuthStore } from './AuthStore';
 import type { UnwrapRef } from 'vue';
 import type { Pinia } from 'pinia';
 import { piniaInstance } from './piniaInstance';
-import { type CallApiType, callApi } from '@/utils/api';
+import { callApi } from '@/utils/api';
 import type { GenericStore } from '@/utils/store';
 
 type ApiStore<Api extends ApiTypes> = PiniaStore<
@@ -21,7 +21,15 @@ type ApiStore<Api extends ApiTypes> = PiniaStore<
   {
     initApi: () => void;
     setIsLoading: (isLoading: boolean) => void;
-    callApi: CallApiType<Api>;
+    callApi: <
+      Endpoint extends keyof Api,
+      //@ts-expect-error function type is not inferred correctly
+      Args extends Parameters<Api[Endpoint]>[0],
+    >(
+      endpoint: Endpoint,
+      args: Args,
+      //@ts-expect-error function type is not inferred correctly
+    ) => ReturnType<Api[Endpoint]>;
   }
 >;
 
@@ -50,6 +58,7 @@ export const useApiStore = <Api extends ApiTypes>(
         this.isLoading = isLoading;
       },
 
+      //@ts-expect-error return type is always a Promise but type is not inferred correctly
       async callApi(apiCall, args) {
         try {
           if (!this.api) throw new Error(`${this.name} Api is not set`);
@@ -58,7 +67,7 @@ export const useApiStore = <Api extends ApiTypes>(
             apiCall,
             // @ts-expect-error false positive
             args,
-            this.api,
+            this.api as Api,
           );
         } finally {
           this.setIsLoading(false);

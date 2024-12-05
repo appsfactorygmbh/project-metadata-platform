@@ -1,7 +1,7 @@
 import type { GlobalPluginModel } from '@/models/Plugin';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import type { ApiStore } from './ApiStore';
-import { PluginsApi } from '@/api/generated';
+import { type GetGlobalPluginResponse, PluginsApi } from '@/api/generated';
 import { useApiStore } from './ApiStore';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
@@ -21,7 +21,7 @@ type StoreActions = {
   update: (
     plugin: GlobalPluginModel,
     pluginId: GlobalPluginModel['id'],
-  ) => Promise<void>;
+  ) => Promise<GetGlobalPluginResponse>;
   delete: (pluginId: GlobalPluginModel['id']) => Promise<void>;
   setGlobalPlugins: (globalPlugins: GlobalPluginModel[]) => void;
   setLoadingGlobalPlugins: (status: boolean) => void;

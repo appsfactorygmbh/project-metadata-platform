@@ -57,7 +57,7 @@ export const useLocalLogStore = (pinia: Pinia = piniaInstance): Store => {
           await this.callApi('logsGet', {
             projectId,
           })
-            .then((logs: LogEntryModel[]) => {
+            .then((logs) => {
               this.setLocalLogs(logs);
             })
             .catch(() => {
