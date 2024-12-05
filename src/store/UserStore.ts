@@ -1,4 +1,3 @@
-import { userService } from '@/services/UserService';
 import type {
   CreateUserModel,
   UpdateUserModel,
@@ -148,8 +147,8 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         },
 
         async fetchUsers(): Promise<void> {
+          this.setIsLoadingUsers(true);
           try {
-            this.setIsLoadingUsers(true);
             const users: UserListModel[] =
               (await this.callApi('usersGet', {})) ?? [];
             this.setUsers(users);
@@ -159,6 +158,7 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         },
 
         async fetchUser(userId: string): Promise<void> {
+          this.setIsLoadingUsers(true);
           try {
             const user =
               (await this.callApi('usersUserIdGet', { userId })) ?? null;
@@ -169,8 +169,9 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         },
 
         async fetchMe(): Promise<void> {
+          this.setIsLoadingUsers(true);
           try {
-            const user = (await userService.fetchMe()) ?? null;
+            const user = (await this.callApi('usersMeGet', {})) ?? null;
             this.setMe(user);
           } finally {
             this.setIsLoadingUsers(false);

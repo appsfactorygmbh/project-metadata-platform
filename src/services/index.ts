@@ -1,4 +1,5 @@
-import { type UserService, userService } from './UserService';
+import { ApiService } from './ApiService';
+import { type AuthService, authService } from './AuthService';
 
-export { userService };
-export type { UserService };
+export { ApiService, authService };
+export type { AuthService };
