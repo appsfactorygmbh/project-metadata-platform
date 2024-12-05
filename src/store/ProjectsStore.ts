@@ -62,7 +62,7 @@ type StoreActions = {
   setLoadingProject: (status: boolean) => void;
   setAddedSuccessfully: (status: boolean) => void;
   setUpdatedSuccessfully: (status: boolean) => void;
-  getSlugById: (id: number) => Promise<string>;
+  getSlugById: (id: ProjectModel['id']) => Promise<string>;
   getBySlug: (slug: string) => Promise<ProjectModel | null>;
 };
 

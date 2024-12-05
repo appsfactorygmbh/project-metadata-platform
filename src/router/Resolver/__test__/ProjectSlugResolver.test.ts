@@ -7,6 +7,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { SplitView } from '@/views';
 import { ProviderCollection } from '@/router/Provider';
 import { useProjectStore } from '@/store';
+import { setActivePinia } from 'pinia';
 
 const testProjects = [
   {
@@ -27,9 +28,19 @@ const testProjects = [
   },
 ];
 
+const piniaOptions: Parameters<typeof createTestingPinia>[0] = {
+  stubActions: false,
+  initialState: {
+    project: {
+      projects: testProjects,
+      setProjects: vi.fn(),
+    },
+  },
+};
+
 describe('ProjectSlugResolver.vue', () => {
   enableAutoUnmount(afterEach);
-  createTestingPinia();
+  setActivePinia(createTestingPinia(piniaOptions));
   const projectStore = useProjectStore();
 
   const mockRouter = createRouter({
@@ -62,23 +73,25 @@ describe('ProjectSlugResolver.vue', () => {
     ],
   });
 
-  it('resolves an initial project id query', async () => {
-    await mockRouter.push({
-      name: 'Provider',
-      query: { projectId: '200' },
-    });
-    await mockRouter.isReady();
-
-    mount(ProjectSlugResolver, {
-      plugins: [
-        createTestingPinia({
-          stubActions: false,
-        }),
-      ],
+  const generateWrapper = () => {
+    return mount(ProjectSlugResolver, {
+      plugins: [createTestingPinia(piniaOptions)],
       global: {
         plugins: [mockRouter, auth],
       },
     });
+  };
+  projectStore.setProjects(testProjects);
+
+  it('resolves an initial project id query', async () => {
+    await flushPromises();
+    await mockRouter.push({
+      name: 'ProjectNameResolver',
+      query: { projectId: '200' },
+    });
+    await mockRouter.isReady();
+
+    generateWrapper();
 
     projectStore.setProjects(testProjects);
     await flushPromises();
@@ -88,22 +101,14 @@ describe('ProjectSlugResolver.vue', () => {
   });
 
   it('changes the slug when changing the query', async () => {
+    await flushPromises();
     await mockRouter.push({
-      name: 'Provider',
+      name: 'ProjectNameResolver',
       query: { projectId: '200' },
     });
     await mockRouter.isReady();
 
-    mount(ProjectSlugResolver, {
-      plugins: [
-        createTestingPinia({
-          stubActions: false,
-        }),
-      ],
-      global: {
-        plugins: [mockRouter, auth],
-      },
-    });
+    generateWrapper();
 
     projectStore.setProjects(testProjects);
     await flushPromises();
@@ -112,9 +117,10 @@ describe('ProjectSlugResolver.vue', () => {
     expect(mockRouter.currentRoute.value.path).toBe('/test-1');
 
     await mockRouter.push({
-      name: 'Provider',
+      name: 'ProjectNameResolver',
       query: { projectId: '300' },
     });
+    await mockRouter.isReady();
     await flushPromises();
 
     expect(mockRouter.currentRoute.value.query.projectId).toBe('300');
