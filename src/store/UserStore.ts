@@ -39,6 +39,7 @@ type StoreGetters = {
 };
 
 type StoreActions = {
+  refreshAuth: () => void;
   setUsers: (users: UserListModel[]) => void;
   setUser: (user: UserModel | null) => void;
   setMe: (me: UserModel | null) => void;
@@ -115,6 +116,9 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         },
       },
       actions: {
+        refreshAuth(): void {
+          this.initApi();
+        },
         setUsers(users: UserListModel[]): void {
           this.users = users;
         },

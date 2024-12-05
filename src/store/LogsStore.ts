@@ -23,7 +23,6 @@ type StoreGetters = {
   getGlobalLogs: () => LogEntryModel[];
   getIsLoadingGlobalLogs: () => boolean;
   getLoadedGlobalLogsSuccessfully: () => boolean;
-  loadedGlobalLogsSuccessfully: () => boolean;
 };
 
 type Store = PiniaStore<'logs', StoreState, StoreGetters, StoreActions>;
@@ -44,13 +43,23 @@ export const useLogsStore = (pinia: Pinia = piniaInstance): Store => {
         getIsLoadingGlobalLogs(): boolean {
           return this.isLoadingGlobalLogs;
         },
-        loadedGlobalLogsSuccessfully(): boolean {
+        getLoadedGlobalLogsSuccessfully(): boolean {
           return this.loadedGlobalLogsSuccessfully;
         },
       },
       actions: {
         refreshAuth(): void {
           this.initApi();
+        },
+
+        setGlobalLogs(globalLogEntries: LogEntryModel[]): void {
+          this.globalLogEntries = globalLogEntries;
+        },
+        setIsLoadingGlobalLogs(isLoading: boolean): void {
+          this.isLoadingGlobalLogs = isLoading;
+        },
+        setLoadedGlobalLogsSuccessfully(state: boolean): void {
+          this.loadedGlobalLogsSuccessfully = state;
         },
 
         async fetchGlobalLogs(searchParam?: string) {
@@ -60,26 +69,19 @@ export const useLogsStore = (pinia: Pinia = piniaInstance): Store => {
             search: searchParam,
           })
             .then((logs: LogEntryModel[]) => {
+              console.log('fetchGlobalLogs', logs);
               this.setGlobalLogs(logs);
               this.setLoadedGlobalLogsSuccessfully(true);
               return logs;
             })
             .catch((e) => {
+              console.error('fetchGlobalLogs', e);
               this.setLoadedGlobalLogsSuccessfully(false);
               return [];
             })
             .finally(() => {
               this.setIsLoadingGlobalLogs(false);
             });
-        },
-        setGlobalLogs(globalLogEntries: LogEntryModel[]): void {
-          this.globalLogEntries = globalLogEntries;
-        },
-        setIsLoadingGlobalLogs(isLoading: boolean): void {
-          this.isLoadingGlobalLogs = isLoading;
-        },
-        setLoadedGlobalLogsSuccessfully(state: boolean): void {
-          this.loadedGlobalLogsSuccessfully = state;
         },
       },
     },

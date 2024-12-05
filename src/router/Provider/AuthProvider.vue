@@ -6,6 +6,7 @@
     useGlobalPluginsStore,
     useLocalLogStore,
     useLogsStore,
+    useUserStore,
   } from '@/store';
   import { useAuthStore, usePluginStore, useProjectStore } from '@/store';
 
@@ -15,6 +16,7 @@
   const globalPluginStore = useGlobalPluginsStore();
   const localLogStore = useLocalLogStore();
   const logsStore = useLogsStore();
+  const userStore = useUserStore();
 
   provide<typeof authStore>(authStoreSymbol, authStore);
 
@@ -26,6 +28,7 @@
   pluginStore.refreshAuth();
   localLogStore.refreshAuth();
   logsStore.refreshAuth();
+  userStore.refreshAuth();
 
   watch(
     () => auth?.token(),
@@ -36,6 +39,7 @@
       pluginStore.refreshAuth();
       localLogStore.refreshAuth();
       logsStore.refreshAuth();
+      userStore.refreshAuth();
     },
   );
 </script>
