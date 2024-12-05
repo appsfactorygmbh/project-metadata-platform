@@ -167,8 +167,8 @@
             >
               <a-button
                 style="width: 100%"
-                @click="clearAllFilters"
                 name="resetButton"
+                @click="clearAllFilters"
               >
                 <template #icon>
                   <UndoOutlined class="icons" />

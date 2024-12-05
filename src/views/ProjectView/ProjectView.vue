@@ -18,7 +18,10 @@
   const pluginStore = inject(pluginStoreSymbol);
   const projectStore = inject(projectsStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
-
+  const isModalOpen = ref(false);
+  const openModal = () => {
+    isModalOpen.value = true;
+  };
   const { isEditing, stopEditing } = useEditing();
 
   const reloadEditStore = () => {
@@ -102,10 +105,18 @@
 </script>
 
 <template>
-  <ProjectEditButtons v-if="isEditing" @cancel="cancelEdit" @save="saveEdit" />
+  <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
   <ProjectInformation />
   <ProjectPlugins class="pluginView" />
   <LocalLogView class="LocalLog" />
+  <ConfirmAction
+    :is-open="isModalOpen"
+    title="Archive Project"
+    message="Are you sure you want to cancel all changes?"
+    @confirm="cancelEdit"
+    @cancel="isModalOpen = false"
+    @update:is-open="(value) => (isModalOpen = value)"
+  />
 </template>
 
 <style scoped>

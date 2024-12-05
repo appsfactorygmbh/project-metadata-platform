@@ -181,46 +181,47 @@
           {{ projectData.projectName.value }}
         </h1>
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
-        <a-button
-          v-if="!projectsStore.getProject?.isArchived"
-          class="button"
-          ghost
-          style="margin-left: 10px"
-          @click="toggleEditingMode"
-        >
-          <template #icon><EditOutlined class="icon" /></template>
-        </a-button>
-        <a-tooltip
-          v-else
-          position="left"
-          title="Click here to reactivate the project"
-          style="padding-left: 0; padding-right: 0"
-        >
+        <div v-if="!isEditing">
           <a-button
+            v-if="!projectsStore.getProject?.isArchived"
             class="button"
             ghost
             style="margin-left: 10px"
-            @click="reactivateProject"
+            @click="toggleEditingMode"
           >
-            <template #icon><UndoOutlined class="icon" /></template>
+            <template #icon><EditOutlined class="icon" /></template>
           </a-button>
-        </a-tooltip>
-        <a-tooltip
-          v-if="!projectsStore.getProject?.isArchived"
-          position="left"
-          title="Click here to archive the project"
-          style="padding-left: 0; padding-right: 0"
-        >
-          <a-button
-            class="button"
-            ghost
-            style="margin-left: 10px"
-            @click="handleArchive"
+          <a-tooltip
+            v-else
+            position="left"
+            title="Click here to reactivate the project"
+            style="padding-left: 0; padding-right: 0"
           >
-            <template #icon><DeleteOutlined class="icon" /></template>
-          </a-button>
-        </a-tooltip>
-
+            <a-button
+              class="button"
+              ghost
+              style="margin-left: 10px"
+              @click="reactivateProject"
+            >
+              <template #icon><UndoOutlined class="icon" /></template>
+            </a-button>
+          </a-tooltip>
+          <a-tooltip
+            v-if="!projectsStore.getProject?.isArchived"
+            position="left"
+            title="Click here to archive the project"
+            style="padding-left: 0; padding-right: 0"
+          >
+            <a-button
+              class="button"
+              ghost
+              style="margin-left: 10px"
+              @click="handleArchive"
+            >
+              <template #icon><DeleteOutlined class="icon" /></template>
+            </a-button>
+          </a-tooltip>
+        </div>
         <ConfirmAction
           :is-open="isModalOpen"
           title="Archive Project"
