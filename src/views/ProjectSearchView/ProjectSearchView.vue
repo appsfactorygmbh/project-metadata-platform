@@ -4,7 +4,6 @@
   import {
     localLogStoreSymbol,
     pluginStoreSymbol,
-    projectRoutingSymbol,
     projectsStoreSymbol,
   } from '@/store/injectionSymbols';
   import { inject, onMounted, provide, reactive } from 'vue';
@@ -19,6 +18,7 @@
     InboxOutlined,
     UndoOutlined,
   } from '@ant-design/icons-vue';
+  import { useProjectRouting } from '@/utils/hooks';
 
   const props = defineProps({
     paneWidth: {
@@ -34,7 +34,7 @@
   type ProjectSearchStore = SearchStore<ProjectModel>;
 
   const { stopEditing, isEditing } = useEditing();
-  const { routerProjectId, setProjectId } = inject(projectRoutingSymbol)!;
+  const { routerProjectId, setProjectId } = useProjectRouting();
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectsStore = inject(projectsStoreSymbol);
@@ -42,10 +42,12 @@
   const searchStore = useSearchStore<ProjectModel>('projects');
   const searchStoreSymbol = Symbol('projectSearchStore');
   const isLoading = computed(() => projectsStore?.getIsLoadingProjects);
+  const isFiltering = computed(() => searchStore?.getIsFiltering);
+
   provide<ProjectSearchStore>(searchStoreSymbol, searchStore);
 
   const highlightButton = computed(() =>
-    searchStore?.getIsFiltering
+    isFiltering.value
       ? { color: '#3e8ee2', width: '100%', borderColor: '#3e8ee2' }
       : { color: 'black', width: '100%', borderColor: '#d9d9d9' },
   );
@@ -168,10 +170,14 @@
           <a-col :span="2" style="display: flex; justify-content: flex-end">
             <a-tooltip
               placement="left"
-              title="Click here to reset all filters"
+              title="Click here to resets all filters"
               style="padding-left: 0; padding-right: 0"
             >
-              <a-button :style="highlightButton" @click="clearAllFilters">
+              <a-button
+                class="reset"
+                :style="highlightButton"
+                @click="clearAllFilters"
+              >
                 <template #icon>
                   <UndoOutlined class="icons" />
                 </template>
@@ -334,12 +340,4 @@
     }
   }
 </script>
-<style scoped>
-  .reset {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 2.5em;
-    height: 2.5em;
-  }
-</style>
+<style scoped></style>
