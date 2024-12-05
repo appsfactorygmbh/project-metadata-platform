@@ -16,17 +16,13 @@
       <UserProvider>
         <LogsProvider>
           <LocalLogProvider>
-            <ProjectProvider>
-              <PluginProvider>
-                <ProjectEditProvider>
-                  <GlobalPluginProvider>
-                    <slot>
-                      <RouterView />
-                    </slot>
-                  </GlobalPluginProvider>
-                </ProjectEditProvider>
-              </PluginProvider>
-            </ProjectProvider>
+            <ProjectEditProvider>
+              <GlobalPluginProvider>
+                <slot>
+                  <RouterView />
+                </slot>
+              </GlobalPluginProvider>
+            </ProjectEditProvider>
           </LocalLogProvider>
         </LogsProvider>
       </UserProvider>

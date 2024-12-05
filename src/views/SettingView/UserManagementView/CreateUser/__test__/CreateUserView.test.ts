@@ -175,8 +175,6 @@ describe('CreateUserView.vue', () => {
     await flushPromises();
 
     expect(userStore.create).toHaveBeenCalledWith({
-      name: 'Name',
-      username: 'Username',
       email: 'E@Ma.il',
       password: 'Pa$$w0rd',
     });

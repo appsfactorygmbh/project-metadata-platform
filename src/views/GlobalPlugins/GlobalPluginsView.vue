@@ -44,6 +44,7 @@
                   :loading="isButtonLoading(item.id)"
                   :disabled="isButtonLoading(item.id)"
                   title="Archive Plugin"
+                  name="archivePluginButton"
                   @click="showDialog(item.id, 'archive')"
                 >
                   <InboxOutlined />

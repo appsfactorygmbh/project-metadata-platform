@@ -18,14 +18,14 @@
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import { useProjectStore } from '@/store';
+  import { usePluginStore, useProjectStore } from '@/store';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectStore = useProjectStore();
   const projectEditStore = inject(projectEditStoreSymbol)!;
-  const pluginStore = inject(pluginStoreSymbol)!;
+  const pluginStore = usePluginStore();
   const projectRouting = inject(projectRoutingSymbol)!;
 
   const editingClass = computed(() => ({
