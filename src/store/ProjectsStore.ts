@@ -221,7 +221,12 @@ export const useProjectStore = defineStore('project', {
           const nextProject = this.projects.find(
             (project) => !project.isArchived,
           );
-          this.project = nextProject ?? null;
+
+          if (nextProject) {
+            await this.fetchProject(nextProject.id);
+          } else {
+            this.setProject(null);
+          }
         }
         return response;
       } catch (error) {
@@ -230,7 +235,7 @@ export const useProjectStore = defineStore('project', {
       } finally {
         this.setLoadingUpdate(false);
       }
-    },
+    }
   },
 });
 

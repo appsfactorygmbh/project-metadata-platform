@@ -42,8 +42,6 @@ declare module 'vue' {
     ASkeleton: typeof import('ant-design-vue/es')['Skeleton']
     ASpace: typeof import('ant-design-vue/es')['Space']
     ATable: typeof import('ant-design-vue/es')['Table']
-    ATimeline: typeof import('ant-design-vue/es')['Timeline']
-    ATimelineItem: typeof import('ant-design-vue/es')['TimelineItem']
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
     ATypographyText: typeof import('ant-design-vue/es')['TypographyText']
     ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
@@ -60,7 +58,6 @@ declare module 'vue' {
     LogItem: typeof import('./../src/components/LogsDisplay/LogItem/LogItem.vue')['default']
     LogTimeline: typeof import('./../src/components/LogsDisplay/LogTimeline/LogTimeline.vue')['default']
     MenuButtons: typeof import('./../src/components/MenuButtons/MenuButtons.vue')['default']
-    NameInputTextField: typeof import('./../src/components/EditableTextField/InputFields/NameInputTextField.vue')['default']
     PluginComponent: typeof import('./../src/components/Plugin/PluginComponent.vue')['default']
     PopupComponent: typeof import('./../src/components/Popup/PopupComponent.vue')['default']
     ProjectButton: typeof import('./../src/components/Button/ProjectButton/ProjectButton.vue')['default']
@@ -69,6 +66,5 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
     SearchBar: typeof import('./../src/components/Searchbar/SearchBar.vue')['default']
-    UsernameInputTextField: typeof import('./../src/components/EditableTextField/InputFields/UsernameInputTextField.vue')['default']
   }
 }
