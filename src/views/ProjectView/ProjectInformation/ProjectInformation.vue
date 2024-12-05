@@ -2,7 +2,6 @@
   import { computed, inject, onMounted, ref, toRaw } from 'vue';
   import {
     localLogStoreSymbol,
-    pluginStoreSymbol,
     projectEditStoreSymbol,
     projectRoutingSymbol,
   } from '@/store/injectionSymbols';
