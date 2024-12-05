@@ -1,7 +1,6 @@
 export type UserListModel = {
   id: number;
-  name: string;
-  username: string;
+  email: string;
 };
 
 export type UserModel = UserListModel & {

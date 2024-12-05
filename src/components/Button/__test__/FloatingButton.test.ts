@@ -11,6 +11,7 @@ const testButtons: FloatButtonModel[] = [
       console.log('test1');
     },
     icon: QuestionOutlined,
+    size: 'middle',
     status: 'activated',
     tooltip: 'test',
   },
@@ -18,6 +19,7 @@ const testButtons: FloatButtonModel[] = [
     name: '2',
     onClick: () => {},
     icon: QuestionOutlined,
+    size: 'middle',
     status: 'deactivated',
     tooltip: 'test',
   },
@@ -27,6 +29,7 @@ const testButtons: FloatButtonModel[] = [
       console.log('test2');
     },
     icon: QuestionOutlined,
+    size: 'middle',
     status: 'disabled',
     tooltip: 'test',
   },
@@ -36,6 +39,7 @@ const testButtons: FloatButtonModel[] = [
       console.log('test3');
     },
     icon: QuestionOutlined,
+    size: 'middle',
     tooltip: 'test',
   },
 ];

@@ -11,6 +11,9 @@
       },
       icon: CloseOutlined,
       status: 'activated',
+      type: 'primary',
+      size: 'large',
+      specialType: 'danger',
       tooltip: 'Click to cancel editing',
     },
     {
@@ -20,6 +23,9 @@
       },
       icon: SaveOutlined,
       status: 'activated',
+      type: 'primary',
+      size: 'large',
+      specialType: 'success',
       tooltip: 'Click to save changes',
     },
   ];

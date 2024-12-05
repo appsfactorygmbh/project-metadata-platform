@@ -45,8 +45,7 @@ const testColumns: SearchableColumns = [
   },
 ];
 
-// TODO: Fix this test. It lets pipeline fail because of jsdom not implementing window.getComputedStyle and other issues
-describe.skip('SearchableTable.vue', () => {
+describe('SearchableTable.vue', () => {
   enableAutoUnmount(afterEach);
   setActivePinia(createPinia());
   const searchStoreSymbol = Symbol('searchStoreSym');

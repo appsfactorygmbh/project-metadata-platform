@@ -20,8 +20,6 @@
 </template>
 
 <script setup lang="ts">
-  import { defineEmits, defineProps } from 'vue';
-
   const { pluginCount, displayName, faviconUrl } = defineProps({
     pluginCount: {
       type: Number,

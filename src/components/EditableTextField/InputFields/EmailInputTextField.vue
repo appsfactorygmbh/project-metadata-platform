@@ -3,7 +3,7 @@
   import { userStoreSymbol } from '@/store/injectionSymbols';
   import type { Rule } from 'ant-design-vue/es/form';
   import { type FormStore } from '@/components/Form';
-  import { type PropType, defineProps, inject, reactive, toRaw } from 'vue';
+  import { type PropType, inject, reactive, toRaw } from 'vue';
 
   const props = defineProps({
     userId: {
@@ -72,7 +72,7 @@
 
 <template>
   <a-form ref="formRef" :model="dynamicValidateForm">
-    <a-form-item :rules="rulesRef.email" name="email" class="formItem">
+    <a-form-item :rules="rulesRef.email" name="email" class="formItem email">
       <a-input
         v-model:value="dynamicValidateForm.email"
         :placeholder="props.placeholder"

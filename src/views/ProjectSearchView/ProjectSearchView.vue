@@ -2,6 +2,7 @@
   import { type SearchableColumn, SearchableTable } from '@/components/Table';
   import { SearchBar } from '@/components/Searchbar';
   import {
+    localLogStoreSymbol,
     pluginStoreSymbol,
     projectRoutingSymbol,
     projectsStoreSymbol,
@@ -35,6 +36,7 @@
   const { stopEditing, isEditing } = useEditing();
   const { routerProjectId, setProjectId } = inject(projectRoutingSymbol)!;
 
+  const localLogStore = inject(localLogStoreSymbol);
   const projectsStore = inject(projectsStoreSymbol);
   const pluginStore = inject(pluginStoreSymbol);
   const searchStore = useSearchStore<ProjectModel>('projects');
@@ -119,6 +121,7 @@
       await projectsStore?.fetchProject(routerProjectId.value);
       await pluginStore?.fetchPlugins(routerProjectId.value);
       await pluginStore?.fetchUnarchivedPlugins(routerProjectId.value);
+      await localLogStore?.fetchLocalLog(routerProjectId.value);
     },
   );
 
@@ -136,6 +139,7 @@
       await projectsStore?.fetchProject(routerProjectId.value);
       await pluginStore?.fetchPlugins(routerProjectId.value);
       await pluginStore?.fetchUnarchivedPlugins(routerProjectId.value);
+      await localLogStore?.fetchLocalLog(routerProjectId.value);
     }
 
     searchStore.setBaseSet(projectsStore?.getProjects ?? []);
@@ -161,7 +165,11 @@
               title="Click here to reset all filters"
               style="padding-left: 0; padding-right: 0"
             >
-              <a-button style="width: 100%" @click="clearAllFilters">
+              <a-button
+                style="width: 100%"
+                @click="clearAllFilters"
+                name="resetButton"
+              >
                 <template #icon>
                   <UndoOutlined class="icons" />
                 </template>

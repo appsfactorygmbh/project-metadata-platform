@@ -1,6 +1,7 @@
 <script lang="ts" setup>
   import { computed, inject, onMounted, ref, toRaw } from 'vue';
   import {
+    localLogStoreSymbol,
     pluginStoreSymbol,
     projectEditStoreSymbol,
     projectRoutingSymbol,
@@ -23,6 +24,7 @@
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
   import ProjectButton from '@/components/Button/ProjectButton/ProjectButton.vue';
 
+  const localLogStore = inject(localLogStoreSymbol);
   const projectsStore = inject(projectsStoreSymbol)!;
   const projectEditStore = inject(projectEditStoreSymbol)!;
   const pluginStore = inject(pluginStoreSymbol)!;
@@ -197,6 +199,7 @@
 
     await projectsStore.activateProject(currentProject, projectId!);
     await projectsStore.fetchProjects();
+    await localLogStore?.fetchLocalLog(projectId!);
   };
 </script>
 

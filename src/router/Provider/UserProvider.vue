@@ -13,7 +13,6 @@
   watch(
     () => auth?.token(),
     () => {
-      console.log('token change', auth);
       userService.setAuth(auth.token());
     },
   );
