@@ -157,7 +157,7 @@ integration-test-job:
     - apk add --no-cache curl
     - yarn build
     - yarn preview --host 127.0.0.1 --port 80 &
-    - sleep 30 && curl --connect-timeout 10 http://127.0.0.1:80/login
+    - curl -s -o /dev/null -w "%{http_code}" http://localhost:80/login
   rules:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEVELOP_BRANCH && $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_TAG == null
 
