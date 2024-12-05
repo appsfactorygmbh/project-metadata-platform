@@ -1,47 +1,77 @@
-import { logsService } from '@/services/LogsService';
 import type { LogEntryModel } from '@/models/Log';
-import { defineStore } from 'pinia';
+import { type Pinia } from 'pinia';
+import { type PiniaStore, useStore } from 'pinia-generic';
+import { piniaInstance } from './piniaInstance';
+import { type ApiStore, useApiStore } from './ApiStore';
+import { LogsApi } from '@/api/generated';
 
 type StoreState = {
   localLog: LogEntryModel[];
   isLoadingLocalLog: boolean;
 };
 
-export const useLocalLogStore = defineStore('localLogs', {
-  state: (): StoreState => {
-    return {
-      localLog: [],
-      isLoadingLocalLog: false,
-    };
-  },
-  getters: {
-    getLocalLog(): LogEntryModel[] {
-      return this.localLog;
-    },
-    getIsLoadingLocalLog(): boolean {
-      return this.isLoadingLocalLog;
-    },
-  },
-  actions: {
-    setLocalLogs(localLog: LogEntryModel[]): void {
-      this.localLog = localLog;
-    },
-    setIsLoadingLocalLog(isLoading: boolean): void {
-      this.isLoadingLocalLog = isLoading;
-    },
+type StoreActions = {
+  refreshAuth: () => void;
+  setLocalLogs: (localLog: LogEntryModel[]) => void;
+  setIsLoadingLocalLog: (isLoading: boolean) => void;
+  fetchLocalLog: (projectId: number) => Promise<void>;
+};
 
-    async fetchLocalLog(projectId: number): Promise<void> {
-      try {
-        this.setIsLoadingLocalLog(true);
-        const localLog: LogEntryModel[] =
-          await logsService.fetchLocalLog(projectId);
-        this.setLocalLogs(localLog);
-      } finally {
-        this.setIsLoadingLocalLog(false);
-      }
+type StoreGetters = {
+  getLocalLog: () => LogEntryModel[];
+  getIsLoadingLocalLog: () => boolean;
+};
+
+type Store = PiniaStore<'localLogs', StoreState, StoreGetters, StoreActions>;
+
+export const useLocalLogStore = (pinia: Pinia = piniaInstance): Store => {
+  return useStore<Store, ApiStore<LogsApi>>(
+    'localLogs',
+    {
+      state: {
+        localLog: [],
+        isLoadingLocalLog: false,
+      },
+      getters: {
+        getLocalLog(): LogEntryModel[] {
+          return this.localLog;
+        },
+        getIsLoadingLocalLog(): boolean {
+          return this.isLoadingLocalLog;
+        },
+      },
+      actions: {
+        refreshAuth(): void {
+          this.initApi();
+        },
+
+        setLocalLogs(localLog: LogEntryModel[]): void {
+          this.localLog = localLog;
+        },
+        setIsLoadingLocalLog(isLoading: boolean): void {
+          this.isLoadingLocalLog = isLoading;
+        },
+
+        async fetchLocalLog(projectId: number): Promise<void> {
+          this.setIsLoadingLocalLog(true);
+          await this.callApi('logsGet', {
+            projectId,
+          })
+            .then((logs: LogEntryModel[]) => {
+              this.setLocalLogs(logs);
+            })
+            .catch(() => {
+              this.setLocalLogs([]);
+            })
+            .finally(() => {
+              this.setIsLoadingLocalLog(false);
+            });
+        },
+      },
     },
-  },
-});
+    useApiStore(LogsApi, pinia),
+  )(pinia);
+};
 
 type LocalLogStore = ReturnType<typeof useLocalLogStore>;
 export type { LocalLogStore };
