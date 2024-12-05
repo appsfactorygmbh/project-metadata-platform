@@ -270,7 +270,7 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
   )(pinia);
 };
 
-const generateSlug = (name: string) => name.replace(/ /g, '-');
+const generateSlug = (name: string) => name?.replace(/ /g, '-') ?? '';
 
 type ProjectsStore = ReturnType<typeof useProjectStore>;
 export type { ProjectsStore };
