@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { Pane, Splitpanes } from 'splitpanes'; //external framework for splitpanes
   import 'splitpanes/dist/splitpanes.css'; //default css for splitpanes
-  import { reactive, ref, onMounted } from 'vue';
+  import { onBeforeMount, reactive, ref } from 'vue';
   import { useElementSize } from '@vueuse/core';
   import { ProjectSearchView } from '@/views/ProjectSearchView';
   import { MenuButtons } from '@/components/MenuButtons';
@@ -10,27 +10,10 @@
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { RightOutlined } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks';
-  import { debounce } from 'lodash';
 
   const { isEditing } = useEditing();
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
-
-  onMounted(() => {
-    const width = localStorage.getItem('tablePaneWidth');
-    if (width) {
-      console.log('have width', width);
-      dimensions.width = Number(width);
-    }
-    console.log(dimensions);
-  });
-
-  watch(
-    dimensions,
-    debounce((newWidth) => {
-      localStorage.setItem('tablePaneWidth', newWidth.width);
-    }, 500),
-  );
 
   const splitButton: FloatButtonModel = {
     name: 'SplitButton',
@@ -40,23 +23,43 @@
     status: 'activated',
     tooltip: 'Click here to expand the table',
   };
+
+  const leftPaneWidth = ref();
+  const rightPaneWidth = ref();
+
+  onBeforeMount(() => {
+    const paneSizeFromLocalStorage = localStorage.getItem('paneSizes');
+    if (paneSizeFromLocalStorage) {
+      leftPaneWidth.value = JSON.parse(paneSizeFromLocalStorage)[0].size;
+      rightPaneWidth.value = JSON.parse(paneSizeFromLocalStorage)[1].size;
+    }
+  });
+
+  const onResize = (newSizes: number[]) => {
+    localStorage.setItem('paneSizes', JSON.stringify(newSizes));
+  };
 </script>
 
 <template>
   <div class="container">
-    <splitpanes class="default-theme">
+    <splitpanes class="default-theme" @resized="onResize">
       <!--
         size: sets default proportion to 1:4
         min-size: sets smallest possible size to 20% and 1%
       -->
-      <pane ref="tablePane" size="70" min-size="20" class="leftPane">
+      <pane
+        ref="tablePane"
+        :size="leftPaneWidth"
+        min-size="20"
+        class="leftPane"
+      >
         <ProjectSearchView
           :pane-width="dimensions.width"
           :pane-height="dimensions.height"
         />
       </pane>
 
-      <pane size="32" min-size="32" class="rightPane">
+      <pane :size="rightPaneWidth" min-size="32" class="rightPane">
         <ProjectView />
         <FloatingButton :button="splitButton" class="button" />
         <MenuButtons />
