@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { Pane, Splitpanes } from 'splitpanes'; //external framework for splitpanes
   import 'splitpanes/dist/splitpanes.css'; //default css for splitpanes
-  import { reactive, ref } from 'vue';
+  import { reactive, ref, onMounted } from 'vue';
   import { useElementSize } from '@vueuse/core';
   import { ProjectSearchView } from '@/views/ProjectSearchView';
   import { MenuButtons } from '@/components/MenuButtons';
@@ -10,10 +10,27 @@
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { RightOutlined } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks';
+  import { debounce } from 'lodash';
 
   const { isEditing } = useEditing();
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
+
+  onMounted(() => {
+    const width = localStorage.getItem('tablePaneWidth');
+    if (width) {
+      console.log('have width', width);
+      dimensions.width = Number(width);
+    }
+    console.log(dimensions);
+  });
+
+  watch(
+    dimensions,
+    debounce((newWidth) => {
+      localStorage.setItem('tablePaneWidth', newWidth.width);
+    }, 500),
+  );
 
   const splitButton: FloatButtonModel = {
     name: 'SplitButton',
