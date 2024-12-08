@@ -8,8 +8,9 @@ import { SplitView } from '@/views';
 import { ProviderCollection } from '@/router/Provider';
 import { useProjectStore } from '@/store';
 import { setActivePinia } from 'pinia';
+import type { ProjectModel } from '@/models/Project';
 
-const testProjects = [
+const testProjects: ProjectModel[] = [
   {
     id: 200,
     projectName: 'test 1',
@@ -17,6 +18,7 @@ const testProjects = [
     businessUnit: 'test',
     teamNumber: 1,
     isArchived: false,
+    slug: 'test-1',
   },
   {
     id: 300,
@@ -25,6 +27,7 @@ const testProjects = [
     businessUnit: 'test',
     teamNumber: 1,
     isArchived: false,
+    slug: 'test-2',
   },
 ];
 

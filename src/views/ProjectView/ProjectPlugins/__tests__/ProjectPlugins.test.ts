@@ -74,6 +74,7 @@ describe('ProjectPlugins', () => {
       teamNumber: 1,
       department: 'Test Department',
       isArchived: false,
+      slug: 'test-project',
     };
 
     const mockArchivedProject: DetailedProjectModel = {
@@ -84,6 +85,7 @@ describe('ProjectPlugins', () => {
       teamNumber: 1,
       department: 'Test Department',
       isArchived: true,
+      slug: 'test-project',
     };
 
     const unarchivedPluginsSpy = vi

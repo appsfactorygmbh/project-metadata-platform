@@ -66,13 +66,14 @@ describe('ProjectSearchView.vue', () => {
     const wrapper = generateWrapper(700) as VueWrapper<
       ComponentPublicInstance<ProjectSearchViewInstance>
     >;
-    const testProject = {
+    const testProject: ProjectModel = {
       id: 200,
       projectName: 'test',
       clientName: 'test',
       businessUnit: 'test',
       teamNumber: 1,
       isArchived: false,
+      slug: 'test-project',
     };
 
     wrapper.vm.handleRowClick(testProject);

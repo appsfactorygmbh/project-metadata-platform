@@ -18,6 +18,7 @@ import {
 
 const testData: DetailedProjectModel = {
   id: 1,
+  slug: 'test-project',
   isArchived: false,
   projectName: 'Heute Show',
   department: 'IT',
