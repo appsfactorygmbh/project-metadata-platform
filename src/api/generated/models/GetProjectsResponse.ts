@@ -25,6 +25,12 @@ export interface GetProjectsResponse {
      */
     id: number;
     /**
+     * The Slug for the project name.
+     * @type {string}
+     * @memberof GetProjectsResponse
+     */
+    slug: string;
+    /**
      * The name of the project.
      * @type {string}
      * @memberof GetProjectsResponse
@@ -61,6 +67,7 @@ export interface GetProjectsResponse {
  */
 export function instanceOfGetProjectsResponse(value: object): value is GetProjectsResponse {
     if (!('id' in value) || value['id'] === undefined) return false;
+    if (!('slug' in value) || value['slug'] === undefined) return false;
     if (!('projectName' in value) || value['projectName'] === undefined) return false;
     if (!('clientName' in value) || value['clientName'] === undefined) return false;
     if (!('businessUnit' in value) || value['businessUnit'] === undefined) return false;
@@ -80,6 +87,7 @@ export function GetProjectsResponseFromJSONTyped(json: any, ignoreDiscriminator:
     return {
         
         'id': json['id'],
+        'slug': json['slug'],
         'projectName': json['projectName'],
         'clientName': json['clientName'],
         'businessUnit': json['businessUnit'],
@@ -100,6 +108,7 @@ export function GetProjectsResponseFromJSONTyped(json: any, ignoreDiscriminator:
     return {
         
         'id': value['id'],
+        'slug': value['slug'],
         'projectName': value['projectName'],
         'clientName': value['clientName'],
         'businessUnit': value['businessUnit'],

@@ -26,6 +26,7 @@ export interface LogsGetRequest {
     search?: string;
     userId?: string;
     globalPluginId?: number;
+    projectSlug?: string;
 }
 
 /**
@@ -42,6 +43,7 @@ export interface LogsApiInterface {
      * @param {string} [search] The search term to filter logs by.
      * @param {string} [userId] The ID of the affected user to filter logs by.
      * @param {number} [globalPluginId] The ID of the global plugin to filter logs by.
+     * @param {string} [projectSlug] The slug of the project to filter logs by.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof LogsApiInterface
@@ -80,6 +82,10 @@ export class LogsApi extends runtime.BaseAPI implements LogsApiInterface {
 
         if (requestParameters['globalPluginId'] != null) {
             queryParameters['globalPluginId'] = requestParameters['globalPluginId'];
+        }
+
+        if (requestParameters['projectSlug'] != null) {
+            queryParameters['projectSlug'] = requestParameters['projectSlug'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};

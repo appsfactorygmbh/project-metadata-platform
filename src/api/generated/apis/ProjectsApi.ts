@@ -59,6 +59,10 @@ export interface ProjectsPutRequest {
     createProjectRequest?: CreateProjectRequest;
 }
 
+export interface ProjectsSlugGetRequest {
+    slug: string;
+}
+
 /**
  * ProjectsApi - interface
  * 
@@ -191,6 +195,21 @@ export interface ProjectsApiInterface {
      * Creates a new project or updates the one with given id.
      */
     projectsPut(requestParameters: ProjectsPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateProjectResponse>;
+
+    /**
+     * 
+     * @summary Gets the project with the given slug.
+     * @param {string} slug The slug of the project.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectsApiInterface
+     */
+    projectsSlugGetRaw(requestParameters: ProjectsSlugGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetProjectResponse>>;
+
+    /**
+     * Gets the project with the given slug.
+     */
+    projectsSlugGet(requestParameters: ProjectsSlugGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetProjectResponse>;
 
 }
 
@@ -498,6 +517,43 @@ export class ProjectsApi extends runtime.BaseAPI implements ProjectsApiInterface
      */
     async projectsPut(requestParameters: ProjectsPutRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateProjectResponse> {
         const response = await this.projectsPutRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Gets the project with the given slug.
+     */
+    async projectsSlugGetRaw(requestParameters: ProjectsSlugGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetProjectResponse>> {
+        if (requestParameters['slug'] == null) {
+            throw new runtime.RequiredError(
+                'slug',
+                'Required parameter "slug" was null or undefined when calling projectsSlugGet().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = await this.configuration.apiKey("Authorization"); // Bearer authentication
+        }
+
+        const response = await this.request({
+            path: `/Projects/{slug}`.replace(`{${"slug"}}`, encodeURIComponent(String(requestParameters['slug']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => GetProjectResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Gets the project with the given slug.
+     */
+    async projectsSlugGet(requestParameters: ProjectsSlugGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetProjectResponse> {
+        const response = await this.projectsSlugGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
