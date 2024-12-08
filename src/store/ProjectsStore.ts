@@ -235,7 +235,7 @@ export const useProjectStore = defineStore('project', {
       } finally {
         this.setLoadingUpdate(false);
       }
-    }
+    },
   },
 });
 

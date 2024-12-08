@@ -12,8 +12,8 @@ import router from '@/router';
 import {
   DeleteOutlined,
   EditOutlined,
-  UndoOutlined,
   InboxOutlined,
+  UndoOutlined,
 } from '@ant-design/icons-vue';
 
 describe('ProjectInformation.vue', () => {
@@ -70,7 +70,7 @@ describe('ProjectInformation.vue', () => {
       clientName: 'ZDF',
       businessUnit: 'BU Health',
       teamNumber: 42,
-      isArchived: true
+      isArchived: true,
     };
 
     const wrapper = mount(ProjectInformation, {

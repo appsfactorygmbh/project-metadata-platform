@@ -17,7 +17,7 @@
     DeleteOutlined,
     EditOutlined,
     InboxOutlined,
-    UndoOutlined
+    UndoOutlined,
   } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
@@ -268,7 +268,7 @@
           @click="handleArchive"
         >
           <template #icon>
-            <InboxOutlined class="icon"/>
+            <InboxOutlined class="icon" />
           </template>
         </ProjectButton>
 
