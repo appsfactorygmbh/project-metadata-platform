@@ -157,6 +157,8 @@
 
         if (nextProject) {
           projectRouting.setProjectId(nextProject.id);
+        } else {
+          projectRouting.setProjectId(null);
         }
       }
     } catch (error) {
