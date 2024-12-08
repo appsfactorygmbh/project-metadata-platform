@@ -157,7 +157,7 @@ describe('ProjectInformation.vue', () => {
     expect(wrapper.findComponent(DeleteOutlined).exists()).toBeFalsy();
   });
 
-  it('hide edit button when edit', async () => {
+  it('hide edit and archive button when in edit project mode', async () => {
     const testData = {
       projectName: 'Heute Show',
       department: 'IT',

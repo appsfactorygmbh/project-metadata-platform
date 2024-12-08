@@ -111,7 +111,7 @@
   <LocalLogView class="LocalLog" />
   <ConfirmAction
     :is-open="isModalOpen"
-    title="Archive Project"
+    title="Cancel Editing"
     message="Are you sure you want to cancel all changes?"
     @confirm="cancelEdit"
     @cancel="isModalOpen = false"
