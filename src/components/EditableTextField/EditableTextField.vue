@@ -135,10 +135,9 @@
     display: flex;
     flex-flow: column wrap;
     justify-content: center;
-  }
-
-  .ant-card-body {
-    padding: 12px !important;
+    .ant-card-body {
+      padding: 12px !important;
+    }
   }
 
   .info label {
