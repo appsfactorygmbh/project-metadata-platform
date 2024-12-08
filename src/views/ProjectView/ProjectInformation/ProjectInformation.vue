@@ -22,7 +22,7 @@
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
-  import ProjectButton from '@/components/Button/ProjectButton/ProjectButton.vue';
+  import OutlinedButton from '@/components/Button/OutlinedButton.vue';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectsStore = inject(projectsStoreSymbol)!;
@@ -216,7 +216,7 @@
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
 
         <!-- Edit Button -->
-        <ProjectButton
+        <OutlinedButton
           v-if="!projectsStore.getProject?.isArchived"
           tooltip-position="left"
           tooltip="Click here to activate Edit-View"
@@ -225,10 +225,10 @@
           <template #icon>
             <EditOutlined class="icon" />
           </template>
-        </ProjectButton>
+        </OutlinedButton>
 
         <!-- Reactivate Button -->
-        <ProjectButton
+        <OutlinedButton
           v-if="projectsStore.getProject?.isArchived"
           tooltip-position="left"
           tooltip="Click here to reactivate"
@@ -237,10 +237,10 @@
           <template #icon>
             <UndoOutlined class="icon" />
           </template>
-        </ProjectButton>
+        </OutlinedButton>
 
         <!-- Delete Button -->
-        <ProjectButton
+        <OutlinedButton
           v-if="projectsStore.getProject?.isArchived"
           tooltip-position="right"
           tooltip="Click here to delete the project"
@@ -249,7 +249,7 @@
           <template #icon>
             <DeleteOutlined class="icon" />
           </template>
-        </ProjectButton>
+        </OutlinedButton>
 
         <ConfirmAction
           :is-open="isDeleteModalOpen"
@@ -261,7 +261,7 @@
         />
 
         <!-- Archive Button -->
-        <ProjectButton
+        <OutlinedButton
           v-if="!projectsStore.getProject?.isArchived"
           tooltip-position="right"
           tooltip="Click here to archive the project"
@@ -270,7 +270,7 @@
           <template #icon>
             <InboxOutlined class="icon" />
           </template>
-        </ProjectButton>
+        </OutlinedButton>
 
         <ConfirmAction
           :is-open="isArchiveModalOpen"

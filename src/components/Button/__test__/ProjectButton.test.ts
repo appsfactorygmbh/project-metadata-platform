@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils';
-import ProjectButton from '@/components/Button/ProjectButton/ProjectButton.vue';
+import ProjectButton from '@/components/Button/OutlinedButton.vue';
 import { describe, expect, it } from 'vitest';
 
-describe('ProjectButton.vue', () => {
+describe('OutlinedButton.vue', () => {
   it('renders the default button correctly', () => {
     const wrapper = mount(ProjectButton, {
       slots: {
