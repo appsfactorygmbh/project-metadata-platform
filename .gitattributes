@@ -1,0 +1,5 @@
+# Collapse all files within the api/generated directory
+src/api/generated/** gitlab-generated
+
+# Do not collapse package-lock.json
+package-lock.json -gitlab-generated

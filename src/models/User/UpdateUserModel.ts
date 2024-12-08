@@ -1,5 +1,3 @@
-import type { GetUserResponse } from '@/api/generated';
+import type { PatchUserRequest } from '@/api/generated';
 
-export type UpdateUserModel = Partial<GetUserResponse> & {
-  password?: string;
-};
+export type UpdateUserModel = PatchUserRequest;
