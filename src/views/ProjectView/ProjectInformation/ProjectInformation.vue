@@ -218,6 +218,8 @@
         <!-- Edit Button -->
         <ProjectButton
           v-if="!projectsStore.getProject?.isArchived"
+          tooltip-position="left"
+          tooltip="Click here to activate Edit-View"
           @click="toggleEditingMode"
         >
           <template #icon>
@@ -226,55 +228,49 @@
         </ProjectButton>
 
         <!-- Reactivate Button -->
-        <a-tooltip
+        <ProjectButton
           v-if="projectsStore.getProject?.isArchived"
-          position="left"
-          title="Click here to reactivate the project"
-          style="padding-left: 0; padding-right: 0"
+          tooltip-position="left"
+          tooltip="Click here to reactivate"
+          @click="reactivateProject"
         >
-          <ProjectButton @click="reactivateProject">
-            <template #icon>
-              <UndoOutlined class="icon" />
-            </template>
-          </ProjectButton>
-        </a-tooltip>
+          <template #icon>
+            <UndoOutlined class="icon" />
+          </template>
+        </ProjectButton>
 
         <!-- Delete Button -->
-        <a-tooltip
+        <ProjectButton
           v-if="projectsStore.getProject?.isArchived"
-          position="right"
-          title="Click here to delete the project"
-          style="padding-left: 0; padding-right: 0"
+          tooltip-position="right"
+          tooltip="Click here to delete the project"
+          @click="handleDelete"
         >
-          <ProjectButton @click="handleDelete">
-            <template #icon>
-              <DeleteOutlined class="icon" />
-            </template>
-          </ProjectButton>
+          <template #icon>
+            <DeleteOutlined class="icon" />
+          </template>
+        </ProjectButton>
 
-          <ConfirmAction
-            :is-open="isDeleteModalOpen"
-            title="Delete Project"
-            message="Are you sure you want to delete this project permanently?"
-            @confirm="confirmDelete"
-            @cancel="isDeleteModalOpen = false"
-            @update:is-open="(value) => (isDeleteModalOpen = value)"
-          />
-        </a-tooltip>
+        <ConfirmAction
+          :is-open="isDeleteModalOpen"
+          title="Delete Project"
+          message="Are you sure you want to delete this project permanently?"
+          @confirm="confirmDelete"
+          @cancel="isDeleteModalOpen = false"
+          @update:is-open="(value) => (isDeleteModalOpen = value)"
+        />
 
         <!-- Archive Button -->
-        <a-tooltip
+        <ProjectButton
           v-if="!projectsStore.getProject?.isArchived"
-          position="left"
-          title="Click here to archive the project"
-          style="padding-left: 0; padding-right: 0"
+          tooltip-position="right"
+          tooltip="Click here to archive the project"
+          @click="handleArchive"
         >
-          <ProjectButton @click="handleArchive">
-            <template #icon>
-              <InboxOutlined class="icon"/>
-            </template>
-          </ProjectButton>
-        </a-tooltip>
+          <template #icon>
+            <InboxOutlined class="icon"/>
+          </template>
+        </ProjectButton>
 
         <ConfirmAction
           :is-open="isArchiveModalOpen"
