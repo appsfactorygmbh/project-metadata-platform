@@ -32,6 +32,7 @@
 <script lang="ts" setup>
   import type { ButtonShape, ButtonType } from 'ant-design-vue/es/button';
   import type { SizeType } from 'ant-design-vue/es/config-provider';
+  import type { TooltipPlacement } from 'ant-design-vue/es/tooltip';
 
   defineProps({
     type: {
@@ -51,8 +52,8 @@
       default: '',
     },
     tooltipPosition: {
-      type: String,
-      default: '',
+      type: String as () => TooltipPlacement,
+      default: 'left',
     },
   });
 
