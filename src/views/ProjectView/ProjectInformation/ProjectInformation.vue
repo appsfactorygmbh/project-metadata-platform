@@ -16,8 +16,8 @@
   import {
     DeleteOutlined,
     EditOutlined,
-    UndoOutlined,
-    InboxOutlined
+    InboxOutlined,
+    UndoOutlined
   } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';

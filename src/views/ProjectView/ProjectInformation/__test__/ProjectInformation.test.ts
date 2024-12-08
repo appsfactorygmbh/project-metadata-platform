@@ -13,6 +13,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   UndoOutlined,
+  InboxOutlined,
 } from '@ant-design/icons-vue';
 
 describe('ProjectInformation.vue', () => {
@@ -69,7 +70,7 @@ describe('ProjectInformation.vue', () => {
       clientName: 'ZDF',
       businessUnit: 'BU Health',
       teamNumber: 42,
-      isArchived: false,
+      isArchived: true
     };
 
     const wrapper = mount(ProjectInformation, {
@@ -99,19 +100,18 @@ describe('ProjectInformation.vue', () => {
 
     await flushPromises();
 
-    // Confirm Modal should be closed
-    expect(
-      wrapper.findComponent({ name: 'ConfirmAction' }).props('isOpen'),
-    ).toBe(false);
+    // check if delete button exists
+    const deleteButton = wrapper.findComponent(DeleteOutlined);
+    expect(deleteButton.exists()).toBeTruthy();
 
-    // find and clicks delete button
-    await wrapper.find('.button .anticon-delete').trigger('click');
+    // click on delete button
+    await deleteButton.trigger('click');
     await flushPromises();
 
-    // Expectation: Confirm Modal is open
-    expect(
-      wrapper.findComponent({ name: 'ConfirmAction' }).props('isOpen'),
-    ).toBe(true);
+    // check if modal opened
+    const confirmModal = wrapper.findComponent({ name: 'ConfirmAction' });
+    expect(confirmModal.exists()).toBeTruthy();
+    expect(confirmModal.props('isOpen')).toBe(true);
   });
 
   it('does not render the edit button but shows the reactivate button when archived', async () => {
@@ -151,9 +151,10 @@ describe('ProjectInformation.vue', () => {
 
     await flushPromises();
 
-    // Expectation: No Edit- or Archive Button, but Reactivate Button
+    // Expectation: No Edit- or Archive Button, but Reactivate and Delete Button
     expect(wrapper.findComponent(EditOutlined).exists()).toBeFalsy();
+    expect(wrapper.findComponent(InboxOutlined).exists()).toBeFalsy();
     expect(wrapper.findComponent(UndoOutlined).exists()).toBeTruthy();
-    expect(wrapper.findComponent(DeleteOutlined).exists()).toBeFalsy();
+    expect(wrapper.findComponent(DeleteOutlined).exists()).toBeTruthy();
   });
 });
