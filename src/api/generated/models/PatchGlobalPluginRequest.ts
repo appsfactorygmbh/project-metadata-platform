@@ -61,11 +61,11 @@ export function PatchGlobalPluginRequestFromJSONTyped(json: any, ignoreDiscrimin
     };
 }
 
-  export function PatchGlobalPluginRequestToJSON(json: any): PatchGlobalPluginRequest {
-      return PatchGlobalPluginRequestToJSONTyped(json, false);
-  }
+export function PatchGlobalPluginRequestToJSON(json: any): PatchGlobalPluginRequest {
+    return PatchGlobalPluginRequestToJSONTyped(json, false);
+}
 
-  export function PatchGlobalPluginRequestToJSONTyped(value?: PatchGlobalPluginRequest | null, ignoreDiscriminator: boolean = false): any {
+export function PatchGlobalPluginRequestToJSONTyped(value?: PatchGlobalPluginRequest | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

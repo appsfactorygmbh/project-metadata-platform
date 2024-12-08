@@ -64,11 +64,11 @@ export function CreatePluginRequestFromJSONTyped(json: any, ignoreDiscriminator:
     };
 }
 
-  export function CreatePluginRequestToJSON(json: any): CreatePluginRequest {
-      return CreatePluginRequestToJSONTyped(json, false);
-  }
+export function CreatePluginRequestToJSON(json: any): CreatePluginRequest {
+    return CreatePluginRequestToJSONTyped(json, false);
+}
 
-  export function CreatePluginRequestToJSONTyped(value?: CreatePluginRequest | null, ignoreDiscriminator: boolean = false): any {
+export function CreatePluginRequestToJSONTyped(value?: CreatePluginRequest | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

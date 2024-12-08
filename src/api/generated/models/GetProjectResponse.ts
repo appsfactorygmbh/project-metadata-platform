@@ -104,11 +104,11 @@ export function GetProjectResponseFromJSONTyped(json: any, ignoreDiscriminator: 
     };
 }
 
-  export function GetProjectResponseToJSON(json: any): GetProjectResponse {
-      return GetProjectResponseToJSONTyped(json, false);
-  }
+export function GetProjectResponseToJSON(json: any): GetProjectResponse {
+    return GetProjectResponseToJSONTyped(json, false);
+}
 
-  export function GetProjectResponseToJSONTyped(value?: GetProjectResponse | null, ignoreDiscriminator: boolean = false): any {
+export function GetProjectResponseToJSONTyped(value?: GetProjectResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

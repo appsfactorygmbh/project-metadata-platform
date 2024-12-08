@@ -54,11 +54,11 @@ export function PatchUserRequestFromJSONTyped(json: any, ignoreDiscriminator: bo
     };
 }
 
-  export function PatchUserRequestToJSON(json: any): PatchUserRequest {
-      return PatchUserRequestToJSONTyped(json, false);
-  }
+export function PatchUserRequestToJSON(json: any): PatchUserRequest {
+    return PatchUserRequestToJSONTyped(json, false);
+}
 
-  export function PatchUserRequestToJSONTyped(value?: PatchUserRequest | null, ignoreDiscriminator: boolean = false): any {
+export function PatchUserRequestToJSONTyped(value?: PatchUserRequest | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

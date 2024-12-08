@@ -48,11 +48,11 @@ export function CreatePluginResponseFromJSONTyped(json: any, ignoreDiscriminator
     };
 }
 
-  export function CreatePluginResponseToJSON(json: any): CreatePluginResponse {
-      return CreatePluginResponseToJSONTyped(json, false);
-  }
+export function CreatePluginResponseToJSON(json: any): CreatePluginResponse {
+    return CreatePluginResponseToJSONTyped(json, false);
+}
 
-  export function CreatePluginResponseToJSONTyped(value?: CreatePluginResponse | null, ignoreDiscriminator: boolean = false): any {
+export function CreatePluginResponseToJSONTyped(value?: CreatePluginResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

@@ -56,11 +56,11 @@ export function CreateUserRequestFromJSONTyped(json: any, ignoreDiscriminator: b
     };
 }
 
-  export function CreateUserRequestToJSON(json: any): CreateUserRequest {
-      return CreateUserRequestToJSONTyped(json, false);
-  }
+export function CreateUserRequestToJSON(json: any): CreateUserRequest {
+    return CreateUserRequestToJSONTyped(json, false);
+}
 
-  export function CreateUserRequestToJSONTyped(value?: CreateUserRequest | null, ignoreDiscriminator: boolean = false): any {
+export function CreateUserRequestToJSONTyped(value?: CreateUserRequest | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

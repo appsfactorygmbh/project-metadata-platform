@@ -56,11 +56,11 @@ export function DeleteGlobalPluginResponseFromJSONTyped(json: any, ignoreDiscrim
     };
 }
 
-  export function DeleteGlobalPluginResponseToJSON(json: any): DeleteGlobalPluginResponse {
-      return DeleteGlobalPluginResponseToJSONTyped(json, false);
-  }
+export function DeleteGlobalPluginResponseToJSON(json: any): DeleteGlobalPluginResponse {
+    return DeleteGlobalPluginResponseToJSONTyped(json, false);
+}
 
-  export function DeleteGlobalPluginResponseToJSONTyped(value?: DeleteGlobalPluginResponse | null, ignoreDiscriminator: boolean = false): any {
+export function DeleteGlobalPluginResponseToJSONTyped(value?: DeleteGlobalPluginResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

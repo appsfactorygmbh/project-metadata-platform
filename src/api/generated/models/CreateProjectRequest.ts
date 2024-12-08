@@ -101,11 +101,11 @@ export function CreateProjectRequestFromJSONTyped(json: any, ignoreDiscriminator
     };
 }
 
-  export function CreateProjectRequestToJSON(json: any): CreateProjectRequest {
-      return CreateProjectRequestToJSONTyped(json, false);
-  }
+export function CreateProjectRequestToJSON(json: any): CreateProjectRequest {
+    return CreateProjectRequestToJSONTyped(json, false);
+}
 
-  export function CreateProjectRequestToJSONTyped(value?: CreateProjectRequest | null, ignoreDiscriminator: boolean = false): any {
+export function CreateProjectRequestToJSONTyped(value?: CreateProjectRequest | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

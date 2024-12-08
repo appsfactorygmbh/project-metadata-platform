@@ -56,11 +56,11 @@ export function GetUserResponseFromJSONTyped(json: any, ignoreDiscriminator: boo
     };
 }
 
-  export function GetUserResponseToJSON(json: any): GetUserResponse {
-      return GetUserResponseToJSONTyped(json, false);
-  }
+export function GetUserResponseToJSON(json: any): GetUserResponse {
+    return GetUserResponseToJSONTyped(json, false);
+}
 
-  export function GetUserResponseToJSONTyped(value?: GetUserResponse | null, ignoreDiscriminator: boolean = false): any {
+export function GetUserResponseToJSONTyped(value?: GetUserResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

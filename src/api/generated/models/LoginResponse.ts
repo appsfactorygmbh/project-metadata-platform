@@ -56,11 +56,11 @@ export function LoginResponseFromJSONTyped(json: any, ignoreDiscriminator: boole
     };
 }
 
-  export function LoginResponseToJSON(json: any): LoginResponse {
-      return LoginResponseToJSONTyped(json, false);
-  }
+export function LoginResponseToJSON(json: any): LoginResponse {
+    return LoginResponseToJSONTyped(json, false);
+}
 
-  export function LoginResponseToJSONTyped(value?: LoginResponse | null, ignoreDiscriminator: boolean = false): any {
+export function LoginResponseToJSONTyped(value?: LoginResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

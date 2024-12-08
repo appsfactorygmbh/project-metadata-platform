@@ -56,11 +56,11 @@ export function LogResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean
     };
 }
 
-  export function LogResponseToJSON(json: any): LogResponse {
-      return LogResponseToJSONTyped(json, false);
-  }
+export function LogResponseToJSON(json: any): LogResponse {
+    return LogResponseToJSONTyped(json, false);
+}
 
-  export function LogResponseToJSONTyped(value?: LogResponse | null, ignoreDiscriminator: boolean = false): any {
+export function LogResponseToJSONTyped(value?: LogResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

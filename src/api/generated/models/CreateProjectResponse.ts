@@ -48,11 +48,11 @@ export function CreateProjectResponseFromJSONTyped(json: any, ignoreDiscriminato
     };
 }
 
-  export function CreateProjectResponseToJSON(json: any): CreateProjectResponse {
-      return CreateProjectResponseToJSONTyped(json, false);
-  }
+export function CreateProjectResponseToJSON(json: any): CreateProjectResponse {
+    return CreateProjectResponseToJSONTyped(json, false);
+}
 
-  export function CreateProjectResponseToJSONTyped(value?: CreateProjectResponse | null, ignoreDiscriminator: boolean = false): any {
+export function CreateProjectResponseToJSONTyped(value?: CreateProjectResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

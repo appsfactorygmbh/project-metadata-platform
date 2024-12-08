@@ -96,11 +96,11 @@ export function GetProjectsResponseFromJSONTyped(json: any, ignoreDiscriminator:
     };
 }
 
-  export function GetProjectsResponseToJSON(json: any): GetProjectsResponse {
-      return GetProjectsResponseToJSONTyped(json, false);
-  }
+export function GetProjectsResponseToJSON(json: any): GetProjectsResponse {
+    return GetProjectsResponseToJSONTyped(json, false);
+}
 
-  export function GetProjectsResponseToJSONTyped(value?: GetProjectsResponse | null, ignoreDiscriminator: boolean = false): any {
+export function GetProjectsResponseToJSONTyped(value?: GetProjectsResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

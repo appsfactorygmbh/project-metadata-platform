@@ -48,11 +48,11 @@ export function CreateUserResponseFromJSONTyped(json: any, ignoreDiscriminator: 
     };
 }
 
-  export function CreateUserResponseToJSON(json: any): CreateUserResponse {
-      return CreateUserResponseToJSONTyped(json, false);
-  }
+export function CreateUserResponseToJSON(json: any): CreateUserResponse {
+    return CreateUserResponseToJSONTyped(json, false);
+}
 
-  export function CreateUserResponseToJSONTyped(value?: CreateUserResponse | null, ignoreDiscriminator: boolean = false): any {
+export function CreateUserResponseToJSONTyped(value?: CreateUserResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

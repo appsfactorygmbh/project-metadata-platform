@@ -72,11 +72,11 @@ export function GetPluginResponseFromJSONTyped(json: any, ignoreDiscriminator: b
     };
 }
 
-  export function GetPluginResponseToJSON(json: any): GetPluginResponse {
-      return GetPluginResponseToJSONTyped(json, false);
-  }
+export function GetPluginResponseToJSON(json: any): GetPluginResponse {
+    return GetPluginResponseToJSONTyped(json, false);
+}
 
-  export function GetPluginResponseToJSONTyped(value?: GetPluginResponse | null, ignoreDiscriminator: boolean = false): any {
+export function GetPluginResponseToJSONTyped(value?: GetPluginResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

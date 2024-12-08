@@ -64,11 +64,11 @@ export function UpdateProjectPluginRequestFromJSONTyped(json: any, ignoreDiscrim
     };
 }
 
-  export function UpdateProjectPluginRequestToJSON(json: any): UpdateProjectPluginRequest {
-      return UpdateProjectPluginRequestToJSONTyped(json, false);
-  }
+export function UpdateProjectPluginRequestToJSON(json: any): UpdateProjectPluginRequest {
+    return UpdateProjectPluginRequestToJSONTyped(json, false);
+}
 
-  export function UpdateProjectPluginRequestToJSONTyped(value?: UpdateProjectPluginRequest | null, ignoreDiscriminator: boolean = false): any {
+export function UpdateProjectPluginRequestToJSONTyped(value?: UpdateProjectPluginRequest | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
