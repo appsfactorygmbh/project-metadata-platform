@@ -50,8 +50,10 @@
     onClick: () => {
       showModal();
     },
+    type: 'primary',
     icon: PlusOutlined,
     status: 'activated',
+    size: 'large',
     tooltip: 'Click here to create a new project',
   };
 

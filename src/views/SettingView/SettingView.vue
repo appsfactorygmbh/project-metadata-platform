@@ -27,6 +27,8 @@
     icon: LeftOutlined,
     onClick: goToMain,
     name: 'Back',
+    size: 'large',
+    type: 'primary',
   };
 
   //Methods for URL link  by clickin the navigation buttons
@@ -145,7 +147,7 @@
   }
 
   .layout {
-    min-height: 100vh;
+    min-height: 100%;
   }
 
   .ant-layout-header {

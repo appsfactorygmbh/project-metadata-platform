@@ -28,8 +28,7 @@ const testProjects = [
   },
 ];
 
-// TODO: Fix this test. It lets pipeline fail because of jsdom not implementing window.getComputedStyle and other issues
-describe.skip('ProjectSlagResolver.vue', () => {
+describe('ProjectSlagResolver.vue', () => {
   enableAutoUnmount(afterEach);
   createTestingPinia();
 

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { useEditing } from '@/utils/hooks/useEditing';
-  import { defineProps, ref } from 'vue';
+  import { ref } from 'vue';
   import { useFormStore } from '@/components/Form';
   import { inject, reactive, toRaw } from 'vue';
   import type { PropType } from 'vue';

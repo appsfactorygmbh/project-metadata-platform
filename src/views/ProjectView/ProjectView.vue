@@ -1,10 +1,12 @@
 <script lang="ts" setup>
   import { ProjectPlugins } from './ProjectPlugins';
+  import { LocalLogView } from './LocalLogView';
   import { ProjectInformation } from './ProjectInformation';
   import type { UpdateProjectModel } from '@/models/Project';
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import {
+    localLogStoreSymbol,
     pluginStoreSymbol,
     projectEditStoreSymbol,
     projectsStoreSymbol,
@@ -12,6 +14,7 @@
   import { inject, watch } from 'vue';
   import { message } from 'ant-design-vue';
 
+  const localLogStore = inject(localLogStoreSymbol);
   const pluginStore = inject(pluginStoreSymbol);
   const projectStore = inject(projectsStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
@@ -48,8 +51,9 @@
     if (!newVal) {
       if (projectStore?.getUpdatedSuccessfully) {
         projectEditStore?.resetPluginChanges();
-        message.success('Project updated successfully.', 7);
+        message.success('Project updated successfully.', 2);
         projectStore.fetchProject(projectStore.getProject?.id || 0);
+
         stopEditing();
       } else {
         message.error('Could not update Project.', 5);
@@ -92,6 +96,7 @@
       await projectStore.fetchProjects();
       await projectStore.fetchProject(projectID.value);
       await pluginStore?.fetchUnarchivedPlugins(projectID.value);
+      await localLogStore?.fetchLocalLog(projectID.value);
     }
   };
 </script>
@@ -100,6 +105,7 @@
   <ProjectEditButtons v-if="isEditing" @cancel="cancelEdit" @save="saveEdit" />
   <ProjectInformation />
   <ProjectPlugins class="pluginView" />
+  <LocalLogView class="LocalLog" />
 </template>
 
 <style scoped>

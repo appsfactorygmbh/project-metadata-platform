@@ -7,25 +7,20 @@
   import { storeToRefs } from 'pinia';
   import { useRouter } from 'vue-router';
   import { userService } from '@/services';
-  import { useEditing } from '@/utils/hooks';
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useUserRouting } from '@/utils/hooks';
-  import { useFormStore } from '@/components/Form';
 
   const router = useRouter();
   const userStore = inject(userStoreSymbol)!;
   const { routerUserId, setUserId } = useUserRouting();
   const { getIsLoadingUsers, getIsLoading, getUser, getMe } =
     storeToRefs(userStore);
-  const { isEditing, startEditing, stopEditing } = useEditing('isEditingName');
   const user = computed(() => getUser.value);
   const me = computed(() => getMe.value);
   const isLoading = computed(
     () => getIsLoadingUsers.value || getIsLoading.value,
   );
-
-  const nameFormStore = useFormStore('editNameForm');
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
@@ -48,6 +43,8 @@
           router.push('/settings/user-management/create');
         },
         icon: PlusOutlined,
+        type: 'primary',
+        size: 'large',
         status: 'activated',
         tooltip: 'Click here to create a new user',
       },
@@ -57,9 +54,11 @@
           openModal();
         },
         icon: DeleteOutlined,
+        type: 'primary',
+        size: 'large',
+        specialType: 'danger',
         status: 'activated',
         tooltip: 'Click here to delete this user',
-        attributes: { 'data-name': 'DeleteUserButton' },
       },
     ];
     if (me.value?.id == user.value?.id) tempButtons[1].status = 'deactivated';
@@ -73,18 +72,6 @@
     await userStore.fetchUsers();
     const firstId: number = userStore.getUsers[0].id;
     setUserId(firstId);
-  };
-
-  const safeNameEdit = async () => {
-    await nameFormStore.submit();
-    nameFormStore.resetFields();
-    stopEditing();
-    userStore.fetchUser(user.value!.id);
-  };
-
-  const cancleNameEdit = () => {
-    nameFormStore.resetFields();
-    stopEditing();
   };
 </script>
 
@@ -103,27 +90,6 @@
       <a-avatar :size="150">
         <template #icon><UserOutlined /></template>
       </a-avatar>
-      <div v-if="!isLoading" class="nameContainer">
-        <p v-if="!isEditing" class="text name">{{ user?.name ?? '' }}</p>
-
-        <NameInputTextField
-          v-else
-          :form-store="nameFormStore"
-          :placeholder="user?.name ?? ''"
-          :user-id="user?.id ?? -1"
-          :default="user?.name ?? ''"
-          class="nameInput"
-        />
-        <EditButtons
-          :is-editing="isEditing"
-          :is-loading="isLoading"
-          :safe-disabled="isLoading"
-          @start-editing="startEditing"
-          @cancle-edit="cancleNameEdit"
-          @safe-edits="safeNameEdit"
-        />
-      </div>
-      <a-skeleton v-else active :paragraph="false" style="width: 10em" />
     </a-flex>
 
     <!-- User informations components -->
@@ -134,24 +100,11 @@
       }"
     >
       <EditableTextField
-        :value="user?.username ?? ''"
-        :is-loading="isLoading"
-        :label="'Username'"
-        :is-editing-key="'isEditingUsername'"
-        :user-id="user ? Number(user.id) : -1"
-        type="username"
-        class="textField"
-        :placeholder="user?.email"
-        @safed-changes="
-          async () => user && (await userStore.fetchUser(user.id))
-        "
-      />
-      <EditableTextField
         :value="user?.email ?? ''"
         :is-loading="isLoading"
         :label="'Email'"
         :is-editing-key="'isEditingEmail'"
-        class="textField"
+        class="textField email"
         type="email"
         :user-id="user ? Number(user.id) : -1"
         :placeholder="user?.email"
@@ -177,12 +130,6 @@
   .panel {
     min-width: 150px;
   }
-  .nameContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100px;
-  }
 
   .userInfoBox {
     padding: 1em 3em 1em 3em;
@@ -204,27 +151,10 @@
     justify-content: center;
   }
 
-  .name {
-    font-weight: bold;
-    font-size: 2em;
-    flex-direction: row;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    margin-right: 10px;
-  }
-
-  .nameInput {
-    margin-right: 10px;
-  }
-
   .textField {
     height: 5em;
   }
-  .edit {
-    background-color: icon !important;
-  }
+
   .panel {
     position: relative;
     max-height: 100vh; /* Set a maximum height */

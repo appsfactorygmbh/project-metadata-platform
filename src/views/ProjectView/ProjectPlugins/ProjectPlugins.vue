@@ -206,11 +206,12 @@
   );
 
   onMounted(async () => {
-    setPlugins(pluginStore.getUnarchivedPlugins);
-
-    const data: ComputedRef<PluginModel[]> = computed(
-      () => pluginStore.getUnarchivedPlugins,
+    const data: ComputedRef<PluginModel[]> = computed(() =>
+      projectsStore?.getProject?.isArchived
+        ? pluginStore.getPlugins
+        : pluginStore.getUnarchivedPlugins,
     );
+    setPlugins(data.value);
 
     watch(
       () => data.value,
