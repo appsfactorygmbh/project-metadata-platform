@@ -156,4 +156,48 @@ describe('ProjectInformation.vue', () => {
     expect(wrapper.findComponent(UndoOutlined).exists()).toBeTruthy();
     expect(wrapper.findComponent(DeleteOutlined).exists()).toBeFalsy();
   });
+
+  it('hide edit and archive button when in edit project mode', async () => {
+    const testData = {
+      projectName: 'Heute Show',
+      department: 'IT',
+      clientName: 'ZDF',
+      businessUnit: 'BU Health',
+      teamNumber: 42,
+      isArchived: false,
+    };
+
+    const wrapper = mount(ProjectInformation, {
+      plugins: [
+        createTestingPinia({
+          stubActions: true,
+          initialState: {
+            project: {
+              project: testData,
+            },
+          },
+        }),
+      ],
+      global: {
+        stubs: {
+          PluginView: {
+            template: '<span />',
+          },
+        },
+        plugins: [router],
+        provide: {
+          [projectEditStoreSymbol as symbol]: useProjectEditStore(),
+          [projectsStoreSymbol as symbol]: useProjectStore(),
+        },
+      },
+    });
+
+    await flushPromises();
+
+    const button = wrapper.findAll('.button');
+    expect(wrapper.find('.buttonBox').exists()).toBe(true);
+    await button[0].trigger('click');
+    await flushPromises();
+    expect(wrapper.find('.buttonBox').exists()).toBe(false);
+  });
 });
