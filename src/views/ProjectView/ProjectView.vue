@@ -115,7 +115,7 @@
     message="Are you sure you want to cancel all changes?"
     @confirm="cancelEdit"
     @cancel="isModalOpen = false"
-    @update:is-open="(value) => (isModalOpen = value)"
+    @update:is-open="(value: boolean) => (isModalOpen = value)"
   />
 </template>
 

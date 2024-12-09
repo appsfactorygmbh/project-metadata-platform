@@ -174,7 +174,7 @@
               style="padding-left: 0; padding-right: 0"
             >
               <a-button
-                class="reset"
+                name="resetButton"
                 :style="highlightButton"
                 @click="clearAllFilters"
               >
@@ -340,4 +340,3 @@
     }
   }
 </script>
-<style scoped></style>
