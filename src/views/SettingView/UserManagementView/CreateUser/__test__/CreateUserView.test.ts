@@ -43,7 +43,7 @@ describe('CreateUserView.vue', () => {
   it('verifies the email correctly', async () => {
     const testData: UserListModel[] = [
       {
-        id: 1,
+        id: '1',
         email: 'a@b.cd',
       },
     ];
