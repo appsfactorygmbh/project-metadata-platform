@@ -147,6 +147,7 @@ coverage-test-job:
       - coverage/
 
 integration-test-job:
+  image: node:20-bullseye
   stage: test
   extends:
     - .corepack_init
@@ -154,7 +155,7 @@ integration-test-job:
   needs:
     - install-job
   script:
-    - apk add libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+    - apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb
     - yarn build
     - yarn preview --host 127.0.0.1 --port 80 &
     - yarn cypress run
