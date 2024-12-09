@@ -174,7 +174,7 @@
               style="padding-left: 0; padding-right: 0"
             >
               <a-button
-                name="resetButton"
+                class="reset"
                 :style="highlightButton"
                 @click="clearAllFilters"
               >
