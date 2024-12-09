@@ -1,23 +1,5 @@
-import { type PluginService, pluginService } from './PluginService';
-import { type ProjectsService, projectsService } from './ProjectsService';
-import { type LogsService, logsService } from './LogsService';
-import { type UserService, userService } from './UserService';
-import {
-  type GlobalPluginService,
-  globalPluginService,
-} from './GlobalPluginService';
+import { ApiService } from './ApiService';
+import { type AuthService, authService } from './AuthService';
 
-export {
-  pluginService,
-  projectsService,
-  globalPluginService,
-  userService,
-  logsService,
-};
-export type {
-  PluginService,
-  ProjectsService,
-  GlobalPluginService,
-  UserService,
-  LogsService,
-};
+export { ApiService, authService };
+export type { AuthService };

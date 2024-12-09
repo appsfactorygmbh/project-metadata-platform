@@ -1,15 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import auth from '@/auth';
 import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
-import { ProjectSlagResolver } from '..';
-import { useProjectStore } from '@/store';
+import { ProjectSlugResolver } from '..';
 import { createTestingPinia } from '@pinia/testing';
-import { projectsStoreSymbol } from '@/store/injectionSymbols';
 import { createRouter, createWebHistory } from 'vue-router';
 import { SplitView } from '@/views';
 import { ProviderCollection } from '@/router/Provider';
+import { useProjectStore } from '@/store';
+import { setActivePinia } from 'pinia';
+import type { ProjectModel } from '@/models/Project';
 
-const testProjects = [
+const testProjects: ProjectModel[] = [
   {
     id: 200,
     projectName: 'test 1',
@@ -17,6 +18,7 @@ const testProjects = [
     businessUnit: 'test',
     teamNumber: 1,
     isArchived: false,
+    slug: 'test-1',
   },
   {
     id: 300,
@@ -25,12 +27,24 @@ const testProjects = [
     businessUnit: 'test',
     teamNumber: 1,
     isArchived: false,
+    slug: 'test-2',
   },
 ];
 
-describe('ProjectSlagResolver.vue', () => {
+const piniaOptions: Parameters<typeof createTestingPinia>[0] = {
+  stubActions: false,
+  initialState: {
+    project: {
+      projects: testProjects,
+      setProjects: vi.fn(),
+    },
+  },
+};
+
+describe('ProjectSlugResolver.vue', () => {
   enableAutoUnmount(afterEach);
-  createTestingPinia();
+  setActivePinia(createTestingPinia(piniaOptions));
+  const projectStore = useProjectStore();
 
   const mockRouter = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,7 +57,7 @@ describe('ProjectSlagResolver.vue', () => {
           {
             name: 'ProjectNameResolver',
             path: '/',
-            component: ProjectSlagResolver,
+            component: ProjectSlugResolver,
             children: [
               {
                 path: '/',
@@ -51,7 +65,7 @@ describe('ProjectSlagResolver.vue', () => {
                 component: SplitView,
               },
               {
-                path: '/:projectSlag',
+                path: '/:projectSlug',
                 name: 'SplitView',
                 component: SplitView,
               },
@@ -62,67 +76,54 @@ describe('ProjectSlagResolver.vue', () => {
     ],
   });
 
+  const generateWrapper = () => {
+    return mount(ProjectSlugResolver, {
+      plugins: [createTestingPinia(piniaOptions)],
+      global: {
+        plugins: [mockRouter, auth],
+      },
+    });
+  };
+  projectStore.setProjects(testProjects);
+
   it('resolves an initial project id query', async () => {
+    await flushPromises();
     await mockRouter.push({
-      name: 'Provider',
+      name: 'ProjectNameResolver',
       query: { projectId: '200' },
     });
     await mockRouter.isReady();
 
-    mount(ProjectSlagResolver, {
-      plugins: [
-        createTestingPinia({
-          stubActions: false,
-        }),
-      ],
-      global: {
-        provide: {
-          [projectsStoreSymbol as symbol]: useProjectStore(),
-        },
-        plugins: [mockRouter, auth],
-      },
-    });
+    generateWrapper();
 
-    const projectsStore = useProjectStore();
-    projectsStore.setProjects(testProjects);
+    projectStore.setProjects(testProjects);
     await flushPromises();
 
     expect(mockRouter.currentRoute.value.query.projectId).toBe('200');
     expect(mockRouter.currentRoute.value.path).toBe('/test-1');
   });
 
-  it('changes the slag when changing the query', async () => {
+  it('changes the slug when changing the query', async () => {
+    await flushPromises();
     await mockRouter.push({
-      name: 'Provider',
+      name: 'ProjectNameResolver',
       query: { projectId: '200' },
     });
     await mockRouter.isReady();
 
-    mount(ProjectSlagResolver, {
-      plugins: [
-        createTestingPinia({
-          stubActions: false,
-        }),
-      ],
-      global: {
-        provide: {
-          [projectsStoreSymbol as symbol]: useProjectStore(),
-        },
-        plugins: [mockRouter, auth],
-      },
-    });
+    generateWrapper();
 
-    const projectsStore = useProjectStore();
-    projectsStore.setProjects(testProjects);
+    projectStore.setProjects(testProjects);
     await flushPromises();
 
     expect(mockRouter.currentRoute.value.query.projectId).toBe('200');
     expect(mockRouter.currentRoute.value.path).toBe('/test-1');
 
     await mockRouter.push({
-      name: 'Provider',
+      name: 'ProjectNameResolver',
       query: { projectId: '300' },
     });
+    await mockRouter.isReady();
     await flushPromises();
 
     expect(mockRouter.currentRoute.value.query.projectId).toBe('300');

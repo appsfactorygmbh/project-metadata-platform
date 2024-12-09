@@ -2,8 +2,6 @@ import { mount, VueWrapper } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { cutAfterTLD, createFaviconURL } from '../editURL';
 import PluginComponent from '../PluginComponent.vue';
-import { projectsStoreSymbol } from '../../../store/injectionSymbols';
-import { useProjectStore } from '../../../store';
 import router from '../../../router';
 import { createTestingPinia } from '@pinia/testing';
 
@@ -42,9 +40,6 @@ const generateWrapper = (
       editKey,
     },
     global: {
-      provide: {
-        [projectsStoreSymbol as symbol]: useProjectStore(),
-      },
       plugins: [router],
     },
   }) as VueWrapper<ComponentPublicInstance<PluginComponentInstance>>;

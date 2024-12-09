@@ -7,6 +7,7 @@
     "build/**",
     "coverage/**",
     "html/**"
+    // "src/api/generated/**/*"
   ],
   "include": [
     "types/**/*.d.ts",
@@ -23,8 +24,12 @@
     "target": "ES2022",
     "lib": ["ES2023"],
     "module": "ESNext",
+
     "skipLibCheck": true,
     "types": ["node", "jsdom"],
-    "outDir": "./dist"
+    "outDir": "./lib/",
+    "rootDir": ".",
+    "noEmit": false,
+    "emitDeclarationOnly": true
   }
 }

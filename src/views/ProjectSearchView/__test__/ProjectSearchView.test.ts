@@ -2,13 +2,9 @@ import { VueWrapper, flushPromises, mount } from '@vue/test-utils';
 import ProjectSearchView from '../ProjectSearchView.vue';
 import { describe, expect, it } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
-import { useLocalLogStore, usePluginsStore, useProjectStore } from '@/store';
+import { useLocalLogStore, usePluginStore, useProjectStore } from '@/store';
 import { setActivePinia } from 'pinia';
-import {
-  localLogStoreSymbol,
-  pluginStoreSymbol,
-  projectsStoreSymbol,
-} from '@/store/injectionSymbols';
+import { localLogStoreSymbol } from '@/store/injectionSymbols';
 import type { ComponentPublicInstance } from 'vue';
 import router from '@/router';
 import type { ProjectModel } from '@/models/Project';
@@ -21,11 +17,7 @@ interface ProjectSearchViewInstance {
   handleRowClick: (project: ProjectModel) => void;
 }
 
-const generateWrapper = (
-  pWidth: number,
-  projectsStore = useProjectStore(),
-  pluginStore = usePluginsStore(),
-) => {
+const generateWrapper = (pWidth: number) => {
   return mount(ProjectSearchView, {
     plugins: [
       createTestingPinia({
@@ -34,8 +26,6 @@ const generateWrapper = (
     ],
     global: {
       provide: {
-        [projectsStoreSymbol as symbol]: projectsStore,
-        [pluginStoreSymbol as symbol]: pluginStore,
         [projectRoutingSymbol as symbol]: useProjectRouting(router),
         [localLogStoreSymbol as symbol]: useLocalLogStore(),
       },
@@ -76,13 +66,14 @@ describe('ProjectSearchView.vue', () => {
     const wrapper = generateWrapper(700) as VueWrapper<
       ComponentPublicInstance<ProjectSearchViewInstance>
     >;
-    const testProject = {
+    const testProject: ProjectModel = {
       id: 200,
       projectName: 'test',
       clientName: 'test',
       businessUnit: 'test',
       teamNumber: 1,
       isArchived: false,
+      slug: 'test-project',
     };
 
     wrapper.vm.handleRowClick(testProject);
@@ -101,14 +92,14 @@ describe('ProjectSearchView.vue', () => {
     await router.isReady();
     createTestingPinia({});
 
+    const pluginStore = usePluginStore();
     const projectStore = useProjectStore();
-    const pluginStore = usePluginsStore();
     generateWrapper(800);
     await flushPromises();
 
     await flushPromises();
 
-    expect(projectStore.fetchProject).toHaveBeenCalledWith(300);
-    expect(pluginStore.fetchPlugins).toHaveBeenCalledWith(300);
+    expect(projectStore.fetch).toHaveBeenCalledWith(300);
+    expect(pluginStore.fetch).toHaveBeenCalledWith(300);
   });
 });
