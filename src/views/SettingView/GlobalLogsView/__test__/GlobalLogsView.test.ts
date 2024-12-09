@@ -8,9 +8,9 @@ import { logsStoreSymbol } from '@/store/injectionSymbols';
 describe('GlobalLogsView.vue', () => {
   setActivePinia(createTestingPinia({ stubActions: false }));
   it('fetches logs on mount', async () => {
-    const fetchGlobalLogsMock = vi.fn();
+    const fetchMock = vi.fn();
     const logsStoreMock = {
-      fetchGlobalLogs: fetchGlobalLogsMock,
+      fetch: fetchMock,
     };
     mount(GlobalLogsView, {
       global: {
@@ -19,12 +19,12 @@ describe('GlobalLogsView.vue', () => {
         },
       },
     });
-    expect(fetchGlobalLogsMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
   it('refetches logs when user inputs a search term', async () => {
-    const fetchGlobalLogsMock = vi.fn();
+    const fetchMock = vi.fn();
     const logsStoreMock = {
-      fetchGlobalLogs: fetchGlobalLogsMock,
+      fetch: fetchMock,
     };
 
     const wrapper = mount(GlobalLogsView, {
@@ -34,11 +34,11 @@ describe('GlobalLogsView.vue', () => {
         },
       },
     });
-    expect(fetchGlobalLogsMock).toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalled();
     const searchInput = wrapper.find('.input');
     await searchInput.setValue('test search');
     await searchInput.trigger('change');
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    expect(fetchGlobalLogsMock).toHaveBeenCalledWith('test search');
+    expect(fetchMock).toHaveBeenCalledWith('test search');
   });
 });

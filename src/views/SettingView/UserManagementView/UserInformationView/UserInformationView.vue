@@ -6,7 +6,6 @@
   import { userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import { useRouter } from 'vue-router';
-  import { userService } from '@/services';
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useUserRouting } from '@/utils/hooks';
@@ -63,9 +62,9 @@
 
   const deleteUser = async () => {
     if (!user.value) return;
-    await userService.deleteUser(user.value?.id);
-    await userStore.fetchUsers();
-    const firstId: number = userStore.getUsers[0].id;
+    await userStore.delete(user.value?.id);
+    await userStore.fetchAll();
+    const firstId: string = userStore.getUsers[0].id;
     setUserId(firstId);
   };
 </script>
@@ -101,7 +100,7 @@
         :is-editing-key="'isEditingEmail'"
         class="textField email"
         type="email"
-        :user-id="user ? Number(user.id) : -1"
+        :user-id="user?.id ?? ''"
         :placeholder="user?.email"
         @safed-changes="
           async () => user && (await userStore.fetchUser(user.id))
@@ -113,7 +112,7 @@
         label="Password"
         :is-editing-key="'isEditingPassword'"
         :is-loading="isLoading"
-        :user-id="Number(user.id)"
+        :user-id="user?.id ?? ''"
       />
     </a-flex>
   </div>

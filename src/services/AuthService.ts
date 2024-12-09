@@ -42,6 +42,18 @@ class AuthService {
     };
   }
 
+  get fetchUserRequest(): RequestConfig {
+    return {
+      url: import.meta.env.VITE_BACKEND_URL + '/Users/me',
+      method: 'GET',
+      headers: {
+        accept: 'text/plain',
+        'Content-Type': 'application/json',
+      },
+      responseType: 'json',
+    };
+  }
+
   get authDriver(): AuthDriver {
     return {
       request(__, { headers, ...rest }, token) {
@@ -54,9 +66,13 @@ class AuthService {
         return { headers, ...rest };
       },
       response(auth, res) {
+        console.log('login response', res);
+        if (res.status === 400) {
+          throw new Error('Invalid refresh token');
+        }
         let { accessToken, refreshToken } = res.data;
         if (!accessToken && !refreshToken) {
-          [accessToken, refreshToken] = (auth.token() ?? '|').split('|');
+          [accessToken, refreshToken] = (auth?.token() ?? '|').split('|');
         }
 
         if (accessToken && refreshToken) {

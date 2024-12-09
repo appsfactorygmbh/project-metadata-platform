@@ -44,6 +44,7 @@
                   :loading="isButtonLoading(item.id)"
                   :disabled="isButtonLoading(item.id)"
                   title="Archive Plugin"
+                  name="archivePluginButton"
                   @click="showDialog(item.id, 'archive')"
                 >
                   <InboxOutlined />
@@ -53,7 +54,7 @@
                 <a-button
                   style="margin-right: 1em"
                   title="Reactivate Plugin"
-                  @click="handleReactivate(item)"
+                  @click="handleReactivate(item.id)"
                 >
                   <UndoOutlined />
                 </a-button>
@@ -100,15 +101,15 @@
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button';
-  import { globalPluginStoreSymbol } from '@/store/injectionSymbols';
-  import { inject, onBeforeMount } from 'vue';
+  import { onBeforeMount } from 'vue';
   import { useRouter } from 'vue-router';
   import { message } from 'ant-design-vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
+  import { useGlobalPluginsStore } from '@/store';
   import { useToggle } from '@vueuse/core';
   import type { GlobalPluginModel } from '@/models/Plugin';
 
-  const globalPluginsStore = inject(globalPluginStoreSymbol);
+  const globalPluginsStore = useGlobalPluginsStore();
 
   const isLoading = computed(
     () => globalPluginsStore?.getIsLoadingGlobalPlugins,
@@ -121,7 +122,7 @@
   );
 
   onBeforeMount(async () => {
-    await globalPluginsStore?.fetchGlobalPlugins();
+    await globalPluginsStore?.fetchAll();
   });
 
   const router = useRouter();
@@ -195,29 +196,24 @@
    * Adds the plugin to the deleting plugins, deletes the plugin and removes it again
    * @param pluginId Id of the plugin that should be deleted
    */
-  const handleArchive = async (pluginId: number) => {
+  const handleArchive = async (pluginId: GlobalPluginModel['id']) => {
     pluginDeleting.value.push(pluginId);
 
-    const plugin = globalPluginsStore!.getGlobalPlugins.find(
-      (plugin) => plugin.id === pluginId,
-    );
-    await globalPluginsStore?.archiveGlobalPlugin(plugin as GlobalPluginModel);
+    await globalPluginsStore?.archive(pluginId);
 
     const index: number = pluginDeleting.value?.indexOf(pluginId);
     pluginDeleting.value.splice(index, 1);
   };
 
-  const handleDelete = async (pluginId: number) => {
+  const handleDelete = async (pluginId: GlobalPluginModel['id']) => {
     pluginDeleting.value.push(pluginId);
-
-    await globalPluginsStore?.deleteGlobalPlugin(pluginId);
-
+    await globalPluginsStore?.delete(pluginId);
     const index: number = pluginDeleting.value?.indexOf(pluginId);
     pluginDeleting.value.splice(index, 1);
   };
 
-  const handleReactivate = async (plugin: GlobalPluginModel) => {
-    await globalPluginsStore?.reactivateGlobalPlugin(plugin);
+  const handleReactivate = async (pluginId: GlobalPluginModel['id']) => {
+    await globalPluginsStore?.unarchive(pluginId);
     message.success('The plugin has been reactivated', 2);
   };
 

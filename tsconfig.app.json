@@ -1,8 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "./node_modules/@vue/tsconfig/tsconfig.json",
+  // "extends": "@vue/tsconfig/tsconfig.json",
   "compilerOptions": {
     /* Base options */
+    "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2022", // Sets the ECMAScript target version for the compiled JavaScript.
     "useDefineForClassFields": true, // Allows initializing class fields directly within the class body without a constructor.
@@ -15,37 +16,30 @@
     "allowJs": true, // Allows JavaScript files to be included in the TypeScript project.
     "moduleDetection": "force", // Forces TypeScript to always assume modules are present.
     "baseUrl": ".",
-    "outDir": "./dist",
+    "outDir": "./lib/",
     "paths": {
       "@/*": ["./src/*"]
     },
 
     /* Bundler mode */
     "moduleResolution": "bundler", // Resolves module names using a bundler.
+    "emitDeclarationOnly": true,
+    "declaration": true,
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true, // Allows importing JSON files as modules.
     "isolatedModules": true,
-    "noEmit": true, // Disables emitting compiled output files.
+    "noEmit": false, // Disables emitting compiled output files.
     "jsx": "preserve",
     "jsxImportSource": "vue",
 
     /* Linting */
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
 
     /* Strictness */
     "strict": true // Enables all strict type checking options.
     // "noUncheckedIndexedAccess": true // Checks that indexed accesses are not possibly undefined or null.
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "types/**/*.d.ts"],
-  "exclude": [
-    "node_modules/**",
-    "dist/**",
-    "build/**",
-    "coverage/**",
-    "tests/**",
-    "html/**",
-    "src/**/__tests__/**/*"
-  ]
+  "include": ["types/**/*.d.ts", "src/**/*", "src/**/*.json", "tests/**/*.ts"]
 }

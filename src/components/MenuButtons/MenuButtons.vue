@@ -29,6 +29,7 @@
         auth.logout({
           makeRequest: false,
         });
+        window.location.reload();
       },
       icon: LogoutOutlined,
       size: 'middle',

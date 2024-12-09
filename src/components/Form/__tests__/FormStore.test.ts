@@ -4,6 +4,7 @@ import type { FormStore } from '../FormStore';
 import { createPinia, setActivePinia } from 'pinia';
 import { flushPromises } from '@vue/test-utils';
 import type { RulesObject } from '../types';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 describe('FormStore', () => {
   const testForm = {

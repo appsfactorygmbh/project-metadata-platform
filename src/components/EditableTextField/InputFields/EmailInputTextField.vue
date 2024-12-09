@@ -7,7 +7,7 @@
 
   const props = defineProps({
     userId: {
-      type: Number,
+      type: String,
       required: true,
     },
     formStore: {
@@ -60,7 +60,7 @@
     const newEmail = {
       email: toRaw(fields).email,
     };
-    userStore.patchUser(props.userId, newEmail);
+    userStore.update(props.userId, newEmail);
   };
 
   props.formStore.setModel(dynamicValidateForm);
