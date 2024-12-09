@@ -26,7 +26,6 @@
       <LogTimeline
         v-if="logsStore.getGlobalLogs && logsStore.getGlobalLogs.length > 0"
         :log-entries="logsStore.getGlobalLogs"
-        class="timeline"
       />
       <a-flex v-else justify="center" align="center" style="height: 80vh">
         <a-empty description="No results found" />
@@ -53,9 +52,5 @@
     padding: 1em;
     overflow: auto;
     margin-bottom: 60px;
-  }
-
-  .timeline {
-    height: 100%;
   }
 </style>

@@ -148,6 +148,7 @@
 
   const clearAllFilters = () => {
     searchStore.reset();
+    searchStore.applySearch();
   };
 </script>
 

@@ -12,6 +12,7 @@
   import type { ComputedRef, Ref } from 'vue';
   import { useQuery } from '@/utils/hooks';
   import type { ArrayElement } from '@/models/utils';
+  import { useSessionStorage } from '@vueuse/core';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -38,6 +39,7 @@
   }
 
   const searchStore = inject<SearchStore<object>>(props.searchStoreSymbol);
+  const searchStorage = useSessionStorage('searchStorage', { searchQuery: '' });
   const filteredInfo = reactive<FilteredInfoModel>({}); // Use an object to track filter values for each column
 
   const emit = defineEmits(['row-click']);
@@ -97,8 +99,7 @@
     props.columns.map((column) => mapSearchableColumn(column)),
   );
 
-  // Watch filteredInfo to update columns' filteredValue reactively
-  watch(filteredInfo, () => {
+  const setFilters = (filteredInfo: FilteredInfoModel) => {
     if (columns.value) {
       columns.value.forEach((column) => {
         const key = column.key;
@@ -106,6 +107,12 @@
           column.filteredValue = filteredInfo[key] ? [filteredInfo[key]] : null;
       });
     }
+  };
+
+  // Watch filteredInfo to update columns' filteredValue reactively
+  watch(filteredInfo, () => {
+    sessionStorage.setItem('filteredInfo', JSON.stringify(filteredInfo));
+    setFilters(filteredInfo);
   });
 
   /*  Search implementation  */
@@ -173,9 +180,21 @@
   };
   searchStore?.setOnReset(handleClearAll);
 
-  searchStore?.setOnReset(handleClearAll);
-  onMounted(() => {
+  onMounted(async () => {
     const queries = routerSearchQuery.value;
+    const storedFilteredInfo: FilteredInfoModel = JSON.parse(
+      sessionStorage.getItem('filteredInfo') || '{}',
+    );
+    searchStore?.setSearchQuery(searchStorage.value.searchQuery);
+
+    const filterKeys = Object.keys(storedFilteredInfo);
+    filterKeys.forEach(async (key: string) => {
+      if (storedFilteredInfo[key] === '') {
+        await setSearchQuery(undefined, key);
+      } else {
+        await setSearchQuery(storedFilteredInfo[key], key);
+      }
+    });
 
     for (const query in queries) {
       const searchQuery = queries[query];
