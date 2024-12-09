@@ -106,8 +106,8 @@ describe('SplitView.vue', () => {
       },
     });
 
-    const leftPaneWidth = wrapper.vm.leftPaneWidth;
-    const rightPaneWidth = wrapper.vm.rightPaneWidth;
+    const leftPaneWidth = (wrapper.vm as unknown as {leftPaneWidth: number}).leftPaneWidth ;
+    const rightPaneWidth = (wrapper.vm as unknown as {rightPaneWidth: number}).rightPaneWidth ;
 
     expect(getItemSpy).toHaveBeenCalledWith('paneSizes');
     expect(leftPaneWidth).toBe(mockPaneSizes[0].size);
