@@ -7,14 +7,16 @@ import { createPinia, setActivePinia } from 'pinia';
 import type { SearchableColumns } from '../SearchableTableTypes';
 import { Button, Input } from 'ant-design-vue';
 import router from '@/router';
+import type { ProjectModel } from '@/models/Project';
 
-const testData = [
+const testData: ProjectModel[] = [
   {
     id: 1,
     projectName: 'C',
     clientName: 'A',
     businessUnit: 'A',
     teamNumber: 1,
+    isArchived: false,
   },
   {
     id: 2,
@@ -22,6 +24,7 @@ const testData = [
     clientName: 'B',
     businessUnit: 'B',
     teamNumber: 2,
+    isArchived: false,
   },
 ];
 
@@ -50,6 +53,10 @@ describe('SearchableTable.vue', () => {
   setActivePinia(createPinia());
   const searchStoreSymbol = Symbol('searchStoreSym');
   const searchStore = useSearchStore('test');
+
+  afterEach(() => {
+    sessionStorage.clear();
+  });
 
   const generateWrapper = () => {
     return mount(SearchableTable, {
