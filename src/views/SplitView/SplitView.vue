@@ -24,8 +24,8 @@
     tooltip: 'Click here to expand the table',
   };
 
-  const leftPaneWidth = ref();
-  const rightPaneWidth = ref();
+  const leftPaneWidth = ref<object>();
+  const rightPaneWidth = ref<object>();
 
   onBeforeMount(() => {
     const paneSizeFromLocalStorage = localStorage.getItem('paneSizes');
