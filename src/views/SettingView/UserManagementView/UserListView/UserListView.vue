@@ -14,13 +14,7 @@
   const isLoading = computed(
     () => getIsLoadingUsers.value || getIsLoading.value,
   );
-  const usersData = computed(() => {
-    const users = getUsers.value;
-    users.forEach((user) => {
-      user.email = user.email.split('@')[0];
-    });
-    return users;
-  });
+  const usersData = computed(() => getUsers.value);
 
   const routerUser = computed(() => routerUserId.value);
   userStore.fetchMe(); // fetch me for information
@@ -68,7 +62,7 @@
           class="users"
           @click="clickTab(user.id)"
         >
-          <span>{{ user.email }}</span>
+          <span>{{ user.email.split('@')[0] }}</span>
         </a-menu-item>
       </a-menu>
       <a-skeleton

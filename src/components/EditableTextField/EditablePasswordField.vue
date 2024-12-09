@@ -267,11 +267,11 @@
     display: flex;
     flex-flow: column wrap;
     justify-content: center;
-  }
 
-  .ant-card-body {
-    padding: 12px !important;
-    display: flex;
+    .ant-card-body {
+      padding: 12px !important;
+      display: flex;
+    }
   }
 
   .info label {

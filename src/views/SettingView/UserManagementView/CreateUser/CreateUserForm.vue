@@ -5,7 +5,7 @@
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateUserFormData } from './CreateUserFormData.ts';
   import type { Rule } from 'ant-design-vue/es/form/interface';
-  import type { CreateUserModel } from '@/models/User';
+  import type { CreateUserModel, UserListModel } from '@/models/User';
   import type { UserStore } from '@/store/UserStore.ts';
 
   const { formStore, initialValues, userStore } = defineProps<{
@@ -82,6 +82,11 @@
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     if (value && emailRegex.test(value)) {
+      const users: UserListModel[] = userStore.getUsers;
+
+      if (value === users?.find((user) => user.email === value)?.email) {
+        return Promise.reject('This email is already in use.');
+      }
       return Promise.resolve();
     } else {
       return Promise.reject('Please enter a valid email.');
@@ -92,7 +97,7 @@
     email: [
       {
         required: true,
-        message: 'Please insert a valid email.',
+        message: 'Please insert a valid and unique email.',
         validator: validateEmail,
         trigger: 'change',
         type: 'string',

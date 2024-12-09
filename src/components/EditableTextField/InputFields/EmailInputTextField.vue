@@ -4,6 +4,7 @@
   import type { Rule } from 'ant-design-vue/es/form';
   import { type FormStore } from '@/components/Form';
   import { type PropType, inject, reactive, toRaw } from 'vue';
+  import type { UserListModel, UserModel } from '@/models/User';
 
   const props = defineProps({
     userId: {
@@ -30,11 +31,28 @@
 
   const userStore = inject(userStoreSymbol)!;
 
+  const isUniqueEmail = (email: string) => {
+    const users: UserListModel[] = userStore.getUsers;
+    const currentUser: UserModel | null = userStore.getUser;
+
+    // checks if email is already in use by another user
+    if (
+      email === users?.find((user) => user.email === email)?.email &&
+      email !== currentUser?.email
+    ) {
+      return false;
+    }
+    return true;
+  };
+
   const validateEmail = (_rule: Rule, value: string) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     if (value && emailRegex.test(value)) {
-      return Promise.resolve();
+      if (isUniqueEmail(value)) {
+        return Promise.resolve();
+      }
+      return Promise.reject('This email is already in use.');
     } else {
       return Promise.reject('Please enter a valid email.');
     }
@@ -49,7 +67,7 @@
       {
         required: true,
         validator: validateEmail,
-        message: 'Please enter a valid E-Mail adress',
+        message: 'Please enter a valid and unique E-Mail adress',
         trigger: 'change',
         type: 'string',
       },
@@ -72,7 +90,12 @@
 
 <template>
   <a-form ref="formRef" :model="dynamicValidateForm">
-    <a-form-item :rules="rulesRef.email" name="email" class="formItem email">
+    <a-form-item
+      :rules="rulesRef.email"
+      name="email"
+      class="formItem email"
+      has-feedback
+    >
       <a-input
         v-model:value="dynamicValidateForm.email"
         :placeholder="props.placeholder"

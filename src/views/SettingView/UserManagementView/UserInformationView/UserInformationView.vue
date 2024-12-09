@@ -110,6 +110,7 @@
         v-if="me?.id && me.id === user?.id"
         value="**********"
         label="Password"
+        class="textField"
         :is-editing-key="'isEditingPassword'"
         :is-loading="isLoading"
         :user-id="user?.id ?? ''"
@@ -127,7 +128,7 @@
 
   .userInfoBox {
     padding: 1em 3em;
-    margin: 2em 1em 1em 1em;
+    margin: 2em 1em;
     border-radius: 10px;
     background-color: white;
     min-width: 450px;
@@ -137,15 +138,15 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
+  :deep(.ant-card) {
+    margin: 0.5em 0;
+  }
+
   .avatar {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-  }
-
-  .textField {
-    height: 5em;
   }
 
   .panel {
