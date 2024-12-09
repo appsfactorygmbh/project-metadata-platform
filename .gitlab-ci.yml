@@ -148,6 +148,10 @@ coverage-test-job:
 
 integration-test-job:
   stage: test
+  services:
+    - name: yukinying/chrome-headless-browser
+      alias: chrome
+      entrypoint: ["/usr/bin/google-chrome"]
   extends:
     - .corepack_init
     - .update_cache
@@ -157,7 +161,7 @@ integration-test-job:
     - apk add --no-cache chromium
     - yarn build
     - yarn preview --host 127.0.0.1 --port 80 &
-    - chromium --headless --disable-gpu --no-sandbox --dump-dom http://127.0.0.1:80/login
+    - chrome --headless --disable-gpu --no-sandbox --dump-dom http://127.0.0.1:80/login
 
   rules:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEVELOP_BRANCH && $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_TAG == null
