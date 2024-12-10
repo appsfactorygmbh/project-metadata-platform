@@ -2,7 +2,12 @@ import { VueWrapper, flushPromises, mount } from '@vue/test-utils';
 import ProjectSearchView from '../ProjectSearchView.vue';
 import { describe, expect, it } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
-import { useLocalLogStore, usePluginStore, useProjectStore } from '@/store';
+import {
+  useLocalLogStore,
+  usePluginStore,
+  useProjectStore,
+  useSearchStore,
+} from '@/store';
 import { setActivePinia } from 'pinia';
 import { localLogStoreSymbol } from '@/store/injectionSymbols';
 import type { ComponentPublicInstance } from 'vue';
@@ -10,6 +15,7 @@ import router from '@/router';
 import type { ProjectModel } from '@/models/Project';
 import { projectRoutingSymbol } from '@/store/injectionSymbols';
 import { useProjectRouting } from '@/utils/hooks';
+import { useSessionStorage } from '@vueuse/core';
 
 interface ProjectSearchViewInstance {
   paneWidth: number;
@@ -101,5 +107,28 @@ describe('ProjectSearchView.vue', () => {
 
     expect(projectStore.fetch).toHaveBeenCalledWith(300);
     expect(pluginStore.fetch).toHaveBeenCalledWith(300);
+  });
+
+  it('sets the search query with the query in the storage', async () => {
+    const searchStore = useSearchStore('projects');
+    const searchStorage = useSessionStorage('searchStorage', {
+      searchQuery: 'test',
+    });
+    searchStorage.value.searchQuery = 'test';
+    generateWrapper(800);
+    await flushPromises();
+
+    expect(searchStore.setSearchQuery).toHaveBeenCalledWith('test');
+  });
+
+  it('sets the router query with the filters in the storage', async () => {
+    await router.isReady();
+    const filterStorage = useSessionStorage('filterStorage', {});
+    filterStorage.value = { projectName: 'test' };
+
+    generateWrapper(800);
+    await flushPromises();
+
+    expect(router.currentRoute.value.query.projectName).toBe('test');
   });
 });
