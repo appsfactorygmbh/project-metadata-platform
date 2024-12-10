@@ -47,6 +47,7 @@
         size: 'large',
         status: 'activated',
         tooltip: 'Click here to create a new user',
+        class: 'testClass',
       },
       {
         name: 'DeleteUserButton',

@@ -6,6 +6,7 @@ import { createTestingPinia } from '@pinia/testing';
 import { userStoreSymbol } from '@/store/injectionSymbols';
 import { useUserStore } from '@/store';
 import router from '@/router';
+import { DeleteOutlined } from '@ant-design/icons-vue';
 
 const userData1 = {
   id: 100,
@@ -35,6 +36,23 @@ describe('UserInformationView.vue', () => {
       },
     });
   };
+
+  it('should hide delete button when user is me', () => {
+    userStore.setMe(userData2);
+    userStore.setUser(userData2);
+    const wrapper = generateWrapper();
+    const deleteButton = wrapper.findComponent(DeleteOutlined);
+    expect(deleteButton.exists()).toBe(false);
+  });
+
+  it('should show delete button when user is not me', () => {
+    userStore.setMe(userData1);
+    userStore.setUser(userData2);
+    const wrapper = generateWrapper();
+
+    const deleteButton = wrapper.findComponent(DeleteOutlined);
+    expect(deleteButton.exists()).toBe(true);
+  });
 
   it('renders correctly', () => {
     userStore.setMe(userData1);
