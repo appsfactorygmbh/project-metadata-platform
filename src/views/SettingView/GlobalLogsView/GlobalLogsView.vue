@@ -26,7 +26,7 @@
       @change="updateSearchParam"
     />
     <a-card class="cardContainer">
-      <a-spin v-if="loadingGlobalLogs || true" class="loadingIcon" />
+      <a-spin v-if="loadingGlobalLogs" class="loadingIcon" />
       <LogTimeline
         v-else-if="
           logsStore.getGlobalLogs && logsStore.getGlobalLogs.length > 0
