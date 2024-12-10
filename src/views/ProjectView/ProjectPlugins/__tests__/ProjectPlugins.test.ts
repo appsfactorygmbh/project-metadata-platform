@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import { defineComponent, computed, toRaw } from 'vue';
 import { setActivePinia, createPinia } from 'pinia';
-import { usePluginsStore, useProjectStore } from '@/store';
+import { usePluginStore, useProjectStore } from '@/store';
 import type { PluginModel } from '@/models/Plugin';
 import type { DetailedProjectModel } from '@/models/Project';
 import {
@@ -12,17 +12,20 @@ import {
 import { ProjectPlugins } from '..';
 import router from '@/router';
 
-// Mock the pluginService module
-vi.mock('@/services/PluginService', () => ({
-  pluginService: {
-    fetchPlugins: vi.fn(),
-  },
-}));
+vi.mock('@/api/generated', async () => {
+  const originalModule = await import('@/api/generated');
+  return {
+    ...originalModule,
+    PluginsApi: vi.fn().mockImplementation(() => ({
+      pluginsGet: vi.fn(),
+    })),
+  };
+});
 
 // Define a ProjectPlugins component for testing
 const ProjectPluginsMock = defineComponent({
   setup() {
-    const pluginStore = usePluginsStore();
+    const pluginStore = usePluginStore();
     const plugins = computed(() => toRaw(pluginStore.getPlugins));
     return { plugins };
   },
@@ -36,7 +39,7 @@ describe('ProjectPlugins', () => {
   });
 
   it('should compute plugins from the store', async () => {
-    const store = usePluginsStore();
+    const pluginStore = usePluginStore();
     const mockPlugins: PluginModel[] = [
       {
         pluginName: 'testPlugin',
@@ -47,7 +50,7 @@ describe('ProjectPlugins', () => {
     ];
 
     // Set the store plugins
-    store.setPlugins(mockPlugins);
+    pluginStore.setPlugins(mockPlugins);
 
     // Mount the PluginView component
     const wrapper = shallowMount(ProjectPluginsMock);
@@ -60,7 +63,7 @@ describe('ProjectPlugins', () => {
   });
 
   it('should get unarchived plugins when on an active project and all plugins on archived project', async () => {
-    const pluginStore = usePluginsStore();
+    const pluginStore = usePluginStore();
     const projectsStore = useProjectStore();
 
     const mockActiveProject: DetailedProjectModel = {
@@ -71,6 +74,7 @@ describe('ProjectPlugins', () => {
       teamNumber: 1,
       department: 'Test Department',
       isArchived: false,
+      slug: 'test-project',
     };
 
     const mockArchivedProject: DetailedProjectModel = {
@@ -81,6 +85,7 @@ describe('ProjectPlugins', () => {
       teamNumber: 1,
       department: 'Test Department',
       isArchived: true,
+      slug: 'test-project',
     };
 
     const unarchivedPluginsSpy = vi

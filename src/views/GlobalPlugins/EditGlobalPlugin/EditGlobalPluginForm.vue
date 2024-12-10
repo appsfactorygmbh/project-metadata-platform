@@ -1,9 +1,8 @@
 <script setup lang="ts">
-  import { type FormSubmitType } from '@/components/Form';
+  import { type FormStore, type FormSubmitType } from '@/components/Form';
   import { notification } from 'ant-design-vue';
-  import { globalPluginStoreSymbol } from '@/store/injectionSymbols';
-  import { inject, onMounted, reactive } from 'vue';
-  import { type FormStore } from '@/components/Form';
+  import { useGlobalPluginsStore } from '@/store';
+  import { onMounted, reactive } from 'vue';
   import { useRoute } from 'vue-router';
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
   import type { GlobalPluginFormData } from '../GlobalPluginForm';
@@ -12,14 +11,14 @@
     formStore: FormStore;
   }>();
 
-  const globalPluginStore = inject(globalPluginStoreSymbol);
+  const globalPluginStore = useGlobalPluginsStore();
 
   const [notificationApi, contextHolder] = notification.useNotification();
 
   const onSubmit: FormSubmitType = (fields) => {
     try {
-      globalPluginStore?.updateGlobalPlugin({
-        id: pluginIdRef.value,
+      if (!pluginIdRef.value) return;
+      globalPluginStore.update(pluginIdRef.value, {
         ...fields,
       });
     } catch {
@@ -45,16 +44,17 @@
       if (!isNaN(numericPluginId)) {
         pluginIdRef.value = numericPluginId;
         const globalPluginData =
-          await globalPluginStore?.fetchGlobalPlugin(numericPluginId);
+          await globalPluginStore?.fetch(numericPluginId);
         if (!globalPluginData) {
           return;
         }
         initialValues.pluginName = globalPluginData.name;
         initialValues.keys =
-          globalPluginData.keys?.map((keyObj) => ({
-            key: keyObj.key,
-            value: keyObj.value,
-            archived: keyObj.archived,
+          globalPluginData.keys?.map((keyObj, index) => ({
+            // TODO: adapt when feature to archive keys is implemented
+            key: index, //keyObj.key,
+            value: keyObj, //keyObj.value,
+            archived: false, //keyObj.archived,
           })) ?? [];
       }
     }

@@ -5,6 +5,7 @@
 
   const logout = () => {
     auth.logout();
+    window.location.reload();
   };
 </script>
 

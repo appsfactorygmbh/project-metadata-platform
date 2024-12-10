@@ -7,10 +7,10 @@
   const logsStore = inject(logsStoreSymbol)!;
 
   const updateSearchParam = debounce(async () => {
-    await logsStore?.fetchGlobalLogs(searchValue.value);
+    await logsStore?.fetch(searchValue.value);
   }, 500);
   onMounted(async () => {
-    await logsStore?.fetchGlobalLogs();
+    await logsStore?.fetch();
   });
 </script>
 

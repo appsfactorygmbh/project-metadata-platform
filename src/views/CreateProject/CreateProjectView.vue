@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, inject, ref, watch } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import {
     BankOutlined,
     FontColorsOutlined,
@@ -8,11 +8,10 @@
     TeamOutlined,
     UserOutlined,
   } from '@ant-design/icons-vue';
-  import { reactive } from 'vue';
   import type { UnwrapRef } from 'vue';
-  import { projectsStoreSymbol } from '@/store/injectionSymbols';
   import type { CreateProjectModel } from '@/models/Project';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
+  import { useProjectStore } from '@/store';
 
   const open = ref<boolean>(false);
 
@@ -23,16 +22,19 @@
   const cancelFetch = ref<boolean>();
 
   // TableStore to refetch Table after Project was added
-  const projectsStore = inject(projectsStoreSymbol);
-  const isAdding = computed(() => projectsStore?.getIsLoadingAdd);
+
+  const projectStore = useProjectStore();
+
+  const isAdding = computed(() => projectStore.getIsLoadingAdd);
   const fetchError = ref<boolean>(false);
 
   const formState: UnwrapRef<CreateProjectModel> = reactive({
     projectName: '',
     businessUnit: '',
-    teamNumber: undefined,
+    teamNumber: -1,
     department: '',
     clientName: '',
+    isArchived: false,
   });
 
   const validateMessages = {
@@ -83,9 +85,9 @@
   // sends PUT request to the backend
   const submit = async () => {
     watch(isAdding, (newVal) => {
-      if (newVal === false) {
-        if (projectsStore?.getAddedSuccessfully) {
-          projectsStore.fetchProjects();
+      if (newVal == false) {
+        if (projectStore.getAddedSuccessfully) {
+          projectStore.fetchAll();
           fetchError.value = false;
           open.value = false;
           resetModal();
@@ -101,9 +103,10 @@
       teamNumber: formState.teamNumber,
       department: formState.department,
       clientName: formState.clientName,
+      isArchived: false,
     };
 
-    await projectsStore?.addProject(projectData);
+    await projectStore.create(projectData);
   };
 </script>
 
