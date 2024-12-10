@@ -74,13 +74,6 @@
           :placeholder="props.value"
           :default="props.value"
         />
-        <UsernameInputTextField
-          v-if="props.type === 'username'"
-          :form-store="usernameFormStore"
-          :user-id="props.userId"
-          :placeholder="props.value"
-          :default="props.value"
-        />
       </div>
 
       <EditButtons

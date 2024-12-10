@@ -110,7 +110,6 @@
         v-if="me?.id && me.id === user?.id"
         value="**********"
         label="Password"
-        class="textField"
         :is-editing-key="'isEditingPassword'"
         :is-loading="isLoading"
         :user-id="user?.id ?? ''"

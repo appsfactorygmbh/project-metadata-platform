@@ -35,10 +35,10 @@
 
   onMounted(async () => {
     await userStore?.fetchAll();
-    if (routerUser.value === '0') {
+    if (routerUser.value === 'undefined') {
       setUserId(userStore?.getUsers[0]?.id ?? '0');
     } else {
-      await userStore?.fetchUser(routerUser.value);
+      await userStore?.fetchUser(routerUser.value.toString());
       selectedKeys.value = [routerUser.value.toString()];
     }
   });
