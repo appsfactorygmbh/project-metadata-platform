@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url';
-import { configDefaults, defineConfig, ConfigEnv } from 'vitest/config';
+import { configDefaults, defineConfig, type ConfigEnv } from 'vitest/config';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import VueDevTools from 'vite-plugin-vue-devtools';
@@ -10,7 +10,6 @@ import AntdvResolver from 'antdv-component-resolver';
 const baseSrc = fileURLToPath(new URL('./src', import.meta.url));
 
 // https://vitejs.dev/config/
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default defineConfig(({ mode }: ConfigEnv) => {
   return {
     resolve: {
@@ -94,6 +93,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         exclude: ['node_modules', 'dist', 'coverage', 'html', 'lib', '*.d.ts'],
       },
       setupFiles: ['./tests/setup.ts'],
+      globalSetup: './tests/globalSetup.ts',
       reporters: ['default', 'html'],
       outputFile: {
         junit: './junit-report.xml',

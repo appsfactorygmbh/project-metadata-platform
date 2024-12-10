@@ -1,4 +1,3 @@
-export type UpdateUserModel = {
-  email?: string | null;
-  password?: string | null;
-};
+import type { PatchUserRequest } from '@/api/generated';
+
+export type UpdateUserModel = PatchUserRequest;

@@ -1,4 +1,3 @@
-export type LogEntryModel = {
-  logMessage: string;
-  timestamp: string;
-};
+import type { LogResponse } from '@/api/generated';
+
+export type LogEntryModel = LogResponse;

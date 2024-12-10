@@ -1,11 +1,7 @@
 <script setup lang="ts">
-  import { type FormSubmitType } from '@/components/Form';
+  import { type FormStore, type FormSubmitType } from '@/components/Form';
   import { notification } from 'ant-design-vue';
-  import {
-    globalPluginStoreSymbol,
-    projectEditStoreSymbol,
-  } from '@/store/injectionSymbols';
-  import { type FormStore } from '@/components/Form';
+  import { projectEditStoreSymbol } from '@/store/injectionSymbols';
   import { inject, onBeforeMount, reactive, ref, toRaw } from 'vue';
   import type { SelectProps } from 'ant-design-vue';
   import type {
@@ -16,18 +12,19 @@
   import type { LabeledValue, SelectValue } from 'ant-design-vue/lib/select';
   import type { RulesObject } from '@/components/Form/types';
   import type { AddPluginFormData } from './AddPluginFormData.ts';
+  import { useGlobalPluginsStore } from '@/store/GlobalPluginStore.ts';
 
   const { formStore, initialValues } = defineProps<{
     formStore: FormStore;
     initialValues: AddPluginFormData;
   }>();
 
-  const globalPluginStore = inject(globalPluginStoreSymbol);
+  const globalPluginStore = useGlobalPluginsStore();
   const projectEditStore = inject(projectEditStoreSymbol);
   const options = ref<SelectProps['options']>([]);
 
   onBeforeMount(async () => {
-    await globalPluginStore?.fetchGlobalPlugins();
+    await globalPluginStore?.fetchAll();
     options.value = toRaw(globalPluginStore?.getGlobalPlugins)
       ?.filter((plugin) => !plugin.isArchived)
       .map((plugin: GlobalPluginModel) => {

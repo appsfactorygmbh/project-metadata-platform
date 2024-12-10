@@ -36,7 +36,7 @@ describe('AddPluginForm.vue', () => {
 
     pluginStoreMock = {
       setLoading: vi.fn(),
-      fetchGlobalPlugins: vi.fn().mockResolvedValue([]),
+      fetchAll: vi.fn().mockResolvedValue([]),
       getGlobalPlugins: [],
     };
 

@@ -1,11 +1,3 @@
-import type { PluginModel } from '@/models/Plugin';
+import type { CreateProjectRequest } from '@/api/generated';
 
-export type UpdateProjectModel = {
-  projectName: string;
-  businessUnit: string;
-  teamNumber: number;
-  department: string;
-  clientName: string;
-  isArchived?: boolean;
-  pluginList?: PluginModel[] | [];
-};
+export type UpdateProjectModel = CreateProjectRequest;

@@ -5,7 +5,7 @@ import { EditGlobalPluginView } from '@/views/GlobalPlugins/EditGlobalPlugin';
 import { ProviderCollection } from './Provider';
 import { SettingView } from '@/views/SettingView';
 import { GlobalPluginsView } from '@/views/GlobalPlugins';
-import ProjectSlagResolver from './Resolver/ProjectSlagResolver.vue';
+import ProjectSlugResolver from './Resolver/ProjectSlugResolver.vue';
 import NotFoundView from '@/views/Service/NotFoundView.vue';
 import { LoginView, RegisterView } from '@/views/Auth';
 import ForbiddenView from '@/views/Service/ForbiddenView.vue';
@@ -38,7 +38,7 @@ const router = createRouter({
         {
           name: 'ProjectNameResolver',
           path: '/',
-          component: ProjectSlagResolver,
+          component: ProjectSlugResolver,
           children: [
             {
               path: '/',
@@ -46,7 +46,7 @@ const router = createRouter({
               component: SplitView,
             },
             {
-              path: '/:projectSlag',
+              path: '/:projectSlug',
               name: 'SplitView',
               component: SplitView,
             },

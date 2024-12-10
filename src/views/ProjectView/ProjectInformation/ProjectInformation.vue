@@ -2,10 +2,8 @@
   import { computed, inject, onMounted, ref, toRaw } from 'vue';
   import {
     localLogStoreSymbol,
-    pluginStoreSymbol,
     projectEditStoreSymbol,
     projectRoutingSymbol,
-    projectsStoreSymbol,
   } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import type {
@@ -20,14 +18,15 @@
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
+  import { usePluginStore, useProjectStore } from '@/store';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
   import OutlinedButton from '@/components/Button/OutlinedButton.vue';
 
   const localLogStore = inject(localLogStoreSymbol);
-  const projectsStore = inject(projectsStoreSymbol)!;
+  const projectStore = useProjectStore();
   const projectEditStore = inject(projectEditStoreSymbol)!;
-  const pluginStore = inject(pluginStoreSymbol)!;
+  const pluginStore = usePluginStore();
   const projectRouting = inject(projectRoutingSymbol)!;
 
   const editingClass = computed(() => ({
@@ -38,8 +37,8 @@
     'non-editing-mode': !isEditing.value,
   }));
 
-  const { getIsLoadingProject } = storeToRefs(projectsStore);
-  const { getIsLoading } = storeToRefs(projectsStore);
+  const { getIsLoadingProject } = storeToRefs(projectStore);
+  const { getIsLoading } = storeToRefs(projectStore);
   const isLoading = computed(
     () => getIsLoadingProject.value || getIsLoading.value,
   );
@@ -47,11 +46,11 @@
   const { isEditing, stopEditing, startEditing } = useEditing();
 
   onMounted(async () => {
-    const project = projectsStore.getProject;
+    const project = projectStore.getProject;
     if (project) addData(project);
 
     const data: ComputedRef<DetailedProjectModel | null> = computed(
-      () => projectsStore.getProject,
+      () => projectStore.getProject,
     );
 
     watch(
@@ -75,13 +74,13 @@
         teamNumberInputStatus.value = '';
         departmentInputStatus.value = '';
         clientNameInputStatus.value = '';
-        addData(projectsStore.getProject!);
+        addData(projectStore.getProject!);
       }
     },
   );
 
   const toggleEditingMode = async () => {
-    if (isEditing.value) {
+    if (isEditing.value === true) {
       await stopEditing();
     } else {
       await startEditing();
@@ -89,6 +88,7 @@
   };
 
   const projectData = {
+    id: ref<number>(0),
     projectName: ref<string>(''),
     businessUnit: ref<string>(''),
     teamNumber: ref<number>(0),
@@ -97,10 +97,12 @@
     isArchived: ref<boolean>(false),
   };
 
-  const BUInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
-  const teamNumberInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
-  const departmentInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
-  const clientNameInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
+  type Status = '' | 'error' | 'warning' | undefined;
+
+  const BUInputStatus = ref<Status>('');
+  const teamNumberInputStatus = ref<Status>('');
+  const departmentInputStatus = ref<Status>('');
+  const clientNameInputStatus = ref<Status>('');
 
   const BUInput = ref(projectData.businessUnit);
   const teamNumberInput = ref(projectData.teamNumber);
@@ -121,8 +123,9 @@
 
   //Function to load the data from projectViewService to projectView
   function addData(loadedData: DetailedProjectModel) {
-    if (projectsStore.getProject)
-      projectEditStore.setProjectInformation(projectsStore.getProject);
+    if (projectStore.getProject)
+      projectEditStore.setProjectInformation(projectStore.getProject);
+    projectData.id.value = loadedData.id;
     projectData.projectName.value = loadedData.projectName;
     projectData.businessUnit.value = loadedData.businessUnit;
     projectData.teamNumber.value = loadedData.teamNumber;
@@ -132,6 +135,7 @@
 
   const isArchiveModalOpen = ref(false);
   const isDeleteModalOpen = ref(false);
+  const isModalOpen = ref(false);
 
   const handleArchive = () => {
     isArchiveModalOpen.value = true;
@@ -142,7 +146,7 @@
   };
 
   const confirmDelete = async () => {
-    const project = projectsStore.getProject;
+    const project = projectStore.getProject;
 
     if (!project?.id) {
       isDeleteModalOpen.value = false;
@@ -150,17 +154,11 @@
     }
 
     try {
-      const response = await projectsStore.deleteProject(project.id);
+      await projectStore.delete(project.id);
 
-      if (response?.ok) {
-        const nextProject = projectsStore.getProject;
+      const nextProject = projectStore.getProject;
 
-        if (nextProject) {
-          projectRouting.setProjectId(nextProject.id);
-        } else {
-          projectRouting.setProjectId(null);
-        }
-      }
+      if (nextProject) projectRouting.setProjectId(nextProject.id);
     } catch (error) {
       console.error('Error deleting project:', error);
     } finally {
@@ -169,25 +167,24 @@
   };
 
   const getNextActiveProjectId = (currentProjectId: number): number => {
-    const projects = projectsStore.getProjects;
+    const projects = projectStore.getProjects;
     const nextProject = projects.find((project) => !project.isArchived);
     if (!nextProject) return currentProjectId;
     return nextProject.id;
   };
 
   const confirmArchive = async () => {
-    const projectID = projectsStore?.getProject?.id;
-    const projectData = projectsStore?.getProject as UpdateProjectModel;
+    const projectID = projectStore?.getProject?.id;
+    const projectData = projectStore?.getProject as UpdateProjectModel;
     projectData.pluginList = pluginStore?.getPlugins;
 
     if (projectID) {
       try {
-        await projectsStore.archiveProject(projectData, projectID);
-        if (projectsStore.getUpdatedSuccessfully) {
-          await projectsStore.fetchProjects();
-        }
+        await projectStore.archive(projectID);
       } finally {
         isArchiveModalOpen.value = false;
+        isModalOpen.value = false;
+        await localLogStore?.fetch(projectID);
         const newProjectId = getNextActiveProjectId(projectID);
         projectRouting.setProjectId(newProjectId);
       }
@@ -195,13 +192,12 @@
   };
 
   const reactivateProject = async () => {
-    const currentProject = projectsStore.getProject! as UpdateProjectModel;
-    const projectId = projectsStore.getProject?.id;
+    const currentProject = projectStore.getProject! as UpdateProjectModel;
+    const projectId = projectStore.getProject?.id;
     currentProject.pluginList = pluginStore.getPlugins;
 
-    await projectsStore.activateProject(currentProject, projectId!);
-    await projectsStore.fetchProjects();
-    await localLogStore?.fetchLocalLog(projectId!);
+    await projectStore.unarchive(projectId!);
+    await localLogStore?.fetch(projectId!);
   };
 </script>
 
@@ -217,7 +213,7 @@
 
         <!-- Edit Button -->
         <OutlinedButton
-          v-if="!projectsStore.getProject?.isArchived"
+          v-if="!projectStore.getProject?.isArchived"
           tooltip-position="left"
           tooltip="Click here to activate Edit-View"
           @click="toggleEditingMode"
@@ -229,7 +225,7 @@
 
         <!-- Reactivate Button -->
         <OutlinedButton
-          v-if="projectsStore.getProject?.isArchived"
+          v-if="projectStore.getProject?.isArchived"
           tooltip-position="left"
           tooltip="Click here to reactivate"
           @click="reactivateProject"
@@ -241,7 +237,7 @@
 
         <!-- Delete Button -->
         <OutlinedButton
-          v-if="projectsStore.getProject?.isArchived"
+          v-if="projectStore.getProject?.isArchived"
           tooltip-position="right"
           tooltip="Click here to delete the project"
           @click="handleDelete"
@@ -262,7 +258,7 @@
 
         <!-- Archive Button -->
         <OutlinedButton
-          v-if="!projectsStore.getProject?.isArchived"
+          v-if="!projectStore.getProject?.isArchived"
           tooltip-position="right"
           tooltip="Click here to archive the project"
           @click="handleArchive"
@@ -563,7 +559,7 @@
 
   .icon {
     color: black;
-    font-size: 1.5em;
+    font-size: 2.5em;
   }
 
   .label {

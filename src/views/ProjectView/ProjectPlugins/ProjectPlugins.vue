@@ -57,26 +57,23 @@
   import type { ComputedRef } from 'vue';
   import { PluginComponent } from '@/components/Plugin';
   import { AddPluginCard } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
-  import {
-    pluginStoreSymbol,
-    projectEditStoreSymbol,
-    projectsStoreSymbol,
-  } from '@/store/injectionSymbols';
+  import { projectEditStoreSymbol } from '@/store/injectionSymbols';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { PluginEditModel, PluginModel } from '@/models/Plugin';
+  import { usePluginStore, useProjectStore } from '@/store';
   import { createFaviconURL, cutAfterTLD } from '@/components/Plugin/editURL';
   import GroupedCard from '@/components/GroupedCard/GroupedCard.vue';
   import Popup from '@/components/Popup/PopupComponent.vue';
 
   const { isEditing } = useEditing();
 
-  const pluginStore = inject(pluginStoreSymbol)!;
-  const projectsStore = inject(projectsStoreSymbol);
+  const pluginStore = usePluginStore();
+  const projectStore = useProjectStore();
   const projectEditStore = inject(projectEditStoreSymbol);
 
   const plugins = ref<PluginEditModel[]>([]);
   const loading = computed(
-    () => pluginStore.getIsLoading || projectsStore?.getIsLoading,
+    () => pluginStore.getIsLoading || projectStore.getIsLoading,
   );
 
   interface GroupedPlugin {
@@ -161,6 +158,7 @@
   }
 
   const syncEditStore = (normalPlugins: PluginModel[]) => {
+    if (!normalPlugins?.length) return;
     for (let i = 0; i < normalPlugins.length; i++) {
       const index = projectEditStore?.initialAdd(normalPlugins[i]);
       if (index !== undefined) {
@@ -207,7 +205,7 @@
 
   onMounted(async () => {
     const data: ComputedRef<PluginModel[]> = computed(() =>
-      projectsStore?.getProject?.isArchived
+      projectStore?.getProject?.isArchived
         ? pluginStore.getPlugins
         : pluginStore.getUnarchivedPlugins,
     );
