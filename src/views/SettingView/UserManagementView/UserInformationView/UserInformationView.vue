@@ -47,7 +47,6 @@
         size: 'large',
         status: 'activated',
         tooltip: 'Click here to create a new user',
-        class: 'testClass',
       },
       {
         name: 'DeleteUserButton',
@@ -57,7 +56,6 @@
         icon: DeleteOutlined,
         type: 'primary',
         size: 'large',
-        specialType: 'danger',
         status: 'activated',
         tooltip: 'Click here to delete this user',
       },
