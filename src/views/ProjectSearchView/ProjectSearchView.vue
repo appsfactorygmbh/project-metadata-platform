@@ -2,14 +2,12 @@
   import { type SearchableColumn, SearchableTable } from '@/components/Table';
   import { SearchBar } from '@/components/Searchbar';
   import {
+    projectRoutingSymbol,
     localLogStoreSymbol,
-    pluginStoreSymbol,
-    projectsStoreSymbol,
   } from '@/store/injectionSymbols';
   import { inject, onMounted, provide, reactive } from 'vue';
   import { type SearchStore, useSearchStore } from '@/store/SearchStore';
   import type { ProjectModel } from '@/models/Project';
-  import { projectsService } from '@/services';
   import { useEditing } from '@/utils/hooks/useEditing';
   import _ from 'lodash';
   import { useToggle, useWindowSize } from '@vueuse/core';
@@ -18,7 +16,7 @@
     InboxOutlined,
     UndoOutlined,
   } from '@ant-design/icons-vue';
-  import { useProjectRouting } from '@/utils/hooks';
+  import { usePluginStore, useProjectStore } from '@/store';
 
   const props = defineProps({
     paneWidth: {
@@ -34,20 +32,18 @@
   type ProjectSearchStore = SearchStore<ProjectModel>;
 
   const { stopEditing, isEditing } = useEditing();
-  const { routerProjectId, setProjectId } = useProjectRouting();
-
+  const { routerProjectId, setProjectId } = inject(projectRoutingSymbol)!;
   const localLogStore = inject(localLogStoreSymbol);
-  const projectsStore = inject(projectsStoreSymbol);
-  const pluginStore = inject(pluginStoreSymbol);
+
+  const pluginStore = usePluginStore();
+  const projectStore = useProjectStore();
   const searchStore = useSearchStore<ProjectModel>('projects');
   const searchStoreSymbol = Symbol('projectSearchStore');
-  const isLoading = computed(() => projectsStore?.getIsLoadingProjects);
-  const isFiltering = computed(() => searchStore?.getIsFiltering);
-
+  const isLoading = computed(() => projectStore.getIsLoadingProjects);
   provide<ProjectSearchStore>(searchStoreSymbol, searchStore);
 
   const highlightButton = computed(() =>
-    isFiltering.value
+    searchStore.isFiltering
       ? { color: '#3e8ee2', width: '100%', borderColor: '#3e8ee2' }
       : { color: 'black', width: '100%', borderColor: '#d9d9d9' },
   );
@@ -75,9 +71,9 @@
   searchStore.setFilter(showOnlyActive);
 
   watch(
-    () => projectsStore?.getProjects,
+    () => projectStore.getProjects,
     () => {
-      searchStore.setBaseSet(projectsStore!.getProjects);
+      searchStore.setBaseSet(projectStore.getProjects);
     },
   );
 
@@ -85,7 +81,7 @@
     .VITE_PROJECT_SEARCH_METHOD;
 
   watch(
-    () => projectsStore?.getProjects,
+    () => projectStore.getProjects,
     (newData) => {
       searchStore?.setBaseSet(newData || []);
     },
@@ -102,7 +98,7 @@
   if (FETCHING_METHOD === 'BACKEND') {
     const fetchData = async (value: string) => {
       try {
-        return await projectsService.fetchProjects(value);
+        return await projectStore.fetchAll({ search: value });
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -126,10 +122,10 @@
   watch(
     () => routerProjectId.value,
     async () => {
-      await projectsStore?.fetchProject(routerProjectId.value);
-      await pluginStore?.fetchPlugins(routerProjectId.value);
-      await pluginStore?.fetchUnarchivedPlugins(routerProjectId.value);
-      await localLogStore?.fetchLocalLog(routerProjectId.value);
+      await projectStore.fetch(routerProjectId.value);
+      await pluginStore.fetch(routerProjectId.value);
+      await pluginStore?.fetchUnarchived(routerProjectId.value);
+      await localLogStore?.fetch(routerProjectId.value);
     },
   );
 
@@ -139,18 +135,18 @@
   };
 
   onMounted(async () => {
-    await projectsStore?.fetchProjects();
+    await projectStore.fetchAll();
 
     if (routerProjectId.value === 0) {
-      setProjectId(projectsStore?.getProjects[0]?.id ?? 100);
+      setProjectId(projectStore.getProjects[0]?.id ?? 100);
     } else {
-      await projectsStore?.fetchProject(routerProjectId.value);
-      await pluginStore?.fetchPlugins(routerProjectId.value);
-      await pluginStore?.fetchUnarchivedPlugins(routerProjectId.value);
-      await localLogStore?.fetchLocalLog(routerProjectId.value);
+      await projectStore.fetch(routerProjectId.value);
+      await pluginStore.fetch(routerProjectId.value);
+      await pluginStore?.fetchUnarchived(routerProjectId.value);
+      await localLogStore?.fetch(routerProjectId.value);
     }
 
-    searchStore.setBaseSet(projectsStore?.getProjects ?? []);
+    searchStore.setBaseSet(projectStore.getProjects ?? []);
     changeColumns(props.paneWidth);
   });
 
@@ -174,7 +170,7 @@
               style="padding-left: 0; padding-right: 0"
             >
               <a-button
-                class="reset"
+                name="resetButton"
                 :style="highlightButton"
                 @click="clearAllFilters"
               >

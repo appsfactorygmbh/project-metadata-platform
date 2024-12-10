@@ -1,8 +1,5 @@
-export type UserListModel = {
-  id: number;
-  email: string;
-};
+import type { GetUserResponse } from '@/api/generated';
 
-export type UserModel = UserListModel & {
-  email: string;
-};
+export type UserListModel = Pick<GetUserResponse, 'id' | 'email'>;
+
+export type UserModel = GetUserResponse;

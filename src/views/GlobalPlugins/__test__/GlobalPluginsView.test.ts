@@ -1,81 +1,142 @@
-import { createPinia, setActivePinia } from 'pinia';
+import { getActivePinia, setActivePinia } from 'pinia';
 import GlobalPluginsView from '../GlobalPluginsView.vue';
 import { describe, expect, it } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
-import { globalPluginStoreSymbol } from '@/store/injectionSymbols.ts';
-import { useGlobalPluginsStore } from '@/store';
+import {
+  type GlobalPluginsStore,
+  useAuthStore,
+  useGlobalPluginsStore,
+  usePluginStore,
+} from '@/store';
 import { Button } from 'ant-design-vue';
+import type { GlobalPluginModel } from '@/models/Plugin';
+import {
+  authStoreSymbol,
+  globalPluginStoreSymbol,
+  pluginStoreSymbol,
+} from '@/store/injectionSymbols';
+import router from '@/router';
+import { useStore } from 'pinia-generic';
 
-const testData = [
+const testData: GlobalPluginModel[] = [
   {
     id: 0,
     name: 'Plugin 1',
     isArchived: true,
+    keys: [],
   },
   {
     id: 1,
     name: 'Plugin 2',
     isArchived: false,
+    keys: [],
   },
 ];
 
-const testDataArchive = [
+const testDataArchive: GlobalPluginModel[] = [
   {
     id: 0,
     name: 'Plugin 1',
     isArchived: true,
+    keys: [],
   },
   {
     id: 1,
     name: 'Plugin 2',
     isArchived: true,
+    keys: [],
   },
 ];
 
-const testDataReactivate = [
+const testDataReactivate: GlobalPluginModel[] = [
   {
     id: 0,
     name: 'Plugin 1',
     isArchived: true,
+    keys: [],
   },
   {
     id: 1,
     name: 'Plugin 2',
     isArchived: true,
+    keys: [],
   },
 ];
+
+const piniaOptions: Parameters<typeof createTestingPinia>[0] = {
+  stubActions: false,
+  initialState: {
+    globalPlugin: {
+      // globalPlugins: testData,
+      // getGlobalPlugins: vi.fn(() => testData),
+      fetch: vi.fn(), // prevent call to api
+      fetchAll: vi.fn(), // prevent call to api
+      // setGlobalPlugins: vi.fn(),
+    },
+  },
+};
+const testingPinia = createTestingPinia(piniaOptions);
 
 describe('GlobalPluginsView.vue', () => {
-  setActivePinia(createPinia());
+  setActivePinia(testingPinia);
+
+  beforeAll(() => {
+    vi.mock('@/store/GlobalPluginStore', async (importOriginal) => {
+      return {
+        ...(await importOriginal<typeof import('@/store/GlobalPluginStore')>()),
+        useGlobalPluginsStore: (pinia = testingPinia) => {
+          return useStore<GlobalPluginsStore>('globalPlugin', {
+            state: {
+              globalPlugins: testData,
+            },
+            getters: {
+              getGlobalPlugins() {
+                return this.globalPlugins;
+              },
+            },
+            actions: {
+              fetch: vi.fn(),
+              fetchAll: vi.fn(),
+              refreshAuth: vi.fn(),
+              setGlobalPlugins(plugins) {
+                this.globalPlugins = plugins;
+              },
+              async archive(id) {
+                this.globalPlugins = testDataArchive;
+              },
+              async unarchive(id) {
+                this.globalPlugins = testDataReactivate;
+              },
+              delete: vi.fn().mockImplementation(() => {}),
+            },
+          })(getActivePinia());
+        },
+      };
+    });
+  });
+
+  const globalPluginStore = useGlobalPluginsStore(testingPinia);
 
   const generateWrapper = () => {
     return mount(GlobalPluginsView, {
-      plugins: [
-        createTestingPinia({
-          stubActions: false,
-          initialState: {
-            globalPlugin: {
-              globalPlugins: testData,
-            },
-          },
-        }),
-      ],
       global: {
+        plugins: [createTestingPinia(piniaOptions), router],
         provide: {
-          [globalPluginStoreSymbol as symbol]: useGlobalPluginsStore(),
+          [globalPluginStoreSymbol as symbol]: globalPluginStore,
+          [pluginStoreSymbol as symbol]: usePluginStore(testingPinia),
+          [authStoreSymbol as symbol]: useAuthStore(testingPinia),
         },
       },
     });
   };
 
-  it('renders the fetched Plugins, but not the archieved ones', async () => {
+  it('renders the fetched Plugins, but not the archived ones', async () => {
     const wrapper = generateWrapper();
     await flushPromises();
-
+    expect(globalPluginStore.getGlobalPlugins).toMatchObject(testData);
     expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
     expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 2');
-    expect(wrapper.findAll('.ant-btn')).toHaveLength(3);
   });
 
   it('switches to archived plugins when clicking the button', async () => {
@@ -91,31 +152,26 @@ describe('GlobalPluginsView.vue', () => {
   it('calls the store when clicking the archive button', async () => {
     const wrapper = generateWrapper();
     const globalPluginStore = useGlobalPluginsStore();
-    const spy = vi.spyOn(globalPluginStore, 'archiveGlobalPlugin');
-    spy.mockImplementation(async () =>
-      globalPluginStore.setGlobalPlugins(testDataArchive),
-    );
+    const spy = vi.spyOn(globalPluginStore, 'archive');
 
     await flushPromises();
     expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
+    expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 2');
     expect(spy).toHaveBeenCalledTimes(0);
 
-    await wrapper.findAll('.anticon-inbox')[1].trigger('click');
+    await wrapper.find('button[name="archivePluginButton"]').trigger('click');
     //confirms the action
-    const confirmButton = wrapper.findAllComponents(Button)[4];
-    await confirmButton.trigger('click');
+    const confirmButton = wrapper.findComponentByText(Button, 'Yes');
+    await confirmButton?.trigger('click');
 
-    expect(wrapper.findAll('.ant-list-item')).toHaveLength(0);
     expect(spy).toHaveBeenCalledOnce();
+    expect(wrapper.findAll('.ant-list-item')).toHaveLength(0);
   });
 
   it('calls the store when clicking the reactivate button', async () => {
     const wrapper = generateWrapper();
     const globalPluginStore = useGlobalPluginsStore();
-    const spy = vi.spyOn(globalPluginStore, 'reactivateGlobalPlugin');
-    spy.mockImplementation(async () =>
-      globalPluginStore.setGlobalPlugins(testDataReactivate),
-    );
+    const spy = vi.spyOn(globalPluginStore, 'unarchive');
 
     await flushPromises();
     expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
@@ -132,10 +188,7 @@ describe('GlobalPluginsView.vue', () => {
   it('calls the store when clicking the delete button', async () => {
     const wrapper = generateWrapper();
     const globalPluginStore = useGlobalPluginsStore();
-    const spy = vi.spyOn(globalPluginStore, 'deleteGlobalPlugin');
-    spy.mockImplementation(async () =>
-      globalPluginStore.setGlobalPlugins(testData),
-    );
+    const spy = vi.spyOn(globalPluginStore, 'delete');
 
     await flushPromises();
     expect(spy).toHaveBeenCalledTimes(0);
@@ -144,7 +197,7 @@ describe('GlobalPluginsView.vue', () => {
     await wrapper.find('.anticon-inbox').trigger('click');
     await wrapper.find('.anticon-delete').trigger('click');
     //confirms the action
-    const confirmButton = wrapper.findAllComponents(Button)[4];
+    const confirmButton = wrapper.findComponentByText(Button, 'Yes');
     await confirmButton.trigger('click');
 
     expect(spy).toHaveBeenCalledOnce();

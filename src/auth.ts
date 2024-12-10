@@ -27,6 +27,10 @@ const auth = createAuth({
   forbiddenRedirect: {
     path: '/403',
   },
+  fetchData: {
+    ...authService.fetchUserRequest,
+    enabled: true,
+  },
   loginData: {
     ...authService.loginRequest,
     fetchUser: false,

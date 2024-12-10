@@ -6,18 +6,18 @@
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import {
-    localLogStoreSymbol,
-    pluginStoreSymbol,
     projectEditStoreSymbol,
-    projectsStoreSymbol,
+    localLogStoreSymbol,
   } from '@/store/injectionSymbols';
   import { inject, watch } from 'vue';
   import { message } from 'ant-design-vue';
+  import { usePluginStore, useProjectStore } from '@/store';
 
   const localLogStore = inject(localLogStoreSymbol);
-  const pluginStore = inject(pluginStoreSymbol);
-  const projectStore = inject(projectsStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
+  const pluginStore = usePluginStore();
+  const projectStore = useProjectStore();
+
   const isModalOpen = ref(false);
   const openModal = () => {
     isModalOpen.value = true;
@@ -26,7 +26,7 @@
 
   const reloadEditStore = () => {
     if (pluginStore) {
-      pluginStore?.getPlugins.forEach((plugin) => {
+      pluginStore.getPlugins.forEach((plugin) => {
         projectEditStore?.initialAdd(plugin);
       });
     }
@@ -47,16 +47,15 @@
     stopEditing();
   };
 
-  const isAdding = computed(() => projectStore?.getIsLoadingUpdate);
+  const isAdding = computed(() => projectStore.getIsLoadingUpdate);
 
   // Watcher to see if fetch was successful
   watch(isAdding, (newVal) => {
     if (!newVal) {
-      if (projectStore?.getUpdatedSuccessfully) {
+      if (projectStore.getUpdatedSuccessfully) {
         projectEditStore?.resetPluginChanges();
         message.success('Project updated successfully.', 2);
-        projectStore.fetchProject(projectStore.getProject?.id || 0);
-
+        projectStore.fetch(projectStore.getProject?.id || 0);
         stopEditing();
       } else {
         message.error('Could not update Project.', 5);
@@ -77,7 +76,7 @@
       return;
     }
 
-    if (!projectStore?.getProject) {
+    if (!projectStore.getProject) {
       console.error(
         'Error when trying to get ProjectInformation. getProject is undefined',
       );
@@ -92,14 +91,16 @@
       department: updateProjectInformation?.department,
       clientName: updateProjectInformation?.clientName,
       pluginList: projectEditStore?.getPluginChanges,
+      isArchived: projectStore.getProject.isArchived,
     };
-    const projectID = computed(() => projectStore?.getProject?.id);
+    console.log('updated Project', updatedProject);
+    const projectID = computed(() => projectStore.getProject?.id);
     if (projectID.value) {
-      await projectStore?.updateProject(updatedProject, projectID.value);
-      await projectStore.fetchProjects();
-      await projectStore.fetchProject(projectID.value);
-      await pluginStore?.fetchUnarchivedPlugins(projectID.value);
-      await localLogStore?.fetchLocalLog(projectID.value);
+      await projectStore.update(projectID.value, updatedProject);
+      await projectStore.fetchAll();
+      await projectStore.fetch(projectID.value);
+      await pluginStore.fetchUnarchived(projectID.value);
+      await localLogStore?.fetch(projectID.value);
     }
   };
 </script>
