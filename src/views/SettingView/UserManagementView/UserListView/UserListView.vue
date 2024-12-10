@@ -31,6 +31,8 @@
     setUserId(userID);
   };
 
+  const getNameFromEmail = (email: string) => email.split('@')[0];
+
   onMounted(async () => {
     await userStore?.fetchAll();
     if (routerUser.value === '0') {
@@ -62,7 +64,7 @@
           class="users"
           @click="clickTab(user.id)"
         >
-          <span>{{ user.email.split('@')[0] }}</span>
+          <span>{{ getNameFromEmail(user.email) }}</span>
         </a-menu-item>
       </a-menu>
       <a-skeleton
