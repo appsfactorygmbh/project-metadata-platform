@@ -78,29 +78,41 @@
   };
 
   // Creates a regex for all possible E-Mail addresses and checks if the given one fits the pattern
-  const validateEmail = (_rule: Rule, value: string) => {
+  const isValidEmail = (_rule: Rule, value: string) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     if (value && emailRegex.test(value)) {
-      const users: UserListModel[] = userStore.getUsers;
-
-      if (value === users?.find((user) => user.email === value)?.email) {
-        return Promise.reject('This email is already in use.');
-      }
       return Promise.resolve();
     } else {
       return Promise.reject('Please enter a valid email.');
     }
   };
 
+  // Checks if any other users has the same email address
+  const isUniqueEmail = (_rule: Rule, value: string) => {
+    const users: UserListModel[] = userStore.getUsers;
+
+    if (users?.every((user) => user.email !== value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject('This email is already in use.');
+  };
+
   const rulesRef = reactive<RulesObject<CreateUserFormData>>({
     email: [
       {
         required: true,
-        message: 'Please insert a valid and unique email.',
-        validator: validateEmail,
+        message: 'Please insert a valid email.',
+        validator: isValidEmail,
         trigger: 'change',
         type: 'string',
+      },
+      {
+        required: true,
+        message: 'Please insert an unique email.',
+        validator: isUniqueEmail,
+        trigger: 'change',
+        type: 'email',
       },
     ],
     password: [

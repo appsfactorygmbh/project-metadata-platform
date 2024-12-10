@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-  import EmailInputTextField from './InputFields/EmailInputTextField.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { PropType } from 'vue';
   import { useFormStore } from '../Form/FormStore';
+  import UserEmailInputField from './InputFields/UserEmailInputField.vue';
 
   const props = defineProps({
     value: {
@@ -67,7 +67,7 @@
       <p v-if="!isEditing" class="text">{{ value }}</p>
 
       <div v-else>
-        <EmailInputTextField
+        <UserEmailInputField
           v-if="props.type === 'email'"
           :form-store="emailFormStore"
           :user-id="props.userId"

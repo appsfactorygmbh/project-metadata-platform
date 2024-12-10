@@ -17,9 +17,3 @@
     :default-value="props.default"
   ></a-input>
 </template>
-
-<style lang="css" scoped>
-  .formItem {
-    margin: 0;
-  }
-</style>

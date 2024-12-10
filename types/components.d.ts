@@ -65,5 +65,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
     SearchBar: typeof import('./../src/components/Searchbar/SearchBar.vue')['default']
+    UserEmailInputField: typeof import('./../src/components/EditableTextField/InputFields/UserEmailInputField.vue')['default']
   }
 }

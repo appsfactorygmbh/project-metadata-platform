@@ -32,30 +32,49 @@
 
   const userStore = inject(userStoreSymbol)!;
 
+  const dynamicValidateForm = reactive<FormType>({
+    email: props.default,
+  });
+
+  // Creates a regex for all possible E-Mail addresses and checks if the given one fits the pattern
+  const isValidEmail = (_rule: Rule, value: string) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (value && emailRegex.test(value)) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('Please enter a valid email.');
+    }
+  };
+
   const isUniqueEmail = (_rule: Rule, email: string) => {
     const users: UserListModel[] = userStore.getUsers;
     const currentUser: UserModel | null = userStore.getUser;
 
     // checks if email is already in use by another user
     if (
-      users?.every((user) => user.email !== email) &&
-      email !== currentUser?.email
+      users?.every(
+        (user) => user.email !== email || user.email === currentUser?.email,
+      )
     ) {
-      return Promise.reject('This email is already in use.');
+      return Promise.resolve();
     }
-    return Promise.resolve();
+    return Promise.reject('This email is already in use.');
   };
-
-  const dynamicValidateForm = reactive<FormType>({
-    email: props.default,
-  });
 
   const rulesRef = reactive<RulesObject<FormType>>({
     email: [
       {
         required: true,
+        message: 'Please insert a valid email.',
+        validator: isValidEmail,
+        trigger: 'change',
+        type: 'string',
+      },
+      {
+        required: true,
+        message: 'Please insert an unique email.',
         validator: isUniqueEmail,
-        message: 'Please enter a valid and unique E-Mail adress',
         trigger: 'change',
         type: 'email',
       },
