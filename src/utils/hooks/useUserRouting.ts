@@ -1,8 +1,6 @@
-import { useRouter } from 'vue-router';
+import { type Router, useRouter } from 'vue-router';
 
-export const useUserRouting = () => {
-  const router = useRouter();
-
+export const useUserRouting = (router: Router = useRouter()) => {
   const routerUserId = ref<string>(
     String(router.currentRoute.value.query.userId) || '',
   );
