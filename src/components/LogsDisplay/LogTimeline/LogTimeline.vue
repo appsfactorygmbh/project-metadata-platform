@@ -7,6 +7,7 @@
       required: true,
     },
   });
+  console.log(props.logEntries);
 </script>
 
 <template>

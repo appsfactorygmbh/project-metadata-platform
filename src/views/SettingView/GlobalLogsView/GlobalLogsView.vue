@@ -1,15 +1,18 @@
 <script setup lang="ts">
   import { logsStoreSymbol } from '@/store/injectionSymbols';
   import { debounce } from 'lodash';
-  import { inject, onMounted } from 'vue';
+  import { inject, onBeforeMount } from 'vue';
   const searchValue = ref('');
 
   const logsStore = inject(logsStoreSymbol)!;
 
+  const loadingGlobalLogs = computed(() => logsStore.getIsLoadingGlobalLogs);
+
   const updateSearchParam = debounce(async () => {
     await logsStore?.fetch(searchValue.value);
   }, 500);
-  onMounted(async () => {
+  onBeforeMount(async () => {
+    console.log('mouting');
     await logsStore?.fetch();
   });
 </script>
@@ -23,8 +26,11 @@
       @change="updateSearchParam"
     />
     <a-card class="cardContainer">
+      <a-spin v-if="loadingGlobalLogs || true" class="loadingIcon" />
       <LogTimeline
-        v-if="logsStore.getGlobalLogs && logsStore.getGlobalLogs.length > 0"
+        v-else-if="
+          logsStore.getGlobalLogs && logsStore.getGlobalLogs.length > 0
+        "
         :log-entries="logsStore.getGlobalLogs"
         class="timeline"
       />
@@ -57,5 +63,9 @@
 
   .timeline {
     height: 100%;
+  }
+  .loadingIcon {
+    display: flex;
+    justify-content: center;
   }
 </style>
