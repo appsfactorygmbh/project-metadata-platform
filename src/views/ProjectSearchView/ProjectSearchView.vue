@@ -42,8 +42,8 @@
   const isLoading = computed(() => projectStore.getIsLoadingProjects);
   provide<ProjectSearchStore>(searchStoreSymbol, searchStore);
 
-  const highlightButton = computed(() =>
-    searchStore.isFiltering
+  const highlightButtonStyle = computed(() =>
+    searchStore.getIsFiltering()
       ? { color: '#3e8ee2', width: '100%', borderColor: '#3e8ee2' }
       : { color: 'black', width: '100%', borderColor: '#d9d9d9' },
   );
@@ -171,7 +171,7 @@
             >
               <a-button
                 name="resetButton"
-                :style="highlightButton"
+                :style="highlightButtonStyle"
                 @click="clearAllFilters"
               >
                 <template #icon>

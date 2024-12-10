@@ -10,7 +10,6 @@ type SearchStoreState<T> = {
   isLoading: boolean;
   onReset: (() => void) | undefined;
   filter: (items: T[]) => T[];
-  isFiltering: boolean;
 };
 
 const excludedKeys = ['id', 'createdAt', 'updatedAt'];
@@ -25,7 +24,6 @@ export const useSearchStore = <T extends AnyObject>(name: string) =>
         isLoading: false,
         onReset: undefined,
         filter: (items: T[]): T[] => items,
-        isFiltering: false,
       };
     },
     getters: {
@@ -37,9 +35,6 @@ export const useSearchStore = <T extends AnyObject>(name: string) =>
       },
       getIsLoading(): boolean {
         return this.isLoading;
-      },
-      getIsFiltering(): boolean {
-        return this.isFiltering;
       },
     },
     actions: {
@@ -60,7 +55,6 @@ export const useSearchStore = <T extends AnyObject>(name: string) =>
         if (_.isEmpty(this.searchQuery)) {
           // filter only by custom filter function
           this.searchResults = this.filter(this.baseSet);
-          this.isFiltering = false;
           return;
         }
         this.isLoading = true;
@@ -76,10 +70,14 @@ export const useSearchStore = <T extends AnyObject>(name: string) =>
           ),
         );
         // filter by custom filter function
-        this.isFiltering = true;
         const filteredResults = this.filter(searchResults);
         this.searchResults = filteredResults;
         this.isLoading = false;
+      },
+
+      getIsFiltering() {
+        if (_.isEmpty(this.searchQuery)) return false;
+        else return true;
       },
 
       setOnReset(onReset: () => void) {
@@ -87,7 +85,6 @@ export const useSearchStore = <T extends AnyObject>(name: string) =>
       },
 
       reset() {
-        this.isFiltering = false;
         this.searchQuery = '';
         this.searchResults = this.baseSet;
         if (this.onReset) this.onReset();

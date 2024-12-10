@@ -12,55 +12,56 @@ import type { ComponentPublicInstance } from 'vue';
 import router from '@/router';
 import type { ProjectModel } from '@/models/Project';
 import { useProjectRouting } from '@/utils/hooks';
+import { type SearchStore, useSearchStore } from '@/store/SearchStore';
 
 interface ProjectSearchViewInstance {
   paneWidth: number;
   paneHeight: number;
   handleRowClick: (project: ProjectModel) => void;
 }
-const generateWrapper = (pWidth: number, search: boolean) => {
-  return mount(ProjectSearchView, {
-    plugins: [
-      createTestingPinia({
-        stubActions: false,
-        initialState: {
-          test_search: {
-            isFiltering: search,
-          },
-        },
-      }),
-    ],
-    global: {
-      provide: {
-        [projectRoutingSymbol as symbol]: useProjectRouting(router),
-        [localLogStoreSymbol as symbol]: useLocalLogStore(),
-      },
-      plugins: [router],
-    },
-    propsData: {
-      paneWidth: pWidth,
-      paneHeight: 800,
-    },
-  });
-};
 
 describe('ProjectSearchView.vue', () => {
+  const searchStoreSymbol = Symbol('searchStoreSym');
+  const searchStore = useSearchStore('test');
+
+  const generateWrapper = (pWidth: number) => {
+    return mount(ProjectSearchView, {
+      plugins: [
+        createTestingPinia({
+          stubActions: false,
+        }),
+      ],
+      global: {
+        provide: {
+          [searchStoreSymbol as symbol]: searchStore,
+          [projectRoutingSymbol as symbol]: useProjectRouting(router),
+          [localLogStoreSymbol as symbol]: useLocalLogStore(),
+        },
+        plugins: [router],
+      },
+      propsData: {
+        paneWidth: pWidth,
+        paneHeight: 800,
+      },
+    });
+  };
+
   setActivePinia(createTestingPinia());
 
   it('renders correctly with 4 columns', () => {
-    const wrapper = generateWrapper(800, false);
+    const wrapper = generateWrapper(800);
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
   });
 
   it('renders correctly with reset button', async () => {
-    const wrapper = generateWrapper(800, false);
+    const wrapper = generateWrapper(800);
     expect(wrapper.find('[name="resetButton"]').exists()).toBe(true);
   });
 
   // TODO: This test is flaky and fails on CI because of the time based transition
   it.skip('hides columns when the pane width is not large enough', async () => {
     createTestingPinia({});
-    const wrapper = generateWrapper(300, false);
+    const wrapper = generateWrapper(300);
     await flushPromises();
     await new Promise((resolve) => setTimeout(resolve, 2000));
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(2);
@@ -69,7 +70,7 @@ describe('ProjectSearchView.vue', () => {
   it('adds a query when clicking on a project', async () => {
     await router.isReady();
 
-    const wrapper = generateWrapper(700, false) as VueWrapper<
+    const wrapper = generateWrapper(700) as VueWrapper<
       ComponentPublicInstance<ProjectSearchViewInstance>
     >;
     const testProject: ProjectModel = {
@@ -100,8 +101,9 @@ describe('ProjectSearchView.vue', () => {
 
     const pluginStore = usePluginStore();
     const projectStore = useProjectStore();
-    generateWrapper(800, false);
+    generateWrapper(800);
     await flushPromises();
+
     await flushPromises();
 
     expect(projectStore.fetch).toHaveBeenCalledWith(300);
