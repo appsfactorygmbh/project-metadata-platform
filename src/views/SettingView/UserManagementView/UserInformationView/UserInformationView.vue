@@ -3,22 +3,21 @@
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { inject, ref } from 'vue';
-  import { userStoreSymbol } from '@/store/injectionSymbols';
+  import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import { useRouter } from 'vue-router';
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
-  import { useUserRouting } from '@/utils/hooks';
 
   const router = useRouter();
   const userStore = inject(userStoreSymbol)!;
-  const { routerUserId, setUserId } = useUserRouting();
-  const { getIsLoadingUsers, getIsLoading, getUser, getMe } =
+  const { setUserId } = inject(userRoutingSymbol)!;
+  const { getIsLoadingUser, getIsLoading, getUser, getMe } =
     storeToRefs(userStore);
   const user = computed(() => getUser.value);
   const me = computed(() => getMe.value);
   const isLoading = computed(
-    () => getIsLoadingUsers.value || getIsLoading.value,
+    () => getIsLoadingUser.value || getIsLoading.value,
   );
 
   const isConfirmModalOpen = ref<boolean>(false);
@@ -28,10 +27,6 @@
   const closeModal = () => {
     isConfirmModalOpen.value = false;
   };
-
-  watch(routerUserId, () => {
-    userStore.fetchUser(routerUserId.value);
-  });
 
   //Button for adding new User
   const buttons: FloatButtonModel[] = [
@@ -64,8 +59,10 @@
     if (!user.value) return;
     await userStore.delete(user.value?.id);
     await userStore.fetchAll();
-    const firstId: string = userStore.getUsers[0].id;
-    setUserId(firstId);
+    await userStore.fetchMe();
+    const myId: string =
+      userStore.getMe?.id ?? userStore.getUsers[0]?.id ?? '1';
+    setUserId(myId);
   };
 </script>
 

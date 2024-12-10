@@ -16,6 +16,7 @@ type StoreState = {
   me: UserModel | null;
   isLoading: boolean;
   isLoadingCreate: boolean;
+  isLoadingUser: boolean;
   isLoadingUsers: boolean;
   isLoadingDelete: boolean;
   isLoadingUpdate: boolean;
@@ -30,6 +31,7 @@ type StoreGetters = {
   getMe: () => UserModel | null;
   getIsLoading: () => boolean;
   getIsLoadingCreate: () => boolean;
+  getIsLoadingUser: () => boolean;
   getIsLoadingUsers: () => boolean;
   getIsLoadingDelete: () => boolean;
   getIsLoadingUpdate: () => boolean;
@@ -45,6 +47,7 @@ type StoreActions = {
   setMe: (me: UserModel | null) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsLoadingCreate: (isLoadingCreate: boolean) => void;
+  setIsLoadingUser: (isLoadingUser: boolean) => void;
   setIsLoadingUsers: (isLoadingUsers: boolean) => void;
   setIsLoadingDelete: (isLoadingDelete: boolean) => void;
   setIsLoadingUpdate: (isLoadingUpdate: boolean) => void;
@@ -73,6 +76,7 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         user: null,
         me: null,
         isLoadingCreate: false,
+        isLoadingUser: false,
         isLoadingUsers: false,
         isLoadingDelete: false,
         isLoadingUpdate: false,
@@ -95,6 +99,9 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getIsLoadingCreate(): boolean {
           return this.isLoadingCreate;
+        },
+        getIsLoadingUser(): boolean {
+          return this.isLoadingUser;
         },
         getIsLoadingUsers(): boolean {
           return this.isLoadingUsers;
@@ -131,6 +138,9 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         setIsLoadingCreate(isLoadingCreate: boolean): void {
           this.isLoadingCreate = isLoadingCreate;
         },
+        setIsLoadingUser(isLoadingUser: boolean): void {
+          this.isLoadingUser = isLoadingUser;
+        },
         setIsLoadingUsers(isLoadingUsers: boolean): void {
           this.isLoadingUsers = isLoadingUsers;
         },
@@ -162,23 +172,23 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         },
 
         async fetchUser(userId: string): Promise<void> {
-          this.setIsLoadingUsers(true);
+          this.setIsLoadingUser(true);
           try {
             const user =
               (await this.callApi('usersUserIdGet', { userId })) ?? null;
             this.setUser(user);
           } finally {
-            this.setIsLoadingUsers(false);
+            this.setIsLoadingUser(false);
           }
         },
 
         async fetchMe(): Promise<void> {
-          this.setIsLoadingUsers(true);
+          this.setIsLoadingUser(true);
           try {
             const user = (await this.callApi('usersMeGet', {})) ?? null;
             this.setMe(user);
           } finally {
-            this.setIsLoadingUsers(false);
+            this.setIsLoadingUser(false);
           }
         },
 
