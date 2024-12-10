@@ -17,6 +17,7 @@ const testData: ProjectModel[] = [
     businessUnit: 'A',
     teamNumber: 1,
     isArchived: false,
+    slug: 'c',
   },
   {
     id: 2,
@@ -25,6 +26,7 @@ const testData: ProjectModel[] = [
     businessUnit: 'B',
     teamNumber: 2,
     isArchived: false,
+    slug: 'a',
   },
 ];
 
