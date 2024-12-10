@@ -10,13 +10,14 @@
   import type { ProjectModel } from '@/models/Project';
   import { useEditing } from '@/utils/hooks/useEditing';
   import _ from 'lodash';
-  import { useToggle, useWindowSize } from '@vueuse/core';
+  import { useSessionStorage, useToggle, useWindowSize } from '@vueuse/core';
   import {
     BulbOutlined,
     InboxOutlined,
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import { usePluginStore, useProjectStore } from '@/store';
+  import { useQuery } from '@/utils/hooks';
 
   const props = defineProps({
     paneWidth: {
@@ -41,6 +42,13 @@
   const searchStoreSymbol = Symbol('projectSearchStore');
   const isLoading = computed(() => projectStore.getIsLoadingProjects);
   provide<ProjectSearchStore>(searchStoreSymbol, searchStore);
+
+  const searchQuery = useQuery(searchableColumnNames);
+  const searchStorage = useSessionStorage('searchStorage', { searchQuery: '' });
+  const filterStorage = useSessionStorage<Record<string, string>>(
+    'filterStorage',
+    {},
+  );
 
   const showOnlyArchived: ProjectSearchStore['filter'] = (items) =>
     items.filter((item) => item.isArchived);
@@ -128,8 +136,24 @@
     setProjectId(project.id);
   };
 
+  const setFilterQuery = async () => {
+    const filterKeys = Object.keys(filterStorage.value);
+    filterKeys.forEach(async (key) => {
+      setTimeout(async () => {
+        if (filterStorage.value[key] === '') {
+          await searchQuery.setSearchQuery(undefined, key);
+        } else {
+          await searchQuery.setSearchQuery(filterStorage.value[key], key);
+        }
+      }, 0);
+    });
+  };
+
   onMounted(async () => {
     await projectStore.fetchAll();
+
+    searchStore?.setSearchQuery(searchStorage.value.searchQuery);
+    await setFilterQuery();
 
     if (routerProjectId.value === 0) {
       setProjectId(projectStore.getProjects[0]?.id ?? 100);
@@ -251,6 +275,12 @@
       width: '12.5%',
     },
   ]);
+  const searchableColumnNames = [
+    'Project Name',
+    'Client Name',
+    'Business Unit',
+    'Team Number',
+  ];
 
   /*  Column drop implementation  */
 

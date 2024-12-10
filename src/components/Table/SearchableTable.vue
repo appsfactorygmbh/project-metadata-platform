@@ -39,7 +39,10 @@
   }
 
   const searchStore = inject<SearchStore<object>>(props.searchStoreSymbol);
-  const searchStorage = useSessionStorage('searchStorage', { searchQuery: '' });
+  const filterStorage = useSessionStorage<Record<string, string>>(
+    'filterStorage',
+    {},
+  );
   const filteredInfo = reactive<FilteredInfoModel>({}); // Use an object to track filter values for each column
 
   const emit = defineEmits(['row-click']);
@@ -103,15 +106,16 @@
     if (columns.value) {
       columns.value.forEach((column) => {
         const key = column.key;
-        if (key)
+        if (key) {
           column.filteredValue = filteredInfo[key] ? [filteredInfo[key]] : null;
+          filterStorage.value = filteredInfo;
+        }
       });
     }
   };
 
   // Watch filteredInfo to update columns' filteredValue reactively
   watch(filteredInfo, () => {
-    sessionStorage.setItem('filteredInfo', JSON.stringify(filteredInfo));
     setFilters(filteredInfo);
   });
 
@@ -181,20 +185,12 @@
   searchStore?.setOnReset(handleClearAll);
 
   onMounted(async () => {
-    const queries = routerSearchQuery.value;
-    const storedFilteredInfo: FilteredInfoModel = JSON.parse(
-      sessionStorage.getItem('filteredInfo') || '{}',
-    );
-    searchStore?.setSearchQuery(searchStorage.value.searchQuery);
-
-    const filterKeys = Object.keys(storedFilteredInfo);
-    filterKeys.forEach(async (key: string) => {
-      if (storedFilteredInfo[key] === '') {
-        await setSearchQuery(undefined, key);
-      } else {
-        await setSearchQuery(storedFilteredInfo[key], key);
-      }
+    const filterKeys = Object.keys(filterStorage.value);
+    filterKeys.forEach((key: string) => {
+      filteredInfo[key] = filterStorage.value[key];
     });
+
+    const queries = routerSearchQuery.value;
 
     for (const query in queries) {
       const searchQuery = queries[query];
