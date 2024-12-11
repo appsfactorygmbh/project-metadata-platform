@@ -12,7 +12,6 @@ import type { ComponentPublicInstance } from 'vue';
 import router from '@/router';
 import type { ProjectModel } from '@/models/Project';
 import { useProjectRouting } from '@/utils/hooks';
-import { type SearchStore, useSearchStore } from '@/store/SearchStore';
 
 interface ProjectSearchViewInstance {
   paneWidth: number;
@@ -21,9 +20,6 @@ interface ProjectSearchViewInstance {
 }
 
 describe('ProjectSearchView.vue', () => {
-  const searchStoreSymbol = Symbol('searchStoreSym');
-  const searchStore = useSearchStore('test');
-
   const generateWrapper = (pWidth: number) => {
     return mount(ProjectSearchView, {
       plugins: [
@@ -33,7 +29,6 @@ describe('ProjectSearchView.vue', () => {
       ],
       global: {
         provide: {
-          [searchStoreSymbol as symbol]: searchStore,
           [projectRoutingSymbol as symbol]: useProjectRouting(router),
           [localLogStoreSymbol as symbol]: useLocalLogStore(),
         },
