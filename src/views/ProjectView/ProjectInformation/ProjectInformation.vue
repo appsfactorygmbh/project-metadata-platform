@@ -80,7 +80,7 @@
   );
 
   const toggleEditingMode = async () => {
-    if (isEditing.value === true) {
+    if (isEditing.value) {
       await stopEditing();
     } else {
       await startEditing();
@@ -158,7 +158,12 @@
 
       const nextProject = projectStore.getProject;
 
-      if (nextProject) projectRouting.setProjectId(nextProject.id);
+      if (nextProject) {
+        projectRouting.setProjectId(nextProject.id);
+      } else {
+        projectRouting.setProjectId(undefined);
+        await projectRouting.router.push({ path: '/', query: {} });
+      }
     } catch (error) {
       console.error('Error deleting project:', error);
     } finally {
@@ -559,7 +564,7 @@
 
   .icon {
     color: black;
-    font-size: 2.5em;
+    font-size: 1.5em;
   }
 
   .label {
