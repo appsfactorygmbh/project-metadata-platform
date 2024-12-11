@@ -32,6 +32,7 @@ describe('SearchBar.vue', () => {
   beforeEach(() => {
     // Reset mock before each test
     vi.clearAllMocks();
+    sessionStorage.clear();
   });
 
   it('renders correctly', () => {

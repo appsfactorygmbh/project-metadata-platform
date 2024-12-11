@@ -46,6 +46,10 @@ const generateWrapper = (pWidth: number) => {
 describe('ProjectSearchView.vue', () => {
   setActivePinia(createTestingPinia());
 
+  beforeEach(() => {
+    sessionStorage.clear();
+  });
+
   it('renders correctly with 4 columns', () => {
     const wrapper = generateWrapper(800);
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);

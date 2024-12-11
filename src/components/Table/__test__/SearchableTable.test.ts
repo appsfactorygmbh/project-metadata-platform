@@ -56,7 +56,7 @@ describe('SearchableTable.vue', () => {
   const searchStoreSymbol = Symbol('searchStoreSym');
   const searchStore = useSearchStore('test');
 
-  afterEach(() => {
+  beforeEach(() => {
     sessionStorage.clear();
   });
 
