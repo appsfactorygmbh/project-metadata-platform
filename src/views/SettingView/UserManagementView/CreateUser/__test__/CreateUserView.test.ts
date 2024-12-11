@@ -180,6 +180,9 @@ describe('CreateUserView.vue', () => {
 
     const userStore = useUserStore();
     const formStore = useFormStore('createUserForm');
+    const createSpy = vi
+      .spyOn(userStore, 'create')
+      .mockImplementation(() => Promise.resolve());
 
     wrapper = mount(CreateUserView, {
       global: {
@@ -199,7 +202,7 @@ describe('CreateUserView.vue', () => {
     await formStore.submit();
     await flushPromises();
 
-    expect(userStore.create).toHaveBeenCalledWith({
+    expect(createSpy).toHaveBeenCalledWith({
       email: 'E@Ma.il',
       password: 'Pa$$w0rd',
     });
