@@ -21,7 +21,7 @@
   import { usePluginStore, useProjectStore } from '@/store';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
-  import OutlinedButton from '@/components/Button/OutlinedButton.vue';
+  import IconButton from '@/components/Button/IconButton.vue';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectStore = useProjectStore();
@@ -217,7 +217,7 @@
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
 
         <!-- Edit Button -->
-        <OutlinedButton
+        <IconButton
           v-if="!projectStore.getProject?.isArchived"
           tooltip-position="left"
           tooltip="Click here to activate Edit-View"
@@ -226,10 +226,10 @@
           <template #icon>
             <EditOutlined class="icon" />
           </template>
-        </OutlinedButton>
+        </IconButton>
 
         <!-- Reactivate Button -->
-        <OutlinedButton
+        <IconButton
           v-if="projectStore.getProject?.isArchived"
           tooltip-position="left"
           tooltip="Click here to reactivate"
@@ -238,10 +238,10 @@
           <template #icon>
             <UndoOutlined class="icon" />
           </template>
-        </OutlinedButton>
+        </IconButton>
 
         <!-- Delete Button -->
-        <OutlinedButton
+        <IconButton
           v-if="projectStore.getProject?.isArchived"
           tooltip-position="right"
           tooltip="Click here to delete the project"
@@ -250,7 +250,7 @@
           <template #icon>
             <DeleteOutlined class="icon" />
           </template>
-        </OutlinedButton>
+        </IconButton>
 
         <ConfirmAction
           :is-open="isDeleteModalOpen"
@@ -262,7 +262,7 @@
         />
 
         <!-- Archive Button -->
-        <OutlinedButton
+        <IconButton
           v-if="!projectStore.getProject?.isArchived"
           tooltip-position="right"
           tooltip="Click here to archive the project"
@@ -271,7 +271,7 @@
           <template #icon>
             <InboxOutlined class="icon" />
           </template>
-        </OutlinedButton>
+        </IconButton>
 
         <ConfirmAction
           :is-open="isArchiveModalOpen"
