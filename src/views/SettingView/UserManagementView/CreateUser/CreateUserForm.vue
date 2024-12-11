@@ -5,8 +5,17 @@
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateUserFormData } from './CreateUserFormData.ts';
   import type { Rule } from 'ant-design-vue/es/form/interface';
-  import type { CreateUserModel, UserListModel } from '@/models/User';
+  import type { CreateUserModel } from '@/models/User';
   import type { UserStore } from '@/store/UserStore.ts';
+  import {
+    isUniqueEmail,
+    isValidEmail,
+    hasEightCharacters,
+    hasSpecialCharacter,
+    hasDigit,
+    hasLowerCaseLetter,
+    hasUpperCaseLetter,
+  } from '@/utils/form/userValidation.ts';
 
   const { formStore, initialValues, userStore } = defineProps<{
     formStore: FormStore;
@@ -42,31 +51,6 @@
 
   const dynamicValidateForm = reactive<CreateUserFormData>(initialValues);
 
-  const isValidPassword = (pw: string) => {
-    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-    if (pwRegex.test(pw)) {
-      return true;
-    }
-  };
-
-  const validatePassword = async (_rule: Rule, value: string) => {
-    if (value === '') {
-      return Promise.reject('Please enter a password.');
-    } else {
-      if (!isValidPassword(value)) {
-        return Promise.reject(
-          'Please enter a Password, which has upper/lower case letters, special characters, a digit and at least 8 characters.',
-        );
-      }
-
-      if (dynamicValidateForm.confirmPassword !== '') {
-        formRef.value.validateFields('confirmPassword');
-      }
-
-      return Promise.resolve();
-    }
-  };
-
   const validateConfirmPassword = async (_rule: Rule, value: string) => {
     if (value === '') {
       return Promise.reject('Please confirm the password.');
@@ -75,27 +59,6 @@
     } else {
       return Promise.resolve();
     }
-  };
-
-  // Creates a regex for all possible E-Mail addresses and checks if the given one fits the pattern
-  const isValidEmail = (_rule: Rule, value: string) => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-    if (value && emailRegex.test(value)) {
-      return Promise.resolve();
-    } else {
-      return Promise.reject('Please enter a valid email.');
-    }
-  };
-
-  // Checks if any other users has the same email address
-  const isUniqueEmail = (_rule: Rule, value: string) => {
-    const users: UserListModel[] = userStore.getUsers;
-
-    if (users?.every((user) => user.email !== value)) {
-      return Promise.resolve();
-    }
-    return Promise.reject('This email is already in use.');
   };
 
   const rulesRef = reactive<RulesObject<CreateUserFormData>>({
@@ -118,9 +81,36 @@
     password: [
       {
         required: true,
-        message:
-          'Please insert a Password, which has upper/lower case letters, special characters, a digit and at least 8 characters.',
-        validator: validatePassword,
+        message: 'Please insert at least 8 characters.',
+        validator: hasEightCharacters,
+        trigger: 'change',
+        type: 'string',
+      },
+      {
+        required: true,
+        message: 'Please insert a special character.',
+        validator: hasSpecialCharacter,
+        trigger: 'change',
+        type: 'string',
+      },
+      {
+        required: true,
+        message: 'Please insert a number.',
+        validator: hasDigit,
+        trigger: 'change',
+        type: 'string',
+      },
+      {
+        required: true,
+        message: 'Please insert a upper case letter.',
+        validator: hasUpperCaseLetter,
+        trigger: 'change',
+        type: 'string',
+      },
+      {
+        required: true,
+        message: 'Please insert a lower case letter.',
+        validator: hasLowerCaseLetter,
         trigger: 'change',
         type: 'string',
       },

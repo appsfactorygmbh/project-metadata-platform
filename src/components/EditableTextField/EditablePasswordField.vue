@@ -8,6 +8,13 @@
   import type { Rule } from 'ant-design-vue/es/form';
   import { userStoreSymbol } from '@/store/injectionSymbols';
   import useNotification from 'ant-design-vue/es/notification/useNotification';
+  import {
+    hasEightCharacters,
+    hasSpecialCharacter,
+    hasDigit,
+    hasLowerCaseLetter,
+    hasUpperCaseLetter,
+  } from '@/utils/form/userValidation.ts';
 
   type EditPasswordFormData = {
     currentPassword: string;
@@ -94,31 +101,6 @@
     confirmPassword: '',
   });
 
-  const isValidPassword = (pw: string) => {
-    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-    if (pwRegex.test(pw)) {
-      return true;
-    }
-  };
-
-  const validatePassword = async (_rule: Rule, value: string) => {
-    if (value === '') {
-      return Promise.reject('Please enter a password.');
-    } else {
-      if (!isValidPassword(value)) {
-        return Promise.reject(
-          'Please enter a Password, which has upper/lower case letters, special characters, a digit and at least 8 characters.',
-        );
-      }
-
-      if (dynamicValidateForm.confirmPassword !== '') {
-        formRef.value.validateFields('confirmPassword');
-      }
-
-      return Promise.resolve();
-    }
-  };
-
   const validateConfirmPassword = async (_rule: Rule, value: string) => {
     if (value === '') {
       return Promise.reject('Please confirm the password.');
@@ -141,9 +123,36 @@
     newPassword: [
       {
         required: true,
-        message:
-          'Please enter a Password, which has upper/lower case letters, special characters, a digit and at least 8 characters.',
-        validator: validatePassword,
+        message: 'Please insert at least 8 characters.',
+        validator: hasEightCharacters,
+        trigger: 'change',
+        type: 'string',
+      },
+      {
+        required: true,
+        message: 'Please insert a special character.',
+        validator: hasSpecialCharacter,
+        trigger: 'change',
+        type: 'string',
+      },
+      {
+        required: true,
+        message: 'Please insert a number.',
+        validator: hasDigit,
+        trigger: 'change',
+        type: 'string',
+      },
+      {
+        required: true,
+        message: 'Please insert a upper case letter.',
+        validator: hasUpperCaseLetter,
+        trigger: 'change',
+        type: 'string',
+      },
+      {
+        required: true,
+        message: 'Please insert a lower case letter.',
+        validator: hasLowerCaseLetter,
         trigger: 'change',
         type: 'string',
       },

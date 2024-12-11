@@ -6,6 +6,7 @@
   import { type PropType, inject, reactive, toRaw } from 'vue';
   import type { UserListModel, UserModel } from '@/models/User';
   import EmailInputTextField from './EmailInputTextField.vue';
+  import { isValidEmail } from '@/utils/form/userValidation.ts';
 
   const props = defineProps({
     userId: {
@@ -35,17 +36,6 @@
   const dynamicValidateForm = reactive<FormType>({
     email: props.default,
   });
-
-  // Creates a regex for all possible E-Mail addresses and checks if the given one fits the pattern
-  const isValidEmail = (_rule: Rule, value: string) => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-    if (value && emailRegex.test(value)) {
-      return Promise.resolve();
-    } else {
-      return Promise.reject('Please enter a valid email.');
-    }
-  };
 
   const isUniqueEmail = (_rule: Rule, email: string) => {
     const users: UserListModel[] = userStore.getUsers;
