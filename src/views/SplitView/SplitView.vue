@@ -43,6 +43,7 @@
 
 <template>
   <div class="container">
+
     <splitpanes class="default-theme" @resized="onResize">
       <!--
         size: sets default proportion to 1:4
