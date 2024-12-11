@@ -48,11 +48,12 @@
   }
 
   .circle {
-    width: 10px;
-    height: 10px;
+    width: 10px !important;
+    height: 10px !important;
     background-color: white;
     border: 3px solid #6d6e6f;
     border-radius: 50%;
+    box-sizing: border-box;
   }
   .line {
     width: 3px;
