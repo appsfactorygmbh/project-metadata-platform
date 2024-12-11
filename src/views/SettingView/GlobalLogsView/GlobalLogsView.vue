@@ -12,7 +12,6 @@
     await logsStore?.fetch(searchValue.value);
   }, 500);
   onBeforeMount(async () => {
-    console.log('mouting');
     await logsStore?.fetch();
   });
 </script>
