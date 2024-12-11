@@ -1,50 +1,38 @@
 import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
 import SplitView from '../SplitView.vue';
-import { createPinia, setActivePinia } from 'pinia';
 import router from '@/router';
 import { Splitpanes } from 'splitpanes';
 
-setActivePinia(createPinia());
-
-beforeEach(() => {
-  localStorage.clear();
-});
+const generateWrapper = () => {
+  return mount(SplitView, {
+    global: {
+      stubs: {
+        ProjectSearchView: {
+          template: '<span />',
+        },
+        ProjectView: {
+          template: '<span />',
+        },
+      },
+      plugins: [router],
+    },
+  });
+};
 
 describe('SplitView.vue', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
   it('renders correctly', () => {
-    const wrapper = mount(SplitView, {
-      global: {
-        stubs: {
-          ProjectSearchView: {
-            template: '<span />',
-          },
-          ProjectView: {
-            template: '<span />',
-          },
-        },
-        plugins: [router],
-      },
-    });
+    const wrapper = generateWrapper();
 
     expect(wrapper.findAll('.splitpanes__pane')[0].isVisible()).toBeTruthy();
     expect(wrapper.findAll('.splitpanes__pane')[1].isVisible()).toBeTruthy();
   });
 
   it('saves pane sizes to localStorage on resize', async () => {
-    const wrapper = mount(SplitView, {
-      global: {
-        stubs: {
-          ProjectSearchView: {
-            template: '<span />',
-          },
-          ProjectView: {
-            template: '<span />',
-          },
-        },
-        plugins: [router],
-      },
-    });
+    const wrapper = generateWrapper();
 
     const newSizes = [
       { min: 20, max: 100, size: 20 },
@@ -58,19 +46,7 @@ describe('SplitView.vue', () => {
   });
 
   it('should save pane sizes to localStorage on resize', async () => {
-    const wrapper = mount(SplitView, {
-      global: {
-        stubs: {
-          ProjectSearchView: {
-            template: '<span />',
-          },
-          ProjectView: {
-            template: '<span />',
-          },
-        },
-        plugins: [router],
-      },
-    });
+    const wrapper = generateWrapper();
 
     const newSizes = [
       { min: 20, max: 100, size: 20 },
@@ -92,19 +68,7 @@ describe('SplitView.vue', () => {
       .spyOn(Storage.prototype, 'getItem')
       .mockReturnValue(JSON.stringify(mockPaneSizes));
 
-    const wrapper = mount(SplitView, {
-      global: {
-        stubs: {
-          ProjectSearchView: {
-            template: '<span />',
-          },
-          ProjectView: {
-            template: '<span />',
-          },
-        },
-        plugins: [router],
-      },
-    });
+    const wrapper = generateWrapper();
 
     const leftPaneWidth = (wrapper.vm as unknown as { leftPaneWidth: number })
       .leftPaneWidth;
