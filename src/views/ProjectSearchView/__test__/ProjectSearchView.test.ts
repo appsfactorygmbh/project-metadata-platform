@@ -124,7 +124,6 @@ describe('ProjectSearchView.vue', () => {
   });
 
   it('sets the router query with the filters in the storage', async () => {
-    sessionStorage.clear();
     await router.isReady();
 
     sessionStorage.setItem(

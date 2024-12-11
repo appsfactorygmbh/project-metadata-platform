@@ -138,15 +138,13 @@
 
   const setFilterQuery = async () => {
     const filterKeys = Object.keys(filterStorage.value);
-    filterKeys.forEach(async (key) => {
-      setTimeout(async () => {
-        if (filterStorage.value[key] === '') {
-          await searchQuery.setSearchQuery(undefined, key);
-        } else {
-          await searchQuery.setSearchQuery(filterStorage.value[key], key);
-        }
-      }, 0);
-    });
+    for (const key of filterKeys) {
+      if (filterStorage.value[key] === '') {
+        await searchQuery.setSearchQuery(undefined, key);
+      } else {
+        await searchQuery.setSearchQuery(filterStorage.value[key], key);
+      }
+    }
   };
 
   onMounted(async () => {
