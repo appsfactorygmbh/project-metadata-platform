@@ -138,4 +138,34 @@ describe('ProjectSearchView.vue', () => {
 
     expect(router.currentRoute.value.query.projectName).toBe('test');
   });
+
+  it('highlight button when search', async () => {
+    await router.isReady();
+
+    sessionStorage.setItem(
+      'searchStorage',
+      JSON.stringify({ searchQuery: 'test' }),
+    );
+
+    const wrapper = generateWrapper(700);
+    await flushPromises();
+
+    const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
+    expect(button.style.borderColor).toBe('#3e8ee2');
+  });
+
+  it('not highlight button when clear search', async () => {
+    await router.isReady();
+
+    sessionStorage.setItem(
+      'searchStorage',
+      JSON.stringify({ searchQuery: '' }),
+    );
+
+    const wrapper = generateWrapper(700);
+    await flushPromises();
+
+    const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
+    expect(button.style.borderColor).toBe('#d9d9d9');
+  });
 });
