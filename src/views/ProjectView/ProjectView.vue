@@ -116,6 +116,7 @@
       await projectStore.fetchAll();
       await projectStore.fetch(projectID.value);
       await pluginStore.fetchUnarchived(projectID.value);
+      await pluginStore.fetch(projectID.value);
       await localLogStore?.fetch(projectID.value);
     }
   };
