@@ -103,6 +103,7 @@
     const updateProjectInformation =
       projectEditStore.getProjectInformationChanges;
 
+    // Puts the unarchived plugins and the archived plugins together
     const updatedPluginList = computed(() => {
       const tempPluginList: PluginModel[] = [];
       projectEditStore.getPluginChanges.forEach((plugin) => {
