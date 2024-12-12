@@ -8,6 +8,9 @@ const generateWrapper = () => {
   return mount(SplitView, {
     global: {
       stubs: {
+        CreateProjectView: {
+          template: '<span />',
+        },
         ProjectSearchView: {
           template: '<span />',
         },
