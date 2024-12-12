@@ -1,3 +1,3 @@
-import ProjectSlagResolver from './ProjectSlagResolver.vue';
+import ProjectSlugResolver from './ProjectSlugResolver.vue';
 
-export { ProjectSlagResolver };
+export { ProjectSlugResolver };

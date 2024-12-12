@@ -1,6 +1,10 @@
-import { globalPluginService } from '@/services';
-import { defineStore } from 'pinia';
 import type { GlobalPluginModel } from '@/models/Plugin';
+import { type PiniaStore, useStore } from 'pinia-generic';
+import type { ApiStore } from './ApiStore';
+import { type GetGlobalPluginResponse, PluginsApi } from '@/api/generated';
+import { useApiStore } from './ApiStore';
+import { piniaInstance } from './piniaInstance';
+import type { Pinia } from 'pinia';
 
 type StoreState = {
   globalPlugins: GlobalPluginModel[];
@@ -9,130 +13,196 @@ type StoreState = {
   removedSuccessfully: boolean;
 };
 
-export const useGlobalPluginsStore = defineStore('globalPlugin', {
-  state: (): StoreState => {
-    return {
-      globalPlugins: [],
-      isLoadingGlobalPlugins: false,
-      isLoadingDelete: false,
-      removedSuccessfully: true,
-    };
-  },
+type StoreActions = {
+  refreshAuth: () => void;
+  fetchAll: () => Promise<void>;
+  fetch: (pluginId: number) => Promise<GlobalPluginModel | undefined>;
+  create: (plugin: Omit<GlobalPluginModel, 'id'>) => Promise<void>;
+  update: (
+    pluginId: GlobalPluginModel['id'],
+    plugin: GlobalPluginModel,
+  ) => Promise<GetGlobalPluginResponse>;
+  delete: (pluginId: GlobalPluginModel['id']) => Promise<void>;
+  findPlugin: (
+    id: GlobalPluginModel['id'],
+  ) => Promise<GlobalPluginModel | null>;
+  setGlobalPlugins: (globalPlugins: GlobalPluginModel[]) => void;
+  setLoadingGlobalPlugins: (status: boolean) => void;
+  setLoadingDelete: (status: boolean) => void;
+  setRemovedSuccessfully: (status: boolean) => void;
+  archive: (pluginId: GlobalPluginModel['id']) => Promise<void>;
+  unarchive: (pluginId: GlobalPluginModel['id']) => Promise<void>;
+};
 
-  getters: {
-    getGlobalPlugins(): GlobalPluginModel[] {
-      return this.globalPlugins;
-    },
-    getIsLoadingGlobalPlugins(): boolean {
-      return this.isLoadingGlobalPlugins;
-    },
-    getIsLoadingDelete(): boolean {
-      return this.isLoadingDelete;
-    },
-    getRemovedSuccessfully(): boolean {
-      return this.removedSuccessfully;
-    },
-  },
+type StoreGetters = {
+  getGlobalPlugins: () => GlobalPluginModel[];
+  getIsLoadingGlobalPlugins: () => boolean;
+  getIsLoadingDelete: () => boolean;
+  getRemovedSuccessfully: () => boolean;
+};
 
-  actions: {
-    setGlobalPlugins(globalPlugins: GlobalPluginModel[]): void {
-      this.globalPlugins = globalPlugins;
-    },
-    setLoadingGlobalPlugins(status: boolean): void {
-      this.isLoadingGlobalPlugins = status;
-    },
-    setLoadingDelete(status: boolean): void {
-      this.isLoadingDelete = status;
-    },
-    setRemovedSuccessfully(status: boolean): void {
-      this.removedSuccessfully = status;
-    },
+type Store = PiniaStore<'globalPlugin', StoreState, StoreGetters, StoreActions>;
 
-    async fetchGlobalPlugins() {
-      try {
-        this.setLoadingGlobalPlugins(true);
-        const globalPlugins: GlobalPluginModel[] =
-          await globalPluginService.fetchGlobalPlugins();
-        this.setGlobalPlugins(globalPlugins);
-      } finally {
-        this.setLoadingGlobalPlugins(false);
-      }
-    },
+export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
+  return useStore<Store, ApiStore<PluginsApi>>(
+    'globalPlugin',
+    {
+      state: {
+        globalPlugins: [],
+        isLoadingGlobalPlugins: false,
+        isLoadingDelete: false,
+        removedSuccessfully: true,
+      },
 
-    async fetchGlobalPlugin(pluginId: number) {
-      if (this.globalPlugins.length === 0) {
-        await this.fetchGlobalPlugins();
-      }
-      return this.globalPlugins.find((plugin) => plugin.id === pluginId);
-    },
+      getters: {
+        getGlobalPlugins(): GlobalPluginModel[] {
+          return this.globalPlugins;
+        },
+        getIsLoadingGlobalPlugins(): boolean {
+          return this.isLoadingGlobalPlugins;
+        },
+        getIsLoadingDelete(): boolean {
+          return this.isLoadingDelete;
+        },
+        getRemovedSuccessfully(): boolean {
+          return this.removedSuccessfully;
+        },
+      },
 
-    async archiveGlobalPlugin(plugin: GlobalPluginModel) {
-      try {
-        this.setLoadingDelete(true);
-        this.setRemovedSuccessfully(false);
-        const response = await globalPluginService.archiveGlobalPlugin(plugin);
-        if (response && response?.ok) {
-          this.setRemovedSuccessfully(true);
-          this.fetchGlobalPlugins();
-        } else this.setRemovedSuccessfully(false);
-      } finally {
-        this.setLoadingDelete(false);
-      }
-    },
+      actions: {
+        refreshAuth(): void {
+          this.initApi();
+        },
 
-    async reactivateGlobalPlugin(plugin: GlobalPluginModel) {
-      try {
-        this.setLoadingGlobalPlugins(true);
-        const response =
-          await globalPluginService.reactivateGlobalPlugin(plugin);
-        if (response && response?.ok) {
-          this.fetchGlobalPlugins();
-        }
-      } finally {
-        this.setLoadingGlobalPlugins(false);
-      }
-    },
+        setGlobalPlugins(globalPlugins: GlobalPluginModel[]): void {
+          this.globalPlugins = globalPlugins;
+        },
+        setLoadingGlobalPlugins(status: boolean): void {
+          this.isLoadingGlobalPlugins = status;
+        },
+        setLoadingDelete(status: boolean): void {
+          this.isLoadingDelete = status;
+        },
+        setRemovedSuccessfully(status: boolean): void {
+          this.removedSuccessfully = status;
+        },
 
-    async deleteGlobalPlugin(pluginId: number) {
-      try {
-        this.setLoadingDelete(true);
-        this.setRemovedSuccessfully(false);
-        const response = await globalPluginService.deleteGlobalPlugin(pluginId);
-        if (response && response?.ok) {
-          this.setRemovedSuccessfully(true);
-          this.fetchGlobalPlugins();
-        } else this.setRemovedSuccessfully(false);
-      } finally {
-        this.setLoadingDelete(false);
-      }
-    },
+        async findPlugin(id: GlobalPluginModel['id']) {
+          let plugin =
+            this.globalPlugins.find((plugin) => plugin.id === id) ?? null;
+          if (!plugin) plugin = (await this.fetch(id)) ?? null;
+          return plugin;
+        },
 
-    async createGlobalPlugin(plugin: Omit<GlobalPluginModel, 'id'>) {
-      try {
-        const response = await globalPluginService.createGlobalPlugin(plugin);
-        if (response && response.ok) {
-          this.fetchGlobalPlugins();
-        }
-      } catch (err) {
-        console.error('Error creating global plugin: ' + err);
-      }
-    },
+        async fetchAll() {
+          try {
+            this.setLoadingGlobalPlugins(true);
+            const globalPlugins: GlobalPluginModel[] = await this.callApi(
+              'pluginsGet',
+              {},
+            );
+            this.setGlobalPlugins(globalPlugins);
+          } finally {
+            this.setLoadingGlobalPlugins(false);
+          }
+        },
 
-    async updateGlobalPlugin(plugin: GlobalPluginModel) {
-      try {
-        const response = await globalPluginService.updateGlobalPlugin(plugin);
-        if (response && response.ok) {
-          this.fetchGlobalPlugins();
-        } else {
-          throw new Error('Failed to update global plugin');
-        }
-      } catch (err) {
-        console.error('Error updating global plugin:', err);
-        throw err;
-      }
+        async fetch(pluginId: number) {
+          if (this.globalPlugins.length === 0) {
+            await this.fetchAll();
+          }
+          return this.globalPlugins.find((plugin) => plugin.id === pluginId);
+        },
+
+        async delete(pluginId: number) {
+          this.setLoadingDelete(true);
+          this.setRemovedSuccessfully(false);
+          await this.callApi('pluginsPluginIdDelete', {
+            pluginId,
+          })
+            .catch(() => {
+              this.setRemovedSuccessfully(false);
+            })
+            .finally(() => {
+              this.setLoadingDelete(false);
+            });
+        },
+
+        async create(plugin: Omit<GlobalPluginModel, 'id'>) {
+          console.log('creating plugin in store', plugin);
+          try {
+            const response = await this.callApi('pluginsPut', {
+              createPluginRequest: {
+                pluginName: plugin.name,
+                ...plugin,
+              },
+            });
+            if (response) {
+              this.fetchAll();
+            }
+          } catch (err) {
+            console.error('Error creating global plugin: ' + err);
+          }
+        },
+
+        async update(
+          pluginId: GlobalPluginModel['id'],
+          plugin: GlobalPluginModel,
+        ) {
+          try {
+            const response = await this.callApi('pluginsPluginIdPatch', {
+              pluginId,
+              patchGlobalPluginRequest: {
+                ...plugin,
+                pluginName: plugin.name,
+              },
+            });
+            if (response) {
+              this.fetchAll();
+              return response;
+            } else {
+              throw new Error('Failed to update global plugin');
+            }
+          } catch (err) {
+            console.error('Error updating global plugin:', err);
+            throw err;
+          }
+        },
+        async archive(pluginId: GlobalPluginModel['id']) {
+          this.setLoadingDelete(true);
+          this.setRemovedSuccessfully(false);
+          const plugin = await this.findPlugin(pluginId);
+          if (!plugin) {
+            this.setRemovedSuccessfully(false);
+            throw new Error(`Plugin with id ${pluginId} not found`);
+          }
+          await this.update(plugin.id, {
+            ...plugin,
+            isArchived: true,
+          }).catch((e) => {
+            this.setRemovedSuccessfully(false);
+            throw e;
+          });
+          this.setLoadingDelete(false);
+          this.fetchAll();
+        },
+
+        async unarchive(pluginId: GlobalPluginModel['id']) {
+          this.setLoadingGlobalPlugins(true);
+          const plugin = await this.findPlugin(pluginId);
+          if (!plugin) throw new Error(`Plugin with id ${pluginId} not found`);
+          await this.update(plugin.id, {
+            ...plugin,
+            isArchived: false,
+          });
+          this.setLoadingGlobalPlugins(false);
+          this.fetchAll();
+        },
+      },
     },
-  },
-});
+    useApiStore(PluginsApi, pinia),
+  )(pinia);
+};
 
 type GlobalPluginsStore = ReturnType<typeof useGlobalPluginsStore>;
 export type { GlobalPluginsStore };

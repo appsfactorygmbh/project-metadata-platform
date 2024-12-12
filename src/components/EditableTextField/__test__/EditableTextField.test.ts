@@ -35,7 +35,7 @@ describe('EditableTextField', () => {
         isEditingKey: 'isEditingPassword',
         isLoading: false,
         type: 'username',
-        userId: 100,
+        userId: '100',
       },
     });
   };

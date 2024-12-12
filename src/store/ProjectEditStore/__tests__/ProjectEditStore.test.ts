@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { useProjectEditStore } from '../ProjectEditStore';
 import { createPinia, setActivePinia } from 'pinia';
 import type { PluginEditModel, PluginModel } from '../../../models/Plugin';
+import type { DetailedProjectModel } from '@/models/Project';
 
 describe('ProjectEditStore', () => {
   let store: ReturnType<typeof useProjectEditStore>;
@@ -138,6 +139,7 @@ describe('ProjectEditStore', () => {
       id: 1,
       projectName: '',
       clientName: '',
+      slug: '',
       businessUnit: 'Test Business Unit',
       teamNumber: 1,
       department: 'Test Department',
@@ -157,6 +159,7 @@ describe('ProjectEditStore', () => {
     store.setProjectInformation({
       id: 1,
       projectName: 'Test Project',
+      slug: 'test-project',
       clientName: 'Test Client',
       businessUnit: 'Test Business Unit',
       teamNumber: 1,
@@ -206,9 +209,10 @@ describe('ProjectEditStore', () => {
   });
   it('sets project information correctly', () => {
     const store = useProjectEditStore();
-    const projectInfo = {
+    const projectInfo: DetailedProjectModel = {
       id: 1,
       projectName: 'New Project',
+      slug: 'new-project',
       clientName: 'New Client',
       businessUnit: 'New Unit',
       teamNumber: 2,

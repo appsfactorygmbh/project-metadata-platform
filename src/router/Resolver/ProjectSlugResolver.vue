@@ -1,20 +1,19 @@
 <script lang="ts" setup>
-  import { inject, onMounted, watch } from 'vue';
+  import { onMounted, watch } from 'vue';
   import { type LocationQueryValue, useRoute, useRouter } from 'vue-router';
-  import { projectsStoreSymbol } from '@/store/injectionSymbols';
+  import { useProjectStore } from '@/store';
 
   const route = useRoute();
   const router = useRouter();
+  const projectStore = useProjectStore();
 
-  const projectsStore = inject(projectsStoreSymbol);
-
-  const redirectToSlag = async (
+  const redirectToSlug = async (
     id: LocationQueryValue | LocationQueryValue[],
     replace: boolean = true,
   ) => {
     const projectId = parseInt(String(id));
-    const projectSlag = await projectsStore?.getProjectSlagById(projectId);
-    if (!projectSlag) {
+    const projectSlug = await projectStore.getSlugById(projectId);
+    if (!projectSlug) {
       return router.replace({
         query: { ...route.query },
         name: 'SplitViewDefault',
@@ -25,17 +24,15 @@
     const newQuery = route.query;
     router.replace({
       query: { ...newQuery },
-      params: { projectSlag },
+      params: { projectSlug },
       name: 'SplitView',
       replace,
     });
   };
 
   onMounted(async () => {
-    await projectsStore;
-
     if (route.query.projectId) {
-      await redirectToSlag(String(route.query.projectId));
+      await redirectToSlug(String(route.query.projectId));
     }
   });
 
@@ -44,7 +41,7 @@
     async (newId, oldId) => {
       console.log('newId:', newId);
       if (newId !== oldId && newId !== undefined) {
-        await redirectToSlag(newId);
+        await redirectToSlug(newId);
       }
     },
   );

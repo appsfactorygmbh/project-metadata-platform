@@ -2,10 +2,8 @@
   import { computed, inject, onMounted, ref, toRaw } from 'vue';
   import {
     localLogStoreSymbol,
-    pluginStoreSymbol,
     projectEditStoreSymbol,
     projectRoutingSymbol,
-    projectsStoreSymbol,
   } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import type {
@@ -19,13 +17,14 @@
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
+  import { usePluginStore, useProjectStore } from '@/store';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
 
   const localLogStore = inject(localLogStoreSymbol);
-  const projectsStore = inject(projectsStoreSymbol)!;
+  const projectStore = useProjectStore();
   const projectEditStore = inject(projectEditStoreSymbol)!;
-  const pluginStore = inject(pluginStoreSymbol)!;
+  const pluginStore = usePluginStore();
   const projectRouting = inject(projectRoutingSymbol)!;
 
   const editingClass = computed(() => ({
@@ -36,8 +35,8 @@
     'non-editing-mode': !isEditing.value,
   }));
 
-  const { getIsLoadingProject } = storeToRefs(projectsStore);
-  const { getIsLoading } = storeToRefs(projectsStore);
+  const { getIsLoadingProject } = storeToRefs(projectStore);
+  const { getIsLoading } = storeToRefs(projectStore);
   const isLoading = computed(
     () => getIsLoadingProject.value || getIsLoading.value,
   );
@@ -45,11 +44,11 @@
   const { isEditing, stopEditing, startEditing } = useEditing();
 
   onMounted(async () => {
-    const project = projectsStore.getProject;
+    const project = projectStore.getProject;
     if (project) addData(project);
 
     const data: ComputedRef<DetailedProjectModel | null> = computed(
-      () => projectsStore.getProject,
+      () => projectStore.getProject,
     );
 
     watch(
@@ -73,7 +72,7 @@
         teamNumberInputStatus.value = '';
         departmentInputStatus.value = '';
         clientNameInputStatus.value = '';
-        addData(projectsStore.getProject!);
+        addData(projectStore.getProject!);
       }
     },
   );
@@ -87,6 +86,7 @@
   };
 
   const projectData = {
+    id: ref<number>(0),
     projectName: ref<string>(''),
     businessUnit: ref<string>(''),
     teamNumber: ref<number>(0),
@@ -95,10 +95,12 @@
     isArchived: ref<boolean>(false),
   };
 
-  const BUInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
-  const teamNumberInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
-  const departmentInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
-  const clientNameInputStatus = ref<'' | 'error' | 'warning' | undefined>('');
+  type Status = '' | 'error' | 'warning' | undefined;
+
+  const BUInputStatus = ref<Status>('');
+  const teamNumberInputStatus = ref<Status>('');
+  const departmentInputStatus = ref<Status>('');
+  const clientNameInputStatus = ref<Status>('');
 
   const BUInput = ref(projectData.businessUnit);
   const teamNumberInput = ref(projectData.teamNumber);
@@ -119,8 +121,9 @@
 
   //Function to load the data from projectViewService to projectView
   function addData(loadedData: DetailedProjectModel) {
-    if (projectsStore.getProject)
-      projectEditStore.setProjectInformation(projectsStore.getProject);
+    if (projectStore.getProject)
+      projectEditStore.setProjectInformation(projectStore.getProject);
+    projectData.id.value = loadedData.id;
     projectData.projectName.value = loadedData.projectName;
     projectData.businessUnit.value = loadedData.businessUnit;
     projectData.teamNumber.value = loadedData.teamNumber;
@@ -135,26 +138,23 @@
   };
 
   const getNextActiveProjectId = (currentProjectId: number): number => {
-    const projects = projectsStore.getProjects;
+    const projects = projectStore.getProjects;
     const nextProject = projects.find((project) => project.isArchived == false);
     if (!nextProject) return currentProjectId;
     return nextProject.id;
   };
 
   const confirmArchive = async () => {
-    const projectID = projectsStore?.getProject?.id;
-    const projectData = projectsStore?.getProject as UpdateProjectModel;
+    const projectID = projectStore?.getProject?.id;
+    const projectData = projectStore?.getProject as UpdateProjectModel;
     projectData.pluginList = pluginStore?.getPlugins;
 
     if (projectID) {
       try {
-        await projectsStore.archiveProject(projectData, projectID);
-        if (projectsStore.getUpdatedSuccessfully) {
-          await projectsStore.fetchProjects();
-        }
+        await projectStore.archive(projectID);
       } finally {
         isModalOpen.value = false;
-        await localLogStore?.fetchLocalLog(projectID);
+        await localLogStore?.fetch(projectID);
         const newProjectId = getNextActiveProjectId(projectID);
         projectRouting.setProjectId(newProjectId);
       }
@@ -162,13 +162,12 @@
   };
 
   const reactivateProject = async () => {
-    const currentProject = projectsStore.getProject! as UpdateProjectModel;
-    const projectId = projectsStore.getProject?.id;
+    const currentProject = projectStore.getProject! as UpdateProjectModel;
+    const projectId = projectStore.getProject?.id;
     currentProject.pluginList = pluginStore.getPlugins;
 
-    await projectsStore.activateProject(currentProject, projectId!);
-    await projectsStore.fetchProjects();
-    await localLogStore?.fetchLocalLog(projectId!);
+    await projectStore.unarchive(projectId!);
+    await localLogStore?.fetch(projectId!);
   };
 </script>
 
@@ -181,46 +180,47 @@
           {{ projectData.projectName.value }}
         </h1>
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
-        <a-button
-          v-if="!projectsStore.getProject?.isArchived"
-          class="button"
-          ghost
-          style="margin-left: 10px"
-          @click="toggleEditingMode"
-        >
-          <template #icon><EditOutlined class="icon" /></template>
-        </a-button>
-        <a-tooltip
-          v-else
-          position="left"
-          title="Click here to reactivate the project"
-          style="padding-left: 0; padding-right: 0"
-        >
+        <div v-if="!isEditing" class="buttonBox">
           <a-button
+            v-if="!projectStore.getProject?.isArchived"
             class="button"
             ghost
             style="margin-left: 10px"
-            @click="reactivateProject"
+            @click="toggleEditingMode"
           >
-            <template #icon><UndoOutlined class="icon" /></template>
+            <template #icon><EditOutlined class="icon" /></template>
           </a-button>
-        </a-tooltip>
-        <a-tooltip
-          v-if="!projectsStore.getProject?.isArchived"
-          position="left"
-          title="Click here to archive the project"
-          style="padding-left: 0; padding-right: 0"
-        >
-          <a-button
-            class="button"
-            ghost
-            style="margin-left: 10px"
-            @click="handleArchive"
+          <a-tooltip
+            v-else
+            position="left"
+            title="Click here to reactivate the project"
+            style="padding-left: 0; padding-right: 0"
           >
-            <template #icon><DeleteOutlined class="icon" /></template>
-          </a-button>
-        </a-tooltip>
-
+            <a-button
+              class="button"
+              ghost
+              style="margin-left: 10px"
+              @click="reactivateProject"
+            >
+              <template #icon><UndoOutlined class="icon" /></template>
+            </a-button>
+          </a-tooltip>
+          <a-tooltip
+            v-if="!projectStore.getProject?.isArchived"
+            position="left"
+            title="Click here to archive the project"
+            style="padding-left: 0; padding-right: 0"
+          >
+            <a-button
+              class="button"
+              ghost
+              style="margin-left: 10px"
+              @click="handleArchive"
+            >
+              <template #icon><DeleteOutlined class="icon" /></template>
+            </a-button>
+          </a-tooltip>
+        </div>
         <ConfirmAction
           :is-open="isModalOpen"
           title="Archive Project"

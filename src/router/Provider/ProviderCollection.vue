@@ -1,10 +1,9 @@
 <script setup lang="ts">
   import {
+    AuthProvider,
     GlobalPluginProvider,
     LocalLogProvider,
-    PluginProvider,
     ProjectEditProvider,
-    ProjectProvider,
     UserProvider,
   } from '@/router/Provider';
   import ProjectRoutingProvider from './ProjectRoutingProvider.vue';
@@ -12,23 +11,21 @@
 </script>
 
 <template>
-  <ProjectRoutingProvider>
-    <UserProvider>
-      <LogsProvider>
-        <LocalLogProvider>
-          <ProjectProvider>
-            <PluginProvider>
-              <ProjectEditProvider>
-                <GlobalPluginProvider>
-                  <slot>
-                    <RouterView />
-                  </slot>
-                </GlobalPluginProvider>
-              </ProjectEditProvider>
-            </PluginProvider>
-          </ProjectProvider>
-        </LocalLogProvider>
-      </LogsProvider>
-    </UserProvider>
-  </ProjectRoutingProvider>
+  <AuthProvider>
+    <ProjectRoutingProvider>
+      <UserProvider>
+        <LogsProvider>
+          <LocalLogProvider>
+            <ProjectEditProvider>
+              <GlobalPluginProvider>
+                <slot>
+                  <RouterView />
+                </slot>
+              </GlobalPluginProvider>
+            </ProjectEditProvider>
+          </LocalLogProvider>
+        </LogsProvider>
+      </UserProvider>
+    </ProjectRoutingProvider>
+  </AuthProvider>
 </template>

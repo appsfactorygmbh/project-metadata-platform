@@ -1,12 +1,6 @@
-export type ProjectModel = {
-  id: number;
-  projectName: string;
-  clientName: string;
-  businessUnit: string;
-  teamNumber: number;
-  isArchived: boolean;
-};
+import type { GetProjectResponse, GetProjectsResponse } from '@/api/generated';
 
-export type DetailedProjectModel = ProjectModel & {
-  department: string;
-};
+// TODO: Remove this once implemented in backend
+export type ProjectModel = GetProjectsResponse;
+
+export type DetailedProjectModel = GetProjectResponse;

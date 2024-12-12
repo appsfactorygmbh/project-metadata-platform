@@ -1,12 +1,10 @@
 <script setup lang="ts">
-  import { type FormSubmitType } from '@/components/Form';
-  import { notification } from 'ant-design-vue';
-  import { type FormStore } from '@/components/Form';
+  import { type FormStore, type FormSubmitType } from '@/components/Form';
+  import { message, notification } from 'ant-design-vue';
   import { reactive, ref, toRaw } from 'vue';
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateUserFormData } from './CreateUserFormData.ts';
   import type { Rule } from 'ant-design-vue/es/form/interface';
-  import { message } from 'ant-design-vue';
   import type { CreateUserModel } from '@/models/User';
   import type { UserStore } from '@/store/UserStore.ts';
 
@@ -24,7 +22,7 @@
         email: toRaw(fields).email,
         password: toRaw(fields).password,
       };
-      userStore?.createUser(userDef);
+      userStore?.create(userDef);
     } catch (error) {
       notificationApi.error({
         message: 'An error occurred. The user could not be created',
