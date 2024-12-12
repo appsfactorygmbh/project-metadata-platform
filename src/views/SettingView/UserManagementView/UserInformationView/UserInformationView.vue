@@ -33,32 +33,36 @@
     userStore.fetchUser(routerUserId.value);
   });
 
-  //Button for adding new User
-  const buttons: FloatButtonModel[] = [
-    {
-      name: 'DeleteUserButton',
-      onClick: () => {
-        openModal();
+  //Button for adding new User and deleting User
+  const buttons = computed((): FloatButtonModel[] => {
+    const tempButtons: FloatButtonModel[] = [
+      {
+        name: 'CreateUserButton',
+        onClick: () => {
+          router.push('/settings/user-management/create');
+        },
+        icon: PlusOutlined,
+        type: 'primary',
+        size: 'large',
+        status: 'activated',
+        tooltip: 'Click here to create a new user',
       },
-      icon: DeleteOutlined,
-      type: 'primary',
-      size: 'large',
-      specialType: 'danger',
-      status: 'activated',
-      tooltip: 'Click here to delete this user',
-    },
-    {
-      name: 'CreateUserButton',
-      onClick: () => {
-        router.push('/settings/user-management/create');
+      {
+        name: 'DeleteUserButton',
+        onClick: () => {
+          openModal();
+        },
+        icon: DeleteOutlined,
+        type: 'primary',
+        size: 'large',
+        status: 'activated',
+        tooltip: 'Click here to delete this user',
       },
-      icon: PlusOutlined,
-      type: 'primary',
-      size: 'large',
-      status: 'activated',
-      tooltip: 'Click here to create a new user',
-    },
-  ];
+    ];
+    if (me.value?.id == user.value?.id) tempButtons[1].status = 'deactivated';
+
+    return tempButtons;
+  });
 
   const deleteUser = async () => {
     if (!user.value) return;
