@@ -21,7 +21,8 @@
   import { usePluginStore, useProjectStore } from '@/store';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
-  import OutlinedButton from '@/components/Button/OutlinedButton.vue';
+  import IconButton from '@/components/Button/IconButton.vue';
+  import router from '@/router';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectStore = useProjectStore();
@@ -80,7 +81,7 @@
   );
 
   const toggleEditingMode = async () => {
-    if (isEditing.value === true) {
+    if (isEditing.value) {
       await stopEditing();
     } else {
       await startEditing();
@@ -155,15 +156,27 @@
 
     try {
       await projectStore.delete(project.id);
-
-      const nextProject = projectStore.getProject;
-
-      if (nextProject) projectRouting.setProjectId(nextProject.id);
     } catch (error) {
       console.error('Error deleting project:', error);
     } finally {
       isDeleteModalOpen.value = false;
+      const newProjectId =
+        getNextActiveProjectId(project.id) === project.id
+          ? getNextArchivedProjectId()!
+          : getNextActiveProjectId(project.id);
+      if (newProjectId === undefined) {
+        await router.push('/');
+        return;
+      }
+      projectRouting.setProjectId(newProjectId);
     }
+  };
+
+  const getNextArchivedProjectId = (): number | undefined => {
+    const projects = projectStore.getProjects;
+    const nextProject = projects.find((project) => project.isArchived);
+    if (!nextProject) return undefined;
+    return nextProject.id;
   };
 
   const getNextActiveProjectId = (currentProjectId: number): number => {
@@ -212,7 +225,7 @@
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
 
         <!-- Edit Button -->
-        <OutlinedButton
+        <IconButton
           v-if="!projectStore.getProject?.isArchived"
           tooltip-position="left"
           tooltip="Click here to activate Edit-View"
@@ -221,10 +234,10 @@
           <template #icon>
             <EditOutlined class="icon" />
           </template>
-        </OutlinedButton>
+        </IconButton>
 
         <!-- Reactivate Button -->
-        <OutlinedButton
+        <IconButton
           v-if="projectStore.getProject?.isArchived"
           tooltip-position="left"
           tooltip="Click here to reactivate"
@@ -233,10 +246,10 @@
           <template #icon>
             <UndoOutlined class="icon" />
           </template>
-        </OutlinedButton>
+        </IconButton>
 
         <!-- Delete Button -->
-        <OutlinedButton
+        <IconButton
           v-if="projectStore.getProject?.isArchived"
           tooltip-position="right"
           tooltip="Click here to delete the project"
@@ -245,7 +258,7 @@
           <template #icon>
             <DeleteOutlined class="icon" />
           </template>
-        </OutlinedButton>
+        </IconButton>
 
         <ConfirmAction
           :is-open="isDeleteModalOpen"
@@ -257,7 +270,7 @@
         />
 
         <!-- Archive Button -->
-        <OutlinedButton
+        <IconButton
           v-if="!projectStore.getProject?.isArchived"
           tooltip-position="right"
           tooltip="Click here to archive the project"
@@ -266,7 +279,7 @@
           <template #icon>
             <InboxOutlined class="icon" />
           </template>
-        </OutlinedButton>
+        </IconButton>
 
         <ConfirmAction
           :is-open="isArchiveModalOpen"
@@ -559,7 +572,7 @@
 
   .icon {
     color: black;
-    font-size: 2.5em;
+    font-size: 1.5em;
   }
 
   .label {
