@@ -14,12 +14,15 @@
   import {
     DeleteOutlined,
     EditOutlined,
+    InboxOutlined,
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import { usePluginStore, useProjectStore } from '@/store';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
+  import IconButton from '@/components/Button/IconButton.vue';
+  import router from '@/router';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectStore = useProjectStore();
@@ -62,7 +65,7 @@
     );
   });
 
-  // set watcher for isEditing. if is editing is false reset the inputstatus fields
+  // set watcher for isEditing. if isEditing is false reset the input status fields
   watch(
     () => isEditing.value,
     (newVal) => {
@@ -78,7 +81,7 @@
   );
 
   const toggleEditingMode = async () => {
-    if (isEditing.value === true) {
+    if (isEditing.value) {
       await stopEditing();
     } else {
       await startEditing();
@@ -131,15 +134,54 @@
     projectData.clientName.value = loadedData.clientName;
   }
 
+  const isArchiveModalOpen = ref(false);
+  const isDeleteModalOpen = ref(false);
   const isModalOpen = ref(false);
 
   const handleArchive = () => {
-    isModalOpen.value = true;
+    isArchiveModalOpen.value = true;
+  };
+
+  const handleDelete = async () => {
+    isDeleteModalOpen.value = true;
+  };
+
+  const confirmDelete = async () => {
+    const project = projectStore.getProject;
+
+    if (!project?.id) {
+      isDeleteModalOpen.value = false;
+      return;
+    }
+
+    try {
+      await projectStore.delete(project.id);
+    } catch (error) {
+      console.error('Error deleting project:', error);
+    } finally {
+      isDeleteModalOpen.value = false;
+      const newProjectId =
+        getNextActiveProjectId(project.id) === project.id
+          ? getNextArchivedProjectId()!
+          : getNextActiveProjectId(project.id);
+      if (newProjectId === undefined) {
+        await router.push('/');
+        return;
+      }
+      projectRouting.setProjectId(newProjectId);
+    }
+  };
+
+  const getNextArchivedProjectId = (): number | undefined => {
+    const projects = projectStore.getProjects;
+    const nextProject = projects.find((project) => project.isArchived);
+    if (!nextProject) return undefined;
+    return nextProject.id;
   };
 
   const getNextActiveProjectId = (currentProjectId: number): number => {
     const projects = projectStore.getProjects;
-    const nextProject = projects.find((project) => project.isArchived == false);
+    const nextProject = projects.find((project) => !project.isArchived);
     if (!nextProject) return currentProjectId;
     return nextProject.id;
   };
@@ -153,6 +195,7 @@
       try {
         await projectStore.archive(projectID);
       } finally {
+        isArchiveModalOpen.value = false;
         isModalOpen.value = false;
         await localLogStore?.fetch(projectID);
         const newProjectId = getNextActiveProjectId(projectID);
@@ -180,54 +223,71 @@
           {{ projectData.projectName.value }}
         </h1>
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
-        <div v-if="!isEditing" class="buttonBox">
-          <a-button
-            v-if="!projectStore.getProject?.isArchived"
-            class="button"
-            ghost
-            style="margin-left: 10px"
-            @click="toggleEditingMode"
-          >
-            <template #icon><EditOutlined class="icon" /></template>
-          </a-button>
-          <a-tooltip
-            v-else
-            position="left"
-            title="Click here to reactivate the project"
-            style="padding-left: 0; padding-right: 0"
-          >
-            <a-button
-              class="button"
-              ghost
-              style="margin-left: 10px"
-              @click="reactivateProject"
-            >
-              <template #icon><UndoOutlined class="icon" /></template>
-            </a-button>
-          </a-tooltip>
-          <a-tooltip
-            v-if="!projectStore.getProject?.isArchived"
-            position="left"
-            title="Click here to archive the project"
-            style="padding-left: 0; padding-right: 0"
-          >
-            <a-button
-              class="button"
-              ghost
-              style="margin-left: 10px"
-              @click="handleArchive"
-            >
-              <template #icon><DeleteOutlined class="icon" /></template>
-            </a-button>
-          </a-tooltip>
-        </div>
+
+        <!-- Edit Button -->
+        <IconButton
+          v-if="!projectStore.getProject?.isArchived"
+          tooltip-position="left"
+          tooltip="Click here to activate Edit-View"
+          @click="toggleEditingMode"
+        >
+          <template #icon>
+            <EditOutlined class="icon" />
+          </template>
+        </IconButton>
+
+        <!-- Reactivate Button -->
+        <IconButton
+          v-if="projectStore.getProject?.isArchived"
+          tooltip-position="left"
+          tooltip="Click here to reactivate"
+          @click="reactivateProject"
+        >
+          <template #icon>
+            <UndoOutlined class="icon" />
+          </template>
+        </IconButton>
+
+        <!-- Delete Button -->
+        <IconButton
+          v-if="projectStore.getProject?.isArchived"
+          tooltip-position="right"
+          tooltip="Click here to delete the project"
+          @click="handleDelete"
+        >
+          <template #icon>
+            <DeleteOutlined class="icon" />
+          </template>
+        </IconButton>
+
         <ConfirmAction
-          :is-open="isModalOpen"
+          :is-open="isDeleteModalOpen"
+          title="Delete Project"
+          message="Are you sure you want to delete this project permanently?"
+          @confirm="confirmDelete"
+          @cancel="isDeleteModalOpen = false"
+          @update:is-open="(value) => (isDeleteModalOpen = value)"
+        />
+
+        <!-- Archive Button -->
+        <IconButton
+          v-if="!projectStore.getProject?.isArchived"
+          tooltip-position="right"
+          tooltip="Click here to archive the project"
+          @click="handleArchive"
+        >
+          <template #icon>
+            <InboxOutlined class="icon" />
+          </template>
+        </IconButton>
+
+        <ConfirmAction
+          :is-open="isArchiveModalOpen"
           title="Archive Project"
           message="Are you sure you want to archive this project?"
           @confirm="confirmArchive"
-          @cancel="isModalOpen = false"
-          @update:is-open="(value) => (isModalOpen = value)"
+          @cancel="isArchiveModalOpen = false"
+          @update:is-open="(value) => (isArchiveModalOpen = value)"
         />
       </div>
 
@@ -512,7 +572,7 @@
 
   .icon {
     color: black;
-    font-size: 2.5em;
+    font-size: 1.5em;
   }
 
   .label {

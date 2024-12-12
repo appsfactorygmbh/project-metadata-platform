@@ -69,7 +69,6 @@ export const useLogsStore = (pinia: Pinia = piniaInstance): Store => {
             search: searchParam,
           })
             .then((logs: LogEntryModel[]) => {
-              console.log('fetch', logs);
               this.setGlobalLogs(logs);
               this.setLoadedGlobalLogsSuccessfully(true);
               return logs;

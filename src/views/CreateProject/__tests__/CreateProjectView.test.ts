@@ -1,6 +1,9 @@
 import { mount, VueWrapper } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import CreateProjectView from '../CreateProjectView.vue';
+import { projectRoutingSymbol } from '@/store/injectionSymbols';
+import { useProjectRouting } from '@/utils/hooks';
+import router from '@/router';
 
 describe('CreateProjectView.vue', () => {
   type CreateProjectViewInstance = {
@@ -17,7 +20,13 @@ describe('CreateProjectView.vue', () => {
   let wrapper: VueWrapper<CreateProjectViewInstance>;
 
   beforeEach(() => {
-    wrapper = mount(CreateProjectView) as VueWrapper<CreateProjectViewInstance>;
+    wrapper = mount(CreateProjectView, {
+      global: {
+        provide: {
+          [projectRoutingSymbol as symbol]: useProjectRouting(router),
+        },
+      },
+    }) as VueWrapper<CreateProjectViewInstance>;
   });
 
   it('opens modal when plus button is clicked', async () => {

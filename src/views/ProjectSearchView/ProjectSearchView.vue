@@ -10,13 +10,14 @@
   import type { ProjectModel } from '@/models/Project';
   import { useEditing } from '@/utils/hooks/useEditing';
   import _ from 'lodash';
-  import { useToggle, useWindowSize } from '@vueuse/core';
+  import { useSessionStorage, useToggle, useWindowSize } from '@vueuse/core';
   import {
     BulbOutlined,
     InboxOutlined,
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import { usePluginStore, useProjectStore } from '@/store';
+  import { useQuery } from '@/utils/hooks';
 
   const props = defineProps({
     paneWidth: {
@@ -42,6 +43,13 @@
   const isLoading = computed(() => projectStore.getIsLoadingProjects);
   provide<ProjectSearchStore>(searchStoreSymbol, searchStore);
 
+  const searchQuery = useQuery(searchableColumnNames);
+  const searchStorage = useSessionStorage('searchStorage', { searchQuery: '' });
+  const filterStorage = useSessionStorage<Record<string, string>>(
+    'filterStorage',
+    {},
+  );
+
   const showOnlyArchived: ProjectSearchStore['filter'] = (items) =>
     items.filter((item) => item.isArchived);
   const showOnlyActive: ProjectSearchStore['filter'] = (items) =>
@@ -64,13 +72,6 @@
   // on mount, set the filter to show only active projects
   searchStore.setFilter(showOnlyActive);
 
-  watch(
-    () => projectStore.getProjects,
-    () => {
-      searchStore.setBaseSet(projectStore.getProjects);
-    },
-  );
-
   const FETCHING_METHOD: 'FRONTEND' | 'BACKEND' = import.meta.env
     .VITE_PROJECT_SEARCH_METHOD;
 
@@ -78,6 +79,9 @@
     () => projectStore.getProjects,
     (newData) => {
       searchStore?.setBaseSet(newData || []);
+      if (newData.length === 0) {
+        searchStore?.applySearch();
+      }
     },
   );
 
@@ -128,11 +132,26 @@
     setProjectId(project.id);
   };
 
+  const setFilterQuery = async () => {
+    const filterKeys = Object.keys(filterStorage.value);
+    for (const key of filterKeys) {
+      if (filterStorage.value[key] === '') {
+        await searchQuery.setSearchQuery(undefined, key);
+      } else {
+        await searchQuery.setSearchQuery(filterStorage.value[key], key);
+      }
+    }
+  };
+
   onMounted(async () => {
     await projectStore.fetchAll();
 
+    searchStore?.setSearchQuery(searchStorage.value.searchQuery);
+    await setFilterQuery();
+
     if (routerProjectId.value === 0) {
-      setProjectId(projectStore.getProjects[0]?.id ?? 100);
+      if (projectStore.getProjects.length > 0)
+        setProjectId(projectStore.getProjects[0]?.id ?? 100);
     } else {
       await projectStore.fetch(routerProjectId.value);
       await pluginStore.fetch(routerProjectId.value);
@@ -146,6 +165,7 @@
 
   const clearAllFilters = () => {
     searchStore.reset();
+    searchStore.applySearch();
   };
 </script>
 
@@ -250,6 +270,12 @@
       width: '12.5%',
     },
   ]);
+  const searchableColumnNames = [
+    'Project Name',
+    'Client Name',
+    'Business Unit',
+    'Team Number',
+  ];
 
   /*  Column drop implementation  */
 
