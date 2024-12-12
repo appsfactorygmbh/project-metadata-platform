@@ -3,11 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import UserInformationView from '../UserInformationView.vue';
 import { createTestingPinia } from '@pinia/testing';
-import { userStoreSymbol } from '@/store/injectionSymbols';
+import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
 import { useUserStore } from '@/store';
 import router from '@/router';
 import type { UserModel } from '@/models/User';
-import { DeleteOutlined } from '@ant-design/icons-vue';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons-vue';
+import { useUserRouting } from '@/utils/hooks';
 
 const userData1: UserModel = {
   id: '100',
@@ -32,6 +33,7 @@ describe('UserInformationView.vue', () => {
       global: {
         provide: {
           [userStoreSymbol as symbol]: userStore,
+          [userRoutingSymbol as symbol]: useUserRouting(router),
         },
         plugins: [router],
       },
@@ -65,7 +67,7 @@ describe('UserInformationView.vue', () => {
     const text = wrapper.findAll('.text');
     expect(text[0].text()).toBe(userData1.email);
 
-    const button = wrapper.findAll('.edit');
+    const button = wrapper.findAllComponents(EditOutlined);
     expect(button[0].exists()).toBe(true);
     expect(button[1].exists()).toBe(true);
     expect(wrapper.find('.email').exists()).toBe(true);

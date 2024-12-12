@@ -25,8 +25,8 @@
 </script>
 
 <template>
-  <a-button v-if="!isEditing" class="edit button" @click="emit('startEditing')">
-    <EditOutlined class="icon" />
+  <a-button v-if="!isEditing" class="button" @click="emit('startEditing')">
+    <EditOutlined />
   </a-button>
   <div v-else class="buttonGroup">
     <a-button
@@ -43,27 +43,29 @@
 </template>
 
 <style lang="css" scoped>
-  .check {
-    background-color: #24c223;
+  .abort {
+    background-color: color-mix(in srgb, #6d6e6f, #ff002e 60%) !important;
+  }
+  .abort:hover {
+    background-color: color-mix(in srgb, #6d6e6f, #ff002e 80%) !important;
   }
 
-  .abort {
-    background-color: #ff002e;
+  .check {
+    background-color: color-mix(in srgb, #6d6e6f, #27d157 60%) !important;
+  }
+  .check:hover {
+    background-color: color-mix(in srgb, #6d6e6f, #27d157 80%) !important;
   }
 
   .button {
-    width: 2em;
-    height: 2em;
     display: flex;
     justify-content: center;
     align-items: center;
-    border: none;
+    margin-left: auto;
   }
 
-  .edit {
-    margin: 0.6em 0 0.6em;
-    margin-left: auto;
-    background-color: rgba(0, 0, 0, 0.88) !important;
+  .icon {
+    color: white;
   }
 
   .buttonGroup {

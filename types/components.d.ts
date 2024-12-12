@@ -60,7 +60,6 @@ declare module 'vue' {
     LogItem: typeof import('./../src/components/LogsDisplay/LogItem/LogItem.vue')['default']
     LogTimeline: typeof import('./../src/components/LogsDisplay/LogTimeline/LogTimeline.vue')['default']
     MenuButtons: typeof import('./../src/components/MenuButtons/MenuButtons.vue')['default']
-    OutlinedButton: typeof import('./../src/components/Button/OutlinedButton.vue')['default']
     PluginComponent: typeof import('./../src/components/Plugin/PluginComponent.vue')['default']
     PopupComponent: typeof import('./../src/components/Popup/PopupComponent.vue')['default']
     ProjectEditButtons: typeof import('./../src/components/ProjectEditButtons/ProjectEditButtons.vue')['default']
@@ -68,5 +67,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
     SearchBar: typeof import('./../src/components/Searchbar/SearchBar.vue')['default']
+    UserEmailInputField: typeof import('./../src/components/EditableTextField/InputFields/UserEmailInputField.vue')['default']
   }
 }

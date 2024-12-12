@@ -6,6 +6,7 @@ import UserProvider from './UserProvider.vue';
 import ProjectRoutingProvider from './ProjectRoutingProvider.vue';
 import AuthProvider from './AuthProvider.vue';
 import LocalLogProvider from './LocalLogProvider.vue';
+import UserRoutingProvider from './UserRoutingProvider.vue';
 
 export {
   ThemeProvider,
@@ -16,4 +17,5 @@ export {
   ProjectRoutingProvider,
   AuthProvider,
   LocalLogProvider,
+  UserRoutingProvider,
 };

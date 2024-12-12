@@ -178,42 +178,35 @@
 <template>
   <div style="padding: 20px">
     <a-flex vertical gap="middle">
-      <span>
-        <a-row :gutter="16" justify="space-between">
-          <a-col :span="20">
-            <SearchBar :search-store-symbol="searchStoreSymbol" width="100%" />
-          </a-col>
-          <a-col :span="2" style="display: flex; justify-content: flex-end">
-            <a-tooltip
-              placement="left"
-              title="Click here to resets all filters"
-              style="padding-left: 0; padding-right: 0"
-            >
-              <a-button
-                name="resetButton"
-                :style="highlightButtonStyle"
-                @click="clearAllFilters"
-              >
-                <template #icon>
-                  <UndoOutlined class="icons" />
-                </template>
-              </a-button>
-            </a-tooltip>
-          </a-col>
-          <a-col :span="2" style="display: flex; justify-content: flex-end">
-            <a-tooltip
-              placement="left"
-              title="Click here to toggle between active and archived projects"
-            >
-              <a-button style="width: 100%" @click="toggleShowFilter">
-                <template #icon>
-                  <InboxOutlined v-if="filterType === 'active'" />
-                  <BulbOutlined v-else />
-                </template>
-              </a-button>
-            </a-tooltip>
-          </a-col>
-        </a-row>
+      <span style="display: flex; flex-direction: row">
+        <SearchBar :search-store-symbol="searchStoreSymbol" style="flex: 5" />
+        <a-tooltip
+          placement="left"
+          title="Click here to reset all filters"
+          style="padding-left: 0; padding-right: 0"
+        >
+          <a-button
+            class="button"
+            name="resetButton"
+            :style="highlightButtonStyle"
+            @click="clearAllFilters"
+          >
+            <template #icon>
+              <UndoOutlined class="icons" />
+            </template>
+          </a-button>
+        </a-tooltip>
+        <a-tooltip
+          placement="left"
+          title="Click here to toggle between active and archived projects"
+        >
+          <a-button class="button" @click="toggleShowFilter">
+            <template #icon>
+              <InboxOutlined v-if="filterType === 'active'" />
+              <BulbOutlined v-else />
+            </template>
+          </a-button>
+        </a-tooltip>
       </span>
 
       <SearchableTable
@@ -362,3 +355,20 @@
     }
   }
 </script>
+<style scoped>
+  .reset {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 2.5em;
+    height: 2.5em;
+  }
+
+  .button {
+    flex: 1;
+    width: 100%;
+    max-width: 5em;
+    min-width: 2.5em;
+    margin-left: 0.5em;
+  }
+</style>

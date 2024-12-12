@@ -4,8 +4,9 @@ import { describe, expect, it } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 import { useUserStore } from '@/store';
 import { createPinia, setActivePinia } from 'pinia';
-import { userStoreSymbol } from '@/store/injectionSymbols';
+import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
 import router from '@/router';
+import { useUserRouting } from '@/utils/hooks';
 
 interface UserListViewInstance {
   routerUser: number;
@@ -23,6 +24,8 @@ const userData = [
   },
 ];
 
+const userRouter = useUserRouting(router);
+
 const generateWrapper = () => {
   return mount(UserListView, {
     plugins: [
@@ -38,6 +41,7 @@ const generateWrapper = () => {
     global: {
       provide: {
         [userStoreSymbol as symbol]: useUserStore(),
+        [userRoutingSymbol as symbol]: userRouter,
       },
       plugins: [router],
       stubs: {
@@ -60,7 +64,7 @@ describe('UserListView.vue', () => {
     expect(menuItems.length).toBe(userData.length);
 
     menuItems.forEach((itemWrapper, index) => {
-      expect(itemWrapper.text()).toContain(userData[index].email);
+      expect(itemWrapper.text()).toContain(userData[index].email.split('@')[0]);
     });
   });
 
@@ -69,6 +73,6 @@ describe('UserListView.vue', () => {
 
     const vm = wrapper.vm as unknown as UserListViewInstance;
     vm.clickTab(userData[0].id);
-    expect(vm.routerUser).toEqual(userData[0].id);
+    expect(userRouter.routerUserId.value).toEqual(userData[0].id);
   });
 });
