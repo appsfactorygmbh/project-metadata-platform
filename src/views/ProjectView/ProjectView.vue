@@ -13,6 +13,7 @@
   import { message } from 'ant-design-vue';
   import { usePluginStore, useProjectStore } from '@/store';
   import type { PluginModel } from '@/models/Plugin';
+  import _ from 'lodash';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
@@ -114,12 +115,14 @@
           url: plugin.url,
         });
       });
-      const archivedPlugins: ComputedRef<PluginModel[]> = computed(() =>
-        pluginStore.getPlugins.filter(
-          (plugin) => !tempPluginList.includes(plugin),
-        ),
+
+      const archivedPlugins = _.differenceBy(
+        pluginStore.getPlugins,
+        pluginStore.getUnarchivedPlugins,
+        'id',
       );
-      archivedPlugins.value.forEach((plugin) => {
+
+      archivedPlugins.forEach((plugin) => {
         tempPluginList.push({
           id: plugin.id,
           pluginName: plugin.pluginName,
