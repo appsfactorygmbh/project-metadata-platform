@@ -124,6 +124,7 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
               this.setRemovedSuccessfully(false);
             })
             .finally(() => {
+              this.setRemovedSuccessfully(true);
               this.setLoadingDelete(false);
             });
         },
@@ -183,6 +184,7 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
             this.setRemovedSuccessfully(false);
             throw e;
           });
+          this.setRemovedSuccessfully(true);
           this.setLoadingDelete(false);
           this.fetchAll();
         },

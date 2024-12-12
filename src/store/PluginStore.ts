@@ -76,14 +76,12 @@ export const usePluginStore = (pinia: Pinia = piniaInstance): Store => {
           } finally {
             this.setLoadingPlugins(false);
           }
-          console.log(this.getPlugins);
         },
         async fetchUnarchived(projectID: number) {
           try {
             this.setLoadingPlugins(true);
             const plugins: PluginModel[] = await this.callApi(
-              // TODO: change to unarchived
-              'projectsIdPluginsGet',
+              'projectsIdUnarchivedPluginsGet',
               {
                 id: projectID,
               },
