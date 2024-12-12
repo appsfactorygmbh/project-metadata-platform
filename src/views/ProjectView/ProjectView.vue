@@ -12,6 +12,7 @@
   import { inject, watch } from 'vue';
   import { message } from 'ant-design-vue';
   import { usePluginStore, useProjectStore } from '@/store';
+  import type { PluginModel } from '@/models/Plugin';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
@@ -101,13 +102,40 @@
 
     const updateProjectInformation =
       projectEditStore.getProjectInformationChanges;
+
+    const updatedPluginList = computed(() => {
+      const tempPluginList: PluginModel[] = [];
+      projectEditStore.getPluginChanges.forEach((plugin) => {
+        tempPluginList.push({
+          id: plugin.id,
+          pluginName: plugin.pluginName,
+          displayName: plugin.displayName,
+          url: plugin.url,
+        });
+      });
+      const archivedPlugins: ComputedRef<PluginModel[]> = computed(() =>
+        pluginStore.getPlugins.filter(
+          (plugin) => !tempPluginList.includes(plugin),
+        ),
+      );
+      archivedPlugins.value.forEach((plugin) => {
+        tempPluginList.push({
+          id: plugin.id,
+          pluginName: plugin.pluginName,
+          displayName: plugin.displayName,
+          url: plugin.url,
+        });
+      });
+      return tempPluginList;
+    });
+
     const updatedProject: UpdateProjectModel = {
       projectName: updateProjectInformation?.projectName,
       businessUnit: updateProjectInformation?.businessUnit,
       teamNumber: updateProjectInformation?.teamNumber,
       department: updateProjectInformation?.department,
       clientName: updateProjectInformation?.clientName,
-      pluginList: projectEditStore?.getPluginChanges,
+      pluginList: updatedPluginList.value,
       isArchived: projectStore.getProject.isArchived,
     };
 
