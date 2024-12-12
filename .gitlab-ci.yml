@@ -12,6 +12,7 @@ stages:
   - build
   - deploy
   - release
+  - sonarqube
 
 .node_dependencies_cache: &node_dependencies_cache
   key: $CI_COMMIT_REF_SLUG
@@ -146,8 +147,31 @@ coverage-test-job:
     paths:
       - coverage/
 
-sonarqube:
+integration-test-job:
+  image:
+    name: cypress/included:cypress-13.5.0-node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
+    entrypoint: [""]
   stage: test
+  extends:
+    - .corepack_init
+    - .update_cache
+  needs:
+    - install-job
+  script:
+    - yarn build
+    - yarn preview --host 127.0.0.1 --port 80 &
+    - cypress run --headless --e2e
+  artifacts:
+    when: on_failure
+    paths:
+      - cypress/screenshots/
+
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEVELOP_BRANCH && $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_TAG == null
+
+sonarqube-job:
+  stage: sonarqube
+  tags: [imn]
   image: node:latest
   extends:
     - .corepack_init

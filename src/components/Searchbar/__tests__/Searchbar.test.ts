@@ -32,6 +32,7 @@ describe('SearchBar.vue', () => {
   beforeEach(() => {
     // Reset mock before each test
     vi.clearAllMocks();
+    sessionStorage.clear();
   });
 
   it('renders correctly', () => {
@@ -54,6 +55,17 @@ describe('SearchBar.vue', () => {
     await wrapper.vm.$nextTick();
 
     expect(searchStore.getSearchQuery).toBe('Test');
+  });
+
+  it('stores the input in the searchStorage', async () => {
+    const input = wrapper.find('input');
+    await input.setValue('Test1');
+
+    const searchQuery = JSON.parse(
+      sessionStorage.getItem('searchStorage')!,
+    ).searchQuery;
+
+    expect(searchQuery).toBe('Test1');
   });
 
   it('reset the searchBar when using the searchStore reset ', async () => {

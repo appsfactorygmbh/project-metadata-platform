@@ -2,7 +2,12 @@ import { VueWrapper, flushPromises, mount } from '@vue/test-utils';
 import ProjectSearchView from '../ProjectSearchView.vue';
 import { describe, expect, it } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
-import { useLocalLogStore, usePluginStore, useProjectStore } from '@/store';
+import {
+  useLocalLogStore,
+  usePluginStore,
+  useProjectStore,
+  useSearchStore,
+} from '@/store';
 import { setActivePinia } from 'pinia';
 import {
   localLogStoreSymbol,
@@ -43,6 +48,10 @@ describe('ProjectSearchView.vue', () => {
 
   setActivePinia(createTestingPinia());
 
+  beforeEach(() => {
+    sessionStorage.clear();
+  });
+
   it('renders correctly with 4 columns', () => {
     const wrapper = generateWrapper(800);
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
@@ -53,12 +62,10 @@ describe('ProjectSearchView.vue', () => {
     expect(wrapper.find('[name="resetButton"]').exists()).toBe(true);
   });
 
-  // TODO: This test is flaky and fails on CI because of the time based transition
-  it.skip('hides columns when the pane width is not large enough', async () => {
+  it('hides columns when the pane width is not large enough', async () => {
     createTestingPinia({});
     const wrapper = generateWrapper(300);
     await flushPromises();
-    await new Promise((resolve) => setTimeout(resolve, 2000));
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(2);
   });
 
@@ -86,7 +93,7 @@ describe('ProjectSearchView.vue', () => {
     );
   });
 
-  it.skip('requests data with the project id given in the URL', async () => {
+  it('requests data with the project id given in the URL', async () => {
     await router.push({
       path: '/',
       query: { projectId: '300' },
@@ -94,14 +101,41 @@ describe('ProjectSearchView.vue', () => {
     await router.isReady();
     createTestingPinia({});
 
-    const pluginStore = usePluginStore();
-    const projectStore = useProjectStore();
+    generateWrapper(800);
+    await flushPromises();
+    await flushPromises();
+
+    expect(useProjectStore().fetch).toHaveBeenCalledWith(300);
+    expect(usePluginStore().fetch).toHaveBeenCalledWith(300);
+  });
+
+  it('sets the router query with the search query in the storage', async () => {
+    await router.isReady();
+
+    sessionStorage.setItem(
+      'searchStorage',
+      JSON.stringify({ searchQuery: 'test' }),
+    );
+
     generateWrapper(800);
     await flushPromises();
 
+    expect(useSearchStore('projects').setSearchQuery).toHaveBeenCalledWith(
+      'test',
+    );
+  });
+
+  it('sets the router query with the filters in the storage', async () => {
+    await router.isReady();
+
+    sessionStorage.setItem(
+      'filterStorage',
+      JSON.stringify({ projectName: 'test' }),
+    );
+
+    generateWrapper(800);
     await flushPromises();
 
-    expect(projectStore.fetch).toHaveBeenCalledWith(300);
-    expect(pluginStore.fetch).toHaveBeenCalledWith(300);
+    expect(router.currentRoute.value.query.projectName).toBe('test');
   });
 });

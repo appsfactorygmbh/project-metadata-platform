@@ -12,6 +12,7 @@
   import type { CreateProjectModel } from '@/models/Project';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { useProjectStore } from '@/store';
+  import { projectRoutingSymbol } from '@/store/injectionSymbols';
 
   const open = ref<boolean>(false);
 
@@ -24,6 +25,7 @@
   // TableStore to refetch Table after Project was added
 
   const projectStore = useProjectStore();
+  const { setProjectId } = inject(projectRoutingSymbol)!;
 
   const isAdding = computed(() => projectStore.getIsLoadingAdd);
   const fetchError = ref<boolean>(false);
@@ -31,7 +33,7 @@
   const formState: UnwrapRef<CreateProjectModel> = reactive({
     projectName: '',
     businessUnit: '',
-    teamNumber: -1,
+    teamNumber: 0,
     department: '',
     clientName: '',
     isArchived: false,
@@ -84,10 +86,10 @@
 
   // sends PUT request to the backend
   const submit = async () => {
-    watch(isAdding, (newVal) => {
+    watch(isAdding, async (newVal) => {
       if (newVal == false) {
         if (projectStore.getAddedSuccessfully) {
-          projectStore.fetchAll();
+          await projectStore.fetchAll();
           fetchError.value = false;
           open.value = false;
           resetModal();
@@ -107,6 +109,11 @@
     };
 
     await projectStore.create(projectData);
+
+    await projectStore.fetchAll();
+    const projects = projectStore.getProjects;
+    const newProject = projects[projects.length - 1];
+    setProjectId(newProject.id);
   };
 </script>
 
