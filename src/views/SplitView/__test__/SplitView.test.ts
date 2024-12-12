@@ -17,6 +17,9 @@ describe('SplitView.vue', () => {
           ProjectView: {
             template: '<span />',
           },
+          CreateProjectView: {
+            template: '<span />',
+          },
         },
         plugins: [router],
       },
