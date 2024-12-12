@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-  import EmailInputTextField from './InputFields/EmailInputTextField.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import type { PropType } from 'vue';
   import { useFormStore } from '../Form/FormStore';
+  import UserEmailInputField from './InputFields/UserEmailInputField.vue';
 
   const props = defineProps({
     value: {
@@ -67,16 +67,9 @@
       <p v-if="!isEditing" class="text">{{ value }}</p>
 
       <div v-else>
-        <EmailInputTextField
+        <UserEmailInputField
           v-if="props.type === 'email'"
           :form-store="emailFormStore"
-          :user-id="props.userId"
-          :placeholder="props.value"
-          :default="props.value"
-        />
-        <UsernameInputTextField
-          v-if="props.type === 'username'"
-          :form-store="usernameFormStore"
           :user-id="props.userId"
           :placeholder="props.value"
           :default="props.value"
@@ -125,10 +118,6 @@
     gap: 10px;
   }
 
-  .icon {
-    color: white;
-  }
-
   .info {
     border: none;
     width: 100%;
@@ -139,10 +128,9 @@
     display: flex;
     flex-flow: column wrap;
     justify-content: center;
-  }
-
-  .ant-card-body {
-    padding: 12px !important;
+    .ant-card-body {
+      padding: 12px !important;
+    }
   }
 
   .info label {

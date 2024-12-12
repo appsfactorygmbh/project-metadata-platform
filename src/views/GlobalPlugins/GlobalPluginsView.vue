@@ -3,7 +3,7 @@
 
   <a-tooltip
     placement="left"
-    title="Click here to toggle between active and archived projects"
+    title="Click here to toggle between active and archived global plugins"
   >
     <a-button class="archiveButton" @click="toggleShowFilter">
       <template #icon>
@@ -207,9 +207,16 @@
 
   const handleDelete = async (pluginId: GlobalPluginModel['id']) => {
     pluginDeleting.value.push(pluginId);
-    await globalPluginsStore?.delete(pluginId);
-    const index: number = pluginDeleting.value?.indexOf(pluginId);
-    pluginDeleting.value.splice(index, 1);
+
+    try {
+      await globalPluginsStore?.delete(pluginId);
+    } catch (error) {
+      console.error('Error deleting global plugin: ' + error);
+    } finally {
+      const index: number = pluginDeleting.value?.indexOf(pluginId);
+      pluginDeleting.value.splice(index, 1);
+      globalPluginsStore.fetchAll();
+    }
   };
 
   const handleReactivate = async (pluginId: GlobalPluginModel['id']) => {

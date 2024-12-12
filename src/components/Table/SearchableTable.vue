@@ -12,6 +12,7 @@
   import type { ComputedRef, Ref } from 'vue';
   import { useQuery } from '@/utils/hooks';
   import type { ArrayElement } from '@/models/utils';
+  import { useSessionStorage } from '@vueuse/core';
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -38,6 +39,10 @@
   }
 
   const searchStore = inject<SearchStore<object>>(props.searchStoreSymbol);
+  const filterStorage = useSessionStorage<Record<string, string>>(
+    'filterStorage',
+    {},
+  );
   const filteredInfo = reactive<FilteredInfoModel>({}); // Use an object to track filter values for each column
 
   const emit = defineEmits(['row-click']);
@@ -97,15 +102,21 @@
     props.columns.map((column) => mapSearchableColumn(column)),
   );
 
-  // Watch filteredInfo to update columns' filteredValue reactively
-  watch(filteredInfo, () => {
+  const setFilters = (filteredInfo: FilteredInfoModel) => {
     if (columns.value) {
       columns.value.forEach((column) => {
         const key = column.key;
-        if (key)
+        if (key) {
           column.filteredValue = filteredInfo[key] ? [filteredInfo[key]] : null;
+          filterStorage.value = filteredInfo;
+        }
       });
     }
+  };
+
+  // Watch filteredInfo to update columns' filteredValue reactively
+  watch(filteredInfo, () => {
+    setFilters(filteredInfo);
   });
 
   /*  Search implementation  */
@@ -173,8 +184,12 @@
   };
   searchStore?.setOnReset(handleClearAll);
 
-  searchStore?.setOnReset(handleClearAll);
-  onMounted(() => {
+  onMounted(async () => {
+    const filterKeys = Object.keys(filterStorage.value);
+    filterKeys.forEach((key: string) => {
+      filteredInfo[key] = filterStorage.value[key];
+    });
+
     const queries = routerSearchQuery.value;
 
     for (const query in queries) {

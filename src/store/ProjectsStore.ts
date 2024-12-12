@@ -48,6 +48,7 @@ type StoreActions = {
   ) => Promise<GetProjectResponse | null>;
   archive: (id: ProjectModel['id']) => Promise<void>;
   unarchive: (id: ProjectModel['id']) => Promise<void>;
+  delete: (id: ProjectModel['id']) => Promise<void>;
   findProject: <Full extends boolean>(
     id: ProjectModel['id'],
     { fullObjectNeeded }: { fullObjectNeeded?: Full },
@@ -262,6 +263,13 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
           });
           if (!project) throw new Error(`Project with id ${id} not found`);
           await this.update(id, { ...project, isArchived: false });
+          await this.fetchAll();
+        },
+
+        async delete(id: ProjectModel['id']) {
+          await this.callApi('projectsIdDelete', {
+            id,
+          });
           await this.fetchAll();
         },
       },

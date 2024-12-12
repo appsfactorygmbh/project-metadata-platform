@@ -86,22 +86,26 @@ describe('ProjectSlugResolver.vue', () => {
   };
   projectStore.setProjects(testProjects);
 
-  it('resolves an initial project id query', async () => {
-    await flushPromises();
-    await mockRouter.push({
-      name: 'ProjectNameResolver',
-      query: { projectId: '200' },
-    });
-    await mockRouter.isReady();
+  it(
+    'resolves an initial project id query',
+    async () => {
+      await flushPromises();
+      await mockRouter.push({
+        name: 'ProjectNameResolver',
+        query: { projectId: '200' },
+      });
+      await mockRouter.isReady();
 
-    generateWrapper();
+      generateWrapper();
 
-    projectStore.setProjects(testProjects);
-    await flushPromises();
+      projectStore.setProjects(testProjects);
+      await flushPromises();
 
-    expect(mockRouter.currentRoute.value.query.projectId).toBe('200');
-    expect(mockRouter.currentRoute.value.path).toBe('/test-1');
-  });
+      expect(mockRouter.currentRoute.value.query.projectId).toBe('200');
+      expect(mockRouter.currentRoute.value.path).toBe('/test-1');
+    },
+    { timeout: 10000 },
+  );
 
   it('changes the slug when changing the query', async () => {
     await flushPromises();

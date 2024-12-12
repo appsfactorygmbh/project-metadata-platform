@@ -1,28 +1,25 @@
 <script lang="ts" setup>
   import { computed, onMounted, ref, watch } from 'vue';
   import { inject } from 'vue';
-  import { userStoreSymbol } from '@/store/injectionSymbols';
-  import { useUserRouting } from '@/utils/hooks';
+  import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
 
   const collapsed = ref<boolean>(false);
   const selectedKeys = ref<string[]>([]);
   const userStore = inject(userStoreSymbol)!;
-  const { routerUserId, setUserId } = useUserRouting();
-  const { getIsLoadingUsers, getIsLoading, getUsers } = storeToRefs(userStore);
+  const { routerUserId, setUserId } = inject(userRoutingSymbol)!;
+  const { getIsLoading, getUsers } = storeToRefs(userStore);
 
-  const isLoading = computed(
-    () => getIsLoadingUsers.value || getIsLoading.value,
-  );
+  const isLoading = computed(() => getIsLoading.value);
   const usersData = computed(() => getUsers.value);
-  const routerUser = computed(() => routerUserId.value);
+
   userStore.fetchMe(); // fetch me for information
 
   watch(
-    () => routerUser.value,
+    () => routerUserId.value,
     async () => {
-      await userStore?.fetchUser(routerUser.value);
-      selectedKeys.value = [routerUser.value.toString()];
+      await userStore?.fetchUser(routerUserId.value);
+      selectedKeys.value = [routerUserId.value];
     },
   );
 
@@ -30,13 +27,15 @@
     setUserId(userID);
   };
 
+  const getNameFromEmail = (email: string) => email.split('@')[0];
+
   onMounted(async () => {
     await userStore?.fetchAll();
-    if (routerUser.value === '0') {
+    if (routerUserId.value === 'undefined') {
       setUserId(userStore?.getUsers[0]?.id ?? '0');
     } else {
-      await userStore?.fetchUser(routerUser.value);
-      selectedKeys.value = [routerUser.value.toString()];
+      await userStore?.fetchUser(routerUserId.value);
+      selectedKeys.value = [routerUserId.value];
     }
   });
 </script>
@@ -61,7 +60,7 @@
           class="users"
           @click="clickTab(user.id)"
         >
-          <span>{{ user.email }}</span>
+          <span>{{ getNameFromEmail(user.email) }}</span>
         </a-menu-item>
       </a-menu>
       <a-skeleton
@@ -86,8 +85,10 @@
 
   .ant-layout-sider {
     background: #fff;
-    height: 100vh;
+    height: 90vh;
     overflow: auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .content {

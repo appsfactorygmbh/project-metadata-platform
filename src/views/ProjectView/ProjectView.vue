@@ -47,6 +47,22 @@
     stopEditing();
   };
 
+  const isEmpty = ref(false);
+  const setIsEmpty = (value: boolean) => {
+    isEmpty.value = value;
+  };
+
+  watch(
+    () => projectStore.getProjects,
+    () => {
+      if (projectStore.getProjects.length === 0) {
+        setIsEmpty(true);
+      } else {
+        setIsEmpty(false);
+      }
+    },
+  );
+
   const isAdding = computed(() => projectStore.getIsLoadingUpdate);
 
   // Watcher to see if fetch was successful
@@ -82,6 +98,7 @@
       );
       return;
     }
+
     const updateProjectInformation =
       projectEditStore.getProjectInformationChanges;
     const updatedProject: UpdateProjectModel = {
@@ -93,31 +110,42 @@
       pluginList: projectEditStore?.getPluginChanges,
       isArchived: projectStore.getProject.isArchived,
     };
-    console.log('updated Project', updatedProject);
+
     const projectID = computed(() => projectStore.getProject?.id);
     if (projectID.value) {
       await projectStore.update(projectID.value, updatedProject);
       await projectStore.fetchAll();
       await projectStore.fetch(projectID.value);
       await pluginStore.fetchUnarchived(projectID.value);
+      await pluginStore.fetch(projectID.value);
       await localLogStore?.fetch(projectID.value);
     }
   };
 </script>
 
 <template>
-  <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
-  <ProjectInformation />
-  <ProjectPlugins class="pluginView" />
-  <LocalLogView class="LocalLog" />
-  <ConfirmAction
-    :is-open="isModalOpen"
-    title="Cancel Editing"
-    message="Are you sure you want to cancel all changes?"
-    @confirm="cancelEdit"
-    @cancel="isModalOpen = false"
-    @update:is-open="(value) => (isModalOpen = value)"
-  />
+  <div v-if="!isEmpty">
+    <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
+    <ProjectInformation />
+    <ProjectPlugins class="pluginView" />
+    <LocalLogView class="LocalLog" />
+    <ConfirmAction
+      :is-open="isModalOpen"
+      title="Cancel Editing"
+      message="Are you sure you want to cancel all changes?"
+      @confirm="cancelEdit"
+      @cancel="isModalOpen = false"
+      @update:is-open="(value) => (isModalOpen = value)"
+    />
+  </div>
+  <a-flex
+    v-else
+    justify="center"
+    align="center"
+    style="height: 80vh; color: black"
+  >
+    <a-empty description="No project found" />
+  </a-flex>
 </template>
 
 <style scoped>

@@ -3,10 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import UserInformationView from '../UserInformationView.vue';
 import { createTestingPinia } from '@pinia/testing';
-import { userStoreSymbol } from '@/store/injectionSymbols';
+import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
 import { useUserStore } from '@/store';
 import router from '@/router';
 import type { UserModel } from '@/models/User';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons-vue';
+import { useUserRouting } from '@/utils/hooks';
 
 const userData1: UserModel = {
   id: '100',
@@ -31,11 +33,29 @@ describe('UserInformationView.vue', () => {
       global: {
         provide: {
           [userStoreSymbol as symbol]: userStore,
+          [userRoutingSymbol as symbol]: useUserRouting(router),
         },
         plugins: [router],
       },
     });
   };
+
+  it('should hide delete button when user is me', () => {
+    userStore.setMe(userData2);
+    userStore.setUser(userData2);
+    const wrapper = generateWrapper();
+    const deleteButton = wrapper.findComponent(DeleteOutlined);
+    expect(deleteButton.exists()).toBe(false);
+  });
+
+  it('should show delete button when user is not me', () => {
+    userStore.setMe(userData1);
+    userStore.setUser(userData2);
+    const wrapper = generateWrapper();
+
+    const deleteButton = wrapper.findComponent(DeleteOutlined);
+    expect(deleteButton.exists()).toBe(true);
+  });
 
   it('renders correctly', () => {
     userStore.setMe(userData1);
@@ -47,7 +67,7 @@ describe('UserInformationView.vue', () => {
     const text = wrapper.findAll('.text');
     expect(text[0].text()).toBe(userData1.email);
 
-    const button = wrapper.findAll('.edit');
+    const button = wrapper.findAllComponents(EditOutlined);
     expect(button[0].exists()).toBe(true);
     expect(button[1].exists()).toBe(true);
     expect(wrapper.find('.email').exists()).toBe(true);

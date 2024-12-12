@@ -7,6 +7,7 @@ import { userStoreSymbol } from '@/store/injectionSymbols';
 import { useUserStore } from '@/store';
 import { FormItem } from 'ant-design-vue';
 import { useFormStore } from '@/components/Form';
+import type { UserListModel } from '@/models/User';
 
 describe('CreateUserView.vue', () => {
   setActivePinia(createTestingPinia({ stubActions: false }));
@@ -40,7 +41,24 @@ describe('CreateUserView.vue', () => {
   });
 
   it('verifies the email correctly', async () => {
+    const testData: UserListModel[] = [
+      {
+        id: '1',
+        email: 'a@b.cd',
+      },
+    ];
+
     wrapper = mount(CreateUserView, {
+      plugins: [
+        createTestingPinia({
+          stubActions: false,
+          initialState: {
+            user: {
+              users: testData,
+            },
+          },
+        }),
+      ],
       global: {
         provide: {
           [userStoreSymbol as symbol]: useUserStore(),
@@ -49,6 +67,13 @@ describe('CreateUserView.vue', () => {
     });
 
     const emailField = wrapper.findAllComponents(FormItem)[0];
+
+    await emailField.find('.ant-input').setValue('a@bc.de');
+    await flushPromises();
+
+    expect(
+      emailField.find('.ant-form-item-feedback-icon-success').exists(),
+    ).toBe(true);
 
     await emailField.find('.ant-input').setValue('a');
     await flushPromises();
@@ -60,9 +85,9 @@ describe('CreateUserView.vue', () => {
     await emailField.find('.ant-input').setValue('a@b.cd');
     await flushPromises();
 
-    expect(
-      emailField.find('.ant-form-item-feedback-icon-success').exists(),
-    ).toBe(true);
+    expect(emailField.find('.ant-form-item-feedback-icon-error').exists()).toBe(
+      true,
+    );
   });
 
   it('verifies the password correctly', async () => {
@@ -155,6 +180,9 @@ describe('CreateUserView.vue', () => {
 
     const userStore = useUserStore();
     const formStore = useFormStore('createUserForm');
+    const createSpy = vi
+      .spyOn(userStore, 'create')
+      .mockImplementation(() => Promise.resolve());
 
     wrapper = mount(CreateUserView, {
       global: {
@@ -174,7 +202,7 @@ describe('CreateUserView.vue', () => {
     await formStore.submit();
     await flushPromises();
 
-    expect(userStore.create).toHaveBeenCalledWith({
+    expect(createSpy).toHaveBeenCalledWith({
       email: 'E@Ma.il',
       password: 'Pa$$w0rd',
     });
