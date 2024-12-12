@@ -72,13 +72,6 @@
   // on mount, set the filter to show only active projects
   searchStore.setFilter(showOnlyActive);
 
-  watch(
-    () => projectStore.getProjects,
-    () => {
-      searchStore.setBaseSet(projectStore.getProjects);
-    },
-  );
-
   const FETCHING_METHOD: 'FRONTEND' | 'BACKEND' = import.meta.env
     .VITE_PROJECT_SEARCH_METHOD;
 
@@ -86,6 +79,9 @@
     () => projectStore.getProjects,
     (newData) => {
       searchStore?.setBaseSet(newData || []);
+      if (newData.length === 0) {
+        searchStore?.applySearch();
+      }
     },
   );
 
@@ -154,7 +150,8 @@
     await setFilterQuery();
 
     if (routerProjectId.value === 0) {
-      setProjectId(projectStore.getProjects[0]?.id ?? 100);
+      if (projectStore.getProjects.length > 0)
+        setProjectId(projectStore.getProjects[0]?.id ?? 100);
     } else {
       await projectStore.fetch(routerProjectId.value);
       await pluginStore.fetch(routerProjectId.value);
