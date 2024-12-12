@@ -7,14 +7,17 @@ import { createPinia, setActivePinia } from 'pinia';
 import type { SearchableColumns } from '../SearchableTableTypes';
 import { Button, Input } from 'ant-design-vue';
 import router from '@/router';
+import type { ProjectModel } from '@/models/Project';
 
-const testData = [
+const testData: ProjectModel[] = [
   {
     id: 1,
     projectName: 'C',
     clientName: 'A',
     businessUnit: 'A',
     teamNumber: 1,
+    isArchived: false,
+    slug: 'c',
   },
   {
     id: 2,
@@ -22,6 +25,8 @@ const testData = [
     clientName: 'B',
     businessUnit: 'B',
     teamNumber: 2,
+    isArchived: false,
+    slug: 'a',
   },
 ];
 
@@ -50,6 +55,10 @@ describe('SearchableTable.vue', () => {
   setActivePinia(createPinia());
   const searchStoreSymbol = Symbol('searchStoreSym');
   const searchStore = useSearchStore('test');
+
+  beforeEach(() => {
+    sessionStorage.clear();
+  });
 
   const generateWrapper = () => {
     return mount(SearchableTable, {
@@ -140,6 +149,24 @@ describe('SearchableTable.vue', () => {
     expect(wrapper.find('.ant-table-row').find('.ant-table-cell').text()).toBe(
       'A',
     );
+  });
+
+  it('stores the filters in the filterStorage', async () => {
+    const wrapper = generateWrapper();
+    await loadData();
+
+    expect(wrapper.findAll('.ant-table-row')).toHaveLength(2);
+    await wrapper.find('.ant-table-filter-trigger').trigger('click');
+
+    const searchInput = wrapper.getComponent(Input);
+    const searchButton = wrapper.getComponent(Button);
+
+    await searchInput.get('.ant-input').setValue('A');
+    await searchButton.trigger('click');
+
+    const filterStorage = JSON.parse(sessionStorage.getItem('filterStorage')!);
+
+    expect(filterStorage).toEqual({ projectName: 'A' });
   });
 
   it('reset the table when using the searchStore reset ', async () => {

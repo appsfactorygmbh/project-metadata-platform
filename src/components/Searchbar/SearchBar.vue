@@ -16,6 +16,7 @@
   import { type SearchStore } from '@/store/SearchStore';
   import type { Ref } from 'vue';
   import { useQuery } from '@/utils/hooks';
+  import { useSessionStorage } from '@vueuse/core';
 
   const props = defineProps({
     searchStoreSymbol: {
@@ -23,6 +24,8 @@
       required: true,
     },
   });
+
+  const searchStorage = useSessionStorage('searchStorage', { searchQuery: '' });
 
   const { routerSearchQuery, setSearchQuery } = useQuery(['searchQuery']);
   const searchStore = inject<SearchStore>(props.searchStoreSymbol);
@@ -33,6 +36,7 @@
   const onInput = (e: Event) => {
     const target = e.target as HTMLInputElement;
     searchStore?.setSearchQuery(target.value);
+    searchStorage.value.searchQuery = target.value;
   };
 
   watch(
