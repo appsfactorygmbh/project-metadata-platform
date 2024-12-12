@@ -59,7 +59,15 @@ export interface ProjectsPutRequest {
     createProjectRequest?: CreateProjectRequest;
 }
 
+export interface ProjectsSlugDeleteRequest {
+    slug: string;
+}
+
 export interface ProjectsSlugGetRequest {
+    slug: string;
+}
+
+export interface ProjectsSlugPluginsGetRequest {
     slug: string;
 }
 
@@ -198,6 +206,21 @@ export interface ProjectsApiInterface {
 
     /**
      * 
+     * @summary Deletes the project with the given slug.
+     * @param {string} slug The slug of the project to delete.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectsApiInterface
+     */
+    projectsSlugDeleteRaw(requestParameters: ProjectsSlugDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
+
+    /**
+     * Deletes the project with the given slug.
+     */
+    projectsSlugDelete(requestParameters: ProjectsSlugDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
+
+    /**
+     * 
      * @summary Gets the project with the given slug.
      * @param {string} slug The slug of the project.
      * @param {*} [options] Override http request option.
@@ -210,6 +233,21 @@ export interface ProjectsApiInterface {
      * Gets the project with the given slug.
      */
     projectsSlugGet(requestParameters: ProjectsSlugGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetProjectResponse>;
+
+    /**
+     * 
+     * @summary Gets all the plugins of the project with the given id.
+     * @param {string} slug The slug of the project.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectsApiInterface
+     */
+    projectsSlugPluginsGetRaw(requestParameters: ProjectsSlugPluginsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<GetPluginResponse>>>;
+
+    /**
+     * Gets all the plugins of the project with the given id.
+     */
+    projectsSlugPluginsGet(requestParameters: ProjectsSlugPluginsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<GetPluginResponse>>;
 
 }
 
@@ -521,6 +559,42 @@ export class ProjectsApi extends runtime.BaseAPI implements ProjectsApiInterface
     }
 
     /**
+     * Deletes the project with the given slug.
+     */
+    async projectsSlugDeleteRaw(requestParameters: ProjectsSlugDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['slug'] == null) {
+            throw new runtime.RequiredError(
+                'slug',
+                'Required parameter "slug" was null or undefined when calling projectsSlugDelete().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = await this.configuration.apiKey("Authorization"); // Bearer authentication
+        }
+
+        const response = await this.request({
+            path: `/Projects/{slug}`.replace(`{${"slug"}}`, encodeURIComponent(String(requestParameters['slug']))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Deletes the project with the given slug.
+     */
+    async projectsSlugDelete(requestParameters: ProjectsSlugDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.projectsSlugDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
      * Gets the project with the given slug.
      */
     async projectsSlugGetRaw(requestParameters: ProjectsSlugGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetProjectResponse>> {
@@ -554,6 +628,43 @@ export class ProjectsApi extends runtime.BaseAPI implements ProjectsApiInterface
      */
     async projectsSlugGet(requestParameters: ProjectsSlugGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetProjectResponse> {
         const response = await this.projectsSlugGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Gets all the plugins of the project with the given id.
+     */
+    async projectsSlugPluginsGetRaw(requestParameters: ProjectsSlugPluginsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<GetPluginResponse>>> {
+        if (requestParameters['slug'] == null) {
+            throw new runtime.RequiredError(
+                'slug',
+                'Required parameter "slug" was null or undefined when calling projectsSlugPluginsGet().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = await this.configuration.apiKey("Authorization"); // Bearer authentication
+        }
+
+        const response = await this.request({
+            path: `/Projects/{slug}/plugins`.replace(`{${"slug"}}`, encodeURIComponent(String(requestParameters['slug']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(GetPluginResponseFromJSON));
+    }
+
+    /**
+     * Gets all the plugins of the project with the given id.
+     */
+    async projectsSlugPluginsGet(requestParameters: ProjectsSlugPluginsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<GetPluginResponse>> {
+        const response = await this.projectsSlugPluginsGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
