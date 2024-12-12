@@ -24,12 +24,6 @@ export interface DeleteGlobalPluginResponse {
      * @memberof DeleteGlobalPluginResponse
      */
     pluginId: number;
-    /**
-     * The status whether the plugin is archived.
-     * @type {boolean}
-     * @memberof DeleteGlobalPluginResponse
-     */
-    isArchived: boolean;
 }
 
 /**
@@ -37,7 +31,6 @@ export interface DeleteGlobalPluginResponse {
  */
 export function instanceOfDeleteGlobalPluginResponse(value: object): value is DeleteGlobalPluginResponse {
     if (!('pluginId' in value) || value['pluginId'] === undefined) return false;
-    if (!('isArchived' in value) || value['isArchived'] === undefined) return false;
     return true;
 }
 
@@ -52,7 +45,6 @@ export function DeleteGlobalPluginResponseFromJSONTyped(json: any, ignoreDiscrim
     return {
         
         'pluginId': json['pluginId'],
-        'isArchived': json['isArchived'],
     };
 }
 
@@ -68,7 +60,6 @@ export function DeleteGlobalPluginResponseToJSONTyped(value?: DeleteGlobalPlugin
     return {
         
         'pluginId': value['pluginId'],
-        'isArchived': value['isArchived'],
     };
 }
 
