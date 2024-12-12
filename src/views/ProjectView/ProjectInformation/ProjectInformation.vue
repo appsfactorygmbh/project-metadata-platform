@@ -22,6 +22,7 @@
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
   import IconButton from '@/components/Button/IconButton.vue';
+  import router from '@/router';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectStore = useProjectStore();
@@ -155,20 +156,27 @@
 
     try {
       await projectStore.delete(project.id);
-
-      const nextProject = projectStore.getProject;
-
-      if (nextProject) {
-        projectRouting.setProjectId(nextProject.id);
-      } else {
-        projectRouting.setProjectId(undefined);
-        await projectRouting.router.push({ path: '/', query: {} });
-      }
     } catch (error) {
       console.error('Error deleting project:', error);
     } finally {
       isDeleteModalOpen.value = false;
+      const newProjectId =
+        getNextActiveProjectId(project.id) === project.id
+          ? getNextArchivedProjectId()!
+          : getNextActiveProjectId(project.id);
+      if (newProjectId === undefined) {
+        await router.push('/');
+        return;
+      }
+      projectRouting.setProjectId(newProjectId);
     }
+  };
+
+  const getNextArchivedProjectId = (): number | undefined => {
+    const projects = projectStore.getProjects;
+    const nextProject = projects.find((project) => project.isArchived);
+    if (!nextProject) return undefined;
+    return nextProject.id;
   };
 
   const getNextActiveProjectId = (currentProjectId: number): number => {

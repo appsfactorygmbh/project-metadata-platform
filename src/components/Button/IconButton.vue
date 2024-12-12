@@ -6,7 +6,6 @@
         :shape="shape"
         :size="size"
         class="button"
-        style="margin-left: 10px"
         @click="$emit('click')"
       >
         <template #icon>
