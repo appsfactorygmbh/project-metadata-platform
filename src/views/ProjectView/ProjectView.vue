@@ -98,6 +98,7 @@
       );
       return;
     }
+
     const updateProjectInformation =
       projectEditStore.getProjectInformationChanges;
     const updatedProject: UpdateProjectModel = {
@@ -109,7 +110,7 @@
       pluginList: projectEditStore?.getPluginChanges,
       isArchived: projectStore.getProject.isArchived,
     };
-    console.log('updated Project', updatedProject);
+
     const projectID = computed(() => projectStore.getProject?.id);
     if (projectID.value) {
       await projectStore.update(projectID.value, updatedProject);

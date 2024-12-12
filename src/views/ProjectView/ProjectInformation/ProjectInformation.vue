@@ -60,7 +60,6 @@
       (newProject, oldProject) => {
         if (!newProject) return;
         if (!_.isEqual(newProject, oldProject)) {
-          console.log(pluginStore.getPlugins);
           addData(toRaw(newProject));
         }
       },
