@@ -5,7 +5,7 @@ import ProjectInformation from '../ProjectInformation.vue';
 import { createTestingPinia } from '@pinia/testing';
 import {
   projectEditStoreSymbol,
-  projectsStoreSymbol,
+  projectStoreSymbol,
 } from '@/store/injectionSymbols';
 import { useProjectEditStore, useProjectStore } from '@/store';
 import router from '@/router';
@@ -107,7 +107,7 @@ describe('ProjectInformation.vue', () => {
         plugins: [router],
         provide: {
           [projectEditStoreSymbol as symbol]: useProjectEditStore(),
-          [projectsStoreSymbol as symbol]: useProjectStore(),
+          [projectStoreSymbol as symbol]: useProjectStore(),
         },
       },
     });
@@ -158,7 +158,7 @@ describe('ProjectInformation.vue', () => {
         plugins: [router],
         provide: {
           [projectEditStoreSymbol as symbol]: useProjectEditStore(),
-          [projectsStoreSymbol as symbol]: useProjectStore(),
+          [projectStoreSymbol as symbol]: useProjectStore(),
         },
       },
     });

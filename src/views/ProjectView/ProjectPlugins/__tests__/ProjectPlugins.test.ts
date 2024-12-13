@@ -7,7 +7,7 @@ import type { PluginModel } from '@/models/Plugin';
 import type { DetailedProjectModel } from '@/models/Project';
 import {
   pluginStoreSymbol,
-  projectsStoreSymbol,
+  projectStoreSymbol,
 } from '@/store/injectionSymbols';
 import { ProjectPlugins } from '..';
 import router from '@/router';
@@ -64,7 +64,7 @@ describe('ProjectPlugins', () => {
 
   it('should get unarchived plugins when on an active project and all plugins on archived project', async () => {
     const pluginStore = usePluginStore();
-    const projectsStore = useProjectStore();
+    const projectStore = useProjectStore();
 
     const mockActiveProject: DetailedProjectModel = {
       id: 1,
@@ -96,13 +96,13 @@ describe('ProjectPlugins', () => {
       .mockReturnValue([]);
 
     // Test for active project
-    projectsStore.setProject(mockActiveProject);
+    projectStore.setProject(mockActiveProject);
 
     shallowMount(ProjectPlugins, {
       global: {
         provide: {
           [pluginStoreSymbol]: pluginStore,
-          [projectsStoreSymbol]: projectsStore,
+          [projectStoreSymbol]: projectStore,
         },
         plugins: [router],
       },
@@ -111,13 +111,13 @@ describe('ProjectPlugins', () => {
     expect(unarchivedPluginsSpy).toHaveBeenCalled();
 
     // Test for archived project
-    projectsStore.setProject(mockArchivedProject);
+    projectStore.setProject(mockArchivedProject);
 
     shallowMount(ProjectPlugins, {
       global: {
         provide: {
           [pluginStoreSymbol]: pluginStore,
-          [projectsStoreSymbol]: projectsStore,
+          [projectStoreSymbol]: projectStore,
         },
         plugins: [router],
       },
