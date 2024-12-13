@@ -142,6 +142,7 @@
       pluginList: updatedPluginList.value,
       isArchived: projectStore.getProject.isArchived,
     };
+    console.log(updatedProject);
 
     const projectID = computed(() => projectStore.getProject?.id);
     if (projectID.value) {

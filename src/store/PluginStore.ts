@@ -35,6 +35,7 @@ export const usePluginStore = (pinia: Pinia = piniaInstance): Store => {
     {
       state: {
         plugins: [],
+        unarchivedPlugins: [],
         isLoadingPlugins: false,
       },
 
