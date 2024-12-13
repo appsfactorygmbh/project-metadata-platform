@@ -1,4 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 import { ProjectView } from '..';
 import router from '@/router';
 import { EditOutlined, SaveOutlined } from '@ant-design/icons-vue';
@@ -6,10 +7,7 @@ import {
   localLogStoreSymbol,
   projectEditStoreSymbol,
 } from '@/store/injectionSymbols';
-import {
-  useLocalLogStore,
-  useProjectEditStore,
-} from '@/store';
+import { useLocalLogStore, useProjectEditStore } from '@/store';
 import { createTestingPinia } from '@pinia/testing';
 import type { PluginModel } from '@/models/Plugin';
 import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
