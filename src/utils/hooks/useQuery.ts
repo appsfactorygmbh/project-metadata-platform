@@ -1,7 +1,8 @@
 import { useRouter } from 'vue-router';
 import type { ComputedRef } from 'vue';
 import { ref } from 'vue';
-const isSearchQuery = ref(false);
+import _ from 'lodash';
+const isSearchQueryEmpty = ref(false);
 
 export const useQuery = (queryNames: string[]) => {
   const router = useRouter();
@@ -19,9 +20,9 @@ export const useQuery = (queryNames: string[]) => {
     queryName: string,
   ) => {
     const index = queryNames.findIndex((name) => name === queryName);
-    if (index !== -1) isSearchQuery.value = !!searchQuery;
-
     routerSearchQuery.value[index] = searchQuery;
+    isSearchQueryEmpty.value = _.isEmpty(searchQuery);
+
     await router.push({
       path: router.currentRoute.value.path,
       query: {
@@ -31,5 +32,5 @@ export const useQuery = (queryNames: string[]) => {
     });
   };
 
-  return { queryNames, routerSearchQuery, setSearchQuery, isSearchQuery };
+  return { queryNames, routerSearchQuery, setSearchQuery, isSearchQueryEmpty };
 };

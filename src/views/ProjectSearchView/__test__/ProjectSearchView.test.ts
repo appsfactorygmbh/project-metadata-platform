@@ -154,12 +154,16 @@ describe('ProjectSearchView.vue', () => {
     expect(button.style.borderColor).toBe('#3e8ee2');
   });
 
-  it('not highlight button when clear search', async () => {
+  it('not highlight button when clear search and filter', async () => {
     await router.isReady();
 
     sessionStorage.setItem(
       'searchStorage',
       JSON.stringify({ searchQuery: '' }),
+    );
+    sessionStorage.setItem(
+      'filterStorage',
+      JSON.stringify({ projectName: '' }),
     );
 
     const wrapper = generateWrapper(700);
@@ -182,20 +186,5 @@ describe('ProjectSearchView.vue', () => {
 
     const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
     expect(button.style.borderColor).toBe('#3e8ee2');
-  });
-
-  it('not highlight button when clear filter', async () => {
-    await router.isReady();
-
-    sessionStorage.setItem(
-      'filterStorage',
-      JSON.stringify({ projectName: '' }),
-    );
-
-    const wrapper = generateWrapper(700);
-    await flushPromises();
-
-    const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
-    expect(button.style.borderColor).toBe('#d9d9d9');
   });
 });

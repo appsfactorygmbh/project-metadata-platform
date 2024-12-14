@@ -51,7 +51,7 @@
   );
 
   const highlightButtonStyle = computed(() =>
-    searchStore.getIsFiltering() || searchQuery.isSearchQuery.value
+    searchStore.getIsFiltering() || !searchQuery.isSearchQueryEmpty.value
       ? { color: '#3e8ee2', width: '100%', borderColor: '#3e8ee2' }
       : { color: 'black', width: '100%', borderColor: '#d9d9d9' },
   );
