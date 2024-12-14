@@ -7,22 +7,11 @@
   import { MenuButtons } from '@/components/MenuButtons';
   import { CreateProjectView } from '@/views/CreateProject';
   import ProjectView from '../ProjectView/ProjectView.vue';
-  import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
-  import { RightOutlined } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks';
 
   const { isEditing } = useEditing();
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));
-
-  const splitButton: FloatButtonModel = {
-    name: 'SplitButton',
-    onClick: () => {},
-    icon: RightOutlined,
-    size: 'middle',
-    status: 'activated',
-    tooltip: 'Click here to expand the table',
-  };
 </script>
 
 <template>
@@ -41,7 +30,6 @@
 
       <pane size="32" min-size="32" class="rightPane">
         <ProjectView />
-        <FloatingButton :button="splitButton" class="button" />
         <MenuButtons />
         <CreateProjectView v-if="!isEditing" />
       </pane>
@@ -62,11 +50,5 @@
     position: relative;
     max-height: 100vh; /* Set a maximum height */
     overflow-y: auto; /* Enable vertical scrolling */
-  }
-
-  .button {
-    position: absolute;
-    top: 2.5em;
-    left: 1em;
   }
 </style>

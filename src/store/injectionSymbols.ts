@@ -1,4 +1,4 @@
-import { type ProjectsStore } from './ProjectsStore';
+import { type ProjectStore } from './ProjectStore.ts';
 import { type PluginStore } from './PluginStore';
 import { type ProjectEditStore } from './ProjectEditStore/ProjectEditStore.ts';
 import { type UserStore } from './UserStore';
@@ -11,7 +11,7 @@ import type { GlobalPluginsStore } from './GlobalPluginStore.ts';
 import type { AuthStore } from './AuthStore.ts';
 import { useUserRouting } from '@/utils/hooks/useUserRouting.ts';
 
-const projectsStoreSymbol = Symbol() as InjectionKey<ProjectsStore>;
+const projectStoreSymbol = Symbol() as InjectionKey<ProjectStore>;
 
 const pluginStoreSymbol = Symbol() as InjectionKey<PluginStore>;
 
@@ -40,7 +40,7 @@ const userRoutingSymbol = Symbol() as InjectionKey<
 >;
 
 export {
-  projectsStoreSymbol,
+  projectStoreSymbol,
   pluginStoreSymbol,
   globalPluginStoreSymbol,
   projectEditStoreSymbol,

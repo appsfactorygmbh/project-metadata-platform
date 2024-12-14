@@ -23,6 +23,7 @@
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
   import IconButton from '@/components/Button/IconButton.vue';
   import router from '@/router';
+  import _ from 'lodash';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectStore = useProjectStore();
@@ -58,7 +59,7 @@
       () => data.value,
       (newProject, oldProject) => {
         if (!newProject) return;
-        if (newProject.id !== oldProject?.id) {
+        if (!_.isEqual(newProject, oldProject)) {
           addData(toRaw(newProject));
         }
       },
@@ -226,7 +227,7 @@
 
         <!-- Edit Button -->
         <IconButton
-          v-if="!projectStore.getProject?.isArchived"
+          v-if="!projectStore.getProject?.isArchived && !isEditing"
           tooltip-position="left"
           tooltip="Click here to activate Edit-View"
           @click="toggleEditingMode"
@@ -271,7 +272,7 @@
 
         <!-- Archive Button -->
         <IconButton
-          v-if="!projectStore.getProject?.isArchived"
+          v-if="!projectStore.getProject?.isArchived && !isEditing"
           tooltip-position="right"
           tooltip="Click here to archive the project"
           @click="handleArchive"

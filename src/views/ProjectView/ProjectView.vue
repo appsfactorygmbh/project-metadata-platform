@@ -12,6 +12,8 @@
   import { inject, watch } from 'vue';
   import { message } from 'ant-design-vue';
   import { usePluginStore, useProjectStore } from '@/store';
+  import type { PluginModel } from '@/models/Plugin';
+  import _ from 'lodash';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
@@ -98,24 +100,57 @@
       );
       return;
     }
+
     const updateProjectInformation =
       projectEditStore.getProjectInformationChanges;
+
+    // Puts the unarchived plugins and the archived plugins together
+    const updatedPluginList = computed(() => {
+      const tempPluginList: PluginModel[] = [];
+      projectEditStore.getPluginChanges.forEach((plugin) => {
+        tempPluginList.push({
+          id: plugin.id,
+          pluginName: plugin.pluginName,
+          displayName: plugin.displayName,
+          url: plugin.url,
+        });
+      });
+
+      const archivedPlugins = _.differenceBy(
+        pluginStore.getPlugins,
+        pluginStore.getUnarchivedPlugins,
+        'id',
+      );
+
+      archivedPlugins.forEach((plugin) => {
+        tempPluginList.push({
+          id: plugin.id,
+          pluginName: plugin.pluginName,
+          displayName: plugin.displayName,
+          url: plugin.url,
+        });
+      });
+      return tempPluginList;
+    });
+
     const updatedProject: UpdateProjectModel = {
       projectName: updateProjectInformation?.projectName,
       businessUnit: updateProjectInformation?.businessUnit,
       teamNumber: updateProjectInformation?.teamNumber,
       department: updateProjectInformation?.department,
       clientName: updateProjectInformation?.clientName,
-      pluginList: projectEditStore?.getPluginChanges,
+      pluginList: updatedPluginList.value,
       isArchived: projectStore.getProject.isArchived,
     };
-    console.log('updated Project', updatedProject);
+    console.log(updatedProject);
+
     const projectID = computed(() => projectStore.getProject?.id);
     if (projectID.value) {
       await projectStore.update(projectID.value, updatedProject);
       await projectStore.fetchAll();
       await projectStore.fetch(projectID.value);
       await pluginStore.fetchUnarchived(projectID.value);
+      await pluginStore.fetch(projectID.value);
       await localLogStore?.fetch(projectID.value);
     }
   };

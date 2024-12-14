@@ -76,9 +76,10 @@
   .timeStamp {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: flex-start;
     height: 0em;
     margin: 0;
+    max-width: 90px;
   }
 
   .timeStamp p {

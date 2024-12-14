@@ -32,6 +32,18 @@
   const buttons = computed((): FloatButtonModel[] => {
     const tempButtons: FloatButtonModel[] = [
       {
+        name: 'DeleteUserButton',
+        onClick: () => {
+          openModal();
+        },
+        icon: DeleteOutlined,
+        type: 'primary',
+        specialType: 'danger',
+        size: 'large',
+        status: 'activated',
+        tooltip: 'Click here to delete this user',
+      },
+      {
         name: 'CreateUserButton',
         onClick: () => {
           router.push('/settings/user-management/create');
@@ -42,19 +54,8 @@
         status: 'activated',
         tooltip: 'Click here to create a new user',
       },
-      {
-        name: 'DeleteUserButton',
-        onClick: () => {
-          openModal();
-        },
-        icon: DeleteOutlined,
-        type: 'primary',
-        size: 'large',
-        status: 'activated',
-        tooltip: 'Click here to delete this user',
-      },
     ];
-    if (me.value?.id == user.value?.id) tempButtons[1].status = 'deactivated';
+    if (me.value?.id == user.value?.id) tempButtons[0].status = 'deactivated';
 
     return tempButtons;
   });
