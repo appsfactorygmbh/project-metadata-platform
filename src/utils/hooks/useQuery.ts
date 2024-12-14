@@ -1,5 +1,7 @@
 import { useRouter } from 'vue-router';
 import type { ComputedRef } from 'vue';
+import { ref } from 'vue';
+const isSearchQuery = ref(false);
 
 export const useQuery = (queryNames: string[]) => {
   const router = useRouter();
@@ -17,8 +19,9 @@ export const useQuery = (queryNames: string[]) => {
     queryName: string,
   ) => {
     const index = queryNames.findIndex((name) => name === queryName);
-    routerSearchQuery.value[index] = searchQuery;
+    if (index !== -1) isSearchQuery.value = !!searchQuery;
 
+    routerSearchQuery.value[index] = searchQuery;
     await router.push({
       path: router.currentRoute.value.path,
       query: {
@@ -28,5 +31,5 @@ export const useQuery = (queryNames: string[]) => {
     });
   };
 
-  return { queryNames, routerSearchQuery, setSearchQuery };
+  return { queryNames, routerSearchQuery, setSearchQuery, isSearchQuery };
 };

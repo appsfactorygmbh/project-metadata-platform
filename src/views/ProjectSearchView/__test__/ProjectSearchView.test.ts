@@ -168,4 +168,34 @@ describe('ProjectSearchView.vue', () => {
     const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
     expect(button.style.borderColor).toBe('#d9d9d9');
   });
+
+  it('highlight button when filter', async () => {
+    await router.isReady();
+
+    sessionStorage.setItem(
+      'filterStorage',
+      JSON.stringify({ projectName: 'test' }),
+    );
+
+    const wrapper = generateWrapper(700);
+    await flushPromises();
+
+    const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
+    expect(button.style.borderColor).toBe('#3e8ee2');
+  });
+
+  it('not highlight button when clear filter', async () => {
+    await router.isReady();
+
+    sessionStorage.setItem(
+      'filterStorage',
+      JSON.stringify({ projectName: '' }),
+    );
+
+    const wrapper = generateWrapper(700);
+    await flushPromises();
+
+    const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
+    expect(button.style.borderColor).toBe('#d9d9d9');
+  });
 });
