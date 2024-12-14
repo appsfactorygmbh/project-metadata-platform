@@ -109,6 +109,46 @@ describe('ProjectSearchView.vue', () => {
     expect(usePluginStore().fetch).toHaveBeenCalledWith(300);
   });
 
+  it('highlight button when search', async () => {
+    await router.isReady();
+
+    sessionStorage.setItem(
+      'searchStorage',
+      JSON.stringify({ searchQuery: 'test' }),
+    );
+
+    const wrapper = generateWrapper(700);
+    await flushPromises();
+
+    const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
+    expect(button.style.borderColor).toBe('#3e8ee2');
+  });
+
+  it('not highlight button when clear search and filter', async () => {
+    await router.isReady();
+
+    const wrapper = generateWrapper(700);
+    await flushPromises();
+
+    const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
+    expect(button.style.borderColor).toBe('#d9d9d9');
+  });
+
+  it('highlight button when filter', async () => {
+    await router.isReady();
+
+    sessionStorage.setItem(
+      'filterStorage',
+      JSON.stringify({ projectName: 'test' }),
+    );
+
+    const wrapper = generateWrapper(700);
+    await flushPromises();
+
+    const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
+    expect(button.style.borderColor).toBe('#3e8ee2');
+  });
+
   it('sets the router query with the search query in the storage', async () => {
     await router.isReady();
 
@@ -137,54 +177,5 @@ describe('ProjectSearchView.vue', () => {
     await flushPromises();
 
     expect(router.currentRoute.value.query.projectName).toBe('test');
-  });
-
-  it('highlight button when search', async () => {
-    await router.isReady();
-
-    sessionStorage.setItem(
-      'searchStorage',
-      JSON.stringify({ searchQuery: 'test' }),
-    );
-
-    const wrapper = generateWrapper(700);
-    await flushPromises();
-
-    const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
-    expect(button.style.borderColor).toBe('#3e8ee2');
-  });
-
-  it('not highlight button when clear search and filter', async () => {
-    await router.isReady();
-
-    sessionStorage.setItem(
-      'searchStorage',
-      JSON.stringify({ searchQuery: '' }),
-    );
-    sessionStorage.setItem(
-      'filterStorage',
-      JSON.stringify({ projectName: '' }),
-    );
-
-    const wrapper = generateWrapper(700);
-    await flushPromises();
-
-    const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
-    expect(button.style.borderColor).toBe('#d9d9d9');
-  });
-
-  it('highlight button when filter', async () => {
-    await router.isReady();
-
-    sessionStorage.setItem(
-      'filterStorage',
-      JSON.stringify({ projectName: 'test' }),
-    );
-
-    const wrapper = generateWrapper(700);
-    await flushPromises();
-
-    const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
-    expect(button.style.borderColor).toBe('#3e8ee2');
   });
 });

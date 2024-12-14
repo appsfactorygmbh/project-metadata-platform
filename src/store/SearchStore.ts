@@ -78,11 +78,6 @@ export const useSearchStore = <T extends AnyObject>(name: string) =>
         this.isLoading = false;
       },
 
-      getIsFiltering() {
-        if (_.isEmpty(this.searchQuery)) return false;
-        else return true;
-      },
-
       setOnReset(onReset: () => void) {
         this.onReset = onReset;
       },

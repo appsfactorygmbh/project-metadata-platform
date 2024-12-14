@@ -143,34 +143,4 @@ describe('SearchBar.vue', () => {
 
     expect(searchStore.getSearchQuery).toBe('Test2');
   });
-
-  it('getIsFiltering when type in searchBar', async () => {
-    await router.isReady();
-
-    const wrapper = mount(SearchBar, {
-      plugins: [
-        createTestingPinia({
-          stubActions: false,
-        }),
-      ],
-      global: {
-        provide: {
-          [searchStoreSymbol as symbol]: searchStore,
-        },
-        plugins: [router],
-      },
-      propsData: {
-        searchStoreSymbol: searchStoreSymbol,
-      },
-    });
-
-    const input = wrapper.find('input');
-    await input.setValue('Test1');
-    await flushPromises();
-    expect(searchStore.getIsFiltering()).toBe(true);
-    await input.setValue('');
-    await flushPromises();
-    expect(searchStore.getIsFiltering()).toBe(false);
-    wrapper.unmount();
-  });
 });

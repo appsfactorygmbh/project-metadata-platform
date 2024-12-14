@@ -1,11 +1,9 @@
 import { useRouter } from 'vue-router';
 import type { ComputedRef } from 'vue';
-import { ref } from 'vue';
-import _ from 'lodash';
-const isSearchQueryEmpty = ref(false);
 
 export const useQuery = (queryNames: string[]) => {
   const router = useRouter();
+
   const routerSearchQuery: ComputedRef<(string | undefined)[]> = computed(
     () => {
       return queryNames.map(
@@ -15,13 +13,23 @@ export const useQuery = (queryNames: string[]) => {
     },
   );
 
+  const isSearchQuery: ComputedRef<boolean> = computed(() => {
+    const search: {
+      searchQuery?: string;
+      projectName?: string;
+      clientName?: string;
+    } = router.currentRoute.value.query;
+    return search.searchQuery || search.projectName || search.clientName
+      ? true
+      : false;
+  });
+
   const setSearchQuery = async (
     searchQuery: string | undefined,
     queryName: string,
   ) => {
     const index = queryNames.findIndex((name) => name === queryName);
     routerSearchQuery.value[index] = searchQuery;
-    isSearchQueryEmpty.value = _.isEmpty(searchQuery);
 
     await router.push({
       path: router.currentRoute.value.path,
@@ -32,5 +40,5 @@ export const useQuery = (queryNames: string[]) => {
     });
   };
 
-  return { queryNames, routerSearchQuery, setSearchQuery, isSearchQueryEmpty };
+  return { queryNames, routerSearchQuery, setSearchQuery, isSearchQuery };
 };
