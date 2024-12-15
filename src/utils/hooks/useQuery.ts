@@ -14,14 +14,9 @@ export const useQuery = (queryNames: string[]) => {
   );
 
   const isSearchQuery: ComputedRef<boolean> = computed(() => {
-    const search: {
-      searchQuery?: string;
-      projectName?: string;
-      clientName?: string;
-    } = router.currentRoute.value.query;
-    return search.searchQuery || search.projectName || search.clientName
-      ? true
-      : false;
+    return queryNames
+      .map((queryName) => router.currentRoute.value.query[queryName])
+      .some((value) => value !== undefined && value !== 'undefined');
   });
 
   const setSearchQuery = async (

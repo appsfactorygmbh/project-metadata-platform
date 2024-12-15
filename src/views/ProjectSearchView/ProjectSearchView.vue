@@ -43,7 +43,7 @@
   const isLoading = computed(() => projectStore.getIsLoadingProjects);
   provide<ProjectSearchStore>(searchStoreSymbol, searchStore);
 
-  const searchQuery = useQuery(searchableColumnNames);
+  const searchQuery = useQuery(queryNames);
   const searchStorage = useSessionStorage('searchStorage', { searchQuery: '' });
   const filterStorage = useSessionStorage<Record<string, string>>(
     'filterStorage',
@@ -269,11 +269,12 @@
       width: '12.5%',
     },
   ]);
-  const searchableColumnNames = [
-    'Project Name',
-    'Client Name',
-    'Business Unit',
-    'Team Number',
+  const queryNames = [
+    'searchQuery',
+    'projectName',
+    'clientName',
+    'businessUnit',
+    'teamNumber',
   ];
 
   /*  Column drop implementation  */
