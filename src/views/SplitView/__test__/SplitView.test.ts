@@ -34,20 +34,6 @@ describe('SplitView.vue', () => {
     expect(wrapper.findAll('.splitpanes__pane')[1].isVisible()).toBeTruthy();
   });
 
-  it('saves pane sizes to localStorage on resize', async () => {
-    const wrapper = generateWrapper();
-
-    const newSizes = [
-      { min: 20, max: 100, size: 20 },
-      { min: 32, max: 100, size: 80 },
-    ];
-    const pane = wrapper.findComponent(Splitpanes);
-    pane.vm.$emit('resized', newSizes);
-
-    const storedSizes = localStorage.getItem('paneSizes');
-    expect(storedSizes).toBe(JSON.stringify(newSizes));
-  });
-
   it('should save pane sizes to localStorage on resize', async () => {
     const wrapper = generateWrapper();
 

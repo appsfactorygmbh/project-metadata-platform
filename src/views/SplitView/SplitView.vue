@@ -24,8 +24,8 @@
     tooltip: 'Click here to expand the table',
   };
 
-  const leftPaneWidth = ref<number>(70);
-  const rightPaneWidth = ref<number>(30);
+  const leftPaneWidth = ref<number>(60);
+  const rightPaneWidth = ref<number>(40);
 
   onBeforeMount(() => {
     const paneSizeFromLocalStorage = localStorage.getItem('paneSizes');
@@ -36,7 +36,6 @@
   });
 
   const onResize = (newSizes: number[]) => {
-    console.log('rezising');
     localStorage.setItem('paneSizes', JSON.stringify(newSizes));
   };
 </script>
