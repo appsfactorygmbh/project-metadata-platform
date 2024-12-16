@@ -3,7 +3,7 @@ import {
   type ProjectEditStore,
   useProjectEditStore,
 } from './ProjectEditStore/ProjectEditStore.ts';
-import { type ProjectsStore, useProjectStore } from './ProjectsStore';
+import { type ProjectStore, useProjectStore } from './ProjectStore.ts';
 import { type SearchStore, useSearchStore } from './SearchStore';
 import {
   type GlobalPluginsStore,
@@ -27,7 +27,7 @@ export {
 };
 export type {
   PluginStore,
-  ProjectsStore,
+  ProjectStore,
   SearchStore,
   GlobalPluginsStore,
   ProjectEditStore,

@@ -9,11 +9,13 @@ import {
   useSearchStore,
 } from '@/store';
 import { setActivePinia } from 'pinia';
-import { localLogStoreSymbol } from '@/store/injectionSymbols';
+import {
+  localLogStoreSymbol,
+  projectRoutingSymbol,
+} from '@/store/injectionSymbols';
 import type { ComponentPublicInstance } from 'vue';
 import router from '@/router';
 import type { ProjectModel } from '@/models/Project';
-import { projectRoutingSymbol } from '@/store/injectionSymbols';
 import { useProjectRouting } from '@/utils/hooks';
 
 interface ProjectSearchViewInstance {
@@ -22,28 +24,28 @@ interface ProjectSearchViewInstance {
   handleRowClick: (project: ProjectModel) => void;
 }
 
-const generateWrapper = (pWidth: number) => {
-  return mount(ProjectSearchView, {
-    plugins: [
-      createTestingPinia({
-        stubActions: false,
-      }),
-    ],
-    global: {
-      provide: {
-        [projectRoutingSymbol as symbol]: useProjectRouting(router),
-        [localLogStoreSymbol as symbol]: useLocalLogStore(),
-      },
-      plugins: [router],
-    },
-    propsData: {
-      paneWidth: pWidth,
-      paneHeight: 800,
-    },
-  });
-};
-
 describe('ProjectSearchView.vue', () => {
+  const generateWrapper = (pWidth: number) => {
+    return mount(ProjectSearchView, {
+      plugins: [
+        createTestingPinia({
+          stubActions: false,
+        }),
+      ],
+      global: {
+        provide: {
+          [projectRoutingSymbol as symbol]: useProjectRouting(router),
+          [localLogStoreSymbol as symbol]: useLocalLogStore(),
+        },
+        plugins: [router],
+      },
+      propsData: {
+        paneWidth: pWidth,
+        paneHeight: 800,
+      },
+    });
+  };
+
   setActivePinia(createTestingPinia());
 
   beforeEach(() => {
@@ -105,6 +107,46 @@ describe('ProjectSearchView.vue', () => {
 
     expect(useProjectStore().fetch).toHaveBeenCalledWith(300);
     expect(usePluginStore().fetch).toHaveBeenCalledWith(300);
+  });
+
+  it('highlight button when search', async () => {
+    await router.isReady();
+
+    sessionStorage.setItem(
+      'searchStorage',
+      JSON.stringify({ searchQuery: 'test' }),
+    );
+
+    const wrapper = generateWrapper(700);
+    await flushPromises();
+
+    const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
+    expect(button.style.borderColor).toBe('#3e8ee2');
+  });
+
+  it('not highlight button when clear search and filter', async () => {
+    await router.isReady();
+
+    const wrapper = generateWrapper(700);
+    await flushPromises();
+
+    const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
+    expect(button.style.borderColor).toBe('#d9d9d9');
+  });
+
+  it('highlight button when filter', async () => {
+    await router.isReady();
+
+    sessionStorage.setItem(
+      'filterStorage',
+      JSON.stringify({ projectName: 'test' }),
+    );
+
+    const wrapper = generateWrapper(700);
+    await flushPromises();
+
+    const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
+    expect(button.style.borderColor).toBe('#3e8ee2');
   });
 
   it('sets the router query with the search query in the storage', async () => {

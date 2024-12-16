@@ -34,8 +34,8 @@
 
   const { stopEditing, isEditing } = useEditing();
   const { routerProjectId, setProjectId } = inject(projectRoutingSymbol)!;
-
   const localLogStore = inject(localLogStoreSymbol);
+
   const pluginStore = usePluginStore();
   const projectStore = useProjectStore();
   const searchStore = useSearchStore<ProjectModel>('projects');
@@ -43,11 +43,17 @@
   const isLoading = computed(() => projectStore.getIsLoadingProjects);
   provide<ProjectSearchStore>(searchStoreSymbol, searchStore);
 
-  const searchQuery = useQuery(searchableColumnNames);
+  const searchQuery = useQuery(queryNames);
   const searchStorage = useSessionStorage('searchStorage', { searchQuery: '' });
   const filterStorage = useSessionStorage<Record<string, string>>(
     'filterStorage',
     {},
+  );
+
+  const highlightButtonStyle = computed(() =>
+    searchQuery.isSearchQuery.value
+      ? { color: '#3e8ee2', width: '100%', borderColor: '#3e8ee2' }
+      : { color: 'black', width: '100%', borderColor: '#d9d9d9' },
   );
 
   const showOnlyArchived: ProjectSearchStore['filter'] = (items) =>
@@ -179,7 +185,12 @@
           title="Click here to reset all filters"
           style="padding-left: 0; padding-right: 0"
         >
-          <a-button class="button" name="resetButton" @click="clearAllFilters">
+          <a-button
+            class="button"
+            name="resetButton"
+            :style="highlightButtonStyle"
+            @click="clearAllFilters"
+          >
             <template #icon>
               <UndoOutlined class="icons" />
             </template>
@@ -258,11 +269,12 @@
       width: '12.5%',
     },
   ]);
-  const searchableColumnNames = [
-    'Project Name',
-    'Client Name',
-    'Business Unit',
-    'Team Number',
+  const queryNames = [
+    'searchQuery',
+    'projectName',
+    'clientName',
+    'businessUnit',
+    'teamNumber',
   ];
 
   /*  Column drop implementation  */
