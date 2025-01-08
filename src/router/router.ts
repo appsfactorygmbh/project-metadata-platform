@@ -7,7 +7,7 @@ import { SettingView } from '@/views/SettingView';
 import { GlobalPluginsView } from '@/views/GlobalPlugins';
 import ProjectSlugResolver from './Resolver/ProjectSlugResolver.vue';
 import NotFoundView from '@/views/Service/NotFoundView.vue';
-import { LoginView, RegisterView } from '@/views/Auth';
+import { LoginView } from '@/views/Auth';
 import ForbiddenView from '@/views/Service/ForbiddenView.vue';
 import { UserListView } from '@/views/SettingView/UserManagementView/UserListView';
 import { CreateUserView } from '@/views/SettingView/UserManagementView/CreateUser';
@@ -22,12 +22,6 @@ const router = createRouter({
       name: 'Login',
       component: LoginView,
       meta: { title: 'Project Metadata Platform - Login' },
-    },
-    {
-      path: '/register',
-      name: 'Register',
-      component: RegisterView,
-      meta: { title: 'Project Metadata Platform - Register' },
     },
     {
       path: '/',
