@@ -176,7 +176,7 @@
 </script>
 
 <template>
-  <div style="padding: 20px">
+  <div style="padding: 10px">
     <a-flex vertical gap="middle">
       <span style="display: flex; flex-direction: row">
         <SearchBar :search-store-symbol="searchStoreSymbol" style="flex: 5" />
@@ -228,45 +228,53 @@
       dataIndex: 'projectName',
       key: 'projectName',
       searchable: true,
+      resizable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
-      width: '37.5%',
+      width: 100,
+      maxWidth: 150,
     },
     {
       title: 'Client Name',
       dataIndex: 'clientName',
       key: 'clientName',
       searchable: true,
+      resizable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-      width: '37.5%',
+      width: 100,
+      maxWidth: 150,
     },
     {
       title: 'Business Unit',
       dataIndex: 'businessUnit',
       key: 'businessNumber',
+      resizable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-      width: '12.5%',
+      width: 50,
+      maxWidth: 100,
     },
     {
       title: 'Team Number',
       dataIndex: 'teamNumber',
       key: 'teamNumber',
+      resizable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'number',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-      width: '12.5%',
+      width: 50,
+      maxWidth: 100,
     },
   ]);
   const queryNames = [
