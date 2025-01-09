@@ -1,9 +1,10 @@
 <script setup lang="ts">
   import { logsStoreSymbol } from '@/store/injectionSymbols';
+import type { Dayjs } from 'dayjs';
   import { debounce } from 'lodash';
   import { inject, onBeforeMount } from 'vue';
   const searchValue = ref('');
-
+  const filteredDate = ref<[Dayjs, Dayjs]>();
   const logsStore = inject(logsStoreSymbol)!;
 
   const loadingGlobalLogs = computed(() => logsStore.getIsLoadingGlobalLogs);
@@ -14,16 +15,25 @@
   onBeforeMount(async () => {
     await logsStore?.fetch();
   });
+
+  watch(     
+  () => filteredDate.value,
+  (value) => {
+    console.log(value?.[0]);
+  })
 </script>
 
 <template>
   <div class="container">
-    <a-input
-      v-model:value="searchValue"
-      placeholder="Search global logs"
-      class="input"
-      @change="updateSearchParam"
-    />
+    <a-space class="time" direction="horizontal" :size="12">
+      <a-input
+        v-model:value="searchValue"
+        placeholder="Search global logs"
+        class="input"
+        @change="updateSearchParam"
+      />
+      <LogTimeFilter v-model:date="filteredDate"/>
+    </a-space>
     <a-card class="cardContainer">
       <a-spin v-if="loadingGlobalLogs" class="loadingIcon" />
       <LogTimeline
@@ -47,8 +57,11 @@
   }
 
   .input {
-    margin-bottom: 15px !important;
     width: 30em;
+  }
+
+  .time {
+    margin-bottom: 15px;
   }
 
   .cardContainer {
