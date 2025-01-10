@@ -1,10 +1,10 @@
 <script setup lang="ts">
+  import type { LogEntryModel } from '@/models/Log/LogEntryModel';
   import { logsStoreSymbol } from '@/store/injectionSymbols';
-import type { Dayjs } from 'dayjs';
   import { debounce } from 'lodash';
   import { inject, onBeforeMount } from 'vue';
   const searchValue = ref('');
-  const filteredDate = ref<[Dayjs, Dayjs]>();
+  const filteredLog = ref<LogEntryModel[]>([]);
   const logsStore = inject(logsStoreSymbol)!;
 
   const loadingGlobalLogs = computed(() => logsStore.getIsLoadingGlobalLogs);
@@ -16,11 +16,12 @@ import type { Dayjs } from 'dayjs';
     await logsStore?.fetch();
   });
 
-  watch(     
-  () => filteredDate.value,
-  (value) => {
-    console.log(value?.[0]);
-  })
+  watch(
+    () => filteredLog.value,
+    (value) => {
+      console.log(value);
+    },
+  );
 </script>
 
 <template>
@@ -32,15 +33,16 @@ import type { Dayjs } from 'dayjs';
         class="input"
         @change="updateSearchParam"
       />
-      <LogTimeFilter v-model:date="filteredDate"/>
+      <LogTimeFilter
+        :log-entries="logsStore.getGlobalLogs"
+        v-model:logs="filteredLog"
+      />
     </a-space>
     <a-card class="cardContainer">
       <a-spin v-if="loadingGlobalLogs" class="loadingIcon" />
       <LogTimeline
-        v-else-if="
-          logsStore.getGlobalLogs && logsStore.getGlobalLogs.length > 0
-        "
-        :log-entries="logsStore.getGlobalLogs"
+        v-else-if="logsStore.getGlobalLogs && filteredLog.length > 0"
+        :log-entries="filteredLog"
       />
       <a-flex v-else justify="center" align="center" style="height: 80vh">
         <a-empty description="No results found" />
