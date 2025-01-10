@@ -324,7 +324,7 @@
    */
   function hideColumn(index: number) {
     columns[index].hidden = true;
-    columns[index-1].resizable = false;
+    columns[index - 1].resizable = false;
     delete columns[index].width;
   }
 
@@ -334,7 +334,7 @@
    */
   function showColumn(index: number) {
     columns[index].hidden = false;
-    columns[index-1].resizable = true;
+    columns[index - 1].resizable = true;
     columns[index].width = NaN;
   }
 
