@@ -185,7 +185,6 @@
   searchStore?.setOnReset(handleClearAll);
 
   function handleResizeColumn(w: number, col: TableColumnType) {
-    console.log('resize', w, col, col.width);
     col.width = w;
   }
 
@@ -222,7 +221,7 @@
     :data-source="[...(searchStore?.getSearchResults || [])]"
     :pagination="false"
     :loading="isLoading"
-    :scroll="{ y: props.paneHeight - 125 }"
+    :scroll="{ y: props.paneHeight - 125, x: true }"
     :custom-row="customRow"
     :row-class-name="'table-row'"
     @resize-column="handleResizeColumn"

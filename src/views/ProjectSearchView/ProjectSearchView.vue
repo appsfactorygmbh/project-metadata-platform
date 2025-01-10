@@ -233,8 +233,7 @@
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
-      width: 100,
-      maxWidth: 150,
+      width: NaN,
     },
     {
       title: 'Client Name',
@@ -247,8 +246,7 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-      width: 100,
-      maxWidth: 150,
+      width: NaN,
     },
     {
       title: 'Business Unit',
@@ -260,21 +258,17 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-      width: 50,
-      maxWidth: 100,
+      width: NaN,
     },
     {
       title: 'Team Number',
       dataIndex: 'teamNumber',
       key: 'teamNumber',
-      resizable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'number',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-      width: 50,
-      maxWidth: 100,
     },
   ]);
   const queryNames = [
@@ -330,6 +324,8 @@
    */
   function hideColumn(index: number) {
     columns[index].hidden = true;
+    columns[index-1].resizable = false;
+    delete columns[index].width;
   }
 
   /**
@@ -338,6 +334,8 @@
    */
   function showColumn(index: number) {
     columns[index].hidden = false;
+    columns[index-1].resizable = true;
+    columns[index].width = NaN;
   }
 
   /**
