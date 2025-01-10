@@ -15,13 +15,6 @@
   onBeforeMount(async () => {
     await logsStore?.fetch();
   });
-
-  watch(
-    () => filteredLog.value,
-    (value) => {
-      console.log(value);
-    },
-  );
 </script>
 
 <template>

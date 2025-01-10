@@ -48,11 +48,17 @@
 
   watch(
     () => props.logEntries,
-    () => handleChange(date.value),
+    () => {
+      handleChange(date.value);
+      console.log(props.logEntries);
+    },
   );
   watch(
     () => date.value,
-    (value) => handleChange(value),
+    (value) => {
+      handleChange(value);
+      console.log(value?.[0], value?.[1]);
+    },
   );
 </script>
 
