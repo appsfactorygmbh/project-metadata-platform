@@ -60,7 +60,7 @@ const linterConfig: Linter.Config = {
       project: path.resolve(__dirname, './tsconfig.node.json'),
       tsconfigRootDir: __dirname,
       sourceType: 'module',
-      extraFileExtensions
+      extraFileExtensions,
     },
   },
   rules: {
@@ -81,7 +81,7 @@ const vitestConfig: Linter.Config = {
       project: path.resolve(__dirname, './tsconfig.vitest.json'),
       tsconfigRootDir: __dirname,
       sourceType: 'module',
-      extraFileExtensions
+      extraFileExtensions,
     },
   },
 };
@@ -157,7 +157,7 @@ const typescriptConfig: Linter.Config = {
         defaultProject: path.resolve(__dirname, './tsconfig.app.json'),
         loadTypeScriptPlugins: !!process.env.VSCODE_PID,
       },
-      extraFileExtensions
+      extraFileExtensions,
     },
   },
   settings: {
@@ -213,7 +213,7 @@ const generatedApiConfig: Linter.Config = {
       },
       tsconfigRootDir: __dirname,
       sourceType: 'module',
-      extraFileExtensions
+      extraFileExtensions,
     },
   },
   rules: {
