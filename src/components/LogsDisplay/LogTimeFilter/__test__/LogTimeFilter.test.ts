@@ -44,8 +44,9 @@ describe('LogTimeFilter', () => {
         logEntries: logsData,
       },
     });
-    const vm = wrapper.vm as any;
-    vm.handleChange();
+    const vm = wrapper.vm as unknown as LogTimeFilterInterface;
+    const range = undefined;
+    vm.handleChange(range);
 
     expect(wrapper.emitted('update:logs')?.[0]).toStrictEqual([logsData]);
   });
