@@ -41,6 +41,7 @@ type StoreActions = {
     search?: string;
   }) => Promise<ProjectModel[]>;
   fetch: (id: ProjectModel['id']) => Promise<DetailedProjectModel | null>;
+  fetchBySlug: (slug: ProjectModel['slug']) => Promise<DetailedProjectModel | null>;
   create: (project: CreateProjectModel) => Promise<void>;
   update: (
     id: ProjectModel['id'],
@@ -49,8 +50,14 @@ type StoreActions = {
   archive: (id: ProjectModel['id']) => Promise<void>;
   unarchive: (id: ProjectModel['id']) => Promise<void>;
   delete: (id: ProjectModel['id']) => Promise<void>;
-  findProject: <Full extends boolean>(
+  findProjectById: <Full extends boolean>(
     id: ProjectModel['id'],
+    { fullObjectNeeded }: { fullObjectNeeded?: Full },
+  ) => Promise<
+    (Full extends true ? DetailedProjectModel : ProjectModel) | null
+  >;
+  findProjectBySlug: <Full extends boolean>(
+    slug: ProjectModel['slug'],
     { fullObjectNeeded }: { fullObjectNeeded?: Full },
   ) => Promise<
     (Full extends true ? DetailedProjectModel : ProjectModel) | null
@@ -63,8 +70,6 @@ type StoreActions = {
   setLoadingProject: (status: boolean) => void;
   setAddedSuccessfully: (status: boolean) => void;
   setUpdatedSuccessfully: (status: boolean) => void;
-  getSlugById: (id: ProjectModel['id']) => Promise<string>;
-  getBySlug: (slug: string) => Promise<ProjectModel | null>;
 };
 
 type Store = PiniaStore<'project', StoreState, StoreGetters, StoreActions>;
@@ -144,7 +149,7 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
           this.updatedSuccessfully = status;
         },
 
-        async findProject(
+        async findProjectById(
           id: ProjectModel['id'],
           { fullObjectNeeded = false },
         ) {
@@ -154,6 +159,19 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
               this.projects.find((project) => project.id === id) ?? null;
           else if (id === this.project?.id) project = this.project;
           if (!project) project = await this.fetch(id);
+          return project;
+        },
+
+        async findProjectBySlug(
+          slug: ProjectModel['slug'],
+          { fullObjectNeeded = false },
+        ) {
+          let project: ProjectModel | DetailedProjectModel | null = null;
+          if (!fullObjectNeeded)
+            project =
+              this.projects.find((project) => project.slug === slug) ?? null;
+          else if (slug === this.project?.slug) project = this.project;
+          if (!project) project = await this.fetchBySlug(slug);
           return project;
         },
 
@@ -176,6 +194,22 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
               'projectsIdGet',
               {
                 id,
+              },
+            );
+            this.setProject(project);
+            return project;
+          } finally {
+            this.setLoadingProject(false);
+          }
+        },
+
+        async fetchBySlug(slug: ProjectModel['slug']) {
+          try {
+            this.setLoadingProject(true);
+            const project: DetailedProjectModel = await this.callApi(
+              "projectsSlugGet",
+              {
+                slug,
               },
             );
             this.setProject(project);
@@ -221,35 +255,8 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
           }
         },
 
-        async getSlugById(id: number): Promise<string> {
-          let targetProject: DetailedProjectModel | ProjectModel | null = null;
-          targetProject =
-            this.projects.find((project) => project.id === id) ?? null;
-          if (targetProject) return generateSlug(targetProject.projectName);
-
-          targetProject = await this.fetch(id);
-          if (targetProject) return generateSlug(targetProject.projectName);
-
-          return '';
-        },
-
-        async getBySlug(slug: string): Promise<ProjectModel | null> {
-          let targetProject: ProjectModel | null = null;
-          try {
-            this.setLoadingProject(true);
-            targetProject =
-              this.projects.find(
-                (project) => generateSlug(project.projectName) === slug,
-              ) ?? null;
-            if (targetProject) return targetProject;
-            return null;
-          } finally {
-            this.setLoadingProject(false);
-          }
-        },
-
         async archive(id: ProjectModel['id']) {
-          const project = await this.findProject(id, {
+          const project = await this.findProjectById(id, {
             fullObjectNeeded: true,
           });
           if (!project) throw new Error(`Project with id ${id} not found`);
@@ -258,7 +265,7 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
         },
 
         async unarchive(id: ProjectModel['id']) {
-          const project = await this.findProject(id, {
+          const project = await this.findProjectById(id, {
             fullObjectNeeded: true,
           });
           if (!project) throw new Error(`Project with id ${id} not found`);
@@ -277,8 +284,6 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
     useApiStore(ProjectsApi, pinia),
   )(pinia);
 };
-
-const generateSlug = (name: string) => name?.replace(/ /g, '-') ?? '';
 
 type ProjectStore = ReturnType<typeof useProjectStore>;
 export type { ProjectStore };
