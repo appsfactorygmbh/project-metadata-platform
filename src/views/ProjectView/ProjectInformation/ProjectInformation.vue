@@ -308,6 +308,7 @@
             alignItems: 'center',
           }"
           class="infoCard nonEditingClass"
+          v-if="!isEditing"
         >
           <label class="label">Project&nbsp;Slug:</label>
           <template v-if="!isLoading">
