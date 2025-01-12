@@ -91,6 +91,7 @@
 
   const projectData = {
     id: ref<number>(0),
+    slug: ref<string>(''),
     projectName: ref<string>(''),
     businessUnit: ref<string>(''),
     teamNumber: ref<number>(0),
@@ -128,6 +129,7 @@
     if (projectStore.getProject)
       projectEditStore.setProjectInformation(projectStore.getProject);
     projectData.id.value = loadedData.id;
+    projectData.slug.value = loadedData.slug;
     projectData.projectName.value = loadedData.projectName;
     projectData.businessUnit.value = loadedData.businessUnit;
     projectData.teamNumber.value = loadedData.teamNumber;
@@ -299,6 +301,28 @@
           height: 'fit-content',
         }"
       >
+        <a-card
+          :body-style="{
+            display: 'flex',
+            padding: '5px',
+            alignItems: 'center',
+          }"
+          class="infoCard nonEditingClass"
+        >
+          <label class="label">Project&nbsp;Slug:</label>
+          <template v-if="!isLoading">
+            <p class="projectInfo">
+              {{ projectData.slug.value }}
+            </p>
+          </template>
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="padding-left: 1em"
+          />
+        </a-card>
+
         <a-card
           :body-style="{
             display: 'flex',
