@@ -233,7 +233,6 @@
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
-      width: NaN,
     },
     {
       title: 'Client Name',
@@ -246,7 +245,6 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-      width: NaN,
     },
     {
       title: 'Business Unit',
@@ -258,7 +256,6 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-      width: NaN,
     },
     {
       title: 'Team Number',
@@ -325,7 +322,6 @@
   function hideColumn(index: number) {
     columns[index].hidden = true;
     columns[index - 1].resizable = false;
-    delete columns[index].width;
   }
 
   /**
@@ -335,7 +331,6 @@
   function showColumn(index: number) {
     columns[index].hidden = false;
     columns[index - 1].resizable = true;
-    columns[index].width = NaN;
   }
 
   /**
