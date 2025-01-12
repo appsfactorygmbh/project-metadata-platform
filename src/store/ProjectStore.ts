@@ -41,7 +41,9 @@ type StoreActions = {
     search?: string;
   }) => Promise<ProjectModel[]>;
   fetch: (id: ProjectModel['id']) => Promise<DetailedProjectModel | null>;
-  fetchBySlug: (slug: ProjectModel['slug']) => Promise<DetailedProjectModel | null>;
+  fetchBySlug: (
+    slug: ProjectModel['slug'],
+  ) => Promise<DetailedProjectModel | null>;
   create: (project: CreateProjectModel) => Promise<void>;
   update: (
     id: ProjectModel['id'],
@@ -207,7 +209,7 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
           try {
             this.setLoadingProject(true);
             const project: DetailedProjectModel = await this.callApi(
-              "projectsSlugGet",
+              'projectsSlugGet',
               {
                 slug,
               },
