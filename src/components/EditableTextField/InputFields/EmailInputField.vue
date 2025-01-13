@@ -5,7 +5,7 @@
   import { type FormStore } from '@/components/Form';
   import { type PropType, inject, reactive, toRaw } from 'vue';
   import type { UserListModel, UserModel } from '@/models/User';
-  import EmailInputTextField from './EmailInputTextField.vue';
+  import InputField from './InputField.vue';
   import { isValidEmail } from '@/utils/form/userValidation.ts';
 
   const props = defineProps({
@@ -93,7 +93,7 @@
       class="formItem email"
       has-feedback
     >
-      <EmailInputTextField
+      <InputField
         v-model:value="dynamicValidateForm.email"
         :placeholder="props.placeholder"
         :default="props.default"

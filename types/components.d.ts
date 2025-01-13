@@ -49,10 +49,9 @@ declare module 'vue' {
     ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
     BackgroundContainer: typeof import('./../src/components/Container/BackgroundContainer.vue')['default']
     ConfirmAction: typeof import('./../src/components/Modal/ConfirmAction.vue')['default']
-    EditablePasswordField: typeof import('./../src/components/EditableTextField/EditablePasswordField.vue')['default']
     EditableTextField: typeof import('./../src/components/EditableTextField/EditableTextField.vue')['default']
     EditButtons: typeof import('./../src/components/EditableTextField/EditButtons.vue')['default']
-    EmailInputTextField: typeof import('./../src/components/EditableTextField/InputFields/EmailInputTextField.vue')['default']
+    InputField: typeof import('../src/components/EditableTextField/InputFields/InputField.vue')['default']
     FloatingButton: typeof import('./../src/components/Button/FloatingButton.vue')['default']
     FloatingButtonGroup: typeof import('./../src/components/Button/FloatingButtonGroup.vue')['default']
     FormModal: typeof import('./../src/components/Modal/FormModal.vue')['default']
@@ -69,6 +68,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
     SearchBar: typeof import('./../src/components/Searchbar/SearchBar.vue')['default']
-    UserEmailInputField: typeof import('./../src/components/EditableTextField/InputFields/UserEmailInputField.vue')['default']
+    EmailInputField: typeof import('../src/components/EditableTextField/InputFields/EmailInputField.vue')['default']
   }
 }
