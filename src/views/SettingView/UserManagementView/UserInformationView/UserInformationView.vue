@@ -8,6 +8,11 @@
   import { useRouter } from 'vue-router';
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
+  import { useFormStore } from '@/components/Form';
+  import {
+    EmailInputField,
+    PasswordInputField,
+  } from '@/components/EditableTextField';
 
   const router = useRouter();
   const userStore = inject(userStoreSymbol)!;
@@ -19,6 +24,9 @@
   const isLoading = computed(
     () => getIsLoadingUser.value || getIsLoading.value,
   );
+
+  const emailFormStore = useFormStore('editEmailForm');
+  const passwordFormStore = useFormStore('patchPasswordForm');
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
@@ -95,27 +103,43 @@
         height: 'fit-content',
       }"
     >
+      <!-- Email Text Field -->
       <EditableTextField
+        class="textField email"
         :value="user?.email ?? ''"
         :is-loading="isLoading"
         :label="'Email'"
         :is-editing-key="'isEditingEmail'"
-        class="textField email"
-        type="email"
-        :user-id="user?.id ?? ''"
-        :placeholder="user?.email"
+        :form-store="emailFormStore"
+        :has-edit-keys="true"
         @safed-changes="
           async () => user && (await userStore.fetchUser(user.id))
         "
-      />
-      <EditablePasswordField
+      >
+        <EmailInputField
+          :user-id="user?.id ?? ''"
+          :form-store="emailFormStore"
+          :placeholder="user?.email ?? ''"
+          :default="user?.email ?? ''"
+        />
+      </EditableTextField>
+
+      <!-- Password Text Field -->
+      <EditableTextField
         v-if="me?.id && me.id === user?.id"
-        value="**********"
-        label="Password"
+        :value="'**********'"
+        :label="'Password'"
         :is-editing-key="'isEditingPassword'"
         :is-loading="isLoading"
-        :user-id="user?.id ?? ''"
-      />
+        :form-store="passwordFormStore"
+        :has-edit-keys="true"
+      >
+        <PasswordInputField
+          :user-id="user?.id ?? ''"
+          :formStore="passwordFormStore"
+          :placeholder="'**********'"
+        />
+      </EditableTextField>
     </a-flex>
   </div>
   <RouterView />
