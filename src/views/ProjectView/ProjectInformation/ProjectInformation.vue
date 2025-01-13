@@ -327,7 +327,12 @@
             :input-value="BUInput"
             :input-status="BUInputStatus"
             :edit-store="projectEditStore"
-            @updated="updateProjectInformation"
+            @updated="
+              (newValue) => {
+                BUInput = newValue;
+                updateProjectInformation();
+              }
+            "
             @error="BUInputStatus = 'error'"
             @success="BUInputStatus = ''"
           />
@@ -346,7 +351,12 @@
             :input-value="teamNumberInput"
             :input-status="teamNumberInputStatus"
             :edit-store="projectEditStore"
-            @updated="updateProjectInformation"
+            @updated="
+              (newValue) => {
+                teamNumberInput = newValue;
+                updateProjectInformation();
+              }
+            "
             @error="teamNumberInputStatus = 'error'"
             @success="teamNumberInputStatus = ''"
           />
@@ -365,7 +375,12 @@
             :input-value="departmentInput"
             :input-status="departmentInputStatus"
             :edit-store="projectEditStore"
-            @updated="updateProjectInformation"
+            @updated="
+              (newValue) => {
+                departmentInput = newValue;
+                updateProjectInformation();
+              }
+            "
             @error="departmentInputStatus = 'error'"
             @success="departmentInputStatus = ''"
           />
@@ -384,7 +399,12 @@
             :input-value="clientNameInput"
             :input-status="clientNameInputStatus"
             :edit-store="projectEditStore"
-            @updated="updateProjectInformation"
+            @updated="
+              (newValue) => {
+                clientNameInput = newValue;
+                updateProjectInformation();
+              }
+            "
             @error="clientNameInputStatus = 'error'"
             @success="clientNameInputStatus = ''"
           />
@@ -501,14 +521,5 @@
     font-size: 1.4em;
     margin: 0 auto 0 0.5em;
     white-space: nowrap;
-  }
-  .inputField {
-    margin-left: 1em;
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex: 1 !important; /* Set to important to override inline style */
-    padding-left: 1em !important; /* Set to important to override inline style */
   }
 </style>

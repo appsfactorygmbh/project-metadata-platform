@@ -1,12 +1,12 @@
 <script lang="ts" setup>
   import type { FormSubmitType, RulesObject } from '@/components/Form/types';
-  import { userStoreSymbol } from '@/store/injectionSymbols';
   import type { Rule } from 'ant-design-vue/es/form';
   import { type FormStore } from '@/components/Form';
-  import { type PropType, inject, reactive, toRaw } from 'vue';
+  import { type PropType, reactive, toRaw } from 'vue';
   import type { UserListModel, UserModel } from '@/models/User';
   import InputField from './InputField.vue';
   import { isValidEmail } from '@/utils/form/userValidation.ts';
+  import { useUserStore } from '@/store';
 
   const props = defineProps({
     userId: {
@@ -31,7 +31,7 @@
     email: string;
   };
 
-  const userStore = inject(userStoreSymbol)!;
+  const userStore = useUserStore();
 
   const dynamicValidateForm = reactive<FormType>({
     email: props.default,

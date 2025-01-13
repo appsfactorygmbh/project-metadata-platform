@@ -291,26 +291,12 @@
     </template>
 
     <!-- body of the table with all data entries -->
-    <template #bodyCell="{ text, record, column }">
-      <a-row :gutter="8" justify="center">
-        <a-col>
-          {{ text }}
-        </a-col>
-        <a-col>
-          <a-tag
-            v-if="(column as SearchableColumn).hasTags"
-            :color="
-              record.ismsLevel === 'very high'
-                ? 'red'
-                : record.ismsLevel === 'high'
-                  ? 'orange'
-                  : 'green'
-            "
-          >
-            {{ record.ismsLevel }}
-          </a-tag>
-        </a-col>
-      </a-row>
+    <template #bodyCell="{ text, column }">
+      <span
+        v-if="state.searchText && state.searchedColumn === column.dataIndex"
+      >
+        {{ text }}
+      </span>
     </template>
   </a-table>
 </template>

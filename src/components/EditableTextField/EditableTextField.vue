@@ -19,7 +19,6 @@
     isEditingKey: {
       type: String,
       required: false,
-      default: '',
     },
     formStore: {
       type: Object as PropType<FormStore>,
@@ -60,7 +59,7 @@
         :is-loading="props.isLoading"
         :safe-disabled="props.isLoading"
         :formStore="props.formStore!"
-        @safed-changes="emit('savedChanges')"
+        @saved-changes="emit('savedChanges')"
       />
     </template>
     <a-skeleton
@@ -105,9 +104,6 @@
     display: flex;
     flex-flow: column wrap;
     justify-content: center;
-    .ant-card-body {
-      padding: 12px !important;
-    }
   }
 
   .info label {
@@ -127,8 +123,6 @@
   }
 
   .text {
-    font-size: 1.4em;
-    margin: 0 auto 0 0.5em;
-    white-space: nowrap;
+    font-weight: 400;
   }
 </style>

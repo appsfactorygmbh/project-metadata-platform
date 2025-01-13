@@ -12,17 +12,13 @@
   import type { Rule } from 'ant-design-vue/es/form';
   import useNotification from 'ant-design-vue/es/notification/useNotification';
 
-  const { formStore, placeholder, userId } = defineProps({
+  const { formStore, userId } = defineProps({
     userId: {
       type: String,
       required: true,
     },
     formStore: {
       type: Object as PropType<FormStore>,
-      required: true,
-    },
-    placeholder: {
-      type: String,
       required: true,
     },
   });
@@ -172,7 +168,7 @@
       <a-input
         v-model:value="dynamicValidateForm.confirmPassword"
         type="password"
-        :placeholder="placeholder"
+        placeholder="Confirm you new Password"
         :rules="rulesRef.confirmPassword"
         class="password"
       >
