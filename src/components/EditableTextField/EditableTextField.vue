@@ -41,6 +41,7 @@
       display: 'flex',
       padding: '5px',
       alignItems: 'center',
+      height: '2em',
     }"
     class="info"
   >
