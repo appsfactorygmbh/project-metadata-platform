@@ -20,6 +20,7 @@
 <style>
   .LocalLog {
     margin: 2em 5em;
+    z-index: 1;
   }
 
   .cardContainer {

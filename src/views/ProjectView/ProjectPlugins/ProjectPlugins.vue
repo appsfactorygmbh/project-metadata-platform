@@ -34,7 +34,7 @@
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        padding: '16px',
+        padding: '15px',
       }"
     >
       <a-skeleton active></a-skeleton>
