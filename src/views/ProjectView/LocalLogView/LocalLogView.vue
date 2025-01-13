@@ -34,4 +34,9 @@
     padding-top: 0.6em;
     border: none;
   }
+
+  .blur {
+    filter: blur(5px);
+    pointer-events: none;
+  }
 </style>
