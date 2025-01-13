@@ -176,7 +176,7 @@
 </script>
 
 <template>
-  <div style="padding: 20px">
+  <div style="padding: 10px">
     <a-flex vertical gap="middle">
       <span style="display: flex; flex-direction: row">
         <SearchBar :search-store-symbol="searchStoreSymbol" style="flex: 5" />
@@ -228,34 +228,34 @@
       dataIndex: 'projectName',
       key: 'projectName',
       searchable: true,
+      resizable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
-      width: '37.5%',
     },
     {
       title: 'Client Name',
       dataIndex: 'clientName',
       key: 'clientName',
       searchable: true,
+      resizable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-      width: '37.5%',
     },
     {
       title: 'Business Unit',
       dataIndex: 'businessUnit',
       key: 'businessNumber',
+      resizable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-      width: '12.5%',
     },
     {
       title: 'Team Number',
@@ -266,7 +266,6 @@
       sortMethod: 'number',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-      width: '12.5%',
     },
   ]);
   const queryNames = [
@@ -322,6 +321,7 @@
    */
   function hideColumn(index: number) {
     columns[index].hidden = true;
+    columns[index - 1].resizable = false;
   }
 
   /**
@@ -330,6 +330,7 @@
    */
   function showColumn(index: number) {
     columns[index].hidden = false;
+    columns[index - 1].resizable = true;
   }
 
   /**
