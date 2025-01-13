@@ -112,7 +112,7 @@
         :is-editing-key="'isEditingEmail'"
         :form-store="emailFormStore"
         :has-edit-keys="true"
-        @safed-changes="
+        @saved-changes="
           async () => user && (await userStore.fetchUser(user.id))
         "
       >
@@ -137,7 +137,6 @@
         <PasswordInputField
           :user-id="user?.id ?? ''"
           :formStore="passwordFormStore"
-          :placeholder="'**********'"
         />
       </EditableTextField>
     </a-flex>

@@ -14,7 +14,7 @@
       required: true,
     },
     inputStatus: {
-      type: Object as PropType<Status>,
+      type: String as PropType<Status>,
       required: true,
     },
     editStore: {
@@ -23,17 +23,18 @@
   });
 
   const emit = defineEmits(['updated', 'error', 'success']);
+  const inputField = ref(inputValue);
 </script>
 
 <template>
   <a-input
-    v-model:value="inputValue"
+    v-model:value="inputField"
     class="inputField"
     :status="inputStatus"
-    @input="emit('updated')"
+    @input="$emit('updated', inputField)"
     @change="
       () => {
-        if (!inputValue) {
+        if (!inputField) {
           emit('error');
           editStore?.addEmptyProjectInformationField(columnName);
         } else {

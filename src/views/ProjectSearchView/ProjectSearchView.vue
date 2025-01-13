@@ -233,7 +233,7 @@
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
-      hasTags: true,
+      width: NaN,
     },
     {
       title: 'Client Name',
@@ -246,18 +246,7 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-    },
-    {
-      title: 'Company',
-      dataIndex: 'company',
-      key: 'company',
-      searchable: true,
-      resizable: true,
-      ellipsis: true,
-      align: 'center' as const,
-      sortMethod: 'string',
-      defaultSortOrder: 'ascend' as const,
-      hidden: false,
+      width: NaN,
     },
     {
       title: 'Business Unit',
@@ -269,6 +258,7 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
+      width: NaN,
     },
     {
       title: 'Team Number',
@@ -285,7 +275,6 @@
     'searchQuery',
     'projectName',
     'clientName',
-    'company',
     'businessUnit',
     'teamNumber',
   ];
@@ -299,20 +288,17 @@
   function changeColumns(pwidth: number) {
     const breakpoint = getBreakpoint(pwidth);
     switch (breakpoint) {
-      case 'xss':
+      case 'xs':
         showOrHideColumns(0);
         break;
-      case 'xs':
+      case 'sm':
         showOrHideColumns(1);
         break;
-      case 'sm':
+      case 'md':
         showOrHideColumns(2);
         break;
-      case 'md':
-        showOrHideColumns(3);
-        break;
       case 'lg':
-        showOrHideColumns(4);
+        showOrHideColumns(3);
         break;
     }
   }
@@ -322,7 +308,7 @@
    * @param number Has the number of how many columns should be shown
    */
   function showOrHideColumns(number: number) {
-    for (let index: number = 1; index < 5; index++) {
+    for (let index: number = 1; index < 4; index++) {
       if (number > 0) {
         showColumn(index);
         number--;
@@ -339,6 +325,7 @@
   function hideColumn(index: number) {
     columns[index].hidden = true;
     columns[index - 1].resizable = false;
+    delete columns[index - 1].width;
   }
 
   /**
@@ -348,6 +335,7 @@
   function showColumn(index: number) {
     columns[index].hidden = false;
     columns[index - 1].resizable = true;
+    columns[index - 1].width = NaN;
   }
 
   /**
@@ -359,21 +347,18 @@
     const windowSize = useWindowSize().width.value;
     const breakpoint: number[] = [
       0.2 * windowSize,
-      0.275 * windowSize,
       0.35 * windowSize,
       0.4 * windowSize,
     ];
 
-    if (pwidth > breakpoint[3]) {
+    if (pwidth > breakpoint[2]) {
       return 'lg';
-    } else if (pwidth > breakpoint[2]) {
-      return 'md';
     } else if (pwidth > breakpoint[1]) {
-      return 'sm';
+      return 'md';
     } else if (pwidth > breakpoint[0]) {
-      return 'xs';
+      return 'sm';
     } else {
-      return 'xss';
+      return 'xs';
     }
   }
 </script>

@@ -8,7 +8,6 @@ export type SearchableColumn<
   hidden?: boolean;
   searchable?: boolean;
   sortMethod?: 'string' | 'number';
-  hasTags?: boolean;
 };
 
 export type SearchableColumns = SearchableColumn[];
