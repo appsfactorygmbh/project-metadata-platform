@@ -233,11 +233,24 @@
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
+      hasTags: true,
     },
     {
       title: 'Client Name',
       dataIndex: 'clientName',
       key: 'clientName',
+      searchable: true,
+      resizable: true,
+      ellipsis: true,
+      align: 'center' as const,
+      sortMethod: 'string',
+      defaultSortOrder: 'ascend' as const,
+      hidden: false,
+    },
+    {
+      title: 'Company',
+      dataIndex: 'company',
+      key: 'company',
       searchable: true,
       resizable: true,
       ellipsis: true,
@@ -272,6 +285,7 @@
     'searchQuery',
     'projectName',
     'clientName',
+    'company',
     'businessUnit',
     'teamNumber',
   ];
@@ -285,17 +299,20 @@
   function changeColumns(pwidth: number) {
     const breakpoint = getBreakpoint(pwidth);
     switch (breakpoint) {
-      case 'xs':
+      case 'xss':
         showOrHideColumns(0);
         break;
-      case 'sm':
+      case 'xs':
         showOrHideColumns(1);
         break;
-      case 'md':
+      case 'sm':
         showOrHideColumns(2);
         break;
-      case 'lg':
+      case 'md':
         showOrHideColumns(3);
+        break;
+      case 'lg':
+        showOrHideColumns(4);
         break;
     }
   }
@@ -305,7 +322,7 @@
    * @param number Has the number of how many columns should be shown
    */
   function showOrHideColumns(number: number) {
-    for (let index: number = 1; index < 4; index++) {
+    for (let index: number = 1; index < 5; index++) {
       if (number > 0) {
         showColumn(index);
         number--;
@@ -342,18 +359,21 @@
     const windowSize = useWindowSize().width.value;
     const breakpoint: number[] = [
       0.2 * windowSize,
+      0.275 * windowSize,
       0.35 * windowSize,
       0.4 * windowSize,
     ];
 
-    if (pwidth > breakpoint[2]) {
+    if (pwidth > breakpoint[3]) {
       return 'lg';
-    } else if (pwidth > breakpoint[1]) {
+    } else if (pwidth > breakpoint[2]) {
       return 'md';
-    } else if (pwidth > breakpoint[0]) {
+    } else if (pwidth > breakpoint[1]) {
       return 'sm';
-    } else {
+    } else if (pwidth > breakpoint[0]) {
       return 'xs';
+    } else {
+      return 'xss';
     }
   }
 </script>
