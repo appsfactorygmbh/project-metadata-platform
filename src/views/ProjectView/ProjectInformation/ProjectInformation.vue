@@ -76,6 +76,10 @@
         teamNumberInputStatus.value = '';
         departmentInputStatus.value = '';
         clientNameInputStatus.value = '';
+        offerIdInputStatus.value = '';
+        companyInputStatus.value = '';
+        companyStateInputState.value = '';
+        ismsLevelInputState.value = '';
         addData(projectStore.getProject!);
       }
     },
@@ -96,6 +100,10 @@
     teamNumber: ref<number>(0),
     department: ref<string>(''),
     clientName: ref<string>(''),
+    offerId: ref<number>(0),
+    company: ref<string>(''),
+    companyState: ref<string>(''), //check if implementation matches with backend
+    ismsLevel: ref<string>(''),
     isArchived: ref<boolean>(false),
   };
 
@@ -105,11 +113,19 @@
   const teamNumberInputStatus = ref<Status>('');
   const departmentInputStatus = ref<Status>('');
   const clientNameInputStatus = ref<Status>('');
+  const offerIdInputStatus = ref<Status>('');
+  const companyInputStatus = ref<Status>('');
+  const companyStateInputState = ref<Status>('');
+  const ismsLevelInputState = ref<Status>('');
 
   const BUInput = ref(projectData.businessUnit);
   const teamNumberInput = ref(projectData.teamNumber);
   const departmentInput = ref(projectData.department);
   const clientNameInput = ref(projectData.clientName);
+  const offerIdInput = ref(projectData.offerId);
+  const companyInput = ref(projectData.company);
+  const companyStateInput = ref(projectData.companyState);
+  const ismsLevelInput = ref(projectData.ismsLevel);
 
   //Function to update the project information
   function updateProjectInformation(): void {
@@ -119,6 +135,10 @@
       teamNumber: teamNumberInput.value,
       department: departmentInput.value,
       clientName: clientNameInput.value,
+      offerId: offerIdInput.value,
+      company: companyInput.value,
+      companyState: companyStateInput.value,
+      ismsLevel: ismsLevelInput.value,
     };
     projectEditStore.updateProjectInformationChanges(updatedProject);
   }
@@ -133,6 +153,10 @@
     projectData.teamNumber.value = loadedData.teamNumber;
     projectData.department.value = loadedData.department;
     projectData.clientName.value = loadedData.clientName;
+    projectData.offerId.value = loadedData.offerId;
+    projectData.company.value = loadedData.company;
+    projectData.companyState.value = loadedData.companyState;
+    projectData.ismsLevel.value = loadedData.ismsLevel;
   }
 
   const isArchiveModalOpen = ref(false);
