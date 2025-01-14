@@ -116,32 +116,32 @@
   const departmentInput = ref(projectData.department);
   const clientNameInput = ref(projectData.clientName);
 
-  const textFields = [
+  const textFields = ref([
     {
       label: 'Business\xa0Unit',
       name: 'businessUnit',
-      value: BUInput.value,
-      status: BUInputStatus.value,
+      value: BUInput,
+      status: BUInputStatus,
     },
     {
       label: 'Team\xa0Number',
       name: 'teamNumber',
-      value: teamNumberInput.value,
-      status: teamNumberInputStatus.value,
+      value: teamNumberInput,
+      status: teamNumberInputStatus,
     },
     {
       label: 'Department',
       name: 'department',
-      value: departmentInput.value,
-      status: departmentInputStatus.value,
+      value: departmentInput,
+      status: departmentInputStatus,
     },
     {
       label: 'Client\xa0Name',
       name: 'clientName',
-      value: clientNameInput.value,
-      status: clientNameInputStatus.value,
+      value: clientNameInput,
+      status: clientNameInputStatus,
     },
-  ];
+  ]);
 
   //Function to update the project information
   function updateProjectInformation(): void {
