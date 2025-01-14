@@ -116,6 +116,33 @@
   const departmentInput = ref(projectData.department);
   const clientNameInput = ref(projectData.clientName);
 
+  const textFields = [
+    {
+      label: 'Business\xa0Unit',
+      name: 'businessUnit',
+      value: BUInput.value,
+      status: BUInputStatus.value,
+    },
+    {
+      label: 'Team\xa0Number',
+      name: 'teamNumber',
+      value: teamNumberInput.value,
+      status: teamNumberInputStatus.value,
+    },
+    {
+      label: 'Department',
+      name: 'department',
+      value: departmentInput.value,
+      status: departmentInputStatus.value,
+    },
+    {
+      label: 'Client\xa0Name',
+      name: 'clientName',
+      value: clientNameInput.value,
+      status: clientNameInputStatus.value,
+    },
+  ];
+
   //Function to update the project information
   function updateProjectInformation(): void {
     const updatedProject: EditProjectModel = {
@@ -315,98 +342,27 @@
         />
 
         <EditableTextField
+          v-for="field in textFields"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
-          :value="projectData.businessUnit.value"
+          :value="field.value"
           :is-loading="isLoading"
-          :label="'Business\xa0Unit'"
+          :label="field.label"
           :has-edit-keys="false"
         >
           <ProjectInformationInputField
-            :column-name="'businessUnit'"
-            :input-value="BUInput"
-            :input-status="BUInputStatus"
+            :column-name="field.name"
+            :input-value="field.value"
+            :input-status="field.status"
             :edit-store="projectEditStore"
             @updated="
               (newValue) => {
-                BUInput = newValue;
+                field.value = newValue;
                 updateProjectInformation();
               }
             "
-            @error="BUInputStatus = 'error'"
-            @success="BUInputStatus = ''"
-          />
-        </EditableTextField>
-
-        <EditableTextField
-          class="infoCard"
-          :class="[editingClass, nonEditingClass]"
-          :value="projectData.teamNumber.value"
-          :is-loading="isLoading"
-          :label="'Team\xa0Number'"
-          :has-edit-keys="false"
-        >
-          <ProjectInformationInputField
-            :column-name="'teamNumber'"
-            :input-value="teamNumberInput"
-            :input-status="teamNumberInputStatus"
-            :edit-store="projectEditStore"
-            @updated="
-              (newValue) => {
-                teamNumberInput = newValue;
-                updateProjectInformation();
-              }
-            "
-            @error="teamNumberInputStatus = 'error'"
-            @success="teamNumberInputStatus = ''"
-          />
-        </EditableTextField>
-
-        <EditableTextField
-          class="infoCard"
-          :class="[editingClass, nonEditingClass]"
-          :value="projectData.department.value"
-          :is-loading="isLoading"
-          :label="'Department'"
-          :has-edit-keys="false"
-        >
-          <ProjectInformationInputField
-            :column-name="'department'"
-            :input-value="departmentInput"
-            :input-status="departmentInputStatus"
-            :edit-store="projectEditStore"
-            @updated="
-              (newValue) => {
-                departmentInput = newValue;
-                updateProjectInformation();
-              }
-            "
-            @error="departmentInputStatus = 'error'"
-            @success="departmentInputStatus = ''"
-          />
-        </EditableTextField>
-
-        <EditableTextField
-          class="infoCard"
-          :class="[editingClass, nonEditingClass]"
-          :value="projectData.clientName.value"
-          :is-loading="isLoading"
-          :label="'Client\xa0Name'"
-          :has-edit-keys="false"
-        >
-          <ProjectInformationInputField
-            :column-name="'clientName'"
-            :input-value="clientNameInput"
-            :input-status="clientNameInputStatus"
-            :edit-store="projectEditStore"
-            @updated="
-              (newValue) => {
-                clientNameInput = newValue;
-                updateProjectInformation();
-              }
-            "
-            @error="clientNameInputStatus = 'error'"
-            @success="clientNameInputStatus = ''"
+            @error="field.status = 'error'"
+            @success="field.status = ''"
           />
         </EditableTextField>
       </a-flex>
