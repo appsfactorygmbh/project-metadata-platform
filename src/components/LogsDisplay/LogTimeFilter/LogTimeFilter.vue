@@ -18,24 +18,24 @@
   const logs = ref<LogEntryModel[]>(props.logEntries);
   const date = ref<[Dayjs, Dayjs]>();
 
-  const getCurrentStyle = (current: Dayjs) => {
+  const getCurrentStyle = (current: Dayjs, today: Dayjs) => {
     const style: CSSProperties = {};
 
-    if (current.date() === 1) {
-      style.border = '1px solid #1890ff';
-      style.borderRadius = '50%';
+    if (current.isSame(today,'date')) {
+      style.border = '1px solid #3e8eef';
+      style.borderRadius = '20%';    
     }
 
     return style;
   };
 
-  function handleChange(value: [Dayjs, Dayjs] | undefined) {
-    if (value) {
+  function handleChange(inputDate: [Dayjs, Dayjs] | undefined) {
+    if (inputDate) {
       logs.value = props.logEntries.filter((entry) => {
         const logDate = dayjs(entry.timestamp).startOf('day');
         return logDate.isBetween(
-          value?.[0].startOf('day'),
-          value?.[1].endOf('day'),
+          inputDate?.[0].startOf('day'),
+          inputDate?.[1].endOf('day'),
           null,
           '[]',
         );
@@ -62,8 +62,8 @@
 
 <template>
   <a-range-picker v-model:value="date">
-    <template #dateRender="{ current }">
-      <div class="ant-picker-cell-inner" :style="getCurrentStyle(current)">
+    <template #dateRender="{ current, today }">
+      <div class="ant-picker-cell-inner" :style="getCurrentStyle(current, today)">
         {{ current.date() }}
       </div>
     </template>
