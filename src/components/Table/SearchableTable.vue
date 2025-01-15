@@ -184,6 +184,10 @@
   };
   searchStore?.setOnReset(handleClearAll);
 
+  function handleResizeColumn(w: number, col: TableColumnType) {
+    col.width = w;
+  }
+
   onMounted(async () => {
     const filterKeys = Object.keys(filterStorage.value);
     filterKeys.forEach((key: string) => {
@@ -212,13 +216,15 @@
     -->
   <a-table
     class="clickable-table"
+    size="small"
     :columns="[...columns]"
     :data-source="[...(searchStore?.getSearchResults || [])]"
     :pagination="false"
     :loading="isLoading"
-    :scroll="{ y: props.paneHeight - 155 }"
+    :scroll="{ y: props.paneHeight - 125, x: true }"
     :custom-row="customRow"
-    :row-class-name="'row'"
+    :row-class-name="'table-row'"
+    @resize-column="handleResizeColumn"
     bordered
   >
     <!-- Header of the table -->
@@ -297,7 +303,7 @@
 </template>
 
 <style scoped>
-  .clickable-table :deep(.row) {
+  .clickable-table :deep(.table-row) {
     cursor: pointer;
   }
 </style>

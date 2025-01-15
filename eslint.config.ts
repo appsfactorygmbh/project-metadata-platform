@@ -23,6 +23,8 @@ type Plugin =
 // const tsParser = tseslint.parser as Parser;
 const tsPlugin = tseslint.plugin as Plugin;
 
+const extraFileExtensions = ['.vue'];
+
 const ignoreFiles: Linter.Config = {
   name: 'ignore-files',
   ignores: [
@@ -58,6 +60,7 @@ const linterConfig: Linter.Config = {
       project: path.resolve(__dirname, './tsconfig.node.json'),
       tsconfigRootDir: __dirname,
       sourceType: 'module',
+      extraFileExtensions,
     },
   },
   rules: {
@@ -78,6 +81,7 @@ const vitestConfig: Linter.Config = {
       project: path.resolve(__dirname, './tsconfig.vitest.json'),
       tsconfigRootDir: __dirname,
       sourceType: 'module',
+      extraFileExtensions,
     },
   },
 };
@@ -96,7 +100,7 @@ const vueConfig: Linter.Config = {
 
     parserOptions: {
       parser: tsParser,
-      extraFileExtensions: ['.vue'],
+      extraFileExtensions,
       // project: path.resolve(__dirname, './tsconfig.json'),
       projectService: {
         defaultProject: path.resolve(__dirname, './tsconfig.app.json'),
@@ -153,6 +157,7 @@ const typescriptConfig: Linter.Config = {
         defaultProject: path.resolve(__dirname, './tsconfig.app.json'),
         loadTypeScriptPlugins: !!process.env.VSCODE_PID,
       },
+      extraFileExtensions,
     },
   },
   settings: {
@@ -208,6 +213,7 @@ const generatedApiConfig: Linter.Config = {
       },
       tsconfigRootDir: __dirname,
       sourceType: 'module',
+      extraFileExtensions,
     },
   },
   rules: {
