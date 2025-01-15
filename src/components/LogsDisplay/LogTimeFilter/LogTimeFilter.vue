@@ -18,6 +18,7 @@
   const logs = ref<LogEntryModel[]>(props.logEntries);
   const date = ref<[Dayjs, Dayjs]>();
 
+  //function to highlight the current date
   const getCurrentStyle = (current: Dayjs, today: Dayjs) => {
     const style: CSSProperties = {};
 
@@ -29,6 +30,7 @@
     return style;
   };
 
+  //function to filter the log based on selected time range
   function handleChange(inputDate: [Dayjs, Dayjs] | undefined) {
     if (inputDate) {
       logs.value = props.logEntries.filter((entry) => {
@@ -52,6 +54,7 @@
       handleChange(date.value);
     },
   );
+  
   watch(
     () => date.value,
     (value) => {
