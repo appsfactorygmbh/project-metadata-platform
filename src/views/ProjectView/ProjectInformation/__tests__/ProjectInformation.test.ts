@@ -26,6 +26,10 @@ const testData: DetailedProjectModel = {
   clientName: 'ZDF',
   businessUnit: 'BU Health',
   teamNumber: 42,
+  offerId: '3',
+  company: 'Appsfactory',
+  companyState: 'EXTERNAL',
+  ismsLevel: 'NORMAL',
 };
 
 describe('ProjectInformation.vue', () => {
@@ -75,6 +79,10 @@ describe('ProjectInformation.vue', () => {
     expect(wrapper.findAll('.projectInfo')[1].text()).toBe('42');
     expect(wrapper.findAll('.projectInfo')[2].text()).toBe('IT');
     expect(wrapper.findAll('.projectInfo')[3].text()).toBe('ZDF');
+    expect(wrapper.findAll('.projectInfo')[4].text()).toBe('3');
+    expect(wrapper.findAll('.projectInfo')[5].text()).toBe('Appsfactory');
+    expect(wrapper.findAll('.projectInfo')[6].text()).toBe('EXTERNAL');
+    expect(wrapper.findAll('.projectInfo')[7].text()).toBe('NORMAL');
   });
 
   it('opens the confirmation modal when DeleteOutlined button is clicked', async () => {
@@ -85,6 +93,10 @@ describe('ProjectInformation.vue', () => {
       businessUnit: 'BU Health',
       teamNumber: 42,
       isArchived: true,
+      offerId: '3',
+      company: 'Appsfactory',
+      companyState: 'EXTERNAL',
+      ismsLevel: 'NORMAL',
     };
 
     const wrapper = mount(ProjectInformation, {
@@ -136,6 +148,10 @@ describe('ProjectInformation.vue', () => {
       businessUnit: 'DB Rail',
       teamNumber: 45,
       isArchived: true,
+      offerId: '3',
+      company: 'Appsfactory',
+      companyState: 'EXTERNAL',
+      ismsLevel: 'NORMAL',
     };
 
     const wrapper = mount(ProjectInformation, {
