@@ -22,9 +22,9 @@
   const getCurrentStyle = (current: Dayjs, today: Dayjs) => {
     const style: CSSProperties = {};
 
-    if (current.isSame(today,'date')) {
+    if (current.isSame(today, 'date')) {
       style.border = '1px solid #3e8eef';
-      style.borderRadius = '20%';    
+      style.borderRadius = '20%';
     }
 
     return style;
@@ -54,7 +54,7 @@
       handleChange(date.value);
     },
   );
-  
+
   watch(
     () => date.value,
     (value) => {
@@ -66,7 +66,10 @@
 <template>
   <a-range-picker v-model:value="date">
     <template #dateRender="{ current, today }">
-      <div class="ant-picker-cell-inner" :style="getCurrentStyle(current, today)">
+      <div
+        class="ant-picker-cell-inner"
+        :style="getCurrentStyle(current, today)"
+      >
         {{ current.date() }}
       </div>
     </template>
