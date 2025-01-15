@@ -100,10 +100,10 @@
     teamNumber: ref<number>(0),
     department: ref<string>(''),
     clientName: ref<string>(''),
-    offerId: ref<number>(0),
-    company: ref<string>(''),
-    companyState: ref<string>(''), //check if implementation matches with backend
-    ismsLevel: ref<string>(''),
+    offerId: ref<string>(''),
+    company: ref<DetailedProjectModel['company']>(''),
+    companyState: ref<DetailedProjectModel['companyState']>('EXTERNAL'), //check if implementation matches with backend
+    ismsLevel: ref<DetailedProjectModel['ismsLevel']>('NORMAL'),
     isArchived: ref<boolean>(false),
   };
 
