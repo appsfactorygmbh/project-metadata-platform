@@ -220,10 +220,18 @@
     <div class="main">
       <!-- create box for the project name -->
       <div class="projectNameContainer">
-        <h1 v-if="!isLoading" class="projectName">
+        <h1
+          v-if="!isLoading"
+          class="projectName"
+        >
           {{ projectData.projectName.value }}
         </h1>
-        <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
+        <a-skeleton
+          v-else
+          active
+          :paragraph="false"
+          style="max-width: 20em"
+        />
 
         <!-- Edit Button -->
         <IconButton
@@ -310,7 +318,10 @@
         >
           <label class="label">Business&nbsp;Unit:</label>
           <template v-if="!isLoading">
-            <p v-if="!isEditing" class="projectInfo">
+            <p
+              v-if="!isEditing"
+              class="projectInfo"
+            >
               {{ projectData.businessUnit.value }}
             </p>
             <a-input
@@ -351,7 +362,10 @@
         >
           <label class="label">Team&nbsp;Number:</label>
           <template v-if="!isLoading">
-            <p v-if="!isEditing" class="projectInfo">
+            <p
+              v-if="!isEditing"
+              class="projectInfo"
+            >
               {{ projectData.teamNumber.value }}
             </p>
             <a-input
@@ -396,7 +410,10 @@
         >
           <label class="label">Department:</label>
           <template v-if="!isLoading">
-            <p v-if="!isEditing" class="projectInfo">
+            <p
+              v-if="!isEditing"
+              class="projectInfo"
+            >
               {{ projectData.department.value }}
             </p>
             <a-input
@@ -441,7 +458,10 @@
         >
           <label class="label">Client&nbsp;Name:</label>
           <template v-if="!isLoading">
-            <p v-if="!isEditing" class="projectInfo">
+            <p
+              v-if="!isEditing"
+              class="projectInfo"
+            >
               {{ projectData.clientName.value }}
             </p>
             <a-input
