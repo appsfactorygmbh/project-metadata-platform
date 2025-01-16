@@ -20,6 +20,10 @@ describe('ProjectEditStore', () => {
       businessUnit: '',
       teamNumber: -1,
       department: '',
+      company: '',
+      companyState: 'EXTERNAL',
+      ismsLevel: 'NORMAL',
+      offerId: '',
     });
     expect(store.canBeCreated).toBe(true);
     expect(store.duplicatedUrls.size).toBe(0);
@@ -118,6 +122,10 @@ describe('ProjectEditStore', () => {
       businessUnit: '',
       teamNumber: -1,
       department: '',
+      company: '',
+      companyState: 'EXTERNAL',
+      ismsLevel: 'NORMAL',
+      offerId: '',
     });
 
     const plugin: PluginModel = {
