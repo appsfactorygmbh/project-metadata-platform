@@ -8,6 +8,9 @@
   import { CreateProjectView } from '@/views/CreateProject';
   import ProjectView from '../ProjectView/ProjectView.vue';
   import { useEditing } from '@/utils/hooks';
+  import { theme } from 'ant-design-vue';
+  const { useToken } = theme;
+  const { token } = useToken();
 
   const { isEditing } = useEditing();
   const tablePane = ref(null);
@@ -31,10 +34,7 @@
 
 <template>
   <div class="container">
-    <splitpanes
-      class="default-theme"
-      @resized="onResize"
-    >
+    <splitpanes class="default-theme costum-theme" @resized="onResize">
       <!--
         size: sets default proportion to 1:4
         min-size: sets smallest possible size to 20% and 1%
@@ -51,11 +51,7 @@
         />
       </pane>
 
-      <pane
-        :size="rightPaneWidth"
-        min-size="32"
-        class="rightPane"
-      >
+      <pane :size="rightPaneWidth" min-size="32" class="rightPane">
         <ProjectView />
         <MenuButtons />
         <CreateProjectView v-if="!isEditing" />
@@ -65,8 +61,22 @@
 </template>
 
 <style scoped>
+  :deep(.splitpanes.default-theme .splitpanes__pane) {
+    background-color: v-bind('token.colorBgBase') !important;
+  }
+  :deep(.splitpanes__splitter) {
+    background-color: v-bind('token.colorBgBase') !important;
+  }
+  :deep(
+    .splitpanes.default-theme .splitpanes__splitter::before,
+    .splitpanes.default-theme .splitpanes__splitter::after
+  ) {
+    background-color: v-bind('token.colorPrimaryBg') !important;
+  }
+
   .splitpanes {
     height: 100vh;
+    background-color: black;
   }
 
   .leftPane {

@@ -14,6 +14,9 @@
   import { usePluginStore, useProjectStore } from '@/store';
   import type { PluginModel } from '@/models/Plugin';
   import _ from 'lodash';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
@@ -158,11 +161,7 @@
 
 <template>
   <div v-if="!isEmpty">
-    <ProjectEditButtons
-      v-if="isEditing"
-      @cancel="openModal"
-      @save="saveEdit"
-    />
+    <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
     <ProjectInformation />
     <ProjectPlugins class="pluginView" />
     <LocalLogView class="LocalLog" />
@@ -190,5 +189,6 @@
     display: flex;
     justify-content: center;
     padding-top: 1em;
+    background-color: v-bind('token.colorBorder');
   }
 </style>

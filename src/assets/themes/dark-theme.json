@@ -2,7 +2,9 @@
   "token": {
     "colorPrimary": "#f5222d",
     "colorInfo": "#f5222d",
-    "colorSuccess": "#ffffff"
+    "colorSuccess": "#ffffff",
+    "colorBgBase": "#101010",
+    "colorText": "#ffffff"
   },
   "algorithm": "dark"
 }

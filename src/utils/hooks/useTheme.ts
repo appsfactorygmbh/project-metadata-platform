@@ -27,3 +27,9 @@ export function useTheme() {
     themeConfig,
   };
 }
+
+export const useThemeToken = () => {
+  const { useToken } = theme;
+  const { token } = useToken();
+  return token;
+};

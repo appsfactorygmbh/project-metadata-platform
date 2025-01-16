@@ -16,7 +16,6 @@ declare module 'vue' {
     ACard: typeof import('ant-design-vue/es')['Card']
     ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
-    ADivider: typeof import('ant-design-vue/es')['Divider']
     AEmpty: typeof import('ant-design-vue/es')['Empty']
     AFlex: typeof import('ant-design-vue/es')['Flex']
     AFloatButton: typeof import('ant-design-vue/es')['FloatButton']
@@ -44,7 +43,6 @@ declare module 'vue' {
     ASpace: typeof import('ant-design-vue/es')['Space']
     ASpin: typeof import('ant-design-vue/es')['Spin']
     ATable: typeof import('ant-design-vue/es')['Table']
-    ATag: typeof import('ant-design-vue/es')['Tag']
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
     ATypographyText: typeof import('ant-design-vue/es')['TypographyText']
     ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
@@ -70,7 +68,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
     SearchBar: typeof import('./../src/components/Searchbar/SearchBar.vue')['default']
-    ToggleThemeButton: typeof import('./../src/components/Button/ToggleThemeButton.vue')['default']
     UserEmailInputField: typeof import('./../src/components/EditableTextField/InputFields/UserEmailInputField.vue')['default']
   }
 }

@@ -24,12 +24,14 @@
   import IconButton from '@/components/Button/IconButton.vue';
   import router from '@/router';
   import _ from 'lodash';
+  import { useThemeToken } from '@/utils/hooks';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectStore = useProjectStore();
   const projectEditStore = inject(projectEditStoreSymbol)!;
   const pluginStore = usePluginStore();
   const projectRouting = inject(projectRoutingSymbol)!;
+  const token = useThemeToken();
 
   const editingClass = computed(() => ({
     'editing-mode': isEditing.value,
@@ -220,18 +222,10 @@
     <div class="main">
       <!-- create box for the project name -->
       <div class="projectNameContainer">
-        <h1
-          v-if="!isLoading"
-          class="projectName"
-        >
+        <h1 v-if="!isLoading" class="projectName">
           {{ projectData.projectName.value }}
         </h1>
-        <a-skeleton
-          v-else
-          active
-          :paragraph="false"
-          style="max-width: 20em"
-        />
+        <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
 
         <!-- Edit Button -->
         <IconButton
@@ -318,10 +312,7 @@
         >
           <label class="label">Business&nbsp;Unit:</label>
           <template v-if="!isLoading">
-            <p
-              v-if="!isEditing"
-              class="projectInfo"
-            >
+            <p v-if="!isEditing" class="projectInfo">
               {{ projectData.businessUnit.value }}
             </p>
             <a-input
@@ -362,10 +353,7 @@
         >
           <label class="label">Team&nbsp;Number:</label>
           <template v-if="!isLoading">
-            <p
-              v-if="!isEditing"
-              class="projectInfo"
-            >
+            <p v-if="!isEditing" class="projectInfo">
               {{ projectData.teamNumber.value }}
             </p>
             <a-input
@@ -410,10 +398,7 @@
         >
           <label class="label">Department:</label>
           <template v-if="!isLoading">
-            <p
-              v-if="!isEditing"
-              class="projectInfo"
-            >
+            <p v-if="!isEditing" class="projectInfo">
               {{ projectData.department.value }}
             </p>
             <a-input
@@ -458,10 +443,7 @@
         >
           <label class="label">Client&nbsp;Name:</label>
           <template v-if="!isLoading">
-            <p
-              v-if="!isEditing"
-              class="projectInfo"
-            >
+            <p v-if="!isEditing" class="projectInfo">
               {{ projectData.clientName.value }}
             </p>
             <a-input
@@ -547,7 +529,7 @@
   .projectName {
     font-size: 2.5em;
     font-weight: bold;
-    color: #000;
+    color: v-bind('token.colorText');
     margin: 10px;
   }
 
@@ -560,7 +542,7 @@
     padding: 1em 0;
     border-radius: 10px;
     container-type: inline-size;
-    background: white;
+    color: v-bind('token.colorPrimary');
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
