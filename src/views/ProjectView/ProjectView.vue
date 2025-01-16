@@ -167,8 +167,8 @@
   <div v-if="!isEmpty">
     <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
     <ProjectInformation />
-    <ProjectPlugins class="pluginView" @toggle-blur="toggleBlur"/>
-    <LocalLogView class="LocalLog" :class="{ blur: isBlurred }"/>
+    <ProjectPlugins class="pluginView" @toggle-blur="toggleBlur" />
+    <LocalLogView class="LocalLog" :class="{ blur: isBlurred }" />
     <ConfirmAction
       :is-open="isModalOpen"
       title="Cancel Editing"
