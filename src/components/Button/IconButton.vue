@@ -1,5 +1,9 @@
 <template>
-  <a-tooltip v-if="tooltip" :title="tooltip" :placement="tooltipPosition">
+  <a-tooltip
+    v-if="tooltip"
+    :title="tooltip"
+    :placement="tooltipPosition"
+  >
     <span>
       <a-button
         :type="type"

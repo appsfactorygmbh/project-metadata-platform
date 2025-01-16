@@ -14,7 +14,10 @@
 </script>
 
 <template>
-  <FormModal title="Add Plugin" :form-store="formStore">
+  <FormModal
+    title="Add Plugin"
+    :form-store="formStore"
+  >
     <AddPluginForm
       :form-store="formStore"
       :initial-values="initialFormValues"

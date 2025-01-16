@@ -5,7 +5,10 @@
     placement="left"
     title="Click here to toggle between active and archived global plugins"
   >
-    <a-button class="archiveButton" @click="toggleShowFilter">
+    <a-button
+      class="archiveButton"
+      @click="toggleShowFilter"
+    >
       <template #icon>
         <InboxOutlined v-if="filterType" />
         <BulbOutlined v-else />
@@ -32,7 +35,10 @@
               <div class="title">
                 {{ item.name }}
               </div>
-              <div v-if="filterType" class="buttons">
+              <div
+                v-if="filterType"
+                class="buttons"
+              >
                 <a-button
                   style="margin-right: 1em"
                   title="Edit Plugin"
@@ -50,7 +56,10 @@
                   <InboxOutlined />
                 </a-button>
               </div>
-              <div v-else class="buttons">
+              <div
+                v-else
+                class="buttons"
+              >
                 <a-button
                   style="margin-right: 1em"
                   title="Reactivate Plugin"

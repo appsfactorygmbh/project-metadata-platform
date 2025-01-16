@@ -14,7 +14,11 @@
 </script>
 
 <template>
-  <FormModal title="Create Plugin" :form-store="formStore" @close="onClose">
+  <FormModal
+    title="Create Plugin"
+    :form-store="formStore"
+    @close="onClose"
+  >
     <CreateGlobalPluginForm :form-store="formStore" />
   </FormModal>
 </template>

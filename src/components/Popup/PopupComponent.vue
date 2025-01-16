@@ -1,6 +1,9 @@
 <template>
   <transition name="fade-popup">
-    <div v-if="selectedGroup" class="popup">
+    <div
+      v-if="selectedGroup"
+      class="popup"
+    >
       <a-card class="group-popup">
         <h3>Plugins in {{ selectedGroup.pluginName }}</h3>
         <div class="plugin-grid">
@@ -17,7 +20,10 @@
             :show-favicon="false"
           />
         </div>
-        <a-button style="margin-top: 15px" @click="closePopup">
+        <a-button
+          style="margin-top: 15px"
+          @click="closePopup"
+        >
           Close
         </a-button>
       </a-card>

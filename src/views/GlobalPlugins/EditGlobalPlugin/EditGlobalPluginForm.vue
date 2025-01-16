@@ -64,6 +64,9 @@
 </script>
 
 <template>
-  <GlobalPluginForm :form-store="formStore" :initial-values="initialValues" />
+  <GlobalPluginForm
+    :form-store="formStore"
+    :initial-values="initialValues"
+  />
   <contextHolder />
 </template>

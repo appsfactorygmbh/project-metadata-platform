@@ -13,6 +13,7 @@
   import type { RulesObject } from '@/components/Form/types';
   import type { AddPluginFormData } from './AddPluginFormData.ts';
   import { useGlobalPluginsStore } from '@/store/GlobalPluginStore.ts';
+  import _ from 'lodash';
 
   const { formStore, initialValues } = defineProps<{
     formStore: FormStore;
@@ -118,7 +119,7 @@
   });
 
   const handleChange = (value: SelectValue) => {
-    console.log(`selected ${value}`);
+    console.log(`selected ${_.toString(value)}`);
     dynamicValidateForm.inputsDisabled = false;
   };
 

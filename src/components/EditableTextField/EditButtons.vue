@@ -25,10 +25,17 @@
 </script>
 
 <template>
-  <a-button v-if="!isEditing" class="button" @click="emit('startEditing')">
+  <a-button
+    v-if="!isEditing"
+    class="button"
+    @click="emit('startEditing')"
+  >
     <EditOutlined />
   </a-button>
-  <div v-else class="buttonGroup">
+  <div
+    v-else
+    class="buttonGroup"
+  >
     <a-button
       class="check button"
       :disabled="props.safeDisabled"
@@ -36,7 +43,10 @@
     >
       <CheckOutlined class="icon" />
     </a-button>
-    <a-button class="abort button" @click="emit('cancleEdit')">
+    <a-button
+      class="abort button"
+      @click="emit('cancleEdit')"
+    >
       <CloseOutlined class="icon" />
     </a-button>
   </div>

@@ -158,7 +158,11 @@
 
 <template>
   <div v-if="!isEmpty">
-    <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
+    <ProjectEditButtons
+      v-if="isEditing"
+      @cancel="openModal"
+      @save="saveEdit"
+    />
     <ProjectInformation />
     <ProjectPlugins class="pluginView" />
     <LocalLogView class="LocalLog" />

@@ -178,10 +178,18 @@
   <a-card class="info">
     <label class="label">{{ label }}:</label>
     <template v-if="!isLoading">
-      <p v-if="!isEditing" class="text passwordLabel">
+      <p
+        v-if="!isEditing"
+        class="text passwordLabel"
+      >
         {{ value }}
       </p>
-      <a-form v-else ref="formRef" :model="dynamicValidateForm" class="form">
+      <a-form
+        v-else
+        ref="formRef"
+        :model="dynamicValidateForm"
+        class="form"
+      >
         <a-form-item
           name="currentPassword"
           class="formItem"
@@ -231,8 +239,8 @@
         :is-loading="isLoading"
         :safe-disabled="
           dynamicValidateForm.confirmPassword == '' ||
-          dynamicValidateForm.currentPassword == '' ||
-          dynamicValidateForm.newPassword == ''
+            dynamicValidateForm.currentPassword == '' ||
+            dynamicValidateForm.newPassword == ''
         "
         @cancle-edit="cancleEdit"
         @safe-edits="safeEdits"

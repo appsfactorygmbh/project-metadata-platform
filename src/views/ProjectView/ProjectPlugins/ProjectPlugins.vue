@@ -1,7 +1,15 @@
 <template>
   <div>
-    <div v-if="!loading" class="container" :class="{ blur: selectedGroup }">
-      <div v-for="plugin in groupedPlugins" :key="plugin.id" class="plugins">
+    <div
+      v-if="!loading"
+      class="container"
+      :class="{ blur: selectedGroup }"
+    >
+      <div
+        v-for="plugin in groupedPlugins"
+        :key="plugin.id"
+        class="plugins"
+      >
         <PluginComponent
           v-if="!plugin.isGroup"
           :id="Number(plugin.id)"

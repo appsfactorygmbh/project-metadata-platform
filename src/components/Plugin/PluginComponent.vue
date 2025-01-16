@@ -191,7 +191,10 @@
           @input="updatePluginData"
         />
       </div>
-      <DeleteOutlined class="circleBackground" @click="hidePlugin" />
+      <DeleteOutlined
+        class="circleBackground"
+        @click="hidePlugin"
+      />
     </a-card>
   </template>
 

@@ -23,7 +23,10 @@
     @click="props.button.onClick"
   >
     <template #icon>
-      <component :is="props.button.icon" :style="props.button.color" />
+      <component
+        :is="props.button.icon"
+        :style="props.button.color"
+      />
     </template>
   </a-float-button>
   <a-float-button

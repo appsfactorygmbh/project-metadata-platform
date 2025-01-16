@@ -31,7 +31,10 @@
 
 <template>
   <div class="container">
-    <splitpanes class="default-theme" @resized="onResize">
+    <splitpanes
+      class="default-theme"
+      @resized="onResize"
+    >
       <!--
         size: sets default proportion to 1:4
         min-size: sets smallest possible size to 20% and 1%
@@ -48,7 +51,11 @@
         />
       </pane>
 
-      <pane :size="rightPaneWidth" min-size="32" class="rightPane">
+      <pane
+        :size="rightPaneWidth"
+        min-size="32"
+        class="rightPane"
+      >
         <ProjectView />
         <MenuButtons />
         <CreateProjectView v-if="!isEditing" />

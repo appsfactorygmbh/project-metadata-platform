@@ -55,11 +55,16 @@
 <template>
   <AuthLayout>
     <div :style="styles.header">
-      <a-typography-title :style="styles.title"> Login </a-typography-title>
+      <a-typography-title :style="styles.title">
+        Login
+      </a-typography-title>
       <a-typography-text :style="styles.text">
         Welcome back! Please enter your credentials to continue.
       </a-typography-text>
     </div>
-    <LoginForm :form-store="formStore" :feedback-message="feedbackMessage" />
+    <LoginForm
+      :form-store="formStore"
+      :feedback-message="feedbackMessage"
+    />
   </AuthLayout>
 </template>
