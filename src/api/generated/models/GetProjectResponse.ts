@@ -12,6 +12,17 @@
  * Do not edit the class manually.
  */
 
+import type { SecurityLevel } from './SecurityLevel';
+import {
+    SecurityLevelFromJSON,
+    SecurityLevelToJSON,
+} from './SecurityLevel';
+import type { CompanyState } from './CompanyState';
+import {
+    CompanyStateFromJSON,
+    CompanyStateToJSON,
+} from './CompanyState';
+
 /**
  * Represents a response to the GetProject API call.
  * @export
@@ -66,7 +77,33 @@ export interface GetProjectResponse {
      * @memberof GetProjectResponse
      */
     isArchived: boolean;
+    /**
+     * Internal id of the offer associated with the project.
+     * @type {string}
+     * @memberof GetProjectResponse
+     */
+    offerId: string;
+    /**
+     * The company that is responsible for the project.
+     * @type {string}
+     * @memberof GetProjectResponse
+     */
+    company: string;
+    /**
+     * 
+     * @type {CompanyState}
+     * @memberof GetProjectResponse
+     */
+    companyState: CompanyState;
+    /**
+     * 
+     * @type {SecurityLevel}
+     * @memberof GetProjectResponse
+     */
+    ismsLevel: SecurityLevel;
 }
+
+
 
 /**
  * Check if a given object implements the GetProjectResponse interface.
@@ -80,6 +117,10 @@ export function instanceOfGetProjectResponse(value: object): value is GetProject
     if (!('teamNumber' in value) || value['teamNumber'] === undefined) return false;
     if (!('department' in value) || value['department'] === undefined) return false;
     if (!('isArchived' in value) || value['isArchived'] === undefined) return false;
+    if (!('offerId' in value) || value['offerId'] === undefined) return false;
+    if (!('company' in value) || value['company'] === undefined) return false;
+    if (!('companyState' in value) || value['companyState'] === undefined) return false;
+    if (!('ismsLevel' in value) || value['ismsLevel'] === undefined) return false;
     return true;
 }
 
@@ -101,6 +142,10 @@ export function GetProjectResponseFromJSONTyped(json: any, ignoreDiscriminator: 
         'teamNumber': json['teamNumber'],
         'department': json['department'],
         'isArchived': json['isArchived'],
+        'offerId': json['offerId'],
+        'company': json['company'],
+        'companyState': CompanyStateFromJSON(json['companyState']),
+        'ismsLevel': SecurityLevelFromJSON(json['ismsLevel']),
     };
 }
 
@@ -123,6 +168,10 @@ export function GetProjectResponseToJSONTyped(value?: GetProjectResponse | null,
         'teamNumber': value['teamNumber'],
         'department': value['department'],
         'isArchived': value['isArchived'],
+        'offerId': value['offerId'],
+        'company': value['company'],
+        'companyState': CompanyStateToJSON(value['companyState']),
+        'ismsLevel': SecurityLevelToJSON(value['ismsLevel']),
     };
 }
 

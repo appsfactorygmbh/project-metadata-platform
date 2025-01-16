@@ -5,6 +5,7 @@ apis/ProjectsApi.ts
 apis/UsersApi.ts
 apis/index.ts
 index.ts
+models/CompanyState.ts
 models/CreatePluginRequest.ts
 models/CreatePluginResponse.ts
 models/CreateProjectRequest.ts
@@ -23,6 +24,7 @@ models/LoginResponse.ts
 models/PatchGlobalPluginRequest.ts
 models/PatchUserRequest.ts
 models/ProblemDetails.ts
+models/SecurityLevel.ts
 models/UpdateProjectPluginRequest.ts
 models/index.ts
 runtime.ts

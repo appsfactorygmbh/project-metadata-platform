@@ -42,6 +42,12 @@ export interface GetGlobalPluginResponse {
      * @memberof GetGlobalPluginResponse
      */
     keys: Array<string>;
+    /**
+     * Base URL of the plugin
+     * @type {string}
+     * @memberof GetGlobalPluginResponse
+     */
+    baseUrl?: string | null;
 }
 
 /**
@@ -69,6 +75,7 @@ export function GetGlobalPluginResponseFromJSONTyped(json: any, ignoreDiscrimina
         'id': json['id'],
         'isArchived': json['isArchived'],
         'keys': json['keys'],
+        'baseUrl': json['baseUrl'] == null ? undefined : json['baseUrl'],
     };
 }
 
@@ -87,6 +94,7 @@ export function GetGlobalPluginResponseToJSONTyped(value?: GetGlobalPluginRespon
         'id': value['id'],
         'isArchived': value['isArchived'],
         'keys': value['keys'],
+        'baseUrl': value['baseUrl'],
     };
 }
 
