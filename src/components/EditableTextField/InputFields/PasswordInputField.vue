@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import type { FormStore } from '@/components/Form';
   import type { FormSubmitType, RulesObject } from '@/components/Form/types';
-  import { userStoreSymbol } from '@/store/injectionSymbols';
+  import { useUserStore } from '@/store';
   import {
     hasEightCharacters,
     hasSpecialCharacter,
@@ -30,7 +30,7 @@
   };
 
   const formRef = ref();
-  const userStore = inject(userStoreSymbol)!;
+  const userStore = useUserStore();
 
   const dynamicValidateForm = reactive<EditPasswordFormData>({
     currentPassword: '',

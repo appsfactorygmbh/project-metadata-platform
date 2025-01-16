@@ -24,6 +24,16 @@
 
   const emit = defineEmits(['updated', 'error', 'success']);
   const inputField = ref(inputValue);
+
+  const handleChange = () => {
+    if (!inputField.value) {
+      emit('error');
+      editStore?.addEmptyProjectInformationField(columnName);
+    } else {
+      emit('success');
+      editStore?.removeEmptyProjectInformationField(columnName);
+    }
+  };
 </script>
 
 <template>
@@ -32,16 +42,6 @@
     class="inputField"
     :status="inputStatus"
     @input="$emit('updated', inputField)"
-    @change="
-      () => {
-        if (!inputField) {
-          emit('error');
-          editStore?.addEmptyProjectInformationField(columnName);
-        } else {
-          emit('success');
-          editStore?.removeEmptyProjectInformationField(columnName);
-        }
-      }
-    "
+    @change="handleChange"
   />
 </template>
