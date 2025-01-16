@@ -136,6 +136,7 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
               createPluginRequest: {
                 pluginName: plugin.name,
                 ...plugin,
+                baseUrl: plugin.baseUrl ?? '',
               },
             });
             if (response) {

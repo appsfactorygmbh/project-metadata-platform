@@ -36,6 +36,10 @@
     teamNumber: 0,
     department: '',
     clientName: '',
+    offerId: '',
+    company: '',
+    companyState: 'EXTERNAL',
+    ismsLevel: 'NORMAL',
     isArchived: false,
   });
 
@@ -106,6 +110,10 @@
       department: formState.department,
       clientName: formState.clientName,
       isArchived: false,
+      offerId: '',
+      company: '',
+      companyState: 'EXTERNAL',
+      ismsLevel: 'NORMAL',
     };
 
     await projectStore.create(projectData);
