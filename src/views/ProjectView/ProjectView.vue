@@ -141,6 +141,10 @@
       clientName: updateProjectInformation?.clientName,
       pluginList: updatedPluginList.value,
       isArchived: projectStore.getProject.isArchived,
+      offerId: '',
+      company: '',
+      companyState: 'EXTERNAL',
+      ismsLevel: 'NORMAL',
     };
     console.log(updatedProject);
 

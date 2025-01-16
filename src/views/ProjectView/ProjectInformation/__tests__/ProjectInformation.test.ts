@@ -26,6 +26,10 @@ const testData: DetailedProjectModel = {
   clientName: 'ZDF',
   businessUnit: 'BU Health',
   teamNumber: 42,
+  offerId: '',
+  company: '',
+  companyState: 'EXTERNAL',
+  ismsLevel: 'NORMAL',
 };
 
 describe('ProjectInformation.vue', () => {

@@ -144,6 +144,10 @@ describe('ProjectEditStore', () => {
       teamNumber: 1,
       department: 'Test Department',
       isArchived: false,
+      offerId: '',
+      company: '',
+      companyState: 'EXTERNAL',
+      ismsLevel: 'NORMAL',
     });
 
     expect(store.getCanBeAdded).toBe(false);
@@ -154,6 +158,10 @@ describe('ProjectEditStore', () => {
       businessUnit: 'Test Business Unit',
       teamNumber: 1,
       department: 'Test Department',
+      offerId: '',
+      company: '',
+      companyState: 'EXTERNAL',
+      ismsLevel: 'NORMAL',
     });
 
     store.setProjectInformation({
@@ -165,6 +173,10 @@ describe('ProjectEditStore', () => {
       teamNumber: 1,
       department: 'Test Department',
       isArchived: false,
+      offerId: '',
+      company: '',
+      companyState: 'EXTERNAL',
+      ismsLevel: 'NORMAL',
     });
 
     expect(store.getCanBeAdded).toBe(true);
@@ -195,7 +207,7 @@ describe('ProjectEditStore', () => {
   });
   // Add test to check for updating project information
   it('updates project information correctly', () => {
-    const project = {
+    const project: DetailedProjectModel = {
       id: 1,
       projectName: 'Test Project',
       clientName: 'Test Client',
@@ -203,6 +215,11 @@ describe('ProjectEditStore', () => {
       teamNumber: 1,
       department: 'Test Department',
       isArchived: false,
+      slug: '',
+      offerId: '',
+      company: '',
+      companyState: 'EXTERNAL',
+      ismsLevel: 'NORMAL',
     };
     store.updateProjectInformationChanges(project);
     expect(store.getProjectInformationChanges).toEqual(project);
@@ -218,6 +235,10 @@ describe('ProjectEditStore', () => {
       teamNumber: 2,
       department: 'New Department',
       isArchived: false,
+      offerId: '',
+      company: '',
+      companyState: 'EXTERNAL',
+      ismsLevel: 'NORMAL',
     };
     store.setProjectInformation(projectInfo);
     expect(store.projectInformationChanges).toEqual(projectInfo);
@@ -226,7 +247,7 @@ describe('ProjectEditStore', () => {
 
   it('updates project information changes correctly', () => {
     const store = useProjectEditStore();
-    const updatedProjectInfo = {
+    const updatedProjectInfo: DetailedProjectModel = {
       id: 1,
       projectName: 'Updated Project',
       clientName: 'Updated Client',
@@ -234,6 +255,11 @@ describe('ProjectEditStore', () => {
       teamNumber: 3,
       department: 'Updated Department',
       isArchived: false,
+      slug: '',
+      offerId: '',
+      company: '',
+      companyState: 'EXTERNAL',
+      ismsLevel: 'NORMAL',
     };
     store.updateProjectInformationChanges(updatedProjectInfo);
     expect(store.projectInformationChanges).toEqual(updatedProjectInfo);
