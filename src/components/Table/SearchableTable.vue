@@ -224,8 +224,8 @@
     :scroll="{ y: props.paneHeight - 125, x: true }"
     :custom-row="customRow"
     :row-class-name="'table-row'"
-    @resize-column="handleResizeColumn"
     bordered
+    @resize-column="handleResizeColumn"
   >
     <!-- Header of the table -->
     <template #headerCell="{ column }">
@@ -271,7 +271,9 @@
           style="width: 90px; margin-right: 8px"
           @click="handleSearch(selectedKeys[0], confirm, column.dataIndex)"
         >
-          <template #icon><SearchOutlined /></template>
+          <template #icon>
+            <SearchOutlined />
+          </template>
           Search
         </a-button>
         <!-- Reset button, resets filter when clicked -->

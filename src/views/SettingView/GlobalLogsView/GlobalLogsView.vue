@@ -27,8 +27,8 @@
         @change="updateSearchParam"
       />
       <LogTimeFilter
-        :log-entries="logsStore.getGlobalLogs"
         v-model:logs="filteredLog"
+        :log-entries="logsStore.getGlobalLogs"
       />
     </a-space>
     <a-card class="cardContainer">

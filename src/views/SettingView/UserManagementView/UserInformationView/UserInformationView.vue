@@ -84,7 +84,9 @@
     <!-- avatar components -->
     <a-flex class="avatar">
       <a-avatar :size="150">
-        <template #icon><UserOutlined /></template>
+        <template #icon>
+          <UserOutlined />
+        </template>
       </a-avatar>
     </a-flex>
 

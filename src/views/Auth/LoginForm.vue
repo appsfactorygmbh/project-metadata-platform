@@ -83,20 +83,20 @@
     </a-form-item>
     <a-form-item>
       <a-form-item name="remember" value-prop-name="checked" no-style>
-        <a-checkbox v-model:checked="modelRef.remember"
-          >Stay logged in</a-checkbox
-        >
+        <a-checkbox v-model:checked="modelRef.remember">
+          Stay logged in
+        </a-checkbox>
       </a-form-item>
     </a-form-item>
     <a-form-item :style="{ marginBottom: '0px' }">
-      <a-button block type="primary" @click="submit"> Login</a-button>
+      <a-button block type="primary" @click="submit"> Login </a-button>
       <a-space
         v-if="feedbackMessage && feedbackMessage != ''"
         :style="{ paddingTop: '10px' }"
       >
-        <a-typography-text type="danger">{{
-          feedbackMessage
-        }}</a-typography-text>
+        <a-typography-text type="danger">
+          {{ feedbackMessage }}
+        </a-typography-text>
       </a-space>
     </a-form-item>
   </a-form>

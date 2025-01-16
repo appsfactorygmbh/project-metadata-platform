@@ -112,8 +112,7 @@
         v-model:value="modelRef.pluginName"
         class="inputField"
         placeholder="Plugin Name"
-      >
-      </a-input>
+      />
     </a-form-item>
     <a-form-item
       v-for="(key, index) in modelRef.keys"

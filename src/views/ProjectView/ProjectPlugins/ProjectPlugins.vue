@@ -12,7 +12,7 @@
           :is-editing="isEditing"
           :edit-key="plugin.editKey"
           :is-deleted="false"
-        ></PluginComponent>
+        />
 
         <GroupedCard
           v-else
@@ -22,7 +22,7 @@
           @open="openGroupPopup(plugin)"
         />
       </div>
-      <AddPluginCard v-if="isEditing"></AddPluginCard>
+      <AddPluginCard v-if="isEditing" />
     </div>
 
     <!-- Placeholder for loading skeleton -->
@@ -37,7 +37,7 @@
         padding: '15px',
       }"
     >
-      <a-skeleton active></a-skeleton>
+      <a-skeleton active />
     </a-card>
 
     <transition name="fade-popup">

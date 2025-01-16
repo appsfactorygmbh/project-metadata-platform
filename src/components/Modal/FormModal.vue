@@ -62,7 +62,7 @@
     @ok="handleOk"
     @cancel="resetModal"
   >
-    <slot></slot>
+    <slot />
   </a-modal>
 </template>
 

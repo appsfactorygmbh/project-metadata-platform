@@ -9,7 +9,7 @@
         @click="$emit('click')"
       >
         <template #icon>
-          <slot name="icon"></slot>
+          <slot name="icon" />
         </template>
       </a-button>
     </span>
@@ -23,7 +23,7 @@
     @click="$emit('click')"
   >
     <template #icon>
-      <slot name="icon"></slot>
+      <slot name="icon" />
     </template>
   </a-button>
 </template>

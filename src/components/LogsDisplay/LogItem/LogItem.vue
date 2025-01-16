@@ -33,7 +33,9 @@
       <div class="circle" />
       <div v-if="!isLast" class="line" />
     </div>
-    <p class="text">{{ props.logMessage }}</p>
+    <p class="text">
+      {{ props.logMessage }}
+    </p>
   </div>
 </template>
 

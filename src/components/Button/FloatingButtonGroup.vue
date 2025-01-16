@@ -16,7 +16,6 @@
       v-for="button in props.buttons"
       :key="button.name"
       :button="button"
-    >
-    </FloatingButton>
+    />
   </a-float-button-group>
 </template>

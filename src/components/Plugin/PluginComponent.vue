@@ -175,7 +175,9 @@
     >
       <!-- Container for plugin name and URL text. -->
       <div class="textContainerInput">
-        <h3 style="text-align: center">{{ pluginName }}</h3>
+        <h3 style="text-align: center">
+          {{ pluginName }}
+        </h3>
         <a-input
           v-model:value="displayNameInput"
           :status="displayNameStatusRef"
@@ -214,7 +216,7 @@
         shape="square"
         :src="faviconUrl"
         class="avatar"
-      ></a-avatar>
+      />
       <!-- Container for plugin name and URL text. -->
       <div class="textContainer">
         <h3>{{ pluginName }}</h3>
