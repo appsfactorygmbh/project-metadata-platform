@@ -96,7 +96,6 @@ const vueConfig: ConfigWithExtends = {
   extends: [
     eslint.configs.recommended,
     ...tseslint.configs.recommendedTypeChecked,
-    ...vuePlugin.configs['flat/base'],
     ...vuePlugin.configs['flat/recommended'],
   ],
   languageOptions: {
