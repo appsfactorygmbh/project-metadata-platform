@@ -158,7 +158,7 @@
   // Blur effect
   const isBlurred = ref(false);
 
-  function toggleBlur(state: boolean) {
+  function setBlur(state: boolean) {
     isBlurred.value = state;
   }
 </script>
@@ -167,7 +167,7 @@
   <div v-if="!isEmpty">
     <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
     <ProjectInformation />
-    <ProjectPlugins class="pluginView" @toggle-blur="toggleBlur" />
+    <ProjectPlugins class="pluginView" @setBlur="setBlur" />
     <LocalLogView class="LocalLog" :class="{ blur: isBlurred }" />
     <ConfirmAction
       :is-open="isModalOpen"
