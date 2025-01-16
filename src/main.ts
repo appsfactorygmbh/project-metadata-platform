@@ -5,13 +5,13 @@ import { createPinia } from 'pinia';
 
 import App from './App.vue';
 import router from './router';
-import auth from './auth';
+import initAuth from './auth';
 
 const app = createApp(App);
 const pinia = createPinia();
 
 app.use(pinia);
 app.use(router);
-app.use(auth);
+app.use(initAuth(router));
 
 app.mount('#app');
