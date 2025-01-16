@@ -7,6 +7,21 @@ import { logsStoreSymbol } from '@/store/injectionSymbols';
 
 describe('GlobalLogsView.vue', () => {
   setActivePinia(createTestingPinia({ stubActions: false }));
+  it('render correctly', async () => {
+    const fetchMock = vi.fn();
+    const logsStoreMock = {
+      fetch: fetchMock,
+    };
+    const wrapper = mount(GlobalLogsView, {
+      global: {
+        provide: {
+          [logsStoreSymbol as symbol]: logsStoreMock,
+        },
+      },
+    });
+    expect(wrapper.find('.time').exists());
+    expect(wrapper.find('.cardContainer').exists());
+  });
   it('fetches logs on mount', async () => {
     const fetchMock = vi.fn();
     const logsStoreMock = {
