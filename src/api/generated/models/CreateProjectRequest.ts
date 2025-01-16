@@ -12,6 +12,16 @@
  * Do not edit the class manually.
  */
 
+import type { SecurityLevel } from './SecurityLevel';
+import {
+    SecurityLevelFromJSON,
+    SecurityLevelToJSON,
+} from './SecurityLevel';
+import type { CompanyState } from './CompanyState';
+import {
+    CompanyStateFromJSON,
+    CompanyStateToJSON,
+} from './CompanyState';
 import type { UpdateProjectPluginRequest } from './UpdateProjectPluginRequest';
 import {
     UpdateProjectPluginRequestFromJSON,
@@ -55,6 +65,30 @@ export interface CreateProjectRequest {
      */
     clientName: string;
     /**
+     * Id of the offer associated with project.
+     * @type {string}
+     * @memberof CreateProjectRequest
+     */
+    offerId: string;
+    /**
+     * Company responsible for project.
+     * @type {string}
+     * @memberof CreateProjectRequest
+     */
+    company: string;
+    /**
+     * 
+     * @type {CompanyState}
+     * @memberof CreateProjectRequest
+     */
+    companyState: CompanyState;
+    /**
+     * 
+     * @type {SecurityLevel}
+     * @memberof CreateProjectRequest
+     */
+    ismsLevel: SecurityLevel;
+    /**
      * An optional list of plugins associated to the project.
      * @type {Array<UpdateProjectPluginRequest>}
      * @memberof CreateProjectRequest
@@ -68,6 +102,8 @@ export interface CreateProjectRequest {
     isArchived: boolean;
 }
 
+
+
 /**
  * Check if a given object implements the CreateProjectRequest interface.
  */
@@ -77,6 +113,10 @@ export function instanceOfCreateProjectRequest(value: object): value is CreatePr
     if (!('teamNumber' in value) || value['teamNumber'] === undefined) return false;
     if (!('department' in value) || value['department'] === undefined) return false;
     if (!('clientName' in value) || value['clientName'] === undefined) return false;
+    if (!('offerId' in value) || value['offerId'] === undefined) return false;
+    if (!('company' in value) || value['company'] === undefined) return false;
+    if (!('companyState' in value) || value['companyState'] === undefined) return false;
+    if (!('ismsLevel' in value) || value['ismsLevel'] === undefined) return false;
     if (!('isArchived' in value) || value['isArchived'] === undefined) return false;
     return true;
 }
@@ -96,6 +136,10 @@ export function CreateProjectRequestFromJSONTyped(json: any, ignoreDiscriminator
         'teamNumber': json['teamNumber'],
         'department': json['department'],
         'clientName': json['clientName'],
+        'offerId': json['offerId'],
+        'company': json['company'],
+        'companyState': CompanyStateFromJSON(json['companyState']),
+        'ismsLevel': SecurityLevelFromJSON(json['ismsLevel']),
         'pluginList': json['pluginList'] == null ? undefined : ((json['pluginList'] as Array<any>).map(UpdateProjectPluginRequestFromJSON)),
         'isArchived': json['isArchived'],
     };
@@ -117,6 +161,10 @@ export function CreateProjectRequestToJSONTyped(value?: CreateProjectRequest | n
         'teamNumber': value['teamNumber'],
         'department': value['department'],
         'clientName': value['clientName'],
+        'offerId': value['offerId'],
+        'company': value['company'],
+        'companyState': CompanyStateToJSON(value['companyState']),
+        'ismsLevel': SecurityLevelToJSON(value['ismsLevel']),
         'pluginList': value['pluginList'] == null ? undefined : ((value['pluginList'] as Array<any>).map(UpdateProjectPluginRequestToJSON)),
         'isArchived': value['isArchived'],
     };

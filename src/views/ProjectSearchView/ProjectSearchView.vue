@@ -151,6 +151,7 @@
 
   onMounted(async () => {
     await projectStore.fetchAll();
+    console.log(projectStore.getProjects);
 
     searchStore?.setSearchQuery(searchStorage.value.searchQuery);
     await setFilterQuery();
@@ -233,6 +234,7 @@
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
+      width: NaN,
       hasTags: true,
     },
     {
@@ -246,6 +248,7 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
+      width: NaN,
     },
     {
       title: 'Company',
@@ -258,6 +261,7 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
+      width: NaN,
     },
     {
       title: 'Business Unit',
@@ -269,6 +273,7 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
+      width: NaN,
     },
     {
       title: 'Team Number',
@@ -339,6 +344,7 @@
   function hideColumn(index: number) {
     columns[index].hidden = true;
     columns[index - 1].resizable = false;
+    delete columns[index - 1].width;
   }
 
   /**
@@ -348,6 +354,7 @@
   function showColumn(index: number) {
     columns[index].hidden = false;
     columns[index - 1].resizable = true;
+    columns[index - 1].width = NaN;
   }
 
   /**

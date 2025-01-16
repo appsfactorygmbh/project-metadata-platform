@@ -12,6 +12,12 @@
  * Do not edit the class manually.
  */
 
+import type { SecurityLevel } from './SecurityLevel';
+import {
+    SecurityLevelFromJSON,
+    SecurityLevelToJSON,
+} from './SecurityLevel';
+
 /**
  * Represents a response for the GetProjects API call.
  * @export
@@ -60,7 +66,21 @@ export interface GetProjectsResponse {
      * @memberof GetProjectsResponse
      */
     isArchived: boolean;
+    /**
+     * The company associated with the project.
+     * @type {string}
+     * @memberof GetProjectsResponse
+     */
+    company: string;
+    /**
+     * 
+     * @type {SecurityLevel}
+     * @memberof GetProjectsResponse
+     */
+    ismsLevel: SecurityLevel;
 }
+
+
 
 /**
  * Check if a given object implements the GetProjectsResponse interface.
@@ -73,6 +93,8 @@ export function instanceOfGetProjectsResponse(value: object): value is GetProjec
     if (!('businessUnit' in value) || value['businessUnit'] === undefined) return false;
     if (!('teamNumber' in value) || value['teamNumber'] === undefined) return false;
     if (!('isArchived' in value) || value['isArchived'] === undefined) return false;
+    if (!('company' in value) || value['company'] === undefined) return false;
+    if (!('ismsLevel' in value) || value['ismsLevel'] === undefined) return false;
     return true;
 }
 
@@ -93,6 +115,8 @@ export function GetProjectsResponseFromJSONTyped(json: any, ignoreDiscriminator:
         'businessUnit': json['businessUnit'],
         'teamNumber': json['teamNumber'],
         'isArchived': json['isArchived'],
+        'company': json['company'],
+        'ismsLevel': SecurityLevelFromJSON(json['ismsLevel']),
     };
 }
 
@@ -114,6 +138,8 @@ export function GetProjectsResponseToJSONTyped(value?: GetProjectsResponse | nul
         'businessUnit': value['businessUnit'],
         'teamNumber': value['teamNumber'],
         'isArchived': value['isArchived'],
+        'company': value['company'],
+        'ismsLevel': SecurityLevelToJSON(value['ismsLevel']),
     };
 }
 

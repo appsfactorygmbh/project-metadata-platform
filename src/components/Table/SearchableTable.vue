@@ -300,14 +300,14 @@
           <a-tag
             v-if="(column as SearchableColumn).hasTags"
             :color="
-              record.ismsLevel === 'very high'
+              record.ismsLevel === 'VERY_HIGH'
                 ? 'red'
-                : record.ismsLevel === 'high'
+                : record.ismsLevel === 'HIGH'
                   ? 'orange'
                   : 'green'
             "
           >
-            {{ record.ismsLevel }}
+            {{ record.ismsLevel.replace('_', ' ') }}
           </a-tag>
         </a-col>
       </a-row>
