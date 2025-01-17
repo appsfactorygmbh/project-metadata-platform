@@ -46,7 +46,7 @@
   };
 
   onMounted(() => {
-    auth.load().then(() => {
+    auth?.load().then(() => {
       const authCheck = auth.check();
       if (authCheck) return callback();
       auth

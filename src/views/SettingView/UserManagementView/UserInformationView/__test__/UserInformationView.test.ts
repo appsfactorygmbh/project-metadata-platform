@@ -9,6 +9,7 @@ import router from '@/router';
 import type { UserModel } from '@/models/User';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons-vue';
 import { useUserRouting } from '@/utils/hooks';
+import initAuth from '@/auth';
 
 const userData1: UserModel = {
   id: '100',
@@ -35,7 +36,7 @@ describe('UserInformationView.vue', () => {
           [userStoreSymbol as symbol]: userStore,
           [userRoutingSymbol as symbol]: useUserRouting(router),
         },
-        plugins: [router],
+        plugins: [router, initAuth(router)],
       },
     });
   };

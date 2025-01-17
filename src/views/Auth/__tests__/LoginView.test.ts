@@ -4,6 +4,7 @@ import { LoginView } from '..';
 import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import router from '@/router';
+import initAuth from '@/auth';
 
 describe('LoginView.vue', () => {
   let wrapper: VueWrapper;
@@ -14,7 +15,7 @@ describe('LoginView.vue', () => {
       }),
     );
     wrapper = mount(LoginView, {
-      plugins: [router],
+      plugins: [router, initAuth(router)],
       global: {
         stubs: {
           RouterLink: {
