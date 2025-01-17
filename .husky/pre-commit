@@ -5,4 +5,4 @@
 # Add npm's bin directory to PATH
 export PATH=$PATH:/usr/local/bin
 
-npx lint-staged
+yarn dlx lint-staged
