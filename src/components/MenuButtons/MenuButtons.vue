@@ -57,10 +57,7 @@
 </script>
 
 <template>
-  <FloatingButtonGroup
-    :buttons="buttons"
-    class="menu"
-  />
+  <FloatingButtonGroup :buttons="buttons" class="menu" />
 </template>
 
 <style scoped>

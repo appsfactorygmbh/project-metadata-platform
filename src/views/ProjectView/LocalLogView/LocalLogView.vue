@@ -10,22 +10,11 @@
 </script>
 
 <template>
-  <div
-    v-if="logsData.length > 0"
-    class="localLog"
-  >
-    <a-card
-      v-if="!isLoading"
-      class="cardContainer"
-    >
+  <div v-if="logsData.length > 0" class="localLog">
+    <a-card v-if="!isLoading" class="cardContainer">
       <LogTimeline :log-entries="logsData.slice().reverse()" />
     </a-card>
-    <a-skeleton
-      v-else
-      active
-      :paragraph="false"
-      style="padding: 2em"
-    />
+    <a-skeleton v-else active :paragraph="false" style="padding: 2em" />
   </div>
 </template>
 <style>

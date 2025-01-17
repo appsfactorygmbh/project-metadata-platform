@@ -19,11 +19,7 @@
 
 <template>
   <div class="container">
-    <a-space
-      class="time"
-      direction="horizontal"
-      :size="12"
-    >
+    <a-space class="time" direction="horizontal" :size="12">
       <a-input
         v-model:value="searchValue"
         placeholder="Search global logs"
@@ -36,20 +32,12 @@
       />
     </a-space>
     <a-card class="cardContainer">
-      <a-spin
-        v-if="loadingGlobalLogs"
-        class="loadingIcon"
-      />
+      <a-spin v-if="loadingGlobalLogs" class="loadingIcon" />
       <LogTimeline
         v-else-if="logsStore.getGlobalLogs && filteredLog.length > 0"
         :log-entries="filteredLog"
       />
-      <a-flex
-        v-else
-        justify="center"
-        align="center"
-        style="height: 80vh"
-      >
+      <a-flex v-else justify="center" align="center" style="height: 80vh">
         <a-empty description="No results found" />
       </a-flex>
     </a-card>

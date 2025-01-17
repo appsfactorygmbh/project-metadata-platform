@@ -42,15 +42,8 @@
 <template>
   <BackgroundContainer :backgroud-color="bgColor">
     <section :style="styles.section">
-      <a-card
-        :bordered="true"
-        :style="cardStyle"
-      >
-        <a-card
-          :bordered="true"
-          :hoverable="true"
-          :style="innerCardStyle"
-        >
+      <a-card :bordered="true" :style="cardStyle">
+        <a-card :bordered="true" :hoverable="true" :style="innerCardStyle">
           <div :style="styles.container">
             <slot />
           </div>

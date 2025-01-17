@@ -177,15 +177,9 @@
 
 <template>
   <div style="padding: 10px">
-    <a-flex
-      vertical
-      gap="middle"
-    >
+    <a-flex vertical gap="middle">
       <span style="display: flex; flex-direction: row">
-        <SearchBar
-          :search-store-symbol="searchStoreSymbol"
-          style="flex: 5"
-        />
+        <SearchBar :search-store-symbol="searchStoreSymbol" style="flex: 5" />
         <a-tooltip
           placement="left"
           title="Click here to reset all filters"
@@ -206,10 +200,7 @@
           placement="left"
           title="Click here to toggle between active and archived projects"
         >
-          <a-button
-            class="button"
-            @click="toggleShowFilter"
-          >
+          <a-button class="button" @click="toggleShowFilter">
             <template #icon>
               <InboxOutlined v-if="filterType === 'active'" />
               <BulbOutlined v-else />

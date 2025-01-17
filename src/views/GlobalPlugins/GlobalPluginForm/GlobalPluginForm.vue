@@ -138,15 +138,9 @@
         "
       />
     </a-form-item>
-    <a-row
-      v-if="false"
-      style="display: flex; justify-content: center"
-    >
+    <a-row v-if="false" style="display: flex; justify-content: center">
       <a-form-item v-bind="formItemLayoutWithOutLabel">
-        <a-button
-          type="dashed"
-          @click="addPluginKey"
-        >
+        <a-button type="dashed" @click="addPluginKey">
           <PlusOutlined />
           Add PluginKey
         </a-button>

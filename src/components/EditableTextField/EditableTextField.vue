@@ -64,10 +64,7 @@
   >
     <label class="label">{{ label }}:</label>
     <template v-if="!isLoading">
-      <p
-        v-if="!isEditing"
-        class="text"
-      >
+      <p v-if="!isEditing" class="text">
         {{ value }}
       </p>
 
