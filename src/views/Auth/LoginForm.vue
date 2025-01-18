@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import type { FormStore } from '@/components/Form';
   import type { RulesObject } from '@/components/Form/types';
-  import { type StyleValue, reactive } from 'vue';
+  import { reactive } from 'vue';
   import { LockOutlined, UserOutlined } from '@ant-design/icons-vue';
   import { useToken } from 'ant-design-vue/es/theme/internal';
 
@@ -52,17 +52,6 @@
   const token = useToken()[1];
 
   console.log(token);
-
-  const styles = reactive<Record<string, StyleValue>>({
-    footer: {
-      marginTop: `${token.value.marginLG}px`,
-      textAlign: 'center',
-      width: '100%',
-    },
-    forgotPassword: {
-      float: 'right',
-    },
-  });
 </script>
 
 <template>
@@ -98,9 +87,6 @@
           >Stay logged in</a-checkbox
         >
       </a-form-item>
-      <RouterLink :style="styles.forgotPassword" to="/forgot-password">
-        Forgot password?
-      </RouterLink>
     </a-form-item>
     <a-form-item :style="{ marginBottom: '0px' }">
       <a-button block type="primary" @click="submit"> Login</a-button>
@@ -112,10 +98,6 @@
           feedbackMessage
         }}</a-typography-text>
       </a-space>
-      <div :style="styles.footer">
-        <a-typography-text>Don't have an account? </a-typography-text>
-        <RouterLink to="/register">Register now</RouterLink>
-      </div>
     </a-form-item>
   </a-form>
 </template>

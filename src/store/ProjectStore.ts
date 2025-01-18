@@ -195,7 +195,11 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
             if (response) {
               this.fetchAll();
               this.setAddedSuccessfully(true);
-            } else this.setAddedSuccessfully(false);
+            } else {
+              this.setAddedSuccessfully(false);
+            }
+          } catch (error) {
+            console.log(error.message);
           } finally {
             this.setLoadingAdd(false);
           }

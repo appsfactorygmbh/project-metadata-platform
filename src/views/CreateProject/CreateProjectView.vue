@@ -5,8 +5,10 @@
     FontColorsOutlined,
     PlusOutlined,
     ShoppingOutlined,
-    TeamOutlined,
+    NumberOutlined,
     UserOutlined,
+    SecurityScanOutlined,
+    ClockCircleOutlined,
   } from '@ant-design/icons-vue';
   import type { UnwrapRef } from 'vue';
   import type { CreateProjectModel } from '@/models/Project';
@@ -37,6 +39,10 @@
     department: '',
     clientName: '',
     isArchived: false,
+    offerId: '',
+    company: '',
+    companyState: 0,
+    ismsLevel: 0,
   });
 
   const validateMessages = {
@@ -89,7 +95,6 @@
     watch(isAdding, async (newVal) => {
       if (newVal == false) {
         if (projectStore.getAddedSuccessfully) {
-          await projectStore.fetchAll();
           fetchError.value = false;
           open.value = false;
           resetModal();
@@ -106,6 +111,10 @@
       department: formState.department,
       clientName: formState.clientName,
       isArchived: false,
+      offerId: formState.offerId,
+      company: formState.company,
+      companyState: formState.companyState,
+      ismsLevel: formState.ismsLevel,
     };
 
     await projectStore.create(projectData);
@@ -136,6 +145,7 @@
         :validate-messages="validateMessages"
         :label-col="labelCol"
         :wrapper-col="wrapperCol"
+        class="formContainer"
       >
         <a-form-item
           name="projectName"
@@ -145,7 +155,6 @@
         >
           <a-input
             v-model:value="formState.projectName"
-            class="inputField"
             placeholder="Project Name"
           >
             <template #prefix>
@@ -160,7 +169,6 @@
         >
           <a-input
             v-model:value="formState.businessUnit"
-            class="inputField"
             placeholder="Business Unit"
           >
             <template #prefix>
@@ -170,27 +178,11 @@
         </a-form-item>
         <a-form-item
           name="teamNumber"
-          :rules="[{ required: true }, { type: 'number', min: 0 }]"
-          :no-style="true"
-        >
-          <a-input-number
-            v-model:value="formState.teamNumber"
-            class="inputField"
-            placeholder="Team Number"
-          >
-            <template #prefix>
-              <TeamOutlined />
-            </template>
-          </a-input-number>
-        </a-form-item>
-        <a-form-item
-          name="department"
           :rules="[{ required: true, whitespace: true }]"
           :no-style="true"
         >
           <a-input
-            v-model:value="formState.department"
-            class="inputField"
+            v-model:value="formState.teamNumber"
             placeholder="Department"
           >
             <template #prefix>
@@ -205,13 +197,64 @@
         >
           <a-input
             v-model:value="formState.clientName"
-            class="inputField"
             placeholder="Client Name"
           >
             <template #prefix>
               <UserOutlined />
             </template>
           </a-input>
+        </a-form-item>
+        <a-form-item
+          name="offerId"
+          :rules="[{ required: true, whitespace: true }]"
+          :no-style="true"
+        >
+          <a-input v-model:value="formState.offerId" placeholder="Offer ID">
+            <template #prefix>
+              <NumberOutlined />
+            </template>
+          </a-input>
+        </a-form-item>
+        <a-form-item
+          name="company"
+          :rules="[{ required: true, whitespace: true }]"
+          :no-style="true"
+        >
+          <a-input v-model:value="formState.company" placeholder="Company">
+            <template #prefix>
+              <UserOutlined />
+            </template>
+          </a-input>
+        </a-form-item>
+        <a-form-item
+          name="companyState"
+          :rules="[{ required: true }, { type: 'number', min: 0 }]"
+          :no-style="true"
+        >
+          <a-input-number
+            v-model:value="formState.companyState"
+            placeholder="Company State"
+            style="width: 100%"
+          >
+            <template #prefix>
+              <ClockCircleOutlined />
+            </template>
+          </a-input-number>
+        </a-form-item>
+        <a-form-item
+          name="ismsLevel"
+          :rules="[{ required: true }, { type: 'number', min: 0 }]"
+          :no-style="true"
+        >
+          <a-input-number
+            v-model:value="formState.ismsLevel"
+            placeholder="ISMS Level"
+            style="width: 100%"
+          >
+            <template #prefix>
+              <SecurityScanOutlined />
+            </template>
+          </a-input-number>
         </a-form-item>
         <!--shows error if the PUT request failed-->
         <a-alert
@@ -229,9 +272,7 @@
   .formItem {
     max-width: none !important;
   }
-
-  .inputField {
-    width: 100%;
-    margin: 10px 0 10px 0;
+  .formContainer > * {
+    margin-bottom: 20px;
   }
 </style>

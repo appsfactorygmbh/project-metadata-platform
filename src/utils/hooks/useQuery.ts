@@ -3,6 +3,7 @@ import type { ComputedRef } from 'vue';
 
 export const useQuery = (queryNames: string[]) => {
   const router = useRouter();
+
   const routerSearchQuery: ComputedRef<(string | undefined)[]> = computed(
     () => {
       return queryNames.map(
@@ -11,6 +12,12 @@ export const useQuery = (queryNames: string[]) => {
       );
     },
   );
+
+  const isSearchQuery: ComputedRef<boolean> = computed(() => {
+    return queryNames
+      .map((queryName) => router.currentRoute.value.query[queryName])
+      .some((value) => value !== undefined && value !== 'undefined');
+  });
 
   const setSearchQuery = async (
     searchQuery: string | undefined,
@@ -28,5 +35,5 @@ export const useQuery = (queryNames: string[]) => {
     });
   };
 
-  return { queryNames, routerSearchQuery, setSearchQuery };
+  return { queryNames, routerSearchQuery, setSearchQuery, isSearchQuery };
 };

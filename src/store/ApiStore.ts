@@ -69,6 +69,8 @@ export const useApiStore = <Api extends ApiTypes>(
             args,
             this.api as Api,
           );
+        } catch {
+          return;
         } finally {
           this.setIsLoading(false);
         }
