@@ -20,13 +20,24 @@ import type {
   GetPluginResponse,
   GetProjectResponse,
   GetProjectsResponse,
+  ProblemDetails,
+  SecurityLevel,
 } from '../models/index';
 import {
+    CreateProjectRequestFromJSON,
     CreateProjectRequestToJSON,
     CreateProjectResponseFromJSON,
+    CreateProjectResponseToJSON,
     GetPluginResponseFromJSON,
+    GetPluginResponseToJSON,
     GetProjectResponseFromJSON,
+    GetProjectResponseToJSON,
     GetProjectsResponseFromJSON,
+    GetProjectsResponseToJSON,
+    ProblemDetailsFromJSON,
+    ProblemDetailsToJSON,
+    SecurityLevelFromJSON,
+    SecurityLevelToJSON,
 } from '../models/index';
 
 export interface ProjectsGetRequest {
@@ -35,6 +46,8 @@ export interface ProjectsGetRequest {
     businessUnit?: Array<string>;
     teamNumber?: Array<number>;
     isArchived?: boolean;
+    company?: Array<string>;
+    ismsLevel?: SecurityLevel;
     search?: string;
 }
 
@@ -125,6 +138,8 @@ export interface ProjectsApiInterface {
      * @param {Array<string>} [businessUnit] Optional. A list of business units to filter the projects by.
      * @param {Array<number>} [teamNumber] Optional. A list of team numbers to filter the projects by.
      * @param {boolean} [isArchived] Optional. The archival status of the projects to filter by.
+     * @param {Array<string>} [company] Optional. A list of companies to filter the projects by.
+     * @param {SecurityLevel} [ismsLevel] Optional. The ISMS level to filter the projects by.
      * @param {string} [search] Search string to filter the projects by.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -384,6 +399,14 @@ export class ProjectsApi extends runtime.BaseAPI implements ProjectsApiInterface
 
         if (requestParameters['isArchived'] != null) {
             queryParameters['IsArchived'] = requestParameters['isArchived'];
+        }
+
+        if (requestParameters['company'] != null) {
+            queryParameters['Company'] = requestParameters['company'];
+        }
+
+        if (requestParameters['ismsLevel'] != null) {
+            queryParameters['IsmsLevel'] = requestParameters['ismsLevel'];
         }
 
         if (requestParameters['search'] != null) {

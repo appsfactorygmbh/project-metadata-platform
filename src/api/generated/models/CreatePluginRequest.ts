@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 
+import { mapValues } from '../runtime';
 /**
  * Request for creating a new plugin.
  * @export
@@ -36,6 +37,12 @@ export interface CreatePluginRequest {
      * @memberof CreatePluginRequest
      */
     keys: Array<string>;
+    /**
+     * Base Url of the new plugin.
+     * @type {string}
+     * @memberof CreatePluginRequest
+     */
+    baseUrl: string;
 }
 
 /**
@@ -45,6 +52,7 @@ export function instanceOfCreatePluginRequest(value: object): value is CreatePlu
     if (!('pluginName' in value) || value['pluginName'] === undefined) return false;
     if (!('isArchived' in value) || value['isArchived'] === undefined) return false;
     if (!('keys' in value) || value['keys'] === undefined) return false;
+    if (!('baseUrl' in value) || value['baseUrl'] === undefined) return false;
     return true;
 }
 
@@ -61,6 +69,7 @@ export function CreatePluginRequestFromJSONTyped(json: any, ignoreDiscriminator:
         'pluginName': json['pluginName'],
         'isArchived': json['isArchived'],
         'keys': json['keys'],
+        'baseUrl': json['baseUrl'],
     };
 }
 
@@ -78,6 +87,7 @@ export function CreatePluginRequestToJSONTyped(value?: CreatePluginRequest | nul
         'pluginName': value['pluginName'],
         'isArchived': value['isArchived'],
         'keys': value['keys'],
+        'baseUrl': value['baseUrl'],
     };
 }
 

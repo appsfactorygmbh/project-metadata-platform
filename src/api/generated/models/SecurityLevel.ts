@@ -18,9 +18,9 @@
  * @export
  */
 export const SecurityLevel = {
-    NUMBER_0: 0,
-    NUMBER_1: 1,
-    NUMBER_2: 2
+    Normal: 'NORMAL',
+    High: 'HIGH',
+    VeryHigh: 'VERY_HIGH'
 } as const;
 export type SecurityLevel = typeof SecurityLevel[keyof typeof SecurityLevel];
 

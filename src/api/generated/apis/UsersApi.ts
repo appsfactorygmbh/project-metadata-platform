@@ -19,12 +19,19 @@ import type {
   CreateUserResponse,
   GetUserResponse,
   PatchUserRequest,
+  ProblemDetails,
 } from '../models/index';
 import {
+    CreateUserRequestFromJSON,
     CreateUserRequestToJSON,
     CreateUserResponseFromJSON,
+    CreateUserResponseToJSON,
     GetUserResponseFromJSON,
+    GetUserResponseToJSON,
+    PatchUserRequestFromJSON,
     PatchUserRequestToJSON,
+    ProblemDetailsFromJSON,
+    ProblemDetailsToJSON,
 } from '../models/index';
 
 export interface UsersPutRequest {

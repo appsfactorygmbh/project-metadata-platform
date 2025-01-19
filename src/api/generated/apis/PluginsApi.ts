@@ -20,13 +20,21 @@ import type {
   DeleteGlobalPluginResponse,
   GetGlobalPluginResponse,
   PatchGlobalPluginRequest,
+  ProblemDetails,
 } from '../models/index';
 import {
+    CreatePluginRequestFromJSON,
     CreatePluginRequestToJSON,
     CreatePluginResponseFromJSON,
+    CreatePluginResponseToJSON,
     DeleteGlobalPluginResponseFromJSON,
+    DeleteGlobalPluginResponseToJSON,
     GetGlobalPluginResponseFromJSON,
+    GetGlobalPluginResponseToJSON,
+    PatchGlobalPluginRequestFromJSON,
     PatchGlobalPluginRequestToJSON,
+    ProblemDetailsFromJSON,
+    ProblemDetailsToJSON,
 } from '../models/index';
 
 export interface PluginsPluginIdDeleteRequest {

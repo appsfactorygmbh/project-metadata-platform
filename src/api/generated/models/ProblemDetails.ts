@@ -12,13 +12,14 @@
  * Do not edit the class manually.
  */
 
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
  * @interface ProblemDetails
  */
 export interface ProblemDetails {
-    [key: string]: any  ;
+    [key: string]: any | any;
     /**
      * 
      * @type {string}

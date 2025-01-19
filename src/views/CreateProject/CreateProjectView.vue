@@ -41,8 +41,8 @@
     isArchived: false,
     offerId: '',
     company: '',
-    companyState: 0,
-    ismsLevel: 0,
+    companyState: 'EXTERNAL',
+    ismsLevel: 'INTERNAL',
   });
 
   const validateMessages = {
@@ -177,12 +177,12 @@
           </a-input>
         </a-form-item>
         <a-form-item
-          name="teamNumber"
+          name="department"
           :rules="[{ required: true, whitespace: true }]"
           :no-style="true"
         >
           <a-input
-            v-model:value="formState.teamNumber"
+            v-model:value="formState.department"
             placeholder="Department"
           >
             <template #prefix>
@@ -228,33 +228,24 @@
         </a-form-item>
         <a-form-item
           name="companyState"
-          :rules="[{ required: true }, { type: 'number', min: 0 }]"
+          :rules="[{ required: true }]"
           :no-style="true"
         >
-          <a-input-number
-            v-model:value="formState.companyState"
-            placeholder="Company State"
-            style="width: 100%"
-          >
-            <template #prefix>
-              <ClockCircleOutlined />
-            </template>
-          </a-input-number>
+          <a-select ref="select" v-model:value="formState.companyState">
+            <a-select-option value="INTERNAL">Internal</a-select-option>
+            <a-select-option value="EXTERNAL">External</a-select-option>
+          </a-select>
         </a-form-item>
         <a-form-item
           name="ismsLevel"
-          :rules="[{ required: true }, { type: 'number', min: 0 }]"
+          :rules="[{ required: true }]"
           :no-style="true"
         >
-          <a-input-number
-            v-model:value="formState.ismsLevel"
-            placeholder="ISMS Level"
-            style="width: 100%"
-          >
-            <template #prefix>
-              <SecurityScanOutlined />
-            </template>
-          </a-input-number>
+          <a-select ref="select" v-model:value="formState.ismsLevel">
+            <a-select-option value="NORMAL">Normal</a-select-option>
+            <a-select-option value="HIGH">High</a-select-option>
+            <a-select-option value="VERY_HIGH">Very High</a-select-option>
+          </a-select>
         </a-form-item>
         <!--shows error if the PUT request failed-->
         <a-alert

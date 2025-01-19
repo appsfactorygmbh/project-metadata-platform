@@ -18,8 +18,8 @@
  * @export
  */
 export const CompanyState = {
-    NUMBER_0: 0,
-    NUMBER_1: 1
+    External: 'EXTERNAL',
+    Internal: 'INTERNAL'
 } as const;
 export type CompanyState = typeof CompanyState[keyof typeof CompanyState];
 
