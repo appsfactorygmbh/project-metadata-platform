@@ -1,9 +1,9 @@
 {
   "token": {
     "colorPrimary": "#f5222d",
+    "colorBgContainer": "#101010",
     "colorInfo": "#f5222d",
     "colorSuccess": "#ffffff",
-    "colorBgBase": "#101010",
     "colorText": "#ffffff"
   },
   "algorithm": "dark"

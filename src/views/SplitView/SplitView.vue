@@ -9,8 +9,11 @@
   import ProjectView from '../ProjectView/ProjectView.vue';
   import { useEditing } from '@/utils/hooks';
   import { theme } from 'ant-design-vue';
+
   const { useToken } = theme;
   const { token } = useToken();
+
+  console.log(token.value.colorBgBase);
 
   const { isEditing } = useEditing();
   const tablePane = ref(null);
@@ -34,7 +37,7 @@
 
 <template>
   <div class="container">
-    <splitpanes class="default-theme costum-theme" @resized="onResize">
+    <splitpanes class="default-theme" @resized="onResize">
       <!--
         size: sets default proportion to 1:4
         min-size: sets smallest possible size to 20% and 1%
@@ -62,21 +65,11 @@
 
 <style scoped>
   :deep(.splitpanes.default-theme .splitpanes__pane) {
-    background-color: v-bind('token.colorBgBase') !important;
-  }
-  :deep(.splitpanes__splitter) {
-    background-color: v-bind('token.colorBgBase') !important;
-  }
-  :deep(
-    .splitpanes.default-theme .splitpanes__splitter::before,
-    .splitpanes.default-theme .splitpanes__splitter::after
-  ) {
-    background-color: v-bind('token.colorPrimaryBg') !important;
+    background-color: v-bind('token.colorBgContainer');
   }
 
   .splitpanes {
     height: 100vh;
-    background-color: black;
   }
 
   .leftPane {
