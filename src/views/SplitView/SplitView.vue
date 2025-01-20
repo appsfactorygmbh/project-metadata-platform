@@ -68,6 +68,19 @@
     background-color: v-bind('token.colorBgContainer');
   }
 
+  :deep(.splitpanes.default-theme .splitpanes__splitter) {
+    background-color: v-bind('token.colorBgElevated') !important;
+    border: 0;
+  }
+
+  :deep(.splitpanes.default-theme .splitpanes__splitter::before) {
+    background-color: v-bind('token.colorFillSecondary') !important;
+  }
+
+  :deep(.splitpanes.default-theme .splitpanes__splitter::after) {
+    background-color: v-bind('token.colorFillSecondary') !important;
+  }
+
   .splitpanes {
     height: 100vh;
   }

@@ -189,6 +189,5 @@
     display: flex;
     justify-content: center;
     padding-top: 1em;
-    background-color: v-bind('token.colorBorder');
   }
 </style>

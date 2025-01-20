@@ -33,6 +33,8 @@
   const projectRouting = inject(projectRoutingSymbol)!;
   const token = useThemeToken();
 
+  console.log(token);
+
   const editingClass = computed(() => ({
     'editing-mode': isEditing.value,
   }));
@@ -542,8 +544,7 @@
     padding: 1em 0;
     border-radius: 10px;
     container-type: inline-size;
-    color: v-bind('token.colorPrimary');
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: v-bind('token.colorBgElevated') !important;
   }
 
   @container (max-width: 53vw) {
@@ -564,6 +565,7 @@
     display: table;
     padding: 0 1em 0 1em;
     max-width: 100%;
+    background-color: v-bind('token.colorBgElevated ');
   }
 
   .button {
@@ -574,7 +576,7 @@
   }
 
   .icon {
-    color: black;
+    color: v-bind('token.colorText');
     font-size: 1.5em;
   }
 

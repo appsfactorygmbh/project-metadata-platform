@@ -23,7 +23,7 @@
     @click="$emit('click')"
   >
     <template #icon>
-      <slot name="icon" />
+      <slot name="icon" class="icon" />
     </template>
   </a-button>
 </template>
@@ -32,6 +32,9 @@
   import type { ButtonShape, ButtonType } from 'ant-design-vue/es/button';
   import type { SizeType } from 'ant-design-vue/es/config-provider';
   import type { TooltipPlacement } from 'ant-design-vue/es/tooltip';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   defineProps({
     type: {
@@ -65,6 +68,5 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    color: white;
   }
 </style>
