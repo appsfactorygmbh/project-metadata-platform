@@ -18,7 +18,6 @@ import {
 } from '@/store/injectionSymbols';
 import router from '@/router';
 import { useStore } from 'pinia-generic';
-import initAuth from '@/auth';
 
 const testData: GlobalPluginModel[] = [
   {
@@ -122,7 +121,7 @@ describe('GlobalPluginsView.vue', () => {
   const generateWrapper = () => {
     return mount(GlobalPluginsView, {
       global: {
-        plugins: [createTestingPinia(piniaOptions), router, initAuth(router)],
+        plugins: [createTestingPinia(piniaOptions), router],
         provide: {
           [globalPluginStoreSymbol as symbol]: globalPluginStore,
           [pluginStoreSymbol as symbol]: usePluginStore(testingPinia),
