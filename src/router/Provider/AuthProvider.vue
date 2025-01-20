@@ -37,14 +37,14 @@
   const authenticated = ref(false);
 
   watch(
-    () => auth.check(),
+    () => auth?.check(),
     (check) => {
       authenticated.value = check;
     },
   );
 
   onMounted(() => {
-    auth.load().then(() => {
+    auth?.load().then(() => {
       authInitialized.value = true;
     });
   });
@@ -53,9 +53,9 @@
     () => authInitialized.value && !authenticated.value,
     (initialized) => {
       if (!initialized) return;
-      if (!auth.check()) {
+      if (!auth?.check()) {
         auth
-          .refresh()
+          ?.refresh()
           .then((data) => {
             authenticationFailed.value = false;
           })
