@@ -86,10 +86,7 @@
 </script>
 
 <template>
-  <a-form
-    ref="formRef"
-    :model="dynamicValidateForm"
-  >
+  <a-form ref="formRef" :model="dynamicValidateForm">
     <a-form-item
       :rules="rulesRef.email"
       name="email"

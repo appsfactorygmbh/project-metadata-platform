@@ -6,6 +6,7 @@ import tsParser from '@typescript-eslint/parser';
 import vuePlugin from 'eslint-plugin-vue';
 import * as vueParser from 'vue-eslint-parser';
 import eslintConfigPrettier from 'eslint-config-prettier';
+import eslintPluginPrettier from 'eslint-plugin-prettier';
 import unusedImports from 'eslint-plugin-unused-imports';
 import globals from 'globals';
 
@@ -92,6 +93,7 @@ const vueConfig: ConfigWithExtends = {
     'vue-eslint': vuePlugin,
     '@typescript-eslint': tsPlugin,
     'unused-imports': unusedImports,
+    prettier: eslintPluginPrettier,
   },
   extends: [
     eslint.configs.recommended,
@@ -147,6 +149,7 @@ const typescriptConfig: ConfigWithExtends = {
   plugins: {
     '@typescript-eslint': tsPlugin,
     'unused-imports': unusedImports,
+    prettier: eslintPluginPrettier,
   },
   languageOptions: {
     parser: tsParser,
@@ -270,5 +273,5 @@ export default tseslint.config(
   ignoreFiles,
   //disableTypeChecked,
   // keep as last item to override conflicting rules
-  // { name: 'prettier', ...eslintConfigPrettier },
+  { name: 'prettier', ...eslintConfigPrettier },
 );

@@ -25,22 +25,13 @@
 </script>
 
 <template>
-  <div
-    ref="timeStampSize"
-    class="container"
-  >
-    <div
-      class="text timeStamp"
-      :style="{ minWidth }"
-    >
+  <div ref="timeStampSize" class="container">
+    <div class="text timeStamp" :style="{ minWidth }">
       {{ new Date(props.timeStamp).toLocaleString('de-DE') }}
     </div>
     <div class="line-container">
       <div class="circle" />
-      <div
-        v-if="!isLast"
-        class="line"
-      />
+      <div v-if="!isLast" class="line" />
     </div>
     <p class="text">
       {{ props.logMessage }}

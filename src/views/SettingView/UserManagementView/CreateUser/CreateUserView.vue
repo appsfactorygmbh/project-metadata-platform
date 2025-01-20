@@ -22,11 +22,7 @@
 </script>
 
 <template>
-  <FormModal
-    title="Create User"
-    :form-store="formStore"
-    @close="onClose"
-  >
+  <FormModal title="Create User" :form-store="formStore" @close="onClose">
     <CreateUserForm
       :form-store="formStore"
       :initial-values="initialFormValues"

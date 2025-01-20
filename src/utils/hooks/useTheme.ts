@@ -8,8 +8,6 @@ export const themeConfig = ref({
 
 export function useTheme() {
   const isDark = useDark({
-    selector: 'body',
-    attribute: 'color-scheme',
     valueDark: 'dark',
     valueLight: 'light',
     onChanged: (isDark) => {

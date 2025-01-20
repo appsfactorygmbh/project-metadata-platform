@@ -90,10 +90,7 @@
     >
       <!-- return to homepage button-->
       <a-layout-header style="height: 80px" />
-      <FloatingButton
-        :button="backButton"
-        class="iconBack"
-      />
+      <FloatingButton :button="backButton" class="iconBack" />
 
       <!-- navigation elements -->
       <a-menu
@@ -101,11 +98,7 @@
         class="menuItem"
         mode="inline"
       >
-        <a-menu-item
-          key="1"
-          class="userManagement"
-          @click="clickTab('User')"
-        >
+        <a-menu-item key="1" class="userManagement" @click="clickTab('User')">
           <UserOutlined class="icons" />
           <span>User Management</span>
         </a-menu-item>

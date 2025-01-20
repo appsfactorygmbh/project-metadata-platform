@@ -10,10 +10,5 @@
 </script>
 
 <template>
-  <a-button
-    type="primary"
-    @click="logout"
-  >
-    Logout
-  </a-button>
+  <a-button type="primary" @click="logout"> Logout </a-button>
 </template>
