@@ -206,11 +206,7 @@
           placement="left"
           title="Click here to toggle between active and archived projects"
         >
-          <a-button
-            class="button"
-            @click="toggleShowFilter"
-            :style="highlightButtonStyle"
-          >
+          <a-button class="button" @click="toggleShowFilter">
             <template #icon>
               <InboxOutlined v-if="filterType === 'active'" />
               <BulbOutlined v-else />

@@ -1,7 +1,7 @@
 {
   "token": {
+    "colorBgContainer": "#27d157",
     "colorPrimary": "#6d6e6f",
-    "colorBgContainer": "#f2f2f2",
     "colorSuccess": "#27d157",
     "colorLink": "#ff002e",
     "colorInfo": "#ff002e",

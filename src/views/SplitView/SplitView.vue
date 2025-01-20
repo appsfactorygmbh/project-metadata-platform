@@ -65,7 +65,7 @@
 
 <style scoped>
   :deep(.splitpanes.default-theme .splitpanes__pane) {
-    background-color: v-bind('token.colorBgContainer');
+    background-color: v-bind('token.colorBgContainer') !important;
   }
 
   :deep(.splitpanes.default-theme .splitpanes__splitter) {
