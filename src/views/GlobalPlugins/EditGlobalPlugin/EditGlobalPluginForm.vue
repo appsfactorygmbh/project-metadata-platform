@@ -16,15 +16,18 @@
   const [notificationApi, contextHolder] = notification.useNotification();
 
   const onSubmit: FormSubmitType = (fields) => {
-    if (!pluginIdRef.value) return;
-    globalPluginStore.update(pluginIdRef.value, {
-      ...fields,
-    }).catch((error) => {
-      notificationApi.error({
-        message: 'The plugin could not be updated.',
+    if (!pluginIdRef.value) {
+      return;
+    }
+
+    globalPluginStore
+      .update(pluginIdRef.value, { ...fields })
+      .catch((error) => {
+        notificationApi.error({
+          message: 'The plugin could not be updated.',
+        });
+        console.error(error);
       });
-      console.error(error);
-    });
   };
 
   const pluginIdRef = ref<number | null>(null);
