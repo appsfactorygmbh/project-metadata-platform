@@ -359,6 +359,7 @@
       0.4 * windowSize,
     ];
 
+    // runs backwards through the breakpoints and checks if the width is larger then the breakpoint
     for (let index = breakpoints.length - 1; index >= 0; index--) {
       if (pwidth > breakpoints[index]) {
         return index;
