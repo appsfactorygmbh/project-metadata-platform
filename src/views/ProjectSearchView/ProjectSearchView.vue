@@ -151,7 +151,6 @@
 
   onMounted(async () => {
     await projectStore.fetchAll();
-    console.log(projectStore.getProjects);
 
     searchStore?.setSearchQuery(searchStorage.value.searchQuery);
     await setFilterQuery();
