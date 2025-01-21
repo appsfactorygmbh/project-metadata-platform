@@ -71,6 +71,8 @@
   const projectStore = useProjectStore();
   const projectEditStore = inject(projectEditStoreSymbol);
 
+  const emit = defineEmits(['setBlur']);
+
   const plugins = ref<PluginEditModel[]>([]);
   const loading = computed(
     () => pluginStore.getIsLoading || projectStore.getIsLoading,
@@ -136,6 +138,10 @@
 
   function openGroupPopup(pluginGroup: GroupedPlugin) {
     selectedGroup.value = pluginGroup;
+
+    // emits event to turn on blur in the background
+    emit('setBlur', true);
+
     // Delay adding the event listener to prevent immediate closing due to initial click
     setTimeout(() => {
       document.addEventListener('click', handleOutsideClick);
@@ -144,6 +150,10 @@
 
   function closeGroupPopup() {
     selectedGroup.value = null;
+
+    // emits event to turn off blur in the background
+    emit('setBlur', false);
+
     document.removeEventListener('click', handleOutsideClick);
   }
 

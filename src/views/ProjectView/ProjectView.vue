@@ -158,14 +158,21 @@
       await localLogStore?.fetch(projectID.value);
     }
   };
+
+  // Blur effect
+  const isBlurred = ref(false);
+
+  function setBlur(state: boolean) {
+    isBlurred.value = state;
+  }
 </script>
 
 <template>
   <div v-if="!isEmpty">
     <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
     <ProjectInformation />
-    <ProjectPlugins class="pluginView" />
-    <LocalLogView class="LocalLog" />
+    <ProjectPlugins class="pluginView" @setBlur="setBlur" />
+    <LocalLogView class="LocalLog" :class="{ blur: isBlurred }" />
     <ConfirmAction
       :is-open="isModalOpen"
       title="Cancel Editing"

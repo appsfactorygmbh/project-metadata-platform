@@ -8,6 +8,7 @@
   import axios from 'axios';
 
   const auth = useAuth();
+  const router = useRouter();
   const formStore = useFormStore('loginForm');
 
   const feedbackMessage = ref('');
@@ -36,6 +37,25 @@
 
   const token = useToken()[1];
   const screens = useBreakpoint();
+
+  const refreshToken = computed(() => auth.token()?.split('|')[1]);
+
+  const callback = () => {
+    window.location.href =
+      (router.currentRoute.value.query.redirect as string) ?? '/';
+  };
+
+  onMounted(() => {
+    auth?.load().then(() => {
+      const authCheck = auth.check();
+      if (authCheck) return callback();
+      auth
+        .refresh({ data: { refreshToken: refreshToken.value } })
+        .then((response) => {
+          return callback();
+        });
+    });
+  });
 
   const styles = computed(() => ({
     header: {
