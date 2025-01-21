@@ -359,11 +359,11 @@
       0.4 * windowSize,
     ];
 
-    breakpoints.forEach((breakpoint, index) => {
-      if (pwidth > breakpoint) {
+    for (let index = breakpoints.length - 1; index >= 0; index--) {
+      if (pwidth > breakpoints[index]) {
         return index;
       }
-    });
+    }
 
     return -1;
   }
