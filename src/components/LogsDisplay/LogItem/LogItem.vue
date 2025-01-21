@@ -15,7 +15,6 @@
       required: true,
     },
   });
-  const timeStampDate = new Date(props.timeStamp);
   const timeStampSize = ref(null);
   const size = reactive(useElementSize(timeStampSize));
 
@@ -28,7 +27,7 @@
 <template>
   <div ref="timeStampSize" class="container">
     <div class="text timeStamp" :style="{ minWidth }">
-      {{ timeStampDate.toLocaleString('de-DE') }}
+      {{ new Date(props.timeStamp).toLocaleString('de-DE') }}
     </div>
     <div class="line-container">
       <div class="circle" />
