@@ -1,7 +1,7 @@
 Cypress.on('uncaught:exception', (err, runnable) => {
   // returning false here prevents Cypress from failing the test if the login call to the backend fails
-  return false
-})
+  return false;
+});
 
 describe('Login Screen', () => {
   it('should load correctly', () => {
