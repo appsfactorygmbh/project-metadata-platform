@@ -20,6 +20,7 @@
 <style>
   .LocalLog {
     margin: 2em 5em;
+    z-index: 1;
   }
 
   .cardContainer {
@@ -32,5 +33,10 @@
     margin-bottom: 60px;
     padding-top: 0.6em;
     border: none;
+  }
+
+  .blur {
+    filter: blur(5px);
+    pointer-events: none;
   }
 </style>

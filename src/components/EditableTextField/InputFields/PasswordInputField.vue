@@ -108,18 +108,22 @@
   const [notificationApi] = useNotification();
 
   const onSubmit: FormSubmitType = (fields) => {
-    try {
-      userStore?.update(userId, { password: toRaw(fields).newPassword });
-    } catch (error) {
-      notificationApi.error({
-        message: 'An error occurred. The user could not be created',
+    const newPassword = {
+      password: toRaw(fields).newPassword,
+    };
+    userStore
+      ?.update(userId, newPassword)
+      .then(() => {
+        notificationApi.success({
+          message: 'Password updated',
+        });
+      })
+      .catch((error) => {
+        notificationApi.error({
+          message: 'An error occurred. The password could not be updated',
+        });
+        console.error('Error updating password:', error);
       });
-      console.error('Error creating user:', error);
-    } finally {
-      notificationApi.success({
-        message: 'Password updated',
-      });
-    }
   };
 
   formStore.setOnSubmit(onSubmit);
