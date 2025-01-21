@@ -141,6 +141,10 @@
       clientName: updateProjectInformation?.clientName,
       pluginList: updatedPluginList.value,
       isArchived: projectStore.getProject.isArchived,
+      offerId: updateProjectInformation?.offerId,
+      company: updateProjectInformation?.company,
+      companyState: updateProjectInformation?.companyState,
+      ismsLevel: updateProjectInformation?.ismsLevel,
     };
     console.log(updatedProject);
 
