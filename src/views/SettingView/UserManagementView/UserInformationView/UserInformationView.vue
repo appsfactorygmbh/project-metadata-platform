@@ -8,6 +8,9 @@
   import { useRouter } from 'vue-router';
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   const router = useRouter();
   const userStore = inject(userStoreSymbol)!;
@@ -133,7 +136,7 @@
     padding: 1em 3em;
     margin: 2em 1em;
     border-radius: 10px;
-    background-color: white;
+    background-color: v-bind('token.colorBgElevated');
     min-width: 450px;
     height: auto;
     flex-direction: column;
@@ -143,6 +146,7 @@
 
   :deep(.ant-card) {
     margin: 0.5em 0;
+    background-color: v-bind('token.colorBgElevated');
   }
 
   .avatar {

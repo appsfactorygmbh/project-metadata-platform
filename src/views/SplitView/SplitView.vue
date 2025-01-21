@@ -13,8 +13,6 @@
   const { useToken } = theme;
   const { token } = useToken();
 
-  console.log(token.value.colorBgBase);
-
   const { isEditing } = useEditing();
   const tablePane = ref(null);
   const dimensions = reactive(useElementSize(tablePane));

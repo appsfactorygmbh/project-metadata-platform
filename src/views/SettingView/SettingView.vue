@@ -9,6 +9,9 @@
   } from '@ant-design/icons-vue';
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   // Component state using refs
   const collapsed = ref<boolean>(false);
@@ -89,7 +92,7 @@
       :width="280"
     >
       <!-- return to homepage button-->
-      <a-layout-header style="height: 80px" />
+      <a-layout-header class="listHeader" />
       <FloatingButton :button="backButton" class="iconBack" />
 
       <!-- navigation elements -->
@@ -148,17 +151,9 @@
 
   .layout {
     min-height: 100%;
+    background-color: v-bind('token.colorBgContainer');
   }
 
-  .ant-layout-header {
-    background: #fff;
-    padding: 0;
-  }
-
-  .ant-layout-sider {
-    background: #fff;
-    height: 100vh;
-  }
   /* Style for the sidebar menu */
   :deep(.ant-menu-root) {
     border-inline-end: none !important;
@@ -170,11 +165,11 @@
 
   :deep(.ant-menu-item-selected),
   :deep(.ant-menu-item):active {
-    background-color: color-mix(in srgb, #6d6e6f, white) !important;
+    background-color: v-bind('token.colorText');
     color: black;
   }
   :deep(.ant-menu-item-selected):hover {
-    background-color: color-mix(in srgb, #6d6e6f, white 60%) !important;
+    background-color: v-bind('token.colorBgElevated');
   }
 
   span {
@@ -195,7 +190,19 @@
 
   /* Style for the expandable button on bottom*/
   :deep(.ant-layout-sider-trigger) {
-    background-color: #6d6e6f !important;
-    color: white !important;
+    background-color: v-bind('token.colorBgElevated');
+  }
+  .sideSlider {
+    background-color: v-bind('token.colorBgElevated');
+  }
+  .listHeader {
+    height: 80px;
+    background-color: v-bind('token.colorBgElevated');
+  }
+  :deep(.ant-layout-content) {
+    background-color: v-bind('token.colorBgContainer');
+  }
+  .menuItem {
+    background-color: v-bind('token.colorBgElevated');
   }
 </style>
