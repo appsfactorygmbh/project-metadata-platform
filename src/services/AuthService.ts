@@ -1,10 +1,28 @@
 import { type AuthDriver, type HttpDriver } from 'vue-auth3';
 import type { ArgsType } from '@/models/utils/ArgsType';
-import { extractToken } from '@/utils/api';
+import { type SavedTokenOptions, getSavedTokens } from '@/utils/api';
+import { exportTokens, importTokens } from '@/utils/api/tokenHandler';
 
-type RequestConfig = Omit<ArgsType<HttpDriver['request']>[0], 'data'>;
+type RequestConfig = Omit<ArgsType<HttpDriver['request']>[0], 'data'> & {
+  _target?: string;
+};
 
 class AuthService {
+  #options: SavedTokenOptions = {
+    storage: 'localStorage',
+    key: 'auth_token',
+  };
+
+  #getToken = (type: 'access' | 'refresh') => {
+    const tokens = getSavedTokens(this.#options);
+    const { accessToken, refreshToken } = importTokens(tokens);
+    return type === 'access' ? accessToken : refreshToken;
+  };
+
+  setOptions(options: SavedTokenOptions) {
+    this.#options = options;
+  }
+
   get loginRequest(): RequestConfig {
     return {
       url: import.meta.env.VITE_BACKEND_URL + '/Auth/basic',
@@ -14,6 +32,7 @@ class AuthService {
         accept: 'text/plain',
       },
       responseType: 'json',
+      _target: 'login',
     };
   }
 
@@ -24,9 +43,10 @@ class AuthService {
       headers: {
         accept: 'text/plain',
         'Content-Type': 'application/json',
-        Authorization: 'Refresh',
+        Authorization: `Refresh ${this.#getToken('refresh')}`,
       },
       responseType: 'json',
+      _target: 'refresh',
     };
   }
 
@@ -39,6 +59,7 @@ class AuthService {
         accept: 'text/plain',
       },
       responseType: 'json',
+      _target: 'register',
     };
   }
 
@@ -51,6 +72,7 @@ class AuthService {
         'Content-Type': 'application/json',
       },
       responseType: 'json',
+      _target: 'fetchUser',
     };
   }
 
@@ -58,7 +80,10 @@ class AuthService {
     return {
       request(__, { headers, ...rest }, token) {
         const [accessToken, refreshToken] = (token || '|').split('|');
-        if (headers['Authorization']?.startsWith('Refresh')) {
+        if (
+          headers['_target']?.toLowerCase().startsWith('refresh') ||
+          headers['Authorization']?.startsWith('Refresh')
+        ) {
           headers['Authorization'] = `Refresh ${refreshToken}`;
         } else {
           headers['Authorization'] = `Bearer ${accessToken}`;
@@ -66,17 +91,18 @@ class AuthService {
         return { headers, ...rest };
       },
       response(auth, res) {
-        console.log('login response', res);
         if (res.status === 400) {
           throw new Error('Invalid refresh token');
         }
         let { accessToken, refreshToken } = res.data;
         if (!accessToken && !refreshToken) {
-          [accessToken, refreshToken] = (auth?.token() ?? '|').split('|');
+          const importedTokens = importTokens(auth?.token());
+          accessToken = importedTokens.accessToken;
+          refreshToken = importedTokens.refreshToken;
         }
 
         if (accessToken && refreshToken) {
-          return extractToken(accessToken) + '|' + extractToken(refreshToken);
+          return exportTokens({ accessToken, refreshToken });
         }
 
         return null;
