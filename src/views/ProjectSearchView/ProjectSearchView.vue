@@ -249,7 +249,8 @@
     {
       title: 'Business Unit',
       dataIndex: 'businessUnit',
-      key: 'businessNumber',
+      key: 'businessUnit',
+      searchable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'string',
@@ -261,6 +262,7 @@
       title: 'Team Number',
       dataIndex: 'teamNumber',
       key: 'teamNumber',
+      searchable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'number',
