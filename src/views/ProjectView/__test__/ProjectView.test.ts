@@ -98,6 +98,6 @@ describe('ProjectView.vue', () => {
     saveButton.trigger('click');
     await flushPromises();
 
-    expect(logSpy).toHaveBeenNthCalledWith(2, testUpdatedProject);
+    expect(logSpy).toHaveBeenNthCalledWith(3, testUpdatedProject);
   });
 });
