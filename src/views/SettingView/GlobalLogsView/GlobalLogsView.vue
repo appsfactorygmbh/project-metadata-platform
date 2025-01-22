@@ -3,6 +3,9 @@
   import { logsStoreSymbol } from '@/store/injectionSymbols';
   import { debounce } from 'lodash';
   import { inject, onBeforeMount } from 'vue';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
   const searchValue = ref('');
   const filteredLog = ref<LogEntryModel[]>([]);
   const logsStore = inject(logsStoreSymbol)!;
@@ -61,7 +64,7 @@
 
   .cardContainer {
     flex: 1;
-    background-color: white;
+    background-color: v-bind('token.colorBgElevated');
     padding: 1em;
     overflow: auto;
     margin-bottom: 60px;

@@ -2,6 +2,9 @@
   import { inject } from 'vue';
   import { storeToRefs } from 'pinia';
   import { localLogStoreSymbol } from '@/store/injectionSymbols';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   const localLogStore = inject(localLogStoreSymbol)!;
   const { getLocalLog, getIsLoadingLocalLog } = storeToRefs(localLogStore);
@@ -26,7 +29,7 @@
     flex: 1;
     justify-self: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-color: white;
+    background-color: v-bind('token.colorBgElevated');
     border-radius: 15px;
     overflow: auto;
     margin-bottom: 60px;

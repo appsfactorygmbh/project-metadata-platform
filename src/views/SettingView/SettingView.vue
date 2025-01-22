@@ -130,7 +130,7 @@
           <a-breadcrumb-item>Settings</a-breadcrumb-item>
           <a-breadcrumb-item> {{ tab }} </a-breadcrumb-item>
         </a-breadcrumb>
-        <div style="padding: 10px; min-height: 650px">
+        <div style="padding: 10px; min-height: 650px; height: 100vh">
           <RouterView />
         </div>
       </a-layout-content>
@@ -151,7 +151,7 @@
 
   .layout {
     min-height: 100%;
-    background-color: v-bind('token.colorBgContainer');
+    background-color: v-bind('token.colorFill');
   }
 
   /* Style for the sidebar menu */
@@ -165,8 +165,11 @@
 
   :deep(.ant-menu-item-selected),
   :deep(.ant-menu-item):active {
-    background-color: v-bind('token.colorText');
-    color: black;
+    background-color: v-bind('token.colorFillContentHover');
+    color: v-bind('token.colorText');
+  }
+  :deep(.ant-menu-item):hover {
+    background-color: v-bind('token.colorFillContentHover') !important;
   }
   :deep(.ant-menu-item-selected):hover {
     background-color: v-bind('token.colorBgElevated');
@@ -190,7 +193,7 @@
 
   /* Style for the expandable button on bottom*/
   :deep(.ant-layout-sider-trigger) {
-    background-color: v-bind('token.colorBgElevated');
+    background-color: v-bind('token.colorBgSpotlight');
   }
   .sideSlider {
     background-color: v-bind('token.colorBgElevated');
@@ -200,7 +203,7 @@
     background-color: v-bind('token.colorBgElevated');
   }
   :deep(.ant-layout-content) {
-    background-color: v-bind('token.colorBgContainer');
+    background-color: v-bind('token.colorFill');
   }
   .menuItem {
     background-color: v-bind('token.colorBgElevated');

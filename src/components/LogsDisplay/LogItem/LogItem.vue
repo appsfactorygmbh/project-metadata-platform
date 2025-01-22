@@ -1,6 +1,10 @@
 <script setup lang="ts">
   import { reactive, ref } from 'vue';
   import { useElementSize } from '@vueuse/core';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
+
   const props = defineProps({
     timeStamp: {
       type: String,
@@ -51,7 +55,7 @@
   .circle {
     width: 10px !important;
     height: 10px !important;
-    background-color: white;
+    background-color: v-bind('token.colorBgContainer');
     border: 3px solid #6d6e6f;
     border-radius: 50%;
     box-sizing: border-box;
@@ -59,7 +63,7 @@
   .line {
     width: 3px;
     min-height: 30px;
-    background-color: rgba(5, 5, 5, 0.06);
+    background-color: v-bind('token.colorTextDisabled');
     flex-grow: 1;
   }
   .container {

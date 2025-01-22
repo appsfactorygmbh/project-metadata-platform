@@ -308,4 +308,7 @@
   .clickable-table :deep(.table-row) {
     cursor: pointer;
   }
+  :deep(.ant-table-cell .ant-table-cell-ellipsis .ant-table-column-sort) {
+    background-color: white;
+  }
 </style>
