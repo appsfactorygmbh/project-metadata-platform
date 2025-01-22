@@ -55,7 +55,7 @@
 
   const highlightButtonStyle = computed(() =>
     searchQuery.isSearchQuery.value
-      ? { color: '#3e8ee2', width: '100%' }
+      ? { color: '#3e8ee2', width: '100%', borderColor: '#3e8ee2' }
       : {
           color: token.value.colorText,
           width: '100%',
