@@ -5,8 +5,7 @@ export const getFetchErrorMessage = async (
   defaultMessage: string | undefined = 'Unbekannter Fehler',
 ): Promise<string> => {
   if (error instanceof ResponseError) {
-    const res = await error.response?.json();
-    return JSON.stringify(res);
+    return await error.response?.text();
   }
   if (error instanceof Error) {
     return error.message;

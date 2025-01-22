@@ -15,6 +15,7 @@
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { useProjectStore } from '@/store';
   import { projectRoutingSymbol } from '@/store/injectionSymbols';
+  import { SecurityLevel, CompanyState } from '@/api/generated';
 
   const open = ref<boolean>(false);
 
@@ -31,6 +32,9 @@
 
   const isAdding = computed(() => projectStore.getIsLoadingAdd);
   const fetchError = ref<boolean>(false);
+  const errorMessage = ref<string>(
+    'An error occurred while creating the project.',
+  );
 
   const formState: UnwrapRef<CreateProjectModel> = reactive({
     projectName: '',
@@ -41,8 +45,8 @@
     isArchived: false,
     offerId: '',
     company: '',
-    companyState: 'EXTERNAL',
-    ismsLevel: 'INTERNAL',
+    companyState: CompanyState.Internal,
+    ismsLevel: SecurityLevel.Normal,
   });
 
   const validateMessages = {
@@ -92,18 +96,6 @@
 
   // sends PUT request to the backend
   const submit = async () => {
-    watch(isAdding, async (newVal) => {
-      if (newVal == false) {
-        if (projectStore.getAddedSuccessfully) {
-          fetchError.value = false;
-          open.value = false;
-          resetModal();
-        } else {
-          fetchError.value = true;
-        }
-      }
-    });
-
     const projectData: CreateProjectModel = {
       projectName: formState.projectName,
       businessUnit: formState.businessUnit,
@@ -117,8 +109,14 @@
       ismsLevel: formState.ismsLevel,
     };
 
-    await projectStore.create(projectData);
-
+    try {
+      await projectStore.create(projectData);
+    } catch (error) {
+      fetchError.value = true;
+      errorMessage.value = String(error);
+      return;
+    }
+    open.value = false;
     await projectStore.fetchAll();
     const projects = projectStore.getProjects;
     const newProject = projects[projects.length - 1];
@@ -156,6 +154,21 @@
           <a-input
             v-model:value="formState.projectName"
             placeholder="Project Name"
+          >
+            <template #prefix>
+              <FontColorsOutlined />
+            </template>
+          </a-input>
+        </a-form-item>
+        <a-form-item
+          name="teamNumber"
+          :rules="[{ required: true, whitespace: true }]"
+          class="column"
+          :no-style="true"
+        >
+          <a-input
+            v-model:value="formState.teamNumber"
+            placeholder="Team Number"
           >
             <template #prefix>
               <FontColorsOutlined />
@@ -232,6 +245,9 @@
           :no-style="true"
         >
           <a-select ref="select" v-model:value="formState.companyState">
+            <template #itemIcon>
+              <UserOutlined />
+            </template>
             <a-select-option value="INTERNAL">Internal</a-select-option>
             <a-select-option value="EXTERNAL">External</a-select-option>
           </a-select>
@@ -250,7 +266,7 @@
         <!--shows error if the PUT request failed-->
         <a-alert
           v-if="fetchError"
-          message="Failed to create Project"
+          :message="errorMessage"
           type="error"
           show-icon
         ></a-alert>
