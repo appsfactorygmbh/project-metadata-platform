@@ -175,6 +175,7 @@
         projectRouting.setProjectId(newProjectId);
       }
     }
+    return;
   };
 
   const getNextArchivedProjectId = (): number | undefined => {

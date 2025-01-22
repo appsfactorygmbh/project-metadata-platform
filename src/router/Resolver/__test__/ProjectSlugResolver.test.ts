@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import auth from '@/auth';
+import initAuth from '@/auth';
 import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { ProjectSlugResolver } from '..';
 import { createTestingPinia } from '@pinia/testing';
@@ -80,7 +80,7 @@ describe('ProjectSlugResolver.vue', () => {
     return mount(ProjectSlugResolver, {
       plugins: [createTestingPinia(piniaOptions)],
       global: {
-        plugins: [mockRouter, auth],
+        plugins: [mockRouter, initAuth(mockRouter)],
       },
     });
   };
