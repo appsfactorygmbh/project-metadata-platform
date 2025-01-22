@@ -14,9 +14,6 @@
   import { usePluginStore, useProjectStore } from '@/store';
   import type { PluginModel } from '@/models/Plugin';
   import _ from 'lodash';
-  import { useThemeToken } from '@/utils/hooks';
-
-  const token = useThemeToken();
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
@@ -170,7 +167,7 @@
   <div v-if="!isEmpty">
     <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
     <ProjectInformation />
-    <ProjectPlugins class="pluginView" @setBlur="setBlur" />
+    <ProjectPlugins class="pluginView" @set-blur="setBlur" />
     <LocalLogView class="LocalLog" :class="{ blur: isBlurred }" />
     <ConfirmAction
       :is-open="isModalOpen"

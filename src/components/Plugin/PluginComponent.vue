@@ -5,7 +5,6 @@
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import { projectEditStoreSymbol } from '@/store/injectionSymbols';
   import { useThemeToken } from '@/utils/hooks';
-  import { bind } from 'lodash';
 
   const token = useThemeToken();
 

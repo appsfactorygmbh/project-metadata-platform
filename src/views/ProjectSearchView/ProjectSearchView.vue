@@ -9,7 +9,7 @@
   import { type SearchStore, useSearchStore } from '@/store/SearchStore';
   import type { ProjectModel } from '@/models/Project';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import _, { bind } from 'lodash';
+  import _ from 'lodash';
   import { useSessionStorage, useToggle, useWindowSize } from '@vueuse/core';
   import {
     BulbOutlined,

@@ -56,10 +56,10 @@
       if (!auth?.check()) {
         auth
           ?.refresh()
-          .then((data) => {
+          .then(() => {
             authenticationFailed.value = false;
           })
-          .catch((error) => {
+          .catch(() => {
             authenticationFailed.value = true;
           });
       }
