@@ -8,10 +8,9 @@
   import { CreateProjectView } from '@/views/CreateProject';
   import ProjectView from '../ProjectView/ProjectView.vue';
   import { useEditing } from '@/utils/hooks';
-  import { theme } from 'ant-design-vue';
+  import { useThemeToken } from '@/utils/hooks';
 
-  const { useToken } = theme;
-  const { token } = useToken();
+  const token = useThemeToken();
 
   const { isEditing } = useEditing();
   const tablePane = ref(null);
