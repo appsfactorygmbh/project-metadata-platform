@@ -169,10 +169,11 @@
           : getNextActiveProjectId(project.id);
       if (newProjectId === undefined) {
         await router.push('/');
-        return;
+      } else {
+        projectRouting.setProjectId(newProjectId);
       }
-      projectRouting.setProjectId(newProjectId);
     }
+    return;
   };
 
   const getNextArchivedProjectId = (): number | undefined => {
