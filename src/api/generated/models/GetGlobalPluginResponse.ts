@@ -24,30 +24,30 @@ export interface GetGlobalPluginResponse {
    * @memberof GetGlobalPluginResponse
    */
   pluginName: string;
-  /**
-   * Id of the plugin
-   * @type {number}
-   * @memberof GetGlobalPluginResponse
-   */
-  id: number;
-  /**
-   * If the plugin is archived or not
-   * @type {boolean}
-   * @memberof GetGlobalPluginResponse
-   */
-  isArchived: boolean;
-  /**
-   * empty array keys
-   * @type {Array<string>}
-   * @memberof GetGlobalPluginResponse
-   */
-  keys: Array<string>;
-  /**
-   * Base URL of the plugin
-   * @type {string}
-   * @memberof GetGlobalPluginResponse
-   */
-  baseUrl?: string | null;
+    /**
+     * Id of the plugin
+     * @type {number}
+     * @memberof GetGlobalPluginResponse
+     */
+    id: number;
+    /**
+     * If the plugin is archived or not
+     * @type {boolean}
+     * @memberof GetGlobalPluginResponse
+     */
+    isArchived: boolean;
+    /**
+     * empty array keys
+     * @type {Array<string>}
+     * @memberof GetGlobalPluginResponse
+     */
+    keys: Array<string>;
+    /**
+     * Base URL of the plugin
+     * @type {string}
+     * @memberof GetGlobalPluginResponse
+     */
+    baseUrl?: string | null;
 }
 
 /**
