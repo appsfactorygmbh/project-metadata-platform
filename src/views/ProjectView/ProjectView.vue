@@ -19,6 +19,7 @@
   const projectEditStore = inject(projectEditStoreSymbol);
   const pluginStore = usePluginStore();
   const projectStore = useProjectStore();
+  let rerenderPlugins = 1;
 
   const isModalOpen = ref(false);
   const openModal = () => {
@@ -47,6 +48,7 @@
     projectEditStore?.resetPluginChanges();
     reloadEditStore();
     stopEditing();
+    rerenderPlugins++;
   };
 
   const isEmpty = ref(false);
@@ -167,7 +169,7 @@
   <div v-if="!isEmpty">
     <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
     <ProjectInformation />
-    <ProjectPlugins class="pluginView" @setBlur="setBlur" />
+    <ProjectPlugins class="pluginView" @setBlur="setBlur" :key="rerenderPlugins" />
     <LocalLogView class="LocalLog" :class="{ blur: isBlurred }" />
     <ConfirmAction
       :is-open="isModalOpen"
