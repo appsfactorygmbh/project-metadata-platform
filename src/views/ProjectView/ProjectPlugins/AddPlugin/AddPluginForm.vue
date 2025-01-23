@@ -122,15 +122,22 @@
 
     const selectedGlobalPlugin: string = value as string;
 
-    const projectPluginNames = pluginStore.getPlugins.map((plugin: PluginModel) => plugin.pluginName);
-    const addedPluginNames = (projectEditStore?.getAddedPlugins ?? []).map((plugin: PluginEditModel) => plugin.pluginName);
+    const projectPluginNames = pluginStore.getPlugins.map(
+      (plugin: PluginModel) => plugin.pluginName,
+    );
+    const addedPluginNames = (projectEditStore?.getAddedPlugins ?? []).map(
+      (plugin: PluginEditModel) => plugin.pluginName,
+    );
 
-    const globalPluginAlreadyUsed: boolean = [...projectPluginNames, ...addedPluginNames].some((name: string) => name === selectedGlobalPlugin);
+    const globalPluginAlreadyUsed: boolean = [
+      ...projectPluginNames,
+      ...addedPluginNames,
+    ].some((name: string) => name === selectedGlobalPlugin);
 
     if (!globalPluginAlreadyUsed) {
       dynamicValidateForm.pluginName = selectedGlobalPlugin;
     } else {
-      dynamicValidateForm.pluginName = "";
+      dynamicValidateForm.pluginName = '';
     }
   };
 
