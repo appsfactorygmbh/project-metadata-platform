@@ -13,7 +13,6 @@
   import type { RulesObject } from '@/components/Form/types';
   import type { AddPluginFormData } from './AddPluginFormData.ts';
   import { useGlobalPluginsStore } from '@/store/GlobalPluginStore.ts';
-  import { useRouter } from 'vue-router';
   import { usePluginStore } from '@/store';
 
   const { formStore, initialValues } = defineProps<{
@@ -24,13 +23,10 @@
   const globalPluginStore = useGlobalPluginsStore();
   const projectEditStore = inject(projectEditStoreSymbol);
   const pluginStore = usePluginStore();
-  const router = useRouter();
   const options = ref<SelectProps['options']>([]);
-  let projectId: number;
 
   onBeforeMount(async () => {
     await globalPluginStore?.fetchAll();
-    projectId = parseInt(router.currentRoute.value.query["projectId"]?.toString() ?? "");
     options.value = toRaw(globalPluginStore?.getGlobalPlugins)
       ?.filter((plugin) => !plugin.isArchived)
       .map((plugin: GlobalPluginModel) => {
