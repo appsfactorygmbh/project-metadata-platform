@@ -49,11 +49,9 @@
     auth?.load().then(() => {
       const authCheck = auth.check();
       if (authCheck) return callback();
-      auth
-        .refresh({ data: { refreshToken: refreshToken.value } })
-        .then((response) => {
-          return callback();
-        });
+      auth.refresh({ data: { refreshToken: refreshToken.value } }).then(() => {
+        return callback();
+      });
     });
   });
 
