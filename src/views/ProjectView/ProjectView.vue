@@ -19,7 +19,7 @@
   const projectEditStore = inject(projectEditStoreSymbol);
   const pluginStore = usePluginStore();
   const projectStore = useProjectStore();
-  let rerenderPlugins = 1;
+  const rerenderPlugins = ref(1);
 
   const isModalOpen = ref(false);
   const openModal = () => {
@@ -48,7 +48,7 @@
     projectEditStore?.resetPluginChanges();
     reloadEditStore();
     stopEditing();
-    rerenderPlugins++;
+    rerenderPlugins.value++;
   };
 
   const isEmpty = ref(false);

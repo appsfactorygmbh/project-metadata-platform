@@ -56,10 +56,11 @@
         url: toRaw(fields).pluginUrl,
       };
       addPlugin(pluginDef);
-    } catch {
+    } catch (error) {
       notificationApi.error({
         message: 'An error occurred. The plugin could not be created',
       });
+      console.error('error while creating a new project plugin', error);
     }
   };
 
