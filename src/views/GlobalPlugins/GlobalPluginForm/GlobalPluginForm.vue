@@ -29,6 +29,14 @@
         type: 'string',
       },
     ],
+    baseUrl: [
+      {
+        required: true,
+        message: 'Please insert the base url.',
+        trigger: 'change',
+        type: 'string',
+      },
+    ],
     keys: [
       {
         required: false,
@@ -113,6 +121,19 @@
         class="inputField"
         placeholder="Plugin Name"
       />
+    </a-form-item>
+    <a-form-item
+      name="baseUrl"
+      :no-style="false"
+      :whitespace="true"
+      v-bind="formStore.validateInfos.baseUrl"
+    >
+      <a-input
+        v-model:value="modelRef.baseUrl"
+        class="inputField"
+        placeholder="Base Url"
+      >
+      </a-input>
     </a-form-item>
     <a-form-item
       v-for="(key, index) in modelRef.keys"
