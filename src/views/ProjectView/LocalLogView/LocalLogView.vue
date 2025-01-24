@@ -33,6 +33,7 @@
     margin-bottom: 60px;
     padding-top: 0.6em;
     border: none;
+    max-width: 100%;
   }
 
   .blur {
