@@ -93,7 +93,7 @@
     id: ref<number>(0),
     projectName: ref<string>(''),
     businessUnit: ref<string>(''),
-    teamNumber: ref<number>(),
+    teamNumber: ref<number | undefined>(undefined),
     department: ref<string>(''),
     clientName: ref<string>(''),
     isArchived: ref<boolean>(false),
