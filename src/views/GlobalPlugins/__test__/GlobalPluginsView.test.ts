@@ -25,14 +25,14 @@ const testData: GlobalPluginModel[] = [
     pluginName: 'Plugin 1',
     isArchived: true,
     keys: [],
-    baseUrl: "plugin1.de"
+    baseUrl: 'plugin1.de',
   },
   {
     id: 1,
     pluginName: 'Plugin 2',
     isArchived: false,
     keys: [],
-    baseUrl: "plugin2.de"
+    baseUrl: 'plugin2.de',
   },
 ];
 
@@ -42,14 +42,14 @@ const testDataArchive: GlobalPluginModel[] = [
     pluginName: 'Plugin 1',
     isArchived: true,
     keys: [],
-    baseUrl: "plugin1.de"
+    baseUrl: 'plugin1.de',
   },
   {
     id: 1,
     pluginName: 'Plugin 2',
     isArchived: true,
     keys: [],
-    baseUrl: "plugin2.de"
+    baseUrl: 'plugin2.de',
   },
 ];
 
@@ -59,14 +59,14 @@ const testDataReactivate: GlobalPluginModel[] = [
     pluginName: 'Plugin 1',
     isArchived: true,
     keys: [],
-    baseUrl: "plugin1.de"
+    baseUrl: 'plugin1.de',
   },
   {
     id: 1,
     pluginName: 'Plugin 2',
     isArchived: true,
     keys: [],
-    baseUrl: "plugin2.de"
+    baseUrl: 'plugin2.de',
   },
 ];
 
