@@ -12,7 +12,10 @@
     replace: boolean = true,
   ) => {
     const projectId = parseInt(String(id));
-    const projectSlug = await projectStore.getSlugById(projectId);
+    const project = await projectStore.findProjectById(projectId, {
+      fullObjectNeeded: false,
+    });
+    const projectSlug = project?.slug;
     if (!projectSlug) {
       return router.replace({
         query: { ...route.query },
