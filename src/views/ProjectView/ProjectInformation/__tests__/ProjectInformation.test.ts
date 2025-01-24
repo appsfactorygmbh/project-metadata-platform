@@ -79,6 +79,7 @@ describe('ProjectInformation.vue', () => {
 
   it('opens the confirmation modal when DeleteOutlined button is clicked', async () => {
     const testData = {
+      id: 1,
       projectName: 'Heute Show',
       department: 'IT',
       clientName: 'ZDF',
@@ -130,6 +131,7 @@ describe('ProjectInformation.vue', () => {
 
   it('does not render the edit and archive button but shows the reactivate and delete button when archived', async () => {
     const testData = {
+      id: 1,
       projectName: 'Deutsche Bahn',
       department: 'IT',
       clientName: 'DB',
