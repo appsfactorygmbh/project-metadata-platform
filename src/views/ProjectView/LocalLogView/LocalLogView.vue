@@ -34,6 +34,7 @@
     padding-top: 0.6em;
     border: none;
     max-width: 100%;
+    word-break: break-word;
   }
 
   .blur {
