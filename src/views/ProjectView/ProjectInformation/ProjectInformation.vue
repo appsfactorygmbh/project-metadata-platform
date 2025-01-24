@@ -93,7 +93,7 @@
     id: ref<number>(0),
     projectName: ref<string>(''),
     businessUnit: ref<string>(''),
-    teamNumber: ref<number | undefined>(undefined),
+    teamNumber: ref<number>(0),
     department: ref<string>(''),
     clientName: ref<string>(''),
     isArchived: ref<boolean>(false),
@@ -218,7 +218,7 @@
 
 <template>
   <div class="pane">
-    <div class="main">
+    <div v-if="projectData.id.value" class="main">
       <!-- create box for the project name -->
       <div class="projectNameContainer">
         <h1 v-if="!isLoading" class="projectName">
