@@ -47,7 +47,7 @@ export interface GetGlobalPluginResponse {
      * @type {string}
      * @memberof GetGlobalPluginResponse
      */
-    baseUrl?: string | null;
+    baseUrl: string;
 }
 
 /**
@@ -73,13 +73,13 @@ export function GetGlobalPluginResponseFromJSON(
 
 export function GetGlobalPluginResponseFromJSONTyped(
   json: any,
-  ignoreDiscriminator: boolean,
-): GetGlobalPluginResponse {
-  if (json == null) {
-    return json;
-  }
-  return {
-    pluginName: json['pluginName'],
+  ignoreDiscriminator: boolean,): GetGlobalPluginResponse {
+    if (json == null) {
+        return json;
+    }
+    return {
+
+        pluginName: json['pluginName'],
     id: json['id'],
     isArchived: json['isArchived'],
     keys: json['keys'],
@@ -101,8 +101,9 @@ export function GetGlobalPluginResponseToJSONTyped(
     return value;
   }
 
-  return {
-    pluginName: value['pluginName'],
+    return {
+
+        pluginName: value['pluginName'],
     id: value['id'],
     isArchived: value['isArchived'],
     keys: value['keys'],
