@@ -171,6 +171,7 @@
 
   const clearAllFilters = () => {
     searchStore.reset();
+    searchStorage.value.searchQuery = '';
     searchStore.applySearch();
   };
 </script>
