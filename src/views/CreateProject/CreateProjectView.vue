@@ -76,6 +76,10 @@
     open.value = true;
   };
 
+  const closeModal = () => {
+    open.value = false;
+  };
+
   const resetModal = () => {
     formRef.value.resetFields();
     fetchError.value = false;
@@ -111,6 +115,8 @@
 
     try {
       await projectStore.create(projectData);
+      resetModal()
+      closeModal()
     } catch (error) {
       fetchError.value = true;
       errorMessage.value = String(error);
