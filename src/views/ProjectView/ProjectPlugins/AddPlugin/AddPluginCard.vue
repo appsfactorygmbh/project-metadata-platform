@@ -1,6 +1,9 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import AddPluginView from './AddPluginView.vue';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   // It controls the visibility of the modal.
   const openModal = ref<boolean>(false);
@@ -29,7 +32,7 @@
     }"
     @click="handleClick"
   >
-    <h1>+</h1>
+    <h1 class="plusSymbol">+</h1>
   </a-card>
 
   <!-- Opens modal for adding new Plugin when openModal has value "true" -->
@@ -37,6 +40,9 @@
 </template>
 
 <style scoped lang="scss">
+  .plusSymbol {
+    color: v-bind('token.colorText')
+  }
   .card {
     cursor: pointer;
     width: max-content;

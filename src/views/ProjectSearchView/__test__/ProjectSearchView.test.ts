@@ -121,7 +121,6 @@ describe('ProjectSearchView.vue', () => {
     await flushPromises();
 
     const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
-    console.log('Button style: ', button.style.borderColor);
     expect(button.style.borderColor).toBe('#3e8ee2');
   });
 

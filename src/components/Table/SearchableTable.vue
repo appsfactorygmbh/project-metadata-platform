@@ -13,6 +13,9 @@
   import { useQuery } from '@/utils/hooks';
   import type { ArrayElement } from '@/models/utils';
   import { useSessionStorage } from '@vueuse/core';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -310,5 +313,8 @@
   }
   :deep(.ant-table-cell .ant-table-cell-ellipsis .ant-table-column-sort) {
     background-color: white;
+  }
+  :deep(.ant-table-expanded-row-fixed) {
+    background-color: v-bind('token.colorBgElevated')
   }
 </style>

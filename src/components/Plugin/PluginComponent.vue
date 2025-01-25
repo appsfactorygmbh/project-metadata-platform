@@ -239,6 +239,8 @@
     top: -3%;
     right: -3%;
     box-shadow: v-bind('token.boxShadowSecondary');
+    color: white;
+    background-color: color-mix(in srgb, #6d6e6f, #ff002e 60%) !important;
     &:hover {
       transition: 0.1s ease-in-out;
       cursor: pointer;

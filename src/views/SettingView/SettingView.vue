@@ -193,7 +193,7 @@
 
   /* Style for the expandable button on bottom*/
   :deep(.ant-layout-sider-trigger) {
-    background-color: v-bind('token.colorBgSpotlight');
+    background-color: v-bind('token.colorPrimary');
   }
   .sideSlider {
     background-color: v-bind('token.colorBgElevated');

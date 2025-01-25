@@ -33,8 +33,6 @@
   const projectRouting = inject(projectRoutingSymbol)!;
   const token = useThemeToken();
 
-  console.log(token);
-
   const editingClass = computed(() => ({
     'editing-mode': isEditing.value,
   }));
