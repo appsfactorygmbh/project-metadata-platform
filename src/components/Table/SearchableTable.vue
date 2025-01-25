@@ -315,6 +315,6 @@
     background-color: white;
   }
   :deep(.ant-table-expanded-row-fixed) {
-    background-color: v-bind('token.colorBgElevated')
+    background-color: v-bind('token.colorBgElevated');
   }
 </style>

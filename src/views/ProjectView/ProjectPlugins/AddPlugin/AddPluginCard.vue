@@ -41,7 +41,7 @@
 
 <style scoped lang="scss">
   .plusSymbol {
-    color: v-bind('token.colorText')
+    color: v-bind('token.colorText');
   }
   .card {
     cursor: pointer;
