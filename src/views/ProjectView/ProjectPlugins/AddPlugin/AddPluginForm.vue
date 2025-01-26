@@ -180,7 +180,7 @@
         :options="options"
         :filter-option="filterOption"
         @change="handleChange"
-      ></a-select>
+      />
     </a-form-item>
     <a-form-item
       name="pluginName"
@@ -196,8 +196,7 @@
         placeholder="Plugin Name"
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.pluginName"
-      >
-      </a-input>
+      />
     </a-form-item>
     <a-form-item
       name="pluginUrl"
@@ -213,9 +212,8 @@
         placeholder="Plugin URL"
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.pluginName"
-      >
-      </a-input>
+      />
     </a-form-item>
   </a-form>
-  <contextHolder></contextHolder>
+  <contextHolder />
 </template>

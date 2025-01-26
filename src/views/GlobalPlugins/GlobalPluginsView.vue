@@ -108,6 +108,9 @@
   import { useGlobalPluginsStore } from '@/store';
   import { useToggle } from '@vueuse/core';
   import type { GlobalPluginModel } from '@/models/Plugin';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   const globalPluginsStore = useGlobalPluginsStore();
 
@@ -278,7 +281,7 @@
 
   .plugin-list {
     margin: 1em;
-    background-color: white;
+    background-color: v-bind('token.colorBgElevated');
     border: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
@@ -298,5 +301,8 @@
   .error-alert {
     width: max-content;
     margin: 0 auto;
+  }
+  .text {
+    color: v-bind('token.colorText');
   }
 </style>

@@ -159,8 +159,7 @@
         placeholder="E-Mail"
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.email"
-      >
-      </a-input>
+      />
     </a-form-item>
     <a-form-item
       has-feedback
@@ -177,8 +176,7 @@
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.password"
         type="password"
-      >
-      </a-input>
+      />
     </a-form-item>
     <a-form-item
       has-feedback
@@ -195,11 +193,10 @@
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.confirmPassword"
         type="password"
-      >
-      </a-input>
+      />
     </a-form-item>
   </a-form>
-  <contextHolder></contextHolder>
+  <contextHolder />
 </template>
 
 <style scoped>

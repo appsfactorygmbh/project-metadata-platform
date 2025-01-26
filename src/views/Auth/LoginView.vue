@@ -49,11 +49,9 @@
     auth?.load().then(() => {
       const authCheck = auth.check();
       if (authCheck) return callback();
-      auth
-        .refresh({ data: { refreshToken: refreshToken.value } })
-        .then((response) => {
-          return callback();
-        });
+      auth.refresh({ data: { refreshToken: refreshToken.value } }).then(() => {
+        return callback();
+      });
     });
   });
 
@@ -75,7 +73,7 @@
 <template>
   <AuthLayout>
     <div :style="styles.header">
-      <a-typography-title :style="styles.title">Login</a-typography-title>
+      <a-typography-title :style="styles.title"> Login </a-typography-title>
       <a-typography-text :style="styles.text">
         Welcome back! Please enter your credentials to continue.
       </a-typography-text>

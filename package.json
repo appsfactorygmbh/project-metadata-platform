@@ -16,7 +16,8 @@
     "build-only": "yarn vite:env build",
     "type-check": "vue-tsc --build --declaration --emitDeclarationOnly tsconfig.json",
     "type-build": "vue-tsc --build --force tsconfig.json",
-    "lint": "eslint --flag unstable_ts_config --config eslint.config.ts --fix",
+    "lint:check": "eslint --config eslint.config.ts",
+    "lint": "yarn lint:check --fix",
     "format": "prettier --write .",
     "prepare": "husky",
     "upgrade:all": "yarn up \"*\"",
@@ -27,6 +28,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.5.2",
     "@ant-design/icons-vue": "^7.0.1",
+    "@heroicons/vue": "^2.2.0",
     "@vueuse/core": "^12.0.0",
     "ant-design-vue": "^4.2.6",
     "axios": "^1.7.9",
@@ -71,10 +73,11 @@
     "@vue/tsconfig": "^0.7.0",
     "antdv-component-resolver": "^1.0.7",
     "cypress": "^13.16.1",
-    "eslint": "^9.16.0",
+    "eslint": "^9.18.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-formatter-gitlab": "^5.1.0",
     "eslint-import-resolver-typescript": "^3.7.0",
+    "eslint-plugin-prettier": "^5.2.2",
     "eslint-plugin-unused-imports": "^4.1.4",
     "eslint-plugin-vue": "^9.32.0",
     "happy-dom": "^15.11.7",
@@ -104,7 +107,7 @@
     }
   },
   "lint-staged": {
-    "**/*.{ts,tsx,vue}": "eslint  --flag unstable_ts_config --fix",
+    "**/*.{ts,tsx,vue}": "eslint --fix",
     "**/*": "prettier -w -u"
   }
 }
