@@ -174,11 +174,13 @@
 </script>
 
 <template>
-  <contextHolder></contextHolder>
+  <contextHolder />
   <a-card class="info">
     <label class="label">{{ label }}:</label>
     <template v-if="!isLoading">
-      <p v-if="!isEditing" class="text passwordLabel">{{ value }}</p>
+      <p v-if="!isEditing" class="text passwordLabel">
+        {{ value }}
+      </p>
       <a-form v-else ref="formRef" :model="dynamicValidateForm" class="form">
         <a-form-item
           name="currentPassword"
@@ -191,8 +193,7 @@
             type="password"
             placeholder="Enter your current password"
             :rules="rulesRef.currentPassword"
-          >
-          </a-input>
+          />
         </a-form-item>
         <a-form-item
           has-feedback
@@ -206,8 +207,7 @@
             type="password"
             placeholder="Enter your new password"
             :rules="rulesRef.newPassword"
-          >
-          </a-input>
+          />
         </a-form-item>
         <a-form-item
           has-feedback
@@ -222,8 +222,7 @@
             placeholder="Confirm your new password"
             :rules="rulesRef.confirmPassword"
             class="password"
-          >
-          </a-input>
+          />
         </a-form-item>
       </a-form>
 

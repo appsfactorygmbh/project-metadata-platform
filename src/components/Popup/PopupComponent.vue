@@ -15,9 +15,11 @@
             :edit-key="plugin.editKey"
             :is-deleted="false"
             :show-favicon="false"
-          ></PluginComponent>
+          />
         </div>
-        <a-button style="margin-top: 15px" @click="closePopup">Close</a-button>
+        <a-button style="margin-top: 15px" @click="closePopup">
+          Close
+        </a-button>
       </a-card>
     </div>
   </transition>

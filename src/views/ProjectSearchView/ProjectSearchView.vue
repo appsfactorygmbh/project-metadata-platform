@@ -18,6 +18,9 @@
   } from '@ant-design/icons-vue';
   import { usePluginStore, useProjectStore } from '@/store';
   import { useQuery } from '@/utils/hooks';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   const props = defineProps({
     paneWidth: {
@@ -53,7 +56,10 @@
   const highlightButtonStyle = computed(() =>
     searchQuery.isSearchQuery.value
       ? { color: '#3e8ee2', width: '100%', borderColor: '#3e8ee2' }
-      : { color: 'black', width: '100%', borderColor: '#d9d9d9' },
+      : {
+          color: token.value.colorText,
+          width: '100%',
+        },
   );
 
   const showOnlyArchived: ProjectSearchStore['filter'] = (items) =>
@@ -171,6 +177,7 @@
 
   const clearAllFilters = () => {
     searchStore.reset();
+    searchStorage.value.searchQuery = '';
     searchStore.applySearch();
   };
 </script>
@@ -249,7 +256,8 @@
     {
       title: 'Business Unit',
       dataIndex: 'businessUnit',
-      key: 'businessNumber',
+      key: 'businessUnit',
+      searchable: true,
       resizable: true,
       ellipsis: true,
       align: 'center' as const,
@@ -261,6 +269,7 @@
       title: 'Team Number',
       dataIndex: 'teamNumber',
       key: 'teamNumber',
+      searchable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'number',
