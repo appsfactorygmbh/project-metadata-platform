@@ -28,12 +28,14 @@
     EditableTextField,
     ProjectInformationInputField,
   } from '@/components/EditableTextField';
+  import { useThemeToken } from '@/utils/hooks';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectStore = useProjectStore();
   const projectEditStore = inject(projectEditStoreSymbol)!;
   const pluginStore = usePluginStore();
   const projectRouting = inject(projectRoutingSymbol)!;
+  const token = useThemeToken();
 
   const editingClass = computed(() => ({
     'editing-mode': isEditing.value,
@@ -344,6 +346,7 @@
 
         <EditableTextField
           v-for="field in textFields"
+          :key="field.name"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
           :value="field.value"
@@ -419,7 +422,7 @@
   .projectName {
     font-size: 2.5em;
     font-weight: bold;
-    color: #000;
+    color: v-bind('token.colorText');
     margin: 10px;
   }
 
@@ -432,8 +435,7 @@
     padding: 1em 0;
     border-radius: 10px;
     container-type: inline-size;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: v-bind('token.colorBgElevated') !important;
   }
 
   @container (max-width: 53vw) {
@@ -454,6 +456,7 @@
     display: table;
     padding: 0 1em 0 1em;
     max-width: 100%;
+    background-color: v-bind('token.colorBgElevated ');
   }
 
   .button {
@@ -464,7 +467,7 @@
   }
 
   .icon {
-    color: black;
+    color: v-bind('token.colorText');
     font-size: 1.5em;
   }
 

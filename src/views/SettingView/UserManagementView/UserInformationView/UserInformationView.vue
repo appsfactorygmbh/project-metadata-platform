@@ -13,6 +13,9 @@
     EmailInputField,
     PasswordInputField,
   } from '@/components/EditableTextField';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   const router = useRouter();
   const userStore = inject(userStoreSymbol)!;
@@ -92,7 +95,9 @@
     <!-- avatar components -->
     <a-flex class="avatar">
       <a-avatar :size="150">
-        <template #icon><UserOutlined /></template>
+        <template #icon>
+          <UserOutlined />
+        </template>
       </a-avatar>
     </a-flex>
 
@@ -136,7 +141,7 @@
       >
         <PasswordInputField
           :user-id="user?.id ?? ''"
-          :formStore="passwordFormStore"
+          :form-store="passwordFormStore"
         />
       </EditableTextField>
     </a-flex>
@@ -154,7 +159,7 @@
     padding: 1em 3em;
     margin: 2em 1em;
     border-radius: 10px;
-    background-color: white;
+    background-color: v-bind('token.colorBgElevated');
     min-width: 450px;
     height: auto;
     flex-direction: column;
@@ -164,6 +169,7 @@
 
   :deep(.ant-card) {
     margin: 0.5em 0;
+    background-color: v-bind('token.colorBgElevated');
   }
 
   .avatar {

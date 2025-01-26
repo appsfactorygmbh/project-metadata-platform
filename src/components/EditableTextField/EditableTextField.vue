@@ -47,7 +47,9 @@
   >
     <label class="label">{{ label }}:</label>
     <template v-if="!isLoading">
-      <p v-if="!isEditing" class="text">{{ value }}</p>
+      <p v-if="!isEditing" class="text">
+        {{ value }}
+      </p>
 
       <div v-else>
         <slot></slot>
@@ -56,10 +58,10 @@
       <EditButtons
         v-if="hasEditKeys"
         class="editButton"
-        :isEditingKey="props.isEditingKey ?? ''"
+        :is-editing-key="props.isEditingKey ?? ''"
         :is-loading="props.isLoading"
         :safe-disabled="props.isLoading"
-        :formStore="props.formStore!"
+        :form-store="props.formStore!"
         @saved-changes="emit('savedChanges')"
       />
     </template>
