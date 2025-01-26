@@ -177,6 +177,7 @@
 
   const clearAllFilters = () => {
     searchStore.reset();
+    searchStorage.value.searchQuery = '';
     searchStore.applySearch();
   };
 </script>
@@ -257,7 +258,8 @@
     {
       title: 'Business Unit',
       dataIndex: 'businessUnit',
-      key: 'businessNumber',
+      key: 'businessUnit',
+      searchable: true,
       resizable: true,
       ellipsis: true,
       align: 'center' as const,
@@ -270,6 +272,7 @@
       title: 'Team Number',
       dataIndex: 'teamNumber',
       key: 'teamNumber',
+      searchable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'number',

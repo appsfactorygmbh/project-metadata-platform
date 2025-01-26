@@ -19,10 +19,12 @@
     isEditingKey: {
       type: String,
       required: false,
+      default: '',
     },
     formStore: {
       type: Object as PropType<FormStore>,
       required: false,
+      default: {} as FormStore,
     },
     hasEditKeys: {
       type: Boolean,

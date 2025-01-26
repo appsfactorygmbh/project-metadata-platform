@@ -19,6 +19,7 @@
     },
     editStore: {
       type: Object as PropType<ProjectEditStore>,
+      required: true,
     },
   });
 
