@@ -115,7 +115,7 @@
 
   //Function to update the project information
   function updateProjectInformation(): void {
-    // @ts-ignore-next-line implemented in other branch
+    // @ts-expect-error-next-line implemented in other branch
     const updatedProject: EditProjectModel = {
       projectName: projectData.projectName.value,
       businessUnit: BUInput.value,
