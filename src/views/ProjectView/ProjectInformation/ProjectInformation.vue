@@ -24,12 +24,14 @@
   import IconButton from '@/components/Button/IconButton.vue';
   import router from '@/router';
   import _ from 'lodash';
+  import { useThemeToken } from '@/utils/hooks';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectStore = useProjectStore();
   const projectEditStore = inject(projectEditStoreSymbol)!;
   const pluginStore = usePluginStore();
   const projectRouting = inject(projectRoutingSymbol)!;
+  const token = useThemeToken();
 
   const editingClass = computed(() => ({
     'editing-mode': isEditing.value,
@@ -91,6 +93,7 @@
 
   const projectData = {
     id: ref<number>(0),
+    slug: ref<string>(''),
     projectName: ref<string>(''),
     businessUnit: ref<string>(''),
     teamNumber: ref<number>(0),
@@ -128,6 +131,7 @@
     if (projectStore.getProject)
       projectEditStore.setProjectInformation(projectStore.getProject);
     projectData.id.value = loadedData.id;
+    projectData.slug.value = loadedData.slug;
     projectData.projectName.value = loadedData.projectName;
     projectData.businessUnit.value = loadedData.businessUnit;
     projectData.teamNumber.value = loadedData.teamNumber;
@@ -300,6 +304,28 @@
           height: 'fit-content',
         }"
       >
+        <a-card
+          :body-style="{
+            display: 'flex',
+            padding: '5px',
+            alignItems: 'center',
+          }"
+          class="infoCard nonEditingClass"
+        >
+          <label class="label">Project&nbsp;Slug:</label>
+          <template v-if="!isLoading">
+            <p class="projectInfo">
+              {{ projectData.slug.value }}
+            </p>
+          </template>
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="padding-left: 1em"
+          />
+        </a-card>
+
         <a-card
           :body-style="{
             display: 'flex',
@@ -528,7 +554,7 @@
   .projectName {
     font-size: 2.5em;
     font-weight: bold;
-    color: #000;
+    color: v-bind('token.colorText');
     margin: 10px;
   }
 
@@ -541,8 +567,7 @@
     padding: 1em 0;
     border-radius: 10px;
     container-type: inline-size;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: v-bind('token.colorBgElevated') !important;
   }
 
   @container (max-width: 53vw) {
@@ -563,6 +588,7 @@
     display: table;
     padding: 0 1em 0 1em;
     max-width: 100%;
+    background-color: v-bind('token.colorBgElevated ');
   }
 
   .button {
@@ -573,7 +599,7 @@
   }
 
   .icon {
-    color: black;
+    color: v-bind('token.colorText');
     font-size: 1.5em;
   }
 

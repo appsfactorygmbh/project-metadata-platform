@@ -219,7 +219,7 @@
           message="Failed to create Project"
           type="error"
           show-icon
-        ></a-alert>
+        />
       </a-form>
     </a-modal>
   </div>
