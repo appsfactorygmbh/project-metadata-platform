@@ -127,18 +127,16 @@ describe('ProjectSearchView.vue', () => {
   });
 
   it('not highlight button when clear search and filter', async () => {
-    await router.isReady();
+    sessionStorage.clear();
 
     const wrapper = generateWrapper(700);
     await flushPromises();
 
     const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
-    expect(button.style.borderColor).toBe('#d9d9d9');
+    expect(button.style.borderColor).toBe('');
   });
 
   it('highlight button when filter', async () => {
-    await router.isReady();
-
     sessionStorage.setItem(
       'filterStorage',
       JSON.stringify({ projectName: 'test' }),

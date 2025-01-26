@@ -12,8 +12,5 @@
 </script>
 
 <template>
-  <a-input
-    :placeholder="props.placeholder"
-    :default-value="props.default"
-  ></a-input>
+  <a-input :placeholder="props.placeholder" :default-value="props.default" />
 </template>

@@ -174,9 +174,9 @@
     <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
     <ProjectInformation />
     <ProjectPlugins
-      class="pluginView"
-      @setBlur="setBlur"
       :key="rerenderPlugins"
+      class="pluginView"
+      @set-blur="setBlur"
     />
     <LocalLogView class="LocalLog" :class="{ blur: isBlurred }" />
     <ConfirmAction

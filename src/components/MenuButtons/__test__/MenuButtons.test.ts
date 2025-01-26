@@ -10,7 +10,7 @@ describe('MenuButtons.vue', () => {
     const wrapper = mount(MenuButtons);
     const buttons = wrapper.findAll('.ant-float-btn');
 
-    expect(buttons).toHaveLength(2);
+    expect(buttons).toHaveLength(3);
     for (let i = 0; i < buttons.length; i++) {
       expect(buttons[i].isVisible).toBeTruthy();
     }

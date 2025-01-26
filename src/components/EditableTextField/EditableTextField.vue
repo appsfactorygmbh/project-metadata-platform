@@ -64,7 +64,9 @@
   >
     <label class="label">{{ label }}:</label>
     <template v-if="!isLoading">
-      <p v-if="!isEditing" class="text">{{ value }}</p>
+      <p v-if="!isEditing" class="text">
+        {{ value }}
+      </p>
 
       <div v-else>
         <UserEmailInputField

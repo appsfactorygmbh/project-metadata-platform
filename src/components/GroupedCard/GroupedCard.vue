@@ -10,7 +10,7 @@
           padding: '15px',
         }"
       >
-        <a-avatar :src="faviconUrl" shape="square" class="avatar"></a-avatar>
+        <a-avatar :src="faviconUrl" shape="square" class="avatar" />
         <div class="textContainer">
           <h3>{{ displayName + ' Plugins' }}</h3>
         </div>

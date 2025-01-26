@@ -13,6 +13,9 @@
   import { useQuery } from '@/utils/hooks';
   import type { ArrayElement } from '@/models/utils';
   import { useSessionStorage } from '@vueuse/core';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -224,8 +227,8 @@
     :scroll="{ y: props.paneHeight - 125, x: true }"
     :custom-row="customRow"
     :row-class-name="'table-row'"
-    @resize-column="handleResizeColumn"
     bordered
+    @resize-column="handleResizeColumn"
   >
     <!-- Header of the table -->
     <template #headerCell="{ column }">
@@ -271,7 +274,9 @@
           style="width: 90px; margin-right: 8px"
           @click="handleSearch(selectedKeys[0], confirm, column.dataIndex)"
         >
-          <template #icon><SearchOutlined /></template>
+          <template #icon>
+            <SearchOutlined />
+          </template>
           Search
         </a-button>
         <!-- Reset button, resets filter when clicked -->
@@ -318,5 +323,11 @@
 <style scoped>
   .clickable-table :deep(.table-row) {
     cursor: pointer;
+  }
+  :deep(.ant-table-cell .ant-table-cell-ellipsis .ant-table-column-sort) {
+    background-color: white;
+  }
+  :deep(.ant-table-expanded-row-fixed) {
+    background-color: v-bind('token.colorBgElevated');
   }
 </style>
