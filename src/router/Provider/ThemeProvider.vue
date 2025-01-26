@@ -1,8 +1,10 @@
 <script setup lang="ts">
-  import defaultTheme from '@/assets/themes/default-theme.json';
+  import { useTheme } from '@/utils/hooks';
+
+  const { themeConfig } = useTheme();
 </script>
 <template>
-  <a-config-provider :theme="defaultTheme">
-    <slot></slot>
+  <a-config-provider :theme="themeConfig">
+    <slot />
   </a-config-provider>
 </template>

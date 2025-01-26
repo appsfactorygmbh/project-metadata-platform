@@ -6,5 +6,5 @@
   provide<UserStore>(userStoreSymbol, useUserStore());
 </script>
 <template>
-  <slot></slot>
+  <slot />
 </template>
