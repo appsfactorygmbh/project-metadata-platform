@@ -27,6 +27,7 @@
 
   onBeforeMount(async () => {
     await globalPluginStore?.fetchAll();
+    console.log('Fetched GlobalPlugins:', globalPluginStore?.getGlobalPlugins);
     options.value = toRaw(globalPluginStore?.getGlobalPlugins)
       ?.filter((plugin) => !plugin.isArchived)
       .map((plugin: GlobalPluginModel) => {
@@ -38,6 +39,13 @@
   });
 
   const [notificationApi, contextHolder] = notification.useNotification();
+
+  const findMatchingGlobalPlugin = (url: string) => {
+    if (url.length < 8) {
+      // If the URL is too short, ignore
+      return '';
+    }
+  };
 
   const onSubmit: FormSubmitType = (fields) => {
     try {
@@ -117,6 +125,29 @@
       },
     ],
   });
+
+  const handleUrlChange = (url: unknown) => {
+    if (typeof url !== 'string') {
+      notificationApi.error({
+        message: 'Invalid URL format. Please provide a valid string.',
+      });
+      return;
+    }
+
+    const matchingPluginName = findMatchingGlobalPlugin(url);
+    if (matchingPluginName) {
+      dynamicValidateForm.globalPlugin = matchingPluginName;
+      dynamicValidateForm.inputsDisabled = false;
+      notificationApi.success({
+        message: `Matched GlobalPlugin: ${matchingPluginName}`,
+      });
+    } else if (url.length >= 8) {
+      notificationApi.warning({
+        message: 'No matching GlobalPlugin found for the provided URL.',
+      });
+      dynamicValidateForm.globalPlugin = '';
+    }
+  };
 
   const handleChange = (value: SelectValue) => {
     dynamicValidateForm.inputsDisabled = false;
@@ -210,7 +241,7 @@
         v-model:value="dynamicValidateForm.pluginUrl"
         class="inputField"
         placeholder="Plugin URL"
-        :disabled="dynamicValidateForm.inputsDisabled"
+        @change="(e) => handleUrlChange(e.target.value)"
         :rules="rulesRef.pluginName"
       />
     </a-form-item>
