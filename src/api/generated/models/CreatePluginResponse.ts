@@ -41,13 +41,13 @@ export function CreatePluginResponseFromJSON(json: any): CreatePluginResponse {
 
 export function CreatePluginResponseFromJSONTyped(
   json: any,
-  ignoreDiscriminator: boolean,
-): CreatePluginResponse {
-  if (json == null) {
-    return json;
-  }
-  return {
-    id: json['id'],
+  ignoreDiscriminator: boolean,): CreatePluginResponse {
+    if (json == null) {
+        return json;
+    }
+    return {
+
+        id: json['id'],
   };
 }
 
@@ -63,7 +63,8 @@ export function CreatePluginResponseToJSONTyped(
     return value;
   }
 
-  return {
-    id: value['id'],
+    return {
+
+        id: value['id'],
   };
 }

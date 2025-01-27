@@ -58,13 +58,13 @@ export function UpdateProjectPluginRequestFromJSON(
 
 export function UpdateProjectPluginRequestFromJSONTyped(
   json: any,
-  ignoreDiscriminator: boolean,
-): UpdateProjectPluginRequest {
-  if (json == null) {
-    return json;
-  }
-  return {
-    url: json['url'],
+  ignoreDiscriminator: boolean,): UpdateProjectPluginRequest {
+    if (json == null) {
+        return json;
+    }
+    return {
+
+        url: json['url'],
     displayName: json['displayName'],
     id: json['id'],
   };
@@ -84,8 +84,9 @@ export function UpdateProjectPluginRequestToJSONTyped(
     return value;
   }
 
-  return {
-    url: value['url'],
+    return {
+
+        url: value['url'],
     displayName: value['displayName'],
     id: value['id'],
   };

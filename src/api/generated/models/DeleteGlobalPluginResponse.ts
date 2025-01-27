@@ -43,13 +43,13 @@ export function DeleteGlobalPluginResponseFromJSON(
 
 export function DeleteGlobalPluginResponseFromJSONTyped(
   json: any,
-  ignoreDiscriminator: boolean,
-): DeleteGlobalPluginResponse {
-  if (json == null) {
-    return json;
-  }
-  return {
-    pluginId: json['pluginId'],
+  ignoreDiscriminator: boolean,): DeleteGlobalPluginResponse {
+    if (json == null) {
+        return json;
+    }
+    return {
+
+        pluginId: json['pluginId'],
   };
 }
 
@@ -67,7 +67,8 @@ export function DeleteGlobalPluginResponseToJSONTyped(
     return value;
   }
 
-  return {
-    pluginId: value['pluginId'],
+    return {
+
+        pluginId: value['pluginId'],
   };
 }

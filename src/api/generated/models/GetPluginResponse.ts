@@ -64,13 +64,13 @@ export function GetPluginResponseFromJSON(json: any): GetPluginResponse {
 
 export function GetPluginResponseFromJSONTyped(
   json: any,
-  ignoreDiscriminator: boolean,
-): GetPluginResponse {
-  if (json == null) {
-    return json;
-  }
-  return {
-    pluginName: json['pluginName'],
+  ignoreDiscriminator: boolean,): GetPluginResponse {
+    if (json == null) {
+        return json;
+    }
+    return {
+
+        pluginName: json['pluginName'],
     url: json['url'],
     displayName: json['displayName'],
     id: json['id'],
@@ -89,8 +89,9 @@ export function GetPluginResponseToJSONTyped(
     return value;
   }
 
-  return {
-    pluginName: value['pluginName'],
+    return {
+
+        pluginName: value['pluginName'],
     url: value['url'],
     displayName: value['displayName'],
     id: value['id'],
