@@ -7,13 +7,16 @@
     ShoppingOutlined,
     NumberOutlined,
     UserOutlined,
+    FieldNumberOutlined,
+    SafetyCertificateOutlined,
+    TrademarkOutlined,
+    SwapOutlined,
   } from '@ant-design/icons-vue';
   import type { UnwrapRef } from 'vue';
   import type { CreateProjectModel } from '@/models/Project';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { useProjectStore } from '@/store';
   import { projectRoutingSymbol } from '@/store/injectionSymbols';
-  import { SecurityLevel, CompanyState } from '@/api/generated';
 
   const open = ref<boolean>(false);
 
@@ -34,17 +37,17 @@
     'An error occurred while creating the project.',
   );
 
-  const formState: UnwrapRef<CreateProjectModel> = reactive({
+  const formState: UnwrapRef<Partial<CreateProjectModel>> = reactive({
     projectName: '',
     businessUnit: '',
-    teamNumber: 0,
+    teamNumber: undefined,
     department: '',
     clientName: '',
     isArchived: false,
     offerId: '',
     company: '',
-    companyState: CompanyState.Internal,
-    ismsLevel: SecurityLevel.Normal,
+    companyState: undefined,
+    ismsLevel: undefined,
   });
 
   const validateMessages = {
@@ -108,16 +111,16 @@
     });
 
     const projectData: CreateProjectModel = {
-      projectName: formState.projectName,
-      businessUnit: formState.businessUnit,
-      teamNumber: formState.teamNumber,
-      department: formState.department,
-      clientName: formState.clientName,
+      projectName: formState.projectName!,
+      businessUnit: formState.businessUnit!,
+      teamNumber: formState.teamNumber!,
+      department: formState.department!,
+      clientName: formState.clientName!,
       isArchived: false,
-      offerId: formState.offerId,
-      company: formState.company,
-      companyState: formState.companyState,
-      ismsLevel: formState.ismsLevel,
+      offerId: formState.offerId!,
+      company: formState.company!,
+      companyState: formState.companyState!,
+      ismsLevel: formState.ismsLevel!,
     };
 
     await projectStore.create(projectData);
@@ -160,8 +163,8 @@
             v-model:value="formState.projectName"
             placeholder="Project Name"
           >
-            <template #prefix>
-              <FontColorsOutlined />
+            <template #suffix>
+              <FontColorsOutlined class="icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -175,8 +178,8 @@
             v-model:value="formState.teamNumber"
             placeholder="Team Number"
           >
-            <template #prefix>
-              <FontColorsOutlined />
+            <template #suffix>
+              <FieldNumberOutlined class="icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -189,8 +192,8 @@
             v-model:value="formState.businessUnit"
             placeholder="Business Unit"
           >
-            <template #prefix>
-              <ShoppingOutlined />
+            <template #suffix>
+              <ShoppingOutlined class="icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -203,8 +206,8 @@
             v-model:value="formState.department"
             placeholder="Department"
           >
-            <template #prefix>
-              <BankOutlined />
+            <template #suffix>
+              <BankOutlined class="icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -217,8 +220,8 @@
             v-model:value="formState.clientName"
             placeholder="Client Name"
           >
-            <template #prefix>
-              <UserOutlined />
+            <template #suffix>
+              <UserOutlined class="icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -228,8 +231,8 @@
           :no-style="true"
         >
           <a-input v-model:value="formState.offerId" placeholder="Offer ID">
-            <template #prefix>
-              <NumberOutlined />
+            <template #suffix>
+              <NumberOutlined class="icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -239,8 +242,8 @@
           :no-style="true"
         >
           <a-input v-model:value="formState.company" placeholder="Company">
-            <template #prefix>
-              <UserOutlined />
+            <template #suffix>
+              <TrademarkOutlined class="icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -249,9 +252,12 @@
           :rules="[{ required: true }]"
           :no-style="true"
         >
-          <a-select ref="select" v-model:value="formState.companyState">
-            <template #itemIcon>
-              <UserOutlined />
+          <a-select
+            v-model:value="formState.companyState"
+            placeholder="Company State"
+          >
+            <template #suffixIcon>
+              <SwapOutlined class="icon" />
             </template>
             <a-select-option value="INTERNAL">Internal</a-select-option>
             <a-select-option value="EXTERNAL">External</a-select-option>
@@ -262,7 +268,13 @@
           :rules="[{ required: true }]"
           :no-style="true"
         >
-          <a-select ref="select" v-model:value="formState.ismsLevel">
+          <a-select
+            v-model:value="formState.ismsLevel"
+            placeholder="ISMS Level"
+          >
+            <template #suffixIcon>
+              <SafetyCertificateOutlined class="icon" />
+            </template>
             <a-select-option value="NORMAL">Normal</a-select-option>
             <a-select-option value="HIGH">High</a-select-option>
             <a-select-option value="VERY_HIGH">Very High</a-select-option>
@@ -286,5 +298,10 @@
   }
   .formContainer > * {
     margin-bottom: 20px;
+  }
+  .icon {
+    width: 12px;
+    height: 12px;
+    color: black;
   }
 </style>
