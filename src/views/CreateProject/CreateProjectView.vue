@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref, watch } from 'vue';
+  import { computed, ref } from 'vue';
   import {
     BankOutlined,
     FontColorsOutlined,
@@ -7,8 +7,6 @@
     ShoppingOutlined,
     NumberOutlined,
     UserOutlined,
-    SecurityScanOutlined,
-    ClockCircleOutlined,
   } from '@ant-design/icons-vue';
   import type { UnwrapRef } from 'vue';
   import type { CreateProjectModel } from '@/models/Project';
@@ -115,8 +113,8 @@
 
     try {
       await projectStore.create(projectData);
-      resetModal()
-      closeModal()
+      resetModal();
+      closeModal();
     } catch (error) {
       fetchError.value = true;
       errorMessage.value = String(error);
