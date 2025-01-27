@@ -13,6 +13,9 @@
   import { useQuery } from '@/utils/hooks';
   import type { ArrayElement } from '@/models/utils';
   import { useSessionStorage } from '@vueuse/core';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -184,6 +187,10 @@
   };
   searchStore?.setOnReset(handleClearAll);
 
+  function handleResizeColumn(w: number, col: TableColumnType) {
+    col.width = w;
+  }
+
   onMounted(async () => {
     const filterKeys = Object.keys(filterStorage.value);
     filterKeys.forEach((key: string) => {
@@ -212,14 +219,16 @@
     -->
   <a-table
     class="clickable-table"
+    size="small"
     :columns="[...columns]"
     :data-source="[...(searchStore?.getSearchResults || [])]"
     :pagination="false"
     :loading="isLoading"
-    :scroll="{ y: props.paneHeight - 155 }"
+    :scroll="{ y: props.paneHeight - 125, x: true }"
     :custom-row="customRow"
-    :row-class-name="'row'"
+    :row-class-name="'table-row'"
     bordered
+    @resize-column="handleResizeColumn"
   >
     <!-- Header of the table -->
     <template #headerCell="{ column }">
@@ -265,7 +274,9 @@
           style="width: 90px; margin-right: 8px"
           @click="handleSearch(selectedKeys[0], confirm, column.dataIndex)"
         >
-          <template #icon><SearchOutlined /></template>
+          <template #icon>
+            <SearchOutlined />
+          </template>
           Search
         </a-button>
         <!-- Reset button, resets filter when clicked -->
@@ -297,7 +308,13 @@
 </template>
 
 <style scoped>
-  .clickable-table :deep(.row) {
+  .clickable-table :deep(.table-row) {
     cursor: pointer;
+  }
+  :deep(.ant-table-cell .ant-table-cell-ellipsis .ant-table-column-sort) {
+    background-color: white;
+  }
+  :deep(.ant-table-expanded-row-fixed) {
+    background-color: v-bind('token.colorBgElevated');
   }
 </style>

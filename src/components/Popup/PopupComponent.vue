@@ -15,9 +15,11 @@
             :edit-key="plugin.editKey"
             :is-deleted="false"
             :show-favicon="false"
-          ></PluginComponent>
+          />
         </div>
-        <a-button style="margin-top: 15px" @click="closePopup">Close</a-button>
+        <a-button style="margin-top: 15px" @click="closePopup">
+          Close
+        </a-button>
       </a-card>
     </div>
   </transition>
@@ -59,6 +61,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     opacity: 1;
     transition: opacity 0.3s ease-in-out;
+    z-index: 1000;
   }
 
   .group-popup {

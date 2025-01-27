@@ -1,6 +1,10 @@
 <script setup lang="ts">
   import { reactive, ref } from 'vue';
   import { useElementSize } from '@vueuse/core';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
+
   const props = defineProps({
     timeStamp: {
       type: String,
@@ -15,7 +19,6 @@
       required: true,
     },
   });
-  const timeStampDate = new Date(props.timeStamp);
   const timeStampSize = ref(null);
   const size = reactive(useElementSize(timeStampSize));
 
@@ -28,13 +31,15 @@
 <template>
   <div ref="timeStampSize" class="container">
     <div class="text timeStamp" :style="{ minWidth }">
-      {{ timeStampDate.toLocaleString('de-DE') }}
+      {{ new Date(props.timeStamp).toLocaleString('de-DE') }}
     </div>
     <div class="line-container">
       <div class="circle" />
       <div v-if="!isLast" class="line" />
     </div>
-    <p class="text">{{ props.logMessage }}</p>
+    <p class="text">
+      {{ props.logMessage }}
+    </p>
   </div>
 </template>
 
@@ -50,7 +55,7 @@
   .circle {
     width: 10px !important;
     height: 10px !important;
-    background-color: white;
+    background-color: v-bind('token.colorBgContainer');
     border: 3px solid #6d6e6f;
     border-radius: 50%;
     box-sizing: border-box;
@@ -58,7 +63,7 @@
   .line {
     width: 3px;
     min-height: 30px;
-    background-color: rgba(5, 5, 5, 0.06);
+    background-color: v-bind('token.colorTextDisabled');
     flex-grow: 1;
   }
   .container {

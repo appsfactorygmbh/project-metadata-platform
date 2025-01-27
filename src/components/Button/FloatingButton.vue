@@ -23,10 +23,7 @@
     @click="props.button.onClick"
   >
     <template #icon>
-      <component
-        :is="props.button.icon"
-        :style="props.button.color"
-      ></component>
+      <component :is="props.button.icon" :style="props.button.color" />
     </template>
   </a-float-button>
   <a-float-button
@@ -37,7 +34,7 @@
     tooltip="This button is disabled"
   >
     <template #icon>
-      <component :is="props.button.icon"></component>
+      <component :is="props.button.icon" />
     </template>
   </a-float-button>
 </template>

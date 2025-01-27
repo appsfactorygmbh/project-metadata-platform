@@ -275,7 +275,7 @@
           :message="errorMessage"
           type="error"
           show-icon
-        ></a-alert>
+        />
       </a-form>
     </a-modal>
   </div>

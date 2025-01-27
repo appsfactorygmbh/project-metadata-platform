@@ -71,10 +71,11 @@ describe('ProjectInformation.vue', () => {
 
     expect(projectStore.project).toMatchObject(testData);
     expect(wrapper.find('.projectName').text()).toEqual('Heute Show');
-    expect(wrapper.findAll('.projectInfo')[0].text()).toBe('BU Health');
-    expect(wrapper.findAll('.projectInfo')[1].text()).toBe('42');
-    expect(wrapper.findAll('.projectInfo')[2].text()).toBe('IT');
-    expect(wrapper.findAll('.projectInfo')[3].text()).toBe('ZDF');
+    expect(wrapper.findAll('.projectInfo')[0].text()).toBe('test-project');
+    expect(wrapper.findAll('.projectInfo')[1].text()).toBe('BU Health');
+    expect(wrapper.findAll('.projectInfo')[2].text()).toBe('42');
+    expect(wrapper.findAll('.projectInfo')[3].text()).toBe('IT');
+    expect(wrapper.findAll('.projectInfo')[4].text()).toBe('ZDF');
   });
 
   it('opens the confirmation modal when DeleteOutlined button is clicked', async () => {
