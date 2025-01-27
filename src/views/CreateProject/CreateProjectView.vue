@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref, watch } from 'vue';
+  import { computed, ref } from 'vue';
   import {
     BankOutlined,
     FontColorsOutlined,
@@ -7,14 +7,13 @@
     ShoppingOutlined,
     NumberOutlined,
     UserOutlined,
-    SecurityScanOutlined,
-    ClockCircleOutlined,
   } from '@ant-design/icons-vue';
   import type { UnwrapRef } from 'vue';
   import type { CreateProjectModel } from '@/models/Project';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { useProjectStore } from '@/store';
   import { projectRoutingSymbol } from '@/store/injectionSymbols';
+  import { SecurityLevel, CompanyState } from '@/api/generated';
 
   const open = ref<boolean>(false);
 
@@ -31,6 +30,9 @@
 
   const isAdding = computed(() => projectStore.getIsLoadingAdd);
   const fetchError = ref<boolean>(false);
+  const errorMessage = ref<string>(
+    'An error occurred while creating the project.',
+  );
 
   const formState: UnwrapRef<CreateProjectModel> = reactive({
     projectName: '',
@@ -41,8 +43,8 @@
     isArchived: false,
     offerId: '',
     company: '',
-    companyState: 0,
-    ismsLevel: 0,
+    companyState: CompanyState.Internal,
+    ismsLevel: SecurityLevel.Normal,
   });
 
   const validateMessages = {
@@ -72,6 +74,10 @@
     open.value = true;
   };
 
+  const closeModal = () => {
+    open.value = false;
+  };
+
   const resetModal = () => {
     formRef.value.resetFields();
     fetchError.value = false;
@@ -95,6 +101,7 @@
     watch(isAdding, async (newVal) => {
       if (newVal == false) {
         if (projectStore.getAddedSuccessfully) {
+          await projectStore.fetchAll();
           fetchError.value = false;
           open.value = false;
           resetModal();
@@ -163,6 +170,21 @@
           </a-input>
         </a-form-item>
         <a-form-item
+          name="teamNumber"
+          :rules="[{ required: true, whitespace: true }]"
+          class="column"
+          :no-style="true"
+        >
+          <a-input
+            v-model:value="formState.teamNumber"
+            placeholder="Team Number"
+          >
+            <template #prefix>
+              <FontColorsOutlined />
+            </template>
+          </a-input>
+        </a-form-item>
+        <a-form-item
           name="businessUnit"
           :rules="[{ required: true, whitespace: true }]"
           :no-style="true"
@@ -177,12 +199,12 @@
           </a-input>
         </a-form-item>
         <a-form-item
-          name="teamNumber"
+          name="department"
           :rules="[{ required: true, whitespace: true }]"
           :no-style="true"
         >
           <a-input
-            v-model:value="formState.teamNumber"
+            v-model:value="formState.department"
             placeholder="Department"
           >
             <template #prefix>
@@ -228,41 +250,35 @@
         </a-form-item>
         <a-form-item
           name="companyState"
-          :rules="[{ required: true }, { type: 'number', min: 0 }]"
+          :rules="[{ required: true }]"
           :no-style="true"
         >
-          <a-input-number
-            v-model:value="formState.companyState"
-            placeholder="Company State"
-            style="width: 100%"
-          >
-            <template #prefix>
-              <ClockCircleOutlined />
+          <a-select ref="select" v-model:value="formState.companyState">
+            <template #itemIcon>
+              <UserOutlined />
             </template>
-          </a-input-number>
+            <a-select-option value="INTERNAL">Internal</a-select-option>
+            <a-select-option value="EXTERNAL">External</a-select-option>
+          </a-select>
         </a-form-item>
         <a-form-item
           name="ismsLevel"
-          :rules="[{ required: true }, { type: 'number', min: 0 }]"
+          :rules="[{ required: true }]"
           :no-style="true"
         >
-          <a-input-number
-            v-model:value="formState.ismsLevel"
-            placeholder="ISMS Level"
-            style="width: 100%"
-          >
-            <template #prefix>
-              <SecurityScanOutlined />
-            </template>
-          </a-input-number>
+          <a-select ref="select" v-model:value="formState.ismsLevel">
+            <a-select-option value="NORMAL">Normal</a-select-option>
+            <a-select-option value="HIGH">High</a-select-option>
+            <a-select-option value="VERY_HIGH">Very High</a-select-option>
+          </a-select>
         </a-form-item>
         <!--shows error if the PUT request failed-->
         <a-alert
           v-if="fetchError"
-          message="Failed to create Project"
+          :message="errorMessage"
           type="error"
           show-icon
-        ></a-alert>
+        />
       </a-form>
     </a-modal>
   </div>
