@@ -60,6 +60,7 @@ declare module 'vue' {
     GroupedCard: typeof import('./../src/components/GroupedCard/GroupedCard.vue')['default']
     IconButton: typeof import('./../src/components/Button/IconButton.vue')['default']
     LogItem: typeof import('./../src/components/LogsDisplay/LogItem/LogItem.vue')['default']
+    LogTimeFilter: typeof import('./../src/components/LogsDisplay/LogTimeFilter/LogTimeFilter.vue')['default']
     LogTimeline: typeof import('./../src/components/LogsDisplay/LogTimeline/LogTimeline.vue')['default']
     MenuButtons: typeof import('./../src/components/MenuButtons/MenuButtons.vue')['default']
     PluginComponent: typeof import('./../src/components/Plugin/PluginComponent.vue')['default']

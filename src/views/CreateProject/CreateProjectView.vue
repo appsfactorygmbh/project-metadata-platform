@@ -74,10 +74,6 @@
     open.value = true;
   };
 
-  const closeModal = () => {
-    open.value = false;
-  };
-
   const resetModal = () => {
     formRef.value.resetFields();
     fetchError.value = false;
