@@ -7,8 +7,10 @@
     useLocalLogStore,
     useLogsStore,
     useUserStore,
+    useAuthStore,
+    usePluginStore,
+    useProjectStore,
   } from '@/store';
-  import { useAuthStore, usePluginStore, useProjectStore } from '@/store';
 
   const router = useRouter();
 
@@ -56,10 +58,10 @@
       if (!auth?.check()) {
         auth
           ?.refresh()
-          .then((data) => {
+          .then(() => {
             authenticationFailed.value = false;
           })
-          .catch((error) => {
+          .catch(() => {
             authenticationFailed.value = true;
           });
       }
@@ -95,5 +97,5 @@
 </script>
 
 <template>
-  <slot></slot>
+  <slot />
 </template>

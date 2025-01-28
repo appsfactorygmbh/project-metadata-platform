@@ -17,7 +17,9 @@
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import { usePluginStore, useProjectStore } from '@/store';
-  import { useQuery } from '@/utils/hooks';
+  import { useQuery, useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   const props = defineProps({
     paneWidth: {
@@ -53,7 +55,10 @@
   const highlightButtonStyle = computed(() =>
     searchQuery.isSearchQuery.value
       ? { color: '#3e8ee2', width: '100%', borderColor: '#3e8ee2' }
-      : { color: 'black', width: '100%', borderColor: '#d9d9d9' },
+      : {
+          color: token.value.colorText,
+          width: '100%',
+        },
   );
 
   const showOnlyArchived: ProjectSearchStore['filter'] = (items) =>
@@ -116,7 +121,7 @@
       () => searchStore.getSearchQuery,
       () => {
         debouncedFetchData(searchStore.getSearchQuery)?.then((data) => {
-          searchStore?.setBaseSet(data || []);
+          searchStore?.setBaseSet(data ?? []);
         });
         searchStore?.setSearchQuery('');
       },
@@ -171,6 +176,7 @@
 
   const clearAllFilters = () => {
     searchStore.reset();
+    searchStorage.value.searchQuery = '';
     searchStore.applySearch();
   };
 </script>
@@ -233,6 +239,7 @@
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
+      width: NaN,
     },
     {
       title: 'Client Name',
@@ -245,22 +252,26 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
+      width: NaN,
     },
     {
       title: 'Business Unit',
       dataIndex: 'businessUnit',
-      key: 'businessNumber',
+      key: 'businessUnit',
+      searchable: true,
       resizable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
+      width: NaN,
     },
     {
       title: 'Team Number',
       dataIndex: 'teamNumber',
       key: 'teamNumber',
+      searchable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'number',
@@ -322,6 +333,7 @@
   function hideColumn(index: number) {
     columns[index].hidden = true;
     columns[index - 1].resizable = false;
+    delete columns[index - 1].width;
   }
 
   /**
@@ -331,6 +343,7 @@
   function showColumn(index: number) {
     columns[index].hidden = false;
     columns[index - 1].resizable = true;
+    columns[index - 1].width = NaN;
   }
 
   /**

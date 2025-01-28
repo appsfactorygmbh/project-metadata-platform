@@ -1,13 +1,24 @@
 <script lang="ts" setup>
-  import { DeleteOutlined, UserOutlined } from '@ant-design/icons-vue';
+  import {
+    PlusOutlined,
+    DeleteOutlined,
+    UserOutlined,
+  } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
-  import { PlusOutlined } from '@ant-design/icons-vue';
   import { inject, ref } from 'vue';
   import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import { useRouter } from 'vue-router';
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
+  import { useFormStore } from '@/components/Form';
+  import {
+    EmailInputField,
+    PasswordInputField,
+  } from '@/components/EditableTextField';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   const router = useRouter();
   const userStore = inject(userStoreSymbol)!;
@@ -19,6 +30,9 @@
   const isLoading = computed(
     () => getIsLoadingUser.value || getIsLoading.value,
   );
+
+  const emailFormStore = useFormStore('editEmailForm');
+  const passwordFormStore = useFormStore('patchPasswordForm');
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
@@ -84,7 +98,9 @@
     <!-- avatar components -->
     <a-flex class="avatar">
       <a-avatar :size="150">
-        <template #icon><UserOutlined /></template>
+        <template #icon>
+          <UserOutlined />
+        </template>
       </a-avatar>
     </a-flex>
 
@@ -95,27 +111,42 @@
         height: 'fit-content',
       }"
     >
+      <!-- Email Text Field -->
       <EditableTextField
+        class="textField email"
         :value="user?.email ?? ''"
         :is-loading="isLoading"
         :label="'Email'"
         :is-editing-key="'isEditingEmail'"
-        class="textField email"
-        type="email"
-        :user-id="user?.id ?? ''"
-        :placeholder="user?.email"
-        @safed-changes="
+        :form-store="emailFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
           async () => user && (await userStore.fetchUser(user.id))
         "
-      />
-      <EditablePasswordField
+      >
+        <EmailInputField
+          :user-id="user?.id ?? ''"
+          :form-store="emailFormStore"
+          :placeholder="user?.email ?? ''"
+          :default="user?.email ?? ''"
+        />
+      </EditableTextField>
+
+      <!-- Password Text Field -->
+      <EditableTextField
         v-if="me?.id && me.id === user?.id"
-        value="**********"
-        label="Password"
+        :value="'**********'"
+        :label="'Password'"
         :is-editing-key="'isEditingPassword'"
         :is-loading="isLoading"
-        :user-id="user?.id ?? ''"
-      />
+        :form-store="passwordFormStore"
+        :has-edit-keys="true"
+      >
+        <PasswordInputField
+          :user-id="user?.id ?? ''"
+          :form-store="passwordFormStore"
+        />
+      </EditableTextField>
     </a-flex>
   </div>
   <RouterView />
@@ -131,7 +162,7 @@
     padding: 1em 3em;
     margin: 2em 1em;
     border-radius: 10px;
-    background-color: white;
+    background-color: v-bind('token.colorBgElevated');
     min-width: 450px;
     height: auto;
     flex-direction: column;
@@ -141,6 +172,7 @@
 
   :deep(.ant-card) {
     margin: 0.5em 0;
+    background-color: v-bind('token.colorBgElevated');
   }
 
   .avatar {

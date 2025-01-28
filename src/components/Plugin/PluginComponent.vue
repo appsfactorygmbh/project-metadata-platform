@@ -4,6 +4,9 @@
   import { createFaviconURL, cutAfterTLD } from './editURL';
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import { projectEditStoreSymbol } from '@/store/injectionSymbols';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   // Define the component's props with pluginName and url as required strings.
   const props = defineProps({
@@ -83,12 +86,10 @@
     (newVal) => {
       if (props.editKey !== undefined && newVal?.includes(props.editKey)) {
         urlStatusRef.value = 'error';
+      } else if (urlInput.value === '') {
+        urlStatusRef.value = 'error';
       } else {
-        if (urlInput.value === '') {
-          urlStatusRef.value = 'error';
-        } else {
-          urlStatusRef.value = '';
-        }
+        urlStatusRef.value = '';
       }
     },
   );
@@ -126,11 +127,9 @@
       if (props.editKey !== undefined) {
         projectEditStore?.addEmptyUrlField(props.editKey);
       }
-    } else {
-      if (props.editKey !== undefined) {
-        projectEditStore?.removeEmptyUrlField(props.editKey);
-        urlStatusRef.value = '';
-      }
+    } else if (props.editKey !== undefined) {
+      projectEditStore?.removeEmptyUrlField(props.editKey);
+      urlStatusRef.value = '';
     }
 
     if (displayNameInput.value === '') {
@@ -138,11 +137,9 @@
       if (props.editKey !== undefined) {
         projectEditStore?.addEmptyDisplaynameField(props.editKey);
       }
-    } else {
-      if (props.editKey !== undefined) {
-        projectEditStore?.removeEmptyDisplaynameField(props.editKey);
-        displayNameStatusRef.value = '';
-      }
+    } else if (props.editKey !== undefined) {
+      projectEditStore?.removeEmptyDisplaynameField(props.editKey);
+      displayNameStatusRef.value = '';
     }
 
     if (props.editKey !== undefined) {
@@ -165,17 +162,13 @@
       :loading="toggleSkeleton"
       :bordered="false"
       toggle="true"
-      :body-style="{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: '15px',
-      }"
       :style="hide ? 'display: none' : ''"
     >
       <!-- Container for plugin name and URL text. -->
       <div class="textContainerInput">
-        <h3 style="text-align: center">{{ pluginName }}</h3>
+        <h3 style="text-align: center">
+          {{ pluginName }}
+        </h3>
         <a-input
           v-model:value="displayNameInput"
           :status="displayNameStatusRef"
@@ -214,7 +207,7 @@
         shape="square"
         :src="faviconUrl"
         class="avatar"
-      ></a-avatar>
+      />
       <!-- Container for plugin name and URL text. -->
       <div class="textContainer">
         <h3>{{ pluginName }}</h3>
@@ -236,11 +229,12 @@
   .circleBackground {
     padding: 3.5%;
     border-radius: 100%;
-    background-color: white;
     position: absolute;
     top: -3%;
     right: -3%;
-    box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0;
+    box-shadow: v-bind('token.boxShadowSecondary');
+    color: white;
+    background-color: color-mix(in srgb, #6d6e6f, #ff002e 60%) !important;
     &:hover {
       transition: 0.1s ease-in-out;
       cursor: pointer;
@@ -252,19 +246,21 @@
     width: max-content;
     min-width: 200px;
     max-width: 300px;
-    box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0 !important;
+    box-shadow: v-bind('token.boxShadowSecondary');
     display: flex;
-    flex-direction: column;
+    background-color: v-bind('token.colorBgElevated');
   }
 
   .card {
     width: max-content;
     max-width: 300px;
 
-    box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0 !important;
+    box-shadow: v-bind('token.boxShadowSecondary');
     display: flex;
     flex-direction: column;
     transition: 0.1s ease-in-out;
+
+    background-color: v-bind('token.colorBgElevated');
 
     &:hover {
       cursor: pointer;

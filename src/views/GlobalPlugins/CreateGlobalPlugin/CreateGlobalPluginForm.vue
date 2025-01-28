@@ -1,10 +1,8 @@
 <script setup lang="ts">
-  import { type FormSubmitType } from '@/components/Form';
+  import type { FormStore, FormSubmitType } from '@/components/Form';
   import { notification } from 'ant-design-vue';
   import { useGlobalPluginsStore } from '@/store';
   import { reactive } from 'vue';
-  //import type { CreatePluginModel } from '@/models/Plugin';
-  import { type FormStore } from '@/components/Form';
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
   import type { GlobalPluginFormData } from '../GlobalPluginForm';
 
@@ -36,5 +34,5 @@
 
 <template>
   <GlobalPluginForm :form-store="formStore" :initial-values="initialValues" />
-  <contextHolder></contextHolder>
+  <contextHolder />
 </template>

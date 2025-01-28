@@ -75,7 +75,7 @@
       if (projectStore.getUpdatedSuccessfully) {
         projectEditStore?.resetPluginChanges();
         message.success('Project updated successfully.', 2);
-        projectStore.fetch(projectStore.getProject?.id || 0);
+        projectStore.fetch(projectStore.getProject?.id ?? 0);
         stopEditing();
       } else {
         message.error('Could not update Project.', 5);
@@ -170,9 +170,9 @@
     <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
     <ProjectInformation />
     <ProjectPlugins
-      class="pluginView"
-      @setBlur="setBlur"
       :key="rerenderPlugins"
+      class="pluginView"
+      @set-blur="setBlur"
     />
     <LocalLogView class="LocalLog" :class="{ blur: isBlurred }" />
     <ConfirmAction

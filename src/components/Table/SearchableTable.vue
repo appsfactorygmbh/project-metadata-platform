@@ -6,13 +6,15 @@
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
   import type { SearchStore } from '@/store';
-  import { numberSorter, stringSorter } from '../../utils/antd/sort';
+  import { numberSorter, stringSorter } from '@/utils/antd';
   import type { SearchableColumn } from './SearchableTableTypes';
   import type { TableColumnType, TableProps } from 'ant-design-vue';
   import type { ComputedRef, Ref } from 'vue';
-  import { useQuery } from '@/utils/hooks';
   import type { ArrayElement } from '@/models/utils';
   import { useSessionStorage } from '@vueuse/core';
+  import { useQuery, useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   //Get the width of the left pane from App.vue
   const props = defineProps({
@@ -166,6 +168,7 @@
   /**
    * Resets the filtered search in target column.
    * @param {((param?: FilterResetProps) => void)} clearFilters Clears the filter, when confirmed.
+   * @param {string} dataIndex Has the target column.
    */
   function handleReset(
     clearFilters: (param?: FilterResetProps) => void,
@@ -224,8 +227,8 @@
     :scroll="{ y: props.paneHeight - 125, x: true }"
     :custom-row="customRow"
     :row-class-name="'table-row'"
-    @resize-column="handleResizeColumn"
     bordered
+    @resize-column="handleResizeColumn"
   >
     <!-- Header of the table -->
     <template #headerCell="{ column }">
@@ -271,7 +274,9 @@
           style="width: 90px; margin-right: 8px"
           @click="handleSearch(selectedKeys[0], confirm, column.dataIndex)"
         >
-          <template #icon><SearchOutlined /></template>
+          <template #icon>
+            <SearchOutlined />
+          </template>
           Search
         </a-button>
         <!-- Reset button, resets filter when clicked -->
@@ -292,7 +297,6 @@
 
     <!-- body of the table with all data entries -->
     <template #bodyCell="{ text, column }">
-      <!-- span only shows when the specific column is searched on-->
       <span
         v-if="state.searchText && state.searchedColumn === column.dataIndex"
       >
@@ -305,5 +309,11 @@
 <style scoped>
   .clickable-table :deep(.table-row) {
     cursor: pointer;
+  }
+  :deep(.ant-table-cell .ant-table-cell-ellipsis .ant-table-column-sort) {
+    background-color: white;
+  }
+  :deep(.ant-table-expanded-row-fixed) {
+    background-color: v-bind('token.colorBgElevated');
   }
 </style>

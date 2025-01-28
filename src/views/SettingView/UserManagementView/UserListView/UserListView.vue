@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-  import { computed, onMounted, ref, watch } from 'vue';
-  import { inject } from 'vue';
+  import { inject, computed, onMounted, ref, watch } from 'vue';
   import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   const collapsed = ref<boolean>(false);
   const selectedKeys = ref<string[]>([]);
@@ -51,13 +53,12 @@
       <a-menu
         v-if="!isLoading"
         v-model:selected-keys="selectedKeys"
-        class="menuItem"
         mode="inline"
+        class="menuItem"
       >
         <a-menu-item
           v-for="user in usersData"
           :key="user.id"
-          class="users"
           @click="clickTab(user.id)"
         >
           <span>{{ getNameFromEmail(user.email) }}</span>
@@ -84,7 +85,7 @@
   }
 
   .ant-layout-sider {
-    background: #fff;
+    background-color: v-bind('token.colorBgElevated');
     height: 90vh;
     overflow: auto;
     border-radius: 10px;
@@ -105,8 +106,11 @@
   }
 
   :deep(.ant-layout-sider-trigger) {
-    background-color: gray !important;
+    background-color: v-bind('token.colorBgElevated');
     color: white !important;
     height: 0;
+  }
+  .menuItem {
+    background-color: v-bind('token.colorBgElevated');
   }
 </style>

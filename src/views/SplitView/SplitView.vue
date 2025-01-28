@@ -7,7 +7,9 @@
   import { MenuButtons } from '@/components/MenuButtons';
   import { CreateProjectView } from '@/views/CreateProject';
   import ProjectView from '../ProjectView/ProjectView.vue';
-  import { useEditing } from '@/utils/hooks';
+  import { useEditing, useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   const { isEditing } = useEditing();
   const tablePane = ref(null);
@@ -58,6 +60,23 @@
 </template>
 
 <style scoped>
+  :deep(.splitpanes.default-theme .splitpanes__pane) {
+    background-color: v-bind('token.colorFill') !important;
+  }
+
+  :deep(.splitpanes.default-theme .splitpanes__splitter) {
+    background-color: v-bind('token.colorBgElevated') !important;
+    border: 0;
+  }
+
+  :deep(.splitpanes.default-theme .splitpanes__splitter::before) {
+    background-color: v-bind('token.colorFillSecondary') !important;
+  }
+
+  :deep(.splitpanes.default-theme .splitpanes__splitter::after) {
+    background-color: v-bind('token.colorFillSecondary') !important;
+  }
+
   .splitpanes {
     height: 100vh;
   }

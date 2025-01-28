@@ -53,9 +53,9 @@
 
   const validateConfirmPassword = async (_rule: Rule, value: string) => {
     if (value === '') {
-      return Promise.reject('Please confirm the password.');
+      return Promise.reject(new Error('Please confirm the password.'));
     } else if (value !== dynamicValidateForm.password) {
-      return Promise.reject("The passwords don't match.");
+      return Promise.reject(new Error("The passwords don't match."));
     } else {
       return Promise.resolve();
     }
@@ -159,8 +159,7 @@
         placeholder="E-Mail"
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.email"
-      >
-      </a-input>
+      />
     </a-form-item>
     <a-form-item
       has-feedback
@@ -177,8 +176,7 @@
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.password"
         type="password"
-      >
-      </a-input>
+      />
     </a-form-item>
     <a-form-item
       has-feedback
@@ -195,11 +193,10 @@
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.confirmPassword"
         type="password"
-      >
-      </a-input>
+      />
     </a-form-item>
   </a-form>
-  <contextHolder></contextHolder>
+  <contextHolder />
 </template>
 
 <style scoped>

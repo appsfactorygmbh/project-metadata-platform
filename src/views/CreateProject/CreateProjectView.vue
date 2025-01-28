@@ -87,7 +87,7 @@
   // sends PUT request to the backend
   const submit = async () => {
     watch(isAdding, async (newVal) => {
-      if (newVal == false) {
+      if (!newVal) {
         if (projectStore.getAddedSuccessfully) {
           await projectStore.fetchAll();
           fetchError.value = false;
@@ -219,7 +219,7 @@
           message="Failed to create Project"
           type="error"
           show-icon
-        ></a-alert>
+        />
       </a-form>
     </a-modal>
   </div>

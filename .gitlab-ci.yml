@@ -99,7 +99,7 @@ lint-check-job:
   script:
     - echo "Linting code"
     - npm install -g eslint
-    - npx eslint --flag unstable_ts_config --format gitlab .
+    - yarn lint:check --format gitlab .
   artifacts:
     reports:
       codequality: gl-codequality.json
@@ -150,7 +150,7 @@ coverage-test-job:
 integration-test-job:
   image:
     name: cypress/included:cypress-13.5.0-node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
-    entrypoint: [""]
+    entrypoint: ['']
   stage: test
   extends:
     - .corepack_init
