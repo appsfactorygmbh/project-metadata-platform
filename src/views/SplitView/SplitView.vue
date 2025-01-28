@@ -11,7 +11,8 @@
   import { useThemeToken } from '@/utils/hooks';
   import { AddPluginView } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
   import { AppstoreAddOutlined } from '@ant-design/icons-vue';
-  import { Tooltip } from 'ant-design-vue';
+  // import { Tooltip } from 'ant-design-vue';
+  import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
 
   const token = useThemeToken();
 
@@ -34,14 +35,26 @@
     localStorage.setItem('paneSizes', JSON.stringify(newSizes));
   };
 
-  const openModal = ref<boolean>(false);
+  const openAddPluginModal = ref<boolean>(false);
 
-  const handleClick = () => {
-    openModal.value = true;
+  const handleClickAddPlugin = () => {
+    openAddPluginModal.value = true;
   };
 
-  const closeModal = () => {
-    openModal.value = false;
+  const closeAddPluginModal = () => {
+    openAddPluginModal.value = false;
+  };
+
+  const button: FloatButtonModel = {
+    name: 'AddPluginButton',
+    onClick: () => {
+      handleClickAddPlugin();
+    },
+    type: 'primary',
+    icon: AppstoreAddOutlined,
+    status: 'activated',
+    size: 'large',
+    tooltip: 'Click here to add a new plugin',
   };
 </script>
 
@@ -68,22 +81,11 @@
         <ProjectView />
         <MenuButtons />
         <CreateProjectView v-if="!isEditing" />
-        <div v-if="!isEditing" class="floating-button-container">
-          <Tooltip title="Click here to add a new plugin " placement="left">
-            <a-card
-              class="floating-button"
-              :bordered="false"
-              @click="handleClick"
-            >
-              <AppstoreAddOutlined />
-            </a-card>
-          </Tooltip>
-        </div>
-
+        <FloatingButton v-if="!isEditing" :button="button" class="addPlugin" />
         <AddPluginView
-          v-if="openModal"
-          :show-modal="openModal"
-          @close="closeModal"
+          v-if="openAddPluginModal"
+          :show-modal="openAddPluginModal"
+          @close="closeAddPluginModal"
         />
       </pane>
     </splitpanes>
@@ -121,30 +123,7 @@
     max-height: 100vh; /* Set a maximum height */
     overflow-y: auto; /* Enable vertical scrolling */
   }
-  /* Container für den Floating-Button */
-  .floating-button-container {
-    position: absolute;
-    right: 20px;
-    bottom: 100px;
-    z-index: 10;
-  }
-
-  .floating-button {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #6d6e6f;
-    color: white;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    font-size: 24px;
-    transition: 0.3s ease-in-out;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .floating-button:hover {
-    transform: scale(1.1);
+  .addPlugin {
+    margin-bottom: 60px;
   }
 </style>
