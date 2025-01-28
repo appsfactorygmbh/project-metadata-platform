@@ -18,10 +18,7 @@ type StoreActions = {
   refreshAuth: () => void;
   fetchAll: () => Promise<void>;
   fetch: (pluginId: number) => Promise<GlobalPluginModel | undefined>;
-  create: (
-    plugin: Omit<CreatePluginRequest, 'pluginName'> &
-      Pick<GlobalPluginModel, 'name'>,
-  ) => Promise<void>;
+  create: (plugin: CreatePluginRequest) => Promise<void>;
   update: (
     pluginId: GlobalPluginModel['id'],
     plugin: GlobalPluginModel,
@@ -138,7 +135,6 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
           try {
             const response = await this.callApi('pluginsPut', {
               createPluginRequest: {
-                pluginName: plugin.name,
                 ...plugin,
               },
             });
@@ -159,7 +155,6 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
               pluginId,
               patchGlobalPluginRequest: {
                 ...plugin,
-                pluginName: plugin.name,
               },
             });
             if (response) {

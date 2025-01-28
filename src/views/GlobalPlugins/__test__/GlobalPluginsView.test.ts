@@ -22,13 +22,13 @@ import { useStore } from 'pinia-generic';
 const testData: GlobalPluginModel[] = [
   {
     id: 0,
-    name: 'Plugin 1',
+    pluginName: 'Plugin 1',
     isArchived: true,
     keys: [],
   },
   {
     id: 1,
-    name: 'Plugin 2',
+    pluginName: 'Plugin 2',
     isArchived: false,
     keys: [],
   },
@@ -37,13 +37,13 @@ const testData: GlobalPluginModel[] = [
 const testDataArchive: GlobalPluginModel[] = [
   {
     id: 0,
-    name: 'Plugin 1',
+    pluginName: 'Plugin 1',
     isArchived: true,
     keys: [],
   },
   {
     id: 1,
-    name: 'Plugin 2',
+    pluginName: 'Plugin 2',
     isArchived: true,
     keys: [],
   },
@@ -52,13 +52,13 @@ const testDataArchive: GlobalPluginModel[] = [
 const testDataReactivate: GlobalPluginModel[] = [
   {
     id: 0,
-    name: 'Plugin 1',
+    pluginName: 'Plugin 1',
     isArchived: true,
     keys: [],
   },
   {
     id: 1,
-    name: 'Plugin 2',
+    pluginName: 'Plugin 2',
     isArchived: true,
     keys: [],
   },
