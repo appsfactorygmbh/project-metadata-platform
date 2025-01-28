@@ -75,25 +75,15 @@ describe('ProjectInformation.vue', () => {
     expect(wrapper.findAll('.infoCard')[2].text()).toBe('Team\xa0Number:42');
     expect(wrapper.findAll('.infoCard')[3].text()).toBe('Department:IT');
     expect(wrapper.findAll('.infoCard')[4].text()).toBe('Client\xa0Name:ZDF');
-    expect(wrapper.findAll('.projectInfo')[5].text()).toBe('3');
-    expect(wrapper.findAll('.projectInfo')[6].text()).toBe('Appsfactory');
-    expect(wrapper.findAll('.projectInfo')[7].text()).toBe('EXTERNAL');
-    expect(wrapper.findAll('.projectInfo')[8].text()).toBe('NORMAL');
+    expect(wrapper.findAll('.infoCard')[5].text()).toBe('Offer\xa0ID:3');
+    expect(wrapper.findAll('.infoCard')[6].text()).toBe('Company:Appsfactory');
+    expect(wrapper.findAll('.infoCard')[7].text()).toBe(
+      'Company\xa0State:External',
+    );
+    expect(wrapper.findAll('.infoCard')[8].text()).toBe('ISMS\xa0Level:Normal');
   });
 
   it('opens the confirmation modal when DeleteOutlined button is clicked', async () => {
-    const testData = {
-      projectName: 'Heute Show',
-      department: 'IT',
-      clientName: 'ZDF',
-      businessUnit: 'BU Health',
-      teamNumber: 42,
-      isArchived: true,
-      offerId: '3',
-      company: 'Appsfactory',
-      companyState: 'EXTERNAL',
-      ismsLevel: 'NORMAL',
-    };
     projectStore.project!.isArchived = true;
 
     const wrapper = generateWrapper();
