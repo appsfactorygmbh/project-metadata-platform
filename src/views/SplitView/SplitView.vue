@@ -9,6 +9,9 @@
   import ProjectView from '../ProjectView/ProjectView.vue';
   import { useEditing } from '@/utils/hooks';
   import { useThemeToken } from '@/utils/hooks';
+  import { AddPluginView } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
+  import { AppstoreAddOutlined } from '@ant-design/icons-vue';
+  import { Tooltip } from 'ant-design-vue';
 
   const token = useThemeToken();
 
@@ -29,6 +32,16 @@
 
   const onResize = (newSizes: number[]) => {
     localStorage.setItem('paneSizes', JSON.stringify(newSizes));
+  };
+
+  const openModal = ref<boolean>(false);
+
+  const handleClick = () => {
+    openModal.value = true;
+  };
+
+  const closeModal = () => {
+    openModal.value = false;
   };
 </script>
 
@@ -55,6 +68,23 @@
         <ProjectView />
         <MenuButtons />
         <CreateProjectView v-if="!isEditing" />
+        <div v-if="!isEditing" class="floating-button-container">
+          <Tooltip title="Click here to add a new plugin " placement="left">
+            <a-card
+              class="floating-button"
+              :bordered="false"
+              @click="handleClick"
+            >
+              <AppstoreAddOutlined />
+            </a-card>
+          </Tooltip>
+        </div>
+
+        <AddPluginView
+          v-if="openModal"
+          :show-modal="openModal"
+          @close="closeModal"
+        />
       </pane>
     </splitpanes>
   </div>
@@ -90,5 +120,31 @@
     position: relative;
     max-height: 100vh; /* Set a maximum height */
     overflow-y: auto; /* Enable vertical scrolling */
+  }
+  /* Container für den Floating-Button */
+  .floating-button-container {
+    position: absolute;
+    right: 20px;
+    bottom: 100px;
+    z-index: 10;
+  }
+
+  .floating-button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #6d6e6f;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 24px;
+    transition: 0.3s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .floating-button:hover {
+    transform: scale(1.1);
   }
 </style>
