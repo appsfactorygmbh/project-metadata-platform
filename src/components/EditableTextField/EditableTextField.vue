@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-  import { useEditing } from '@/utils/hooks/useEditing';
   import type { PropType } from 'vue';
-  import { useFormStore } from '../Form/FormStore';
-  import UserEmailInputField from './InputFields/UserEmailInputField.vue';
+  import type { FormStore } from '../Form/FormStore';
+  import { useEditing } from '@/utils/hooks';
 
   const props = defineProps({
     value: {
-      type: String,
+      type: [Number, String],
       required: true,
     },
     label: {
@@ -17,48 +16,34 @@
       type: Boolean,
       required: true,
     },
-    type: {
-      type: String as PropType<'username' | 'email'>,
-      default: 'text',
-    },
     isEditingKey: {
       type: String,
-      required: true,
+      required: false,
+      default: '',
     },
-    userId: {
-      type: String,
+    formStore: {
+      type: Object as PropType<FormStore>,
+      required: false,
+      default: {} as FormStore,
+    },
+    hasEditKeys: {
+      type: Boolean,
       required: true,
     },
   });
 
-  const emailFormStore = useFormStore('editEmailForm');
-  const usernameFormStore = useFormStore('editUsernameForm');
+  const emit = defineEmits(['savedChanges']);
 
-  const emit = defineEmits(['safedChanges']);
-
-  const { isEditing, startEditing, stopEditing } = useEditing(
-    props.isEditingKey,
-  );
-
-  const safeEdit = async () => {
-    if (props.type === 'email') {
-      await emailFormStore.submit();
-      emailFormStore.resetFields();
-    }
-    if (props.type === 'username') {
-      await usernameFormStore.submit();
-      usernameFormStore.resetFields();
-    }
-    stopEditing();
-    emit('safedChanges');
-  };
+  const { isEditing } = useEditing(props.isEditingKey);
 </script>
 
 <template>
   <a-card
     :body-style="{
       display: 'flex',
+      padding: '5px',
       alignItems: 'center',
+      height: '2em',
     }"
     class="info"
   >
@@ -69,23 +54,17 @@
       </p>
 
       <div v-else>
-        <UserEmailInputField
-          v-if="props.type === 'email'"
-          :form-store="emailFormStore"
-          :user-id="props.userId"
-          :placeholder="props.value"
-          :default="props.value"
-        />
+        <slot></slot>
       </div>
 
       <EditButtons
-        :is-editing="isEditing"
-        :is-loading="isLoading"
-        :safe-disabled="isLoading"
+        v-if="hasEditKeys"
         class="editButton"
-        @start-editing="startEditing"
-        @cancle-edit="stopEditing"
-        @safe-edits="safeEdit"
+        :is-editing-key="props.isEditingKey ?? ''"
+        :is-loading="props.isLoading"
+        :safe-disabled="props.isLoading"
+        :form-store="props.formStore!"
+        @saved-changes="emit('savedChanges')"
       />
     </template>
     <a-skeleton
@@ -130,9 +109,6 @@
     display: flex;
     flex-flow: column wrap;
     justify-content: center;
-    .ant-card-body {
-      padding: 12px !important;
-    }
   }
 
   .info label {
@@ -142,8 +118,15 @@
   }
 
   .input {
-    margin: 0 !important;
+    margin-left: 1em;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1 !important;
+    padding-left: 1em !important;
   }
+
   .text {
     font-weight: 400;
   }

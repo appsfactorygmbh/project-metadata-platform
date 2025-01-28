@@ -1,7 +1,3 @@
-// function getNestedProp(obj: object, prop: string) {
-//   return prop.split('.').reduce((o, key) => o && o[key], obj);
-// }
-
 type NestedElements = object | string | number | Date | undefined;
 
 type NestedElementsObject = {
