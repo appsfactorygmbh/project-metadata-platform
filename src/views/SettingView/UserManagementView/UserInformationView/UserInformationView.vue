@@ -1,5 +1,9 @@
 <script lang="ts" setup>
-  import { PlusOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons-vue';
+  import {
+    PlusOutlined,
+    DeleteOutlined,
+    UserOutlined,
+  } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { inject, ref } from 'vue';
   import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';

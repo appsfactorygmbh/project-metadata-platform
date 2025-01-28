@@ -9,7 +9,7 @@
     useUserStore,
     useAuthStore,
     usePluginStore,
-    useProjectStore
+    useProjectStore,
   } from '@/store';
 
   const router = useRouter();

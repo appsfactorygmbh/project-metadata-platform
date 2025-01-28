@@ -45,7 +45,9 @@
           keyProp: 'key',
           validator: (_, value) => {
             if (value.value.length === 0) {
-              return Promise.reject(new Error('Please insert the key or remove it.'));
+              return Promise.reject(
+                new Error('Please insert the key or remove it.'),
+              );
             }
             return Promise.resolve();
           },
