@@ -3,7 +3,6 @@
   import { globalPluginStoreSymbol } from '@/store/injectionSymbols';
   import { provide } from 'vue';
 
-  // const globalPluginsStore = useGlobalPluginsStore();
   provide<GlobalPluginsStore>(globalPluginStoreSymbol, useGlobalPluginsStore());
 </script>
 

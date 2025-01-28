@@ -6,14 +6,13 @@
     FilterResetProps,
   } from 'ant-design-vue/es/table/interface';
   import type { SearchStore } from '@/store';
-  import { numberSorter, stringSorter } from '../../utils/antd/sort';
+  import { numberSorter, stringSorter } from '@/utils/antd';
   import type { SearchableColumn } from './SearchableTableTypes';
   import type { TableColumnType, TableProps } from 'ant-design-vue';
   import type { ComputedRef, Ref } from 'vue';
-  import { useQuery } from '@/utils/hooks';
   import type { ArrayElement } from '@/models/utils';
   import { useSessionStorage } from '@vueuse/core';
-  import { useThemeToken } from '@/utils/hooks';
+  import { useQuery, useThemeToken } from '@/utils/hooks';
 
   const token = useThemeToken();
 
@@ -169,6 +168,7 @@
   /**
    * Resets the filtered search in target column.
    * @param {((param?: FilterResetProps) => void)} clearFilters Clears the filter, when confirmed.
+   * @param {string} dataIndex Has the target column.
    */
   function handleReset(
     clearFilters: (param?: FilterResetProps) => void,

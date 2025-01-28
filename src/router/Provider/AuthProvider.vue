@@ -7,8 +7,10 @@
     useLocalLogStore,
     useLogsStore,
     useUserStore,
+    useAuthStore,
+    usePluginStore,
+    useProjectStore
   } from '@/store';
-  import { useAuthStore, usePluginStore, useProjectStore } from '@/store';
 
   const router = useRouter();
 
