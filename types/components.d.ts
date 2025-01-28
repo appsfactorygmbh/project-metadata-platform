@@ -50,6 +50,7 @@ declare module 'vue' {
     ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
     BackgroundContainer: typeof import('./../src/components/Container/BackgroundContainer.vue')['default']
     ConfirmAction: typeof import('./../src/components/Modal/ConfirmAction.vue')['default']
+    EditablePasswordField: typeof import('./../src/components/EditableTextField/EditablePasswordField.vue')['default']
     EditableTextField: typeof import('./../src/components/EditableTextField/EditableTextField.vue')['default']
     EditButtons: typeof import('./../src/components/EditableTextField/EditButtons.vue')['default']
     EmailInputField: typeof import('./../src/components/EditableTextField/InputFields/EmailInputField.vue')['default']
