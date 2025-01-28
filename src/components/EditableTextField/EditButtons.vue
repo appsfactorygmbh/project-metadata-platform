@@ -1,42 +1,63 @@
 <script setup lang="ts">
+  import { useEditing } from '@/utils/hooks';
   import {
     CheckOutlined,
     CloseOutlined,
     EditOutlined,
   } from '@ant-design/icons-vue';
+  import type { FormStore } from '../Form';
+
   const props = defineProps({
-    isEditing: {
-      type: Boolean,
+    isEditingKey: {
+      type: String,
       required: true,
-      default: false,
     },
     safeDisabled: {
       type: Boolean,
       required: true,
-      default: false,
     },
     isLoading: {
       type: Boolean,
       required: true,
-      default: false,
+    },
+    formStore: {
+      type: Object as PropType<FormStore>,
+      required: true,
     },
   });
-  const emit = defineEmits(['startEditing', 'cancleEdit', 'safeEdits']);
+  const emit = defineEmits(['savedChanges']);
+
+  const { isEditing, startEditing, stopEditing } = useEditing(
+    props.isEditingKey,
+  );
+
+  const safeEdit = async () => {
+    await props.formStore.submit();
+    props.formStore.resetFields();
+
+    stopEditing();
+    emit('savedChanges');
+  };
+
+  const cancleEdit = () => {
+    props.formStore.resetFields();
+    stopEditing();
+  };
 </script>
 
 <template>
-  <a-button v-if="!isEditing" class="button" @click="emit('startEditing')">
+  <a-button v-if="!isEditing" class="button" @click="startEditing">
     <EditOutlined />
   </a-button>
   <div v-else class="buttonGroup">
     <a-button
       class="check button"
       :disabled="props.safeDisabled"
-      @click="emit('safeEdits')"
+      @click="safeEdit"
     >
       <CheckOutlined class="icon" />
     </a-button>
-    <a-button class="abort button" @click="emit('cancleEdit')">
+    <a-button class="abort button" @click="cancleEdit">
       <CloseOutlined class="icon" />
     </a-button>
   </div>

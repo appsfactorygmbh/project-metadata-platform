@@ -34,5 +34,3 @@
 <template>
   <FloatingButtonGroup :buttons="buttons" />
 </template>
-
-<style scoped></style>

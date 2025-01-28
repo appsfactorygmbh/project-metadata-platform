@@ -58,7 +58,7 @@
     const searchQuery: string | undefined =
       routerQuery !== 'undefined' ? routerQuery : '';
 
-    defaultSearchQuery.value = searchQuery || '';
-    searchStore?.setSearchQuery(searchQuery || '');
+    defaultSearchQuery.value = searchQuery ?? '';
+    searchStore?.setSearchQuery(searchQuery ?? '');
   });
 </script>

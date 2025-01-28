@@ -75,7 +75,7 @@
       if (projectStore.getUpdatedSuccessfully) {
         projectEditStore?.resetPluginChanges();
         message.success('Project updated successfully.', 2);
-        projectStore.fetch(projectStore.getProject?.id || 0);
+        projectStore.fetch(projectStore.getProject?.id ?? 0);
         stopEditing();
       } else {
         message.error('Could not update Project.', 5);
