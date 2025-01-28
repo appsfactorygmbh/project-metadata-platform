@@ -5,6 +5,10 @@ export const useProjectRouting = (router: Router = useRouter()) => {
     Number(router.currentRoute.value.query.projectId),
   );
 
+  const routerProjectSlug = ref<string>(
+    String(router.currentRoute.value.params.projectSlug),
+  );
+
   const setProjectId = (id: number | undefined) => {
     if (id === undefined) {
       const { query, path } = router.currentRoute.value;
@@ -26,5 +30,5 @@ export const useProjectRouting = (router: Router = useRouter()) => {
     }
   };
 
-  return { router, routerProjectId, setProjectId };
+  return { router, routerProjectId, routerProjectSlug, setProjectId };
 };
