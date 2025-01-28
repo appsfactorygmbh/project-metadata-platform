@@ -27,8 +27,10 @@
   import {
     EditableTextField,
     ProjectInformationInputField,
+    ProjectInformationSelectField,
   } from '@/components/EditableTextField';
   import { useThemeToken } from '@/utils/hooks';
+  import { CompanyState, SecurityLevel } from '@/api/generated';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectStore = useProjectStore();
@@ -134,7 +136,27 @@
   const companyStateInput = ref(projectData.companyState);
   const ismsLevelInput = ref(projectData.ismsLevel);
 
-  const textFields = ref([
+  type BaseInputField<T = string | number> = {
+    label: string;
+    name: string;
+    value: Ref<T>;
+    status: Ref<Status>;
+    displayValue?: (value: T) => string | number | boolean | undefined;
+  };
+
+  type InputField<T = string | number> = BaseInputField<T> &
+    (
+      | {
+          options?: string[] | (keyof T)[];
+          getValue?: (value: string) => T;
+          inputType: 'select';
+        }
+      | {
+          inputType?: 'text';
+        }
+    );
+
+  const textFields = ref<InputField[]>([
     {
       label: 'Business\xa0Unit',
       name: 'businessUnit',
@@ -176,12 +198,26 @@
       name: 'companyState',
       value: companyStateInput,
       status: companyStateInputState,
+      options: Object.keys(CompanyState) as (keyof typeof CompanyState)[],
+      displayValue: (value) =>
+        Object.keys(CompanyState).find(
+          (key) => CompanyState[key as keyof typeof CompanyState] === value,
+        ),
+      getValue: (value) => CompanyState[value as keyof typeof CompanyState],
+      inputType: 'select',
     },
     {
       label: 'ISMS\xa0Level',
       name: 'ismsLevel',
       value: ismsLevelInput,
       status: ismsLevelInputState,
+      options: Object.keys(SecurityLevel) as (keyof typeof SecurityLevel)[],
+      displayValue: (value) =>
+        Object.keys(SecurityLevel).find(
+          (key) => SecurityLevel[key as keyof typeof SecurityLevel] === value,
+        ),
+      getValue: (value) => SecurityLevel[value as keyof typeof SecurityLevel],
+      inputType: 'select',
     },
   ]);
 
@@ -401,8 +437,28 @@
           :is-loading="isLoading"
           :label="field.label"
           :has-edit-keys="false"
+          :display-value="field.displayValue"
         >
+          <ProjectInformationSelectField
+            v-if="field.inputType === 'select'"
+            :column-name="field.name"
+            :input-value="field.value"
+            :input-status="field.status"
+            :edit-store="projectEditStore"
+            :options="field.options!"
+            :get-value="field.getValue!"
+            :display-value="field.displayValue!"
+            @updated="
+              (newValue) => {
+                field.value = newValue;
+                updateProjectInformation();
+              }
+            "
+            @error="field.status = 'error'"
+            @success="field.status = ''"
+          />
           <ProjectInformationInputField
+            v-else
             :column-name="field.name"
             :input-value="field.value"
             :input-status="field.status"
