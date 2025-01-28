@@ -24,6 +24,10 @@
   import IconButton from '@/components/Button/IconButton.vue';
   import router from '@/router';
   import _ from 'lodash';
+  import {
+    EditableTextField,
+    ProjectInformationInputField,
+  } from '@/components/EditableTextField';
   import { useThemeToken } from '@/utils/hooks';
 
   const localLogStore = inject(localLogStoreSymbol);
@@ -129,6 +133,57 @@
   const companyInput = ref(projectData.company);
   const companyStateInput = ref(projectData.companyState);
   const ismsLevelInput = ref(projectData.ismsLevel);
+
+  const textFields = ref([
+    {
+      label: 'Business\xa0Unit',
+      name: 'businessUnit',
+      value: BUInput,
+      status: BUInputStatus,
+    },
+    {
+      label: 'Team\xa0Number',
+      name: 'teamNumber',
+      value: teamNumberInput,
+      status: teamNumberInputStatus,
+    },
+    {
+      label: 'Department',
+      name: 'department',
+      value: departmentInput,
+      status: departmentInputStatus,
+    },
+    {
+      label: 'Client\xa0Name',
+      name: 'clientName',
+      value: clientNameInput,
+      status: clientNameInputStatus,
+    },
+    {
+      label: 'Offer\xa0ID',
+      name: 'offerId',
+      value: offerIdInput,
+      status: offerIdInputStatus,
+    },
+    {
+      label: 'Company',
+      name: 'company',
+      value: companyInput,
+      status: companyInputStatus,
+    },
+    {
+      label: 'Company\xa0State',
+      name: 'companyState',
+      value: companyStateInput,
+      status: companyStateInputState,
+    },
+    {
+      label: 'ISMS\xa0Level',
+      name: 'ismsLevel',
+      value: ismsLevelInput,
+      status: ismsLevelInputState,
+    },
+  ]);
 
   //Function to update the project information
   function updateProjectInformation(): void {
@@ -246,7 +301,7 @@
 
 <template>
   <div class="pane">
-    <div class="main">
+    <div v-if="projectData.id.value" class="main">
       <!-- create box for the project name -->
       <div class="projectNameContainer">
         <h1 v-if="!isLoading" class="projectName">
@@ -328,380 +383,45 @@
           height: 'fit-content',
         }"
       >
-        <a-card
-          :body-style="{
-            display: 'flex',
-            padding: '5px',
-            alignItems: 'center',
-          }"
-          class="infoCard nonEditingClass"
-        >
-          <label class="label">Project&nbsp;Slug:</label>
-          <template v-if="!isLoading">
-            <p class="projectInfo">
-              {{ projectData.slug.value }}
-            </p>
-          </template>
-          <a-skeleton
-            v-else
-            active
-            :paragraph="false"
-            style="padding-left: 1em"
-          />
-        </a-card>
+        <EditableTextField
+          v-if="!isEditing"
+          class="infoCard"
+          :value="projectData.slug.value"
+          :is-loading="isLoading"
+          :label="'Project\xa0Slug'"
+          :has-edit-keys="false"
+        />
 
-        <a-card
-          :body-style="{
-            display: 'flex',
-            padding: '5px',
-            alignItems: 'center',
-          }"
+        <EditableTextField
+          v-for="field in textFields"
+          :key="field.name"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
+          :value="field.value"
+          :is-loading="isLoading"
+          :label="field.label"
+          :has-edit-keys="false"
         >
-          <label class="label">Business&nbsp;Unit:</label>
-          <template v-if="!isLoading">
-            <p v-if="!isEditing" class="projectInfo">
-              {{ projectData.businessUnit.value }}
-            </p>
-            <a-input
-              v-else
-              v-model:value="BUInput"
-              class="inputField"
-              :status="BUInputStatus"
-              @input="updateProjectInformation"
-              @change="
-                () => {
-                  if (!BUInput) {
-                    BUInputStatus = 'error';
-                    projectEditStore.addEmptyProjectInformationField('BU');
-                  } else {
-                    BUInputStatus = '';
-                    projectEditStore.removeEmptyProjectInformationField('BU');
-                  }
-                }
-              "
-            />
-          </template>
-          <a-skeleton
-            v-else
-            active
-            :paragraph="false"
-            style="padding-left: 1em"
+          <ProjectInformationInputField
+            :column-name="field.name"
+            :input-value="field.value"
+            :input-status="field.status"
+            :edit-store="projectEditStore"
+            @updated="
+              (newValue) => {
+                field.value = newValue;
+                updateProjectInformation();
+              }
+            "
+            @error="field.status = 'error'"
+            @success="field.status = ''"
           />
-        </a-card>
-
-        <a-card
-          :body-style="{
-            display: 'flex',
-            padding: '5px',
-            alignItems: 'center',
-          }"
-          class="infoCard"
-          :class="[editingClass, nonEditingClass]"
-        >
-          <label class="label">Team&nbsp;Number:</label>
-          <template v-if="!isLoading">
-            <p v-if="!isEditing" class="projectInfo">
-              {{ projectData.teamNumber.value }}
-            </p>
-            <a-input
-              v-else
-              v-model:value="teamNumberInput"
-              class="inputField"
-              :status="teamNumberInputStatus"
-              @input="updateProjectInformation"
-              @change="
-                () => {
-                  if (!teamNumberInput || isNaN(teamNumberInput)) {
-                    teamNumberInputStatus = 'error';
-                    projectEditStore.addEmptyProjectInformationField(
-                      'teamNumber',
-                    );
-                  } else {
-                    teamNumberInputStatus = '';
-                    projectEditStore.removeEmptyProjectInformationField(
-                      'teamNumber',
-                    );
-                  }
-                }
-              "
-            />
-          </template>
-          <a-skeleton
-            v-else
-            active
-            :paragraph="false"
-            style="padding-left: 1em"
-          />
-        </a-card>
-
-        <a-card
-          :body-style="{
-            display: 'flex',
-            padding: '5px',
-            alignItems: 'center',
-          }"
-          class="infoCard"
-          :class="[editingClass, nonEditingClass]"
-        >
-          <label class="label">Department:</label>
-          <template v-if="!isLoading">
-            <p v-if="!isEditing" class="projectInfo">
-              {{ projectData.department.value }}
-            </p>
-            <a-input
-              v-else
-              v-model:value="departmentInput"
-              class="inputField"
-              :status="departmentInputStatus"
-              @input="updateProjectInformation"
-              @change="
-                () => {
-                  if (!departmentInput) {
-                    departmentInputStatus = 'error';
-                    projectEditStore.addEmptyProjectInformationField(
-                      'department',
-                    );
-                  } else {
-                    departmentInputStatus = '';
-                    projectEditStore.removeEmptyProjectInformationField(
-                      'department',
-                    );
-                  }
-                }
-              "
-            />
-          </template>
-          <a-skeleton
-            v-else
-            active
-            :paragraph="false"
-            style="padding-left: 1em"
-          />
-        </a-card>
-
-        <a-card
-          :body-style="{
-            display: 'flex',
-            padding: '5px',
-            alignItems: 'center',
-          }"
-          class="infoCard"
-          :class="[editingClass, nonEditingClass]"
-        >
-          <label class="label">Client&nbsp;Name:</label>
-          <template v-if="!isLoading">
-            <p v-if="!isEditing" class="projectInfo">
-              {{ projectData.clientName.value }}
-            </p>
-            <a-input
-              v-else
-              v-model:value="clientNameInput"
-              class="inputField"
-              :status="clientNameInputStatus"
-              @input="updateProjectInformation"
-              @change="
-                () => {
-                  if (!clientNameInput) {
-                    clientNameInputStatus = 'error';
-                    projectEditStore.addEmptyProjectInformationField(
-                      'clientName',
-                    );
-                  } else {
-                    clientNameInputStatus = '';
-                    projectEditStore.removeEmptyProjectInformationField(
-                      'clientName',
-                    );
-                  }
-                }
-              "
-            />
-          </template>
-          <a-skeleton
-            v-else
-            active
-            :paragraph="false"
-            style="padding-left: 1em"
-          />
-        </a-card>
-        <a-card
-          :body-style="{
-            display: 'flex',
-            padding: '5px',
-            alignItems: 'center',
-          }"
-          class="infoCard"
-          :class="[editingClass, nonEditingClass]"
-        >
-          <label class="label">Offer&nbsp;ID:</label>
-          <template v-if="!isLoading">
-            <p v-if="!isEditing" class="projectInfo">
-              {{ projectData.offerId.value }}
-            </p>
-            <a-input
-              v-else
-              v-model:value="offerIdInput"
-              class="inputField"
-              :status="offerIdInputStatus"
-              @input="updateProjectInformation"
-              @change="
-                () => {
-                  if (!offerIdInput) {
-                    offerIdInputStatus = 'error';
-                    projectEditStore.addEmptyProjectInformationField('offerId');
-                  } else {
-                    offerIdInputStatus = '';
-                    projectEditStore.removeEmptyProjectInformationField(
-                      'offerId',
-                    );
-                  }
-                }
-              "
-            />
-          </template>
-          <a-skeleton
-            v-else
-            active
-            :paragraph="false"
-            style="padding-left: 1em"
-          />
-        </a-card>
-
-        <a-card
-          :body-style="{
-            display: 'flex',
-            padding: '5px',
-            alignItems: 'center',
-          }"
-          class="infoCard"
-          :class="[editingClass, nonEditingClass]"
-        >
-          <label class="label">Company:</label>
-          <template v-if="!isLoading">
-            <p v-if="!isEditing" class="projectInfo">
-              {{ projectData.company.value }}
-            </p>
-            <a-input
-              v-else
-              v-model:value="companyInput"
-              class="inputField"
-              :status="companyInputStatus"
-              @input="updateProjectInformation"
-              @change="
-                () => {
-                  if (!companyInput) {
-                    companyInputStatus = 'error';
-                    projectEditStore.addEmptyProjectInformationField('company');
-                  } else {
-                    companyInputStatus = '';
-                    projectEditStore.removeEmptyProjectInformationField(
-                      'company',
-                    );
-                  }
-                }
-              "
-            />
-          </template>
-          <a-skeleton
-            v-else
-            active
-            :paragraph="false"
-            style="padding-left: 1em"
-          />
-        </a-card>
-
-        <a-card
-          :body-style="{
-            display: 'flex',
-            padding: '5px',
-            alignItems: 'center',
-          }"
-          class="infoCard"
-          :class="[editingClass, nonEditingClass]"
-        >
-          <label class="label">Company&nbsp;State:</label>
-          <template v-if="!isLoading">
-            <p v-if="!isEditing" class="projectInfo">
-              {{ projectData.companyState.value }}
-            </p>
-            <a-input
-              v-else
-              v-model:value="companyStateInput"
-              class="inputField"
-              :status="companyStateInputState"
-              @input="updateProjectInformation"
-              @change="
-                () => {
-                  if (!companyStateInput) {
-                    companyStateInputState = 'error';
-                    projectEditStore.addEmptyProjectInformationField(
-                      'companyState',
-                    );
-                  } else {
-                    companyStateInputState = '';
-                    projectEditStore.removeEmptyProjectInformationField(
-                      'companyState',
-                    );
-                  }
-                }
-              "
-            />
-          </template>
-          <a-skeleton
-            v-else
-            active
-            :paragraph="false"
-            style="padding-left: 1em"
-          />
-        </a-card>
-
-        <a-card
-          :body-style="{
-            display: 'flex',
-            padding: '5px',
-            alignItems: 'center',
-          }"
-          class="infoCard"
-          :class="[editingClass, nonEditingClass]"
-        >
-          <label class="label">ISMS&nbsp;Level:</label>
-          <template v-if="!isLoading">
-            <p v-if="!isEditing" class="projectInfo">
-              {{ projectData.ismsLevel.value }}
-            </p>
-            <a-input
-              v-else
-              v-model:value="ismsLevelInput"
-              class="inputField"
-              :status="ismsLevelInputState"
-              @input="updateProjectInformation"
-              @change="
-                () => {
-                  if (!ismsLevelInput) {
-                    ismsLevelInputState = 'error';
-                    projectEditStore.addEmptyProjectInformationField(
-                      'ismsLevel',
-                    );
-                  } else {
-                    ismsLevelInputState = '';
-                    projectEditStore.removeEmptyProjectInformationField(
-                      'ismsLevel',
-                    );
-                  }
-                }
-              "
-            />
-          </template>
-          <a-skeleton
-            v-else
-            active
-            :paragraph="false"
-            style="padding-left: 1em"
-          />
-        </a-card>
+        </EditableTextField>
       </a-flex>
     </div>
+    <a-flex v-else justify="center" align="center" class="emptyProjects">
+      <a-empty description="No project selected." />
+    </a-flex>
   </div>
 </template>
 
@@ -717,6 +437,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  .emptyProjects {
+    height: 100vh;
+    width: 100vh;
+    color: v-bind('token.colorText');
   }
 
   /* Style for the right panel */
@@ -808,18 +534,9 @@
     margin: 0;
   }
 
-  .projectInfo {
+  .text {
     font-size: 1.4em;
     margin: 0 auto 0 0.5em;
     white-space: nowrap;
-  }
-  .inputField {
-    margin-left: 1em;
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex: 1 !important; /* Set to important to override inline style */
-    padding-left: 1em !important; /* Set to important to override inline style */
   }
 </style>

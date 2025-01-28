@@ -19,7 +19,7 @@ import {
 
 const testData: DetailedProjectModel = {
   id: 1,
-  slug: 'test-project',
+  slug: 'test_project',
   isArchived: false,
   projectName: 'Heute Show',
   department: 'IT',
@@ -46,20 +46,11 @@ describe('ProjectInformation.vue', () => {
 
   const generateWrapper = () =>
     mount(ProjectInformation, {
-      plugins: [
-        createTestingPinia({
-          stubActions: true,
-          initialState: {
-            project: {
-              project: testData,
-            },
-          },
-        }),
-      ],
       global: {
         plugins: [router, testingPinia],
         provide: {
           [projectEditStoreSymbol as symbol]: useProjectEditStore(),
+          [projectStoreSymbol as symbol]: useProjectStore(),
         },
         stubs: {
           PluginView: {
@@ -75,11 +66,15 @@ describe('ProjectInformation.vue', () => {
 
     expect(projectStore.project).toMatchObject(testData);
     expect(wrapper.find('.projectName').text()).toEqual('Heute Show');
-    expect(wrapper.findAll('.projectInfo')[0].text()).toBe('test-project');
-    expect(wrapper.findAll('.projectInfo')[1].text()).toBe('BU Health');
-    expect(wrapper.findAll('.projectInfo')[2].text()).toBe('42');
-    expect(wrapper.findAll('.projectInfo')[3].text()).toBe('IT');
-    expect(wrapper.findAll('.projectInfo')[4].text()).toBe('ZDF');
+    expect(wrapper.findAll('.infoCard')[0].text()).toBe(
+      'Project\xa0Slug:test_project',
+    );
+    expect(wrapper.findAll('.infoCard')[1].text()).toBe(
+      'Business\xa0Unit:BU Health',
+    );
+    expect(wrapper.findAll('.infoCard')[2].text()).toBe('Team\xa0Number:42');
+    expect(wrapper.findAll('.infoCard')[3].text()).toBe('Department:IT');
+    expect(wrapper.findAll('.infoCard')[4].text()).toBe('Client\xa0Name:ZDF');
     expect(wrapper.findAll('.projectInfo')[5].text()).toBe('3');
     expect(wrapper.findAll('.projectInfo')[6].text()).toBe('Appsfactory');
     expect(wrapper.findAll('.projectInfo')[7].text()).toBe('EXTERNAL');
@@ -99,32 +94,9 @@ describe('ProjectInformation.vue', () => {
       companyState: 'EXTERNAL',
       ismsLevel: 'NORMAL',
     };
+    projectStore.project!.isArchived = true;
 
-    const wrapper = mount(ProjectInformation, {
-      plugins: [
-        createTestingPinia({
-          stubActions: true,
-          initialState: {
-            project: {
-              project: testData,
-            },
-          },
-        }),
-      ],
-      global: {
-        stubs: {
-          PluginView: {
-            template: '<span />',
-          },
-        },
-        plugins: [router],
-        provide: {
-          [projectEditStoreSymbol as symbol]: useProjectEditStore(),
-          [projectStoreSymbol as symbol]: useProjectStore(),
-        },
-      },
-    });
-
+    const wrapper = generateWrapper();
     await flushPromises();
 
     // check if delete button exists
@@ -142,44 +114,7 @@ describe('ProjectInformation.vue', () => {
   });
 
   it('does not render the edit and archive button but shows the reactivate and delete button when archived', async () => {
-    const testData = {
-      projectName: 'Deutsche Bahn',
-      department: 'IT',
-      clientName: 'DB',
-      businessUnit: 'DB Rail',
-      teamNumber: 45,
-      isArchived: true,
-      offerId: '3',
-      company: 'Appsfactory',
-      companyState: 'EXTERNAL',
-      ismsLevel: 'NORMAL',
-    };
-
-    const wrapper = mount(ProjectInformation, {
-      plugins: [
-        createTestingPinia({
-          stubActions: true,
-          initialState: {
-            project: {
-              project: testData,
-            },
-          },
-        }),
-      ],
-      global: {
-        stubs: {
-          PluginView: {
-            template: '<span />',
-          },
-        },
-        plugins: [router],
-        provide: {
-          [projectEditStoreSymbol as symbol]: useProjectEditStore(),
-          [projectStoreSymbol as symbol]: useProjectStore(),
-        },
-      },
-    });
-
+    const wrapper = generateWrapper();
     await flushPromises();
 
     // Expectation: No Edit- or Archive Button, but Reactivate and Delete Button
