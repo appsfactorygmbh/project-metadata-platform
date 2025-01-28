@@ -18,6 +18,9 @@
   } from '@ant-design/icons-vue';
   import { usePluginStore, useProjectStore } from '@/store';
   import { useQuery } from '@/utils/hooks';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   const props = defineProps({
     paneWidth: {
@@ -53,7 +56,10 @@
   const highlightButtonStyle = computed(() =>
     searchQuery.isSearchQuery.value
       ? { color: '#3e8ee2', width: '100%', borderColor: '#3e8ee2' }
-      : { color: 'black', width: '100%', borderColor: '#d9d9d9' },
+      : {
+          color: token.value.colorText,
+          width: '100%',
+        },
   );
 
   const showOnlyArchived: ProjectSearchStore['filter'] = (items) =>
@@ -171,12 +177,13 @@
 
   const clearAllFilters = () => {
     searchStore.reset();
+    searchStorage.value.searchQuery = '';
     searchStore.applySearch();
   };
 </script>
 
 <template>
-  <div style="padding: 20px">
+  <div style="padding: 10px">
     <a-flex vertical gap="middle">
       <span style="display: flex; flex-direction: row">
         <SearchBar :search-store-symbol="searchStoreSymbol" style="flex: 5" />
@@ -228,45 +235,46 @@
       dataIndex: 'projectName',
       key: 'projectName',
       searchable: true,
+      resizable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
-      width: '37.5%',
     },
     {
       title: 'Client Name',
       dataIndex: 'clientName',
       key: 'clientName',
       searchable: true,
+      resizable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-      width: '37.5%',
     },
     {
       title: 'Business Unit',
       dataIndex: 'businessUnit',
-      key: 'businessNumber',
+      key: 'businessUnit',
+      searchable: true,
+      resizable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-      width: '12.5%',
     },
     {
       title: 'Team Number',
       dataIndex: 'teamNumber',
       key: 'teamNumber',
+      searchable: true,
       ellipsis: true,
       align: 'center' as const,
       sortMethod: 'number',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
-      width: '12.5%',
     },
   ]);
   const queryNames = [
@@ -322,6 +330,7 @@
    */
   function hideColumn(index: number) {
     columns[index].hidden = true;
+    columns[index - 1].resizable = false;
   }
 
   /**
@@ -330,6 +339,7 @@
    */
   function showColumn(index: number) {
     columns[index].hidden = false;
+    columns[index - 1].resizable = true;
   }
 
   /**

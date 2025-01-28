@@ -13,6 +13,7 @@
   import type { RulesObject } from '@/components/Form/types';
   import type { AddPluginFormData } from './AddPluginFormData.ts';
   import { useGlobalPluginsStore } from '@/store/GlobalPluginStore.ts';
+  import { usePluginStore } from '@/store';
 
   const { formStore, initialValues } = defineProps<{
     formStore: FormStore;
@@ -21,6 +22,7 @@
 
   const globalPluginStore = useGlobalPluginsStore();
   const projectEditStore = inject(projectEditStoreSymbol);
+  const pluginStore = usePluginStore();
   const options = ref<SelectProps['options']>([]);
 
   onBeforeMount(async () => {
@@ -39,7 +41,6 @@
 
   const onSubmit: FormSubmitType = (fields) => {
     try {
-      console.log(fields);
       const pluginNumber: number | undefined =
         globalPluginStore?.getGlobalPlugins.find(
           (plugin) => plugin.name === toRaw(fields).globalPlugin,
@@ -55,11 +56,11 @@
         url: toRaw(fields).pluginUrl,
       };
       addPlugin(pluginDef);
-    } catch {
+    } catch (error) {
       notificationApi.error({
         message: 'An error occurred. The plugin could not be created',
       });
-      console.log('fehler');
+      console.error('error while creating a new project plugin', error);
     }
   };
 
@@ -118,8 +119,27 @@
   });
 
   const handleChange = (value: SelectValue) => {
-    console.log(`selected ${value}`);
     dynamicValidateForm.inputsDisabled = false;
+
+    const selectedGlobalPlugin: string = value as string;
+
+    const projectPluginNames = pluginStore.getPlugins.map(
+      (plugin: PluginModel) => plugin.pluginName,
+    );
+    const addedPluginNames = (projectEditStore?.getAddedPlugins ?? []).map(
+      (plugin: PluginEditModel) => plugin.pluginName,
+    );
+
+    const globalPluginAlreadyUsed: boolean = [
+      ...projectPluginNames,
+      ...addedPluginNames,
+    ].some((name: string) => name === selectedGlobalPlugin);
+
+    if (!globalPluginAlreadyUsed) {
+      dynamicValidateForm.pluginName = selectedGlobalPlugin;
+    } else {
+      dynamicValidateForm.pluginName = '';
+    }
   };
 
   const filterOption = (input: string, option: LabeledValue) => {
@@ -160,7 +180,7 @@
         :options="options"
         :filter-option="filterOption"
         @change="handleChange"
-      ></a-select>
+      />
     </a-form-item>
     <a-form-item
       name="pluginName"
@@ -176,8 +196,7 @@
         placeholder="Plugin Name"
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.pluginName"
-      >
-      </a-input>
+      />
     </a-form-item>
     <a-form-item
       name="pluginUrl"
@@ -193,9 +212,8 @@
         placeholder="Plugin URL"
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.pluginName"
-      >
-      </a-input>
+      />
     </a-form-item>
   </a-form>
-  <contextHolder></contextHolder>
+  <contextHolder />
 </template>

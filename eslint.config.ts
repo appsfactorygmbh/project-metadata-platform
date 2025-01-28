@@ -6,6 +6,7 @@ import tsParser from '@typescript-eslint/parser';
 import vuePlugin from 'eslint-plugin-vue';
 import * as vueParser from 'vue-eslint-parser';
 import eslintConfigPrettier from 'eslint-config-prettier';
+import eslintPluginPrettier from 'eslint-plugin-prettier';
 import unusedImports from 'eslint-plugin-unused-imports';
 import globals from 'globals';
 
@@ -22,6 +23,8 @@ type Plugin =
 
 // const tsParser = tseslint.parser as Parser;
 const tsPlugin = tseslint.plugin as Plugin;
+
+const extraFileExtensions = ['.vue'];
 
 const ignoreFiles: Linter.Config = {
   name: 'ignore-files',
@@ -58,6 +61,7 @@ const linterConfig: Linter.Config = {
       project: path.resolve(__dirname, './tsconfig.node.json'),
       tsconfigRootDir: __dirname,
       sourceType: 'module',
+      extraFileExtensions,
     },
   },
   rules: {
@@ -78,17 +82,24 @@ const vitestConfig: Linter.Config = {
       project: path.resolve(__dirname, './tsconfig.vitest.json'),
       tsconfigRootDir: __dirname,
       sourceType: 'module',
+      extraFileExtensions,
     },
   },
 };
-const vueConfig: Linter.Config = {
+const vueConfig: ConfigWithExtends = {
   name: 'vue-config',
   files: ['src/**/*.vue'],
   plugins: {
     'vue-eslint': vuePlugin,
     '@typescript-eslint': tsPlugin,
     'unused-imports': unusedImports,
+    prettier: eslintPluginPrettier,
   },
+  extends: [
+    eslint.configs.recommended,
+    ...tseslint.configs.recommendedTypeChecked,
+    ...vuePlugin.configs['flat/recommended'],
+  ],
   languageOptions: {
     parser: vueParser,
     ecmaVersion: 'latest',
@@ -96,7 +107,7 @@ const vueConfig: Linter.Config = {
 
     parserOptions: {
       parser: tsParser,
-      extraFileExtensions: ['.vue'],
+      extraFileExtensions,
       // project: path.resolve(__dirname, './tsconfig.json'),
       projectService: {
         defaultProject: path.resolve(__dirname, './tsconfig.app.json'),
@@ -124,9 +135,13 @@ const vueConfig: Linter.Config = {
     'import-x/extensions': ['.vue'],
   },
 };
-const typescriptConfig: Linter.Config = {
+const typescriptConfig: ConfigWithExtends = {
   name: 'typescript-config',
   files: ['src/**/!(generated)/**/*.{ts,tsx}'],
+  extends: [
+    eslint.configs.recommended,
+    ...tseslint.configs.recommendedTypeChecked,
+  ],
   ignores: [
     'src/**/__tests__/**/*.{ts,tsx}',
     // 'src/api/generated/**/*.{ts,tsx}',
@@ -134,6 +149,7 @@ const typescriptConfig: Linter.Config = {
   plugins: {
     '@typescript-eslint': tsPlugin,
     'unused-imports': unusedImports,
+    prettier: eslintPluginPrettier,
   },
   languageOptions: {
     parser: tsParser,
@@ -141,7 +157,6 @@ const typescriptConfig: Linter.Config = {
     sourceType: 'module',
 
     parserOptions: {
-      parser: tsParser,
       // project: path.resolve(__dirname, './tsconfig.json'),
       tsconfigRootDir: __dirname,
       sourceType: 'module',
@@ -153,6 +168,7 @@ const typescriptConfig: Linter.Config = {
         defaultProject: path.resolve(__dirname, './tsconfig.app.json'),
         loadTypeScriptPlugins: !!process.env.VSCODE_PID,
       },
+      extraFileExtensions,
     },
   },
   settings: {
@@ -208,6 +224,7 @@ const generatedApiConfig: Linter.Config = {
       },
       tsconfigRootDir: __dirname,
       sourceType: 'module',
+      extraFileExtensions,
     },
   },
   rules: {
@@ -246,22 +263,6 @@ const disableTypeChecked: ConfigWithExtends = {
 };
 
 export default tseslint.config(
-  {
-    name: 'typescript-base-config',
-    files: ['src/**/!(generated)/**/*.{ts,tsx}'],
-    extends: [
-      eslint.configs.recommended,
-      ...tseslint.configs.recommendedTypeChecked,
-    ],
-  },
-  {
-    files: ['src/**/*.{vue}'],
-    extends: [
-      ...vuePlugin.configs['flat/base'],
-      ...vuePlugin.configs['flat/recommended'],
-    ],
-  },
-  ignoreFiles,
   globalsConfig,
   linterConfig,
   vitestConfig,
@@ -269,7 +270,8 @@ export default tseslint.config(
   typescriptConfig,
   generatedApiConfig,
   ruleOverrides,
+  ignoreFiles,
   //disableTypeChecked,
   // keep as last item to override conflicting rules
-  // { name: 'prettier', ...eslintConfigPrettier },
+  { name: 'prettier', ...eslintConfigPrettier },
 );

@@ -10,6 +10,8 @@
   } from '@/store';
   import { useAuthStore, usePluginStore, useProjectStore } from '@/store';
 
+  const router = useRouter();
+
   const authStore = useAuthStore();
   const projectStore = useProjectStore();
   const pluginStore = usePluginStore();
@@ -30,6 +32,54 @@
   logsStore.refreshAuth();
   userStore.refreshAuth();
 
+  const authInitialized = ref(false);
+  const authenticationFailed = ref(false);
+  const authenticated = ref(false);
+
+  watch(
+    () => auth?.check(),
+    (check) => {
+      authenticated.value = check;
+    },
+  );
+
+  onMounted(() => {
+    auth?.load().then(() => {
+      authInitialized.value = true;
+    });
+  });
+
+  watch(
+    () => authInitialized.value && !authenticated.value,
+    (initialized) => {
+      if (!initialized) return;
+      if (!auth?.check()) {
+        auth
+          ?.refresh()
+          .then(() => {
+            authenticationFailed.value = false;
+          })
+          .catch(() => {
+            authenticationFailed.value = true;
+          });
+      }
+    },
+  );
+
+  watch(
+    () => authenticationFailed.value,
+    (failed) => {
+      if (failed) {
+        router.push({
+          path: '/login',
+          query: {
+            redirect: router.currentRoute.value.path,
+          },
+        });
+      }
+    },
+  );
+
   watch(
     () => auth?.token(),
     (token) => {
@@ -45,5 +95,5 @@
 </script>
 
 <template>
-  <slot></slot>
+  <slot />
 </template>

@@ -8,6 +8,7 @@
   import axios from 'axios';
 
   const auth = useAuth();
+  const router = useRouter();
   const formStore = useFormStore('loginForm');
 
   const feedbackMessage = ref('');
@@ -37,6 +38,23 @@
   const token = useToken()[1];
   const screens = useBreakpoint();
 
+  const refreshToken = computed(() => auth.token()?.split('|')[1]);
+
+  const callback = () => {
+    window.location.href =
+      (router.currentRoute.value.query.redirect as string) ?? '/';
+  };
+
+  onMounted(() => {
+    auth?.load().then(() => {
+      const authCheck = auth.check();
+      if (authCheck) return callback();
+      auth.refresh({ data: { refreshToken: refreshToken.value } }).then(() => {
+        return callback();
+      });
+    });
+  });
+
   const styles = computed(() => ({
     header: {
       marginBottom: `${token.value.marginXL}px`,
@@ -55,7 +73,7 @@
 <template>
   <AuthLayout>
     <div :style="styles.header">
-      <a-typography-title :style="styles.title">Login</a-typography-title>
+      <a-typography-title :style="styles.title"> Login </a-typography-title>
       <a-typography-text :style="styles.text">
         Welcome back! Please enter your credentials to continue.
       </a-typography-text>

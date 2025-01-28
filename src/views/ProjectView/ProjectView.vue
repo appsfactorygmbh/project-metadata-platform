@@ -19,6 +19,7 @@
   const projectEditStore = inject(projectEditStoreSymbol);
   const pluginStore = usePluginStore();
   const projectStore = useProjectStore();
+  const rerenderPlugins = ref(1);
 
   const isModalOpen = ref(false);
   const openModal = () => {
@@ -47,6 +48,7 @@
     projectEditStore?.resetPluginChanges();
     reloadEditStore();
     stopEditing();
+    rerenderPlugins.value++;
   };
 
   const isEmpty = ref(false);
@@ -158,14 +160,25 @@
       await localLogStore?.fetch(projectID.value);
     }
   };
+
+  // Blur effect
+  const isBlurred = ref(false);
+
+  function setBlur(state: boolean) {
+    isBlurred.value = state;
+  }
 </script>
 
 <template>
   <div v-if="!isEmpty">
     <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
     <ProjectInformation />
-    <ProjectPlugins class="pluginView" />
-    <LocalLogView class="LocalLog" />
+    <ProjectPlugins
+      :key="rerenderPlugins"
+      class="pluginView"
+      @set-blur="setBlur"
+    />
+    <LocalLogView class="LocalLog" :class="{ blur: isBlurred }" />
     <ConfirmAction
       :is-open="isModalOpen"
       title="Cancel Editing"
