@@ -86,12 +86,10 @@
     (newVal) => {
       if (props.editKey !== undefined && newVal?.includes(props.editKey)) {
         urlStatusRef.value = 'error';
+      } else if (urlInput.value === '') {
+        urlStatusRef.value = 'error';
       } else {
-        if (urlInput.value === '') {
-          urlStatusRef.value = 'error';
-        } else {
-          urlStatusRef.value = '';
-        }
+        urlStatusRef.value = '';
       }
     },
   );
@@ -129,11 +127,9 @@
       if (props.editKey !== undefined) {
         projectEditStore?.addEmptyUrlField(props.editKey);
       }
-    } else {
-      if (props.editKey !== undefined) {
-        projectEditStore?.removeEmptyUrlField(props.editKey);
-        urlStatusRef.value = '';
-      }
+    } else if (props.editKey !== undefined) {
+      projectEditStore?.removeEmptyUrlField(props.editKey);
+      urlStatusRef.value = '';
     }
 
     if (displayNameInput.value === '') {
@@ -141,11 +137,9 @@
       if (props.editKey !== undefined) {
         projectEditStore?.addEmptyDisplaynameField(props.editKey);
       }
-    } else {
-      if (props.editKey !== undefined) {
-        projectEditStore?.removeEmptyDisplaynameField(props.editKey);
-        displayNameStatusRef.value = '';
-      }
+    } else if (props.editKey !== undefined) {
+      projectEditStore?.removeEmptyDisplaynameField(props.editKey);
+      displayNameStatusRef.value = '';
     }
 
     if (props.editKey !== undefined) {

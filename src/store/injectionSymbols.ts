@@ -6,7 +6,6 @@ import { useLogsStore } from './LogsStore';
 import { useProjectRouting } from '@/utils/hooks/useProjectRouting.ts';
 import { useLocalLogStore } from './LocalLogStore';
 import type { InjectionKey } from 'vue';
-// import type { useAuthStore } from './AuthStore.ts';
 import type { GlobalPluginsStore } from './GlobalPluginStore.ts';
 import type { AuthStore } from './AuthStore.ts';
 import { useUserRouting } from '@/utils/hooks/useUserRouting.ts';
