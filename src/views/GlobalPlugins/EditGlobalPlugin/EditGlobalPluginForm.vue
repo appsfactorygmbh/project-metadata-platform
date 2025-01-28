@@ -35,6 +35,7 @@
   const initialValues = reactive<GlobalPluginFormData>({
     pluginName: '',
     keys: [],
+    baseUrl: '',
   });
 
   onMounted(async () => {
@@ -57,6 +58,7 @@
             value: keyObj, //keyObj.value,
             archived: false, //keyObj.archived,
           })) ?? [];
+        initialValues.baseUrl = globalPluginData.baseUrl;
       }
     }
   });
