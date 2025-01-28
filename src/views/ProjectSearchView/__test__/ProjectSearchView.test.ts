@@ -66,7 +66,7 @@ describe('ProjectSearchView.vue', () => {
     createTestingPinia({});
     const wrapper = generateWrapper(300);
     await flushPromises();
-    expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
+    expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(3);
   });
 
   it('adds a query when clicking on a project', async () => {
