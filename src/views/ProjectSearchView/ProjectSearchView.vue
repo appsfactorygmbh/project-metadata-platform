@@ -321,7 +321,7 @@
    * @param number Has the number of how many columns should be shown
    */
   function showOrHideColumns(number: number) {
-    for (let index: number = 1; index < 5; index++) {
+    for (let index: number = 1; index < 4; index++) {
       if (number > 0) {
         showColumn(index);
         number--;

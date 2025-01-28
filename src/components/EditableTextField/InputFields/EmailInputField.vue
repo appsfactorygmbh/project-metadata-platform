@@ -1,12 +1,13 @@
 <script lang="ts" setup>
   import type { FormSubmitType, RulesObject } from '@/components/Form/types';
-  import { userStoreSymbol } from '@/store/injectionSymbols';
   import type { Rule } from 'ant-design-vue/es/form';
   import { type FormStore } from '@/components/Form';
-  import { type PropType, inject, reactive, toRaw } from 'vue';
+  import { type PropType, reactive, toRaw } from 'vue';
   import type { UserListModel, UserModel } from '@/models/User';
-  import EmailInputTextField from './EmailInputTextField.vue';
+  import InputField from './InputField.vue';
   import { isValidEmail } from '@/utils/form/userValidation.ts';
+  import { useUserStore } from '@/store';
+  import useNotification from 'ant-design-vue/es/notification/useNotification';
 
   const props = defineProps({
     userId: {
@@ -31,7 +32,7 @@
     email: string;
   };
 
-  const userStore = inject(userStoreSymbol)!;
+  const userStore = useUserStore();
 
   const dynamicValidateForm = reactive<FormType>({
     email: props.default,
@@ -71,11 +72,25 @@
     ],
   });
 
+  const [notificationApi] = useNotification();
+
   const onSubmit: FormSubmitType = (fields) => {
     const newEmail = {
       email: toRaw(fields).email,
     };
-    userStore.update(props.userId, newEmail);
+    userStore
+      .update(props.userId, newEmail)
+      .then(() => {
+        notificationApi.success({
+          message: 'E-Mail updated',
+        });
+      })
+      .catch((error) => {
+        notificationApi.error({
+          message: 'An error occurred. The email could not be updated',
+        });
+        console.error('Error updating email:', error);
+      });
   };
 
   props.formStore.setModel(dynamicValidateForm);
@@ -93,7 +108,7 @@
       class="formItem email"
       has-feedback
     >
-      <EmailInputTextField
+      <InputField
         v-model:value="dynamicValidateForm.email"
         :placeholder="props.placeholder"
         :default="props.default"
