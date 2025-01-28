@@ -17,8 +17,7 @@
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import { usePluginStore, useProjectStore } from '@/store';
-  import { useQuery } from '@/utils/hooks';
-  import { useThemeToken } from '@/utils/hooks';
+  import { useQuery, useThemeToken } from '@/utils/hooks';
 
   const token = useThemeToken();
 
@@ -122,7 +121,7 @@
       () => searchStore.getSearchQuery,
       () => {
         debouncedFetchData(searchStore.getSearchQuery)?.then((data) => {
-          searchStore?.setBaseSet(data || []);
+          searchStore?.setBaseSet(data ?? []);
         });
         searchStore?.setSearchQuery('');
       },

@@ -254,7 +254,7 @@
 
 <template>
   <div class="pane">
-    <div class="main">
+    <div v-if="projectData.id.value" class="main">
       <!-- create box for the project name -->
       <div class="projectNameContainer">
         <h1 v-if="!isLoading" class="projectName">
@@ -372,6 +372,9 @@
         </EditableTextField>
       </a-flex>
     </div>
+    <a-flex v-else justify="center" align="center" class="emptyProjects">
+      <a-empty description="No project selected." />
+    </a-flex>
   </div>
 </template>
 
@@ -387,6 +390,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  .emptyProjects {
+    height: 100vh;
+    width: 100vh;
+    color: v-bind('token.colorText');
   }
 
   /* Style for the right panel */

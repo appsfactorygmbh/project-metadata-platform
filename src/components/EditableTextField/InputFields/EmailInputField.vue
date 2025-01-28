@@ -50,7 +50,7 @@
     ) {
       return Promise.resolve();
     }
-    return Promise.reject('This email is already in use.');
+    return Promise.reject(new Error('This email is already in use.'));
   };
 
   const rulesRef = reactive<RulesObject<FormType>>({

@@ -7,8 +7,7 @@
   import { MenuButtons } from '@/components/MenuButtons';
   import { CreateProjectView } from '@/views/CreateProject';
   import ProjectView from '../ProjectView/ProjectView.vue';
-  import { useEditing } from '@/utils/hooks';
-  import { useThemeToken } from '@/utils/hooks';
+  import { useEditing, useThemeToken } from '@/utils/hooks';
 
   const token = useThemeToken();
 
