@@ -13,6 +13,7 @@ models/CreateProjectResponse.ts
 models/CreateUserRequest.ts
 models/CreateUserResponse.ts
 models/DeleteGlobalPluginResponse.ts
+models/ErrorResponse.ts
 models/GetGlobalPluginResponse.ts
 models/GetPluginResponse.ts
 models/GetProjectResponse.ts
@@ -23,7 +24,6 @@ models/LoginRequest.ts
 models/LoginResponse.ts
 models/PatchGlobalPluginRequest.ts
 models/PatchUserRequest.ts
-models/ProblemDetails.ts
 models/SecurityLevel.ts
 models/UpdateProjectPluginRequest.ts
 models/index.ts

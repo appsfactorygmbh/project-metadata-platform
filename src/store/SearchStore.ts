@@ -43,10 +43,16 @@ export const useSearchStore = <T extends AnyObject>(name: string) =>
         this.applySearch();
       },
       setBaseSet(baseSet: T[]) {
+        if (!_.isArray(baseSet)) {
+          throw new Error('Base set must be an array');
+        }
         this.baseSet = baseSet;
         this.applySearch();
       },
       setFilter(filter: (items: T[]) => T[]) {
+        if (!_.isFunction(filter)) {
+          throw new Error('Filter must be a function');
+        }
         this.filter = filter;
         this.applySearch();
       },
@@ -55,23 +61,25 @@ export const useSearchStore = <T extends AnyObject>(name: string) =>
           this.searchResults = [];
           return;
         }
+
+        this.isLoading = true;
+        let searchResults: T[] = [];
         if (_.isEmpty(this.searchQuery)) {
           // filter only by custom filter function
-          this.searchResults = this.filter(this.baseSet);
-          return;
+          searchResults = this.baseSet;
+        } else {
+          const keys = Object.keys(this.baseSet[0]).filter(
+            (key) => !excludedKeys.includes(key),
+          );
+          // filter by search query
+          searchResults = this.baseSet.filter((item) =>
+            keys.some((key) =>
+              String(item[key as keyof T])
+                .toLowerCase()
+                .includes(this.searchQuery.toLowerCase()),
+            ),
+          );
         }
-        this.isLoading = true;
-        const keys = Object.keys(this.baseSet[0]).filter(
-          (key) => !excludedKeys.includes(key),
-        );
-        // filter by search query
-        const searchResults = this.baseSet.filter((item) =>
-          keys.some((key) =>
-            String(item[key as keyof T])
-              .toLowerCase()
-              .includes(this.searchQuery.toLowerCase()),
-          ),
-        );
         // filter by custom filter function
         const filteredResults = this.filter(searchResults);
         this.searchResults = filteredResults;

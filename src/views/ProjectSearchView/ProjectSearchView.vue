@@ -81,7 +81,7 @@
   };
 
   // on mount, set the filter to show only active projects
-  searchStore.setFilter(showOnlyActive);
+  onMounted(() => searchStore.setFilter(showOnlyActive));
 
   const FETCHING_METHOD: 'FRONTEND' | 'BACKEND' = import.meta.env
     .VITE_PROJECT_SEARCH_METHOD;
