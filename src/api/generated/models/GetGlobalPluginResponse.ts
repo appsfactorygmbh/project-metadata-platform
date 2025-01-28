@@ -23,7 +23,7 @@ export interface GetGlobalPluginResponse {
    * @type {string}
    * @memberof GetGlobalPluginResponse
    */
-  name: string;
+  pluginName: string;
   /**
    * Id of the plugin
    * @type {number}
@@ -56,7 +56,8 @@ export interface GetGlobalPluginResponse {
 export function instanceOfGetGlobalPluginResponse(
   value: object,
 ): value is GetGlobalPluginResponse {
-  if (!('name' in value) || value['name'] === undefined) return false;
+  if (!('pluginName' in value) || value['pluginName'] === undefined)
+    return false;
   if (!('id' in value) || value['id'] === undefined) return false;
   if (!('isArchived' in value) || value['isArchived'] === undefined)
     return false;
@@ -78,7 +79,7 @@ export function GetGlobalPluginResponseFromJSONTyped(
     return json;
   }
   return {
-    name: json['name'],
+    pluginName: json['pluginName'],
     id: json['id'],
     isArchived: json['isArchived'],
     keys: json['keys'],
@@ -101,7 +102,7 @@ export function GetGlobalPluginResponseToJSONTyped(
   }
 
   return {
-    name: value['name'],
+    pluginName: value['pluginName'],
     id: value['id'],
     isArchived: value['isArchived'],
     keys: value['keys'],

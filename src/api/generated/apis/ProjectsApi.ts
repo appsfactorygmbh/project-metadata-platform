@@ -145,7 +145,7 @@ export interface ProjectsApiInterface {
   projectsGetRaw(
     requestParameters: ProjectsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetProjectsResponse>>;
+  ): Promise<runtime.ApiResponse<Array<GetProjectsResponse>>>;
 
   /**
    * Gets all projects or all projects that match the given search string. Also orders response alphabetical by ClientName and then by ProjectName
@@ -153,7 +153,7 @@ export interface ProjectsApiInterface {
   projectsGet(
     requestParameters: ProjectsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetProjectsResponse>;
+  ): Promise<Array<GetProjectsResponse>>;
 
   /**
    *
@@ -463,7 +463,7 @@ export class ProjectsApi
   async projectsGetRaw(
     requestParameters: ProjectsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetProjectsResponse>> {
+  ): Promise<runtime.ApiResponse<Array<GetProjectsResponse>>> {
     const queryParameters: any = {};
 
     if (requestParameters['projectName'] != null) {
@@ -516,7 +516,7 @@ export class ProjectsApi
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetProjectsResponseFromJSON(jsonValue),
+      jsonValue.map(GetProjectsResponseFromJSON),
     );
   }
 
@@ -526,7 +526,7 @@ export class ProjectsApi
   async projectsGet(
     requestParameters: ProjectsGetRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetProjectsResponse> {
+  ): Promise<Array<GetProjectsResponse>> {
     const response = await this.projectsGetRaw(
       requestParameters,
       initOverrides,
