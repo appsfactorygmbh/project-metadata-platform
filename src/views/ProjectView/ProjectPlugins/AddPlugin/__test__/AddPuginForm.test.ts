@@ -12,12 +12,14 @@ import { globalPluginStoreSymbol } from '@/store/injectionSymbols.ts';
 import { useGlobalPluginsStore } from '@/store';
 import { createTestingPinia } from '@pinia/testing';
 
-const plugin = [{
-  name: 'testPlugin',
-  id: 100,
-  isArchived: false,
-  keys: []
-}]
+const plugin = [
+  {
+    name: 'testPlugin',
+    id: 100,
+    isArchived: false,
+    keys: [],
+  },
+];
 
 const testForm: AddPluginFormData = {
   pluginName: 'testGlobalPlugin',
@@ -28,7 +30,7 @@ const testForm: AddPluginFormData = {
 
 describe('AddPluginForm.vue', () => {
   let wrapper: VueWrapper;
-  let formStore: ReturnType<typeof useFormStore>;  
+  let formStore: ReturnType<typeof useFormStore>;
   const globalPluginStore = useGlobalPluginsStore();
 
   enableAutoUnmount(afterEach);
@@ -159,14 +161,13 @@ describe('AddPluginForm.vue', () => {
           pluginUrl: '',
           globalPlugin: '',
           inputsDisabled: false,
-        },      
+        },
       },
     });
     const input = wrapper.find('#inputAddPluginPluginUrl');
-    input.setValue('test.com')
+    input.setValue('test.com');
     expect(formStore.getFieldValue('globalPlugin')).toBe('');
-    input.setValue('testPlugin.com')
+    input.setValue('testPlugin.com');
     expect(formStore.getFieldValue('globalPlugin')).toBe('testPlugin');
-
   });
 });

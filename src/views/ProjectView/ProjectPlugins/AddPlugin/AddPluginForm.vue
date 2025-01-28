@@ -40,7 +40,9 @@
   const [notificationApi, contextHolder] = notification.useNotification();
 
   function findMatchingGlobalPlugin(url: string): null | [boolean, string] {
-    const urlArr = url.split('.').filter((part) => part.toLowerCase() !== "www");
+    const urlArr = url
+      .split('.')
+      .filter((part) => part.toLowerCase() !== 'www');
     if (urlArr.length < 2) return null;
     else {
       const pluginNames = new Map(
