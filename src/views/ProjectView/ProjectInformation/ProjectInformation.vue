@@ -371,8 +371,15 @@
         </EditableTextField>
       </a-flex>
     </div>
-    <a-flex v-else justify="center" align="center" class="emptyProjects">
-      <a-empty description="No project selected." />
+    <a-flex
+      v-else
+      justify="center"
+      align="center"
+      class="emptyProjects"
+      :loading="isLoading"
+    >
+      <a-spin v-if="isLoading" />
+      <a-empty v-else description="No project selected." />
     </a-flex>
   </div>
 </template>

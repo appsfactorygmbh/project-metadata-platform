@@ -30,5 +30,15 @@ export const useProjectRouting = (router: Router = useRouter()) => {
     }
   };
 
-  return { router, routerProjectId, routerProjectSlug, setProjectId };
+  const setProjectSlug = (slug: string) => {
+    routerProjectSlug.value = slug;
+  };
+
+  return {
+    router,
+    routerProjectId,
+    routerProjectSlug,
+    setProjectId,
+    setProjectSlug,
+  };
 };

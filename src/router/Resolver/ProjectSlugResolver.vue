@@ -42,7 +42,6 @@
   watch(
     () => route.query.projectId,
     async (newId, oldId) => {
-      console.log('newId:', newId);
       if (newId !== oldId && newId !== undefined) {
         await redirectToSlug(newId);
       }
