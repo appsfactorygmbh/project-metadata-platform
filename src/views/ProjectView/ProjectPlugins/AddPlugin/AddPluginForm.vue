@@ -40,12 +40,23 @@
 
   const [notificationApi, contextHolder] = notification.useNotification();
 
-  const findMatchingGlobalPlugin = (url: string) => {
-    if (url.length < 8) {
-      // If the URL is too short, ignore
-      return '';
+  function findMatchingGlobalPlugin(url: string): null | [boolean, string] {
+    const urlArr = url.split('.');
+    if (urlArr.length < 2) return null;
+    else {
+      const pluginNames = new Map(
+        globalPluginStore?.getGlobalPlugins.map((plugin) => [
+          plugin.name.toLowerCase(),
+          plugin.name,
+        ]),
+      );
+
+      const found = urlArr.find((url) => pluginNames.has(url));
+      const result = found ? (pluginNames.get(found) ?? null) : null;
+      if (result) return [true, result];
+      else return [false, ''];
     }
-  };
+  }
 
   const onSubmit: FormSubmitType = (fields) => {
     try {
@@ -56,7 +67,6 @@
       if (pluginNumber === undefined) {
         return;
       }
-
       const pluginDef: PluginModel = {
         id: pluginNumber,
         pluginName: toRaw(fields).globalPlugin,
@@ -136,16 +146,15 @@
 
     const matchingPluginName = findMatchingGlobalPlugin(url);
     if (matchingPluginName) {
-      dynamicValidateForm.globalPlugin = matchingPluginName;
-      dynamicValidateForm.inputsDisabled = false;
-      notificationApi.success({
-        message: `Matched GlobalPlugin: ${matchingPluginName}`,
-      });
-    } else if (url.length >= 8) {
-      notificationApi.warning({
-        message: 'No matching GlobalPlugin found for the provided URL.',
-      });
-      dynamicValidateForm.globalPlugin = '';
+      if (matchingPluginName[0]) {
+        dynamicValidateForm.globalPlugin = matchingPluginName[1];
+        dynamicValidateForm.inputsDisabled = false;
+      } else {
+        notificationApi.warning({
+          message: 'No matching GlobalPlugin found for the provided URL.',
+        });
+        dynamicValidateForm.globalPlugin = '';
+      }
     }
   };
 
@@ -239,10 +248,10 @@
       <a-input
         id="inputAddPluginPluginUrl"
         v-model:value="dynamicValidateForm.pluginUrl"
+        :rules="rulesRef.pluginName"
         class="inputField"
         placeholder="Plugin URL"
         @change="(e) => handleUrlChange(e.target.value)"
-        :rules="rulesRef.pluginName"
       />
     </a-form-item>
   </a-form>
