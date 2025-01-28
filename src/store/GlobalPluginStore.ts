@@ -130,7 +130,6 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
         },
 
         async create(plugin: Omit<GlobalPluginModel, 'id'>) {
-          console.log('creating plugin in store', plugin);
           try {
             const response = await this.callApi('pluginsPut', {
               createPluginRequest: {

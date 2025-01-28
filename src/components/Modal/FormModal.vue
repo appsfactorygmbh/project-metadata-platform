@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { type PropType, ref, toRaw } from 'vue';
+  import { type PropType, ref } from 'vue';
   import { type FormStore } from '@/components/Form/FormStore';
 
   const { formStore, title, initiallyOpen, open } = defineProps({
@@ -42,7 +42,6 @@
       })
       .catch((e) => {
         console.log(e);
-        console.log(toRaw(formStore.validateInfos));
       });
   };
 

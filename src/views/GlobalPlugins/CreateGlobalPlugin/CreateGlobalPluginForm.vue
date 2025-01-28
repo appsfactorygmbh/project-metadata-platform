@@ -17,7 +17,6 @@
   const [notificationApi, contextHolder] = notification.useNotification();
 
   const onSubmit: FormSubmitType = (fields) => {
-    console.log('creating Plugin', fields);
     globalPluginStore.create(fields).catch(() => {
       notificationApi.error({
         message: 'An error occurred. The plugin could not be created',

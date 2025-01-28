@@ -27,7 +27,6 @@
 
   onBeforeMount(async () => {
     await globalPluginStore?.fetchAll();
-    console.log('Fetched GlobalPlugins:', globalPluginStore?.getGlobalPlugins);
     options.value = toRaw(globalPluginStore?.getGlobalPlugins)
       ?.filter((plugin) => !plugin.isArchived)
       .map((plugin: GlobalPluginModel) => {
@@ -41,7 +40,7 @@
   const [notificationApi, contextHolder] = notification.useNotification();
 
   function findMatchingGlobalPlugin(url: string): null | [boolean, string] {
-    const urlArr = url.split('.');
+    const urlArr = url.split('.').filter((part) => part.toLowerCase() !== "www");
     if (urlArr.length < 2) return null;
     else {
       const pluginNames = new Map(
@@ -50,12 +49,11 @@
           plugin.name,
         ]),
       );
-
-      console.log('here', url);
-      
-
-      const found = urlArr.find((url) => pluginNames.has(url));
+      const found = urlArr
+        .find((url) => pluginNames.has(url.toLowerCase()))
+        ?.toLowerCase();
       const result = found ? (pluginNames.get(found) ?? null) : null;
+
       if (result) return [true, result];
       else return [false, ''];
     }
