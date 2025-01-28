@@ -33,7 +33,7 @@ export const callApiFetch = async <
     // @ts-expect-error complains about the type of api[apiCall] but it's correct
     return (await api[apiCall](args as Args)) as FetchResponse<Api, Endpoint>;
   } catch (err) {
-    console.log('error: ', err);
+    console.error(err);
     await handleFetchError(err);
     // @ts-expect-error complains about the return type, but handleError always throws an error so we can ignore it
     return undefined;
