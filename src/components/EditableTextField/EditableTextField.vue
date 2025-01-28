@@ -19,6 +19,7 @@
     isEditingKey: {
       type: String,
       required: false,
+      default: undefined,
     },
     formStore: {
       type: Object as PropType<FormStore>,
