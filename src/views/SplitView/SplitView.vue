@@ -42,7 +42,7 @@
       <pane
         ref="tablePane"
         :size="leftPaneWidth"
-        min-size="20"
+        min-size="15"
         class="leftPane"
       >
         <ProjectSearchView

@@ -250,6 +250,21 @@
       resizable: true,
       ellipsis: true,
       align: 'center' as const,
+      filters: [
+        {
+          text: 'NORMAL',
+          value: 'NORMAL',
+        },
+        {
+          text: 'HIGH',
+          value: 'HIGH',
+        },
+        {
+          text: 'VERY HIGH',
+          value: 'VERY HIGH',
+        },
+      ],
+      filterMultiple: true,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       width: NaN,
@@ -321,7 +336,7 @@
    * @param number Has the number of how many columns should be shown
    */
   function showOrHideColumns(number: number) {
-    for (let index: number = 1; index < 4; index++) {
+    for (let index: number = 1; index < columns.length; index++) {
       if (number > 0) {
         showColumn(index);
         number--;

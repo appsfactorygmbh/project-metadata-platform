@@ -297,25 +297,22 @@
 
     <!-- body of the table with all data entries -->
     <template #bodyCell="{ text, record, column }">
-      <a-row :gutter="8" justify="center">
-        <a-col>
-          {{ text }}
-        </a-col>
-        <a-col>
-          <a-tag
-            v-if="(column as SearchableColumn).hasTags"
-            :color="
-              record.ismsLevel === 'VERY_HIGH'
-                ? 'red'
-                : record.ismsLevel === 'HIGH'
-                  ? 'orange'
-                  : 'green'
-            "
-          >
-            {{ record.ismsLevel.replace('_', ' ') }}
-          </a-tag>
-        </a-col>
-      </a-row>
+      <a-flex style="justify-content: space-between; flex-wrap: wrap; gap: 5px">
+        {{ text }}
+        <a-tag
+          v-if="(column as SearchableColumn).hasTags"
+          style="margin-left: auto"
+          :color="
+            record.ismsLevel === 'VERY_HIGH'
+              ? 'red'
+              : record.ismsLevel === 'HIGH'
+                ? 'orange'
+                : 'green'
+          "
+        >
+          {{ record.ismsLevel.replace('_', ' ') }}
+        </a-tag>
+      </a-flex>
     </template>
   </a-table>
 </template>
