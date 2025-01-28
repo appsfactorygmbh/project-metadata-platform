@@ -1,5 +1,10 @@
 <script setup lang="ts">
-  import { FontColorsOutlined, MinusCircleOutlined, PlusOutlined, LinkOutlined } from '@ant-design/icons-vue';
+  import {
+    FontColorsOutlined,
+    MinusCircleOutlined,
+    PlusOutlined,
+    LinkOutlined,
+  } from '@ant-design/icons-vue';
   import { reactive } from 'vue';
   import { type FormStore } from '@/components/Form';
   import {
