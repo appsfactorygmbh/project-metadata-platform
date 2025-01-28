@@ -18,81 +18,87 @@
  * @interface ProblemDetails
  */
 export interface ProblemDetails {
-    [key: string]: any  ;
-    /**
-     *
-     * @type {string}
-     * @memberof ProblemDetails
-     */
-    type?: string | null;
-    /**
-     *
-     * @type {string}
-     * @memberof ProblemDetails
-     */
-    title?: string | null;
-    /**
-     *
-     * @type {number}
-     * @memberof ProblemDetails
-     */
-    status?: number | null;
-    /**
-     *
-     * @type {string}
-     * @memberof ProblemDetails
-     */
-    detail?: string | null;
-    /**
-     *
-     * @type {string}
-     * @memberof ProblemDetails
-     */
-    instance?: string | null;
+  [key: string]: any;
+  /**
+   *
+   * @type {string}
+   * @memberof ProblemDetails
+   */
+  type?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof ProblemDetails
+   */
+  title?: string | null;
+  /**
+   *
+   * @type {number}
+   * @memberof ProblemDetails
+   */
+  status?: number | null;
+  /**
+   *
+   * @type {string}
+   * @memberof ProblemDetails
+   */
+  detail?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof ProblemDetails
+   */
+  instance?: string | null;
 }
 
 /**
  * Check if a given object implements the ProblemDetails interface.
  */
-export function instanceOfProblemDetails(value: object): value is ProblemDetails {
-    return true;
+export function instanceOfProblemDetails(
+  value: object,
+): value is ProblemDetails {
+  return true;
 }
 
 export function ProblemDetailsFromJSON(json: any): ProblemDetails {
-    return ProblemDetailsFromJSONTyped(json, false);
+  return ProblemDetailsFromJSONTyped(json, false);
 }
 
-export function ProblemDetailsFromJSONTyped(json: any, ignoreDiscriminator: boolean): ProblemDetails {
-    if (json == null) {
-        return json;
-    }
-    return {
-            ...json,
-        'type': json['type'] ?? undefined,
-        'title': json['title'] ?? undefined,
-        'status': json['status'] ?? undefined,
-        'detail': json['detail'] ?? undefined,
-        'instance': json['instance'] ?? undefined,
-    };
+export function ProblemDetailsFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean,
+): ProblemDetails {
+  if (json == null) {
+    return json;
+  }
+  return {
+    ...json,
+    type: json['type'] ?? undefined,
+    title: json['title'] ?? undefined,
+    status: json['status'] ?? undefined,
+    detail: json['detail'] ?? undefined,
+    instance: json['instance'] ?? undefined,
+  };
 }
 
 export function ProblemDetailsToJSON(json: any): ProblemDetails {
-    return ProblemDetailsToJSONTyped(json, false);
+  return ProblemDetailsToJSONTyped(json, false);
 }
 
-export function ProblemDetailsToJSONTyped(value?: ProblemDetails | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function ProblemDetailsToJSONTyped(
+  value?: ProblemDetails | null,
+  ignoreDiscriminator: boolean = false,
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-
-            ...value,
-        'type': value['type'],
-        'title': value['title'],
-        'status': value['status'],
-        'detail': value['detail'],
-        'instance': value['instance'],
-    };
+  return {
+    ...value,
+    type: value['type'],
+    title: value['title'],
+    status: value['status'],
+    detail: value['detail'],
+    instance: value['instance'],
+  };
 }
-
