@@ -14,7 +14,7 @@ import { createTestingPinia } from '@pinia/testing';
 
 const testForm: AddPluginFormData = {
   pluginName: 'testPlugin',
-  pluginUrl: 'testUrl',
+  pluginUrl: 'testGlobalPlugin.com',
   globalPlugin: 'testGlobalPlugin',
   inputsDisabled: false,
 };
@@ -37,7 +37,11 @@ describe('AddPluginForm.vue', () => {
     pluginStoreMock = {
       setLoading: vi.fn(),
       fetchAll: vi.fn().mockResolvedValue([]),
-      getGlobalPlugins: [],
+      getGlobalPlugins: [{
+        value: 'testPlugin',
+        key: 100,
+        archived: false,
+      }],
     };
 
     wrapper = mount(AddPluginForm, {
@@ -112,16 +116,12 @@ describe('AddPluginForm.vue', () => {
     });
 
     const inputPluginName = wrapper.find('#inputAddPluginPluginName');
-    const inputPluginUrl = wrapper.find('#inputAddPluginPluginUrl');
     expect(inputPluginName.attributes('disabled')).toBe('');
-    expect(inputPluginUrl.attributes('disabled')).toBe('');
   });
 
   it('should enable inputs after plugin select', async () => {
     const inputPluginName = wrapper.find('#inputAddPluginPluginName');
-    const inputPluginUrl = wrapper.find('#inputAddPluginPluginUrl');
     expect(inputPluginName.attributes('disabled')).toBe(undefined);
-    expect(inputPluginUrl.attributes('disabled')).toBe(undefined);
   });
 
   it('should validate the form if pluginName is not set', async () => {
@@ -154,5 +154,12 @@ describe('AddPluginForm.vue', () => {
         },
       ],
     });
+  });
+
+  it('choose plugin automatically', () => {
+    const input = wrapper.find('#inputAddPluginPluginUrl');
+    input.setValue('testPlugin')
+    expect(formStore.getFieldValue('pluginUrl')).toBe('');
+
   });
 });

@@ -51,6 +51,9 @@
         ]),
       );
 
+      console.log('here', url);
+      
+
       const found = urlArr.find((url) => pluginNames.has(url));
       const result = found ? (pluginNames.get(found) ?? null) : null;
       if (result) return [true, result];
@@ -213,6 +216,7 @@
       :whitespace="true"
     >
       <a-select
+        id="inputAddPluginPluginSelect"
         v-model:value="dynamicValidateForm.globalPlugin"
         class="inputField"
         show-search
