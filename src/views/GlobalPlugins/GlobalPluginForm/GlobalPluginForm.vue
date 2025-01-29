@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons-vue';
   import { reactive } from 'vue';
-  //import type { CreatePluginModel } from '@/models/Plugin';
   import { type FormStore } from '@/components/Form';
   import {
     type CustomRulesObject,
@@ -54,7 +53,9 @@
           keyProp: 'key',
           validator: (_, value) => {
             if (value.value.length === 0) {
-              return Promise.reject('Please insert the key or remove it.');
+              return Promise.reject(
+                new Error('Please insert the key or remove it.'),
+              );
             }
             return Promise.resolve();
           },

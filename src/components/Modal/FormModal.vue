@@ -65,5 +65,3 @@
     <slot />
   </a-modal>
 </template>
-
-<style scoped></style>

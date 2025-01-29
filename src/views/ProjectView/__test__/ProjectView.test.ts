@@ -48,7 +48,11 @@ const testProject: DetailedProjectModel = {
   department: 'Test Department',
   teamNumber: 1,
   isArchived: false,
-  slug: 'test-project',
+  slug: 'test_project',
+  offerId: '1',
+  company: 'AppsFactory',
+  companyState: 'EXTERNAL',
+  ismsLevel: 'HIGH',
 };
 
 const testUpdatedProject: UpdateProjectModel = {
@@ -59,13 +63,15 @@ const testUpdatedProject: UpdateProjectModel = {
   teamNumber: 1,
   pluginList: testPlugins,
   isArchived: false,
+  offerId: '1',
+  company: 'AppsFactory',
+  companyState: 'EXTERNAL',
+  ismsLevel: 'HIGH',
 };
 
 describe('ProjectView.vue', () => {
-  it('doesnt delete archived plugins when editing', async () => {
-    const logSpy = vi.spyOn(console, 'log');
-
-    const wrapper = mount(ProjectView, {
+  const generateWrapper = () => {
+    return mount(ProjectView, {
       global: {
         provide: {
           [localLogStoreSymbol as symbol]: useLocalLogStore(),
@@ -86,6 +92,11 @@ describe('ProjectView.vue', () => {
         ],
       },
     });
+  };
+  it('doesnt delete archived plugins when editing', async () => {
+    const logSpy = vi.spyOn(console, 'log');
+
+    const wrapper = generateWrapper();
     await flushPromises();
 
     const editButton = wrapper.findComponent(EditOutlined);
@@ -99,5 +110,21 @@ describe('ProjectView.vue', () => {
     await flushPromises();
 
     expect(logSpy).toHaveBeenNthCalledWith(2, testUpdatedProject);
+  });
+
+  it('hides the project slug when editing', async () => {
+    const wrapper = generateWrapper();
+    await flushPromises();
+
+    // check if slug is visible
+    expect(wrapper.find('.label').text()).toBe('Project\xa0Slug:');
+
+    // click on edit button
+    const editButton = wrapper.findComponent(EditOutlined);
+    await editButton.trigger('click');
+    await flushPromises();
+
+    // check if slug is hidden
+    expect(wrapper.find('.label')).not.toBe('Project\xa0Slug:');
   });
 });

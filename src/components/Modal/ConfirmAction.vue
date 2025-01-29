@@ -62,5 +62,3 @@
     closeModal();
   };
 </script>
-
-<style scoped></style>

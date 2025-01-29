@@ -1,12 +1,11 @@
 <script setup lang="ts">
-  import { type FormSubmitType } from '@/components/Form';
-  import { message } from 'ant-design-vue';
+  import type { FormStore, FormSubmitType } from '@/components/Form';
+  import { notification } from 'ant-design-vue';
   import { useGlobalPluginsStore } from '@/store';
   import { reactive } from 'vue';
-  //import type { CreatePluginModel } from '@/models/Plugin';
-  import { type FormStore } from '@/components/Form';
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
   import type { GlobalPluginFormData } from '../GlobalPluginForm';
+  import type { CreatePluginRequest } from '@/api/generated';
 
   const { formStore } = defineProps<{
     formStore: FormStore;
@@ -14,13 +13,16 @@
 
   const globalPluginStore = useGlobalPluginsStore();
 
-  const onSubmit: FormSubmitType = async (fields) => {
-    try {
-      await globalPluginStore.create(fields)
-      message.success('Created global Plugin successfully', 4);
-    } catch (error) {
-      message.error((error as Error).message, 4)
-    }
+  const [notificationApi, contextHolder] = notification.useNotification();
+
+  const onSubmit: FormSubmitType = (fields: CreatePluginRequest) => {
+    console.log('creating Plugin', fields);
+    globalPluginStore.create(fields).catch(() => {
+      notificationApi.error({
+        message: 'An error occurred. The plugin could not be created',
+      });
+      console.error('error');
+    });
   };
 
   formStore.setOnSubmit(onSubmit);

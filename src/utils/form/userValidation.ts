@@ -8,7 +8,7 @@ export const hasEightCharacters = (_rule: Rule, value: string) => {
   if (value.length >= 8) {
     return Promise.resolve();
   }
-  return Promise.reject('Please insert at least 8 characters.');
+  return Promise.reject(new Error('Please insert at least 8 characters.'));
 };
 
 export const hasSpecialCharacter = (_rule: Rule, value: string) => {
@@ -16,7 +16,7 @@ export const hasSpecialCharacter = (_rule: Rule, value: string) => {
   if (specialCharRegex.test(value)) {
     return Promise.resolve();
   }
-  return Promise.reject('Please insert a special character.');
+  return Promise.reject(new Error('Please insert a special character.'));
 };
 
 export const hasDigit = (_rule: Rule, value: string) => {
@@ -24,7 +24,7 @@ export const hasDigit = (_rule: Rule, value: string) => {
   if (digitRegex.test(value)) {
     return Promise.resolve();
   }
-  return Promise.reject('Please insert a digit.');
+  return Promise.reject(new Error('Please insert a digit.'));
 };
 
 export const hasUpperCaseLetter = (_rule: Rule, value: string) => {
@@ -32,7 +32,7 @@ export const hasUpperCaseLetter = (_rule: Rule, value: string) => {
   if (upperCaseRegex.test(value)) {
     return Promise.resolve();
   }
-  return Promise.reject('Please insert an upper case letter.');
+  return Promise.reject(new Error('Please insert an upper case letter.'));
 };
 
 export const hasLowerCaseLetter = (_rule: Rule, value: string) => {
@@ -40,7 +40,7 @@ export const hasLowerCaseLetter = (_rule: Rule, value: string) => {
   if (lowerCaseRegex.test(value)) {
     return Promise.resolve();
   }
-  return Promise.reject('Please insert a lower case letter.');
+  return Promise.reject(new Error('Please insert a lower case letter.'));
 };
 
 // Creates a regex for all possible E-Mail addresses and checks if the given one fits the pattern
@@ -50,7 +50,7 @@ export const isValidEmail = (_rule: Rule, value: string) => {
   if (value && emailRegex.test(value)) {
     return Promise.resolve();
   } else {
-    return Promise.reject('Please enter a valid email.');
+    return Promise.reject(new Error('Please enter a valid email.'));
   }
 };
 
@@ -61,5 +61,5 @@ export const isUniqueEmail = (_rule: Rule, value: string) => {
   if (users?.every((user) => user.email !== value)) {
     return Promise.resolve();
   }
-  return Promise.reject('This email is already in use.');
+  return Promise.reject(new Error('This email is already in use.'));
 };

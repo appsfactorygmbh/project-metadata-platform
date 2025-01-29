@@ -53,9 +53,9 @@
 
   const validateConfirmPassword = async (_rule: Rule, value: string) => {
     if (value === '') {
-      return Promise.reject('Please confirm the password.');
+      return Promise.reject(new Error('Please confirm the password.'));
     } else if (value !== dynamicValidateForm.password) {
-      return Promise.reject("The passwords don't match.");
+      return Promise.reject(new Error("The passwords don't match."));
     } else {
       return Promise.resolve();
     }
