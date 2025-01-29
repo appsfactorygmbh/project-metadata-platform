@@ -17,7 +17,6 @@
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { useProjectStore } from '@/store';
   import { projectRoutingSymbol } from '@/store/injectionSymbols';
-  import { SecurityLevel, CompanyState } from '@/api/generated';
 
   const open = ref<boolean>(false);
 
