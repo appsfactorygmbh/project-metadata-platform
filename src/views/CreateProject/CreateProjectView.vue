@@ -17,6 +17,7 @@
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { useProjectStore } from '@/store';
   import { projectRoutingSymbol } from '@/store/injectionSymbols';
+  import { message } from 'ant-design-vue';
 
   const open = ref<boolean>(false);
 
@@ -101,19 +102,6 @@
 
   // sends PUT request to the backend
   const submit = async () => {
-    watch(isAdding, async (newVal) => {
-      if (!newVal) {
-        if (projectStore.getAddedSuccessfully) {
-          await projectStore.fetchAll();
-          fetchError.value = false;
-          open.value = false;
-          resetModal();
-        } else {
-          fetchError.value = true;
-        }
-      }
-    });
-
     const projectData: CreateProjectModel = {
       projectName: formState.projectName!,
       businessUnit: formState.businessUnit!,
@@ -129,11 +117,11 @@
 
     try {
       await projectStore.create(projectData);
+      message.success('Project created successfully');
       resetModal();
       closeModal();
     } catch (error) {
-      fetchError.value = true;
-      errorMessage.value = String(error);
+      message.error((error as Error).message ?? 'An error occurred');
       return;
     }
     open.value = false;
