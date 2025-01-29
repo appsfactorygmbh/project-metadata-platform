@@ -19,7 +19,7 @@
     isEditingKey: {
       type: String,
       required: false,
-      default: '',
+      default: undefined,
     },
     formStore: {
       type: Object as PropType<FormStore>,
@@ -29,6 +29,14 @@
     hasEditKeys: {
       type: Boolean,
       required: true,
+    },
+    displayValue: {
+      type: Function as PropType<
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (value: any) => string | number | boolean | undefined
+      >,
+      required: false,
+      default: (value: unknown) => value,
     },
   });
 
@@ -43,19 +51,18 @@
       display: 'flex',
       padding: '5px',
       alignItems: 'center',
-      height: '2em',
+      height: '2rem',
+      gap: '1rem',
     }"
     class="info"
   >
     <label class="label">{{ label }}:</label>
     <template v-if="!isLoading">
       <p v-if="!isEditing" class="text">
-        {{ value }}
+        {{ displayValue(value) ?? '' }}
       </p>
 
-      <div v-else>
-        <slot></slot>
-      </div>
+      <slot v-else></slot>
 
       <EditButtons
         v-if="hasEditKeys"

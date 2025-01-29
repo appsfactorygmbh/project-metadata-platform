@@ -83,6 +83,8 @@ describe('ProjectSearchView.vue', () => {
       teamNumber: 1,
       isArchived: false,
       slug: 'test-project',
+      company: 'test',
+      ismsLevel: 'NORMAL',
     };
 
     wrapper.vm.handleRowClick(testProject);

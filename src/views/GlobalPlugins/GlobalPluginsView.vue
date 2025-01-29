@@ -24,13 +24,13 @@
     :loading="isLoading"
     bordered
   >
-    <template #renderItem="{ item }">
+    <template #renderItem="{ item }: { item: GlobalPluginModel }">
       <a-list-item class="list-items">
         <a-list-item-meta>
           <template #title>
             <div class="list-item">
               <div class="title">
-                {{ item.name }}
+                {{ item.pluginName }}
               </div>
               <div v-if="filterType" class="buttons">
                 <a-button

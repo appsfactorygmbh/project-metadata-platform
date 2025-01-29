@@ -49,7 +49,7 @@
         if (!globalPluginData) {
           return;
         }
-        initialValues.pluginName = globalPluginData.name;
+        initialValues.pluginName = globalPluginData.pluginName;
         initialValues.keys =
           globalPluginData.keys?.map((keyObj, index) => ({
             // TODO: adapt when feature to archive keys is implemented

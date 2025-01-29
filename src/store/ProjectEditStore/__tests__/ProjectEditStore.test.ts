@@ -20,6 +20,10 @@ describe('ProjectEditStore', () => {
       businessUnit: '',
       teamNumber: -1,
       department: '',
+      offerId: '',
+      company: '',
+      ismsLevel: 'NORMAL',
+      companyState: 'EXTERNAL',
     });
     expect(store.canBeCreated).toBe(true);
     expect(store.duplicatedUrls.size).toBe(0);
@@ -118,6 +122,10 @@ describe('ProjectEditStore', () => {
       businessUnit: '',
       teamNumber: -1,
       department: '',
+      offerId: '',
+      company: '',
+      ismsLevel: 'NORMAL',
+      companyState: 'EXTERNAL',
     });
 
     const plugin: PluginModel = {
@@ -144,6 +152,10 @@ describe('ProjectEditStore', () => {
       teamNumber: 1,
       department: 'Test Department',
       isArchived: false,
+      offerId: 'Offer1',
+      company: 'Test Firma',
+      ismsLevel: 'VERY_HIGH',
+      companyState: 'EXTERNAL',
     });
 
     expect(store.getCanBeAdded).toBe(false);
@@ -154,6 +166,10 @@ describe('ProjectEditStore', () => {
       businessUnit: 'Test Business Unit',
       teamNumber: 1,
       department: 'Test Department',
+      offerId: 'Offer1',
+      company: 'Test Firma',
+      ismsLevel: 'VERY_HIGH',
+      companyState: 'EXTERNAL',
     });
 
     store.setProjectInformation({
@@ -165,6 +181,10 @@ describe('ProjectEditStore', () => {
       teamNumber: 1,
       department: 'Test Department',
       isArchived: false,
+      offerId: 'Offer1',
+      company: 'Test Firma',
+      ismsLevel: 'VERY_HIGH',
+      companyState: 'EXTERNAL',
     });
 
     expect(store.getCanBeAdded).toBe(true);
@@ -203,6 +223,10 @@ describe('ProjectEditStore', () => {
       teamNumber: 1,
       department: 'Test Department',
       isArchived: false,
+      offerId: 'Offer1',
+      company: 'Test Firma',
+      ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
+      companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
     };
     store.updateProjectInformationChanges(project);
     expect(store.getProjectInformationChanges).toEqual(project);
@@ -218,6 +242,10 @@ describe('ProjectEditStore', () => {
       teamNumber: 2,
       department: 'New Department',
       isArchived: false,
+      offerId: 'Offer1',
+      company: 'New Firma',
+      ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
+      companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
     };
     store.setProjectInformation(projectInfo);
     expect(store.projectInformationChanges).toEqual(projectInfo);
@@ -234,6 +262,10 @@ describe('ProjectEditStore', () => {
       teamNumber: 3,
       department: 'Updated Department',
       isArchived: false,
+      offerId: 'Offer1',
+      company: 'Test Firma',
+      ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
+      companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
     };
     store.updateProjectInformationChanges(updatedProjectInfo);
     expect(store.projectInformationChanges).toEqual(updatedProjectInfo);
