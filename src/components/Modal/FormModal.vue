@@ -41,7 +41,7 @@
         emit('close');
       })
       .catch((e) => {
-        console.log(e);
+        console.error('error submitting input' + e);
       });
   };
 

@@ -39,7 +39,7 @@
 
   const [notificationApi, contextHolder] = notification.useNotification();
 
-  function findMatchingGlobalPlugin(url: string): null | [boolean, string] {
+  function findMatchingGlobalPlugin(url: string): null | string {
     const urlArr = url
       .split('.')
       .filter((part) => part.toLowerCase() !== 'www');
@@ -56,8 +56,7 @@
         ?.toLowerCase();
       const result = found ? (pluginNames.get(found) ?? null) : null;
 
-      if (result) return [true, result];
-      else return [false, ''];
+      return result;
     }
   }
 
@@ -139,25 +138,13 @@
     ],
   });
 
-  const handleUrlChange = (url: unknown) => {
-    if (typeof url !== 'string') {
-      notificationApi.error({
-        message: 'Invalid URL format. Please provide a valid string.',
-      });
-      return;
-    }
-
-    const matchingPluginName = findMatchingGlobalPlugin(url);
-    if (matchingPluginName) {
-      if (matchingPluginName[0]) {
-        dynamicValidateForm.globalPlugin = matchingPluginName[1];
+  const handleUrlChange = (url: string | undefined) => {
+    if (url) {
+      const matchingPluginName = findMatchingGlobalPlugin(url);
+      if (matchingPluginName) {
+        dynamicValidateForm.globalPlugin = matchingPluginName;
         dynamicValidateForm.inputsDisabled = false;
-      } else {
-        notificationApi.warning({
-          message: 'No matching GlobalPlugin found for the provided URL.',
-        });
-        dynamicValidateForm.globalPlugin = '';
-      }
+      } else dynamicValidateForm.globalPlugin = '';
     }
   };
 
