@@ -39,24 +39,39 @@
 
   const [notificationApi, contextHolder] = notification.useNotification();
 
-  function findMatchingGlobalPlugin(url: string): null | string {
-    const urlArr = url
-      .split('.')
-      .filter((part) => part.toLowerCase() !== 'www');
-    if (urlArr.length < 2) return null;
-    else {
-      const pluginNames = new Map(
-        globalPluginStore?.getGlobalPlugins.map((plugin) => [
-          plugin.name.toLowerCase(),
-          plugin.name,
-        ]),
-      );
-      const found = urlArr
-        .find((url) => pluginNames.has(url.toLowerCase()))
-        ?.toLowerCase();
-      const result = found ? (pluginNames.get(found) ?? null) : null;
+  function findMatchingGlobalPlugin(url: string): string | null {
+    try {
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+      }
 
-      return result;
+      const parsedUrl = new URL(url);
+      const hostname = parsedUrl.hostname
+        .split('.')
+        .filter((part) => part !== 'www')
+        .join('.');
+
+      const pluginNames = new Map(
+        globalPluginStore?.getGlobalPlugins.map((plugin) => {
+          const pluginUrl = plugin.baseUrl
+            .toLowerCase()
+            .split(/[./]/)
+            .filter(
+              (part) => part !== 'www' && !part.startsWith('http') && part,
+            )
+            .join('.');
+          return [pluginUrl, plugin.name];
+        }),
+      );
+      console.log(pluginNames);
+
+      if (pluginNames.has(hostname)) {
+        const result = pluginNames.get(hostname) ?? null;
+        return result;
+      } else return null;
+    } catch (error) {
+      console.error('Invalid URL provided:', error);
+      return null;
     }
   }
 

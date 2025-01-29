@@ -17,6 +17,7 @@ const plugin = [
     name: 'testPlugin',
     id: 100,
     isArchived: false,
+    baseUrl: 'testPlugin.com',
     keys: [],
   },
 ];
