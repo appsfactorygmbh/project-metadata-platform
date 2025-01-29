@@ -2,11 +2,11 @@ import { useProjectStore } from '@/store';
 import { type Router, useRouter } from 'vue-router';
 
 export const useProjectRouting = (router: Router = useRouter()) => {
-  const routerProjectId = ref<number>(
+  const routerProjectId = ref<number | undefined>(
     Number(router.currentRoute.value.query.projectId),
   );
 
-  const routerProjectSlug = ref<string>(
+  const routerProjectSlug = ref<string | undefined>(
     String(router.currentRoute.value.params.projectSlug),
   );
 

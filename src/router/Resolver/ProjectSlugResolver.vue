@@ -35,7 +35,7 @@
   };
 
   onMounted(async () => {
-    if (route.query.projectId) {
+    if (route.query.projectId && route.path == '/') {
       await redirectToSlug(String(route.query.projectId));
     }
   });

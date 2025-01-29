@@ -132,6 +132,7 @@
   watch(
     () => routerProjectId.value,
     async () => {
+      if (!routerProjectId.value) return;
       await projectStore.fetch(routerProjectId.value);
       await pluginStore.fetch(routerProjectId.value);
       await pluginStore?.fetchUnarchived(routerProjectId.value);
@@ -167,9 +168,7 @@
         { fullObjectNeeded: false },
       );
       if (project) setProjectId(project.id);
-    }
-
-    if (routerProjectId.value) {
+    } else if (routerProjectId.value) {
       await projectStore.fetch(routerProjectId.value);
       await pluginStore.fetch(routerProjectId.value);
       await pluginStore?.fetchUnarchived(routerProjectId.value);
