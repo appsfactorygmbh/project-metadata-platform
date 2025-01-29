@@ -11,10 +11,10 @@
   import { useThemeToken } from '@/utils/hooks';
   import { AddPluginView } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
   import { AppstoreAddOutlined } from '@ant-design/icons-vue';
-  // import { Tooltip } from 'ant-design-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
 
   const token = useThemeToken();
+  const emit = defineEmits(['save-edit']);
 
   const { isEditing } = useEditing();
   const tablePane = ref(null);
@@ -38,10 +38,12 @@
   const openAddPluginModal = ref<boolean>(false);
 
   const handleClickAddPlugin = () => {
+    console.log('Add Plugin button clicked');
     openAddPluginModal.value = true;
   };
 
   const closeAddPluginModal = () => {
+    console.log('Add Plugin modal closed');
     openAddPluginModal.value = false;
   };
 
@@ -55,6 +57,22 @@
     status: 'activated',
     size: 'large',
     tooltip: 'Click here to add a new plugin',
+  };
+
+  // Hier wird die saveEdit Methode aufgerufen
+  const handleSaveEdit = () => {
+    if (!isEditing) {
+      console.log('Emitting save-edit event');
+      emit('save-edit');
+    }
+  };
+
+  const handleAddPluginOk = () => {
+    console.log('Add Plugin OK button clicked');
+    if (!isEditing) {
+      console.log('Emitting save-edit event');
+      emit('save-edit');
+    }
   };
 </script>
 
@@ -78,13 +96,20 @@
       </pane>
 
       <pane :size="rightPaneWidth" min-size="32" class="rightPane">
-        <ProjectView />
+        <ProjectView @save-edit="saveEdit"></ProjectView>
         <MenuButtons />
         <CreateProjectView v-if="!isEditing" />
-        <FloatingButton v-if="!isEditing" :button="button" class="addPlugin" />
+        <!-- Der Floating Button ist hier -->
+        <FloatingButton
+          v-if="!isEditing"
+          :button="button"
+          class="addPlugin"
+          @click="handleSaveEdit"
+        />
         <AddPluginView
           v-if="openAddPluginModal"
           :show-modal="openAddPluginModal"
+          @ok="handleAddPluginOk"
           @close="closeAddPluginModal"
         />
       </pane>

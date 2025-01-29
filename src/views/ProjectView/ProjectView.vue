@@ -85,6 +85,7 @@
 
   const saveEdit = async () => {
     // Check for empty fields and duplicates
+    console.log('saveEdit function called');
     projectEditStore?.checkForConflicts();
 
     // If error occurred, display message and return
@@ -93,6 +94,7 @@
         'Could not update Project. There are empty fields or duplicated plugins.',
         5,
       );
+      console.log('Conflicts found, cannot proceed with save');
       return;
     }
 
