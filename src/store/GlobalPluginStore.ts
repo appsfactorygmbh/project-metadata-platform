@@ -141,10 +141,10 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
             if (response) {
               this.fetchAll();
             }
-        } finally {
-          this.setIsLoading(false);
-        }},
-
+          } finally {
+            this.setIsLoading(false);
+          }
+        },
 
         async update(
           pluginId: GlobalPluginModel['id'],
