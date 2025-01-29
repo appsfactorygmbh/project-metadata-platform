@@ -48,10 +48,6 @@
     companyState: 'EXTERNAL',
     ismsLevel: 'NORMAL',
     isArchived: false,
-    offerId: '',
-    company: '',
-    companyState: undefined,
-    ismsLevel: undefined,
   });
 
   const validateMessages = {

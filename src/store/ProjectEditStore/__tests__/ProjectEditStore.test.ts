@@ -227,6 +227,7 @@ describe('ProjectEditStore', () => {
       company: 'Test Firma',
       ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
       companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
+      slug: 'test_project',
     };
     store.updateProjectInformationChanges(project);
     expect(store.getProjectInformationChanges).toEqual(project);
@@ -266,6 +267,7 @@ describe('ProjectEditStore', () => {
       company: 'Test Firma',
       ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
       companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
+      slug: 'updated_project',
     };
     store.updateProjectInformationChanges(updatedProjectInfo);
     expect(store.projectInformationChanges).toEqual(updatedProjectInfo);
