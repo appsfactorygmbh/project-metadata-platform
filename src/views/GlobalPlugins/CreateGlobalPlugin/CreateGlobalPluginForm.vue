@@ -27,6 +27,7 @@
 
   const initialValues = reactive<GlobalPluginFormData>({
     pluginName: '',
+    baseUrl: '',
     keys: [],
   });
 </script>
