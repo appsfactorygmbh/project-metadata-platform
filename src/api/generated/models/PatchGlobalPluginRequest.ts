@@ -70,8 +70,7 @@ export function PatchGlobalPluginRequestFromJSONTyped(
     isArchived: json['isArchived'] == null ? undefined : json['isArchived'],
     keys: json['keys'] == null ? undefined : json['keys'],
     baseUrl: json['baseUrl'] == null ? undefined : json['baseUrl'],
-        'baseUrl': json['baseUrl'] == null ? undefined : json['baseUrl'],
-    };
+  };
 }
 
 export function PatchGlobalPluginRequestToJSON(
