@@ -421,7 +421,7 @@
       >
         <EditableTextField
           v-if="!isEditing"
-          class="infoCard"
+          class="infoCard non-editing-mode"
           :value="projectData.slug.value"
           :is-loading="isLoading"
           :label="'Project\xa0Slug'"
@@ -441,6 +441,7 @@
         >
           <ProjectInformationSelectField
             v-if="field.inputType === 'select'"
+            class="editField"
             :column-name="field.name"
             :input-value="field.value"
             :input-status="field.status"
@@ -459,6 +460,7 @@
           />
           <ProjectInformationInputField
             v-else
+            class="editField"
             :column-name="field.name"
             :input-value="field.value"
             :input-status="field.status"
@@ -564,7 +566,11 @@
     }
   }
 
-  @container (max-width: 45vw) {
+  .infoCard.editing-mode {
+    margin: 0.2em 0;
+  }
+
+  @container (max-width: 42vw) {
     .infoCard.non-editing-mode {
       width: 100% !important;
     }
@@ -574,9 +580,15 @@
     border: none;
     width: 50%;
     display: table;
-    padding: 0 1em 0 1em;
+    padding: 0 0 0 1em;
+    white-space: nowrap;
+    overflow: hidden;
     max-width: 100%;
     background-color: v-bind('token.colorBgElevated ');
+  }
+
+  .editField {
+    margin: 0 2em 0 1em;
   }
 
   .button {
