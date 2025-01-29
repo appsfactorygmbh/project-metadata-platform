@@ -31,8 +31,8 @@
       ?.filter((plugin) => !plugin.isArchived)
       .map((plugin: GlobalPluginModel) => {
         return {
-          value: plugin.name,
-          label: plugin.name,
+          value: plugin.pluginName,
+          label: plugin.pluginName,
         };
       });
   });
@@ -43,7 +43,7 @@
     try {
       const pluginNumber: number | undefined =
         globalPluginStore?.getGlobalPlugins.find(
-          (plugin) => plugin.name === toRaw(fields).globalPlugin,
+          (plugin) => plugin.pluginName === toRaw(fields).globalPlugin,
         )?.id;
       if (pluginNumber === undefined) {
         return;
@@ -133,7 +133,7 @@
     const globalPluginAlreadyUsed: boolean = [
       ...projectPluginNames,
       ...addedPluginNames,
-    ].some((name: string) => name === selectedGlobalPlugin);
+    ].some((pluginName: string) => pluginName === selectedGlobalPlugin);
 
     if (!globalPluginAlreadyUsed) {
       dynamicValidateForm.pluginName = selectedGlobalPlugin;

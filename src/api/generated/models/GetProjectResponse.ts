@@ -12,110 +12,170 @@
  * Do not edit the class manually.
  */
 
+import type { SecurityLevel } from './SecurityLevel';
+import { SecurityLevelFromJSON, SecurityLevelToJSON } from './SecurityLevel';
+import type { CompanyState } from './CompanyState';
+import { CompanyStateFromJSON, CompanyStateToJSON } from './CompanyState';
+
 /**
  * Represents a response to the GetProject API call.
  * @export
  * @interface GetProjectResponse
  */
 export interface GetProjectResponse {
-    /**
-     * The identification number for the project.
-     * @type {number}
-     * @memberof GetProjectResponse
-     */
-    id: number;
-    /**
-     * The Slug for the project name.
-     * @type {string}
-     * @memberof GetProjectResponse
-     */
-    slug: string;
-    /**
-     * The name of the project.
-     * @type {string}
-     * @memberof GetProjectResponse
-     */
-    projectName: string;
-    /**
-     * The name of the client for the project.
-     * @type {string}
-     * @memberof GetProjectResponse
-     */
-    clientName: string;
-    /**
-     * The name of the Business Unit associated with the project.
-     * @type {string}
-     * @memberof GetProjectResponse
-     */
-    businessUnit: string;
-    /**
-     * The number of the team working on the project.
-     * @type {number}
-     * @memberof GetProjectResponse
-     */
-    teamNumber: number;
-    /**
-     * The name of the department associated with the project.
-     * @type {string}
-     * @memberof GetProjectResponse
-     */
-    department: string;
-    /**
-     * If the project is archived or not.
-     * @type {boolean}
-     * @memberof GetProjectResponse
-     */
-    isArchived: boolean;
+  /**
+   * The identification number for the project.
+   * @type {number}
+   * @memberof GetProjectResponse
+   */
+  id: number;
+  /**
+   * The Slug for the project name.
+   * @type {string}
+   * @memberof GetProjectResponse
+   */
+  slug: string;
+  /**
+   * The name of the project.
+   * @type {string}
+   * @memberof GetProjectResponse
+   */
+  projectName: string;
+  /**
+   * The name of the client for the project.
+   * @type {string}
+   * @memberof GetProjectResponse
+   */
+  clientName: string;
+  /**
+   * The name of the Business Unit associated with the project.
+   * @type {string}
+   * @memberof GetProjectResponse
+   */
+  businessUnit: string;
+  /**
+   * The number of the team working on the project.
+   * @type {number}
+   * @memberof GetProjectResponse
+   */
+  teamNumber: number;
+  /**
+   * The name of the department associated with the project.
+   * @type {string}
+   * @memberof GetProjectResponse
+   */
+  department: string;
+  /**
+   * If the project is archived or not.
+   * @type {boolean}
+   * @memberof GetProjectResponse
+   */
+  isArchived: boolean;
+  /**
+   * Internal id of the offer associated with the project.
+   * @type {string}
+   * @memberof GetProjectResponse
+   */
+  offerId: string;
+  /**
+   * The company that is responsible for the project.
+   * @type {string}
+   * @memberof GetProjectResponse
+   */
+  company: string;
+  /**
+   *
+   * @type {CompanyState}
+   * @memberof GetProjectResponse
+   */
+  companyState: CompanyState;
+  /**
+   *
+   * @type {SecurityLevel}
+   * @memberof GetProjectResponse
+   */
+  ismsLevel: SecurityLevel;
 }
 
 /**
  * Check if a given object implements the GetProjectResponse interface.
  */
-export function instanceOfGetProjectResponse(value: object): value is GetProjectResponse {
-  return ["id", "slug", "projectName", "clientName", "businessUnit", "teamNumber", "department", "isArchived"]
-    .every(key => key in value && (value as any)[key] !== undefined);
+export function instanceOfGetProjectResponse(
+  value: object,
+): value is GetProjectResponse {
+  if (!('id' in value) || value['id'] === undefined) return false;
+  if (!('slug' in value) || value['slug'] === undefined) return false;
+  if (!('projectName' in value) || value['projectName'] === undefined)
+    return false;
+  if (!('clientName' in value) || value['clientName'] === undefined)
+    return false;
+  if (!('businessUnit' in value) || value['businessUnit'] === undefined)
+    return false;
+  if (!('teamNumber' in value) || value['teamNumber'] === undefined)
+    return false;
+  if (!('department' in value) || value['department'] === undefined)
+    return false;
+  if (!('isArchived' in value) || value['isArchived'] === undefined)
+    return false;
+  if (!('offerId' in value) || value['offerId'] === undefined) return false;
+  if (!('company' in value) || value['company'] === undefined) return false;
+  if (!('companyState' in value) || value['companyState'] === undefined)
+    return false;
+  if (!('ismsLevel' in value) || value['ismsLevel'] === undefined) return false;
+  return true;
 }
 
 export function GetProjectResponseFromJSON(json: any): GetProjectResponse {
-    return GetProjectResponseFromJSONTyped(json, false);
+  return GetProjectResponseFromJSONTyped(json, false);
 }
 
-export function GetProjectResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): GetProjectResponse {
-    if (json == null) {
-        return json;
-    }
-    return {
-
-        'id': json['id'],
-        'slug': json['slug'],
-        'projectName': json['projectName'],
-        'clientName': json['clientName'],
-        'businessUnit': json['businessUnit'],
-        'teamNumber': json['teamNumber'],
-        'department': json['department'],
-        'isArchived': json['isArchived'],
-    };
+export function GetProjectResponseFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean,
+): GetProjectResponse {
+  if (json == null) {
+    return json;
+  }
+  return {
+    id: json['id'],
+    slug: json['slug'],
+    projectName: json['projectName'],
+    clientName: json['clientName'],
+    businessUnit: json['businessUnit'],
+    teamNumber: json['teamNumber'],
+    department: json['department'],
+    isArchived: json['isArchived'],
+    offerId: json['offerId'],
+    company: json['company'],
+    companyState: CompanyStateFromJSON(json['companyState']),
+    ismsLevel: SecurityLevelFromJSON(json['ismsLevel']),
+  };
 }
 
 export function GetProjectResponseToJSON(json: any): GetProjectResponse {
-    return GetProjectResponseToJSONTyped(json, false);
+  return GetProjectResponseToJSONTyped(json, false);
 }
 
-export function GetProjectResponseToJSONTyped(value?: GetProjectResponse | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function GetProjectResponseToJSONTyped(
+  value?: GetProjectResponse | null,
+  ignoreDiscriminator: boolean = false,
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-
-        'id': value['id'],
-        'slug': value['slug'],
-        'projectName': value['projectName'],
-        'clientName': value['clientName'],
-        'businessUnit': value['businessUnit'],
-        'teamNumber': value['teamNumber'],
-        'department': value['department'],
-        'isArchived': value['isArchived'],
-    };
+  return {
+    id: value['id'],
+    slug: value['slug'],
+    projectName: value['projectName'],
+    clientName: value['clientName'],
+    businessUnit: value['businessUnit'],
+    teamNumber: value['teamNumber'],
+    department: value['department'],
+    isArchived: value['isArchived'],
+    offerId: value['offerId'],
+    company: value['company'],
+    companyState: CompanyStateToJSON(value['companyState']),
+    ismsLevel: SecurityLevelToJSON(value['ismsLevel']),
+  };
 }
-
