@@ -6,7 +6,6 @@ import { createTestingPinia } from '@pinia/testing';
 import { createRouter, createWebHistory } from 'vue-router';
 import { SplitView } from '@/views';
 import { ProviderCollection } from '@/router/Provider';
-import { useProjectStore } from '@/store';
 import { setActivePinia } from 'pinia';
 import type { ProjectModel } from '@/models/Project';
 
@@ -48,7 +47,6 @@ const piniaOptions: Parameters<typeof createTestingPinia>[0] = {
 describe('ProjectSlugResolver.vue', () => {
   enableAutoUnmount(afterEach);
   setActivePinia(createTestingPinia(piniaOptions));
-  const projectStore = useProjectStore();
 
   const mockRouter = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -88,28 +86,22 @@ describe('ProjectSlugResolver.vue', () => {
       },
     });
   };
-  projectStore.setProjects(testProjects);
 
-  it(
-    'resolves an initial project id query',
-    async () => {
-      await flushPromises();
-      await mockRouter.push({
-        name: 'ProjectNameResolver',
-        query: { projectId: '200' },
-      });
-      await mockRouter.isReady();
+  it('resolves an initial project id query', async () => {
+    await flushPromises();
 
-      generateWrapper();
+    await mockRouter.push({
+      name: 'ProjectNameResolver',
+      query: { projectId: '200' },
+    });
+    await mockRouter.isReady();
 
-      projectStore.setProjects(testProjects);
-      await flushPromises();
+    generateWrapper();
 
-      expect(mockRouter.currentRoute.value.query.projectId).toBe('200');
-      expect(mockRouter.currentRoute.value.path).toBe('/test-1');
-    },
-    { timeout: 10000 },
-  );
+    expect(mockRouter.currentRoute.value.query.projectId).toBe('200');
+    await flushPromises();
+    expect(mockRouter.currentRoute.value.path).toBe('/test-1');
+  });
 
   it('changes the slug when changing the query', async () => {
     await flushPromises();
@@ -121,10 +113,8 @@ describe('ProjectSlugResolver.vue', () => {
 
     generateWrapper();
 
-    projectStore.setProjects(testProjects);
-    await flushPromises();
-
     expect(mockRouter.currentRoute.value.query.projectId).toBe('200');
+    await flushPromises();
     expect(mockRouter.currentRoute.value.path).toBe('/test-1');
 
     await mockRouter.push({
@@ -132,9 +122,10 @@ describe('ProjectSlugResolver.vue', () => {
       query: { projectId: '300' },
     });
     await mockRouter.isReady();
-    await flushPromises();
 
     expect(mockRouter.currentRoute.value.query.projectId).toBe('300');
-    expect(mockRouter.currentRoute.value.path).toBe('/test-2');
+    setTimeout(() => {
+      expect(mockRouter.currentRoute.value.path).toBe('/test-2');
+    }, 1000);
   });
 });

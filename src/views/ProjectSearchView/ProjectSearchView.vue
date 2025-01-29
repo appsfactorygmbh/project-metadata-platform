@@ -35,7 +35,7 @@
   type ProjectSearchStore = SearchStore<ProjectModel>;
 
   const { stopEditing, isEditing } = useEditing();
-  const { routerProjectId, routerProjectSlug, setProjectId, setProjectSlug } =
+  const { routerProjectId, routerProjectSlug, setProjectId } =
     inject(projectRoutingSymbol)!;
   const localLogStore = inject(localLogStoreSymbol);
 
@@ -142,7 +142,6 @@
   const handleRowClick = async (project: ProjectModel) => {
     if (isEditing) await stopEditing();
     setProjectId(project.id);
-    setProjectSlug(project.slug);
   };
 
   const setFilterQuery = async () => {
@@ -168,6 +167,13 @@
         { fullObjectNeeded: false },
       );
       if (project) setProjectId(project.id);
+    }
+
+    if (routerProjectId.value) {
+      await projectStore.fetch(routerProjectId.value);
+      await pluginStore.fetch(routerProjectId.value);
+      await pluginStore?.fetchUnarchived(routerProjectId.value);
+      await localLogStore?.fetch(routerProjectId.value);
     }
 
     searchStore.setBaseSet(projectStore.getProjects ?? []);

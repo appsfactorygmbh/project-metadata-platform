@@ -1,3 +1,4 @@
+import { useProjectStore } from '@/store';
 import { type Router, useRouter } from 'vue-router';
 
 export const useProjectRouting = (router: Router = useRouter()) => {
@@ -27,11 +28,18 @@ export const useProjectRouting = (router: Router = useRouter()) => {
           projectId: routerProjectId.value,
         },
       });
+
+      updateProjectSlug(id);
     }
   };
 
-  const setProjectSlug = (slug: string) => {
-    routerProjectSlug.value = slug;
+  const updateProjectSlug = async (id: number) => {
+    const projectStore = useProjectStore();
+    const project = await projectStore.findProjectById(id, {
+      fullObjectNeeded: false,
+    });
+    const projectSlug = project?.slug;
+    routerProjectSlug.value = projectSlug!;
   };
 
   return {
@@ -39,6 +47,5 @@ export const useProjectRouting = (router: Router = useRouter()) => {
     routerProjectId,
     routerProjectSlug,
     setProjectId,
-    setProjectSlug,
   };
 };

@@ -16,6 +16,7 @@
       fullObjectNeeded: false,
     });
     const projectSlug = project?.slug;
+
     if (!projectSlug) {
       return router.replace({
         query: { ...route.query },
