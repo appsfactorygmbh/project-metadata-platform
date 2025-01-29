@@ -17,7 +17,10 @@
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { useProjectStore } from '@/store';
   import { projectRoutingSymbol } from '@/store/injectionSymbols';
+  import { useThemeToken } from '@/utils/hooks';
   import { message } from 'ant-design-vue';
+
+  const token = useThemeToken();
 
   const open = ref<boolean>(false);
 
@@ -302,6 +305,9 @@
   .icon {
     width: 12px;
     height: 12px;
-    color: black;
+    color: v-bind('token.colorText');
+  }
+  :deep(.ant-select .ant-select-arrow) {
+    color: unset;
   }
 </style>
