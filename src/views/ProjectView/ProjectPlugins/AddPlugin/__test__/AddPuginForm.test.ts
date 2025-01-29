@@ -6,15 +6,25 @@ import {
   mount,
 } from '@vue/test-utils';
 import { useFormStore } from '@/components/Form';
-import { setActivePinia } from 'pinia';
 import type { AddPluginFormData } from '../AddPluginFormData';
 import { AddPluginForm } from '..';
-import { pluginStoreSymbol } from '@/store/injectionSymbols.ts';
+import { globalPluginStoreSymbol } from '@/store/injectionSymbols.ts';
+import { useGlobalPluginsStore } from '@/store';
 import { createTestingPinia } from '@pinia/testing';
 
+const plugin = [
+  {
+    pluginName: 'testPlugin',
+    id: 100,
+    isArchived: false,
+    baseUrl: 'testPlugin.com',
+    keys: [],
+  },
+];
+
 const testForm: AddPluginFormData = {
-  pluginName: 'testPlugin',
-  pluginUrl: 'testUrl',
+  pluginName: 'testGlobalPlugin',
+  pluginUrl: 'testGlobalPlugin.com',
   globalPlugin: 'testGlobalPlugin',
   inputsDisabled: false,
 };
@@ -22,30 +32,15 @@ const testForm: AddPluginFormData = {
 describe('AddPluginForm.vue', () => {
   let wrapper: VueWrapper;
   let formStore: ReturnType<typeof useFormStore>;
-  let pluginStoreMock: unknown;
+  const globalPluginStore = useGlobalPluginsStore();
 
   enableAutoUnmount(afterEach);
 
   beforeEach(() => {
-    setActivePinia(
-      createTestingPinia({ createSpy: vi.fn, stubActions: false }),
-    );
-
     formStore = useFormStore('testForm');
     formStore.resetFields();
 
-    pluginStoreMock = {
-      setLoading: vi.fn(),
-      fetchAll: vi.fn().mockResolvedValue([]),
-      getGlobalPlugins: [],
-    };
-
     wrapper = mount(AddPluginForm, {
-      global: {
-        provide: {
-          [pluginStoreSymbol as symbol]: pluginStoreMock,
-        },
-      },
       props: {
         formStore,
         initialValues: testForm,
@@ -112,33 +107,24 @@ describe('AddPluginForm.vue', () => {
     });
 
     const inputPluginName = wrapper.find('#inputAddPluginPluginName');
-    const inputPluginUrl = wrapper.find('#inputAddPluginPluginUrl');
     expect(inputPluginName.attributes('disabled')).toBe('');
-    expect(inputPluginUrl.attributes('disabled')).toBe('');
   });
 
   it('should enable inputs after plugin select', async () => {
     const inputPluginName = wrapper.find('#inputAddPluginPluginName');
-    const inputPluginUrl = wrapper.find('#inputAddPluginPluginUrl');
     expect(inputPluginName.attributes('disabled')).toBe(undefined);
-    expect(inputPluginUrl.attributes('disabled')).toBe(undefined);
   });
 
   it('should validate the form if pluginName is not set', async () => {
     const formStore2: ReturnType<typeof useFormStore> =
-      useFormStore('testForm3');
+      useFormStore('testForm2');
 
     wrapper = mount(AddPluginForm, {
-      global: {
-        provide: {
-          [pluginStoreSymbol as symbol]: pluginStoreMock,
-        },
-      },
       props: {
         formStore: formStore2,
         initialValues: {
           pluginName: '',
-          pluginUrl: 'testUrl',
+          pluginUrl: 'testGlobalPlugin.com',
           globalPlugin: 'testGlobalPlugin',
           inputsDisabled: false,
         },
@@ -154,5 +140,35 @@ describe('AddPluginForm.vue', () => {
         },
       ],
     });
+  });
+
+  it('choose plugin automatically', () => {
+    globalPluginStore.setGlobalPlugins(plugin);
+    wrapper = mount(AddPluginForm, {
+      plugins: [
+        createTestingPinia({
+          stubActions: false,
+        }),
+      ],
+      global: {
+        provide: {
+          [globalPluginStoreSymbol as symbol]: globalPluginStore,
+        },
+      },
+      props: {
+        formStore,
+        initialValues: {
+          pluginName: '',
+          pluginUrl: '',
+          globalPlugin: '',
+          inputsDisabled: false,
+        },
+      },
+    });
+    const input = wrapper.find('#inputAddPluginPluginUrl');
+    input.setValue('test.com');
+    expect(formStore.getFieldValue('globalPlugin')).toBe('');
+    input.setValue('testPlugin.com');
+    expect(formStore.getFieldValue('globalPlugin')).toBe('testPlugin');
   });
 });
