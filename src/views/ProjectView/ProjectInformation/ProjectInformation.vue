@@ -572,7 +572,8 @@
 
   @container (max-width: 42vw) {
     .infoCard.non-editing-mode {
-      width: 100% !important;
+      width: 24vw !important;
+      margin: 0 auto;
     }
   }
 
