@@ -24,30 +24,30 @@ export interface GetGlobalPluginResponse {
    * @memberof GetGlobalPluginResponse
    */
   pluginName: string;
-    /**
-     * Id of the plugin
-     * @type {number}
-     * @memberof GetGlobalPluginResponse
-     */
-    id: number;
-    /**
-     * If the plugin is archived or not
-     * @type {boolean}
-     * @memberof GetGlobalPluginResponse
-     */
-    isArchived: boolean;
-    /**
-     * empty array keys
-     * @type {Array<string>}
-     * @memberof GetGlobalPluginResponse
-     */
-    keys: Array<string>;
-    /**
-     * Base URL of the plugin
-     * @type {string}
-     * @memberof GetGlobalPluginResponse
-     */
-    baseUrl: string;
+  /**
+   * Id of the plugin
+   * @type {number}
+   * @memberof GetGlobalPluginResponse
+   */
+  id: number;
+  /**
+   * If the plugin is archived or not
+   * @type {boolean}
+   * @memberof GetGlobalPluginResponse
+   */
+  isArchived: boolean;
+  /**
+   * empty array keys
+   * @type {Array<string>}
+   * @memberof GetGlobalPluginResponse
+   */
+  keys: Array<string>;
+  /**
+   * Base URL of the plugin
+   * @type {string}
+   * @memberof GetGlobalPluginResponse
+   */
+  baseUrl: string;
 }
 
 /**
@@ -73,13 +73,13 @@ export function GetGlobalPluginResponseFromJSON(
 
 export function GetGlobalPluginResponseFromJSONTyped(
   json: any,
-  ignoreDiscriminator: boolean,): GetGlobalPluginResponse {
-    if (json == null) {
-        return json;
-    }
-    return {
-
-        pluginName: json['pluginName'],
+  ignoreDiscriminator: boolean,
+): GetGlobalPluginResponse {
+  if (json == null) {
+    return json;
+  }
+  return {
+    pluginName: json['pluginName'],
     id: json['id'],
     isArchived: json['isArchived'],
     keys: json['keys'],
@@ -101,9 +101,8 @@ export function GetGlobalPluginResponseToJSONTyped(
     return value;
   }
 
-    return {
-
-        pluginName: value['pluginName'],
+  return {
+    pluginName: value['pluginName'],
     id: value['id'],
     isArchived: value['isArchived'],
     keys: value['keys'],

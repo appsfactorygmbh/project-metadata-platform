@@ -17,30 +17,30 @@
  * @interface PatchGlobalPluginRequest
  */
 export interface PatchGlobalPluginRequest {
-    /**
-     * The name of the plugin. Null if not being updated.
-     * @type {string}
-     * @memberof PatchGlobalPluginRequest
-     */
-    pluginName?: string | null;
-    /**
-     * The archived status of the plugin. Null if not being updated.
-     * @type {boolean}
-     * @memberof PatchGlobalPluginRequest
-     */
-    isArchived?: boolean | null;
-    /**
-     * An array of keys associated with the plugin.
-     * @type {Array<string>}
-     * @memberof PatchGlobalPluginRequest
-     */
-    keys?: Array<string> | null;
-    /**
-     * The base url of the plugin.
-     * @type {string}
-     * @memberof PatchGlobalPluginRequest
-     */
-    baseUrl?: string | null;
+  /**
+   * The name of the plugin. Null if not being updated.
+   * @type {string}
+   * @memberof PatchGlobalPluginRequest
+   */
+  pluginName?: string | null;
+  /**
+   * The archived status of the plugin. Null if not being updated.
+   * @type {boolean}
+   * @memberof PatchGlobalPluginRequest
+   */
+  isArchived?: boolean | null;
+  /**
+   * An array of keys associated with the plugin.
+   * @type {Array<string>}
+   * @memberof PatchGlobalPluginRequest
+   */
+  keys?: Array<string> | null;
+  /**
+   * The base url of the plugin.
+   * @type {string}
+   * @memberof PatchGlobalPluginRequest
+   */
+  baseUrl?: string | null;
 }
 
 /**

@@ -17,30 +17,30 @@
  * @interface CreatePluginRequest
  */
 export interface CreatePluginRequest {
-    /**
-     * The name of the new plugin.
-     * @type {string}
-     * @memberof CreatePluginRequest
-     */
-    pluginName: string;
-    /**
-     * A boolean indicating if a plugin is archived/deleted.
-     * @type {boolean}
-     * @memberof CreatePluginRequest
-     */
-    isArchived: boolean;
-    /**
-     * The keys of the new plugin.
-     * @type {Array<string>}
-     * @memberof CreatePluginRequest
-     */
-    keys: Array<string>;
-    /**
-     * Base Url of the new plugin.
-     * @type {string}
-     * @memberof CreatePluginRequest
-     */
-    baseUrl: string;
+  /**
+   * The name of the new plugin.
+   * @type {string}
+   * @memberof CreatePluginRequest
+   */
+  pluginName: string;
+  /**
+   * A boolean indicating if a plugin is archived/deleted.
+   * @type {boolean}
+   * @memberof CreatePluginRequest
+   */
+  isArchived: boolean;
+  /**
+   * The keys of the new plugin.
+   * @type {Array<string>}
+   * @memberof CreatePluginRequest
+   */
+  keys: Array<string>;
+  /**
+   * Base Url of the new plugin.
+   * @type {string}
+   * @memberof CreatePluginRequest
+   */
+  baseUrl: string;
 }
 
 /**
@@ -56,7 +56,7 @@ export function instanceOfCreatePluginRequest(
   if (!('keys' in value) || value['keys'] === undefined) return false;
   if (!('baseUrl' in value) || value['baseUrl'] === undefined) return false;
   if (!('baseUrl' in value) || value['baseUrl'] === undefined) return false;
-    return true;
+  return true;
 }
 
 export function CreatePluginRequestFromJSON(json: any): CreatePluginRequest {
@@ -65,13 +65,13 @@ export function CreatePluginRequestFromJSON(json: any): CreatePluginRequest {
 
 export function CreatePluginRequestFromJSONTyped(
   json: any,
-  ignoreDiscriminator: boolean,): CreatePluginRequest {
-    if (json == null) {
-        return json;
-    }
-    return {
-
-        pluginName: json['pluginName'],
+  ignoreDiscriminator: boolean,
+): CreatePluginRequest {
+  if (json == null) {
+    return json;
+  }
+  return {
+    pluginName: json['pluginName'],
     isArchived: json['isArchived'],
     keys: json['keys'],
     baseUrl: json['baseUrl'],
@@ -90,9 +90,8 @@ export function CreatePluginRequestToJSONTyped(
     return value;
   }
 
-    return {
-
-        pluginName: value['pluginName'],
+  return {
+    pluginName: value['pluginName'],
     isArchived: value['isArchived'],
     keys: value['keys'],
     baseUrl: value['baseUrl'],
