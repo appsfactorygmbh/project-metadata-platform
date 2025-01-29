@@ -65,7 +65,6 @@
           return [pluginUrl, plugin.pluginName];
         }),
       );
-      console.log(pluginNames);
 
       if (pluginNames.has(hostname)) {
         const result = pluginNames.get(hostname) ?? null;
