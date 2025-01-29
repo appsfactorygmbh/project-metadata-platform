@@ -31,8 +31,8 @@
       ?.filter((plugin) => !plugin.isArchived)
       .map((plugin: GlobalPluginModel) => {
         return {
-          value: plugin.name,
-          label: plugin.name,
+          value: plugin.pluginName,
+          label: plugin.pluginName,
         };
       });
   });
@@ -54,13 +54,15 @@
       const pluginNames = new Map(
         globalPluginStore?.getGlobalPlugins.map((plugin) => {
           const pluginUrl = plugin.baseUrl
-            .toLowerCase()
-            .split(/[./]/)
-            .filter(
-              (part) => part !== 'www' && !part.startsWith('http') && part,
-            )
-            .join('.');
-          return [pluginUrl, plugin.name];
+            ? plugin.baseUrl
+                .toLowerCase()
+                .split(/[./]/)
+                .filter(
+                  (part) => part !== 'www' && !part.startsWith('http') && part,
+                )
+                .join('.')
+            : '';
+          return [pluginUrl, plugin.pluginName];
         }),
       );
       console.log(pluginNames);
@@ -79,7 +81,7 @@
     try {
       const pluginNumber: number | undefined =
         globalPluginStore?.getGlobalPlugins.find(
-          (plugin) => plugin.name === toRaw(fields).globalPlugin,
+          (plugin) => plugin.pluginName === toRaw(fields).globalPlugin,
         )?.id;
       if (pluginNumber === undefined) {
         return;
@@ -178,7 +180,7 @@
     const globalPluginAlreadyUsed: boolean = [
       ...projectPluginNames,
       ...addedPluginNames,
-    ].some((name: string) => name === selectedGlobalPlugin);
+    ].some((pluginName: string) => pluginName === selectedGlobalPlugin);
 
     if (!globalPluginAlreadyUsed) {
       dynamicValidateForm.pluginName = selectedGlobalPlugin;

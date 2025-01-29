@@ -26,7 +26,7 @@ describe('CreateProjectView.vue', () => {
           [projectRoutingSymbol as symbol]: useProjectRouting(router),
         },
       },
-    }) as VueWrapper<CreateProjectViewInstance>;
+    }) as unknown as VueWrapper<CreateProjectViewInstance>;
   });
 
   it('opens modal when plus button is clicked', async () => {

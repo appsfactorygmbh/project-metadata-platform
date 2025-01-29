@@ -14,7 +14,7 @@ import { createTestingPinia } from '@pinia/testing';
 
 const plugin = [
   {
-    name: 'testPlugin',
+    pluginName: 'testPlugin',
     id: 100,
     isArchived: false,
     baseUrl: 'testPlugin.com',
