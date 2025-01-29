@@ -302,6 +302,6 @@
   .icon {
     width: 12px;
     height: 12px;
-    color: black;
+    color: gray;
   }
 </style>
