@@ -24,6 +24,7 @@ const testForm: GlobalPluginFormData = {
       archived: false,
     },
   ],
+  baseUrl: 'testplugin.de',
 };
 
 describe('GlobalPluginForm.vue', () => {
@@ -55,7 +56,7 @@ describe('GlobalPluginForm.vue', () => {
     wrapper = mount(GlobalPluginForm, {
       props: {
         formStore,
-        initialValues: { pluginName: '', keys: [] },
+        initialValues: { pluginName: '', keys: [], baseUrl: '' },
       },
     });
   });

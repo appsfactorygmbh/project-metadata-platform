@@ -32,6 +32,9 @@
               <div class="title">
                 {{ item.pluginName }}
               </div>
+              <div class="baseUrl">
+                {{ item.baseUrl }}
+              </div>
               <div v-if="filterType" class="buttons">
                 <a-button
                   style="margin-right: 1em"
@@ -304,5 +307,10 @@
   }
   .text {
     color: v-bind('token.colorText');
+  }
+
+  .baseUrl {
+    font-weight: normal;
+    margin-left: 10px;
   }
 </style>

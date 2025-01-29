@@ -49,7 +49,6 @@ declare module 'vue' {
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
     ATypographyText: typeof import('ant-design-vue/es')['TypographyText']
     ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
-    BackgroundContainer: typeof import('./../src/components/Container/BackgroundContainer.vue')['default']
     ConfirmAction: typeof import('./../src/components/Modal/ConfirmAction.vue')['default']
     EditableCheckbox: typeof import('./../src/components/EditableTextField/EditableCheckbox.vue')['default']
     EditablePasswordField: typeof import('./../src/components/EditableTextField/EditablePasswordField.vue')['default']
