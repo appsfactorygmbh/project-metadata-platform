@@ -21,7 +21,7 @@ type StoreActions = {
   create: (plugin: CreatePluginRequest) => Promise<void>;
   update: (
     pluginId: GlobalPluginModel['id'],
-    plugin: GlobalPluginModel,
+    payload: GlobalPluginModel | { isArchived: boolean },
   ) => Promise<GetGlobalPluginResponse>;
   delete: (pluginId: GlobalPluginModel['id']) => Promise<void>;
   findPlugin: (
@@ -149,13 +149,13 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
 
         async update(
           pluginId: GlobalPluginModel['id'],
-          plugin: GlobalPluginModel,
+          payload: GlobalPluginModel | { isArchived: boolean },
         ) {
           try {
             const response = await this.callApi('pluginsPluginIdPatch', {
               pluginId,
               patchGlobalPluginRequest: {
-                ...plugin,
+                ...payload,
               },
             });
             if (response) {
@@ -178,7 +178,6 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
             throw new Error(`Plugin with id ${pluginId} not found`);
           }
           await this.update(plugin.id, {
-            ...plugin,
             isArchived: true,
           }).catch((e) => {
             this.setRemovedSuccessfully(false);
@@ -194,7 +193,6 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
           const plugin = await this.findPlugin(pluginId);
           if (!plugin) throw new Error(`Plugin with id ${pluginId} not found`);
           await this.update(plugin.id, {
-            ...plugin,
             isArchived: false,
           });
           this.setLoadingGlobalPlugins(false);

@@ -1,5 +1,10 @@
 <script setup lang="ts">
-  import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons-vue';
+  import {
+    FontColorsOutlined,
+    MinusCircleOutlined,
+    PlusOutlined,
+    LinkOutlined,
+  } from '@ant-design/icons-vue';
   import { reactive } from 'vue';
   import { type FormStore } from '@/components/Form';
   import {
@@ -24,6 +29,14 @@
       {
         required: true,
         message: 'Please insert the plugin name.',
+        trigger: 'change',
+        type: 'string',
+      },
+    ],
+    baseUrl: [
+      {
+        required: true,
+        message: 'Please insert the base url.',
         trigger: 'change',
         type: 'string',
       },
@@ -105,7 +118,7 @@
   >
     <a-form-item
       name="pluginName"
-      :no-style="false"
+      :no-style="true"
       :whitespace="true"
       v-bind="formStore.validateInfos.pluginName"
     >
@@ -113,7 +126,27 @@
         v-model:value="modelRef.pluginName"
         class="inputField"
         placeholder="Plugin Name"
-      />
+      >
+        <template #prefix>
+          <FontColorsOutlined />
+        </template>
+      </a-input>
+    </a-form-item>
+    <a-form-item
+      name="baseUrl"
+      :no-style="true"
+      :whitespace="true"
+      v-bind="formStore.validateInfos.baseUrl"
+    >
+      <a-input
+        v-model:value="modelRef.baseUrl"
+        class="inputField"
+        placeholder="Base Url"
+      >
+        <template #prefix>
+          <LinkOutlined />
+        </template>
+      </a-input>
     </a-form-item>
     <a-form-item
       v-for="(key, index) in modelRef.keys"
