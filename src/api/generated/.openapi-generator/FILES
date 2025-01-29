@@ -13,6 +13,7 @@ models/CreateProjectResponse.ts
 models/CreateUserRequest.ts
 models/CreateUserResponse.ts
 models/DeleteGlobalPluginResponse.ts
+models/ErrorResponse.ts
 models/GetGlobalPluginResponse.ts
 models/GetPluginResponse.ts
 models/GetProjectResponse.ts

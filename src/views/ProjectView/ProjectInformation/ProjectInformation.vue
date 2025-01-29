@@ -27,8 +27,10 @@
   import {
     EditableTextField,
     ProjectInformationInputField,
+    ProjectInformationSelectField,
   } from '@/components/EditableTextField';
   import { useThemeToken } from '@/utils/hooks';
+  import { CompanyState, SecurityLevel } from '@/api/generated';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectStore = useProjectStore();
@@ -82,6 +84,10 @@
         teamNumberInputStatus.value = '';
         departmentInputStatus.value = '';
         clientNameInputStatus.value = '';
+        offerIdInputStatus.value = '';
+        companyInputStatus.value = '';
+        companyStateInputState.value = '';
+        ismsLevelInputState.value = '';
         addData(projectStore.getProject!);
       }
     },
@@ -103,6 +109,10 @@
     teamNumber: ref<number>(0),
     department: ref<string>(''),
     clientName: ref<string>(''),
+    offerId: ref<string>(''),
+    company: ref<DetailedProjectModel['company']>(''),
+    companyState: ref<DetailedProjectModel['companyState']>('EXTERNAL'), //check if implementation matches with backend
+    ismsLevel: ref<DetailedProjectModel['ismsLevel']>('NORMAL'),
     isArchived: ref<boolean>(false),
   };
 
@@ -112,13 +122,41 @@
   const teamNumberInputStatus = ref<Status>('');
   const departmentInputStatus = ref<Status>('');
   const clientNameInputStatus = ref<Status>('');
+  const offerIdInputStatus = ref<Status>('');
+  const companyInputStatus = ref<Status>('');
+  const companyStateInputState = ref<Status>('');
+  const ismsLevelInputState = ref<Status>('');
 
   const BUInput = ref(projectData.businessUnit);
   const teamNumberInput = ref(projectData.teamNumber);
   const departmentInput = ref(projectData.department);
   const clientNameInput = ref(projectData.clientName);
+  const offerIdInput = ref(projectData.offerId);
+  const companyInput = ref(projectData.company);
+  const companyStateInput = ref(projectData.companyState);
+  const ismsLevelInput = ref(projectData.ismsLevel);
 
-  const textFields = ref([
+  type BaseInputField<T = string | number> = {
+    label: string;
+    name: string;
+    value: Ref<T>;
+    status: Ref<Status>;
+    displayValue?: (value: T) => string | number | boolean | undefined;
+  };
+
+  type InputField<T = string | number> = BaseInputField<T> &
+    (
+      | {
+          options?: string[] | (keyof T)[];
+          getValue?: (value: string) => T;
+          inputType: 'select';
+        }
+      | {
+          inputType?: 'text';
+        }
+    );
+
+  const textFields = ref<InputField[]>([
     {
       label: 'Business\xa0Unit',
       name: 'businessUnit',
@@ -143,17 +181,58 @@
       value: clientNameInput,
       status: clientNameInputStatus,
     },
+    {
+      label: 'Offer\xa0ID',
+      name: 'offerId',
+      value: offerIdInput,
+      status: offerIdInputStatus,
+    },
+    {
+      label: 'Company',
+      name: 'company',
+      value: companyInput,
+      status: companyInputStatus,
+    },
+    {
+      label: 'Company\xa0State',
+      name: 'companyState',
+      value: companyStateInput,
+      status: companyStateInputState,
+      options: Object.keys(CompanyState) as (keyof typeof CompanyState)[],
+      displayValue: (value) =>
+        Object.keys(CompanyState).find(
+          (key) => CompanyState[key as keyof typeof CompanyState] === value,
+        ),
+      getValue: (value) => CompanyState[value as keyof typeof CompanyState],
+      inputType: 'select',
+    },
+    {
+      label: 'ISMS\xa0Level',
+      name: 'ismsLevel',
+      value: ismsLevelInput,
+      status: ismsLevelInputState,
+      options: Object.keys(SecurityLevel) as (keyof typeof SecurityLevel)[],
+      displayValue: (value) =>
+        Object.keys(SecurityLevel).find(
+          (key) => SecurityLevel[key as keyof typeof SecurityLevel] === value,
+        ),
+      getValue: (value) => SecurityLevel[value as keyof typeof SecurityLevel],
+      inputType: 'select',
+    },
   ]);
 
   //Function to update the project information
   function updateProjectInformation(): void {
-    // @ts-expect-error-next-line implemented in other branch
     const updatedProject: EditProjectModel = {
       projectName: projectData.projectName.value,
       businessUnit: BUInput.value,
       teamNumber: teamNumberInput.value,
       department: departmentInput.value,
       clientName: clientNameInput.value,
+      offerId: offerIdInput.value,
+      company: companyInput.value,
+      companyState: companyStateInput.value,
+      ismsLevel: ismsLevelInput.value,
     };
     projectEditStore.updateProjectInformationChanges(updatedProject);
   }
@@ -169,6 +248,10 @@
     projectData.teamNumber.value = loadedData.teamNumber;
     projectData.department.value = loadedData.department;
     projectData.clientName.value = loadedData.clientName;
+    projectData.offerId.value = loadedData.offerId;
+    projectData.company.value = loadedData.company;
+    projectData.companyState.value = loadedData.companyState;
+    projectData.ismsLevel.value = loadedData.ismsLevel;
   }
 
   const isArchiveModalOpen = ref(false);
@@ -354,8 +437,28 @@
           :is-loading="isLoading"
           :label="field.label"
           :has-edit-keys="false"
+          :display-value="field.displayValue"
         >
+          <ProjectInformationSelectField
+            v-if="field.inputType === 'select'"
+            :column-name="field.name"
+            :input-value="field.value"
+            :input-status="field.status"
+            :edit-store="projectEditStore"
+            :options="field.options!"
+            :get-value="field.getValue!"
+            :display-value="field.displayValue!"
+            @updated="
+              (newValue) => {
+                field.value = newValue;
+                updateProjectInformation();
+              }
+            "
+            @error="field.status = 'error'"
+            @success="field.status = ''"
+          />
           <ProjectInformationInputField
+            v-else
             :column-name="field.name"
             :input-value="field.value"
             :input-status="field.status"

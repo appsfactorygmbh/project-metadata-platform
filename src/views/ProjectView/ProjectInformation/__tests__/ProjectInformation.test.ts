@@ -26,8 +26,8 @@ const testData: DetailedProjectModel = {
   clientName: 'ZDF',
   businessUnit: 'BU Health',
   teamNumber: 42,
-  offerId: '',
-  company: '',
+  offerId: '3',
+  company: 'Appsfactory',
   companyState: 'EXTERNAL',
   ismsLevel: 'NORMAL',
 };
@@ -75,6 +75,12 @@ describe('ProjectInformation.vue', () => {
     expect(wrapper.findAll('.infoCard')[2].text()).toBe('Team\xa0Number:42');
     expect(wrapper.findAll('.infoCard')[3].text()).toBe('Department:IT');
     expect(wrapper.findAll('.infoCard')[4].text()).toBe('Client\xa0Name:ZDF');
+    expect(wrapper.findAll('.infoCard')[5].text()).toBe('Offer\xa0ID:3');
+    expect(wrapper.findAll('.infoCard')[6].text()).toBe('Company:Appsfactory');
+    expect(wrapper.findAll('.infoCard')[7].text()).toBe(
+      'Company\xa0State:External',
+    );
+    expect(wrapper.findAll('.infoCard')[8].text()).toBe('ISMS\xa0Level:Normal');
   });
 
   it('opens the confirmation modal when DeleteOutlined button is clicked', async () => {

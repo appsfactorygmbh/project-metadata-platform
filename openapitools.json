@@ -2,6 +2,23 @@
   "$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
   "spaces": 2,
   "generator-cli": {
-    "version": "7.10.0"
+    "version": "7.11.0",
+    "generators": {
+      "typescript-fetch": {
+        "inputSpec": "http://localhost:8090/swagger/v1/swagger.json",
+        "output": "./src/api/generated",
+        "generatorName": "typescript-fetch",
+        "additional-properties": {
+          "typescriptThreePlus": true,
+          "withInterfaces": true,
+          "withSeparateModelsAndApi": true,
+          "apiPackage": "apis",
+          "modelPackage": "models",
+          "useSingleRequestParameter": true,
+          "fileNaming": "PascalCase"
+        },
+        "enablePostProcessFile": true
+      }
+    }
   }
 }

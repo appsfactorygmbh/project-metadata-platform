@@ -5,6 +5,7 @@
   import { reactive } from 'vue';
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
   import type { GlobalPluginFormData } from '../GlobalPluginForm';
+  import type { CreatePluginRequest } from '@/api/generated';
 
   const { formStore } = defineProps<{
     formStore: FormStore;
@@ -14,7 +15,7 @@
 
   const [notificationApi, contextHolder] = notification.useNotification();
 
-  const onSubmit: FormSubmitType = (fields) => {
+  const onSubmit: FormSubmitType = (fields: CreatePluginRequest) => {
     console.log('creating Plugin', fields);
     globalPluginStore.create(fields).catch(() => {
       notificationApi.error({

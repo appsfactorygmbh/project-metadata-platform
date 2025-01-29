@@ -19,7 +19,7 @@ const testProjects: ProjectModel[] = [
     teamNumber: 1,
     isArchived: false,
     slug: 'test-1',
-    company: '',
+    company: 'test',
     ismsLevel: 'NORMAL',
   },
   {
@@ -30,7 +30,7 @@ const testProjects: ProjectModel[] = [
     teamNumber: 1,
     isArchived: false,
     slug: 'test-2',
-    company: '',
+    company: 'test',
     ismsLevel: 'NORMAL',
   },
 ];

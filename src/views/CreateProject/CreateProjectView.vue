@@ -1,12 +1,16 @@
 <script setup lang="ts">
-  import { computed, ref, watch } from 'vue';
+  import { computed, ref } from 'vue';
   import {
     BankOutlined,
     FontColorsOutlined,
     PlusOutlined,
     ShoppingOutlined,
-    TeamOutlined,
+    NumberOutlined,
     UserOutlined,
+    FieldNumberOutlined,
+    SafetyCertificateOutlined,
+    TrademarkOutlined,
+    SwapOutlined,
   } from '@ant-design/icons-vue';
   import type { UnwrapRef } from 'vue';
   import type { CreateProjectModel } from '@/models/Project';
@@ -29,11 +33,14 @@
 
   const isAdding = computed(() => projectStore.getIsLoadingAdd);
   const fetchError = ref<boolean>(false);
+  const errorMessage = ref<string>(
+    'An error occurred while creating the project.',
+  );
 
-  const formState: UnwrapRef<CreateProjectModel> = reactive({
+  const formState: UnwrapRef<Partial<CreateProjectModel>> = reactive({
     projectName: '',
     businessUnit: '',
-    teamNumber: 0,
+    teamNumber: undefined,
     department: '',
     clientName: '',
     offerId: '',
@@ -41,6 +48,10 @@
     companyState: 'EXTERNAL',
     ismsLevel: 'NORMAL',
     isArchived: false,
+    offerId: '',
+    company: '',
+    companyState: undefined,
+    ismsLevel: undefined,
   });
 
   const validateMessages = {
@@ -104,16 +115,16 @@
     });
 
     const projectData: CreateProjectModel = {
-      projectName: formState.projectName,
-      businessUnit: formState.businessUnit,
-      teamNumber: formState.teamNumber,
-      department: formState.department,
-      clientName: formState.clientName,
+      projectName: formState.projectName!,
+      businessUnit: formState.businessUnit!,
+      teamNumber: formState.teamNumber!,
+      department: formState.department!,
+      clientName: formState.clientName!,
       isArchived: false,
-      offerId: '',
-      company: '',
-      companyState: 'EXTERNAL',
-      ismsLevel: 'NORMAL',
+      offerId: formState.offerId!,
+      company: formState.company!,
+      companyState: formState.companyState!,
+      ismsLevel: formState.ismsLevel!,
     };
 
     await projectStore.create(projectData);
@@ -144,6 +155,7 @@
         :validate-messages="validateMessages"
         :label-col="labelCol"
         :wrapper-col="wrapperCol"
+        class="formContainer"
       >
         <a-form-item
           name="projectName"
@@ -153,11 +165,25 @@
         >
           <a-input
             v-model:value="formState.projectName"
-            class="inputField"
             placeholder="Project Name"
           >
-            <template #prefix>
-              <FontColorsOutlined />
+            <template #suffix>
+              <FontColorsOutlined class="icon" />
+            </template>
+          </a-input>
+        </a-form-item>
+        <a-form-item
+          name="teamNumber"
+          :rules="[{ required: true, whitespace: true }]"
+          class="column"
+          :no-style="true"
+        >
+          <a-input
+            v-model:value="formState.teamNumber"
+            placeholder="Team Number"
+          >
+            <template #suffix>
+              <FieldNumberOutlined class="icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -168,28 +194,12 @@
         >
           <a-input
             v-model:value="formState.businessUnit"
-            class="inputField"
             placeholder="Business Unit"
           >
-            <template #prefix>
-              <ShoppingOutlined />
+            <template #suffix>
+              <ShoppingOutlined class="icon" />
             </template>
           </a-input>
-        </a-form-item>
-        <a-form-item
-          name="teamNumber"
-          :rules="[{ required: true }, { type: 'number', min: 0 }]"
-          :no-style="true"
-        >
-          <a-input-number
-            v-model:value="formState.teamNumber"
-            class="inputField"
-            placeholder="Team Number"
-          >
-            <template #prefix>
-              <TeamOutlined />
-            </template>
-          </a-input-number>
         </a-form-item>
         <a-form-item
           name="department"
@@ -198,11 +208,10 @@
         >
           <a-input
             v-model:value="formState.department"
-            class="inputField"
             placeholder="Department"
           >
-            <template #prefix>
-              <BankOutlined />
+            <template #suffix>
+              <BankOutlined class="icon" />
             </template>
           </a-input>
         </a-form-item>
@@ -213,18 +222,72 @@
         >
           <a-input
             v-model:value="formState.clientName"
-            class="inputField"
             placeholder="Client Name"
           >
-            <template #prefix>
-              <UserOutlined />
+            <template #suffix>
+              <UserOutlined class="icon" />
             </template>
           </a-input>
+        </a-form-item>
+        <a-form-item
+          name="offerId"
+          :rules="[{ required: true, whitespace: true }]"
+          :no-style="true"
+        >
+          <a-input v-model:value="formState.offerId" placeholder="Offer ID">
+            <template #suffix>
+              <NumberOutlined class="icon" />
+            </template>
+          </a-input>
+        </a-form-item>
+        <a-form-item
+          name="company"
+          :rules="[{ required: true, whitespace: true }]"
+          :no-style="true"
+        >
+          <a-input v-model:value="formState.company" placeholder="Company">
+            <template #suffix>
+              <TrademarkOutlined class="icon" />
+            </template>
+          </a-input>
+        </a-form-item>
+        <a-form-item
+          name="companyState"
+          :rules="[{ required: true }]"
+          :no-style="true"
+        >
+          <a-select
+            v-model:value="formState.companyState"
+            placeholder="Company State"
+          >
+            <template #suffixIcon>
+              <SwapOutlined class="icon" />
+            </template>
+            <a-select-option value="INTERNAL">Internal</a-select-option>
+            <a-select-option value="EXTERNAL">External</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item
+          name="ismsLevel"
+          :rules="[{ required: true }]"
+          :no-style="true"
+        >
+          <a-select
+            v-model:value="formState.ismsLevel"
+            placeholder="ISMS Level"
+          >
+            <template #suffixIcon>
+              <SafetyCertificateOutlined class="icon" />
+            </template>
+            <a-select-option value="NORMAL">Normal</a-select-option>
+            <a-select-option value="HIGH">High</a-select-option>
+            <a-select-option value="VERY_HIGH">Very High</a-select-option>
+          </a-select>
         </a-form-item>
         <!--shows error if the PUT request failed-->
         <a-alert
           v-if="fetchError"
-          message="Failed to create Project"
+          :message="errorMessage"
           type="error"
           show-icon
         />
@@ -237,9 +300,12 @@
   .formItem {
     max-width: none !important;
   }
-
-  .inputField {
-    width: 100%;
-    margin: 10px 0 10px 0;
+  .formContainer > * {
+    margin-bottom: 20px;
+  }
+  .icon {
+    width: 12px;
+    height: 12px;
+    color: black;
   }
 </style>

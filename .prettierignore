@@ -7,4 +7,3 @@ types/*.d.ts
 nginx.conf
 docker*
 Docker*
-src/api/generated/**/*.ts

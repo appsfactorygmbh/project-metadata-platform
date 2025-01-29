@@ -83,7 +83,7 @@ describe('ProjectSearchView.vue', () => {
       teamNumber: 1,
       isArchived: false,
       slug: 'test-project',
-      company: '',
+      company: 'test',
       ismsLevel: 'NORMAL',
     };
 

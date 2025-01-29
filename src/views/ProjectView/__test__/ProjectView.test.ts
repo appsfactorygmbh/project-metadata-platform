@@ -48,11 +48,11 @@ const testProject: DetailedProjectModel = {
   department: 'Test Department',
   teamNumber: 1,
   isArchived: false,
-  slug: 'test-project',
-  offerId: '',
-  company: '',
+  slug: 'test_project',
+  offerId: '1',
+  company: 'AppsFactory',
   companyState: 'EXTERNAL',
-  ismsLevel: 'NORMAL',
+  ismsLevel: 'HIGH',
 };
 
 const testUpdatedProject: UpdateProjectModel = {
@@ -63,10 +63,10 @@ const testUpdatedProject: UpdateProjectModel = {
   teamNumber: 1,
   pluginList: testPlugins,
   isArchived: false,
-  offerId: '',
-  company: '',
+  offerId: '1',
+  company: 'AppsFactory',
   companyState: 'EXTERNAL',
-  ismsLevel: 'NORMAL',
+  ismsLevel: 'HIGH',
 };
 
 describe('ProjectView.vue', () => {
