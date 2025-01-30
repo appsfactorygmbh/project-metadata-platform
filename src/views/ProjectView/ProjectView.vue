@@ -205,7 +205,8 @@
     tooltip: 'Click here to add a new plugin',
   };
 
-  const handleAddPluginOk = async (newPlugin: PluginModel) => {
+  const handleAddPluginOk = async (event: Event) => {
+    const newPlugin = (event as CustomEvent).detail as PluginModel;
     const currentProject = projectStore.getProject;
     const currentPlugins = pluginStore.getPlugins;
     if (currentProject) {
@@ -223,6 +224,11 @@
         ismsLevel: currentProject?.ismsLevel,
       };
       await projectStore.update(currentProject.id, updatedProject);
+      await projectStore.fetch(currentProject.id);
+      await pluginStore.fetch(currentProject.id);
+      message.success('Plugin added successfully.', 2);
+    } else {
+      message.error('No project found to update.', 5);
     }
     openAddPluginModal.value = false;
   };
@@ -241,7 +247,7 @@
     <AddPluginView
       v-if="openAddPluginModal"
       :show-modal="openAddPluginModal"
-      @ok="handleAddPluginOk"
+      @ok="(plugin) => handleAddPluginOk(plugin)"
       @close="closeAddPluginModal"
     />
     <LocalLogView class="LocalLog" :class="{ blur: isBlurred }" />

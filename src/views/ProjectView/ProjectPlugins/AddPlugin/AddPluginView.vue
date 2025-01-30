@@ -5,6 +5,7 @@
   import type { AddPluginFormData } from './AddPluginFormData.ts';
 
   const formStore = useFormStore('addPluginForm');
+
   const initialFormValues: AddPluginFormData = {
     globalPlugin: '',
     inputsDisabled: true,
