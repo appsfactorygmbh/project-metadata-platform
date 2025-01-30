@@ -29,6 +29,7 @@
   .cardContainer {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     background-color: v-bind('token.colorBgElevated');
+    border: none;
     border-radius: 15px;
     margin-bottom: 60px;
     padding-top: 0.6em;

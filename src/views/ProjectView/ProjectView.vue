@@ -205,6 +205,6 @@
     padding-top: 1em;
   }
   .LocalLog {
-    margin: 2em 3.5em;
+    margin: 2em 3.5em 2em 3em;
   }
 </style>
