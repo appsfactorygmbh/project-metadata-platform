@@ -92,9 +92,8 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
     headerParameters['Content-Type'] = 'application/json';
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -145,9 +144,8 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
     }
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(

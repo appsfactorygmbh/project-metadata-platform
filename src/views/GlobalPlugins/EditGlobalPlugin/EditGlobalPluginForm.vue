@@ -49,9 +49,8 @@
       const numericPluginId = parseInt(pluginId, 10);
       if (!isNaN(numericPluginId)) {
         pluginIdRef.value = numericPluginId;
-        const globalPluginData = await globalPluginStore?.fetch(
-          numericPluginId,
-        );
+        const globalPluginData =
+          await globalPluginStore?.fetch(numericPluginId);
         if (!globalPluginData) {
           return;
         }

@@ -387,9 +387,8 @@ export class ProjectsApi
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -412,9 +411,8 @@ export class ProjectsApi
   async projectsFilterDataBusinessunitsGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<string>> {
-    const response = await this.projectsFilterDataBusinessunitsGetRaw(
-      initOverrides,
-    );
+    const response =
+      await this.projectsFilterDataBusinessunitsGetRaw(initOverrides);
     return await response.value();
   }
 
@@ -430,9 +428,8 @@ export class ProjectsApi
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -455,9 +452,8 @@ export class ProjectsApi
   async projectsFilterDataTeamnumbersGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<number>> {
-    const response = await this.projectsFilterDataTeamnumbersGetRaw(
-      initOverrides,
-    );
+    const response =
+      await this.projectsFilterDataTeamnumbersGetRaw(initOverrides);
     return await response.value();
   }
 
@@ -505,9 +501,8 @@ export class ProjectsApi
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -558,9 +553,8 @@ export class ProjectsApi
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -608,9 +602,8 @@ export class ProjectsApi
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -664,9 +657,8 @@ export class ProjectsApi
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -720,9 +712,8 @@ export class ProjectsApi
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -775,9 +766,8 @@ export class ProjectsApi
     headerParameters['Content-Type'] = 'application/json';
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -831,9 +821,8 @@ export class ProjectsApi
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -881,9 +870,8 @@ export class ProjectsApi
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -937,9 +925,8 @@ export class ProjectsApi
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -995,9 +982,8 @@ export class ProjectsApi
     headerParameters['Content-Type'] = 'application/json';
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -1054,9 +1040,8 @@ export class ProjectsApi
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(

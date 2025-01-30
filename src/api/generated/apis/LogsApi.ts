@@ -93,9 +93,8 @@ export class LogsApi extends runtime.BaseAPI implements LogsApiInterface {
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(

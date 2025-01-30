@@ -145,9 +145,8 @@ export class PluginsApi extends runtime.BaseAPI implements PluginsApiInterface {
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -194,9 +193,8 @@ export class PluginsApi extends runtime.BaseAPI implements PluginsApiInterface {
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -252,9 +250,8 @@ export class PluginsApi extends runtime.BaseAPI implements PluginsApiInterface {
     headerParameters['Content-Type'] = 'application/json';
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
@@ -306,9 +303,8 @@ export class PluginsApi extends runtime.BaseAPI implements PluginsApiInterface {
     headerParameters['Content-Type'] = 'application/json';
 
     if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] = await this.configuration.apiKey(
-        'Authorization',
-      ); // Bearer authentication
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
     }
 
     const response = await this.request(
