@@ -75,7 +75,7 @@
       if (projectStore.getUpdatedSuccessfully) {
         projectEditStore?.resetPluginChanges();
         message.success('Project updated successfully.', 2);
-        projectStore.fetch(projectStore.getProject?.id || 0);
+        projectStore.fetch(projectStore.getProject?.id ?? 0);
         stopEditing();
       } else {
         message.error('Could not update Project.', 5);
@@ -155,6 +155,10 @@
       clientName: updateProjectInformation?.clientName,
       pluginList: updatedPluginList.value,
       isArchived: projectStore.getProject.isArchived,
+      offerId: updateProjectInformation?.offerId,
+      company: updateProjectInformation?.company,
+      companyState: updateProjectInformation?.companyState,
+      ismsLevel: updateProjectInformation?.ismsLevel,
     };
     console.log(updatedProject);
 

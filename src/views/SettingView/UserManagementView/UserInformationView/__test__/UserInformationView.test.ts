@@ -77,8 +77,8 @@ describe('UserInformationView.vue', () => {
     userStore.setMe(userData1);
     userStore.setUser(userData1);
     const wrapper = generateWrapper();
-    const textField = wrapper.find('.passwordLabel');
-    expect(textField.exists()).toBe(true);
+    const textField = wrapper.findAll('.label')[1];
+    expect(textField.text()).toBe('Password:');
   });
 
   it('should hide password', () => {

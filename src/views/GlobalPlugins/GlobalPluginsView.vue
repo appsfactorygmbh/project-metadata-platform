@@ -24,13 +24,16 @@
     :loading="isLoading"
     bordered
   >
-    <template #renderItem="{ item }">
+    <template #renderItem="{ item }: { item: GlobalPluginModel }">
       <a-list-item class="list-items">
         <a-list-item-meta>
           <template #title>
             <div class="list-item">
               <div class="title">
-                {{ item.name }}
+                {{ item.pluginName }}
+              </div>
+              <div class="baseUrl">
+                {{ item.baseUrl }}
               </div>
               <div v-if="filterType" class="buttons">
                 <a-button
@@ -304,5 +307,10 @@
   }
   .text {
     color: v-bind('token.colorText');
+  }
+
+  .baseUrl {
+    font-weight: normal;
+    margin-left: 10px;
   }
 </style>

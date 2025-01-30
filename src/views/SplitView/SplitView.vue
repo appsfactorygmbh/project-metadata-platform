@@ -7,11 +7,10 @@
   import { MenuButtons } from '@/components/MenuButtons';
   import { CreateProjectView } from '@/views/CreateProject';
   import ProjectView from '../ProjectView/ProjectView.vue';
-  import { useEditing } from '@/utils/hooks';
-  import { useThemeToken } from '@/utils/hooks';
   import { AddPluginView } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
   import { AppstoreAddOutlined } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
+  import { useEditing, useThemeToken } from '@/utils/hooks';
 
   const token = useThemeToken();
   const emit = defineEmits(['save-edit']);

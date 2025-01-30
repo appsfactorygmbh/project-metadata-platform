@@ -18,6 +18,8 @@ const testData: ProjectModel[] = [
     teamNumber: 1,
     isArchived: false,
     slug: 'c',
+    company: 'test',
+    ismsLevel: 'NORMAL',
   },
   {
     id: 2,
@@ -27,6 +29,8 @@ const testData: ProjectModel[] = [
     teamNumber: 2,
     isArchived: false,
     slug: 'a',
+    company: 'test',
+    ismsLevel: 'NORMAL',
   },
 ];
 

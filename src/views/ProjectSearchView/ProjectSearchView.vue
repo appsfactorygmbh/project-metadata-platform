@@ -17,8 +17,7 @@
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import { usePluginStore, useProjectStore } from '@/store';
-  import { useQuery } from '@/utils/hooks';
-  import { useThemeToken } from '@/utils/hooks';
+  import { useQuery, useThemeToken } from '@/utils/hooks';
 
   const token = useThemeToken();
 
@@ -82,7 +81,7 @@
   };
 
   // on mount, set the filter to show only active projects
-  searchStore.setFilter(showOnlyActive);
+  onMounted(() => searchStore.setFilter(showOnlyActive));
 
   const FETCHING_METHOD: 'FRONTEND' | 'BACKEND' = import.meta.env
     .VITE_PROJECT_SEARCH_METHOD;
@@ -122,7 +121,7 @@
       () => searchStore.getSearchQuery,
       () => {
         debouncedFetchData(searchStore.getSearchQuery)?.then((data) => {
-          searchStore?.setBaseSet(data || []);
+          searchStore?.setBaseSet(data ?? []);
         });
         searchStore?.setSearchQuery('');
       },
@@ -240,6 +239,7 @@
       align: 'center' as const,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
+      width: NaN,
     },
     {
       title: 'Client Name',
@@ -252,6 +252,7 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
+      width: NaN,
     },
     {
       title: 'Business Unit',
@@ -264,6 +265,7 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
+      width: NaN,
     },
     {
       title: 'Team Number',
@@ -331,6 +333,7 @@
   function hideColumn(index: number) {
     columns[index].hidden = true;
     columns[index - 1].resizable = false;
+    delete columns[index - 1].width;
   }
 
   /**
@@ -340,6 +343,7 @@
   function showColumn(index: number) {
     columns[index].hidden = false;
     columns[index - 1].resizable = true;
+    columns[index - 1].width = NaN;
   }
 
   /**

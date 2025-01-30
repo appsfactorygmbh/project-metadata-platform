@@ -20,6 +20,9 @@
       return;
     }
 
+    fields['pluginName'] =
+      fields['pluginName'] === oldPluginName ? undefined : fields['pluginName'];
+
     globalPluginStore
       .update(pluginIdRef.value, { ...fields })
       .catch((error) => {
@@ -35,7 +38,9 @@
   const initialValues = reactive<GlobalPluginFormData>({
     pluginName: '',
     keys: [],
+    baseUrl: '',
   });
+  let oldPluginName: string = '';
 
   onMounted(async () => {
     const route = useRoute();
@@ -44,12 +49,14 @@
       const numericPluginId = parseInt(pluginId, 10);
       if (!isNaN(numericPluginId)) {
         pluginIdRef.value = numericPluginId;
-        const globalPluginData =
-          await globalPluginStore?.fetch(numericPluginId);
+        const globalPluginData = await globalPluginStore?.fetch(
+          numericPluginId,
+        );
         if (!globalPluginData) {
           return;
         }
-        initialValues.pluginName = globalPluginData.name;
+        initialValues.pluginName = globalPluginData.pluginName;
+        oldPluginName = globalPluginData.pluginName;
         initialValues.keys =
           globalPluginData.keys?.map((keyObj, index) => ({
             // TODO: adapt when feature to archive keys is implemented
@@ -57,6 +64,7 @@
             value: keyObj, //keyObj.value,
             archived: false, //keyObj.archived,
           })) ?? [];
+        initialValues.baseUrl = globalPluginData.baseUrl;
       }
     }
   });
