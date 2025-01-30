@@ -83,6 +83,16 @@
     }
   });
 
+  /*todo: funktion bauen die request ans backend sendet
+    button hier auslagern aus splitview
+    porject store update = plugins hinzufügen
+    id from porject brauch ich aus der projectview
+    put projects endpunkt wichitg
+    alles übernehmen aus dem put, also busines unit ... also die informtinnen
+
+  *
+  */
+
   const saveEdit = async () => {
     // Check for empty fields and duplicates
     console.log('saveEdit function called');
