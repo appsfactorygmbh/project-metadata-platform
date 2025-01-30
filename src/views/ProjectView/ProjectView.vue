@@ -9,18 +9,20 @@
     projectEditStoreSymbol,
     localLogStoreSymbol,
   } from '@/store/injectionSymbols';
-  import { inject, watch } from 'vue';
+  import { inject, ref, watch } from 'vue';
   import { message } from 'ant-design-vue';
   import { usePluginStore, useProjectStore } from '@/store';
   import type { PluginModel } from '@/models/Plugin';
   import _ from 'lodash';
+  import type { FloatButtonModel } from '@/components/Button';
+  import { AppstoreAddOutlined } from '@ant-design/icons-vue';
+  import { AddPluginView } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
   const pluginStore = usePluginStore();
   const projectStore = useProjectStore();
   const rerenderPlugins = ref(1);
-
   const isModalOpen = ref(false);
   const openModal = () => {
     isModalOpen.value = true;
@@ -84,7 +86,6 @@
   });
 
   /*todo: funktion bauen die request ans backend sendet
-    button hier auslagern aus splitview
     porject store update = plugins hinzufügen
     id from porject brauch ich aus der projectview
     put projects endpunkt wichitg
@@ -179,6 +180,52 @@
   function setBlur(state: boolean) {
     isBlurred.value = state;
   }
+
+  const openAddPluginModal = ref<boolean>(false);
+
+  const handleClickAddPlugin = () => {
+    console.log('Add Plugin button clicked');
+    openAddPluginModal.value = true;
+  };
+
+  const closeAddPluginModal = () => {
+    console.log('Add Plugin modal closed');
+    openAddPluginModal.value = false;
+  };
+
+  const button: FloatButtonModel = {
+    name: 'AddPluginButton',
+    onClick: () => {
+      handleClickAddPlugin();
+    },
+    type: 'primary',
+    icon: AppstoreAddOutlined,
+    status: 'activated',
+    size: 'large',
+    tooltip: 'Click here to add a new plugin',
+  };
+
+  const handleAddPluginOk = async (newPlugin: PluginModel) => {
+    const currentProject = projectStore.getProject;
+    const currentPlugins = pluginStore.getPlugins;
+    if (currentProject) {
+      const updatedProject = {
+        projectName: currentProject?.projectName,
+        businessUnit: currentProject?.businessUnit,
+        teamNumber: currentProject?.teamNumber,
+        department: currentProject?.department,
+        clientName: currentProject?.clientName,
+        pluginList: [...currentPlugins, newPlugin],
+        isArchived: currentProject?.isArchived,
+        offerId: currentProject?.offerId,
+        company: currentProject?.company,
+        companyState: currentProject?.companyState,
+        ismsLevel: currentProject?.ismsLevel,
+      };
+      await projectStore.update(currentProject.id, updatedProject);
+    }
+    openAddPluginModal.value = false;
+  };
 </script>
 
 <template>
@@ -189,6 +236,13 @@
       :key="rerenderPlugins"
       class="pluginView"
       @set-blur="setBlur"
+    />
+    <FloatingButton v-if="!isEditing" :button="button" class="addPlugin" />
+    <AddPluginView
+      v-if="openAddPluginModal"
+      :show-modal="openAddPluginModal"
+      @ok="handleAddPluginOk"
+      @close="closeAddPluginModal"
     />
     <LocalLogView class="LocalLog" :class="{ blur: isBlurred }" />
     <ConfirmAction
@@ -215,5 +269,8 @@
     display: flex;
     justify-content: center;
     padding-top: 1em;
+  }
+  .addPlugin {
+    margin-bottom: 60px;
   }
 </style>

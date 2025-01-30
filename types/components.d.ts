@@ -66,11 +66,8 @@ declare module 'vue' {
     LogTimeFilter: typeof import('./../src/components/LogsDisplay/LogTimeFilter/LogTimeFilter.vue')['default']
     LogTimeline: typeof import('./../src/components/LogsDisplay/LogTimeline/LogTimeline.vue')['default']
     MenuButtons: typeof import('./../src/components/MenuButtons/MenuButtons.vue')['default']
-<<<<<<< HEAD
     Modal: typeof import('ant-design-vue/es')['Modal']
-=======
     PasswordInputField: typeof import('./../src/components/EditableTextField/InputFields/PasswordInputField.vue')['default']
->>>>>>> origin/develop
     PluginComponent: typeof import('./../src/components/Plugin/PluginComponent.vue')['default']
     PopupComponent: typeof import('./../src/components/Popup/PopupComponent.vue')['default']
     ProjectEditButtons: typeof import('./../src/components/ProjectEditButtons/ProjectEditButtons.vue')['default']

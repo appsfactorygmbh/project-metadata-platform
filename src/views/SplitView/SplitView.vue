@@ -7,13 +7,10 @@
   import { MenuButtons } from '@/components/MenuButtons';
   import { CreateProjectView } from '@/views/CreateProject';
   import ProjectView from '../ProjectView/ProjectView.vue';
-  import { AddPluginView } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
-  import { AppstoreAddOutlined } from '@ant-design/icons-vue';
-  import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
+
   import { useEditing, useThemeToken } from '@/utils/hooks';
 
   const token = useThemeToken();
-  const emit = defineEmits(['save-edit']);
 
   const { isEditing } = useEditing();
   const tablePane = ref(null);
@@ -32,46 +29,6 @@
 
   const onResize = (newSizes: number[]) => {
     localStorage.setItem('paneSizes', JSON.stringify(newSizes));
-  };
-
-  const openAddPluginModal = ref<boolean>(false);
-
-  const handleClickAddPlugin = () => {
-    console.log('Add Plugin button clicked');
-    openAddPluginModal.value = true;
-  };
-
-  const closeAddPluginModal = () => {
-    console.log('Add Plugin modal closed');
-    openAddPluginModal.value = false;
-  };
-
-  const button: FloatButtonModel = {
-    name: 'AddPluginButton',
-    onClick: () => {
-      handleClickAddPlugin();
-    },
-    type: 'primary',
-    icon: AppstoreAddOutlined,
-    status: 'activated',
-    size: 'large',
-    tooltip: 'Click here to add a new plugin',
-  };
-
-  // Hier wird die saveEdit Methode aufgerufen
-  const handleSaveEdit = () => {
-    if (!isEditing) {
-      console.log('Emitting save-edit event');
-      emit('save-edit');
-    }
-  };
-
-  const handleAddPluginOk = () => {
-    console.log('Add Plugin OK button clicked');
-    if (!isEditing) {
-      console.log('Emitting save-edit event');
-      emit('save-edit');
-    }
   };
 </script>
 
@@ -95,22 +52,9 @@
       </pane>
 
       <pane :size="rightPaneWidth" min-size="32" class="rightPane">
-        <ProjectView @save-edit="saveEdit"></ProjectView>
+        <ProjectView></ProjectView>
         <MenuButtons />
         <CreateProjectView v-if="!isEditing" />
-        <!-- Der Floating Button ist hier -->
-        <FloatingButton
-          v-if="!isEditing"
-          :button="button"
-          class="addPlugin"
-          @click="handleSaveEdit"
-        />
-        <AddPluginView
-          v-if="openAddPluginModal"
-          :show-modal="openAddPluginModal"
-          @ok="handleAddPluginOk"
-          @close="closeAddPluginModal"
-        />
       </pane>
     </splitpanes>
   </div>
@@ -146,8 +90,5 @@
     position: relative;
     max-height: 100vh; /* Set a maximum height */
     overflow-y: auto; /* Enable vertical scrolling */
-  }
-  .addPlugin {
-    margin-bottom: 60px;
   }
 </style>
