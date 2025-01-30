@@ -149,19 +149,6 @@
       </a-input>
     </a-form-item>
     <a-form-item
-      name="baseUrl"
-      :no-style="false"
-      :whitespace="true"
-      v-bind="formStore.validateInfos.baseUrl"
-    >
-      <a-input
-        v-model:value="modelRef.baseUrl"
-        class="inputField"
-        placeholder="Base Url"
-      >
-      </a-input>
-    </a-form-item>
-    <a-form-item
       v-for="(key, index) in modelRef.keys"
       :key="key.key"
       :label="index === 0 ? 'Project Keys' : ' '"

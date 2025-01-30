@@ -18,8 +18,8 @@
       await globalPluginStore.create(fields);
       message.success('Plugin created successfully');
     } catch (error) {
-      message.error((error as Error).message ?? 'Failed to create plugin');
-      Promise.reject();
+      message.error((error as Error).message ?? 'An error occurred');
+      return Promise.reject();
     }
   };
 
