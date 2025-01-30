@@ -18,9 +18,6 @@
       return;
     }
 
-    fields['pluginName'] =
-      fields['pluginName'] === oldPluginName ? undefined : fields['pluginName'];
-
     try {
       await globalPluginStore.update(pluginIdRef.value, { ...fields });
       message.success('Plugin updated successfully.');
@@ -37,7 +34,6 @@
     keys: [],
     baseUrl: '',
   });
-  let oldPluginName: string = '';
 
   onMounted(async () => {
     const route = useRoute();
@@ -52,7 +48,6 @@
           return;
         }
         initialValues.pluginName = globalPluginData.pluginName;
-        oldPluginName = globalPluginData.pluginName;
         initialValues.keys =
           globalPluginData.keys?.map((keyObj, index) => ({
             // TODO: adapt when feature to archive keys is implemented
