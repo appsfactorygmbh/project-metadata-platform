@@ -278,7 +278,7 @@
     justify-content: center;
     padding-top: 1em;
   }
-  .addPlugin {
-    margin-bottom: 60px;
+  .LocalLog {
+    margin: 2em 3.5em 2em 3em;
   }
 </style>
