@@ -19,6 +19,7 @@
   import { projectRoutingSymbol } from '@/store/injectionSymbols';
   import { useThemeToken } from '@/utils/hooks';
   import { message } from 'ant-design-vue';
+  import { hasDigit } from '@/utils/form/userValidation';
 
   const token = useThemeToken();
 
@@ -36,10 +37,6 @@
   const { setProjectId } = inject(projectRoutingSymbol)!;
 
   const isAdding = computed(() => projectStore.getIsLoadingAdd);
-  const fetchError = ref<boolean>(false);
-  const errorMessage = ref<string>(
-    'An error occurred while creating the project.',
-  );
 
   const formState: UnwrapRef<Partial<CreateProjectModel>> = reactive({
     projectName: '',
@@ -87,7 +84,6 @@
 
   const resetModal = () => {
     formRef.value.resetFields();
-    fetchError.value = false;
   };
 
   // checks for correct input
@@ -173,7 +169,7 @@
         </a-form-item>
         <a-form-item
           name="teamNumber"
-          :rules="[{ required: true, whitespace: true }]"
+          :rules="[{ required: true, whitespace: true, validator: hasDigit }]"
           class="column"
           :no-style="true"
         >
@@ -283,13 +279,6 @@
             <a-select-option value="VERY_HIGH">Very High</a-select-option>
           </a-select>
         </a-form-item>
-        <!--shows error if the PUT request failed-->
-        <a-alert
-          v-if="fetchError"
-          :message="errorMessage"
-          type="error"
-          show-icon
-        />
       </a-form>
     </a-modal>
   </div>
