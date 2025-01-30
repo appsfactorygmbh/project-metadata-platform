@@ -214,6 +214,7 @@
       await projectStore.update(currentProject.id, updatedProject);
       await projectStore.fetch(currentProject.id);
       await pluginStore.fetch(currentProject.id);
+      await localLogStore?.fetch(currentProject.id);
       message.success('Plugin added successfully.', 2);
     } else {
       message.error('No project found to update.', 5);
@@ -232,7 +233,11 @@
       class="pluginView"
       @set-blur="setBlur"
     />
-    <FloatingButton v-if="!isEditing" :button="button" class="addPlugin" />
+    <FloatingButton
+      v-if="!isEditing && projectStore.getProject"
+      :button="button"
+      class="addPlugin"
+    />
     <AddPluginView
       v-if="openAddPluginModal"
       :show-modal="openAddPluginModal"
