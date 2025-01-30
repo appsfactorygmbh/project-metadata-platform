@@ -1,12 +1,11 @@
 <script setup lang="ts">
-  import { type FormSubmitType } from '@/components/Form';
+  import type { FormStore, FormSubmitType } from '@/components/Form';
   import { notification } from 'ant-design-vue';
   import { useGlobalPluginsStore } from '@/store';
   import { reactive } from 'vue';
-  //import type { CreatePluginModel } from '@/models/Plugin';
-  import { type FormStore } from '@/components/Form';
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
   import type { GlobalPluginFormData } from '../GlobalPluginForm';
+  import type { CreatePluginRequest } from '@/api/generated';
 
   const { formStore } = defineProps<{
     formStore: FormStore;
@@ -16,7 +15,7 @@
 
   const [notificationApi, contextHolder] = notification.useNotification();
 
-  const onSubmit: FormSubmitType = (fields) => {
+  const onSubmit: FormSubmitType = (fields: CreatePluginRequest) => {
     console.log('creating Plugin', fields);
     globalPluginStore.create(fields).catch(() => {
       notificationApi.error({
@@ -30,6 +29,7 @@
 
   const initialValues = reactive<GlobalPluginFormData>({
     pluginName: '',
+    baseUrl: '',
     keys: [],
   });
 </script>

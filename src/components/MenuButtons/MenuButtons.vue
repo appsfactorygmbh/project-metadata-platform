@@ -2,8 +2,7 @@
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { useTheme } from '@/utils/hooks';
   import { LogoutOutlined, SettingOutlined } from '@ant-design/icons-vue';
-  import { SunIcon } from '@heroicons/vue/24/outline';
-  import { MoonIcon } from '@heroicons/vue/24/outline';
+  import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline';
   import { useAuth } from 'vue-auth3';
   import { useRouter } from 'vue-router';
 

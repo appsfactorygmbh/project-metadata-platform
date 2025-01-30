@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-  import { computed, onMounted, ref, watch } from 'vue';
-  import { inject } from 'vue';
+  import { inject, computed, onMounted, ref, watch } from 'vue';
   import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';

@@ -31,24 +31,60 @@
       ?.filter((plugin) => !plugin.isArchived)
       .map((plugin: GlobalPluginModel) => {
         return {
-          value: plugin.name,
-          label: plugin.name,
+          value: plugin.pluginName,
+          label: plugin.pluginName,
         };
       });
   });
 
   const [notificationApi, contextHolder] = notification.useNotification();
 
+  function findMatchingGlobalPlugin(url: string): string | null {
+    try {
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+      }
+
+      const parsedUrl = new URL(url);
+      const hostname = parsedUrl.hostname
+        .split('.')
+        .filter((part) => part !== 'www')
+        .join('.');
+
+      const pluginNames = new Map(
+        globalPluginStore?.getGlobalPlugins.map((plugin) => {
+          const pluginUrl = plugin.baseUrl
+            ? plugin.baseUrl
+                .toLowerCase()
+                .split(/[./]/)
+                .filter(
+                  (part) => part !== 'www' && !part.startsWith('http') && part,
+                )
+                .join('.')
+            : '';
+          return [pluginUrl, plugin.pluginName];
+        }),
+      );
+
+      if (pluginNames.has(hostname)) {
+        const result = pluginNames.get(hostname) ?? null;
+        return result;
+      } else return null;
+    } catch (error) {
+      console.error('Invalid URL provided:', error);
+      return null;
+    }
+  }
+
   const onSubmit: FormSubmitType = (fields) => {
     try {
       const pluginNumber: number | undefined =
         globalPluginStore?.getGlobalPlugins.find(
-          (plugin) => plugin.name === toRaw(fields).globalPlugin,
+          (plugin) => plugin.pluginName === toRaw(fields).globalPlugin,
         )?.id;
       if (pluginNumber === undefined) {
         return;
       }
-
       const pluginDef: PluginModel = {
         id: pluginNumber,
         pluginName: toRaw(fields).globalPlugin,
@@ -118,6 +154,16 @@
     ],
   });
 
+  const handleUrlChange = (url: string | undefined) => {
+    if (url) {
+      const matchingPluginName = findMatchingGlobalPlugin(url);
+      if (matchingPluginName) {
+        dynamicValidateForm.globalPlugin = matchingPluginName;
+        dynamicValidateForm.inputsDisabled = false;
+      } else dynamicValidateForm.globalPlugin = '';
+    }
+  };
+
   const handleChange = (value: SelectValue) => {
     dynamicValidateForm.inputsDisabled = false;
 
@@ -133,7 +179,7 @@
     const globalPluginAlreadyUsed: boolean = [
       ...projectPluginNames,
       ...addedPluginNames,
-    ].some((name: string) => name === selectedGlobalPlugin);
+    ].some((pluginName: string) => pluginName === selectedGlobalPlugin);
 
     if (!globalPluginAlreadyUsed) {
       dynamicValidateForm.pluginName = selectedGlobalPlugin;
@@ -173,6 +219,7 @@
       :whitespace="true"
     >
       <a-select
+        id="inputAddPluginPluginSelect"
         v-model:value="dynamicValidateForm.globalPlugin"
         class="inputField"
         show-search
@@ -208,10 +255,10 @@
       <a-input
         id="inputAddPluginPluginUrl"
         v-model:value="dynamicValidateForm.pluginUrl"
+        :rules="rulesRef.pluginName"
         class="inputField"
         placeholder="Plugin URL"
-        :disabled="dynamicValidateForm.inputsDisabled"
-        :rules="rulesRef.pluginName"
+        @change="(e) => handleUrlChange(e.target.value)"
       />
     </a-form-item>
   </a-form>

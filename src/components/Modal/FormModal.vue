@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { type PropType, ref, toRaw } from 'vue';
+  import { type PropType, ref } from 'vue';
   import { type FormStore } from '@/components/Form/FormStore';
 
   const { formStore, title, initiallyOpen, open } = defineProps({
@@ -41,8 +41,7 @@
         emit('close');
       })
       .catch((e) => {
-        console.log(e);
-        console.log(toRaw(formStore.validateInfos));
+        console.error('error submitting input' + e);
       });
   };
 
@@ -65,5 +64,3 @@
     <slot />
   </a-modal>
 </template>
-
-<style scoped></style>

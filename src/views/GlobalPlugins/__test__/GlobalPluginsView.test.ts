@@ -22,45 +22,51 @@ import { useStore } from 'pinia-generic';
 const testData: GlobalPluginModel[] = [
   {
     id: 0,
-    name: 'Plugin 1',
+    pluginName: 'Plugin 1',
     isArchived: true,
     keys: [],
+    baseUrl: 'plugin1.de',
   },
   {
     id: 1,
-    name: 'Plugin 2',
+    pluginName: 'Plugin 2',
     isArchived: false,
     keys: [],
+    baseUrl: 'plugin2.de',
   },
 ];
 
 const testDataArchive: GlobalPluginModel[] = [
   {
     id: 0,
-    name: 'Plugin 1',
+    pluginName: 'Plugin 1',
     isArchived: true,
     keys: [],
+    baseUrl: 'plugin1.de',
   },
   {
     id: 1,
-    name: 'Plugin 2',
+    pluginName: 'Plugin 2',
     isArchived: true,
     keys: [],
+    baseUrl: 'plugin2.de',
   },
 ];
 
 const testDataReactivate: GlobalPluginModel[] = [
   {
     id: 0,
-    name: 'Plugin 1',
+    pluginName: 'Plugin 1',
     isArchived: true,
     keys: [],
+    baseUrl: 'plugin1.de',
   },
   {
     id: 1,
-    name: 'Plugin 2',
+    pluginName: 'Plugin 2',
     isArchived: true,
     keys: [],
+    baseUrl: 'plugin2.de',
   },
 ];
 
@@ -136,7 +142,7 @@ describe('GlobalPluginsView.vue', () => {
     await flushPromises();
     expect(globalPluginStore.getGlobalPlugins).toMatchObject(testData);
     expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
-    expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 2');
+    expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 2plugin2.de');
   });
 
   it('switches to archived plugins when clicking the button', async () => {
@@ -146,7 +152,7 @@ describe('GlobalPluginsView.vue', () => {
     await flushPromises();
 
     expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
-    expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 1');
+    expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 1plugin1.de');
   });
 
   it('calls the store when clicking the archive button', async () => {
@@ -156,7 +162,7 @@ describe('GlobalPluginsView.vue', () => {
 
     await flushPromises();
     expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
-    expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 2');
+    expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 2plugin2.de');
     expect(spy).toHaveBeenCalledTimes(0);
 
     await wrapper.find('button[name="archivePluginButton"]').trigger('click');

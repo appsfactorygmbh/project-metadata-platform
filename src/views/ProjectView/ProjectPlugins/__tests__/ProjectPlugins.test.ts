@@ -75,6 +75,10 @@ describe('ProjectPlugins', () => {
       department: 'Test Department',
       isArchived: false,
       slug: 'test-project',
+      offerId: '1',
+      company: 'AppsFactory',
+      companyState: 'EXTERNAL',
+      ismsLevel: 'HIGH',
     };
 
     const mockArchivedProject: DetailedProjectModel = {
@@ -86,6 +90,10 @@ describe('ProjectPlugins', () => {
       department: 'Test Department',
       isArchived: true,
       slug: 'test-project',
+      offerId: '1',
+      company: 'AppsFactory',
+      companyState: 'EXTERNAL',
+      ismsLevel: 'HIGH',
     };
 
     const unarchivedPluginsSpy = vi
