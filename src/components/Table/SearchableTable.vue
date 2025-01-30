@@ -297,11 +297,11 @@
 
     <!-- body of the table with all data entries -->
     <template #bodyCell="{ text, record, column }">
-      <a-flex style="justify-content: space-between; flex-wrap: wrap; gap: 5px">
+      <a-flex style="justify-content: center; flex-wrap: wrap; gap: 0.5em">
         {{ text }}
         <a-tag
           v-if="(column as SearchableColumn).hasTags"
-          style="margin-left: auto"
+          style="margin-right: auto"
           :color="
             (column as SearchableColumn).getTagColor?.(record) || 'default'
           "
