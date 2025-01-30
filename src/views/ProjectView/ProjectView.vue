@@ -184,12 +184,10 @@
   const openAddPluginModal = ref<boolean>(false);
 
   const handleClickAddPlugin = () => {
-    console.log('Add Plugin button clicked');
     openAddPluginModal.value = true;
   };
 
   const closeAddPluginModal = () => {
-    console.log('Add Plugin modal closed');
     openAddPluginModal.value = false;
   };
 
