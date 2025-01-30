@@ -281,4 +281,7 @@
   .LocalLog {
     margin: 2em 3.5em 2em 3em;
   }
+  .addPlugin {
+    margin-bottom: 60px;
+  }
 </style>
