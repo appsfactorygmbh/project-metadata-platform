@@ -63,7 +63,7 @@
             value: keyObj, //keyObj.value,
             archived: false, //keyObj.archived,
           })) ?? [];
-        initialValues.baseUrl = globalPluginData.baseUrl;
+        initialValues.baseUrl = globalPluginData.baseUrl ?? '';
       }
     }
   });
