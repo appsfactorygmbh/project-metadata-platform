@@ -487,9 +487,7 @@
     width: 100%;
     max-height: 80vh;
     height: max-content;
-    padding-right: 5em;
-    padding-left: 5em;
-
+    padding: 0 3.5em;
     display: flex;
     flex-direction: column;
     align-items: center;
