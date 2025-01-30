@@ -249,26 +249,17 @@
       resizable: true,
       ellipsis: true,
       align: 'center' as const,
-      filters: [
-        {
-          text: 'NORMAL',
-          value: 'NORMAL',
-        },
-        {
-          text: 'HIGH',
-          value: 'HIGH',
-        },
-        {
-          text: 'VERY HIGH',
-          value: 'VERY HIGH',
-        },
-      ],
-      filterMultiple: true,
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       width: NaN,
       hidden: false,
       hasTags: true,
+      getTagColor: (record): string =>
+        record.ismsLevel === 'VERY_HIGH'
+          ? 'red'
+          : record.ismsLevel === 'HIGH'
+            ? 'orange'
+            : 'green',
     },
     {
       title: 'Company',

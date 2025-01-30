@@ -75,7 +75,7 @@
 
     if (column.searchable) {
       column.onFilter = (value, record) =>
-        String(record[index])
+        String(record[index] as string)
           .toLowerCase()
           .includes(value.toString().toLowerCase());
       column.customFilterDropdown = true;
@@ -303,11 +303,7 @@
           v-if="(column as SearchableColumn).hasTags"
           style="margin-left: auto"
           :color="
-            record.ismsLevel === 'VERY_HIGH'
-              ? 'red'
-              : record.ismsLevel === 'HIGH'
-                ? 'orange'
-                : 'green'
+            (column as SearchableColumn).getTagColor?.(record) || 'default'
           "
         >
           {{ record.ismsLevel.replace('_', ' ') }}
