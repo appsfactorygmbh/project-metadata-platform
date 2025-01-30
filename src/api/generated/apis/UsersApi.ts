@@ -16,13 +16,20 @@ import * as runtime from '../runtime';
 import type {
   CreateUserRequest,
   CreateUserResponse,
+  ErrorResponse,
   GetUserResponse,
   PatchUserRequest,
 } from '../models/index';
 import {
+  CreateUserRequestFromJSON,
   CreateUserRequestToJSON,
   CreateUserResponseFromJSON,
+  CreateUserResponseToJSON,
+  ErrorResponseFromJSON,
+  ErrorResponseToJSON,
   GetUserResponseFromJSON,
+  GetUserResponseToJSON,
+  PatchUserRequestFromJSON,
   PatchUserRequestToJSON,
 } from '../models/index';
 

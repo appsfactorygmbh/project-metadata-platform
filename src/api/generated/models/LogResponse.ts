@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 
+import { mapValues } from '../runtime';
 /**
  * Represents a response containing a log message and its timestamp.
  * @export

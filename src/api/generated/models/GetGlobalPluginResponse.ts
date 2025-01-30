@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 
+import { mapValues } from '../runtime';
 /**
  * Response Model representing a Plugin.
  * @export

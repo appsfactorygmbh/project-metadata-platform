@@ -12,8 +12,14 @@
  * Do not edit the class manually.
  */
 
+import { mapValues } from '../runtime';
 import type { SecurityLevel } from './SecurityLevel';
-import { SecurityLevelFromJSON, SecurityLevelToJSON } from './SecurityLevel';
+import {
+  SecurityLevelFromJSON,
+  SecurityLevelFromJSONTyped,
+  SecurityLevelToJSON,
+  SecurityLevelToJSONTyped,
+} from './SecurityLevel';
 
 /**
  * Represents a response for the GetProjects API call.

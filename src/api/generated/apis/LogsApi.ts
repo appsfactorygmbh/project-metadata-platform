@@ -13,8 +13,13 @@
  */
 
 import * as runtime from '../runtime';
-import type { LogResponse } from '../models/index';
-import { LogResponseFromJSON } from '../models/index';
+import type { ErrorResponse, LogResponse } from '../models/index';
+import {
+  ErrorResponseFromJSON,
+  ErrorResponseToJSON,
+  LogResponseFromJSON,
+  LogResponseToJSON,
+} from '../models/index';
 
 export interface LogsGetRequest {
   projectId?: number;

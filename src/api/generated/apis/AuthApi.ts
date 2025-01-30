@@ -13,8 +13,19 @@
  */
 
 import * as runtime from '../runtime';
-import type { LoginRequest, LoginResponse } from '../models/index';
-import { LoginRequestToJSON, LoginResponseFromJSON } from '../models/index';
+import type {
+  ErrorResponse,
+  LoginRequest,
+  LoginResponse,
+} from '../models/index';
+import {
+  ErrorResponseFromJSON,
+  ErrorResponseToJSON,
+  LoginRequestFromJSON,
+  LoginRequestToJSON,
+  LoginResponseFromJSON,
+  LoginResponseToJSON,
+} from '../models/index';
 
 export interface AuthBasicPostRequest {
   loginRequest?: LoginRequest;

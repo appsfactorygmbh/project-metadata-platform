@@ -12,14 +12,27 @@
  * Do not edit the class manually.
  */
 
+import { mapValues } from '../runtime';
 import type { SecurityLevel } from './SecurityLevel';
-import { SecurityLevelFromJSON, SecurityLevelToJSON } from './SecurityLevel';
+import {
+  SecurityLevelFromJSON,
+  SecurityLevelFromJSONTyped,
+  SecurityLevelToJSON,
+  SecurityLevelToJSONTyped,
+} from './SecurityLevel';
 import type { CompanyState } from './CompanyState';
-import { CompanyStateFromJSON, CompanyStateToJSON } from './CompanyState';
+import {
+  CompanyStateFromJSON,
+  CompanyStateFromJSONTyped,
+  CompanyStateToJSON,
+  CompanyStateToJSONTyped,
+} from './CompanyState';
 import type { UpdateProjectPluginRequest } from './UpdateProjectPluginRequest';
 import {
   UpdateProjectPluginRequestFromJSON,
+  UpdateProjectPluginRequestFromJSONTyped,
   UpdateProjectPluginRequestToJSON,
+  UpdateProjectPluginRequestToJSONTyped,
 } from './UpdateProjectPluginRequest';
 
 /**

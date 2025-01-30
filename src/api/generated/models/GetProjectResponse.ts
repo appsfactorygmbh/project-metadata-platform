@@ -12,10 +12,21 @@
  * Do not edit the class manually.
  */
 
+import { mapValues } from '../runtime';
 import type { SecurityLevel } from './SecurityLevel';
-import { SecurityLevelFromJSON, SecurityLevelToJSON } from './SecurityLevel';
+import {
+  SecurityLevelFromJSON,
+  SecurityLevelFromJSONTyped,
+  SecurityLevelToJSON,
+  SecurityLevelToJSONTyped,
+} from './SecurityLevel';
 import type { CompanyState } from './CompanyState';
-import { CompanyStateFromJSON, CompanyStateToJSON } from './CompanyState';
+import {
+  CompanyStateFromJSON,
+  CompanyStateFromJSONTyped,
+  CompanyStateToJSON,
+  CompanyStateToJSONTyped,
+} from './CompanyState';
 
 /**
  * Represents a response to the GetProject API call.
