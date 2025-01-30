@@ -27,15 +27,14 @@
   }
 
   .cardContainer {
-    flex: 1;
-    justify-self: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     background-color: v-bind('token.colorBgElevated');
+    border: none;
     border-radius: 15px;
-    overflow: auto;
     margin-bottom: 60px;
     padding-top: 0.6em;
-    border: none;
+    max-width: 100%;
+    word-break: break-word;
   }
 
   .blur {
