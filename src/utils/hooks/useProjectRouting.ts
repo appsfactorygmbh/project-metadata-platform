@@ -2,12 +2,13 @@ import { useProjectStore } from '@/store';
 import { type Router, useRouter } from 'vue-router';
 
 export const useProjectRouting = (router: Router = useRouter()) => {
-  const routerProjectId = ref<number | undefined>(
-    Number(router.currentRoute.value.query.projectId),
-  );
+  const projectIdRoute = router.currentRoute.value.query.projectId;
+  const projectSlugRoute = router.currentRoute.value.params.projectSlug;
+
+  const routerProjectId = ref<number | undefined>(Number(projectIdRoute));
 
   const routerProjectSlug = ref<string | undefined>(
-    String(router.currentRoute.value.params.projectSlug),
+    projectSlugRoute ? String(projectSlugRoute) : undefined,
   );
 
   const setProjectId = (id: number | undefined) => {

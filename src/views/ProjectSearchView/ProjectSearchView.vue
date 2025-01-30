@@ -162,7 +162,7 @@
     searchStore?.setSearchQuery(searchStorage.value.searchQuery);
     await setFilterQuery();
 
-    if (routerProjectSlug.value) {
+    if (routerProjectSlug.value !== undefined) {
       const project = await projectStore.findProjectBySlug(
         routerProjectSlug.value,
         { fullObjectNeeded: false },
