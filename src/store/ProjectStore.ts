@@ -173,8 +173,7 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
             project =
               this.projects.find((project) => project.slug === slug) ?? null;
           else if (slug === this.project?.slug) project = this.project;
-          if (!project && slug !== 'undefined')
-            project = await this.fetchBySlug(slug);
+          if (!project) project = await this.fetchBySlug(slug);
           return project;
         },
 

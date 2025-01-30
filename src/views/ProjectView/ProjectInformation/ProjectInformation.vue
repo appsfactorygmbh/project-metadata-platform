@@ -507,6 +507,7 @@
   .emptyProjects {
     height: 100vh;
     width: 100vh;
+    margin: 0 auto;
     color: v-bind('token.colorText');
   }
 

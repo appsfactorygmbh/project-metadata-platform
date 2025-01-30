@@ -19,6 +19,8 @@ export const useProjectRouting = (router: Router = useRouter()) => {
         path,
         query: remainingQuery,
       });
+
+      routerProjectSlug.value = undefined;
     } else {
       routerProjectId.value = id;
       router.push({
