@@ -48,7 +48,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0 1em;
+    margin: 0 10px;
     transform: translateY(7px);
   }
 
@@ -72,18 +72,14 @@
     height: max-content;
   }
   .text {
-    margin: 0;
-    margin-bottom: 20px;
-  }
-  .hide {
-    display: none;
+    margin: 0 0 20px;
   }
   .timeStamp {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    height: 0em;
-    margin: 0;
+    height: 0;
+    margin-right: -30px;
     max-width: 90px;
   }
 

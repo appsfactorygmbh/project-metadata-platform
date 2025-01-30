@@ -496,9 +496,7 @@
     width: 100%;
     max-height: 80vh;
     height: max-content;
-    padding-right: 5em;
-    padding-left: 5em;
-
+    padding: 0 3.5em 0 3em;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -558,6 +556,7 @@
     padding: 0.5em 0;
     border-radius: 10px;
     container-type: inline-size;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     background-color: v-bind('token.colorBgElevated') !important;
   }
 
