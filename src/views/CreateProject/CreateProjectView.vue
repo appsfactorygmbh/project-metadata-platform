@@ -169,7 +169,13 @@
         </a-form-item>
         <a-form-item
           name="teamNumber"
-          :rules="[{ required: true, whitespace: true, validator: isANumber }]"
+          :rules="[
+            {
+              required: true,
+              whitespace: true,
+              validator: isANumber,
+            },
+          ]"
           class="column"
           :no-style="true"
         >
