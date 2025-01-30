@@ -555,7 +555,7 @@
     justify-content: start;
     flex-direction: row;
     flex-wrap: wrap;
-    padding: 1em 0;
+    padding: 0.5em 0;
     border-radius: 10px;
     container-type: inline-size;
     background-color: v-bind('token.colorBgElevated') !important;
@@ -575,6 +575,7 @@
     .infoCard.non-editing-mode {
       width: 24vw !important;
       margin: 0 auto;
+      padding: 0 0.5em;
     }
   }
 

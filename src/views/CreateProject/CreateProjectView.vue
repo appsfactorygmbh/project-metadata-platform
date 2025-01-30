@@ -130,8 +130,10 @@
 
     await projectStore.fetchAll();
     const projects = projectStore.getProjects;
-    const newProject = projects[projects.length - 1];
-    setProjectId(newProject.id);
+    const newProject = projects.find(
+      (project) => project.projectName === projectData.projectName,
+    );
+    setProjectId(newProject?.id ?? undefined);
   };
 </script>
 
