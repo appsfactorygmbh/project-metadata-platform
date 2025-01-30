@@ -19,7 +19,7 @@
   import { projectRoutingSymbol } from '@/store/injectionSymbols';
   import { useThemeToken } from '@/utils/hooks';
   import { message } from 'ant-design-vue';
-  import { hasDigit } from '@/utils/form/userValidation';
+  import { isANumber } from '@/utils/form/userValidation';
 
   const token = useThemeToken();
 
@@ -169,7 +169,7 @@
         </a-form-item>
         <a-form-item
           name="teamNumber"
-          :rules="[{ required: true, whitespace: true, validator: hasDigit }]"
+          :rules="[{ required: true, whitespace: true, validator: isANumber }]"
           class="column"
           :no-style="true"
         >

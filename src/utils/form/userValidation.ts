@@ -27,6 +27,14 @@ export const hasDigit = (_rule: Rule, value: string) => {
   return Promise.reject(new Error('Please insert a digit.'));
 };
 
+export const isANumber = (_rule: Rule, value: string) => {
+  const digitRegex = /^\d+$/;
+  if (digitRegex.test(value)) {
+    return Promise.resolve();
+  }
+  return Promise.reject(new Error('Please insert only digits.'));
+};
+
 export const hasUpperCaseLetter = (_rule: Rule, value: string) => {
   const upperCaseRegex = /(?=.*[A-Z])/;
   if (upperCaseRegex.test(value)) {
