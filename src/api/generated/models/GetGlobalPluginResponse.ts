@@ -47,7 +47,7 @@ export interface GetGlobalPluginResponse {
    * @type {string}
    * @memberof GetGlobalPluginResponse
    */
-  baseUrl: string;
+  baseUrl?: string | null;
 }
 
 /**
