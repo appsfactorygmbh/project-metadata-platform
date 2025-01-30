@@ -24,6 +24,7 @@
   const projectEditStore = inject(projectEditStoreSymbol);
   const pluginStore = usePluginStore();
   const options = ref<SelectProps['options']>([]);
+  const emit = defineEmits(['addedPlugin']);
 
   onBeforeMount(async () => {
     await globalPluginStore?.fetchAll();
@@ -92,6 +93,7 @@
         url: toRaw(fields).pluginUrl,
       };
       addPlugin(pluginDef);
+      emit('addedPlugin');
     } catch (error) {
       notificationApi.error({
         message: 'An error occurred. The plugin could not be created',

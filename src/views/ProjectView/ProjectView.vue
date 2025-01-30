@@ -205,10 +205,11 @@
     tooltip: 'Click here to add a new plugin',
   };
 
-  const handleAddPluginOk = async (event: Event) => {
-    const newPlugin = (event as CustomEvent).detail as PluginModel;
+  const handleAddPluginOk = async () => {
     const currentProject = projectStore.getProject;
     const currentPlugins = pluginStore.getPlugins;
+    const addedPlugin = projectEditStore?.getPluginChanges;
+
     if (currentProject) {
       const updatedProject = {
         projectName: currentProject?.projectName,
@@ -216,7 +217,7 @@
         teamNumber: currentProject?.teamNumber,
         department: currentProject?.department,
         clientName: currentProject?.clientName,
-        pluginList: [...currentPlugins, newPlugin],
+        pluginList: [...currentPlugins, ...addedPlugin!],
         isArchived: currentProject?.isArchived,
         offerId: currentProject?.offerId,
         company: currentProject?.company,
@@ -231,6 +232,7 @@
       message.error('No project found to update.', 5);
     }
     openAddPluginModal.value = false;
+    projectEditStore?.resetPluginChanges();
   };
 </script>
 
@@ -247,8 +249,8 @@
     <AddPluginView
       v-if="openAddPluginModal"
       :show-modal="openAddPluginModal"
-      @ok="(plugin) => handleAddPluginOk(plugin)"
       @close="closeAddPluginModal"
+      @added-plugin="handleAddPluginOk"
     />
     <LocalLogView class="LocalLog" :class="{ blur: isBlurred }" />
     <ConfirmAction

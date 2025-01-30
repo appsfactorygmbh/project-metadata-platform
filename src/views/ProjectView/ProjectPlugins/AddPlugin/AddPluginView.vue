@@ -12,6 +12,8 @@
     pluginName: '',
     pluginUrl: '',
   };
+
+  const emit = defineEmits(['added-plugin']);
 </script>
 
 <template>
@@ -19,6 +21,7 @@
     <AddPluginForm
       :form-store="formStore"
       :initial-values="initialFormValues"
+      @added-plugin="() => emit('added-plugin')"
     />
   </FormModal>
 </template>
