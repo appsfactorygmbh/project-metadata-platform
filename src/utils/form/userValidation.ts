@@ -1,8 +1,9 @@
 import type { UserListModel } from '@/models/User';
-import { useUserStore } from '@/store';
+import { usePluginStore, useUserStore } from '@/store';
 import type { Rule } from 'ant-design-vue/es/form';
 
 const userStore = useUserStore();
+const pluginStore = usePluginStore();
 
 export const hasEightCharacters = (_rule: Rule, value: string) => {
   if (value.length >= 8) {
@@ -62,4 +63,13 @@ export const isUniqueEmail = (_rule: Rule, value: string) => {
     return Promise.resolve();
   }
   return Promise.reject(new Error('This email is already in use.'));
+};
+
+export const isUniqueUrl = (_rule: Rule, value: string) => {
+  const plugins = pluginStore.getPlugins;
+
+  if (plugins?.every((plugin) => plugin.url !== value)) {
+    return Promise.resolve();
+  }
+  return Promise.reject(new Error('This Url is already in use.'));
 };

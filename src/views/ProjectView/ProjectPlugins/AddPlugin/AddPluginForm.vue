@@ -14,6 +14,7 @@
   import type { AddPluginFormData } from './AddPluginFormData.ts';
   import { useGlobalPluginsStore } from '@/store/GlobalPluginStore.ts';
   import { usePluginStore } from '@/store';
+  import { isUniqueUrl } from '@/utils/form/userValidation.ts';
 
   const { formStore, initialValues } = defineProps<{
     formStore: FormStore;
@@ -136,9 +137,10 @@
     pluginUrl: [
       {
         required: true,
-        message: 'Please insert the plugin URL.',
+        message: 'Please insert a unique wURL.',
         trigger: 'change',
         type: 'string',
+        validator: isUniqueUrl,
       },
     ],
     globalPlugin: [
