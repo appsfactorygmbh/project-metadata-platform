@@ -133,10 +133,7 @@
     () => routerProjectId.value,
     async () => {
       if (!routerProjectId.value) return;
-      await projectStore.fetch(routerProjectId.value);
-      await pluginStore.fetch(routerProjectId.value);
-      await pluginStore?.fetchUnarchived(routerProjectId.value);
-      await localLogStore?.fetch(routerProjectId.value);
+      await fetchProject(routerProjectId.value);
     },
   );
 
@@ -156,6 +153,13 @@
     }
   };
 
+  const fetchProject = async (id: number) => {
+    await projectStore.fetch(id);
+    await pluginStore.fetch(id);
+    await pluginStore?.fetchUnarchived(id);
+    await localLogStore?.fetch(id);
+  };
+
   onMounted(async () => {
     await projectStore.fetchAll();
 
@@ -167,12 +171,12 @@
         routerProjectSlug.value,
         { fullObjectNeeded: false },
       );
-      if (project) setProjectId(project.id);
+      if (project) {
+        if (routerProjectId.value !== project.id) setProjectId(project.id);
+        else fetchProject(project.id);
+      }
     } else if (routerProjectId.value) {
-      await projectStore.fetch(routerProjectId.value);
-      await pluginStore.fetch(routerProjectId.value);
-      await pluginStore?.fetchUnarchived(routerProjectId.value);
-      await localLogStore?.fetch(routerProjectId.value);
+      await fetchProject(routerProjectId.value);
     }
 
     searchStore.setBaseSet(projectStore.getProjects ?? []);
