@@ -1,8 +1,14 @@
+import { useProjectStore } from '@/store';
 import { type Router, useRouter } from 'vue-router';
 
 export const useProjectRouting = (router: Router = useRouter()) => {
-  const routerProjectId = ref<number>(
-    Number(router.currentRoute.value.query.projectId),
+  const projectIdRoute = router.currentRoute.value.query.projectId;
+  const projectSlugRoute = router.currentRoute.value.params.projectSlug;
+
+  const routerProjectId = ref<number | undefined>(Number(projectIdRoute));
+
+  const routerProjectSlug = ref<string | undefined>(
+    projectSlugRoute ? String(projectSlugRoute) : undefined,
   );
 
   const setProjectId = (id: number | undefined) => {
@@ -14,6 +20,8 @@ export const useProjectRouting = (router: Router = useRouter()) => {
         path,
         query: remainingQuery,
       });
+
+      routerProjectSlug.value = undefined;
     } else {
       routerProjectId.value = id;
       router.push({
@@ -23,8 +31,24 @@ export const useProjectRouting = (router: Router = useRouter()) => {
           projectId: routerProjectId.value,
         },
       });
+
+      updateProjectSlug(id);
     }
   };
 
-  return { router, routerProjectId, setProjectId };
+  const updateProjectSlug = async (id: number) => {
+    const projectStore = useProjectStore();
+    const project = await projectStore.findProjectById(id, {
+      fullObjectNeeded: false,
+    });
+    const projectSlug = project?.slug;
+    routerProjectSlug.value = projectSlug!;
+  };
+
+  return {
+    router,
+    routerProjectId,
+    routerProjectSlug,
+    setProjectId,
+  };
 };

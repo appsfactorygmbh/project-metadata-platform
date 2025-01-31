@@ -215,7 +215,7 @@ describe('ProjectEditStore', () => {
   });
   // Add test to check for updating project information
   it('updates project information correctly', () => {
-    const project = {
+    const project: DetailedProjectModel = {
       id: 1,
       projectName: 'Test Project',
       clientName: 'Test Client',
@@ -227,6 +227,7 @@ describe('ProjectEditStore', () => {
       company: 'Test Firma',
       ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
       companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
+      slug: 'test_project',
     };
     store.updateProjectInformationChanges(project);
     expect(store.getProjectInformationChanges).toEqual(project);
@@ -254,7 +255,7 @@ describe('ProjectEditStore', () => {
 
   it('updates project information changes correctly', () => {
     const store = useProjectEditStore();
-    const updatedProjectInfo = {
+    const updatedProjectInfo: DetailedProjectModel = {
       id: 1,
       projectName: 'Updated Project',
       clientName: 'Updated Client',
@@ -266,6 +267,7 @@ describe('ProjectEditStore', () => {
       company: 'Test Firma',
       ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
       companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
+      slug: 'updated_project',
     };
     store.updateProjectInformationChanges(updatedProjectInfo);
     expect(store.projectInformationChanges).toEqual(updatedProjectInfo);

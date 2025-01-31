@@ -1,3 +1,4 @@
+.openapi-generator-ignore
 apis/AuthApi.ts
 apis/LogsApi.ts
 apis/PluginsApi.ts
@@ -24,6 +25,7 @@ models/LoginRequest.ts
 models/LoginResponse.ts
 models/PatchGlobalPluginRequest.ts
 models/PatchUserRequest.ts
+models/ProblemDetails.ts
 models/SecurityLevel.ts
 models/UpdateProjectPluginRequest.ts
 models/index.ts

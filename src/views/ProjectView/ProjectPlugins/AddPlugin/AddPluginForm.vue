@@ -159,34 +159,41 @@
   });
 
   const handleUrlChange = (url: string | undefined) => {
-    if (url) {
+    if (url && dynamicValidateForm.globalPlugin === '') {
       const matchingPluginName = findMatchingGlobalPlugin(url);
       if (matchingPluginName) {
         dynamicValidateForm.globalPlugin = matchingPluginName;
         dynamicValidateForm.inputsDisabled = false;
+        handleChange(matchingPluginName);
       } else dynamicValidateForm.globalPlugin = '';
     }
+  };
+
+  const isGlobalPluginAlreadyUsed = (globalPlugin: string) => {
+    // All plugin names already use in the project
+    const projectPluginNames = pluginStore.getPlugins.map(
+      (plugin: PluginModel) => plugin.pluginName,
+    );
+
+    // All currently new added plugin names
+    const addedPluginNames = (projectEditStore?.getAddedPlugins ?? []).map(
+      (plugin: PluginEditModel) => plugin.pluginName,
+    );
+
+    // returns true if the global plugin is already used in the project
+    return [...projectPluginNames, ...addedPluginNames].some(
+      (pluginName: string) => pluginName === globalPlugin,
+    );
   };
 
   const handleChange = (value: SelectValue) => {
     dynamicValidateForm.inputsDisabled = false;
 
-    const selectedGlobalPlugin: string = value as string;
+    const globalPlugin = value as string;
 
-    const projectPluginNames = pluginStore.getPlugins.map(
-      (plugin: PluginModel) => plugin.pluginName,
-    );
-    const addedPluginNames = (projectEditStore?.getAddedPlugins ?? []).map(
-      (plugin: PluginEditModel) => plugin.pluginName,
-    );
-
-    const globalPluginAlreadyUsed: boolean = [
-      ...projectPluginNames,
-      ...addedPluginNames,
-    ].some((pluginName: string) => pluginName === selectedGlobalPlugin);
-
-    if (!globalPluginAlreadyUsed) {
-      dynamicValidateForm.pluginName = selectedGlobalPlugin;
+    //sets the plugin name to the global plugin name if it is not already used
+    if (!isGlobalPluginAlreadyUsed(globalPlugin)) {
+      dynamicValidateForm.pluginName = globalPlugin;
     } else {
       dynamicValidateForm.pluginName = '';
     }

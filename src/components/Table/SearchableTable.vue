@@ -75,7 +75,7 @@
 
     if (column.searchable) {
       column.onFilter = (value, record) =>
-        String(record[index])
+        String(record[index] as string)
           .toLowerCase()
           .includes(value.toString().toLowerCase());
       column.customFilterDropdown = true;
@@ -296,12 +296,19 @@
     </template>
 
     <!-- body of the table with all data entries -->
-    <template #bodyCell="{ text, column }">
-      <span
-        v-if="state.searchText && state.searchedColumn === column.dataIndex"
-      >
+    <template #bodyCell="{ text, record, column }">
+      <a-flex style="justify-content: center; flex-wrap: wrap; gap: 0.5em">
         {{ text }}
-      </span>
+        <a-tag
+          v-if="(column as SearchableColumn).hasTags"
+          style="margin-right: auto"
+          :color="
+            (column as SearchableColumn).getTagColor?.(record) || 'default'
+          "
+        >
+          {{ record.ismsLevel.replace('_', ' ') }}
+        </a-tag>
+      </a-flex>
     </template>
   </a-table>
 </template>

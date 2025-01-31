@@ -35,7 +35,8 @@
   type ProjectSearchStore = SearchStore<ProjectModel>;
 
   const { stopEditing, isEditing } = useEditing();
-  const { routerProjectId, setProjectId } = inject(projectRoutingSymbol)!;
+  const { routerProjectId, routerProjectSlug, setProjectId } =
+    inject(projectRoutingSymbol)!;
   const localLogStore = inject(localLogStoreSymbol);
 
   const pluginStore = usePluginStore();
@@ -131,6 +132,7 @@
   watch(
     () => routerProjectId.value,
     async () => {
+      if (!routerProjectId.value) return;
       await projectStore.fetch(routerProjectId.value);
       await pluginStore.fetch(routerProjectId.value);
       await pluginStore?.fetchUnarchived(routerProjectId.value);
@@ -160,10 +162,13 @@
     searchStore?.setSearchQuery(searchStorage.value.searchQuery);
     await setFilterQuery();
 
-    if (routerProjectId.value === 0) {
-      if (projectStore.getProjects.length > 0)
-        setProjectId(projectStore.getProjects[0]?.id ?? 100);
-    } else {
+    if (routerProjectSlug.value !== undefined) {
+      const project = await projectStore.findProjectBySlug(
+        routerProjectSlug.value,
+        { fullObjectNeeded: false },
+      );
+      if (project) setProjectId(project.id);
+    } else if (routerProjectId.value) {
       await projectStore.fetch(routerProjectId.value);
       await pluginStore.fetch(routerProjectId.value);
       await pluginStore?.fetchUnarchived(routerProjectId.value);
@@ -230,6 +235,18 @@
   //sets the parameters for every column
   const columns: SearchableColumn[] = reactive([
     {
+      title: 'Client Name',
+      dataIndex: 'clientName',
+      key: 'clientName',
+      searchable: true,
+      resizable: true,
+      ellipsis: true,
+      align: 'center' as const,
+      sortMethod: 'string',
+      defaultSortOrder: 'ascend' as const,
+      width: NaN,
+    },
+    {
       title: 'Project Name',
       dataIndex: 'projectName',
       key: 'projectName',
@@ -240,11 +257,19 @@
       sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       width: NaN,
+      hidden: false,
+      hasTags: true,
+      getTagColor: (record): string =>
+        record.ismsLevel === 'VERY_HIGH'
+          ? 'red'
+          : record.ismsLevel === 'HIGH'
+            ? 'orange'
+            : 'green',
     },
     {
-      title: 'Client Name',
-      dataIndex: 'clientName',
-      key: 'clientName',
+      title: 'Company',
+      dataIndex: 'company',
+      key: 'company',
       searchable: true,
       resizable: true,
       ellipsis: true,
@@ -281,8 +306,9 @@
   ]);
   const queryNames = [
     'searchQuery',
-    'projectName',
     'clientName',
+    'projectName',
+    'company',
     'businessUnit',
     'teamNumber',
   ];
@@ -294,21 +320,10 @@
    * @param {number} pwidth Has the width of the left pane.
    */
   function changeColumns(pwidth: number) {
-    const breakpoint = getBreakpoint(pwidth);
-    switch (breakpoint) {
-      case 'xs':
-        showOrHideColumns(0);
-        break;
-      case 'sm':
-        showOrHideColumns(1);
-        break;
-      case 'md':
-        showOrHideColumns(2);
-        break;
-      case 'lg':
-        showOrHideColumns(3);
-        break;
-    }
+    // getBreakpoint returns the index of the breakpoint, which is one less then the index of the column to hide/show
+    const columnToChange = getBreakpoint(pwidth) + 1;
+
+    if (columnToChange >= 0) showOrHideColumns(columnToChange);
   }
 
   /**
@@ -316,7 +331,7 @@
    * @param number Has the number of how many columns should be shown
    */
   function showOrHideColumns(number: number) {
-    for (let index: number = 1; index < 4; index++) {
+    for (let index: number = 1; index < columns.length; index++) {
       if (number > 0) {
         showColumn(index);
         number--;
@@ -351,23 +366,25 @@
    * @param {number} pwidth Has the width of the left pane.
    * @return {string} Returns a string, which represents the current breakpoint of the pane width.
    */
-  function getBreakpoint(pwidth: number): string {
+  function getBreakpoint(pwidth: number): number {
     const windowSize = useWindowSize().width.value;
-    const breakpoint: number[] = [
+    // has the breakpoints for the columns
+    // smaller then the first one and only one column is shown, larger then the last one and all are shown
+    const breakpoints: number[] = [
       0.2 * windowSize,
+      0.275 * windowSize,
       0.35 * windowSize,
       0.4 * windowSize,
     ];
 
-    if (pwidth > breakpoint[2]) {
-      return 'lg';
-    } else if (pwidth > breakpoint[1]) {
-      return 'md';
-    } else if (pwidth > breakpoint[0]) {
-      return 'sm';
-    } else {
-      return 'xs';
+    // runs backwards through the breakpoints and checks if the width is larger then the breakpoint
+    for (let index = breakpoints.length - 1; index >= 0; index--) {
+      if (pwidth > breakpoints[index]) {
+        return index;
+      }
     }
+
+    return -1;
   }
 </script>
 <style scoped>

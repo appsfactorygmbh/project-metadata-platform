@@ -54,7 +54,7 @@ describe('ProjectSearchView.vue', () => {
 
   it('renders correctly with 4 columns', () => {
     const wrapper = generateWrapper(800);
-    expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(4);
+    expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(5);
   });
 
   it('renders correctly with reset button', async () => {
@@ -66,7 +66,7 @@ describe('ProjectSearchView.vue', () => {
     createTestingPinia({});
     const wrapper = generateWrapper(300);
     await flushPromises();
-    expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(2);
+    expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(3);
   });
 
   it('adds a query when clicking on a project', async () => {
@@ -101,11 +101,11 @@ describe('ProjectSearchView.vue', () => {
       query: { projectId: '300' },
     });
     await router.isReady();
-    createTestingPinia({});
 
     generateWrapper(800);
     await flushPromises();
-    await flushPromises();
+
+    console.log(useProjectRouting(router).routerProjectId.value);
 
     expect(useProjectStore().fetch).toHaveBeenCalledWith(300);
     expect(usePluginStore().fetch).toHaveBeenCalledWith(300);

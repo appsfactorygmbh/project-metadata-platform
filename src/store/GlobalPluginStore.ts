@@ -136,13 +136,14 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
             const response = await this.callApi('pluginsPut', {
               createPluginRequest: {
                 ...plugin,
+                baseUrl: plugin.baseUrl ?? '',
               },
             });
             if (response) {
               this.fetchAll();
             }
-          } catch (err) {
-            console.error('Error creating global plugin: ' + err);
+          } finally {
+            this.setIsLoading(false);
           }
         },
 

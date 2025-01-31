@@ -16,6 +16,7 @@
       fullObjectNeeded: false,
     });
     const projectSlug = project?.slug;
+
     if (!projectSlug) {
       return router.replace({
         query: { ...route.query },
@@ -34,7 +35,7 @@
   };
 
   onMounted(async () => {
-    if (route.query.projectId) {
+    if (route.query.projectId && route.path == '/') {
       await redirectToSlug(String(route.query.projectId));
     }
   });
@@ -42,7 +43,6 @@
   watch(
     () => route.query.projectId,
     async (newId, oldId) => {
-      console.log('newId:', newId);
       if (newId !== oldId && newId !== undefined) {
         await redirectToSlug(newId);
       }

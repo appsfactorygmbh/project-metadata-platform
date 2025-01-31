@@ -52,7 +52,6 @@
       padding: '5px',
       alignItems: 'center',
       height: '2rem',
-      gap: '1rem',
     }"
     class="info"
   >
@@ -136,5 +135,6 @@
 
   .text {
     font-weight: 400;
+    margin: 0 0 0 0.5em;
   }
 </style>
