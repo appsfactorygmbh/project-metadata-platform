@@ -48,6 +48,7 @@
 
   const cancelEdit = () => {
     projectEditStore?.resetPluginChanges();
+    pluginStore.fetch(projectStore.getProject?.id ?? 0);
     reloadEditStore();
     stopEditing();
     rerenderPlugins.value++;
@@ -217,10 +218,11 @@
       await localLogStore?.fetch(currentProject.id);
       message.success('Plugin added successfully.', 2);
     } else {
-      message.error('No project found to update.', 5);
+      message.error('No project found to update.', 2);
     }
     openAddPluginModal.value = false;
-    projectEditStore?.resetPluginChanges();
+    // projectEditStore?.resetPluginChanges();
+    reloadEditStore();
   };
 </script>
 
