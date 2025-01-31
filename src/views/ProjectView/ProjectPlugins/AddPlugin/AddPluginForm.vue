@@ -137,10 +137,10 @@
     pluginUrl: [
       {
         required: true,
-        message: 'Please insert a unique wURL.',
+        message: 'Please insert a unique url.',
+        validator: isUniqueUrl,
         trigger: 'change',
         type: 'string',
-        validator: isUniqueUrl,
       },
     ],
     globalPlugin: [
@@ -254,12 +254,12 @@
       class="column"
       :no-style="true"
       :whitespace="true"
-      :rules="rulesRef.pluginName"
+      :rules="rulesRef.pluginUrl"
     >
       <a-input
         id="inputAddPluginPluginUrl"
         v-model:value="dynamicValidateForm.pluginUrl"
-        :rules="rulesRef.pluginName"
+        :rules="rulesRef.pluginUrl"
         class="inputField"
         placeholder="Plugin URL"
         @change="(e) => handleUrlChange(e.target.value)"
