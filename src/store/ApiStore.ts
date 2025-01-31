@@ -2,10 +2,11 @@ import type { ApiInstance, ApiTypes } from '@/api/ApiType.type';
 import { callApi, getApiConfiguration, handleFetchError } from '@/utils/api';
 import { type PiniaStore, defineGenericStore } from 'pinia-generic';
 import { type AuthStore, useAuthStore } from './AuthStore';
-import type { UnwrapRef } from 'vue';
+import { type UnwrapRef } from 'vue';
 import type { Pinia } from 'pinia';
 import { piniaInstance } from './piniaInstance';
 import type { GenericStore } from '@/utils/store';
+import { handleFetchError } from '@/utils/api';
 
 type ApiStore<Api extends ApiTypes> = PiniaStore<
   'api',
