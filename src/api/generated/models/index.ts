@@ -9,6 +9,7 @@ export * from './CreateUserRequest';
 export * from './CreateUserResponse';
 export * from './DeleteGlobalPluginResponse';
 export * from './ErrorResponse';
+export * from './GetAllUsersResponse';
 export * from './GetGlobalPluginResponse';
 export * from './GetPluginResponse';
 export * from './GetProjectResponse';
