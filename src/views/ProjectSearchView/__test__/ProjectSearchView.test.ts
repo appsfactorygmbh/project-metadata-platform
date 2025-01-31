@@ -101,11 +101,11 @@ describe('ProjectSearchView.vue', () => {
       query: { projectId: '300' },
     });
     await router.isReady();
-    createTestingPinia({});
 
     generateWrapper(800);
     await flushPromises();
-    await flushPromises();
+
+    console.log(useProjectRouting(router).routerProjectId.value);
 
     expect(useProjectStore().fetch).toHaveBeenCalledWith(300);
     expect(usePluginStore().fetch).toHaveBeenCalledWith(300);

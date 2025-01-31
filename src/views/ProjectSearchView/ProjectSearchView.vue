@@ -35,7 +35,8 @@
   type ProjectSearchStore = SearchStore<ProjectModel>;
 
   const { stopEditing, isEditing } = useEditing();
-  const { routerProjectId, setProjectId } = inject(projectRoutingSymbol)!;
+  const { routerProjectId, routerProjectSlug, setProjectId } =
+    inject(projectRoutingSymbol)!;
   const localLogStore = inject(localLogStoreSymbol);
 
   const pluginStore = usePluginStore();
@@ -131,6 +132,7 @@
   watch(
     () => routerProjectId.value,
     async () => {
+      if (!routerProjectId.value) return;
       await projectStore.fetch(routerProjectId.value);
       await pluginStore.fetch(routerProjectId.value);
       await pluginStore?.fetchUnarchived(routerProjectId.value);
@@ -160,10 +162,13 @@
     searchStore?.setSearchQuery(searchStorage.value.searchQuery);
     await setFilterQuery();
 
-    if (routerProjectId.value === 0) {
-      if (projectStore.getProjects.length > 0)
-        setProjectId(projectStore.getProjects[0]?.id ?? 100);
-    } else {
+    if (routerProjectSlug.value !== undefined) {
+      const project = await projectStore.findProjectBySlug(
+        routerProjectSlug.value,
+        { fullObjectNeeded: false },
+      );
+      if (project) setProjectId(project.id);
+    } else if (routerProjectId.value) {
       await projectStore.fetch(routerProjectId.value);
       await pluginStore.fetch(routerProjectId.value);
       await pluginStore?.fetchUnarchived(routerProjectId.value);

@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { type FormStore, type FormSubmitType } from '@/components/Form';
-  import { notification } from 'ant-design-vue';
+  import { message } from 'ant-design-vue';
   import { useGlobalPluginsStore } from '@/store';
   import { onMounted, reactive } from 'vue';
   import { useRoute } from 'vue-router';
@@ -13,24 +13,18 @@
 
   const globalPluginStore = useGlobalPluginsStore();
 
-  const [notificationApi, contextHolder] = notification.useNotification();
-
-  const onSubmit: FormSubmitType = (fields) => {
+  const onSubmit: FormSubmitType = async (fields) => {
     if (!pluginIdRef.value) {
       return;
     }
 
-    fields['pluginName'] =
-      fields['pluginName'] === oldPluginName ? undefined : fields['pluginName'];
-
-    globalPluginStore
-      .update(pluginIdRef.value, { ...fields })
-      .catch((error) => {
-        notificationApi.error({
-          message: 'The plugin could not be updated.',
-        });
-        console.error(error);
-      });
+    try {
+      await globalPluginStore.update(pluginIdRef.value, { ...fields });
+      message.success('Plugin updated successfully.');
+    } catch (error) {
+      message.error((error as Error).message ?? 'An error occurred');
+      return Promise.reject();
+    }
   };
 
   const pluginIdRef = ref<number | null>(null);
@@ -40,7 +34,6 @@
     keys: [],
     baseUrl: '',
   });
-  let oldPluginName: string = '';
 
   onMounted(async () => {
     const route = useRoute();
@@ -55,7 +48,6 @@
           return;
         }
         initialValues.pluginName = globalPluginData.pluginName;
-        oldPluginName = globalPluginData.pluginName;
         initialValues.keys =
           globalPluginData.keys?.map((keyObj, index) => ({
             // TODO: adapt when feature to archive keys is implemented
@@ -63,7 +55,7 @@
             value: keyObj, //keyObj.value,
             archived: false, //keyObj.archived,
           })) ?? [];
-        initialValues.baseUrl = globalPluginData.baseUrl;
+        initialValues.baseUrl = globalPluginData.baseUrl ?? '';
       }
     }
   });

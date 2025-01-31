@@ -27,6 +27,20 @@ export const hasDigit = (_rule: Rule, value: string) => {
   return Promise.reject(new Error('Please insert a digit.'));
 };
 
+export const isANumber = (_rule: Rule, value: string) => {
+  const digitRegex = /^\d{1,9}$/;
+  const isNumber = digitRegex.test(value);
+  const isSafeInteger = Number.isSafeInteger(Number(value));
+
+  if (isNumber && isSafeInteger) {
+    return Promise.resolve();
+  }
+
+  return Promise.reject(
+    new Error('Please insert a valid number with up to 9 digits.'),
+  );
+};
+
 export const hasUpperCaseLetter = (_rule: Rule, value: string) => {
   const upperCaseRegex = /(?=.*[A-Z])/;
   if (upperCaseRegex.test(value)) {
