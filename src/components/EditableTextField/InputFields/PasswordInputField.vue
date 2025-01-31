@@ -111,6 +111,7 @@
     const newPassword = {
       password: toRaw(fields).newPassword,
     };
+
     userStore
       ?.update(userId, newPassword)
       .then(() => {

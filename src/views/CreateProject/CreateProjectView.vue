@@ -18,6 +18,8 @@
   import { useProjectStore } from '@/store';
   import { projectRoutingSymbol } from '@/store/injectionSymbols';
   import { useThemeToken } from '@/utils/hooks';
+  import { message } from 'ant-design-vue';
+  import { isANumber } from '@/utils/form/userValidation';
 
   const token = useThemeToken();
 
@@ -35,10 +37,6 @@
   const { setProjectId } = inject(projectRoutingSymbol)!;
 
   const isAdding = computed(() => projectStore.getIsLoadingAdd);
-  const fetchError = ref<boolean>(false);
-  const errorMessage = ref<string>(
-    'An error occurred while creating the project.',
-  );
 
   const formState: UnwrapRef<Partial<CreateProjectModel>> = reactive({
     projectName: '',
@@ -80,9 +78,12 @@
     open.value = true;
   };
 
+  const closeModal = () => {
+    open.value = false;
+  };
+
   const resetModal = () => {
     formRef.value.resetFields();
-    fetchError.value = false;
   };
 
   // checks for correct input
@@ -100,19 +101,6 @@
 
   // sends PUT request to the backend
   const submit = async () => {
-    watch(isAdding, async (newVal) => {
-      if (!newVal) {
-        if (projectStore.getAddedSuccessfully) {
-          await projectStore.fetchAll();
-          fetchError.value = false;
-          open.value = false;
-          resetModal();
-        } else {
-          fetchError.value = true;
-        }
-      }
-    });
-
     const projectData: CreateProjectModel = {
       projectName: formState.projectName!,
       businessUnit: formState.businessUnit!,
@@ -126,8 +114,16 @@
       ismsLevel: formState.ismsLevel!,
     };
 
-    await projectStore.create(projectData);
-
+    try {
+      await projectStore.create(projectData);
+      message.success('Project created successfully');
+      resetModal();
+      closeModal();
+    } catch (error) {
+      message.error((error as Error).message ?? 'An error occurred');
+      return;
+    }
+    open.value = false;
     await projectStore.fetchAll();
     const projects = projectStore.getProjects;
     const newProject = projects.find(
@@ -175,7 +171,13 @@
         </a-form-item>
         <a-form-item
           name="teamNumber"
-          :rules="[{ required: true, whitespace: true }]"
+          :rules="[
+            {
+              required: true,
+              whitespace: true,
+              validator: isANumber,
+            },
+          ]"
           class="column"
           :no-style="true"
         >
@@ -285,13 +287,6 @@
             <a-select-option value="VERY_HIGH">Very High</a-select-option>
           </a-select>
         </a-form-item>
-        <!--shows error if the PUT request failed-->
-        <a-alert
-          v-if="fetchError"
-          :message="errorMessage"
-          type="error"
-          show-icon
-        />
       </a-form>
     </a-modal>
   </div>
