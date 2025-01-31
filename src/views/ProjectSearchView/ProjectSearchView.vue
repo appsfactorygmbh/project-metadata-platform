@@ -165,6 +165,7 @@
 
     searchStore?.setSearchQuery(searchStorage.value.searchQuery);
     await setFilterQuery();
+    console.log(routerProjectSlug.value, routerProjectId.value);
 
     if (routerProjectSlug.value !== undefined) {
       const project = await projectStore.findProjectBySlug(
@@ -172,8 +173,8 @@
         { fullObjectNeeded: false },
       );
       if (project) {
-        if (routerProjectId.value !== project.id) setProjectId(project.id);
-        else fetchProject(project.id);
+        if (routerProjectId.value === project.id) fetchProject(project.id);
+        setProjectId(project.id);
       }
     } else if (routerProjectId.value) {
       await fetchProject(routerProjectId.value);
