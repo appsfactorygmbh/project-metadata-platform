@@ -48,7 +48,6 @@
 
   const cancelEdit = () => {
     projectEditStore?.resetPluginChanges();
-    pluginStore.fetch(projectStore.getProject?.id ?? 0);
     reloadEditStore();
     stopEditing();
     rerenderPlugins.value++;
@@ -162,6 +161,7 @@
       await pluginStore.fetch(projectID.value);
       await localLogStore?.fetch(projectID.value);
     }
+    closeAddPluginModal();
   };
 
   // Blur effect
@@ -173,7 +173,16 @@
 
   const openAddPluginModal = ref<boolean>(false);
 
+  const syncEditStore = (normalPlugins: PluginModel[]) => {
+    if (!normalPlugins?.length) return;
+    for (let i = 0; i < normalPlugins.length; i++) {
+      projectEditStore?.initialAdd(normalPlugins[i]);
+    }
+  };
+
   const handleClickAddPlugin = () => {
+    projectEditStore?.resetPluginChanges();
+    syncEditStore(pluginStore.getUnarchivedPlugins);
     openAddPluginModal.value = true;
   };
 
@@ -191,38 +200,6 @@
     status: 'activated',
     size: 'large',
     tooltip: 'Click here to add a new plugin',
-  };
-
-  const handleAddPluginOk = async () => {
-    const currentProject = projectStore.getProject;
-    const currentPlugins = pluginStore.getPlugins;
-    const addedPlugin = projectEditStore?.getPluginChanges;
-
-    if (currentProject) {
-      const updatedProject = {
-        projectName: currentProject?.projectName,
-        businessUnit: currentProject?.businessUnit,
-        teamNumber: currentProject?.teamNumber,
-        department: currentProject?.department,
-        clientName: currentProject?.clientName,
-        pluginList: [...currentPlugins, ...addedPlugin!],
-        isArchived: currentProject?.isArchived,
-        offerId: currentProject?.offerId,
-        company: currentProject?.company,
-        companyState: currentProject?.companyState,
-        ismsLevel: currentProject?.ismsLevel,
-      };
-      await projectStore.update(currentProject.id, updatedProject);
-      await projectStore.fetch(currentProject.id);
-      await pluginStore.fetch(currentProject.id);
-      await localLogStore?.fetch(currentProject.id);
-      message.success('Plugin added successfully.', 2);
-    } else {
-      message.error('No project found to update.', 2);
-    }
-    openAddPluginModal.value = false;
-    // projectEditStore?.resetPluginChanges();
-    reloadEditStore();
   };
 </script>
 
@@ -243,8 +220,7 @@
     <AddPluginView
       v-if="openAddPluginModal"
       :show-modal="openAddPluginModal"
-      @close="closeAddPluginModal"
-      @added-plugin="handleAddPluginOk"
+      @added-plugin="async () => await saveEdit()"
     />
     <LocalLogView class="LocalLog" :class="{ blur: isBlurred }" />
     <ConfirmAction
