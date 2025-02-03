@@ -13,18 +13,18 @@
 
   const globalPluginStore = useGlobalPluginsStore();
 
-  const onSubmit: FormSubmitType = async (fields) => {
+  const onSubmit: FormSubmitType = (fields) => {
     if (!pluginIdRef.value) {
       return;
     }
 
-    try {
-      await globalPluginStore.update(pluginIdRef.value, { ...fields });
-      message.success('Plugin updated successfully.');
-    } catch (error) {
-      message.error((error as Error).message ?? 'An error occurred');
-      throw error;
-    }
+    globalPluginStore
+      .update(pluginIdRef.value, { ...fields })
+      .then(() => message.success('Plugin updated successfully.'))
+      .catch((error) => {
+        message.error((error as Error).message ?? 'An error occurred');
+        throw error;
+      });
   };
 
   const pluginIdRef = ref<number | null>(null);

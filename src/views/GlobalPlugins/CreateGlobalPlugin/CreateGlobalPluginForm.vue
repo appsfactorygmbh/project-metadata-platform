@@ -13,14 +13,14 @@
 
   const globalPluginStore = useGlobalPluginsStore();
 
-  const onSubmit: FormSubmitType = async (fields: CreatePluginRequest) => {
-    try {
-      await globalPluginStore.create(fields);
-      message.success('Plugin created successfully');
-    } catch (error) {
-      message.error((error as Error).message ?? 'An error occurred');
-      throw error;
-    }
+  const onSubmit: FormSubmitType = (fields: CreatePluginRequest) => {
+    globalPluginStore
+      .create(fields)
+      .then(() => message.success('Plugin created successfully'))
+      .catch((error) => {
+        message.error((error as Error).message ?? 'An error occurred');
+        throw error;
+      });
   };
 
   formStore.setOnSubmit(onSubmit);
