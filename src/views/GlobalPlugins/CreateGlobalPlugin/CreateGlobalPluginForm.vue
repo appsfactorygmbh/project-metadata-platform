@@ -19,7 +19,7 @@
       message.success('Plugin created successfully');
     } catch (error) {
       message.error((error as Error).message ?? 'An error occurred');
-      return Promise.reject();
+      throw error;
     }
   };
 

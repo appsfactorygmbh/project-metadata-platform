@@ -1,11 +1,14 @@
 import type { GlobalPluginModel } from '@/models/Plugin';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import type { ApiStore } from './ApiStore';
-import { type GetGlobalPluginResponse, PluginsApi } from '@/api/generated';
+import {
+  type GetGlobalPluginResponse,
+  type CreatePluginRequest,
+  PluginsApi,
+} from '@/api/generated';
 import { useApiStore } from './ApiStore';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
-import type { CreatePluginRequest } from '@/api/generated';
 
 type StoreState = {
   globalPlugins: GlobalPluginModel[];
