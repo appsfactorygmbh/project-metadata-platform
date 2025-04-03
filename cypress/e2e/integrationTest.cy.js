@@ -5,7 +5,7 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 
 describe('Login Screen', () => {
   it('should load correctly', () => {
-    cy.visit('http://127.0.0.1:80/login');
+    cy.visit('http://127.0.0.1:8080/login');
     cy.wait(3000);
     cy.get('h1').should('contain', 'Login');
     cy.get('input[id="standard_login_email"]').should('exist');
