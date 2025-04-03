@@ -1,21 +1,149 @@
-# Node.js with Vue
-# Build a Node.js project that uses Vue.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+# ASP.NET
+# Build and test ASP.NET projects.
+# Add steps that publish symbols, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
 
 trigger:
-- develop
+  - develop
+  - master
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '20.x'
-  displayName: 'Install Node.js'
+variables:
+  # cache key -> different -> cache miss (based on the used deps -> invalidate caches)
+  cacheKey: 'dependencies | $(Agent.OS) | $(Build.SourcesDirectory)/yarn.lock'
+  CACHE_RESTORED_YARN: 'false'
+  CACHE_RESTORED_NODEMODULES: 'false'
+stages:
+  - stage: Prepare_Cache
+    displayName: Prepare Cache
+    jobs:
+      - job: Prepare_Caches
+        displayName: Prepare Caches
+        steps:
+          - task: Cache@2
+            displayName: Cache Yarn Dependencies
+            inputs:
+              key: '$(cacheKey)'
+              path: '$(System.DefaultWorkingDirectory)/.yarn'
+              cacheHitVar: CACHE_RESTORED_YARN
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
+          - task: Cache@2
+            displayName: Cache node_modules
+            inputs:
+              key: '$(cacheKey) | node_modules'
+              path: '$(System.DefaultWorkingDirectory)/node_modules'
+              cacheHitVar: CACHE_RESTORED_NODEMODULES
+          
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Install Node.js'
+
+          - script: |
+              npm install -g corepack
+              corepack enable
+              echo 'yarn-offline-mirror ".yarn-cache/"' >> .yarnrc
+              echo 'yarn-offline-mirror-pruning true' >> .yarnrc
+              yarn install --immutable
+            displayName: 'Install Dependencies'
+            condition: or(ne(variables.CACHE_RESTORED_YARN, 'true'), ne(variables.CACHE_RESTORED_NODEMODULES, 'true'))
+
+  - stage: style_check
+    displayName: Style Checking
+    dependsOn: Prepare_Cache
+    jobs:
+      - job: Run_Prettier
+        displayName: Run Prettier
+        steps:
+          - task: Cache@2
+            displayName: Restore node_modules cache
+            inputs:
+              key: '$(cacheKey) | node_modules'
+              path: '$(System.DefaultWorkingDirectory)/node_modules'
+          - script: |
+              npx prettier --check .
+            displayName: 'Run Prettier Check'
+
+  # - stage: Test
+  #   displayName: 'Test stage'
+  #   jobs:
+  #   - job : Test
+  #     steps:
+
+  #     - task: UseDotNet@2
+  #       displayName: 'Use .NET SDK $(dotnetVersion)'
+  #       inputs:
+  #         packageType: 'sdk'
+  #         version: '$(dotnetVersion)'
+
+  #     - task: NuGetCommand@2
+  #       displayName: Restore packages
+  #       inputs:
+  #         command: restore
+  #         feedsToUse: select
+
+  #     - task: DotNetCoreCLI@2
+  #       displayName: 'Restore tools'
+  #       inputs:
+  #         command: custom
+  #         custom: tool
+  #         arguments: 'restore'
+
+  #     - task: SonarCloudPrepare@3
+  #       displayName: "Prepare analysis on SonarCloud"
+  #       inputs:
+  #         SonarCloud: "SC-SonarCloud-backend"
+  #         organization: $(SonarCloudOrg)
+  #         cliprojectKey: $(sonarCloudProjectKey)
+  #         scannerMode: "CLI"
+  #         configMode: manual
+  #         extraProperties: |
+  #               sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+  #               sonar.exclusions=/ProjectMetadataPlatform.Infrastructure/Migrations/**
+
+  #     - script: dotnet tool run dotnet-coverage collect "dotnet test --configuration Release" -f xml -o "coverage.xml"
+  #       displayName: 'Unit Tests with Coverage'
+
+  #     - task: PublishCodeCoverageResults@2
+  #       displayName: Publish code coverage
+  #       inputs:
+  #         summaryFileLocation: "coverage.xml"
+
+  #     - task: SonarCloudAnalyze@3
+  #       displayName: "Run analysis on SonarCloud"
+
+  #     - task: SonarCloudPublish@3
+  #       displayName: "Publish results on SonarCloud"
+  #       inputs:
+  #         pollingTimeoutSec: "300"
+
+  # - stage: Build
+  #   displayName: Build + Push Stage
+  #   dependsOn: Test
+  #   condition:  succeeded()
+  #   jobs:
+  #   - job: Build
+  #     displayName: Build job
+  #     steps:
+
+  #     - task: Docker@2
+  #       displayName: Build docker image
+  #       inputs:
+  #         command: build
+  #         containerRegistry: $(dockerRegistryServiceConnection)
+  #         repository: $(dockerImageRepository)
+  #         Dockerfile: $(dockerfilePath)
+  #         arguments: >-
+  #           --build-arg BUILD_CONFIGURATION=Release
+  #           --progress=plain
+  #         tags: $(today),dev
+
+  #     - task: Docker@2
+  #       displayName: Push image to container registry with build number and prod tag
+  #       inputs:
+  #         command: push
+  #         containerRegistry: $(dockerRegistryServiceConnection)
+  #         repository: $(dockerImageRepository)
+  #         tags: $(today),dev
