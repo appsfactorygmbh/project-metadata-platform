@@ -48,7 +48,8 @@ stages:
               echo 'yarn-offline-mirror-pruning true' >> .yarnrc
               yarn install --immutable
             displayName: 'Install Dependencies'
-            condition: or(ne(variables.CACHE_RESTORED_YARN, 'true'), ne(variables.CACHE_RESTORED_NODEMODULES, 'true'))
+            # only executed when reading from cache failed
+            condition: or(ne(variables.CACHE_RESTORED_YARN, 'true'), ne(variables.CACHE_RESTORED_NODEMODULES, 'true')) 
 
   - stage: style_check
     displayName: Style Checking
@@ -57,7 +58,7 @@ stages:
       - job: Run_Prettier
         displayName: Run Prettier
         steps:
-          - task: Cache@2
+          - task: Cache@2 # read cache
             displayName: Restore node_modules cache
             inputs:
               key: '$(cacheKey) | node_modules'
@@ -66,6 +67,85 @@ stages:
               npx prettier --check .
             displayName: 'Run Prettier Check'
 
+  - stage: type_check
+    displayName: Type Checking
+    dependsOn: Prepare_Cache
+    jobs:
+      - job: Run_Type_Check
+        displayName: Run Type Check
+        steps:
+          - task: Cache@2
+            displayName: Restore node_modules cache
+            inputs:
+              key: '$(cacheKey) | node_modules'
+              path: '$(System.DefaultWorkingDirectory)/node_modules'
+              cacheHitVar: CACHE_RESTORED_NODEMODULES
+
+          - task: Cache@2
+            displayName: Restore .yarn cache
+            inputs:
+              key: '$(cacheKey)'
+              path: '$(System.DefaultWorkingDirectory)/.yarn'
+              cacheHitVar: CACHE_RESTORED_YARN
+          - script: |
+              corepack enable
+              yarn type-check
+            displayName: 'Run Type Check'
+
+  - stage: lint_check
+    displayName: Lint Checking
+    dependsOn: Prepare_Cache
+    jobs:
+      - job: Run_Lint_Check
+        displayName: Run Lint Check
+        steps:
+          - task: Cache@2
+            displayName: Restore node_modules cache
+            inputs:
+              key: '$(cacheKey) | node_modules'
+              path: '$(System.DefaultWorkingDirectory)/node_modules'
+              cacheHitVar: CACHE_RESTORED_NODEMODULES
+          - task: Cache@2
+            displayName: Restore .yarn cache
+            inputs:
+              key: '$(cacheKey)'
+              path: '$(System.DefaultWorkingDirectory)/.yarn'
+              cacheHitVar: CACHE_RESTORED_YARN
+          - script: |
+              corepack enable
+              npm install -g eslint
+              yarn lint:check --format gitlab .
+            displayName: 'Run Lint Check'
+
+  - stage: coverage_test
+    displayName: Unit Tests with Coverage
+    dependsOn: Prepare_Cache
+    jobs:
+      - job: Run_Coverage_Tests
+        displayName: Run Coverage Tests
+        steps:
+          - task: Cache@2
+            displayName: Restore node_modules cache
+            inputs:
+              key: '$(cacheKey) | node_modules'
+              path: '$(System.DefaultWorkingDirectory)/node_modules'
+              cacheHitVar: CACHE_RESTORED_NODEMODULES
+          - task: Cache@2
+            displayName: Restore .yarn cache
+            inputs:
+              key: '$(cacheKey)'
+              path: '$(System.DefaultWorkingDirectory)/.yarn'
+              cacheHitVar: CACHE_RESTORED_YARN
+          - script: |
+              corepack enable
+              yarn coverage
+            displayName: 'Run Coverage Tests'
+            env:
+              DEBUG: true'
+          - task: PublishCodeCoverageResults@2
+            displayName: Publish Code Coverage
+            inputs:
+              summaryFileLocation:  "coverage/cobertura-coverage.xml"
   # - stage: Test
   #   displayName: 'Test stage'
   #   jobs:
