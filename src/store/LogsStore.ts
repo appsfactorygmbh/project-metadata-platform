@@ -38,7 +38,7 @@ export const useLogsStore = (pinia: Pinia = piniaInstance): Store => {
       },
       getters: {
         getGlobalLogs(): LogEntryModel[] {
-          return this.globalLogEntries.reverse();
+          return this.globalLogEntries;
         },
         getIsLoadingGlobalLogs(): boolean {
           return this.isLoadingGlobalLogs;
