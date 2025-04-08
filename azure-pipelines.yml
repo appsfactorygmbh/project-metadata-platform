@@ -28,6 +28,7 @@ variables:
     value: "appsfactory" 
   - name: today
     value: $[ format('{0:yyyy}.{0:MM}.{0:dd}-{0:HH}.{0:mm}', pipeline.startTime) ]
+  - group: ProdCreds
 stages:
   - stage: Prepare_Cache
     displayName: Prepare Cache
@@ -115,7 +116,6 @@ stages:
 
   - stage: coverage_test
     displayName: Unit Tests with Coverage + SonarCloud
-    #lint_check
     dependsOn: lint_check
     jobs:
       - job: Run_Coverage_Tests
@@ -218,3 +218,44 @@ stages:
           containerRegistry: $(dockerRegistryServiceConnection)
           repository: $(dockerImageRepository)
           tags: $(today),dev
+    
+  - stage: DeployProd
+    displayName: Deploy Production
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    jobs:
+    - job: DeployProd
+      displayName: Deploy Production
+      steps:
+        - task: Docker@2
+          displayName: Login to registry
+          inputs: 
+            command: login
+            containerRegistry: $(dockerRegistryServiceConnection)
+
+        - script: docker pull $(dockerImageRepository):dev
+          displayName: Pull dev image
+
+        - script: docker tag $(dockerImageRepository):dev $(dockerImageRepository):prod
+          displayName: Retag dev image
+
+        - script: docker push $(dockerImageRepository):prod
+          displayName: Push prod image to DockerHub
+          
+        - task: CopyFilesOverSSH@0
+          displayName: Copy compose file to VM
+          inputs:
+            sshEndpoint: 'SC-AfItDocker01-VM'
+            contents: '**/docker-compose-production.yml'
+            targetFolder: '~/pmp-frontend/'
+
+        - task: SSH@0
+          displayName: Add credentials to compose file + compose up
+          inputs:
+            sshEndpoint: 'SC-AfItDocker01-VM' # Service connection
+            interactiveSession: true
+            commands:  |
+              echo $(DOCKER_HUB_PAT) | docker login -u $(DOCKER_HUB_NAME) --password-stdin        
+              docker compose -f ~/pmp-frontend/docker-compose-production.yml pull
+              docker compose -f ~/pmp-frontend/docker-compose-production.yml up -d
+              rm ~/.docker/config.json
