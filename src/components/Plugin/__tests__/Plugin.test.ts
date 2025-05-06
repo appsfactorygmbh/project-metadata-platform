@@ -1,5 +1,5 @@
 import { mount, VueWrapper } from '@vue/test-utils';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { cutAfterTLD, createFaviconURL } from '../editURL';
 import PluginComponent from '../PluginComponent.vue';
 import router from '../../../router';
@@ -131,37 +131,6 @@ describe('Plugin.vue', () => {
     expect(result).toBe('www.example');
   });
 
-  // create Mock for clipboard API
-  const clipboard = { writeText: vi.fn() };
-  beforeEach(() => {
-    Object.defineProperty(global.navigator, 'clipboard', {
-      value: clipboard,
-      writable: true,
-    });
-  });
-
-  it('copies URL to clipboard', async () => {
-    const wrapper = generateWrapper(
-      'Test Plugin',
-      'https://example.com/examplePath',
-      'test instance',
-      false,
-      false,
-      100,
-    );
-
-    const card = wrapper.findComponent({ name: 'ACard' });
-    // check if card exists, if it does, trigger click event
-    if (card.exists()) {
-      await card.trigger('click');
-      expect(clipboard.writeText).toHaveBeenCalledWith(
-        'https://example.com/examplePath',
-      );
-    } else {
-      throw new Error('ACard component not found');
-    }
-  });
-
   it('opens the link onclick', async () => {
     // Mock window.open
     const windowOpenMock = vi.fn();
@@ -174,11 +143,8 @@ describe('Plugin.vue', () => {
       false,
       100,
     );
-    await wrapper.findComponent({ name: 'ACard' }).trigger('click');
-    expect(windowOpenMock).toBeCalledWith(
-      'https://example.com/examplePath',
-      '_blank',
-    );
+    const link = wrapper.find('a');
+    expect(link.attributes('href')).toBe('https://example.com/examplePath');
   });
   it('adds prefix to url before opening if its missing', async () => {
     // Mock window.open
@@ -192,7 +158,7 @@ describe('Plugin.vue', () => {
       false,
       100,
     );
-    await wrapper.findComponent({ name: 'ACard' }).trigger('click');
-    expect(windowOpenMock).toBeCalledWith('https://example.com', '_blank');
+    const link = wrapper.find('a');
+    expect(link.attributes('href')).toBe('https://example.com');
   });
 });

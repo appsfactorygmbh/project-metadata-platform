@@ -97,20 +97,6 @@
   // Create a reactive variable for the favicon URL based on the given URL.
   const faviconUrl = ref(createFaviconURL(cutAfterTLD(props.url)));
 
-  // Copies URL to clipboard when card is clicked.
-  async function handleClick() {
-    try {
-      await navigator.clipboard.writeText(props.url);
-    } catch (err) {
-      console.error('Error when trying to copy: ', err);
-    }
-    let url = props.url;
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      url = 'https://' + url;
-    }
-    window.open(url, '_blank');
-  }
-
   // Hides the plugin card if set to true
   const hide = ref<boolean>(false);
   const hidePlugin = () => {
@@ -187,33 +173,41 @@
   </template>
 
   <template v-else>
-    <!-- Define the card component, styled as a clickable flex container. -->
-    <a-card
-      class="card"
-      :loading="toggleSkeleton"
-      :bordered="false"
-      toggle="true"
-      :body-style="{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: '15px',
-      }"
-      @click="handleClick"
+    <!-- Define the card component, styled as a clickable link. -->
+    <a
+      :href="
+        props.url.startsWith('http://') || props.url.startsWith('https://')
+          ? props.url
+          : 'https://' + props.url
+      "
+      target="_blank"
     >
-      <!-- Display the favicon image. -->
-      <a-avatar
-        v-if="showFavicon"
-        shape="square"
-        :src="faviconUrl"
-        class="avatar"
-      />
-      <!-- Container for plugin name and URL text. -->
-      <div class="textContainer">
-        <h3>{{ pluginName }}</h3>
-        <p>{{ displayName }}</p>
-      </div>
-    </a-card>
+      <a-card
+        class="card"
+        :loading="toggleSkeleton"
+        :bordered="false"
+        toggle="true"
+        :body-style="{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          padding: '15px',
+        }"
+      >
+        <!-- Display the favicon image. -->
+        <a-avatar
+          v-if="showFavicon"
+          shape="square"
+          :src="faviconUrl"
+          class="avatar"
+        />
+        <!-- Container for plugin name and URL text. -->
+        <div class="textContainer">
+          <h3>{{ pluginName }}</h3>
+          <p>{{ displayName }}</p>
+        </div>
+      </a-card>
+    </a>
   </template>
 </template>
 
