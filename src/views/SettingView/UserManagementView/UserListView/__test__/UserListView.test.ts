@@ -1,78 +1,112 @@
 import { mount } from '@vue/test-utils';
-import UserListView from '../UserListView.vue';
-import { describe, expect, it } from 'vitest';
-import { createTestingPinia } from '@pinia/testing';
-import { useUserStore } from '@/store';
-import { createPinia, setActivePinia } from 'pinia';
-import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
-import router from '@/router';
-import { useUserRouting } from '@/utils/hooks';
+import { describe, expect, it, vi } from 'vitest';
+import SettingView from '@/views/SettingView/SettingView.vue';
+import {
+  createRouter,
+  createWebHistory,
+  type RouteRecordRaw,
+  type Router,
+} from 'vue-router';
 
-interface UserListViewInstance {
-  routerUser: number;
-  clickTab: (id: number) => void;
+//
+// Mock the entire vue-router module
+vi.mock('vue-router', async () => {
+  const actual = await vi.importActual('vue-router');
+  const mockRouter: Router = {
+    push: vi.fn(),
+  } as any;
+  return {
+    ...actual,
+    useRouter: () => mockRouter,
+    createRouter: vi.fn().mockImplementation(() => {
+      return mockRouter;
+    }),
+  };
+});
+
+interface SettingViewObject {
+  collapsed: boolean;
+  selectedKeys: string[];
+  tab: string;
+  clickTab: (name: string) => void;
+  goToMain: () => void;
 }
 
-const userData = [
-  {
-    id: 100,
-    email: 'maxmuster1@gmail.com',
-  },
-  {
-    id: 200,
-    email: 'maxmuster2@gmail.com',
-  },
-];
+describe('SettingView.vue', () => {
+  let mockRouter: Router;
 
-const userRouter = useUserRouting(router);
-
-const generateWrapper = () => {
-  return mount(UserListView, {
-    plugins: [
-      createTestingPinia({
-        stubActions: true,
-        initialState: {
-          user: {
-            users: userData,
-          },
-        },
-      }),
-    ],
-    global: {
-      provide: {
-        [userStoreSymbol as symbol]: useUserStore(),
-        [userRoutingSymbol as symbol]: userRouter,
+  beforeEach(() => {
+    const MockComponent = { template: '<div></div>' };
+    const routes: RouteRecordRaw[] = [
+      { path: '/', name: 'Home', component: MockComponent },
+      {
+        path: '/settings/user-management',
+        name: 'UserManagement',
+        component: MockComponent,
       },
-      plugins: [router],
-      stubs: {
-        'a-menu-item': {
-          template: '<div class="users"><slot /></div>',
-        },
+      {
+        path: '/settings/global-plugins',
+        name: 'GlobalPlugins',
+        component: MockComponent,
       },
-    },
-  });
-};
+      {
+        path: '/settings/global-logs',
+        name: 'GlobalLogs',
+        component: MockComponent,
+      },
+    ];
 
-describe('UserListView.vue', () => {
-  setActivePinia(createPinia());
-
-  it('renders correctly', () => {
-    const wrapper = generateWrapper();
-    expect(wrapper.find('.layout').exists()).toBe(true);
-    expect(wrapper.find('.sideSlider').exists()).toBe(true);
-    const menuItems = wrapper.findAll('.users');
-    expect(menuItems.length).toBe(userData.length);
-
-    menuItems.forEach((itemWrapper, index) => {
-      expect(itemWrapper.text()).toContain(userData[index].email.split('@')[0]);
+    mockRouter = createRouter({
+      history: createWebHistory(),
+      routes,
     });
   });
 
-  it('adds a query when clicking on a user', () => {
-    const wrapper = generateWrapper();
+  it('renders correctly', () => {
+    const wrapper = mount(SettingView, {
+      global: {
+        plugins: [mockRouter],
+      },
+    });
+    expect(wrapper.find('.layout').exists()).toBe(true);
+    expect(wrapper.find('.sideSlider').exists()).toBe(true);
+    expect(wrapper.find('.menuItem').exists()).toBe(true);
+    expect(wrapper.find('.addressBar').exists()).toBe(true);
+    expect(wrapper.find('.backButton button').exists()).toBe(true);
+  });
 
-    const vm = wrapper.vm as unknown as UserListViewInstance;
-    vm.clickTab(userData[0].id);
-    expect(userRouter.routerUserId.value).toEqual(userData[0].id);
+  it('has initial state', () => {
+    const wrapper = mount(SettingView, {
+      global: {
+        plugins: [mockRouter],
+      },
+    });
+    const vm = wrapper.vm as unknown as SettingViewObject;
+    expect(vm.collapsed).toBe(false);
+    expect(vm.tab).toBe('Global Plugins');
+  });
+
+  it('go to main menu when back click', async () => {
+    const wrapper = mount(SettingView, {
+      global: {
+        plugins: [mockRouter],
+      },
+    });
+    await wrapper.find('.backButton button').trigger('click');
+
+    expect(mockRouter.push).toHaveBeenCalledWith('/');
+  });
+
+  it('go to other tab when tab click', async () => {
+    const wrapper = mount(SettingView, {
+      global: {
+        plugins: [mockRouter],
+      },
+    });
+    await wrapper.find('.userManagement').trigger('click');
+    expect(mockRouter.push).toHaveBeenCalledWith('/settings/user-management');
+
+    await wrapper.find('.globalLogs').trigger('click');
+    expect(mockRouter.push).toHaveBeenCalledWith('/settings/global-logs');
   });
 });

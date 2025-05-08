@@ -95,7 +95,10 @@
     >
       <!-- return to homepage button-->
       <a-layout-header class="listHeader" />
-      <FloatingButtonGroup :buttons="[backButton]"></FloatingButtonGroup>
+      <FloatingButtonGroup
+        class="backButton"
+        :buttons="[backButton]"
+      ></FloatingButtonGroup>
 
       <!-- navigation elements -->
       <a-menu

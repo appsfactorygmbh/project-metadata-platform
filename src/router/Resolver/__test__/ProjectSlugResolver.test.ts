@@ -82,7 +82,7 @@ describe('ProjectSlugResolver.vue', () => {
     return mount(ProjectSlugResolver, {
       plugins: [createTestingPinia(piniaOptions)],
       global: {
-        plugins: [mockRouter, initAuth(mockRouter)],
+        plugins: [mockRouter, initAuth()],
       },
     });
   };

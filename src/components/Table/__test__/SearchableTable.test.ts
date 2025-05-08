@@ -54,6 +54,13 @@ const testColumns: SearchableColumns = [
   },
 ];
 
+vi.mock('vue-auth3', () => ({
+  useAuth: () => ({
+    ready: vi.fn().mockResolvedValue(undefined),
+    check: vi.fn().mockReturnValue(true),
+  }),
+}));
+
 describe('SearchableTable.vue', () => {
   enableAutoUnmount(afterEach);
   setActivePinia(createPinia());

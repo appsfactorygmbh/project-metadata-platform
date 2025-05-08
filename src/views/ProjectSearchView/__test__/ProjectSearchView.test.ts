@@ -24,6 +24,13 @@ interface ProjectSearchViewInstance {
   handleRowClick: (project: ProjectModel) => void;
 }
 
+vi.mock('vue-auth3', () => ({
+  useAuth: () => ({
+    ready: vi.fn().mockResolvedValue(undefined),
+    check: vi.fn().mockReturnValue(true),
+  }),
+}));
+
 describe('ProjectSearchView.vue', () => {
   const generateWrapper = (pWidth: number) => {
     return mount(ProjectSearchView, {

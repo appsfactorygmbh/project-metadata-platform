@@ -15,7 +15,7 @@ describe('LoginView.vue', () => {
       }),
     );
     wrapper = mount(LoginView, {
-      plugins: [router, initAuth(router)],
+      plugins: [router, initAuth()],
       global: {
         stubs: {
           RouterLink: {

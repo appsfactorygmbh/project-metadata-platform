@@ -12,6 +12,6 @@ const pinia = createPinia();
 
 app.use(pinia);
 app.use(router);
-app.use(initAuth(router));
+app.use(initAuth());
 
 app.mount('#app');
