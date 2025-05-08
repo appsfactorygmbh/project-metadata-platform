@@ -46,7 +46,8 @@
     <template v-else>
       <a-float-button
         v-if="
-          props.button.status == 'activated' || props.button.status === undefined
+          props.button.status == 'activated' ||
+          props.button.status === undefined
         "
         :class="[props.button.size, props.button.specialType]"
         :type="props.button.type"
@@ -99,7 +100,7 @@
   }
 
   .danger .ant-float-btn-body {
-    background-color: color-mix(in srgb,#6d6e6f,#ff002e 60%) !important;
+    background-color: color-mix(in srgb, #6d6e6f, #ff002e 60%) !important;
   }
   .danger .ant-float-btn-body:hover {
     background-color: color-mix(in srgb, #6d6e6f, #ff002e 80%) !important;

@@ -28,7 +28,7 @@
           status: 'activated',
           tooltip: 'Click here to navigate to the settings page',
           isLink: true,
-          destination: "/settings"
+          destination: '/settings',
         },
         {
           name: 'LogoutButton',

@@ -22,13 +22,16 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: LoginView,
-      meta: { title: 'Project Metadata Platform - Login', noAuthRequired: true },
+      meta: {
+        title: 'Project Metadata Platform - Login',
+        noAuthRequired: true,
+      },
     },
     {
       path: '/',
       name: 'Provider',
       component: ProviderCollection,
-      meta: { },
+      meta: {},
       children: [
         {
           name: 'ProjectNameResolver',
@@ -52,13 +55,13 @@ const router = createRouter({
           name: 'settings',
           redirect: '/settings/global-plugins',
           component: SettingView,
-          meta: { title: 'Project Metadata Platform - Settings', },
+          meta: { title: 'Project Metadata Platform - Settings' },
           children: [
             {
               path: '/settings/user-management',
               name: 'usersList',
               component: UserListView,
-              meta: { title: 'Project Metadata Platform - User Management',  },
+              meta: { title: 'Project Metadata Platform - User Management' },
               children: [
                 {
                   path: '/settings/user-management',
@@ -66,7 +69,6 @@ const router = createRouter({
                   component: UserInformationView,
                   meta: {
                     title: 'Project Metadata Platform - User Information',
-
                   },
                   children: [
                     {
@@ -75,7 +77,6 @@ const router = createRouter({
                       component: CreateUserView,
                       meta: {
                         title: 'Project Metadata Platform - User Creation',
-
                       },
                     },
                   ],
@@ -92,14 +93,13 @@ const router = createRouter({
                   path: '/settings/global-plugins/create',
                   name: 'CreateGlobalPlugin',
                   component: CreateGlobalPluginView,
-                  meta: { title: 'Project Metadata Platform - Create Plugin',
-                  },
+                  meta: { title: 'Project Metadata Platform - Create Plugin' },
                 },
                 {
                   path: '/settings/global-plugins/edit/',
                   name: 'EditGlobalPlugin',
                   component: EditGlobalPluginView,
-                  meta: { title: 'Project Metadata Platform - Edit Plugin',  },
+                  meta: { title: 'Project Metadata Platform - Edit Plugin' },
                 },
               ],
             },
@@ -107,7 +107,7 @@ const router = createRouter({
               path: '/settings/global-logs',
               name: 'global-logs',
               component: GlobalLogsView,
-              meta: { title: 'Project Metadata Platform - Global Logs',},
+              meta: { title: 'Project Metadata Platform - Global Logs' },
             },
           ],
         },
@@ -132,7 +132,6 @@ const router = createRouter({
     },
   ],
 });
-
 
 router.beforeEach(async (to, _, next) => {
   const auth = useAuth();

@@ -33,7 +33,7 @@
     size: 'large',
     type: 'primary',
     isLink: false,
-    status: 'activated'
+    status: 'activated',
   };
 
   //Methods for URL link  by clickin the navigation buttons
@@ -145,7 +145,7 @@
     position: absolute;
     left: 20px;
     top: 20px;
-    z-index: 1;        /* Ensure they're above other elements */
+    z-index: 1; /* Ensure they're above other elements */
     height: fit-content;
     width: fit-content;
   }

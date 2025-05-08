@@ -56,7 +56,7 @@
         size: 'large',
         status: 'activated',
         tooltip: 'Click here to delete this user',
-        isLink: false
+        isLink: false,
       },
       {
         name: 'CreateUserButton',
@@ -68,7 +68,7 @@
         size: 'large',
         status: 'activated',
         tooltip: 'Click here to create a new user',
-        isLink: false
+        isLink: false,
       },
     ];
     if (me.value?.id == user.value?.id) tempButtons[0].status = 'deactivated';
@@ -187,5 +187,4 @@
     align-items: center;
     justify-content: center;
   }
-
 </style>

@@ -42,7 +42,8 @@
   const refreshToken = computed(() => auth.token()?.split('|')[1]);
 
   const callback = () => {
-    const redirect = (router.currentRoute.value.query.redirect as string) ?? '/';
+    const redirect =
+      (router.currentRoute.value.query.redirect as string) ?? '/';
     router.push(redirect);
   };
 
