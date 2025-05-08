@@ -7,36 +7,71 @@
       type: Object as PropType<FloatButtonModel>,
       required: true,
     },
+    isLast: {
+      type: Boolean,
+      required: false,
+    },
   });
-</script>
+  const marginShouldBeApplied = !(props.isLast == null) && !props.isLast;
 
+  const wrapperClasses = computed(() => ({
+    'floating-button-wrapper': true,
+    'margin-bottom-floating-button': marginShouldBeApplied,
+  }));
+</script>
 <template>
-  <a-float-button
-    v-if="
-      props.button.status == 'activated' || props.button.status === undefined
-    "
-    :class="[props.button.size, props.button.specialType]"
-    :type="props.button.type"
-    :shape="props.button.shape"
-    :tooltip="props.button.tooltip"
-    :badge="props.button.badge"
-    @click="props.button.onClick"
-  >
-    <template #icon>
-      <component :is="props.button.icon" :style="props.button.color" />
+  <div :class="wrapperClasses">
+    <template v-if="props.button.isLink">
+      <a
+        :class="[props.button.size, props.button.specialType]"
+        :type="props.button.type"
+        :shape="props.button.shape"
+        :tooltip="props.button.tooltip"
+        :badge="props.button.badge"
+        :href="props.button.destination"
+      >
+        <a-float-button
+          :class="[props.button.size, props.button.specialType]"
+          :type="props.button.type"
+          :shape="props.button.shape"
+          :tooltip="props.button.tooltip"
+          :badge="props.button.badge"
+        >
+          <template #icon>
+            <component :is="props.button.icon" :style="props.button.color" />
+          </template>
+        </a-float-button>
+      </a>
     </template>
-  </a-float-button>
-  <a-float-button
-    v-else-if="props.button.status == 'disabled'"
-    class="disabled-button"
-    :type="props.button.type"
-    :shape="props.button.shape"
-    tooltip="This button is disabled"
-  >
-    <template #icon>
-      <component :is="props.button.icon" />
+    <template v-else>
+      <a-float-button
+        v-if="
+          props.button.status == 'activated' || props.button.status === undefined
+        "
+        :class="[props.button.size, props.button.specialType]"
+        :type="props.button.type"
+        :shape="props.button.shape"
+        :tooltip="props.button.tooltip"
+        :badge="props.button.badge"
+        @click="props.button.onClick"
+      >
+        <template #icon>
+          <component :is="props.button.icon" :style="props.button.color" />
+        </template>
+      </a-float-button>
+      <a-float-button
+        v-else-if="props.button.status == 'disabled'"
+        class="disabled-button"
+        :type="props.button.type"
+        :shape="props.button.shape"
+        tooltip="This button is disabled"
+      >
+        <template #icon>
+          <component :is="props.button.icon" />
+        </template>
+      </a-float-button>
     </template>
-  </a-float-button>
+  </div>
 </template>
 
 <style>
@@ -64,7 +99,7 @@
   }
 
   .danger .ant-float-btn-body {
-    background-color: color-mix(in srgb, #6d6e6f, #ff002e 60%) !important;
+    background-color: color-mix(in srgb,#6d6e6f,#ff002e 60%) !important;
   }
   .danger .ant-float-btn-body:hover {
     background-color: color-mix(in srgb, #6d6e6f, #ff002e 80%) !important;
@@ -75,5 +110,8 @@
   }
   .success .ant-float-btn-body:hover {
     background-color: color-mix(in srgb, #6d6e6f, #27d157 80%) !important;
+  }
+  .margin-bottom-floating-button {
+    margin-bottom: 16px;
   }
 </style>

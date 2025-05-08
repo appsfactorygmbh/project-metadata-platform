@@ -50,8 +50,8 @@
     :body-style="{
       display: 'flex',
       padding: '5px',
-      alignItems: 'center',
-      height: '2rem',
+      alignItems: 'top',
+      height: 'fit-content',
     }"
     class="info"
   >

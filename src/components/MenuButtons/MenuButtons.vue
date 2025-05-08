@@ -27,6 +27,8 @@
           size: 'middle',
           status: 'activated',
           tooltip: 'Click here to navigate to the settings page',
+          isLink: true,
+          destination: "/settings"
         },
         {
           name: 'LogoutButton',
@@ -40,6 +42,7 @@
           size: 'middle',
           status: 'activated',
           tooltip: 'Click here to log out',
+          isLink: false,
         },
         {
           name: 'ToggleThemeButton',
@@ -50,6 +53,7 @@
           size: 'middle',
           status: 'activated',
           tooltip: 'Click here to toggle the theme',
+          isLink: false,
         },
       ] satisfies FloatButtonModel[],
   );

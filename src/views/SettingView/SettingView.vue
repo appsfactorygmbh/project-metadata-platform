@@ -32,6 +32,8 @@
     name: 'Back',
     size: 'large',
     type: 'primary',
+    isLink: false,
+    status: 'activated'
   };
 
   //Methods for URL link  by clickin the navigation buttons
@@ -93,7 +95,7 @@
     >
       <!-- return to homepage button-->
       <a-layout-header class="listHeader" />
-      <FloatingButton :button="backButton" class="iconBack" />
+      <FloatingButtonGroup :buttons="[backButton]"></FloatingButtonGroup>
 
       <!-- navigation elements -->
       <a-menu
@@ -139,9 +141,13 @@
 </template>
 
 <style scoped>
-  .iconBack {
+  .ant-float-btn-group {
+    position: absolute;
     left: 20px;
     top: 20px;
+    z-index: 1;        /* Ensure they're above other elements */
+    height: fit-content;
+    width: fit-content;
   }
   /* Style for the sidebar icons */
   .icons * {

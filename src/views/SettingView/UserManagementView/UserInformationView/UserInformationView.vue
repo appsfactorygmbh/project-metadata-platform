@@ -56,6 +56,7 @@
         size: 'large',
         status: 'activated',
         tooltip: 'Click here to delete this user',
+        isLink: false
       },
       {
         name: 'CreateUserButton',
@@ -67,6 +68,7 @@
         size: 'large',
         status: 'activated',
         tooltip: 'Click here to create a new user',
+        isLink: false
       },
     ];
     if (me.value?.id == user.value?.id) tempButtons[0].status = 'deactivated';
@@ -84,7 +86,6 @@
     setUserId(myId);
   };
 </script>
-
 <template>
   <ConfirmationDialog
     :is-open="isConfirmModalOpen"
@@ -95,7 +96,6 @@
     @update:is-open="isConfirmModalOpen = $event"
   />
   <div class="panel">
-    <!-- avatar components -->
     <a-flex class="avatar">
       <a-avatar :size="150">
         <template #icon>
@@ -104,14 +104,12 @@
       </a-avatar>
     </a-flex>
 
-    <!-- User informations components -->
     <a-flex
       class="userInfoBox"
       :body-style="{
         height: 'fit-content',
       }"
     >
-      <!-- Email Text Field -->
       <EditableTextField
         class="textField email"
         :value="user?.email ?? ''"
@@ -132,7 +130,6 @@
         />
       </EditableTextField>
 
-      <!-- Password Text Field -->
       <EditableTextField
         v-if="me?.id && me.id === user?.id"
         :value="'**********'"
@@ -149,15 +146,24 @@
       </EditableTextField>
     </a-flex>
   </div>
+  <FloatingButtonGroup :buttons="buttons" class="floating-buttons" />
   <RouterView />
-  <FloatingButtonGroup :buttons="buttons" />
 </template>
 
 <style scoped>
   .panel {
+    position: relative; /* Make sure the panel is a positioning context */
     min-width: 150px;
+    max-height: 100vh;
+    overflow-y: auto;
   }
-
+  .ant-float-btn-group {
+    height: max-content !important;
+    width: max-content !important;
+    position: absolute;
+    right: 20px;
+    bottom: 40px;
+  }
   .userInfoBox {
     padding: 1em 3em;
     margin: 2em 1em;
@@ -182,9 +188,4 @@
     justify-content: center;
   }
 
-  .panel {
-    position: relative;
-    max-height: 100vh; /* Set a maximum height */
-    overflow-y: auto; /* Enable vertical scrolling */
-  }
 </style>

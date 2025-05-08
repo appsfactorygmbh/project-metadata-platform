@@ -23,6 +23,7 @@
         staySignedIn: fields.remember,
       })
       .then((response) => {
+        callback();
         console.log(response);
       })
       .catch((error) => {
@@ -41,8 +42,8 @@
   const refreshToken = computed(() => auth.token()?.split('|')[1]);
 
   const callback = () => {
-    window.location.href =
-      (router.currentRoute.value.query.redirect as string) ?? '/';
+    const redirect = (router.currentRoute.value.query.redirect as string) ?? '/';
+    router.push(redirect);
   };
 
   onMounted(() => {

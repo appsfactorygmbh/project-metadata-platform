@@ -6,7 +6,6 @@ import {
 import { authService } from './services/AuthService';
 import axios from 'axios';
 import { REFRESH_TOKEN_EXPIRATION, TOKEN_REFRESH_INTERVAL } from './constants';
-import type { Router } from 'vue-router';
 
 type RequestOptionType =
   | 'drivers'
@@ -17,12 +16,9 @@ type RequestOptionType =
 type BaseAuthOptions = Omit<AuthOptions, RequestOptionType>;
 type RequestAuthOptions = Pick<AuthOptions, RequestOptionType>;
 
-const initAuth = (router: Router) => {
+const initAuth = () => {
   const baseOptions = {
     initSync: true,
-    plugins: {
-      router,
-    },
     authRedirect: {
       path: '/login',
     },

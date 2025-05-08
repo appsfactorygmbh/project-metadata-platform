@@ -45,10 +45,19 @@
     },
   );
 
+
+
+
   onMounted(() => {
-    auth?.load().then(() => {
-      authInitialized.value = true;
-    });
+    auth?.load()
+      .then(() => {
+        authenticated.value = true;
+        authInitialized.value = true;
+      })
+      .catch(() => {
+        // Token refresh failed or initial load failed
+        router.push('/login');
+      })
   });
 
   watch(
@@ -62,6 +71,7 @@
             authenticationFailed.value = false;
           })
           .catch(() => {
+            console.log("refresh failed")
             authenticationFailed.value = true;
           });
       }
@@ -73,10 +83,7 @@
     (failed) => {
       if (failed) {
         router.push({
-          path: '/login',
-          query: {
-            redirect: router.currentRoute.value.path,
-          },
+          path: '/login'
         });
       }
     },
