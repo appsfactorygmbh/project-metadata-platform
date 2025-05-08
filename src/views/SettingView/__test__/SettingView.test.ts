@@ -2,18 +2,28 @@ import { mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import SettingView from '@/views/SettingView/SettingView.vue';
 import {
-  createRouter,
-  createWebHistory,
   type RouteRecordRaw,
   type Router,
+  createRouter,
+  createWebHistory,
 } from 'vue-router';
+
+interface actualRouter {
+  createRouter: typeof createRouter;
+  createWebHistory: typeof createWebHistory;
+  useRouter: typeof useRouter;
+}
 
 // Mock the entire vue-router module
 vi.mock('vue-router', async () => {
-  const actual = await vi.importActual('vue-router');
+  const actual: actualRouter = await vi.importActual('vue-router');
   const mockRouter: Router = {
+    ...actual.createRouter({
+      history: actual.createWebHistory(),
+      routes: [],
+    }),
     push: vi.fn(),
-  } as any;
+  } as Router;
   return {
     ...actual,
     useRouter: () => mockRouter,
