@@ -10,7 +10,7 @@ import {
   usePluginStore,
 } from '@/store';
 import { Button } from 'ant-design-vue';
-import type { GlobalPluginModel } from '@/models/Plugin';
+import type { GlobalPluginModel } from '@/models/GlobalPlugin';
 import {
   authStoreSymbol,
   globalPluginStoreSymbol,

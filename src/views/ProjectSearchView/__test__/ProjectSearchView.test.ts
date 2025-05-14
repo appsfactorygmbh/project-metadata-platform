@@ -86,8 +86,11 @@ describe('ProjectSearchView.vue', () => {
       id: 200,
       projectName: 'test',
       clientName: 'test',
-      businessUnit: 'test',
-      teamNumber: 1,
+      team: {
+        id: 1,
+        businessUnit: 'test',
+        teamName: '1',
+      },
       isArchived: false,
       slug: 'test-project',
       company: 'test',

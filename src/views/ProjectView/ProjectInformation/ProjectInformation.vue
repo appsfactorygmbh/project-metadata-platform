@@ -222,12 +222,10 @@
   ]);
 
   //Function to update the project information
+  // TODO add reading from team input
   function updateProjectInformation(): void {
     const updatedProject: EditProjectModel = {
       projectName: projectData.projectName.value,
-      businessUnit: BUInput.value,
-      teamNumber: teamNumberInput.value,
-      department: departmentInput.value,
       clientName: clientNameInput.value,
       offerId: offerIdInput.value,
       company: companyInput.value,
@@ -244,9 +242,6 @@
     projectData.id.value = loadedData.id;
     projectData.slug.value = loadedData.slug;
     projectData.projectName.value = loadedData.projectName;
-    projectData.businessUnit.value = loadedData.businessUnit;
-    projectData.teamNumber.value = loadedData.teamNumber;
-    projectData.department.value = loadedData.department;
     projectData.clientName.value = loadedData.clientName;
     projectData.offerId.value = loadedData.offerId;
     projectData.company.value = loadedData.company;

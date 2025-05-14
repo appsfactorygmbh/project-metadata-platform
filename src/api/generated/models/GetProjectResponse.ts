@@ -75,7 +75,7 @@ export interface GetProjectResponse {
    * @type {GetTeamResponse}
    * @memberof GetProjectResponse
    */
-  team: GetTeamResponse;
+  team?: GetTeamResponse;
   /**
    *
    * @type {CompanyState}
@@ -106,7 +106,6 @@ export function instanceOfGetProjectResponse(
   if (!('company' in value) || value['company'] === undefined) return false;
   if (!('isArchived' in value) || value['isArchived'] === undefined)
     return false;
-  if (!('team' in value) || value['team'] === undefined) return false;
   if (!('companyState' in value) || value['companyState'] === undefined)
     return false;
   if (!('ismsLevel' in value) || value['ismsLevel'] === undefined) return false;
@@ -132,7 +131,8 @@ export function GetProjectResponseFromJSONTyped(
     offerId: json['offerId'],
     company: json['company'],
     isArchived: json['isArchived'],
-    team: GetTeamResponseFromJSON(json['team']),
+    team:
+      json['team'] == null ? undefined : GetTeamResponseFromJSON(json['team']),
     companyState: CompanyStateFromJSON(json['companyState']),
     ismsLevel: SecurityLevelFromJSON(json['ismsLevel']),
   };

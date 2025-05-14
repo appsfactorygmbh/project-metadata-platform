@@ -110,7 +110,7 @@
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useGlobalPluginsStore } from '@/store';
   import { useToggle } from '@vueuse/core';
-  import type { GlobalPluginModel } from '@/models/Plugin';
+  import type { GlobalPluginModel } from '@/models/GlobalPlugin';
   import { useThemeToken } from '@/utils/hooks';
 
   const token = useThemeToken();

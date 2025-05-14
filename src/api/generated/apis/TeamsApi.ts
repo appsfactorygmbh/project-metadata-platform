@@ -37,18 +37,17 @@ export interface TeamsIdGetRequest {
   id: number;
 }
 
-export interface TeamsPluginIdPatchRequest {
-  pluginId: string;
-  teamId?: number;
-  patchTeamRequest?: PatchTeamRequest;
-}
-
 export interface TeamsPutRequest {
   createTeamRequest?: CreateTeamRequest;
 }
 
 export interface TeamsTeamIdDeleteRequest {
   teamId: number;
+}
+
+export interface TeamsTeamIdPatchRequest {
+  teamId: number;
+  patchTeamRequest?: PatchTeamRequest;
 }
 
 /**
@@ -103,29 +102,6 @@ export interface TeamsApiInterface {
 
   /**
    *
-   * @summary Updates a team.
-   * @param {string} pluginId
-   * @param {number} [teamId] The id of the team to update.
-   * @param {PatchTeamRequest} [patchTeamRequest] The request body containing the details of the team to be updated.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof TeamsApiInterface
-   */
-  teamsPluginIdPatchRaw(
-    requestParameters: TeamsPluginIdPatchRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetTeamResponse>>;
-
-  /**
-   * Updates a team.
-   */
-  teamsPluginIdPatch(
-    requestParameters: TeamsPluginIdPatchRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetTeamResponse>;
-
-  /**
-   *
    * @summary Creates a new team with the given attributes.
    * @param {CreateTeamRequest} [createTeamRequest] The request body.
    * @param {*} [options] Override http request option.
@@ -165,6 +141,28 @@ export interface TeamsApiInterface {
     requestParameters: TeamsTeamIdDeleteRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<DeleteTeamResponse>;
+
+  /**
+   *
+   * @summary Updates a team.
+   * @param {number} teamId The id of the team to update.
+   * @param {PatchTeamRequest} [patchTeamRequest] The request body containing the details of the team to be updated.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TeamsApiInterface
+   */
+  teamsTeamIdPatchRaw(
+    requestParameters: TeamsTeamIdPatchRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<GetTeamResponse>>;
+
+  /**
+   * Updates a team.
+   */
+  teamsTeamIdPatch(
+    requestParameters: TeamsTeamIdPatchRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<GetTeamResponse>;
 }
 
 /**
@@ -274,68 +272,6 @@ export class TeamsApi extends runtime.BaseAPI implements TeamsApiInterface {
   }
 
   /**
-   * Updates a team.
-   */
-  async teamsPluginIdPatchRaw(
-    requestParameters: TeamsPluginIdPatchRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetTeamResponse>> {
-    if (requestParameters['pluginId'] == null) {
-      throw new runtime.RequiredError(
-        'pluginId',
-        'Required parameter "pluginId" was null or undefined when calling teamsPluginIdPatch().',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    if (requestParameters['teamId'] != null) {
-      queryParameters['teamId'] = requestParameters['teamId'];
-    }
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    headerParameters['Content-Type'] = 'application/json';
-
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
-
-    const response = await this.request(
-      {
-        path: `/Teams/{pluginId}`.replace(
-          `{${'pluginId'}}`,
-          encodeURIComponent(String(requestParameters['pluginId'])),
-        ),
-        method: 'PATCH',
-        headers: headerParameters,
-        query: queryParameters,
-        body: PatchTeamRequestToJSON(requestParameters['patchTeamRequest']),
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetTeamResponseFromJSON(jsonValue),
-    );
-  }
-
-  /**
-   * Updates a team.
-   */
-  async teamsPluginIdPatch(
-    requestParameters: TeamsPluginIdPatchRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetTeamResponse> {
-    const response = await this.teamsPluginIdPatchRaw(
-      requestParameters,
-      initOverrides,
-    );
-    return await response.value();
-  }
-
-  /**
    * Creates a new team with the given attributes.
    */
   async teamsPutRaw(
@@ -429,6 +365,64 @@ export class TeamsApi extends runtime.BaseAPI implements TeamsApiInterface {
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<DeleteTeamResponse> {
     const response = await this.teamsTeamIdDeleteRaw(
+      requestParameters,
+      initOverrides,
+    );
+    return await response.value();
+  }
+
+  /**
+   * Updates a team.
+   */
+  async teamsTeamIdPatchRaw(
+    requestParameters: TeamsTeamIdPatchRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<GetTeamResponse>> {
+    if (requestParameters['teamId'] == null) {
+      throw new runtime.RequiredError(
+        'teamId',
+        'Required parameter "teamId" was null or undefined when calling teamsTeamIdPatch().',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/Teams/{teamId}`.replace(
+          `{${'teamId'}}`,
+          encodeURIComponent(String(requestParameters['teamId'])),
+        ),
+        method: 'PATCH',
+        headers: headerParameters,
+        query: queryParameters,
+        body: PatchTeamRequestToJSON(requestParameters['patchTeamRequest']),
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      GetTeamResponseFromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Updates a team.
+   */
+  async teamsTeamIdPatch(
+    requestParameters: TeamsTeamIdPatchRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<GetTeamResponse> {
+    const response = await this.teamsTeamIdPatchRaw(
       requestParameters,
       initOverrides,
     );

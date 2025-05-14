@@ -1,13 +1,10 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue';
   import {
-    BankOutlined,
     FontColorsOutlined,
     PlusOutlined,
-    ShoppingOutlined,
     NumberOutlined,
     UserOutlined,
-    FieldNumberOutlined,
     SafetyCertificateOutlined,
     TrademarkOutlined,
     SwapOutlined,
@@ -19,7 +16,6 @@
   import { projectRoutingSymbol } from '@/store/injectionSymbols';
   import { useThemeToken } from '@/utils/hooks';
   import { message } from 'ant-design-vue';
-  import { isANumber } from '@/utils/form/userValidation';
 
   const token = useThemeToken();
 
@@ -103,9 +99,7 @@
   const submit = async () => {
     const projectData: CreateProjectModel = {
       projectName: formState.projectName!,
-      businessUnit: formState.businessUnit!,
-      teamNumber: formState.teamNumber!,
-      department: formState.department!,
+      teamId: formState.teamId!,
       clientName: formState.clientName!,
       isArchived: false,
       offerId: formState.offerId!,
@@ -166,55 +160,6 @@
           >
             <template #suffix>
               <FontColorsOutlined class="icon" />
-            </template>
-          </a-input>
-        </a-form-item>
-        <a-form-item
-          name="teamNumber"
-          :rules="[
-            {
-              required: true,
-              whitespace: true,
-              validator: isANumber,
-            },
-          ]"
-          class="column"
-          :no-style="true"
-        >
-          <a-input
-            v-model:value="formState.teamNumber"
-            placeholder="Team Number"
-          >
-            <template #suffix>
-              <FieldNumberOutlined class="icon" />
-            </template>
-          </a-input>
-        </a-form-item>
-        <a-form-item
-          name="businessUnit"
-          :rules="[{ required: true, whitespace: true }]"
-          :no-style="true"
-        >
-          <a-input
-            v-model:value="formState.businessUnit"
-            placeholder="Business Unit"
-          >
-            <template #suffix>
-              <ShoppingOutlined class="icon" />
-            </template>
-          </a-input>
-        </a-form-item>
-        <a-form-item
-          name="department"
-          :rules="[{ required: true, whitespace: true }]"
-          :no-style="true"
-        >
-          <a-input
-            v-model:value="formState.department"
-            placeholder="Department"
-          >
-            <template #suffix>
-              <BankOutlined class="icon" />
             </template>
           </a-input>
         </a-form-item>

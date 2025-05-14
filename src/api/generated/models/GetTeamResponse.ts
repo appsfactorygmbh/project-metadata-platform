@@ -37,7 +37,7 @@ export interface GetTeamResponse {
    */
   businessUnit: string;
   /**
-   * Gets or sets the business unit associated with the team. This property is required.
+   * Gets or sets the PTL associated with the team. This property is optional.
    * @type {string}
    * @memberof GetTeamResponse
    */

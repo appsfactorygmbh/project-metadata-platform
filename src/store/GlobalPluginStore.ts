@@ -1,4 +1,8 @@
-import type { GlobalPluginModel, CreateGlobalPluginModel, PatchGlobalPluginModel } from '@/models/GlobalPlugin';
+import type {
+  GlobalPluginModel,
+  CreateGlobalPluginModel,
+  PatchGlobalPluginModel,
+} from '@/models/GlobalPlugin';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import type { ApiStore } from './ApiStore';
 import { PluginsApi } from '@/api/generated';

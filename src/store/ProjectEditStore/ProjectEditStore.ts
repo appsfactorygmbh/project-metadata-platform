@@ -28,9 +28,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
       projectInformationChanges: {
         projectName: '',
         clientName: '',
-        businessUnit: '',
-        teamNumber: -1,
-        department: '',
+        teamId: null,
         offerId: '',
         company: '',
         ismsLevel: 'NORMAL',
@@ -70,8 +68,6 @@ export const useProjectEditStore = defineStore('projectEdit', {
         this.emptyDisplaynameFields.size === 0 &&
         this.projectInformationChanges.projectName !== '' &&
         this.projectInformationChanges.clientName !== '' &&
-        this.projectInformationChanges.businessUnit !== '' &&
-        this.projectInformationChanges.teamNumber !== undefined &&
         this.emptyProjectInformationFields.size === 0
       );
     },
