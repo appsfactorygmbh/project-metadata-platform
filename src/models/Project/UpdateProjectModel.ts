@@ -1,3 +1,3 @@
-import type { CreateProjectRequest } from '@/api/generated';
+import type { PutProjectRequest } from '@/api/generated';
 
-export type UpdateProjectModel = CreateProjectRequest;
+export type UpdateProjectModel = PutProjectRequest;

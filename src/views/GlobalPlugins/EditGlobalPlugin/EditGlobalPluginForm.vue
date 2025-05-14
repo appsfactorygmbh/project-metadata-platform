@@ -6,6 +6,7 @@
   import { useRoute } from 'vue-router';
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
   import type { GlobalPluginFormData } from '../GlobalPluginForm';
+import type { PatchGlobalPluginRequest } from '@/api/generated';
 
   const { formStore } = defineProps<{
     formStore: FormStore;
@@ -13,7 +14,7 @@
 
   const globalPluginStore = useGlobalPluginsStore();
 
-  const onSubmit: FormSubmitType = (fields) => {
+  const onSubmit: FormSubmitType = (fields : PatchGlobalPluginRequest) => {
     if (!pluginIdRef.value) {
       return;
     }

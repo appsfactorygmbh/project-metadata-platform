@@ -15,35 +15,35 @@
 /**
  * Response for creating a new Plugin.
  * @export
- * @interface CreatePluginResponse
+ * @interface CreateTeamResponse
  */
-export interface CreatePluginResponse {
+export interface CreateTeamResponse {
   /**
    * The id of the new Plugin.
    * @type {number}
-   * @memberof CreatePluginResponse
+   * @memberof CreateTeamResponse
    */
   id: number;
 }
 
 /**
- * Check if a given object implements the CreatePluginResponse interface.
+ * Check if a given object implements the CreateTeamResponse interface.
  */
-export function instanceOfCreatePluginResponse(
+export function instanceOfCreateTeamResponse(
   value: object,
-): value is CreatePluginResponse {
+): value is CreateTeamResponse {
   if (!('id' in value) || value['id'] === undefined) return false;
   return true;
 }
 
-export function CreatePluginResponseFromJSON(json: any): CreatePluginResponse {
-  return CreatePluginResponseFromJSONTyped(json, false);
+export function CreateTeamResponseFromJSON(json: any): CreateTeamResponse {
+  return CreateTeamResponseFromJSONTyped(json, false);
 }
 
-export function CreatePluginResponseFromJSONTyped(
+export function CreateTeamResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): CreatePluginResponse {
+): CreateTeamResponse {
   if (json == null) {
     return json;
   }
@@ -52,12 +52,12 @@ export function CreatePluginResponseFromJSONTyped(
   };
 }
 
-export function CreatePluginResponseToJSON(json: any): CreatePluginResponse {
-  return CreatePluginResponseToJSONTyped(json, false);
+export function CreateTeamResponseToJSON(json: any): CreateTeamResponse {
+  return CreateTeamResponseToJSONTyped(json, false);
 }
 
-export function CreatePluginResponseToJSONTyped(
-  value?: CreatePluginResponse | null,
+export function CreateTeamResponseToJSONTyped(
+  value?: CreateTeamResponse | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {

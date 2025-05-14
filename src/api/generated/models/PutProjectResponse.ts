@@ -13,37 +13,37 @@
  */
 
 /**
- * Response for creating a new Plugin.
+ * Represents a response to create a new project.
  * @export
- * @interface CreatePluginResponse
+ * @interface PutProjectResponse
  */
-export interface CreatePluginResponse {
+export interface PutProjectResponse {
   /**
-   * The id of the new Plugin.
+   * The id of the newly created project.
    * @type {number}
-   * @memberof CreatePluginResponse
+   * @memberof PutProjectResponse
    */
   id: number;
 }
 
 /**
- * Check if a given object implements the CreatePluginResponse interface.
+ * Check if a given object implements the PutProjectResponse interface.
  */
-export function instanceOfCreatePluginResponse(
+export function instanceOfPutProjectResponse(
   value: object,
-): value is CreatePluginResponse {
+): value is PutProjectResponse {
   if (!('id' in value) || value['id'] === undefined) return false;
   return true;
 }
 
-export function CreatePluginResponseFromJSON(json: any): CreatePluginResponse {
-  return CreatePluginResponseFromJSONTyped(json, false);
+export function PutProjectResponseFromJSON(json: any): PutProjectResponse {
+  return PutProjectResponseFromJSONTyped(json, false);
 }
 
-export function CreatePluginResponseFromJSONTyped(
+export function PutProjectResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): CreatePluginResponse {
+): PutProjectResponse {
   if (json == null) {
     return json;
   }
@@ -52,12 +52,12 @@ export function CreatePluginResponseFromJSONTyped(
   };
 }
 
-export function CreatePluginResponseToJSON(json: any): CreatePluginResponse {
-  return CreatePluginResponseToJSONTyped(json, false);
+export function PutProjectResponseToJSON(json: any): PutProjectResponse {
+  return PutProjectResponseToJSONTyped(json, false);
 }
 
-export function CreatePluginResponseToJSONTyped(
-  value?: CreatePluginResponse | null,
+export function PutProjectResponseToJSONTyped(
+  value?: PutProjectResponse | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {

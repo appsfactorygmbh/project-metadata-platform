@@ -1,11 +1,7 @@
-import type { GlobalPluginModel } from '@/models/Plugin';
+import type { GlobalPluginModel, CreateGlobalPluginModel, PatchGlobalPluginModel } from '@/models/GlobalPlugin';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import type { ApiStore } from './ApiStore';
-import {
-  type CreatePluginRequest,
-  type GetGlobalPluginResponse,
-  PluginsApi,
-} from '@/api/generated';
+import { PluginsApi } from '@/api/generated';
 import { useApiStore } from './ApiStore';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
@@ -21,11 +17,11 @@ type StoreActions = {
   refreshAuth: () => void;
   fetchAll: () => Promise<void>;
   fetch: (pluginId: number) => Promise<GlobalPluginModel | undefined>;
-  create: (plugin: CreatePluginRequest) => Promise<void>;
+  create: (plugin: CreateGlobalPluginModel) => Promise<void>;
   update: (
     pluginId: GlobalPluginModel['id'],
-    payload: GlobalPluginModel | { isArchived: boolean },
-  ) => Promise<GetGlobalPluginResponse>;
+    payload: PatchGlobalPluginModel,
+  ) => Promise<GlobalPluginModel>;
   delete: (pluginId: GlobalPluginModel['id']) => Promise<void>;
   findPlugin: (
     id: GlobalPluginModel['id'],
@@ -152,7 +148,7 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
 
         async update(
           pluginId: GlobalPluginModel['id'],
-          payload: GlobalPluginModel | { isArchived: boolean },
+          payload: PatchGlobalPluginModel | { isArchived: boolean },
         ) {
           try {
             const response = await this.callApi('pluginsPluginIdPatch', {

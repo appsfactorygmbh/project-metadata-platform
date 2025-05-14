@@ -1,25 +1,28 @@
 /* tslint:disable */
-
+/* eslint-disable */
 export * from './CompanyState';
 export * from './CreatePluginRequest';
 export * from './CreatePluginResponse';
-export * from './CreateProjectRequest';
-export * from './CreateProjectResponse';
+export * from './CreateTeamRequest';
+export * from './CreateTeamResponse';
 export * from './CreateUserRequest';
 export * from './CreateUserResponse';
 export * from './DeleteGlobalPluginResponse';
+export * from './DeleteTeamResponse';
 export * from './ErrorResponse';
-export * from './GetAllUsersResponse';
 export * from './GetGlobalPluginResponse';
 export * from './GetPluginResponse';
 export * from './GetProjectResponse';
 export * from './GetProjectsResponse';
+export * from './GetTeamResponse';
 export * from './GetUserResponse';
 export * from './LogResponse';
 export * from './LoginRequest';
 export * from './LoginResponse';
 export * from './PatchGlobalPluginRequest';
+export * from './PatchTeamRequest';
 export * from './PatchUserRequest';
-export * from './ProblemDetails';
+export * from './PutProjectRequest';
+export * from './PutProjectResponse';
 export * from './SecurityLevel';
 export * from './UpdateProjectPluginRequest';
