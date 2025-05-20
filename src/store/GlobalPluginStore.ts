@@ -47,7 +47,7 @@ type StoreGetters = {
 
 type Store = PiniaStore<'globalPlugin', StoreState, StoreGetters, StoreActions>;
 
-export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
+export const useGlobalPluginStore = (pinia: Pinia = piniaInstance): Store => {
   return useStore<Store, ApiStore<PluginsApi>>(
     'globalPlugin',
     {
@@ -207,5 +207,5 @@ export const useGlobalPluginsStore = (pinia: Pinia = piniaInstance): Store => {
   )(pinia);
 };
 
-type GlobalPluginsStore = ReturnType<typeof useGlobalPluginsStore>;
-export type { GlobalPluginsStore };
+type GlobalPluginStore = ReturnType<typeof useGlobalPluginStore>;
+export type { GlobalPluginStore };

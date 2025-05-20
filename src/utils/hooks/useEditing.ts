@@ -25,7 +25,6 @@ export const useEditing = (queryKey: string = 'isEditing') => {
   };
 
   const stopEditing = async () => {
-    console.log('stop editing');
     const currentQueries = router.currentRoute.value.query;
     await router.push({
       path: router.currentRoute.value.path,

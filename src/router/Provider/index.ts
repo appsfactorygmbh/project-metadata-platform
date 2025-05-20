@@ -7,6 +7,8 @@ import ProjectRoutingProvider from './ProjectRoutingProvider.vue';
 import AuthProvider from './AuthProvider.vue';
 import LocalLogProvider from './LocalLogProvider.vue';
 import UserRoutingProvider from './UserRoutingProvider.vue';
+import TeamRoutingProvider from './TeamRoutingProvider.vue';
+import TeamProvider from './TeamProvider.vue';
 
 export {
   ThemeProvider,
@@ -18,4 +20,6 @@ export {
   AuthProvider,
   LocalLogProvider,
   UserRoutingProvider,
+  TeamRoutingProvider,
+  TeamProvider,
 };

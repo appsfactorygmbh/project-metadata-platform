@@ -68,7 +68,12 @@ export const useApiStore = <Api extends ApiTypes>(
             args,
             this.api as Api,
           );
-        } catch (error) {
+        } catch (error: any) {
+          if (error?.response?.status === 401) {
+            console.log(
+              '|||||||||||||||||||||||||||||||||||||||||TRY TO REFRESH AUTH|||||||||||||||||||||||||||||||||||||||||||',
+            );
+          }
           await handleFetchError(error);
         } finally {
           this.setIsLoading(false);

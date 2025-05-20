@@ -1,0 +1,174 @@
+<script lang="ts" setup>
+  import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+  import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
+  import { inject, ref } from 'vue';
+  import { teamStoreSymbol } from '@/store/injectionSymbols';
+  import { storeToRefs } from 'pinia';
+  import { useRouter } from 'vue-router';
+  import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
+  import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
+  import { useFormStore } from '@/components/Form';
+  import { TeamNameInputField } from '@/components/EditableTextField';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
+
+  const router = useRouter();
+  const teamStore = inject(teamStoreSymbol)!;
+  const { getTeam, getIsLoadingTeams } = storeToRefs(teamStore);
+  const team = computed(() => getTeam.value);
+  const isLoading = computed(() => getIsLoadingTeams.value);
+
+  const teamNameFormStore = useFormStore('editTeamNameForm');
+  const businessUnitFormStore = useFormStore('editBuForm');
+  const ptlFormStore = useFormStore('editPtlForm');
+
+  const isConfirmModalOpen = ref<boolean>(false);
+  const openModal = () => {
+    isConfirmModalOpen.value = true;
+  };
+  const closeModal = () => {
+    isConfirmModalOpen.value = false;
+  };
+
+  //Button for adding new User and deleting User
+  const buttons = computed((): FloatButtonModel[] => {
+    const tempButtons: FloatButtonModel[] = [
+      {
+        name: 'DeleteTeamButton',
+        onClick: () => {
+          openModal();
+        },
+        icon: DeleteOutlined,
+        type: 'primary',
+        specialType: 'danger',
+        size: 'large',
+        status: 'activated',
+        tooltip: 'Click here to delete this team',
+        isLink: false,
+      },
+      {
+        name: 'CreateTeamButton',
+        onClick: () => {
+          router.push('/settings/team-management/create');
+        },
+        icon: PlusOutlined,
+        type: 'primary',
+        size: 'large',
+        status: 'activated',
+        tooltip: 'Click here to create a new team',
+        isLink: false,
+      },
+    ];
+    return tempButtons;
+  });
+
+  const deleteUser = async () => {
+    if (!team.value) return;
+    await teamStore.delete(team.value?.id);
+  };
+</script>
+<template>
+  <ConfirmationDialog
+    :is-open="isConfirmModalOpen"
+    title="Delete confirm"
+    message="Are you sure you want to delete this user?"
+    @confirm="deleteUser"
+    @cancel="closeModal"
+    @update:is-open="isConfirmModalOpen = $event"
+  />
+  <div class="panel">
+    <a-flex class="avatar">
+      <a-avatar :size="150">
+        <template #icon>
+          <TeamOutlined />
+        </template>
+      </a-avatar>
+    </a-flex>
+
+    <a-flex
+      class="userInfoBox"
+      :body-style="{
+        height: 'fit-content',
+      }"
+    >
+      <EditableTextField
+        class="textField teamName"
+        :value="team?.teamName ?? ''"
+        :is-loading="isLoading"
+        :label="'TeamName'"
+        :is-editing-key="'isEditingTeamName'"
+        :form-store="teamNameFormStore"
+        :has-edit-keys="true"
+        @saved-changes="async () => team && (await teamStore.fetch(team.id))"
+      >
+        <TeamNameInputField
+          :teamId="team?.id ?? -1"
+          :form-store="teamNameFormStore"
+          :placeholder="team?.teamName ?? ''"
+          :default="team?.teamName ?? ''"
+        />
+      </EditableTextField>
+
+      <EditableTextField
+        :value="team == undefined ? '' : (team.businessUnit ?? '')"
+        :label="'Business Unit'"
+        :is-editing-key="'isEditingBU'"
+        :is-loading="isLoading"
+        :form-store="businessUnitFormStore"
+        :has-edit-keys="true"
+      >
+      </EditableTextField>
+      <EditableTextField
+        :value="team == undefined ? '' : (team.businessUnit ?? '')"
+        :label="'PTL'"
+        :is-editing-key="'isEditingPTL'"
+        :is-loading="isLoading"
+        :form-store="ptlFormStore"
+        :has-edit-keys="true"
+      >
+      </EditableTextField>
+    </a-flex>
+  </div>
+  <FloatingButtonGroup :buttons="buttons" class="floating-buttons" />
+  <RouterView />
+</template>
+
+<style scoped>
+  .panel {
+    position: relative; /* Make sure the panel is a positioning context */
+    min-width: 150px;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  .ant-float-btn-group {
+    height: max-content !important;
+    width: max-content !important;
+    position: absolute;
+    right: 20px;
+    bottom: 40px;
+  }
+  .userInfoBox {
+    padding: 1em 3em;
+    margin: 2em 1em;
+    border-radius: 10px;
+    background-color: v-bind('token.colorBgElevated');
+    min-width: 450px;
+    height: auto;
+    flex-direction: column;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  :deep(.ant-card) {
+    margin: 0.5em 0;
+    background-color: v-bind('token.colorBgElevated');
+  }
+
+  .avatar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+</style>

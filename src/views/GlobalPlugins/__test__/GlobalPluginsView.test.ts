@@ -4,9 +4,9 @@ import { describe, expect, it } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import {
-  type GlobalPluginsStore,
+  type GlobalPluginStore,
   useAuthStore,
-  useGlobalPluginsStore,
+  useGlobalPluginStore,
   usePluginStore,
 } from '@/store';
 import { Button } from 'ant-design-vue';
@@ -91,8 +91,8 @@ describe('GlobalPluginsView.vue', () => {
     vi.mock('@/store/GlobalPluginStore', async (importOriginal) => {
       return {
         ...(await importOriginal<typeof import('@/store/GlobalPluginStore')>()),
-        useGlobalPluginsStore: (pinia = testingPinia) => {
-          return useStore<GlobalPluginsStore>('globalPlugin', {
+        useGlobalPluginStore: (pinia = testingPinia) => {
+          return useStore<GlobalPluginStore>('globalPlugin', {
             state: {
               globalPlugins: testData,
             },
@@ -122,7 +122,7 @@ describe('GlobalPluginsView.vue', () => {
     });
   });
 
-  const globalPluginStore = useGlobalPluginsStore(testingPinia);
+  const globalPluginStore = useGlobalPluginStore(testingPinia);
 
   const generateWrapper = () => {
     return mount(GlobalPluginsView, {
@@ -157,7 +157,7 @@ describe('GlobalPluginsView.vue', () => {
 
   it('calls the store when clicking the archive button', async () => {
     const wrapper = generateWrapper();
-    const globalPluginStore = useGlobalPluginsStore();
+    const globalPluginStore = useGlobalPluginStore();
     const spy = vi.spyOn(globalPluginStore, 'archive');
 
     await flushPromises();
@@ -176,7 +176,7 @@ describe('GlobalPluginsView.vue', () => {
 
   it('calls the store when clicking the reactivate button', async () => {
     const wrapper = generateWrapper();
-    const globalPluginStore = useGlobalPluginsStore();
+    const globalPluginStore = useGlobalPluginStore();
     const spy = vi.spyOn(globalPluginStore, 'unarchive');
 
     await flushPromises();
@@ -193,7 +193,7 @@ describe('GlobalPluginsView.vue', () => {
 
   it('calls the store when clicking the delete button', async () => {
     const wrapper = generateWrapper();
-    const globalPluginStore = useGlobalPluginsStore();
+    const globalPluginStore = useGlobalPluginStore();
     const spy = vi.spyOn(globalPluginStore, 'delete');
 
     await flushPromises();

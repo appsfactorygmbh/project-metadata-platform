@@ -8,7 +8,7 @@
   import type { LabeledValue, SelectValue } from 'ant-design-vue/lib/select';
   import type { RulesObject } from '@/components/Form/types';
   import type { AddPluginFormData } from './AddPluginFormData.ts';
-  import { useGlobalPluginsStore } from '@/store/GlobalPluginStore.ts';
+  import { useGlobalPluginStore } from '@/store/GlobalPluginStore.ts';
   import { usePluginStore } from '@/store';
   import { isUniqueUrl } from '@/utils/form/userValidation.ts';
   import type { GlobalPluginModel } from '@/models/GlobalPlugin';
@@ -18,7 +18,7 @@
     initialValues: AddPluginFormData;
   }>();
 
-  const globalPluginStore = useGlobalPluginsStore();
+  const globalPluginStore = useGlobalPluginStore();
   const projectEditStore = inject(projectEditStoreSymbol);
   const pluginStore = usePluginStore();
   const options = ref<SelectProps['options']>([]);

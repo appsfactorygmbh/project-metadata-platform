@@ -244,7 +244,7 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingUpdate(true);
             this.setUpdatedSuccessfully(false);
             const response = await this.callApi('projectsPut', {
-              createProjectRequest: projectData,
+              putProjectRequest: projectData,
               projectId: id,
             });
             if (response) {

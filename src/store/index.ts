@@ -6,33 +6,36 @@ import {
 import { type ProjectStore, useProjectStore } from './ProjectStore.ts';
 import { type SearchStore, useSearchStore } from './SearchStore';
 import {
-  type GlobalPluginsStore,
-  useGlobalPluginsStore,
+  type GlobalPluginStore,
+  useGlobalPluginStore,
 } from './GlobalPluginStore';
 import { type UserStore, useUserStore } from './UserStore';
 import { type AuthStore, useAuthStore } from './AuthStore';
 import { type LocalLogStore, useLocalLogStore } from './LocalLogStore';
 import { type LogsStore, useLogsStore } from './LogsStore';
+import { type TeamStore, useTeamStore } from './TeamStore.ts';
 
 export {
   useAuthStore,
   useProjectStore,
   usePluginStore,
   useSearchStore,
-  useGlobalPluginsStore,
+  useGlobalPluginStore,
   useProjectEditStore,
   useUserStore,
   useLocalLogStore,
   useLogsStore,
+  useTeamStore,
 };
 export type {
   PluginStore,
   ProjectStore,
   SearchStore,
-  GlobalPluginsStore,
+  GlobalPluginStore,
   ProjectEditStore,
   UserStore,
   AuthStore,
   LocalLogStore,
   LogsStore,
+  TeamStore,
 };

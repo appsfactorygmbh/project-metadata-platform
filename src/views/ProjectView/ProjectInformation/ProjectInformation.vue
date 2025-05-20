@@ -18,7 +18,7 @@
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import { usePluginStore, useProjectStore } from '@/store';
+  import { usePluginStore, useProjectStore, useTeamStore } from '@/store';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
   import IconButton from '@/components/Button/IconButton.vue';
@@ -36,6 +36,7 @@
   const projectStore = useProjectStore();
   const projectEditStore = inject(projectEditStoreSymbol)!;
   const pluginStore = usePluginStore();
+  const teamStore = useTeamStore();
   const projectRouting = inject(projectRoutingSymbol)!;
   const token = useThemeToken();
 
@@ -57,6 +58,7 @@
 
   onMounted(async () => {
     const project = projectStore.getProject;
+    teamStore.fetchAll();
     if (project) addData(project);
 
     const data: ComputedRef<DetailedProjectModel | null> = computed(
@@ -82,12 +84,14 @@
         projectEditStore.resetPluginChanges();
         BUInputStatus.value = '';
         teamNumberInputStatus.value = '';
-        departmentInputStatus.value = '';
+        PtlInputStatus.value = '';
         clientNameInputStatus.value = '';
         offerIdInputStatus.value = '';
         companyInputStatus.value = '';
         companyStateInputState.value = '';
         ismsLevelInputState.value = '';
+        teamNameInputStatus.value = '';
+        teamNameInput.value = '';
         addData(projectStore.getProject!);
       }
     },
@@ -106,8 +110,9 @@
     slug: ref<string>(''),
     projectName: ref<string>(''),
     businessUnit: ref<string>(''),
-    teamNumber: ref<number>(0),
-    department: ref<string>(''),
+    teamId: ref<number | undefined>(undefined),
+    teamName: ref<string>(''),
+    ptl: ref<string>(''),
     clientName: ref<string>(''),
     offerId: ref<string>(''),
     company: ref<DetailedProjectModel['company']>(''),
@@ -119,18 +124,17 @@
   type Status = '' | 'error' | 'warning' | undefined;
 
   const BUInputStatus = ref<Status>('');
+  const teamNameInputStatus = ref<Status>('');
   const teamNumberInputStatus = ref<Status>('');
-  const departmentInputStatus = ref<Status>('');
+  const PtlInputStatus = ref<Status>('');
   const clientNameInputStatus = ref<Status>('');
   const offerIdInputStatus = ref<Status>('');
   const companyInputStatus = ref<Status>('');
   const companyStateInputState = ref<Status>('');
   const ismsLevelInputState = ref<Status>('');
 
-  const BUInput = ref(projectData.businessUnit);
-  const teamNumberInput = ref(projectData.teamNumber);
-  const departmentInput = ref(projectData.department);
   const clientNameInput = ref(projectData.clientName);
+  const teamNameInput = ref(projectData.teamName);
   const offerIdInput = ref(projectData.offerId);
   const companyInput = ref(projectData.company);
   const companyStateInput = ref(projectData.companyState);
@@ -157,24 +161,6 @@
     );
 
   const textFields = ref<InputField[]>([
-    {
-      label: 'Business\xa0Unit',
-      name: 'businessUnit',
-      value: BUInput,
-      status: BUInputStatus,
-    },
-    {
-      label: 'Team\xa0Number',
-      name: 'teamNumber',
-      value: teamNumberInput,
-      status: teamNumberInputStatus,
-    },
-    {
-      label: 'Department',
-      name: 'department',
-      value: departmentInput,
-      status: departmentInputStatus,
-    },
     {
       label: 'Client\xa0Name',
       name: 'clientName',
@@ -221,9 +207,10 @@
     },
   ]);
 
-  //Function to update the project information
+  // Function to update the project information
   // TODO add reading from team input
   function updateProjectInformation(): void {
+    const mappedTeamId = teamStore.getIdToName(teamNameInput.value);
     const updatedProject: EditProjectModel = {
       projectName: projectData.projectName.value,
       clientName: clientNameInput.value,
@@ -231,6 +218,7 @@
       company: companyInput.value,
       companyState: companyStateInput.value,
       ismsLevel: ismsLevelInput.value,
+      teamId: mappedTeamId,
     };
     projectEditStore.updateProjectInformationChanges(updatedProject);
   }
@@ -241,6 +229,12 @@
       projectEditStore.setProjectInformation(projectStore.getProject);
     projectData.id.value = loadedData.id;
     projectData.slug.value = loadedData.slug;
+    projectData.businessUnit.value =
+      loadedData.team == undefined ? '' : loadedData.team.businessUnit;
+    projectData.teamName.value =
+      loadedData.team == undefined ? '' : loadedData.team.teamName;
+    projectData.ptl.value =
+      loadedData.team?.ptl == undefined ? '' : loadedData.team.ptl;
     projectData.projectName.value = loadedData.projectName;
     projectData.clientName.value = loadedData.clientName;
     projectData.offerId.value = loadedData.offerId;
@@ -414,6 +408,9 @@
           height: 'fit-content',
         }"
       >
+        <a-divider class="SectionSeperator" orientation="left"
+          >General Information</a-divider
+        >
         <EditableTextField
           v-if="!isEditing"
           class="infoCard non-editing-mode"
@@ -470,6 +467,61 @@
             @success="field.status = ''"
           />
         </EditableTextField>
+
+        <!-- team specific inputs -->
+        <a-divider orientation="left" class="SectionSeperator">Team</a-divider>
+        <EditableTextField
+          v-if="isEditing"
+          :key="'Team'"
+          class="infoCard"
+          :class="[editingClass, nonEditingClass]"
+          :value="teamNameInput"
+          :is-loading="isLoading"
+          :label="'Team\xa0Select'"
+          :has-edit-keys="false"
+          :display-value="() => 'Team\xa0Select'"
+          ><ProjectInformationSearchSelectField
+            class="editField"
+            :columnName="'TeamName'"
+            :inputValue="teamNameInput"
+            :inputStatus="'error'"
+            :options="teamStore.getTeamNames"
+            :edit-store="projectEditStore"
+            :isEditing="isEditing"
+            @updated="
+              (newValue) => {
+                teamNameInput = newValue;
+                updateProjectInformation();
+              }
+            "
+        /></EditableTextField>
+
+        <EditableTextField
+          v-if="!isEditing"
+          class="infoCard non-editing-mode"
+          :value="projectData.teamName.value"
+          :is-loading="isLoading"
+          :label="'Team\xa0Name'"
+          :has-edit-keys="false"
+        />
+
+        <EditableTextField
+          v-if="!isEditing"
+          class="infoCard non-editing-mode"
+          :value="projectData.businessUnit.value"
+          :is-loading="isLoading"
+          :label="'Business\xa0Unit'"
+          :has-edit-keys="false"
+        />
+
+        <EditableTextField
+          v-if="!isEditing"
+          class="infoCard non-editing-mode"
+          :value="projectData.ptl.value"
+          :is-loading="isLoading"
+          :label="'PTL'"
+          :has-edit-keys="false"
+        />
       </a-flex>
     </div>
     <a-flex
@@ -483,9 +535,15 @@
       <a-empty v-else description="No project selected." />
     </a-flex>
   </div>
+  <template> </template>
 </template>
 
 <style scoped lang="scss">
+  /* Style for the seperator */
+  .SectionSeperator {
+    font-size: large;
+  }
+
   /* Style for the middle section */
   .main {
     width: 100%;

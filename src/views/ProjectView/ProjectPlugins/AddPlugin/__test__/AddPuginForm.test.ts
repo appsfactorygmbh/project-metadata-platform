@@ -9,7 +9,7 @@ import { useFormStore } from '@/components/Form';
 import type { AddPluginFormData } from '../AddPluginFormData';
 import { AddPluginForm } from '..';
 import { globalPluginStoreSymbol } from '@/store/injectionSymbols.ts';
-import { useGlobalPluginsStore } from '@/store';
+import { useGlobalPluginStore } from '@/store';
 import { createTestingPinia } from '@pinia/testing';
 
 const plugin = [
@@ -32,7 +32,7 @@ const testForm: AddPluginFormData = {
 describe('AddPluginForm.vue', () => {
   let wrapper: VueWrapper;
   let formStore: ReturnType<typeof useFormStore>;
-  const globalPluginStore = useGlobalPluginsStore();
+  const globalPluginStore = useGlobalPluginStore();
 
   enableAutoUnmount(afterEach);
 
