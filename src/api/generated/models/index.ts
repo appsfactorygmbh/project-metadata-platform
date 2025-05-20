@@ -11,6 +11,7 @@ export * from './DeleteGlobalPluginResponse';
 export * from './DeleteTeamResponse';
 export * from './ErrorResponse';
 export * from './GetGlobalPluginResponse';
+export * from './GetLinkedProjectsResponse';
 export * from './GetPluginResponse';
 export * from './GetProjectResponse';
 export * from './GetProjectsResponse';

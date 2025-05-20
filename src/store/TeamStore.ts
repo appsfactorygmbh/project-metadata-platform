@@ -10,6 +10,8 @@ import { useApiStore, type ApiStore } from './ApiStore';
 type StoreState = {
   teams: TeamModel[];
   team: TeamModel;
+  // in sync with team
+  linkedProjects: number[];
   isLoadingTeams: boolean;
   loadedTeamsSuccessfully: boolean;
 };
@@ -17,6 +19,7 @@ type StoreState = {
 type StoreGetters = {
   getTeams: () => TeamModel[];
   getTeam: () => TeamModel;
+  getLinkedProjects: () => number[];
   getTeamNames: () => string[];
   getIsLoadingTeams: () => boolean;
 };
@@ -25,6 +28,7 @@ type StoreActions = {
   refreshAuth: () => void;
   fetchAll: () => Promise<void>;
   fetch: (teamId: number) => Promise<void>;
+  fetchLinkedProjects: (teamId: number) => Promise<void>;
   create: (teamCreate: CreateTeamModel) => Promise<void>;
   update: (
     teamId: TeamModel['id'],
@@ -46,6 +50,7 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
       state: {
         teams: [],
         team: undefined,
+        linkedProjects: [],
         isLoadingTeams: false,
         loadedTeamsSuccessfully: false,
       },
@@ -62,6 +67,9 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getTeamNames(): string[] {
           return this.teams.map((team) => team.teamName);
+        },
+        getLinkedProjects(): number[] {
+          return this.linkedProjects;
         },
       },
 
@@ -87,6 +95,7 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
             const teamGet: TeamModel = await this.callApi('teamsIdGet', {
               id: teamId,
             });
+            this.fetchLinkedProjects(teamId);
             this.setTeam(teamGet);
           } finally {
             this.setLoadingTeams(false);
@@ -113,6 +122,22 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingTeams(false);
           }
         },
+        async update(teamId: TeamModel['id'],payload: TeamEditModel): Promise<TeamModel>{
+        try {
+            const team = await this.callApi('teamsTeamIdPatch', { teamId: teamId, patchTeamRequest: payload});
+            this.fetchAll();
+            return team;
+          } finally {
+            this.setLoadingTeams(false);
+          }
+      },
+      async fetchLinkedProjects(teamId: number): Promise<void>{
+         try {
+            this.linkedProjects= (await this.callApi('teamsTeamIdLinkedProjectsGet', { teamId: teamId })).projectIds;
+          } finally {
+
+          }
+      }
       },
     },
     useApiStore(TeamsApi, pinia),

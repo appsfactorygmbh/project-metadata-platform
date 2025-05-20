@@ -17,6 +17,7 @@ import type {
   CreateTeamRequest,
   CreateTeamResponse,
   DeleteTeamResponse,
+  GetLinkedProjectsResponse,
   GetTeamResponse,
   PatchTeamRequest,
 } from '../models/index';
@@ -24,6 +25,7 @@ import {
   CreateTeamRequestToJSON,
   CreateTeamResponseFromJSON,
   DeleteTeamResponseFromJSON,
+  GetLinkedProjectsResponseFromJSON,
   GetTeamResponseFromJSON,
   PatchTeamRequestToJSON,
 } from '../models/index';
@@ -42,6 +44,10 @@ export interface TeamsPutRequest {
 }
 
 export interface TeamsTeamIdDeleteRequest {
+  teamId: number;
+}
+
+export interface TeamsTeamIdLinkedProjectsGetRequest {
   teamId: number;
 }
 
@@ -141,6 +147,27 @@ export interface TeamsApiInterface {
     requestParameters: TeamsTeamIdDeleteRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<DeleteTeamResponse>;
+
+  /**
+   *
+   * @summary Retrieves the linked projects for a team by its ID.
+   * @param {number} teamId The unique identifier of the team.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TeamsApiInterface
+   */
+  teamsTeamIdLinkedProjectsGetRaw(
+    requestParameters: TeamsTeamIdLinkedProjectsGetRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<GetLinkedProjectsResponse>>;
+
+  /**
+   * Retrieves the linked projects for a team by its ID.
+   */
+  teamsTeamIdLinkedProjectsGet(
+    requestParameters: TeamsTeamIdLinkedProjectsGetRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<GetLinkedProjectsResponse>;
 
   /**
    *
@@ -365,6 +392,61 @@ export class TeamsApi extends runtime.BaseAPI implements TeamsApiInterface {
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<DeleteTeamResponse> {
     const response = await this.teamsTeamIdDeleteRaw(
+      requestParameters,
+      initOverrides,
+    );
+    return await response.value();
+  }
+
+  /**
+   * Retrieves the linked projects for a team by its ID.
+   */
+  async teamsTeamIdLinkedProjectsGetRaw(
+    requestParameters: TeamsTeamIdLinkedProjectsGetRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<GetLinkedProjectsResponse>> {
+    if (requestParameters['teamId'] == null) {
+      throw new runtime.RequiredError(
+        'teamId',
+        'Required parameter "teamId" was null or undefined when calling teamsTeamIdLinkedProjectsGet().',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/Teams/{teamId}/linkedProjects`.replace(
+          `{${'teamId'}}`,
+          encodeURIComponent(String(requestParameters['teamId'])),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      GetLinkedProjectsResponseFromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Retrieves the linked projects for a team by its ID.
+   */
+  async teamsTeamIdLinkedProjectsGet(
+    requestParameters: TeamsTeamIdLinkedProjectsGetRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<GetLinkedProjectsResponse> {
+    const response = await this.teamsTeamIdLinkedProjectsGetRaw(
       requestParameters,
       initOverrides,
     );

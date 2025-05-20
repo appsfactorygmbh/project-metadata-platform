@@ -10,13 +10,16 @@
   import { useFormStore } from '@/components/Form';
   import { TeamNameInputField } from '@/components/EditableTextField';
   import { useThemeToken } from '@/utils/hooks';
+  import { message } from 'ant-design-vue';
+
 
   const token = useThemeToken();
 
   const router = useRouter();
   const teamStore = inject(teamStoreSymbol)!;
-  const { getTeam, getIsLoadingTeams } = storeToRefs(teamStore);
+  const { getTeam, getIsLoadingTeams, getLinkedProjects } = storeToRefs(teamStore);
   const team = computed(() => getTeam.value);
+  const linkedProjects = computed(() => getLinkedProjects.value);
   const isLoading = computed(() => getIsLoadingTeams.value);
 
   const teamNameFormStore = useFormStore('editTeamNameForm');
@@ -25,6 +28,10 @@
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
+    if (linkedProjects.value.length > 0){
+      message.error(`Team is still linked to these projects (ids): [${linkedProjects.value}]`, 5)
+      return;
+    }
     isConfirmModalOpen.value = true;
   };
   const closeModal = () => {
@@ -72,20 +79,12 @@
   <ConfirmationDialog
     :is-open="isConfirmModalOpen"
     title="Delete confirm"
-    message="Are you sure you want to delete this user?"
+    message="Are you sure you want to delete this team?"
     @confirm="deleteUser"
     @cancel="closeModal"
     @update:is-open="isConfirmModalOpen = $event"
   />
   <div class="panel">
-    <a-flex class="avatar">
-      <a-avatar :size="150">
-        <template #icon>
-          <TeamOutlined />
-        </template>
-      </a-avatar>
-    </a-flex>
-
     <a-flex
       class="userInfoBox"
       :body-style="{
@@ -96,7 +95,7 @@
         class="textField teamName"
         :value="team?.teamName ?? ''"
         :is-loading="isLoading"
-        :label="'TeamName'"
+        :label="'Team\xa0Name'"
         :is-editing-key="'isEditingTeamName'"
         :form-store="teamNameFormStore"
         :has-edit-keys="true"
@@ -112,21 +111,37 @@
 
       <EditableTextField
         :value="team == undefined ? '' : (team.businessUnit ?? '')"
-        :label="'Business Unit'"
+        :label="'Business\xa0Unit'"
         :is-editing-key="'isEditingBU'"
         :is-loading="isLoading"
         :form-store="businessUnitFormStore"
         :has-edit-keys="true"
       >
+        <TeamInformationInputField
+          :teamId="team?.id ?? -1"
+          :attributeName="'businessUnit'"
+          :formStore="businessUnitFormStore"
+          :default="team == undefined ? '' : (team.businessUnit ?? '')"
+          :placeholder="'BU'"
+          >
+        </TeamInformationInputField>
       </EditableTextField>
       <EditableTextField
-        :value="team == undefined ? '' : (team.businessUnit ?? '')"
+        :value="team == undefined ? '' : (team.ptl ?? '')"
         :label="'PTL'"
         :is-editing-key="'isEditingPTL'"
         :is-loading="isLoading"
         :form-store="ptlFormStore"
         :has-edit-keys="true"
       >
+        <TeamInformationInputField
+            :teamId="team?.id ?? -1"
+            :attributeName="'ptl'"
+            :formStore="ptlFormStore"
+            :default="team == undefined ? '' : (team.ptl ?? '')"
+            :placeholder="'PTL'"
+            >
+          </TeamInformationInputField>
       </EditableTextField>
     </a-flex>
   </div>

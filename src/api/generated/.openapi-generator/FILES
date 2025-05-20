@@ -17,6 +17,7 @@ models/DeleteGlobalPluginResponse.ts
 models/DeleteTeamResponse.ts
 models/ErrorResponse.ts
 models/GetGlobalPluginResponse.ts
+models/GetLinkedProjectsResponse.ts
 models/GetPluginResponse.ts
 models/GetProjectResponse.ts
 models/GetProjectsResponse.ts

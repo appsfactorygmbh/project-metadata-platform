@@ -21,6 +21,7 @@
   const token = useThemeToken();
 
   const router = useRouter();
+  const route = useRoute();
   const userStore = inject(userStoreSymbol)!;
   const { setUserId } = inject(userRoutingSymbol)!;
   const { getIsLoadingUser, getIsLoading, getUser, getMe } =
@@ -95,7 +96,7 @@
     @cancel="closeModal"
     @update:is-open="isConfirmModalOpen = $event"
   />
-  <div class="panel">
+  <div class="panel" v-if="user?.id">
     <a-flex class="avatar">
       <a-avatar :size="150">
         <template #icon>
@@ -146,6 +147,8 @@
       </EditableTextField>
     </a-flex>
   </div>
+  <a-empty :description="`No User Found for Id ${route.query.userId}`"  v-else-if="route.query.userId"></a-empty>
+  <a-empty description="No User Selected"  v-else></a-empty>
   <FloatingButtonGroup :buttons="buttons" class="floating-buttons" />
   <RouterView />
 </template>

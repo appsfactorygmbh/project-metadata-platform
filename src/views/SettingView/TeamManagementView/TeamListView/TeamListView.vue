@@ -9,9 +9,7 @@
   const collapsed = ref<boolean>(false);
   const selectedKeys = ref<string[]>([]);
   const teamStore = inject(teamStoreSymbol)!;
-  if (teamStore == undefined) {
-    console.log('HILFE ICH MÖCHTE NICHT MEHR');
-  }
+
   const { routerTeamId, setTeamId } = inject(teamRoutingSymbol)!;
   const { getTeams, getIsLoadingTeams } = storeToRefs(teamStore);
 
@@ -21,7 +19,7 @@
     () => routerTeamId.value,
     async () => {
       if (Number(routerTeamId.value) == undefined) {
-        setTeamId('');
+        setTeamId(String(teamData.value[0].id ?? ''));
       }
       await teamStore?.fetch(Number(routerTeamId.value));
       selectedKeys.value = [routerTeamId.value];

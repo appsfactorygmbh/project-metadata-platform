@@ -1,112 +1,116 @@
 <script lang="ts" setup>
-  import type { FormSubmitType, RulesObject } from '@/components/Form/types';
-  import type { Rule } from 'ant-design-vue/es/form';
-  import { type FormStore } from '@/components/Form';
-  import { type PropType, reactive, toRaw } from 'vue';
-  import InputField from './InputField.vue';
-  import { useTeamStore } from '@/store';
-  import useNotification from 'ant-design-vue/es/notification/useNotification';
-  import type { TeamModel } from '@/models/Team';
+import { type PropType, reactive, computed, ref } from 'vue';
+import type { FormSubmitType } from '@/components/Form/types';
+import type { Rule } from 'ant-design-vue/es/form';
+import { type FormStore } from '@/components/Form';
+import InputField from './InputField.vue';
+import { useTeamStore } from '@/store';
+import useNotification from 'ant-design-vue/es/notification/useNotification';
 
-  const props = defineProps({
-    teamId: {
-      type: Number,
-      required: true,
-    },
-    formStore: {
-      type: Object as PropType<FormStore>,
-      required: true,
-    },
-    placeholder: {
-      type: String,
-      required: true,
-    },
-    default: {
-      type: String,
-      required: true,
-    },
+const props = defineProps({
+  teamId: {
+    type: Number,
+    required: true,
+  },
+  attributeName: {
+    type: String,
+    required: true,
+  },
+  formStore: {
+    type: Object as PropType<FormStore>,
+    required: true,
+  },
+  placeholder: {
+    type: String,
+    default: '',
+  },
+  default: {
+    type: String,
+    required: true,
+  },
+  rules: {
+    type: Array as PropType<Rule[]>,
+    default: () => [],
+  },
+});
+
+const teamStore = useTeamStore();
+const [notificationApi] = useNotification();
+const formRef = ref();
+
+const dynamicValidateForm = reactive<Record<string, string>>({
+  [props.attributeName]: props.default,
   });
 
-  type FormType = {
-    teamName: string;
+const onSubmitHandler: FormSubmitType = (fieldsFromFormStore) => {
+  const value = fieldsFromFormStore[props.attributeName];
+
+  if (value === undefined) {
+    console.error(`[DynamicFieldEditor] Value for ${props.attributeName} is undefined during submission.`);
+    notificationApi.error({
+      message: `Submission Error`,
+      description: `Value for ${props.attributeName} is missing. Please try again.`,
+    });
+    return;
+  }
+
+  const payload: Record<string, any> = {
+    [props.attributeName]: value,
   };
 
-  const teamStore = useTeamStore();
-
-  const dynamicValidateForm = reactive<FormType>({
-    teamName: props.default,
-  });
-
-  const isUniqueTeamName = (_rule: Rule, name: string) => {
-    const teams: TeamModel[] = teamStore.getTeams;
-    const currentTeam: TeamModel = teamStore.getTeam;
-
-    if (
-      teams?.every(
-        (team) => team.teamName !== name || name === currentTeam.teamName,
-      )
-    ) {
-      return Promise.resolve();
-    }
-    return Promise.reject(new Error('This team name is already in use.'));
-  };
-
-  const rulesRef = reactive<RulesObject<FormType>>({
-    teamName: [
-      {
-        required: true,
-        message: 'Please insert an unique team name.',
-        validator: isUniqueTeamName,
-        trigger: 'change',
-        type: 'string',
-      },
-    ],
-  });
-
-  const [notificationApi] = useNotification();
-
-  const onSubmit: FormSubmitType = (fields) => {
-    const newTeamName = {
-      teamName: toRaw(fields).teamName,
-    };
-    teamStore
-      .update(props.teamId, newTeamName)
-      .then(() => {
-        notificationApi.success({
-          message: 'Team Name updated',
-        });
-      })
-      .catch((error) => {
-        notificationApi.error({
-          message: 'An error occurred. The team name could not be updated',
-        });
-        console.error('Error updating team:', error);
+  teamStore
+    .update(props.teamId, payload)
+    .then(() => {
+      notificationApi.success({
+        message: `${props.attributeName} updated successfully.`,
       });
-  };
+    })
+    .catch((error) => {
+      const errorMessage = error.response?.data?.message || error.message || `An error occurred.`;
+      notificationApi.error({
+        message: `Error updating ${props.attributeName}`,
+        description: `${errorMessage} The ${props.attributeName.toLowerCase()} could not be updated.`,
+      });
+      console.error(`Error updating ${props.attributeName} for team ${props.teamId}:`, error);
+    });
+};
 
-  props.formStore.setModel(dynamicValidateForm);
-  props.formStore.setRules(rulesRef);
-  props.formStore.setOnSubmit(onSubmit);
 
-  const formRef = ref();
+props.formStore.setModel(dynamicValidateForm);
+props.formStore.setRules({ [props.attributeName]: props.rules });
+props.formStore.setOnSubmit(onSubmitHandler);
+
+
+const currentAttributeRulesForTemplate = computed(() => props.rules);
+
+const handleAntFormFinish = (values: Record<string, string>) => {
+  if (props.formStore && typeof props.formStore.submit === 'function') {
+    props.formStore.submit();
+  } else {
+    console.warn('[DynamicFieldEditor] formStore.submit is not available. Calling onSubmitHandler directly with Ant Form values.');
+    onSubmitHandler(values);
+  }
+};
+
 </script>
 
 <template>
-  <a-form ref="formRef" :model="dynamicValidateForm">
+  <a-form
+    ref="formRef"
+    :model="dynamicValidateForm"
+    @finish="handleAntFormFinish"
+  >
     <a-form-item
-      :rules="rulesRef.teamName"
-      name="teamName"
-      class="formItem teamName"
-      has-feedback
-    >
+      :name="props.attributeName" :rules="currentAttributeRulesForTemplate" class="formItem"
+      :has-feedback="!!(props.rules && props.rules.length > 0)" >
       <InputField
         v-model:value="dynamicValidateForm.teamName"
         :placeholder="props.placeholder"
         :default="props.default"
-        :rules="rulesRef.teamName"
+        :rules="rules"
       />
     </a-form-item>
-  </a-form>
+    </a-form>
 </template>
 
 <style lang="css" scoped>

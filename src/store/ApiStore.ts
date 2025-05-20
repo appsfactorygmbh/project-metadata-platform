@@ -73,7 +73,11 @@ export const useApiStore = <Api extends ApiTypes>(
             console.log(
               '|||||||||||||||||||||||||||||||||||||||||TRY TO REFRESH AUTH|||||||||||||||||||||||||||||||||||||||||||',
             );
+            this.initApi();
           }
+          console.log(
+              '|||||||||||||||||||||||||||||||||||||||||OTHER ERROR|||||||||||||||||||||||||||||||||||||||||||',
+            );
           await handleFetchError(error);
         } finally {
           this.setIsLoading(false);
