@@ -22,7 +22,7 @@
   watch(
     () => routerUserId.value,
     async () => {
-      // if no query ist present -> get the first entry in users / default to 0
+      // if no query is present -> check if data is in store -> if so set the userId query
       if (routerUserId.value == '') {
         if (selectedUserId.value != ''){
           setUserId(selectedUserId.value);
@@ -31,7 +31,6 @@
       await userStore?.fetchUser(routerUserId.value);
       selectedKeys.value = [routerUserId.value];
     },
-    { immediate: true }
   );
 
   const clickTab = async (userID: string) => {

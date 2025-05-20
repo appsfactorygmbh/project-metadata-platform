@@ -1,18 +1,41 @@
-import { type Router, useRouter } from 'vue-router';
+import { ref, watch, type Ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-export const useTeamRouting = (router: Router = useRouter()) => {
-  const routerTeamId = ref<string>(
-    String(router.currentRoute.value.query.teamId) || '',
+export interface TeamRoutingReturnType {
+  routerTeamId: Ref<string>;
+  setTeamId: (id: string | null) => void;
+}
+
+export const useTeamRouting = (): TeamRoutingReturnType => {
+  const router = useRouter();
+  const route = useRoute();
+
+  const routerTeamId = ref<string>(String(route.query.teamId ?? ''));
+
+  watch(
+    () => route.query.teamId,
+    (newQueryUserId) => {
+      const newIdString = String(newQueryUserId ?? '');
+      if (routerTeamId.value !== newIdString) {
+        routerTeamId.value = newIdString;
+      }
+    }
   );
 
-  const setTeamId = (id: string) => {
-    routerTeamId.value = id;
-    router.push({
-      path: router.currentRoute.value.path,
-      query: {
-        teamId: routerTeamId.value,
-      },
-    });
+  const setTeamId = (id: string | null) => {
+    const currentPath = route.path;
+    const currentQuery = { ...route.query };
+
+    if (id && id !== '0' && id !== 'undefined') {
+      currentQuery.teamId = id;
+    } else {
+      delete currentQuery.teamId;
+    }
+    router.push({ path: currentPath, query: currentQuery })
+      .catch(err => {
+        if (err.name !== 'NavigationDuplicated') {
+        }
+      });
   };
 
   return { routerTeamId, setTeamId };

@@ -16,11 +16,12 @@
   const token = useThemeToken();
 
   const router = useRouter();
+  const route = useRoute();
   const teamStore = inject(teamStoreSymbol)!;
-  const { getTeam, getIsLoadingTeams, getLinkedProjects } = storeToRefs(teamStore);
+  const { getTeam, getIsLoadingTeam, getLinkedProjects } = storeToRefs(teamStore);
   const team = computed(() => getTeam.value);
   const linkedProjects = computed(() => getLinkedProjects.value);
-  const isLoading = computed(() => getIsLoadingTeams.value);
+  const isLoading = computed(() => getIsLoadingTeam.value);
 
   const teamNameFormStore = useFormStore('editTeamNameForm');
   const businessUnitFormStore = useFormStore('editBuForm');
@@ -84,7 +85,7 @@
     @cancel="closeModal"
     @update:is-open="isConfirmModalOpen = $event"
   />
-  <div class="panel">
+  <div class="panel" v-if="team?.id">
     <a-flex
       class="userInfoBox"
       :body-style="{
@@ -145,6 +146,8 @@
       </EditableTextField>
     </a-flex>
   </div>
+  <a-empty :description="`No Team Found for Id ${route.query.teamId}`"  v-else-if="route.query.teamId"></a-empty>
+  <a-empty description="No Team Selected"  v-else></a-empty>
   <FloatingButtonGroup :buttons="buttons" class="floating-buttons" />
   <RouterView />
 </template>

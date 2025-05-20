@@ -15,32 +15,53 @@
 
   const isLoading = computed(() => getIsLoadingTeams.value);
   const teamData = computed(() => getTeams.value);
+
+  const selectedTeamId = ref<string>('');
   watch(
     () => routerTeamId.value,
     async () => {
-      if (Number(routerTeamId.value) == undefined) {
-        setTeamId(String(teamData.value[0].id ?? ''));
+      if (routerTeamId.value == '') {
+        if(selectedTeamId.value != ''){
+          setTeamId(selectedTeamId.value);
+        }
       }
       await teamStore?.fetch(Number(routerTeamId.value));
       selectedKeys.value = [routerTeamId.value];
     },
   );
 
+  // used for scrolling to the selected team on mount
+  const siderRef = ref<HTMLElement | any>(null);
+
+  const scrollToSelectedMenuItem = async () => {
+    await nextTick();
+    if (siderRef.value && selectedKeys.value && selectedKeys.value.length > 0) {
+      const siderElement = siderRef.value.$el || siderRef.value;
+
+      const selectedItemElement = siderElement.querySelector('.ant-menu-item-selected') as HTMLElement;
+
+      if (selectedItemElement) {
+        selectedItemElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
+      }
+    }
+  };
+
   const clickTab = async (teamId: string) => {
+    selectedTeamId.value = teamId;
     setTeamId(teamId);
   };
 
   onMounted(async () => {
-    await teamStore?.fetchAll();
-    if (routerTeamId.value === 'undefined') {
-      setTeamId(String(teamStore?.getTeams[0]?.id ?? '0'));
-    } else {
-      if (Number(routerTeamId.value) == undefined) {
-        setTeamId('');
-      }
-      await teamStore?.fetch(Number(routerTeamId.value));
-      selectedKeys.value = [routerTeamId.value];
+    if(teamStore.getTeam?.id != undefined){
+      setTeamId(String(teamStore.getTeam?.id));
     }
+    await teamStore?.fetchAll();
+    await teamStore?.fetch(Number(routerTeamId.value));
+    selectedKeys.value = [routerTeamId.value];
+    scrollToSelectedMenuItem();
   });
 </script>
 
@@ -51,6 +72,7 @@
       class="sideSlider"
       collapsible
       :width="250"
+      ref="siderRef"
     >
       <a-menu
         v-if="!isLoading"
@@ -60,7 +82,7 @@
       >
         <a-menu-item
           v-for="team in teamData"
-          :key="team.id"
+          :key="String(team.id)"
           @click="clickTab(String(team.id))"
         >
           <span>{{ team.teamName }}</span>
