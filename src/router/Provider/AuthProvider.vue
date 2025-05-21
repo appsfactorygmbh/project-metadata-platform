@@ -72,7 +72,6 @@
             authenticationFailed.value = false;
           })
           .catch(() => {
-            console.log('refresh failed');
             authenticationFailed.value = true;
           });
       }

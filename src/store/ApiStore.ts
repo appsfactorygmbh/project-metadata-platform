@@ -70,14 +70,8 @@ export const useApiStore = <Api extends ApiTypes>(
           );
         } catch (error: any) {
           if (error?.response?.status === 401) {
-            console.log(
-              '|||||||||||||||||||||||||||||||||||||||||TRY TO REFRESH AUTH|||||||||||||||||||||||||||||||||||||||||||',
-            );
             this.initApi();
           }
-          console.log(
-              '|||||||||||||||||||||||||||||||||||||||||OTHER ERROR|||||||||||||||||||||||||||||||||||||||||||',
-            );
           await handleFetchError(error);
         } finally {
           this.setIsLoading(false);

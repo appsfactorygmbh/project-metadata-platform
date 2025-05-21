@@ -2,6 +2,7 @@ import { type AuthDriver, type HttpDriver } from 'vue-auth3';
 import type { ArgsType } from '@/models/utils/ArgsType';
 import { type SavedTokenOptions, getSavedTokens } from '@/utils/api';
 import { exportTokens, importTokens } from '@/utils/api/tokenHandler';
+import { InvalidRefreshTokenError } from '@/utils/errors/invalidRefreshTokenError';
 
 type RequestConfig = Omit<ArgsType<HttpDriver['request']>[0], 'data'> & {
   _target?: string;
@@ -91,8 +92,10 @@ class AuthService {
         return { headers, ...rest };
       },
       response(auth, res) {
-        if (res.status === 400) {
-          throw new Error('Invalid refresh token');
+        // if an error was returned indicating the refresh token was invalid
+        // return without side effects
+        if (res instanceof InvalidRefreshTokenError){
+          return null;
         }
         let { accessToken, refreshToken } = res.data;
         if (!accessToken && !refreshToken) {
@@ -104,9 +107,10 @@ class AuthService {
         if (accessToken && refreshToken) {
           return exportTokens({ accessToken, refreshToken });
         }
-
         return null;
       },
+
+
     };
   }
 }

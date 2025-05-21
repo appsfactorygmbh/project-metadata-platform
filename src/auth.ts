@@ -4,8 +4,34 @@ import {
   type Options as AuthOptions,
 } from 'vue-auth3';
 import { authService } from './services/AuthService';
-import axios from 'axios';
+import axios, { type AxiosError } from 'axios';
 import { REFRESH_TOKEN_EXPIRATION, TOKEN_REFRESH_INTERVAL } from './constants';
+import { appEventBus } from './utils/errors/eventBus';
+import { InvalidRefreshTokenError } from './utils/errors/invalidRefreshTokenError';
+
+// configure the axios client used for the auth handling
+// to emit an event on the global event bus that the auth failed
+// causes redirect to login page (configured in main.ts)
+axios.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    const config = error.config;
+    const response = error.response;
+
+    if (
+      config &&
+      response &&
+      response.status === 400 &&
+      config.url &&
+      config.url.endsWith('/Auth/refresh')
+    ) {
+      appEventBus.emit('criticalAuthFailure');
+      return new InvalidRefreshTokenError();
+    }else{
+      return error;
+    }
+  }
+);
 
 type RequestOptionType =
   | 'drivers'
@@ -34,10 +60,10 @@ const initAuth = () => {
     staySignedInKey: 'auth_stay_signed_in',
     tokenDefaultKey: 'auth_token',
     tokenImpersonateKey: 'auth_token_impersonate',
-    stores: ['storage', 'cookie'], // ['storage', 'cookie']
+    stores: ['storage', 'cookie'],
     cookie: {
       secure: true,
-      expires: REFRESH_TOKEN_EXPIRATION * 60 * 1000, // in milliseconds
+      expires: REFRESH_TOKEN_EXPIRATION * 60 * 1000,
     },
   } satisfies BaseAuthOptions;
 
@@ -55,9 +81,9 @@ const initAuth = () => {
     },
     refreshToken: {
       ...authService.refreshRequest,
-      enabled: true, // refresh token in goto page
-      enabledInBackground: true, // refresh token in background
-      interval: TOKEN_REFRESH_INTERVAL, // in minutes
+      enabled: true,
+      enabledInBackground: true,
+      interval: TOKEN_REFRESH_INTERVAL,
     },
     fetchData: {
       ...authService.fetchUserRequest,
