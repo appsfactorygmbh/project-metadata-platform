@@ -9,7 +9,7 @@ import { useApiStore, type ApiStore } from './ApiStore';
 
 type StoreState = {
   teams: TeamModel[];
-  team: TeamModel;
+  team: TeamModel | undefined;
   // in sync with team
   linkedProjects: number[];
   isLoadingTeam: boolean;
@@ -18,7 +18,7 @@ type StoreState = {
 
 type StoreGetters = {
   getTeams: () => TeamModel[];
-  getTeam: () => TeamModel;
+  getTeam: () => TeamModel | undefined;
   getLinkedProjects: () => number[];
   getTeamNames: () => string[];
   getIsLoadingTeams: () => boolean;
@@ -31,15 +31,13 @@ type StoreActions = {
   fetch: (teamId: number) => Promise<void>;
   fetchLinkedProjects: (teamId: number) => Promise<void>;
   create: (teamCreate: CreateTeamModel) => Promise<void>;
-  update: (
-    teamId: TeamModel['id'],
-    payload: TeamEditModel,
-  ) => Promise<TeamModel>;
+  update: (teamId: TeamModel['id'], payload: TeamEditModel) => Promise<void>;
   delete: (teamId: number) => Promise<void>;
   setLoadingTeams: (status: boolean) => void;
   setLoadingTeam: (status: boolean) => void;
   setTeams: (teams: TeamModel[]) => void;
   setTeam: (team: TeamModel) => void;
+  nullTeam: () => void;
   getIdToName: (name: string) => number | undefined;
 };
 
@@ -61,7 +59,7 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
         getTeams(): TeamModel[] {
           return this.teams;
         },
-        getTeam(): TeamModel {
+        getTeam(): TeamModel | undefined {
           return this.team;
         },
         getIsLoadingTeams(): boolean {
@@ -103,7 +101,7 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
             const teamGet: TeamModel = await this.callApi('teamsIdGet', {
               id: teamId,
             });
-            this.fetchLinkedProjects(teamId);
+            await this.fetchLinkedProjects(teamId);
             this.setTeam(teamGet);
           } finally {
             this.setLoadingTeam(false);
@@ -125,28 +123,42 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
           try {
             this.setLoadingTeam(true);
             await this.callApi('teamsTeamIdDelete', { teamId: teamId });
-            this.fetchAll();
+            await this.fetchAll();
           } finally {
             this.setLoadingTeam(false);
           }
         },
-        async update(teamId: TeamModel['id'],payload: TeamEditModel): Promise<TeamModel>{
-        try {
+        async update(
+          teamId: TeamModel['id'],
+          payload: TeamEditModel,
+        ): Promise<void> {
+          try {
             this.setLoadingTeam(true);
-            const team = await this.callApi('teamsTeamIdPatch', { teamId: teamId, patchTeamRequest: payload});
+            await this.callApi('teamsTeamIdPatch', {
+              teamId: teamId,
+              patchTeamRequest: payload,
+            });
             this.fetchAll();
-            return team;
+            this.fetch(teamId);
+          } catch (e) {
+            throw e;
           } finally {
             this.setLoadingTeam(false);
           }
-      },
-      async fetchLinkedProjects(teamId: number): Promise<void>{
-         try {
-            this.linkedProjects= (await this.callApi('teamsTeamIdLinkedProjectsGet', { teamId: teamId })).projectIds;
+        },
+        async fetchLinkedProjects(teamId: number): Promise<void> {
+          try {
+            this.linkedProjects = (
+              await this.callApi('teamsTeamIdLinkedProjectsGet', {
+                teamId: teamId,
+              })
+            ).projectIds;
           } finally {
-
           }
-      }
+        },
+        nullTeam() {
+          this.team = undefined;
+        },
       },
     },
     useApiStore(TeamsApi, pinia),

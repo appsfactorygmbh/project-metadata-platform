@@ -70,7 +70,12 @@
         :is-loading="props.isLoading"
         :safe-disabled="props.isLoading"
         :form-store="props.formStore!"
-        @saved-changes="emit('savedChanges')"
+        @saved-changes="
+          {
+            console.log('save changes emitted (EDIT TEXT FIELD)');
+            emit('savedChanges');
+          }
+        "
       />
     </template>
     <a-skeleton

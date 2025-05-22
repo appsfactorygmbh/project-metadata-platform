@@ -24,7 +24,7 @@
     async () => {
       // if no query is present -> check if data is in store -> if so set the userId query
       if (routerUserId.value == '') {
-        if (selectedUserId.value != ''){
+        if (selectedUserId.value != '') {
           setUserId(selectedUserId.value);
         }
       }
@@ -43,7 +43,7 @@
   // when mounted -> look if there is already data loaded into the store -> if so set the userId to the one in the store
   // this is used for when coming back to the User Management tab to have the same user selected as before
   onMounted(async () => {
-    if(userStore.getUser?.id != undefined){
+    if (userStore.getUser?.id != undefined) {
       setUserId(userStore.getUser?.id);
     }
     await userStore?.fetchAll();

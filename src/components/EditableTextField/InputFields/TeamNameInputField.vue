@@ -39,8 +39,10 @@
 
   const isUniqueTeamName = (_rule: Rule, name: string) => {
     const teams: TeamModel[] = teamStore.getTeams;
-    const currentTeam: TeamModel = teamStore.getTeam;
-
+    const currentTeam: TeamModel | undefined = teamStore.getTeam;
+    if (!currentTeam) {
+      return Promise.reject(new Error('Current team undefined'));
+    }
     if (
       teams?.every(
         (team) => team.teamName !== name || name === currentTeam.teamName,

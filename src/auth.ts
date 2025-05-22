@@ -27,10 +27,10 @@ axios.interceptors.response.use(
     ) {
       appEventBus.emit('criticalAuthFailure');
       return new InvalidRefreshTokenError();
-    }else{
+    } else {
       return error;
     }
-  }
+  },
 );
 
 type RequestOptionType =

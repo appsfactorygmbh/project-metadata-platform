@@ -70,6 +70,7 @@ export const useApiStore = <Api extends ApiTypes>(
           );
         } catch (error: any) {
           if (error?.response?.status === 401) {
+            console.log('NEU__________________________________________');
             this.initApi();
           }
           await handleFetchError(error);

@@ -139,6 +139,9 @@
         :is-loading="isLoading"
         :form-store="passwordFormStore"
         :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.id))
+        "
       >
         <PasswordInputField
           :user-id="user?.id ?? ''"
@@ -147,8 +150,11 @@
       </EditableTextField>
     </a-flex>
   </div>
-  <a-empty :description="`No User Found for Id ${route.query.userId}`"  v-else-if="route.query.userId"></a-empty>
-  <a-empty description="No User Selected"  v-else></a-empty>
+  <a-empty
+    :description="`No User Found for Id ${route.query.userId}`"
+    v-else-if="route.query.userId"
+  ></a-empty>
+  <a-empty description="No User Selected" v-else></a-empty>
   <FloatingButtonGroup :buttons="buttons" class="floating-buttons" />
   <RouterView />
 </template>

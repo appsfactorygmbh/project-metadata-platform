@@ -21,7 +21,8 @@
     () => routerTeamId.value,
     async () => {
       if (routerTeamId.value == '') {
-        if(selectedTeamId.value != ''){
+        if (selectedTeamId.value != '') {
+          console.log('write ');
           setTeamId(selectedTeamId.value);
         }
       }
@@ -38,7 +39,9 @@
     if (siderRef.value && selectedKeys.value && selectedKeys.value.length > 0) {
       const siderElement = siderRef.value.$el || siderRef.value;
 
-      const selectedItemElement = siderElement.querySelector('.ant-menu-item-selected') as HTMLElement;
+      const selectedItemElement = siderElement.querySelector(
+        '.ant-menu-item-selected',
+      ) as HTMLElement;
 
       if (selectedItemElement) {
         selectedItemElement.scrollIntoView({
@@ -55,13 +58,15 @@
   };
 
   onMounted(async () => {
-    if(teamStore.getTeam?.id != undefined){
+    if (teamStore.getTeam?.id != undefined) {
       setTeamId(String(teamStore.getTeam?.id));
     }
     await teamStore?.fetchAll();
-    await teamStore?.fetch(Number(routerTeamId.value));
-    selectedKeys.value = [routerTeamId.value];
-    scrollToSelectedMenuItem();
+    if (routerTeamId.value) {
+      await teamStore?.fetch(Number(routerTeamId.value));
+      selectedKeys.value = [routerTeamId.value];
+      scrollToSelectedMenuItem();
+    }
   });
 </script>
 
@@ -96,9 +101,10 @@
       />
     </a-layout-sider>
     <a-layout-content>
-      <div class="content">
-        <RouterView />
-      </div>
+      <!-- renders the TeamInformationView -->
+      <RouterView v-slot="{ Component }">
+        <component :is="Component" @team-deleted="selectedTeamId = ''" />
+      </RouterView>
     </a-layout-content>
   </a-layout>
 </template>

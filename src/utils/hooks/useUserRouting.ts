@@ -19,7 +19,7 @@ export const useUserRouting = (): UserRoutingReturnType => {
       if (routerUserId.value !== newIdString) {
         routerUserId.value = newIdString;
       }
-    }
+    },
   );
 
   const setUserId = (id: string | null) => {
@@ -31,11 +31,10 @@ export const useUserRouting = (): UserRoutingReturnType => {
     } else {
       delete currentQuery.userId;
     }
-    router.push({ path: currentPath, query: currentQuery })
-      .catch(err => {
-        if (err.name !== 'NavigationDuplicated') {
-        }
-      });
+    router.push({ path: currentPath, query: currentQuery }).catch((err) => {
+      if (err.name !== 'NavigationDuplicated') {
+      }
+    });
   };
 
   return { routerUserId, setUserId };

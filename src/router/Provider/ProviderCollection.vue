@@ -16,25 +16,25 @@
 <template>
   <UserRoutingProvider>
     <AuthProvider>
-      <ProjectRoutingProvider>
-        <UserProvider>
-          <LogsProvider>
-            <LocalLogProvider>
-              <ProjectEditProvider>
-                <GlobalPluginProvider>
-                  <TeamRoutingProvider>
-                    <TeamProvider>
+      <TeamProvider>
+        <ProjectRoutingProvider>
+          <UserProvider>
+            <LogsProvider>
+              <LocalLogProvider>
+                <ProjectEditProvider>
+                  <GlobalPluginProvider>
+                    <TeamRoutingProvider>
                       <slot>
                         <RouterView />
                       </slot>
-                    </TeamProvider>
-                  </TeamRoutingProvider>
-                </GlobalPluginProvider>
-              </ProjectEditProvider>
-            </LocalLogProvider>
-          </LogsProvider>
-        </UserProvider>
-      </ProjectRoutingProvider>
+                    </TeamRoutingProvider>
+                  </GlobalPluginProvider>
+                </ProjectEditProvider>
+              </LocalLogProvider>
+            </LogsProvider>
+          </UserProvider>
+        </ProjectRoutingProvider>
+      </TeamProvider>
     </AuthProvider>
   </UserRoutingProvider>
 </template>

@@ -19,7 +19,7 @@ export const useTeamRouting = (): TeamRoutingReturnType => {
       if (routerTeamId.value !== newIdString) {
         routerTeamId.value = newIdString;
       }
-    }
+    },
   );
 
   const setTeamId = (id: string | null) => {
@@ -31,11 +31,10 @@ export const useTeamRouting = (): TeamRoutingReturnType => {
     } else {
       delete currentQuery.teamId;
     }
-    router.push({ path: currentPath, query: currentQuery })
-      .catch(err => {
-        if (err.name !== 'NavigationDuplicated') {
-        }
-      });
+    router.push({ path: currentPath, query: currentQuery }).catch((err) => {
+      if (err.name !== 'NavigationDuplicated') {
+      }
+    });
   };
 
   return { routerTeamId, setTeamId };

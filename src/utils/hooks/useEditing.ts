@@ -16,7 +16,6 @@ export const useEditing = (queryKey: string = 'isEditing') => {
   );
 
   const startEditing = async () => {
-    console.log('start editing');
     const currentQueries = router.currentRoute.value.query;
     await router.push({
       path: router.currentRoute.value.path,

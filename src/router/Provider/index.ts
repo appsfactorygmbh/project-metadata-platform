@@ -16,10 +16,10 @@ export {
   GlobalPluginProvider,
   ProjectEditProvider,
   UserProvider,
+  TeamProvider,
   ProjectRoutingProvider,
   AuthProvider,
   LocalLogProvider,
   UserRoutingProvider,
   TeamRoutingProvider,
-  TeamProvider,
 };

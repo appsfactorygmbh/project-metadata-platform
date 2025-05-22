@@ -22,7 +22,7 @@ appEventBus.on('criticalAuthFailure', () => {
     authInstance.logout({ makeRequest: false });
   }
   if (router.currentRoute.value.path !== '/login') {
-    router.push('/login')
+    router.push('/login');
   }
 });
 

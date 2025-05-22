@@ -94,7 +94,7 @@ class AuthService {
       response(auth, res) {
         // if an error was returned indicating the refresh token was invalid
         // return without side effects
-        if (res instanceof InvalidRefreshTokenError){
+        if (res instanceof InvalidRefreshTokenError) {
           return null;
         }
         let { accessToken, refreshToken } = res.data;
@@ -109,8 +109,6 @@ class AuthService {
         }
         return null;
       },
-
-
     };
   }
 }

@@ -2,7 +2,7 @@
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { inject, ref } from 'vue';
-  import { teamStoreSymbol } from '@/store/injectionSymbols';
+  import { teamRoutingSymbol, teamStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import { useRouter } from 'vue-router';
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
@@ -12,16 +12,19 @@
   import { useThemeToken } from '@/utils/hooks';
   import { message } from 'ant-design-vue';
 
-
   const token = useThemeToken();
 
   const router = useRouter();
   const route = useRoute();
   const teamStore = inject(teamStoreSymbol)!;
-  const { getTeam, getIsLoadingTeam, getLinkedProjects } = storeToRefs(teamStore);
+  const { getTeam, getIsLoadingTeam, getLinkedProjects } =
+    storeToRefs(teamStore);
   const team = computed(() => getTeam.value);
   const linkedProjects = computed(() => getLinkedProjects.value);
   const isLoading = computed(() => getIsLoadingTeam.value);
+  const { setTeamId } = inject(teamRoutingSymbol)!;
+
+  const emit = defineEmits(['teamDeleted']);
 
   const teamNameFormStore = useFormStore('editTeamNameForm');
   const businessUnitFormStore = useFormStore('editBuForm');
@@ -29,8 +32,11 @@
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
-    if (linkedProjects.value.length > 0){
-      message.error(`Team is still linked to these projects (ids): [${linkedProjects.value}]`, 5)
+    if (linkedProjects.value.length > 0) {
+      message.error(
+        `Team is still linked to these projects (ids): [${linkedProjects.value}]`,
+        5,
+      );
       return;
     }
     isConfirmModalOpen.value = true;
@@ -71,9 +77,12 @@
     return tempButtons;
   });
 
-  const deleteUser = async () => {
+  const deleteTeam = async () => {
     if (!team.value) return;
     await teamStore.delete(team.value?.id);
+    emit('teamDeleted');
+    teamStore.nullTeam();
+    setTeamId(null);
   };
 </script>
 <template>
@@ -81,11 +90,11 @@
     :is-open="isConfirmModalOpen"
     title="Delete confirm"
     message="Are you sure you want to delete this team?"
-    @confirm="deleteUser"
+    @confirm="deleteTeam"
     @cancel="closeModal"
     @update:is-open="isConfirmModalOpen = $event"
   />
-  <div class="panel" v-if="team?.id">
+  <div class="panel" v-if="team && team.id">
     <a-flex
       class="userInfoBox"
       :body-style="{
@@ -100,7 +109,6 @@
         :is-editing-key="'isEditingTeamName'"
         :form-store="teamNameFormStore"
         :has-edit-keys="true"
-        @saved-changes="async () => team && (await teamStore.fetch(team.id))"
       >
         <TeamNameInputField
           :teamId="team?.id ?? -1"
@@ -124,7 +132,7 @@
           :formStore="businessUnitFormStore"
           :default="team == undefined ? '' : (team.businessUnit ?? '')"
           :placeholder="'BU'"
-          >
+        >
         </TeamInformationInputField>
       </EditableTextField>
       <EditableTextField
@@ -136,18 +144,25 @@
         :has-edit-keys="true"
       >
         <TeamInformationInputField
-            :teamId="team?.id ?? -1"
-            :attributeName="'ptl'"
-            :formStore="ptlFormStore"
-            :default="team == undefined ? '' : (team.ptl ?? '')"
-            :placeholder="'PTL'"
-            >
-          </TeamInformationInputField>
+          :teamId="team?.id ?? -1"
+          :attributeName="'ptl'"
+          :formStore="ptlFormStore"
+          :default="team == undefined ? '' : (team.ptl ?? '')"
+          :placeholder="'PTL'"
+        >
+        </TeamInformationInputField>
       </EditableTextField>
     </a-flex>
   </div>
-  <a-empty :description="`No Team Found for Id ${route.query.teamId}`"  v-else-if="route.query.teamId"></a-empty>
-  <a-empty description="No Team Selected"  v-else></a-empty>
+  <a-skeleton
+    :description="`No Team Found for Id ${route.query.teamId}`"
+    v-else-if="isLoading"
+  ></a-skeleton>
+  <a-empty
+    :description="`No Team Found for Id ${route.query.teamId}`"
+    v-else-if="route.query.teamId"
+  ></a-empty>
+  <a-empty description="No Team Selected" v-else></a-empty>
   <FloatingButtonGroup :buttons="buttons" class="floating-buttons" />
   <RouterView />
 </template>
