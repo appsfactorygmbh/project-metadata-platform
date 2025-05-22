@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { type FormStore, type FormSubmitType } from '@/components/Form';
-  import { message, notification } from 'ant-design-vue';
+  import { message } from 'ant-design-vue';
   import { reactive, ref, toRaw } from 'vue';
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateTeamFormData } from './CreateTeamFormData.ts';
@@ -14,23 +14,27 @@
     teamStore: TeamStore;
   }>();
 
-  const [notificationApi, contextHolder] = notification.useNotification();
+  const emit = defineEmits<{
+    (e: 'newId', id: number,): void;
+  }>();
 
-  const onSubmit: FormSubmitType = (fields) => {
+  const onSubmit: FormSubmitType = async (fields) => {
     try {
       const teamDef: CreateTeamModel = {
         ptl: toRaw(fields).ptl,
         businessUnit: toRaw(fields).businessUnit,
         teamName: toRaw(fields).teamName,
       };
-      teamStore?.create(teamDef);
-    } catch (error) {
-      notificationApi.error({
-        message: 'An error occurred. The team could not be created',
-      });
-      console.error('Error creating team:', error);
-    } finally {
+      debugger
+      const id = await teamStore.create(teamDef);
+      await teamStore.fetchAll();
       message.success('Team created', 2);
+      emit("newId", id);
+    } catch (error) {
+      message.error(
+        'An error occurred. The team could not be created', 10
+      );
+      console.error('Error creating team:', error);
     }
   };
 
@@ -97,7 +101,7 @@
         id="inputCreateTeamTeamName"
         v-model:value="dynamicValidateForm.teamName"
         class="inputField"
-        placeholder="E-Mail"
+        placeholder="Team Name"
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.teamName"
       />
@@ -113,10 +117,9 @@
         id="inputCreateTeamBusinessUnit"
         v-model:value="dynamicValidateForm.businessUnit"
         class="inputField"
-        placeholder="Password"
+        placeholder="Business Unit"
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.businessUnit"
-        type="password"
       />
     </a-form-item>
     <a-form-item
@@ -130,10 +133,9 @@
         id="inputCreateTeamPtl"
         v-model:value="dynamicValidateForm.ptl"
         class="inputField"
-        placeholder="Confirm Password"
+        placeholder="PTL"
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.ptl"
-        type="password"
       />
     </a-form-item>
   </a-form>

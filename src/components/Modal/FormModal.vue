@@ -30,7 +30,7 @@
     },
   );
 
-  const emit = defineEmits(['close']);
+  const emit = defineEmits(['close', 'cancel']);
 
   // checks for correct input
   const handleOk = () => {
@@ -46,9 +46,10 @@
   };
 
   const resetModal = () => {
+    emit('cancel');
+    formStore.resetFields();
     isOpen.value = false;
     emit('close');
-    formStore.resetFields();
   };
 </script>
 

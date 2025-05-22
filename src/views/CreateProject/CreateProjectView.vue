@@ -8,14 +8,17 @@
     SafetyCertificateOutlined,
     TrademarkOutlined,
     SwapOutlined,
+    TeamOutlined,
   } from '@ant-design/icons-vue';
   import type { UnwrapRef } from 'vue';
   import type { CreateProjectModel } from '@/models/Project';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
-  import { useProjectStore } from '@/store';
+  import { useProjectStore, useTeamStore } from '@/store';
   import { projectRoutingSymbol } from '@/store/injectionSymbols';
   import { useThemeToken } from '@/utils/hooks';
   import { message } from 'ant-design-vue';
+  import { storeToRefs } from 'pinia';
+  import type { SelectValue } from 'ant-design-vue/es/select';
 
   const token = useThemeToken();
 
@@ -30,14 +33,18 @@
   // TableStore to refetch Table after Project was added
 
   const projectStore = useProjectStore();
+
+  const teamStore = useTeamStore();
+
+  const { getTeams } = storeToRefs(teamStore);
+
   const { setProjectId } = inject(projectRoutingSymbol)!;
 
   const isAdding = computed(() => projectStore.getIsLoadingAdd);
 
-  const formState: UnwrapRef<Partial<CreateProjectModel>> = reactive({
+  const formState: UnwrapRef<CreateProjectModel> = reactive({
     projectName: '',
     businessUnit: '',
-    teamNumber: undefined,
     department: '',
     clientName: '',
     offerId: '',
@@ -45,6 +52,7 @@
     companyState: 'EXTERNAL',
     ismsLevel: 'NORMAL',
     isArchived: false,
+    teamId: undefined,
   });
 
   const validateMessages = {
@@ -125,6 +133,25 @@
     );
     setProjectId(newProject?.id ?? undefined);
   };
+
+  // handling because a-select cant handle null values
+  const selectedTeamForSelect = computed<SelectValue>({
+  get() {
+    if(formState.teamId === undefined || formState.teamId === null){
+      return undefined;
+    }
+    const name = teamStore.getNameToId(formState.teamId);
+    return name;
+  },
+  set(newValue) {
+    if (newValue === undefined || newValue === null) {
+      formState.teamId = undefined;
+    } else {
+      const id = teamStore.getIdToName(String(newValue));
+      formState.teamId = id;
+    }
+  }
+});
 </script>
 
 <template>
@@ -232,10 +259,29 @@
             <a-select-option value="VERY_HIGH">Very High</a-select-option>
           </a-select>
         </a-form-item>
+        <a-form-item
+        name="teamId"
+        :rules="[{ required: false }]"
+        :no-style="true"
+        >
+        <a-select
+          v-model:value="selectedTeamForSelect"
+          placeholder="Team"
+          show-search
+        >
+            <template #suffixIcon>
+              <TeamOutlined class="icon" />
+            </template>
+          <a-select-option :value="undefined">{{ "<null>" }}</a-select-option>
+          <a-select-option v-for="team in getTeams" :value="team.teamName" >{{ team.teamName }}</a-select-option>
+        </a-select>
+      </a-form-item>
       </a-form>
     </a-modal>
   </div>
 </template>
+
+
 
 <style scoped lang="scss">
   .formItem {

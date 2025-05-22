@@ -30,7 +30,7 @@ type StoreActions = {
   fetchAll: () => Promise<void>;
   fetch: (teamId: number) => Promise<void>;
   fetchLinkedProjects: (teamId: number) => Promise<void>;
-  create: (teamCreate: CreateTeamModel) => Promise<void>;
+  create: (teamCreate: CreateTeamModel) => Promise<number>;
   update: (teamId: TeamModel['id'], payload: TeamEditModel) => Promise<void>;
   delete: (teamId: number) => Promise<void>;
   setLoadingTeams: (status: boolean) => void;
@@ -39,6 +39,7 @@ type StoreActions = {
   setTeam: (team: TeamModel) => void;
   nullTeam: () => void;
   getIdToName: (name: string) => number | undefined;
+  getNameToId: (id: number) => string | undefined;
 };
 
 type Store = PiniaStore<'team', StoreState, StoreGetters, StoreActions>;
@@ -80,6 +81,9 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
         getIdToName(name: string): number | undefined {
           return this.teams.find((team) => team.teamName == name)?.id;
         },
+        getNameToId(id: number): string | undefined {
+          return this.teams.find((team) => team.id == id)?.teamName;
+        },
         setLoadingTeams(status: boolean) {
           this.isLoadingTeams = status;
         },
@@ -94,6 +98,18 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
         },
         setTeam(team: TeamModel) {
           this.team = team;
+        },
+        async create (teamCreate: CreateTeamModel): Promise<number>{
+          try {
+            this.setLoadingTeam(true);
+            const res = await this.callApi('teamsPut', {createTeamRequest: teamCreate});
+            return res.id;
+          }
+          catch(e){
+            throw e;
+          }finally {
+            this.setLoadingTeam(false);
+          }
         },
         async fetch(teamId: number): Promise<void> {
           try {
