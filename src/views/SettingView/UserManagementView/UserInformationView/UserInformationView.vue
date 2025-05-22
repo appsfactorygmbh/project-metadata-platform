@@ -23,7 +23,7 @@
   const router = useRouter();
   const route = useRoute();
   const userStore = inject(userStoreSymbol)!;
-  const { setUserId } = inject(userRoutingSymbol)!;
+  const { setUserId, routerUserId } = inject(userRoutingSymbol)!;
   const { getIsLoadingUser, getIsLoading, getUser, getMe } =
     storeToRefs(userStore);
   const user = computed(() => getUser.value);
@@ -155,7 +155,7 @@
     v-else-if="route.query.userId"
   ></a-empty>
   <a-empty description="No User Selected" v-else></a-empty>
-  <FloatingButtonGroup :buttons="buttons" class="floating-buttons" />
+  <FloatingButtonGroup v-if="routerUserId" :buttons="buttons" class="floating-buttons" />
   <RouterView />
 </template>
 

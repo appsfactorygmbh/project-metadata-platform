@@ -163,7 +163,7 @@
     v-else-if="route.query.teamId"
   ></a-empty>
   <a-empty description="No Team Selected" v-else></a-empty>
-  <FloatingButtonGroup :buttons="buttons" class="floating-buttons" />
+  <FloatingButtonGroup v-if="team" :buttons="buttons" class="floating-buttons" />
   <RouterView />
 </template>
 
