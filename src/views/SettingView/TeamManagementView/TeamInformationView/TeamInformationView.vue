@@ -74,6 +74,7 @@
         isLink: false,
       },
     ];
+    if (!team.value) tempButtons[0].status = 'deactivated';
     return tempButtons;
   });
 
@@ -164,7 +165,6 @@
   ></a-empty>
   <a-empty v-else description="No Team Selected"></a-empty>
   <FloatingButtonGroup
-    v-if="team"
     :buttons="buttons"
     class="floating-buttons"
   />

@@ -72,7 +72,7 @@
         isLink: false,
       },
     ];
-    if (me.value?.id == user.value?.id) tempButtons[0].status = 'deactivated';
+    if (me.value?.id == user.value?.id || !routerUserId.value) tempButtons[0].status = 'deactivated';
 
     return tempButtons;
   });
@@ -156,7 +156,6 @@
   ></a-empty>
   <a-empty v-else description="No User Selected"></a-empty>
   <FloatingButtonGroup
-    v-if="routerUserId"
     :buttons="buttons"
     class="floating-buttons"
   />
