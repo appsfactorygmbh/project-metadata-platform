@@ -94,7 +94,7 @@
     @cancel="closeModal"
     @update:is-open="isConfirmModalOpen = $event"
   />
-  <div class="panel" v-if="team && team.id">
+  <div v-if="team && team.id" class="panel">
     <a-flex
       class="userInfoBox"
       :body-style="{
@@ -111,7 +111,7 @@
         :has-edit-keys="true"
       >
         <TeamNameInputField
-          :teamId="team?.id ?? -1"
+          :team-id="team?.id ?? -1"
           :form-store="teamNameFormStore"
           :placeholder="team?.teamName ?? ''"
           :default="team?.teamName ?? ''"
@@ -127,9 +127,9 @@
         :has-edit-keys="true"
       >
         <TeamInformationInputField
-          :teamId="team?.id ?? -1"
+          :team-id="team?.id ?? -1"
           :attributeName="'businessUnit'"
-          :formStore="businessUnitFormStore"
+          :form-store="businessUnitFormStore"
           :default="team == undefined ? '' : (team.businessUnit ?? '')"
           :placeholder="'BU'"
         >
@@ -144,9 +144,9 @@
         :has-edit-keys="true"
       >
         <TeamInformationInputField
-          :teamId="team?.id ?? -1"
+          :team-id="team?.id ?? -1"
           :attributeName="'ptl'"
-          :formStore="ptlFormStore"
+          :form-store="ptlFormStore"
           :default="team == undefined ? '' : (team.ptl ?? '')"
           :placeholder="'PTL'"
         >
@@ -155,14 +155,14 @@
     </a-flex>
   </div>
   <a-skeleton
-    :description="`No Team Found for Id ${route.query.teamId}`"
     v-else-if="isLoading"
+    :description="`No Team Found for Id ${route.query.teamId}`"
   ></a-skeleton>
   <a-empty
-    :description="`No Team Found for Id ${route.query.teamId}`"
     v-else-if="route.query.teamId"
+    :description="`No Team Found for Id ${route.query.teamId}`"
   ></a-empty>
-  <a-empty description="No Team Selected" v-else></a-empty>
+  <a-empty v-else description="No Team Selected"></a-empty>
   <FloatingButtonGroup v-if="team" :buttons="buttons" class="floating-buttons" />
   <RouterView />
 </template>

@@ -96,7 +96,7 @@
     @cancel="closeModal"
     @update:is-open="isConfirmModalOpen = $event"
   />
-  <div class="panel" v-if="user?.id">
+  <div v-if="user?.id" class="panel">
     <a-flex class="avatar">
       <a-avatar :size="150">
         <template #icon>
@@ -151,10 +151,10 @@
     </a-flex>
   </div>
   <a-empty
-    :description="`No User Found for Id ${route.query.userId}`"
     v-else-if="route.query.userId"
+    :description="`No User Found for Id ${route.query.userId}`"
   ></a-empty>
-  <a-empty description="No User Selected" v-else></a-empty>
+  <a-empty v-else description="No User Selected"></a-empty>
   <FloatingButtonGroup v-if="routerUserId" :buttons="buttons" class="floating-buttons" />
   <RouterView />
 </template>

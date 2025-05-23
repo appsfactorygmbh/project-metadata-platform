@@ -482,12 +482,12 @@
           :display-value="() => 'Team\xa0Select'"
           ><ProjectInformationSearchSelectField
             class="editField"
-            :columnName="'TeamName'"
-            :inputValue="teamNameInput"
-            :inputStatus="'error'"
+            :column-name="'TeamName'"
+            :input-value="teamNameInput"
+            :input-status="'error'"
             :options="teamStore.getTeamNames"
             :edit-store="projectEditStore"
-            :isEditing="isEditing"
+            :is-editing="isEditing"
             @updated="
               (newValue) => {
                 teamNameInput = newValue;

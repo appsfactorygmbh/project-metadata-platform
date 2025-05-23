@@ -1,11 +1,11 @@
 import { TeamsApi } from '@/api/generated';
 import type { TeamModel } from '@/models/Team/TeamModel';
-import { useStore, type PiniaStore } from 'pinia-generic';
+import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
 import type { CreateTeamModel } from '@/models/Team/CreateTeamModel';
 import type { TeamEditModel } from '@/models/Team';
-import { useApiStore, type ApiStore } from './ApiStore';
+import { type ApiStore, useApiStore } from './ApiStore';
 
 type StoreState = {
   teams: TeamModel[];

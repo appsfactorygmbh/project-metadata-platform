@@ -73,11 +73,11 @@
 <template>
   <a-layout class="layout">
     <a-layout-sider
+      ref="siderRef"
       v-model:collapsed="collapsed"
       class="sideSlider"
       collapsible
       :width="250"
-      ref="siderRef"
     >
       <a-menu
         v-if="!isLoading"

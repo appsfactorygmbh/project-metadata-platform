@@ -7,10 +7,10 @@ import {
   type PluginsApi as PluginsApiType,
   ProjectsApi,
   type ProjectsApi as ProjectsApiType,
-  UsersApi,
-  type UsersApi as UsersApiType,
   TeamsApi,
   type TeamsApi as TeamsApiType,
+  UsersApi,
+  type UsersApi as UsersApiType,
 } from './generated';
 
 export type ApiTypes =

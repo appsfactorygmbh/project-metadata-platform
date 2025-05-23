@@ -25,7 +25,6 @@
         businessUnit: toRaw(fields).businessUnit,
         teamName: toRaw(fields).teamName,
       };
-      debugger
       const id = await teamStore.create(teamDef);
       await teamStore.fetchAll();
       message.success('Team created', 2);

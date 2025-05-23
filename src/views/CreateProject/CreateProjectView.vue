@@ -106,14 +106,14 @@
   // sends PUT request to the backend
   const submit = async () => {
     const projectData: CreateProjectModel = {
-      projectName: formState.projectName!,
+      projectName: formState.projectName,
       teamId: formState.teamId!,
-      clientName: formState.clientName!,
+      clientName: formState.clientName,
       isArchived: false,
-      offerId: formState.offerId!,
-      company: formState.company!,
-      companyState: formState.companyState!,
-      ismsLevel: formState.ismsLevel!,
+      offerId: formState.offerId,
+      company: formState.company,
+      companyState: formState.companyState,
+      ismsLevel: formState.ismsLevel,
     };
 
     try {

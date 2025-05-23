@@ -1,6 +1,6 @@
 import type {
-  GlobalPluginModel,
   CreateGlobalPluginModel,
+  GlobalPluginModel,
   PatchGlobalPluginModel,
 } from '@/models/GlobalPlugin';
 import { type PiniaStore, useStore } from 'pinia-generic';
