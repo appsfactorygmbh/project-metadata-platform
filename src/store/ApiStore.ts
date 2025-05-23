@@ -6,6 +6,7 @@ import { type UnwrapRef } from 'vue';
 import type { Pinia } from 'pinia';
 import { piniaInstance } from './piniaInstance';
 import type { GenericStore } from '@/utils/store';
+import { ResponseError } from '@/api/generated';
 
 type ApiStore<Api extends ApiTypes> = PiniaStore<
   'api',
@@ -68,10 +69,12 @@ export const useApiStore = <Api extends ApiTypes>(
             args,
             this.api as Api,
           );
-        } catch (error: any) {
-          if (error?.response?.status === 401) {
-            console.log('NEU__________________________________________');
-            this.initApi();
+        } catch (error: unknown) {
+          if (error instanceof ResponseError) {
+            if (error.response.status === 401) {
+              console.log('REFRESH BECAUSE 401');
+              this.initApi();
+            }
           }
           await handleFetchError(error);
         } finally {

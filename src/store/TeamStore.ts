@@ -106,8 +106,6 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
               createTeamRequest: teamCreate,
             });
             return res.id;
-          } catch (e) {
-            throw e;
           } finally {
             this.setLoadingTeam(false);
           }
@@ -157,8 +155,6 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
             });
             this.fetchAll();
             this.fetch(teamId);
-          } catch (e) {
-            throw e;
           } finally {
             this.setLoadingTeam(false);
           }
@@ -170,7 +166,9 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
                 teamId: teamId,
               })
             ).projectIds;
-          } finally {
+          } catch (e) {
+            console.error('failed retrieving linked projects for team');
+            throw e;
           }
         },
         nullTeam() {

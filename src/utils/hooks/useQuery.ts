@@ -25,8 +25,6 @@ export const useQuery = (queryNames: string[]) => {
   ) => {
     const index = queryNames.findIndex((name) => name === queryName);
     routerSearchQuery.value[index] = searchQuery;
-    const debugString = `set search query to : ${router.currentRoute.value.query}, ${queryName}: ${routerSearchQuery.value[index]}`;
-    console.log(debugString);
 
     await router.push({
       path: router.currentRoute.value.path,

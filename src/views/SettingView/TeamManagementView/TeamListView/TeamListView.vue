@@ -31,8 +31,12 @@
     },
   );
 
+  interface VueComponentWithEl extends HTMLElement {
+    $el: HTMLElement;
+  }
+
   // used for scrolling to the selected team on mount
-  const siderRef = ref<HTMLElement | any>(null);
+  const siderRef = ref<VueComponentWithEl | null>(null);
 
   const scrollToSelectedMenuItem = async () => {
     await nextTick();

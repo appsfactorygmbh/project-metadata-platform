@@ -33,6 +33,7 @@ export const useUserRouting = (): UserRoutingReturnType => {
     }
     router.push({ path: currentPath, query: currentQuery }).catch((err) => {
       if (err.name !== 'NavigationDuplicated') {
+        console.log(`unknown error: ${err}`);
       }
     });
   };

@@ -55,7 +55,7 @@
       return;
     }
 
-    const payload: Record<string, any> = {
+    const payload: Record<string, string | null> = {
       [props.attributeName]: value,
     };
 

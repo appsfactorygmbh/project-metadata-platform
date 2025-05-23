@@ -147,7 +147,7 @@
     if (newValue === undefined || newValue === null) {
       formState.teamId = undefined;
     } else {
-      const id = teamStore.getIdToName(String(newValue));
+      const id = teamStore.getIdToName(JSON.stringify(newValue));
       formState.teamId = id;
     }
   }
@@ -273,7 +273,7 @@
               <TeamOutlined class="icon" />
             </template>
           <a-select-option :value="undefined">{{ "<null>" }}</a-select-option>
-          <a-select-option v-for="team in getTeams" :value="team.teamName" >{{ team.teamName }}</a-select-option>
+          <a-select-option v-for="team in getTeams" :key="team.teamName" :value="team.teamName">{{ team.teamName }}</a-select-option>
         </a-select>
       </a-form-item>
       </a-form>

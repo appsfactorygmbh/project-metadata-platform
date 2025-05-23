@@ -535,7 +535,6 @@
       <a-empty v-else description="No project selected." />
     </a-flex>
   </div>
-  <template> </template>
 </template>
 
 <style scoped lang="scss">
