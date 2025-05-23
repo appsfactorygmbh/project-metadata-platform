@@ -8,5 +8,5 @@ export type {
   DetailedProjectModel,
   CreateProjectModel,
   UpdateProjectModel,
-  ProjectSearchModel
+  ProjectSearchModel,
 };

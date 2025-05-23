@@ -163,7 +163,11 @@
     :description="`No Team Found for Id ${route.query.teamId}`"
   ></a-empty>
   <a-empty v-else description="No Team Selected"></a-empty>
-  <FloatingButtonGroup v-if="team" :buttons="buttons" class="floating-buttons" />
+  <FloatingButtonGroup
+    v-if="team"
+    :buttons="buttons"
+    class="floating-buttons"
+  />
   <RouterView />
 </template>
 

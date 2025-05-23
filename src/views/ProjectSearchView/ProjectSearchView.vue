@@ -54,10 +54,10 @@
       company: model.company,
       isArchived: model.isArchived,
       ismsLevel: model.ismsLevel,
-      teamName: model.team === undefined ? "" : model.team.teamName,
-      businessUnit: model.team === undefined ? "" : model.team.businessUnit,
-    } as ProjectSearchModel
-  }
+      teamName: model.team === undefined ? '' : model.team.teamName,
+      businessUnit: model.team === undefined ? '' : model.team.businessUnit,
+    } as ProjectSearchModel;
+  };
 
   provide<ProjectSearchStore>(searchStoreSymbol, searchStore);
 
@@ -195,7 +195,9 @@
       await fetchProject(routerProjectId.value);
     }
 
-    searchStore.setBaseSet(projectStore.getProjects.map(toSearchModelConverter) ?? []);
+    searchStore.setBaseSet(
+      projectStore.getProjects.map(toSearchModelConverter) ?? [],
+    );
     changeColumns(props.paneWidth);
   });
 

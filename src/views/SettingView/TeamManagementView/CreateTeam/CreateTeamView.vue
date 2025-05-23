@@ -2,11 +2,10 @@
   import { FormModal } from '@/components/Modal';
   import { useFormStore } from '@/components/Form';
   import type { CreateTeamFormData } from './CreateTeamFormData.ts';
-  import {CreateTeamForm} from './';
+  import { CreateTeamForm } from './';
   import router from '@/router/router.ts';
   import { useTeamStore } from '@/store/TeamStore.ts';
-import { teamRoutingSymbol } from '@/store/injectionSymbols.ts';
-
+  import { teamRoutingSymbol } from '@/store/injectionSymbols.ts';
 
   const { setTeamId } = inject(teamRoutingSymbol)!;
 
@@ -17,7 +16,7 @@ import { teamRoutingSymbol } from '@/store/injectionSymbols.ts';
   const onSave = async (id: number) => {
     await router.push('/settings/team-management');
     setTeamId(String(id));
-  }
+  };
 
   const formStore = useFormStore('CreateTeamForm');
   const teamStore = useTeamStore();

@@ -155,7 +155,11 @@
     :description="`No User Found for Id ${route.query.userId}`"
   ></a-empty>
   <a-empty v-else description="No User Selected"></a-empty>
-  <FloatingButtonGroup v-if="routerUserId" :buttons="buttons" class="floating-buttons" />
+  <FloatingButtonGroup
+    v-if="routerUserId"
+    :buttons="buttons"
+    class="floating-buttons"
+  />
   <RouterView />
 </template>
 

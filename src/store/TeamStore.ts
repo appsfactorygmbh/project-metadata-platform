@@ -99,15 +99,16 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
         setTeam(team: TeamModel) {
           this.team = team;
         },
-        async create (teamCreate: CreateTeamModel): Promise<number>{
+        async create(teamCreate: CreateTeamModel): Promise<number> {
           try {
             this.setLoadingTeam(true);
-            const res = await this.callApi('teamsPut', {createTeamRequest: teamCreate});
+            const res = await this.callApi('teamsPut', {
+              createTeamRequest: teamCreate,
+            });
             return res.id;
-          }
-          catch(e){
+          } catch (e) {
             throw e;
-          }finally {
+          } finally {
             this.setLoadingTeam(false);
           }
         },

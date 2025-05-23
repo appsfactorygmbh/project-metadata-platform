@@ -15,7 +15,7 @@
   }>();
 
   const emit = defineEmits<{
-    (e: 'newId', id: number,): void;
+    (e: 'newId', id: number): void;
   }>();
 
   const onSubmit: FormSubmitType = async (fields) => {
@@ -28,11 +28,9 @@
       const id = await teamStore.create(teamDef);
       await teamStore.fetchAll();
       message.success('Team created', 2);
-      emit("newId", id);
+      emit('newId', id);
     } catch (error) {
-      message.error(
-        'An error occurred. The team could not be created', 10
-      );
+      message.error('An error occurred. The team could not be created', 10);
       console.error('Error creating team:', error);
     }
   };
