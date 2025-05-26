@@ -136,22 +136,22 @@
 
   // handling because a-select cant handle null values
   const selectedTeamForSelect = computed<SelectValue>({
-  get() {
-    if(formState.teamId === undefined || formState.teamId === null){
-      return undefined;
-    }
-    const name = teamStore.getNameToId(formState.teamId);
-    return name;
-  },
-  set(newValue) {
-    if (newValue === undefined || newValue === null) {
-      formState.teamId = undefined;
-    } else {
-      const id = teamStore.getIdToName(JSON.stringify(newValue));
-      formState.teamId = id;
-    }
-  }
-});
+    get() {
+      if (formState.teamId === undefined || formState.teamId === null) {
+        return undefined;
+      }
+      const name = teamStore.getNameToId(formState.teamId);
+      return name;
+    },
+    set(newValue) {
+      if (newValue === undefined || newValue === null) {
+        formState.teamId = undefined;
+      } else {
+        const id = teamStore.getIdToName(JSON.stringify(newValue));
+        formState.teamId = id;
+      }
+    },
+  });
 </script>
 
 <template>
@@ -260,28 +260,31 @@
           </a-select>
         </a-form-item>
         <a-form-item
-        name="teamId"
-        :rules="[{ required: false }]"
-        :no-style="true"
+          name="teamId"
+          :rules="[{ required: false }]"
+          :no-style="true"
         >
-        <a-select
-          v-model:value="selectedTeamForSelect"
-          placeholder="Team"
-          show-search
-        >
+          <a-select
+            v-model:value="selectedTeamForSelect"
+            placeholder="Team"
+            show-search
+          >
             <template #suffixIcon>
               <TeamOutlined class="icon" />
             </template>
-          <a-select-option :value="undefined">{{ "<null>" }}</a-select-option>
-          <a-select-option v-for="team in getTeams" :key="team.teamName" :value="team.teamName">{{ team.teamName }}</a-select-option>
-        </a-select>
-      </a-form-item>
+            <a-select-option :value="undefined">{{ 'null' }}</a-select-option>
+            <a-select-option
+              v-for="team in getTeams"
+              :key="team.teamName"
+              :value="team.teamName"
+              >{{ team.teamName }}</a-select-option
+            >
+          </a-select>
+        </a-form-item>
       </a-form>
     </a-modal>
   </div>
 </template>
-
-
 
 <style scoped lang="scss">
   .formItem {
