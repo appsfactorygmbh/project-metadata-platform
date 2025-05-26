@@ -27,7 +27,7 @@
   import {
     EditableTextField,
     ProjectInformationInputField,
-    ProjectInformationSelectField,
+    ProjectInformationSearchSelectField,
   } from '@/components/EditableTextField';
   import { useThemeToken } from '@/utils/hooks';
   import { CompanyState, SecurityLevel } from '@/api/generated';
@@ -431,7 +431,7 @@
           :has-edit-keys="false"
           :display-value="field.displayValue"
         >
-          <ProjectInformationSelectField
+          <ProjectInformationSearchSelectField
             v-if="field.inputType === 'select'"
             class="editField"
             :column-name="field.name"
@@ -441,6 +441,7 @@
             :options="field.options!"
             :get-value="field.getValue!"
             :display-value="field.displayValue!"
+            :is-editing="true"
             @updated="
               (newValue) => {
                 field.value = newValue;

@@ -68,7 +68,6 @@ declare module 'vue' {
     ProjectEditButtons: typeof import('./../src/components/ProjectEditButtons/ProjectEditButtons.vue')['default']
     ProjectInformationInputField: typeof import('./../src/components/EditableTextField/InputFields/ProjectInformationInputField.vue')['default']
     ProjectInformationSearchSelectField: typeof import('./../src/components/EditableTextField/InputFields/ProjectInformationSearchSelectField.vue')['default']
-    ProjectInformationSelectField: typeof import('./../src/components/EditableTextField/InputFields/ProjectInformationSelectField.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']

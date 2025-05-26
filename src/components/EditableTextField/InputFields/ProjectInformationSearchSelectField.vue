@@ -11,7 +11,7 @@
       required: true,
     },
     inputValue: {
-      type: [String],
+      type: [String, Number],
       required: true,
     },
     inputStatus: {
