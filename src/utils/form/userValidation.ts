@@ -1,5 +1,5 @@
 import type { UserListModel } from '@/models/User';
-import { usePluginStore, useUserStore, type TeamStore } from '@/store';
+import { type TeamStore, usePluginStore, useUserStore } from '@/store';
 import type { Rule } from 'ant-design-vue/es/form';
 
 const userStore = useUserStore();

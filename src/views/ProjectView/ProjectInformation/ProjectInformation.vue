@@ -498,7 +498,7 @@
 
         <EditableTextField
           v-if="!isEditing"
-          class="infoCard non-editing-mode"
+          class="infoCard non-editing-mode teamNameField"
           :value="projectData.teamName.value"
           :is-loading="isLoading"
           :label="'Team\xa0Name'"
@@ -507,7 +507,7 @@
 
         <EditableTextField
           v-if="!isEditing"
-          class="infoCard non-editing-mode"
+          class="infoCard non-editing-mode buField"
           :value="projectData.businessUnit.value"
           :is-loading="isLoading"
           :label="'Business\xa0Unit'"
@@ -516,7 +516,7 @@
 
         <EditableTextField
           v-if="!isEditing"
-          class="infoCard non-editing-mode"
+          class="infoCard non-editing-mode ptlField"
           :value="projectData.ptl.value"
           :is-loading="isLoading"
           :label="'PTL'"

@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
-import UserInformationView from '../UserInformationView.vue';
 import { createTestingPinia } from '@pinia/testing';
 import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
 import { useUserStore } from '@/store';
@@ -9,6 +8,7 @@ import router from '@/router';
 import type { UserModel } from '@/models/User';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons-vue';
 import { useUserRouting } from '@/utils/hooks';
+import { UserInformationView } from '..';
 
 const userData1: UserModel = {
   id: '100',
@@ -18,6 +18,29 @@ const userData2: UserModel = {
   id: '200',
   email: 'maxmuster2@gmail.com',
 };
+
+const mockRoute = {
+  path: '/mock-path',
+  query: { userId: '200' },
+  params: {},
+  hash: '',
+  fullPath: '/mock-path',
+  matched: [],
+  meta: {},
+  redirectedFrom: undefined,
+};
+const mockRouter = {
+  push: vi.fn(),
+};
+
+vi.mock('vue-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('vue-router')>();
+  return {
+    ...actual,
+    useRoute: () => mockRoute,
+    useRouter: () => mockRouter,
+  };
+});
 
 describe('UserInformationView.vue', () => {
   setActivePinia(createPinia());
@@ -33,14 +56,14 @@ describe('UserInformationView.vue', () => {
       global: {
         provide: {
           [userStoreSymbol as symbol]: userStore,
-          [userRoutingSymbol as symbol]: useUserRouting(router),
+          [userRoutingSymbol as symbol]: useUserRouting(),
         },
         plugins: [router],
       },
     });
   };
 
-  it('should hide delete button when user is me', () => {
+  it('should hide delete button when user is me', async () => {
     userStore.setMe(userData2);
     userStore.setUser(userData2);
     const wrapper = generateWrapper();
@@ -58,6 +81,7 @@ describe('UserInformationView.vue', () => {
   });
 
   it('renders correctly', () => {
+    mockRoute.query.userId = '100';
     userStore.setMe(userData1);
     userStore.setUser(userData1);
     const wrapper = generateWrapper();
@@ -74,6 +98,7 @@ describe('UserInformationView.vue', () => {
   });
 
   it('should show password', () => {
+    mockRoute.query.userId = '100';
     userStore.setMe(userData1);
     userStore.setUser(userData1);
     const wrapper = generateWrapper();
@@ -82,6 +107,7 @@ describe('UserInformationView.vue', () => {
   });
 
   it('should hide password', () => {
+    mockRoute.query.userId = '100';
     userStore.setMe(userData2);
     userStore.setUser(userData1);
     const wrapper = generateWrapper();

@@ -27,6 +27,7 @@ const testData: DetailedProjectModel = {
     id: 1,
     businessUnit: 'BU Health',
     teamName: '42',
+    ptl: 'Max Mustermann',
   },
   offerId: '3',
   company: 'Appsfactory',
@@ -71,18 +72,18 @@ describe('ProjectInformation.vue', () => {
     expect(wrapper.findAll('.infoCard')[0].text()).toBe(
       'Project\xa0Slug:test_project',
     );
-    expect(wrapper.findAll('.infoCard')[1].text()).toBe(
-      'Business\xa0Unit:BU Health',
-    );
-    expect(wrapper.findAll('.infoCard')[2].text()).toBe('Team\xa0Number:42');
-    expect(wrapper.findAll('.infoCard')[3].text()).toBe('Department:IT');
-    expect(wrapper.findAll('.infoCard')[4].text()).toBe('Client\xa0Name:ZDF');
-    expect(wrapper.findAll('.infoCard')[5].text()).toBe('Offer\xa0ID:3');
-    expect(wrapper.findAll('.infoCard')[6].text()).toBe('Company:Appsfactory');
-    expect(wrapper.findAll('.infoCard')[7].text()).toBe(
+    expect(wrapper.findAll('.infoCard')[1].text()).toBe('Client\xa0Name:ZDF');
+    expect(wrapper.findAll('.infoCard')[2].text()).toBe('Offer\xa0ID:3');
+    expect(wrapper.findAll('.infoCard')[3].text()).toBe('Company:Appsfactory');
+    expect(wrapper.findAll('.infoCard')[4].text()).toBe(
       'Company\xa0State:External',
     );
-    expect(wrapper.findAll('.infoCard')[8].text()).toBe('ISMS\xa0Level:Normal');
+    expect(wrapper.findAll('.infoCard')[5].text()).toBe('ISMS\xa0Level:Normal');
+    expect(wrapper.findAll('.infoCard')[6].text()).toBe('Team\xa0Name:42');
+    expect(wrapper.findAll('.infoCard')[7].text()).toBe(
+      'Business\xa0Unit:BU Health',
+    );
+    expect(wrapper.findAll('.infoCard')[8].text()).toBe('PTL:Max Mustermann');
   });
 
   it('opens the confirmation modal when DeleteOutlined button is clicked', async () => {

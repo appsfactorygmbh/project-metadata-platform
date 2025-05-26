@@ -51,9 +51,18 @@ const mockAuth3Service = {
   login: vi.fn(),
   logout: vi.fn(),
   check: vi.fn(),
-  load: vi.fn(() => Promise.resolve),
+  load: vi.fn(() => Promise.resolve()),
+  token: vi.fn(() => 'Access Token|Refresh Token'),
+  refresh: vi.fn(() => Promise.resolve()),
 };
-vi.mock('vue-auth3', () => ({ useAuth: vi.fn(() => mockAuth3Service) }));
+vi.mock('vue-auth3', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('vue-auth3')>();
+
+  return {
+    ...actual,
+    useAuth: vi.fn(() => mockAuth3Service),
+  };
+});
 
 beforeAll(() => {
   vi.mock('@/store/ApiStore', async (importOriginal) => ({
