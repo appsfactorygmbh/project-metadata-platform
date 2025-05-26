@@ -4,8 +4,10 @@
   import type { CreateTeamFormData } from './CreateTeamFormData.ts';
   import { CreateTeamForm } from './';
   import router from '@/router/router.ts';
-  import { useTeamStore } from '@/store/TeamStore.ts';
-  import { teamRoutingSymbol } from '@/store/injectionSymbols.ts';
+  import {
+    teamRoutingSymbol,
+    teamStoreSymbol,
+  } from '@/store/injectionSymbols.ts';
 
   const { setTeamId } = inject(teamRoutingSymbol)!;
 
@@ -19,7 +21,12 @@
   };
 
   const formStore = useFormStore('CreateTeamForm');
-  const teamStore = useTeamStore();
+  const teamStore = inject(teamStoreSymbol)!;
+
+  if (teamStore === undefined) {
+    throw new Error('team store cant be undefined');
+  }
+
   const initialFormValues: CreateTeamFormData = {
     teamName: '',
     ptl: '',

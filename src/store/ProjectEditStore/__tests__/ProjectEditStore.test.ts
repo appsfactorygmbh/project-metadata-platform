@@ -17,9 +17,7 @@ describe('ProjectEditStore', () => {
     expect(store.projectInformationChanges).toEqual({
       projectName: '',
       clientName: '',
-      businessUnit: '',
-      teamNumber: -1,
-      department: '',
+      teamId: null,
       offerId: '',
       company: '',
       ismsLevel: 'NORMAL',
@@ -119,9 +117,7 @@ describe('ProjectEditStore', () => {
     expect(store.getProjectInformationChanges).toEqual({
       projectName: '',
       clientName: '',
-      businessUnit: '',
-      teamNumber: -1,
-      department: '',
+      teamId: null,
       offerId: '',
       company: '',
       ismsLevel: 'NORMAL',

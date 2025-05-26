@@ -72,7 +72,8 @@
         isLink: false,
       },
     ];
-    if (me.value?.id == user.value?.id || !routerUserId.value) tempButtons[0].status = 'deactivated';
+    if (me.value?.id == user.value?.id || !routerUserId.value)
+      tempButtons[0].status = 'deactivated';
 
     return tempButtons;
   });
@@ -155,10 +156,7 @@
     :description="`No User Found for Id ${route.query.userId}`"
   ></a-empty>
   <a-empty v-else description="No User Selected"></a-empty>
-  <FloatingButtonGroup
-    :buttons="buttons"
-    class="floating-buttons"
-  />
+  <FloatingButtonGroup :buttons="buttons" class="floating-buttons" />
   <RouterView />
 </template>
 

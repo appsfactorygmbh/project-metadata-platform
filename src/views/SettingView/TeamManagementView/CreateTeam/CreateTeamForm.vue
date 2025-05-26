@@ -4,7 +4,7 @@
   import { reactive, ref, toRaw } from 'vue';
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateTeamFormData } from './CreateTeamFormData.ts';
-  import { isUniqueTeamName } from '@/utils/form/userValidation.ts';
+  import { CreateIsUniqueTeamName } from '@/utils/form/userValidation.ts';
   import type { CreateTeamModel } from '@/models/Team/CreateTeamModel.ts';
   import type { TeamStore } from '@/store/TeamStore.ts';
 
@@ -49,7 +49,7 @@
       {
         required: true,
         message: 'Please insert an unique team name.',
-        validator: isUniqueTeamName,
+        validator: CreateIsUniqueTeamName(teamStore),
         trigger: 'change',
         type: 'string',
       },
