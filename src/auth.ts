@@ -18,13 +18,7 @@ axios.interceptors.response.use(
     const config = error.config;
     const response = error.response;
 
-    if (
-      config &&
-      response &&
-      response.status === 400 &&
-      config.url &&
-      config.url.endsWith('/Auth/refresh')
-    ) {
+    if (response?.status === 400 && config?.url?.endsWith('/Auth/refresh')) {
       appEventBus.emit('criticalAuthFailure');
       return new InvalidRefreshTokenError();
     } else {

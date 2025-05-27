@@ -14,10 +14,7 @@
     teamStore: TeamStore;
   }>();
 
-  const emit = defineEmits<{
-    (e: 'newId', id: number): void;
-  }>();
-
+  const emit = defineEmits<(e: 'newId', id: number) => void>();
   const onSubmit: FormSubmitType = async (fields) => {
     try {
       const teamDef: CreateTeamModel = {

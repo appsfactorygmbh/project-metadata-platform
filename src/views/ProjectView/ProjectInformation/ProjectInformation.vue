@@ -208,7 +208,6 @@
   ]);
 
   // Function to update the project information
-  // TODO add reading from team input
   function updateProjectInformation(): void {
     const mappedTeamId = teamStore.getIdToName(teamNameInput.value);
     const updatedProject: EditProjectModel = {
