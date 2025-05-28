@@ -6,7 +6,6 @@ import { type UnwrapRef } from 'vue';
 import type { Pinia } from 'pinia';
 import { piniaInstance } from './piniaInstance';
 import type { GenericStore } from '@/utils/store';
-import { ResponseError } from '@/api/generated';
 
 type ApiStore<Api extends ApiTypes> = PiniaStore<
   'api',
