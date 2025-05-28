@@ -70,12 +70,6 @@ export const useApiStore = <Api extends ApiTypes>(
             this.api as Api,
           );
         } catch (error: unknown) {
-          if (error instanceof ResponseError) {
-            if (error.response.status === 401) {
-              console.log('REFRESH BECAUSE 401');
-              this.initApi();
-            }
-          }
           await handleFetchError(error);
         } finally {
           this.setIsLoading(false);
