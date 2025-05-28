@@ -26,6 +26,13 @@ vi.mock('vue-auth3', () => ({
   }),
 }));
 
+vi.mock('vue-auth3', () => ({
+  useAuth: () => ({
+    ready: vi.fn().mockResolvedValue(undefined),
+    check: vi.fn().mockReturnValue(true),
+  }),
+}));
+
 const testPlugins: PluginModel[] = [
   {
     id: 1,

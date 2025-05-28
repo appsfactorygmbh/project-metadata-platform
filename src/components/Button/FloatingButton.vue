@@ -12,7 +12,7 @@
       required: false,
     },
   });
-  const marginShouldBeApplied = props.isLast !== null && !props.isLast;
+  const marginShouldBeApplied = !(props.isLast == null) && !props.isLast;
 
   const wrapperClasses = computed(() => ({
     'floating-button-wrapper': true,
