@@ -34,7 +34,7 @@
   const openModal = () => {
     if (linkedProjects.value.length > 0) {
       message.error(
-        `Team is still linked to these projects (ids): [${linkedProjects.value}]`,
+        `Team is still linked to these projects: [${linkedProjects.value}]`,
         5,
       );
       return;

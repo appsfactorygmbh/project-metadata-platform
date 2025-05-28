@@ -11,7 +11,7 @@ type StoreState = {
   teams: TeamModel[];
   team: TeamModel | undefined;
   // in sync with team
-  linkedProjects: number[];
+  linkedProjects: string[];
   isLoadingTeam: boolean;
   isLoadingTeams: boolean;
 };
@@ -19,7 +19,7 @@ type StoreState = {
 type StoreGetters = {
   getTeams: () => TeamModel[];
   getTeam: () => TeamModel | undefined;
-  getLinkedProjects: () => number[];
+  getLinkedProjects: () => string[];
   getTeamNames: () => string[];
   getIsLoadingTeams: () => boolean;
   getIsLoadingTeam: () => boolean;
@@ -72,7 +72,7 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
         getTeamNames(): string[] {
           return this.teams.map((team) => team.teamName);
         },
-        getLinkedProjects(): number[] {
+        getLinkedProjects(): string[] {
           return this.linkedProjects;
         },
       },
@@ -165,7 +165,7 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
               await this.callApi('teamsTeamIdLinkedProjectsGet', {
                 teamId: teamId,
               })
-            ).projectIds;
+            ).projectSlugs;
           } catch (e) {
             console.error('failed retrieving linked projects for team');
             throw e;
