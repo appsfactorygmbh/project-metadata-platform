@@ -264,7 +264,11 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
             fullObjectNeeded: true,
           });
           if (!project) throw new Error(`Project with id ${id} not found`);
-          await this.update(id, { ...project, isArchived: true, teamId: project.team?.id });
+          await this.update(id, {
+            ...project,
+            isArchived: true,
+            teamId: project.team?.id,
+          });
           await this.fetchAll();
         },
 
@@ -273,7 +277,11 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
             fullObjectNeeded: true,
           });
           if (!project) throw new Error(`Project with id ${id} not found`);
-          await this.update(id, { ...project, isArchived: false, teamId: project.team?.id });
+          await this.update(id, {
+            ...project,
+            isArchived: false,
+            teamId: project.team?.id,
+          });
           await this.fetchAll();
         },
 
