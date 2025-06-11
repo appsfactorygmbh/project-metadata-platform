@@ -13,6 +13,8 @@
   import type { ArrayElement } from '@/models/utils';
   import { useSessionStorage } from '@vueuse/core';
   import { useQuery, useThemeToken } from '@/utils/hooks';
+  import type { ProjectSearchModel } from '@/models/Project';
+  import { projectRoutingSymbol } from '@/store/injectionSymbols';
 
   const token = useThemeToken();
 
@@ -35,6 +37,8 @@
       required: true,
     },
   });
+
+  const { routerProjectId } = inject(projectRoutingSymbol)!;
 
   interface FilteredInfoModel {
     [key: string]: string;
@@ -226,7 +230,15 @@
     :loading="isLoading"
     :scroll="{ y: props.paneHeight - 125, x: true }"
     :custom-row="customRow"
-    :row-class-name="'table-row'"
+    :row-class-name="
+      (record: ProjectSearchModel, index: number, indent: number) => {
+        if (routerProjectId === record.id) {
+          return 'selected-row table-row';
+        } else {
+          return 'table-row';
+        }
+      }
+    "
     bordered
     @resize-column="handleResizeColumn"
   >
@@ -322,5 +334,8 @@
   }
   :deep(.ant-table-expanded-row-fixed) {
     background-color: v-bind('token.colorBgElevated');
+  }
+  .clickable-table :deep(.table-row.selected-row td) {
+    background: v-bind('token.colorHighlight') !important;
   }
 </style>
