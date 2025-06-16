@@ -4,6 +4,9 @@ import CreateProjectView from '../CreateProjectView.vue';
 import { projectRoutingSymbol } from '@/store/injectionSymbols';
 import { useProjectRouting } from '@/utils/hooks';
 import router from '@/router';
+import { createTestingPinia } from '@pinia/testing';
+import { setActivePinia } from 'pinia';
+import { useTeamStore } from '@/store';
 
 describe('CreateProjectView.vue', () => {
   type CreateProjectViewInstance = {
@@ -15,12 +18,43 @@ describe('CreateProjectView.vue', () => {
       resetFields?: () => void;
       validate?: () => Promise<void>;
     };
+    formState: {
+      teamId: number | undefined;
+    };
   };
 
   let wrapper: VueWrapper<CreateProjectViewInstance>;
+  let teamStore: ReturnType<typeof useTeamStore>;
+
+  const mockTeams = [
+    { id: 101, teamName: 'Mock Team A' },
+    { id: 102, teamName: 'Mock Team B' },
+    { id: 103, teamName: 'Mock Team C' },
+  ];
 
   beforeEach(() => {
+    const testingPinia = createTestingPinia({
+      stubActions: false,
+      initialState: {
+        team: {
+          teams: mockTeams,
+        },
+      },
+    });
+
+    teamStore = useTeamStore(testingPinia);
+
+    teamStore.getNameToId = vi.fn(
+      (id: number) => mockTeams.find((t) => t.id === id)?.teamName,
+    );
+    teamStore.getIdToName = vi.fn(
+      (name: string) => mockTeams.find((t) => t.teamName === name)?.id,
+    );
+
+    setActivePinia(testingPinia);
+
     wrapper = mount(CreateProjectView, {
+      plugins: [testingPinia],
       global: {
         provide: {
           [projectRoutingSymbol as symbol]: useProjectRouting(router),

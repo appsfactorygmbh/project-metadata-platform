@@ -55,10 +55,6 @@
     teamId: undefined,
   });
 
-  watch(formState, (formState) => {
-    console.log(`x is ${formState.teamId}`);
-  });
-
   // needed for mapping type null -> undefined in form input
   const displayOfferId = computed({
     get() {
@@ -72,6 +68,7 @@
 
   const validateMessages = {
     required: 'Please enter valid input.',
+    whitespace: 'Please enter valid input.',
   };
 
   const button: FloatButtonModel = {
@@ -194,7 +191,6 @@
           name="projectName"
           :rules="[{ required: true, whitespace: true }]"
           class="column"
-          :no-style="true"
         >
           <a-input
             v-model:value="formState.projectName"
@@ -208,7 +204,6 @@
         <a-form-item
           name="clientName"
           :rules="[{ required: true, whitespace: true }]"
-          :no-style="true"
         >
           <a-input
             v-model:value="formState.clientName"
@@ -229,7 +224,6 @@
         <a-form-item
           name="company"
           :rules="[{ required: true, whitespace: true }]"
-          :no-style="true"
         >
           <a-input v-model:value="formState.company" placeholder="Company">
             <template #suffix>
@@ -237,11 +231,7 @@
             </template>
           </a-input>
         </a-form-item>
-        <a-form-item
-          name="companyState"
-          :rules="[{ required: true }]"
-          :no-style="true"
-        >
+        <a-form-item name="companyState" :rules="[{ required: true }]">
           <a-select
             v-model:value="formState.companyState"
             placeholder="Company State"
@@ -253,11 +243,7 @@
             <a-select-option value="EXTERNAL">External</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item
-          name="ismsLevel"
-          :rules="[{ required: true }]"
-          :no-style="true"
-        >
+        <a-form-item name="ismsLevel" :rules="[{ required: true }]">
           <a-select
             v-model:value="formState.ismsLevel"
             placeholder="ISMS Level"
@@ -270,16 +256,14 @@
             <a-select-option value="VERY_HIGH">Very High</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item
-          name="teamId"
-          :rules="[{ required: false }]"
-          :no-style="true"
-        >
+        <a-form-item name="teamId" :rules="[{ required: false }]">
           <a-select
             v-model:value="selectedTeamForSelect"
             placeholder="Team"
+            class="team-select"
             show-search
             allow-clear
+            data-test="team-id-select"
           >
             <template #suffixIcon>
               <TeamOutlined class="icon" />
@@ -288,9 +272,10 @@
               'No Team'
             }}</a-select-option>
             <a-select-option
-              v-for="team in getTeams"
+              v-for="(team, index) in getTeams"
               :key="team.teamName"
               :value="team.teamName"
+              :data-testid="'team-select-' + index"
               >{{ team.teamName }}</a-select-option
             >
           </a-select>
@@ -314,5 +299,8 @@
   }
   :deep(.ant-select .ant-select-arrow) {
     color: unset;
+  }
+  :deep(.ant-col-14) {
+    max-width: 100%;
   }
 </style>
