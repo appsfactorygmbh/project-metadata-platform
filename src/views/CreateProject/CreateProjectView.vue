@@ -109,6 +109,11 @@
       });
   };
 
+  const getDropdownContainer = (triggerNode: HTMLElement) => {
+    console.log(triggerNode.textContent);
+    return triggerNode.parentNode as HTMLElement;
+  };
+
   // sends PUT request to the backend
   const submit = async () => {
     const projectData: CreateProjectModel = {
@@ -276,6 +281,7 @@
               :key="team.teamName"
               :value="team.teamName"
               :data-testid="'team-select-' + index"
+              :get-popup-container="getDropdownContainer"
               >{{ team.teamName }}</a-select-option
             >
           </a-select>

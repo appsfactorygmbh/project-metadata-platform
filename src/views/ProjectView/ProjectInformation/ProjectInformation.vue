@@ -604,6 +604,8 @@
     font-weight: bold;
     color: v-bind('token.colorText');
     margin: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .projectInformationBox {
