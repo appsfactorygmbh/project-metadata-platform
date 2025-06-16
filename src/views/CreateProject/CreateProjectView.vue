@@ -55,6 +55,10 @@
     teamId: undefined,
   });
 
+  watch(formState, (formState) => {
+    console.log(`x is ${formState.teamId}`);
+  });
+
   // needed for mapping type null -> undefined in form input
   const displayOfferId = computed({
     get() {
@@ -68,12 +72,6 @@
 
   const validateMessages = {
     required: 'Please enter valid input.',
-    types: {
-      number: 'Team number is not a valid number!',
-    },
-    number: {
-      range: 'Team number must be positive number.',
-    },
   };
 
   const button: FloatButtonModel = {
@@ -145,7 +143,7 @@
     setProjectId(newProject?.id ?? undefined);
   };
 
-  // handling because a-select cant handle null values
+  // mapping team name on the select input -> id / id -> name
   const selectedTeamForSelect = computed<SelectValue>({
     get() {
       if (formState.teamId === undefined || formState.teamId === null) {
@@ -154,12 +152,18 @@
       const name = teamStore.getNameToId(formState.teamId);
       return name;
     },
-    set(newValue) {
+    set(newValue: SelectValue) {
       if (newValue === undefined || newValue === null) {
         formState.teamId = undefined;
-      } else {
-        const id = teamStore.getIdToName(JSON.stringify(newValue));
+      } else if (typeof newValue === 'string') {
+        const id = teamStore.getIdToName(newValue);
         formState.teamId = id;
+      } else {
+        console.warn(
+          'Unexpected newValue type for selectedTeamForSelect:',
+          newValue,
+        );
+        formState.teamId = undefined;
       }
     },
   });
@@ -275,11 +279,14 @@
             v-model:value="selectedTeamForSelect"
             placeholder="Team"
             show-search
+            allow-clear
           >
             <template #suffixIcon>
               <TeamOutlined class="icon" />
             </template>
-            <a-select-option :value="undefined">{{ 'null' }}</a-select-option>
+            <a-select-option :value="undefined">{{
+              'No Team'
+            }}</a-select-option>
             <a-select-option
               v-for="team in getTeams"
               :key="team.teamName"
