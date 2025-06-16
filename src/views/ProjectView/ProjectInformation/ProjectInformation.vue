@@ -149,7 +149,7 @@
     displayValue?: (value: T) => string | number | boolean | undefined;
   };
 
-  type InputField<T = string | number > = BaseInputField<T> &
+  type InputField<T = string | number> = BaseInputField<T> &
     (
       | {
           options?: string[] | (keyof T)[];
@@ -167,22 +167,21 @@
       name: 'clientName',
       value: clientNameInput,
       status: clientNameInputStatus,
-      requiredValue: true
+      requiredValue: true,
     },
     {
       label: 'Offer\xa0ID',
       name: 'offerId',
       value: offerIdInput,
       status: offerIdInputStatus,
-      requiredValue: false
+      requiredValue: false,
     },
     {
       label: 'Company',
       name: 'company',
       value: companyInput,
       status: companyInputStatus,
-      requiredValue: true
-
+      requiredValue: true,
     },
     {
       label: 'Company\xa0State',
@@ -196,8 +195,7 @@
         ),
       getValue: (value) => CompanyState[value as keyof typeof CompanyState],
       inputType: 'select',
-      requiredValue: true
-
+      requiredValue: true,
     },
     {
       label: 'ISMS\xa0Level',
@@ -211,7 +209,7 @@
         ),
       getValue: (value) => SecurityLevel[value as keyof typeof SecurityLevel],
       inputType: 'select',
-      requiredValue: true
+      requiredValue: true,
     },
   ]);
 

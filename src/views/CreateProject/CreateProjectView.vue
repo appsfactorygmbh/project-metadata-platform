@@ -61,7 +61,8 @@
       return formState.offerId === null ? undefined : formState.offerId;
     },
     set(newValue: string | undefined) {
-      formState.offerId = newValue === undefined || newValue === '' ? null : newValue;
+      formState.offerId =
+        newValue === undefined || newValue === '' ? null : newValue;
     },
   });
 
@@ -214,10 +215,7 @@
             </template>
           </a-input>
         </a-form-item>
-        <a-form-item
-          name="offerId"
-          :no-style="true"
-        >
+        <a-form-item name="offerId" :no-style="true">
           <a-input v-model:value="displayOfferId" placeholder="Offer ID">
             <template #suffix>
               <NumberOutlined class="icon" />
