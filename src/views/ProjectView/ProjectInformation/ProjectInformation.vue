@@ -140,15 +140,16 @@
   const companyStateInput = ref(projectData.companyState);
   const ismsLevelInput = ref(projectData.ismsLevel);
 
-  type BaseInputField<T = string | number> = {
+  type BaseInputField<T = string | number | undefined | null> = {
     label: string;
     name: string;
     value: Ref<T>;
     status: Ref<Status>;
+    requiredValue: boolean;
     displayValue?: (value: T) => string | number | boolean | undefined;
   };
 
-  type InputField<T = string | number> = BaseInputField<T> &
+  type InputField<T = string | number > = BaseInputField<T> &
     (
       | {
           options?: string[] | (keyof T)[];
@@ -160,24 +161,28 @@
         }
     );
 
-  const textFields = ref<InputField[]>([
+  const requieredTextFields = ref<InputField[]>([
     {
       label: 'Client\xa0Name',
       name: 'clientName',
       value: clientNameInput,
       status: clientNameInputStatus,
+      requiredValue: true
     },
     {
       label: 'Offer\xa0ID',
       name: 'offerId',
       value: offerIdInput,
       status: offerIdInputStatus,
+      requiredValue: false
     },
     {
       label: 'Company',
       name: 'company',
       value: companyInput,
       status: companyInputStatus,
+      requiredValue: true
+
     },
     {
       label: 'Company\xa0State',
@@ -191,6 +196,8 @@
         ),
       getValue: (value) => CompanyState[value as keyof typeof CompanyState],
       inputType: 'select',
+      requiredValue: true
+
     },
     {
       label: 'ISMS\xa0Level',
@@ -204,6 +211,7 @@
         ),
       getValue: (value) => SecurityLevel[value as keyof typeof SecurityLevel],
       inputType: 'select',
+      requiredValue: true
     },
   ]);
 
@@ -236,7 +244,7 @@
       loadedData.team?.ptl == undefined ? '' : loadedData.team.ptl;
     projectData.projectName.value = loadedData.projectName;
     projectData.clientName.value = loadedData.clientName;
-    projectData.offerId.value = loadedData.offerId;
+    projectData.offerId.value = loadedData.offerId ?? '';
     projectData.company.value = loadedData.company;
     projectData.companyState.value = loadedData.companyState;
     projectData.ismsLevel.value = loadedData.ismsLevel;
@@ -420,7 +428,7 @@
         />
 
         <EditableTextField
-          v-for="field in textFields"
+          v-for="field in requieredTextFields"
           :key="field.name"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
@@ -457,6 +465,7 @@
             :input-value="field.value"
             :input-status="field.status"
             :edit-store="projectEditStore"
+            :required-value="field.requiredValue"
             @updated="
               (newValue) => {
                 field.value = newValue;

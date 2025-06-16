@@ -72,7 +72,6 @@
         :form-store="props.formStore!"
         @saved-changes="
           {
-            console.log('save changes emitted (EDIT TEXT FIELD)');
             emit('savedChanges');
           }
         "

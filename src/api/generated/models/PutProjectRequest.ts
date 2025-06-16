@@ -45,7 +45,7 @@ export interface PutProjectRequest {
    * @type {string}
    * @memberof PutProjectRequest
    */
-  offerId: string;
+  offerId?: string | null;
   /**
    * Company responsible for project.
    * @type {string}
@@ -94,7 +94,6 @@ export function instanceOfPutProjectRequest(
     return false;
   if (!('clientName' in value) || value['clientName'] === undefined)
     return false;
-  if (!('offerId' in value) || value['offerId'] === undefined) return false;
   if (!('company' in value) || value['company'] === undefined) return false;
   if (!('companyState' in value) || value['companyState'] === undefined)
     return false;
@@ -118,7 +117,7 @@ export function PutProjectRequestFromJSONTyped(
   return {
     projectName: json['projectName'],
     clientName: json['clientName'],
-    offerId: json['offerId'],
+    offerId: json['offerId'] == null ? undefined : json['offerId'],
     company: json['company'],
     teamId: json['teamId'] == null ? undefined : json['teamId'],
     companyState: CompanyStateFromJSON(json['companyState']),

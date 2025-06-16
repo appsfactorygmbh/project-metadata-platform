@@ -55,6 +55,16 @@
     teamId: undefined,
   });
 
+  // needed for mapping type null -> undefined in form input
+  const displayOfferId = computed({
+    get() {
+      return formState.offerId === null ? undefined : formState.offerId;
+    },
+    set(newValue: string | undefined) {
+      formState.offerId = newValue === undefined || newValue === '' ? null : newValue;
+    },
+  });
+
   const validateMessages = {
     required: 'Please enter valid input.',
     types: {
@@ -206,10 +216,9 @@
         </a-form-item>
         <a-form-item
           name="offerId"
-          :rules="[{ required: true, whitespace: true }]"
           :no-style="true"
         >
-          <a-input v-model:value="formState.offerId" placeholder="Offer ID">
+          <a-input v-model:value="displayOfferId" placeholder="Offer ID">
             <template #suffix>
               <NumberOutlined class="icon" />
             </template>

@@ -57,7 +57,7 @@ export interface GetProjectResponse {
    * @type {string}
    * @memberof GetProjectResponse
    */
-  offerId: string;
+  offerId?: string | null;
   /**
    * The company that is responsible for the project.
    * @type {string}
@@ -102,7 +102,6 @@ export function instanceOfGetProjectResponse(
     return false;
   if (!('clientName' in value) || value['clientName'] === undefined)
     return false;
-  if (!('offerId' in value) || value['offerId'] === undefined) return false;
   if (!('company' in value) || value['company'] === undefined) return false;
   if (!('isArchived' in value) || value['isArchived'] === undefined)
     return false;
@@ -128,7 +127,7 @@ export function GetProjectResponseFromJSONTyped(
     slug: json['slug'],
     projectName: json['projectName'],
     clientName: json['clientName'],
-    offerId: json['offerId'],
+    offerId: json['offerId'] == null ? undefined : json['offerId'],
     company: json['company'],
     isArchived: json['isArchived'],
     team:
