@@ -334,23 +334,6 @@
     <div v-if="projectData.id.value" class="main">
       <!-- create box for the project name -->
       <div class="projectNameContainer">
-        <h1 v-if="!isLoading" class="projectName">
-          {{ projectData.projectName.value }}
-        </h1>
-        <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
-
-        <!-- Edit Button -->
-        <IconButton
-          v-if="!projectStore.getProject?.isArchived && !isEditing"
-          tooltip-position="left"
-          tooltip="Click here to activate Edit-View"
-          @click="toggleEditingMode"
-        >
-          <template #icon>
-            <EditOutlined class="icon" />
-          </template>
-        </IconButton>
-
         <!-- Reactivate Button -->
         <IconButton
           v-if="projectStore.getProject?.isArchived"
@@ -396,6 +379,18 @@
           </template>
         </IconButton>
 
+        <!-- Edit Button -->
+        <IconButton
+          v-if="!projectStore.getProject?.isArchived && !isEditing"
+          tooltip-position="left"
+          tooltip="Click here to activate Edit-View"
+          @click="toggleEditingMode"
+        >
+          <template #icon>
+            <EditOutlined class="icon" />
+          </template>
+        </IconButton>
+
         <ConfirmAction
           :is-open="isArchiveModalOpen"
           title="Archive Project"
@@ -404,6 +399,10 @@
           @cancel="isArchiveModalOpen = false"
           @update:is-open="(value) => (isArchiveModalOpen = value)"
         />
+        <h1 v-if="!isLoading" class="projectName">
+          {{ projectData.projectName.value }}
+        </h1>
+        <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
       </div>
 
       <!-- create box for project description (BU, Team Nr, Department, Client Name) -->
@@ -604,6 +603,7 @@
     font-weight: bold;
     color: v-bind('token.colorText');
     margin: 10px;
+    max-width: 80%;
     overflow: hidden;
     text-overflow: ellipsis;
   }
