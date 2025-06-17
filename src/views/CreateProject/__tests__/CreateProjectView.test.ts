@@ -1,4 +1,4 @@
-import { mount, VueWrapper } from '@vue/test-utils';
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import CreateProjectView from '../CreateProjectView.vue';
 import { projectRoutingSymbol } from '@/store/injectionSymbols';
@@ -75,6 +75,64 @@ describe('CreateProjectView.vue', () => {
     };
     wrapper.vm.resetModal();
     expect(wrapper.vm.formRef.resetFields).toHaveBeenCalled();
+  });
+
+  it('set sample data correctly', async () => {
+    const button = wrapper.findComponent({ name: 'a-float-button' });
+    await button.trigger('click');
+
+    await flushPromises();
+
+    // get the modal div (search in document because it is portaled out of the wrapper)
+    let modalContentWrapper = document.body.querySelector('.ant-modal-wrap');
+    expect(modalContentWrapper).not.toBeNull();
+
+    const teamSelectTrigger = modalContentWrapper!.querySelector(
+      '[data-test="team-id-select"] .ant-select-selector',
+    );
+    expect(teamSelectTrigger).not.toBeNull();
+
+    const mousedownEvent = new MouseEvent('mousedown', {
+      bubbles: true,
+      cancelable: true,
+      button: 0,
+    });
+
+    (teamSelectTrigger as HTMLElement).dispatchEvent(mousedownEvent);
+    await flushPromises();
+
+    const teamLocalPopupContainer = modalContentWrapper!.querySelector(
+      '.team-local-popup-container',
+    );
+    expect(teamLocalPopupContainer).not.toBeNull();
+
+    const antSelectDropdown = teamLocalPopupContainer!.querySelector(
+      '.ant-select-dropdown',
+    );
+    expect(antSelectDropdown).not.toBeNull();
+
+    const options = antSelectDropdown!.querySelectorAll(
+      '.ant-select-item-option',
+    );
+    expect(options.length).toBe(teamStore.getTeams.length + 1);
+
+    expect(options[0]!.textContent).toBe('No Team');
+    expect(options[1]!.textContent).toBe('Mock Team A');
+    expect(options[1]!.getAttribute('data-testid')).toBe('team-select-0');
+
+    expect(options[2]!.textContent).toBe('Mock Team B');
+    expect(options[2]!.getAttribute('data-testid')).toBe('team-select-1');
+
+    expect(options[3]!.textContent).toBe('Mock Team C');
+    expect(options[3]!.getAttribute('data-testid')).toBe('team-select-2');
+
+    expect(wrapper.vm.formState.teamId == undefined);
+
+    (options[1] as HTMLElement).click();
+    expect(wrapper.vm.formState.teamId == 101);
+
+    (options[0] as HTMLElement).click();
+    expect(wrapper.vm.formState.teamId == undefined);
   });
 
   it('handles form validation errors on handleOk', async () => {

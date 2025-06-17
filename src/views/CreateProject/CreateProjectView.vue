@@ -109,11 +109,6 @@
       });
   };
 
-  const getDropdownContainer = (triggerNode: HTMLElement) => {
-    console.log(triggerNode.textContent);
-    return triggerNode.parentNode as HTMLElement;
-  };
-
   // sends PUT request to the backend
   const submit = async () => {
     const projectData: CreateProjectModel = {
@@ -169,6 +164,17 @@
       }
     },
   });
+
+  const getDropdownContainer = () => {
+    const globalContainer = document.querySelector(
+      '.team-local-popup-container',
+    );
+    if (globalContainer instanceof HTMLElement) {
+      return globalContainer;
+    } else {
+      return document.body;
+    }
+  };
 </script>
 
 <template>
@@ -262,6 +268,10 @@
           </a-select>
         </a-form-item>
         <a-form-item name="teamId" :rules="[{ required: false }]">
+          <div
+            ref="localPopupContainer"
+            class="team-local-popup-container"
+          ></div>
           <a-select
             v-model:value="selectedTeamForSelect"
             placeholder="Team"
@@ -269,6 +279,7 @@
             show-search
             allow-clear
             data-test="team-id-select"
+            :get-popup-container="getDropdownContainer"
           >
             <template #suffixIcon>
               <TeamOutlined class="icon" />
@@ -281,7 +292,6 @@
               :key="team.teamName"
               :value="team.teamName"
               :data-testid="'team-select-' + index"
-              :get-popup-container="getDropdownContainer"
               >{{ team.teamName }}</a-select-option
             >
           </a-select>
