@@ -6,6 +6,30 @@ import { createTestingPinia } from '@pinia/testing';
 import router from '@/router';
 import initAuth from '@/auth';
 
+const mockRoute = {
+  path: '/mock-path',
+  query: { redirect: '/redirect-path' },
+  params: {},
+  hash: '',
+  fullPath: '/mock-path',
+  matched: [],
+  meta: {},
+  redirectedFrom: undefined,
+};
+
+const mockRouter = {
+  push: vi.fn(),
+};
+
+vi.mock('vue-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('vue-router')>();
+  return {
+    ...actual,
+    useRouter: () => mockRouter,
+    useRoute: () => mockRoute,
+  };
+});
+
 describe('LoginView.vue', () => {
   let wrapper: VueWrapper;
   beforeEach(() => {
@@ -15,7 +39,7 @@ describe('LoginView.vue', () => {
       }),
     );
     wrapper = mount(LoginView, {
-      plugins: [router, initAuth(router)],
+      plugins: [router, initAuth()],
       global: {
         stubs: {
           RouterLink: {

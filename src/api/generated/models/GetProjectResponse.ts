@@ -12,6 +12,11 @@
  * Do not edit the class manually.
  */
 
+import type { GetTeamResponse } from './GetTeamResponse';
+import {
+  GetTeamResponseFromJSON,
+  GetTeamResponseToJSON,
+} from './GetTeamResponse';
 import type { SecurityLevel } from './SecurityLevel';
 import { SecurityLevelFromJSON, SecurityLevelToJSON } from './SecurityLevel';
 import type { CompanyState } from './CompanyState';
@@ -36,35 +41,29 @@ export interface GetProjectResponse {
    */
   slug: string;
   /**
-   * The name of the project.
+   *
    * @type {string}
    * @memberof GetProjectResponse
    */
   projectName: string;
   /**
-   * The name of the client for the project.
+   *
    * @type {string}
    * @memberof GetProjectResponse
    */
   clientName: string;
   /**
-   * The name of the Business Unit associated with the project.
+   * Internal id of the offer associated with the project.
    * @type {string}
    * @memberof GetProjectResponse
    */
-  businessUnit: string;
+  offerId?: string | null;
   /**
-   * The number of the team working on the project.
-   * @type {number}
-   * @memberof GetProjectResponse
-   */
-  teamNumber: number;
-  /**
-   * The name of the department associated with the project.
+   * The company that is responsible for the project.
    * @type {string}
    * @memberof GetProjectResponse
    */
-  department: string;
+  company: string;
   /**
    * If the project is archived or not.
    * @type {boolean}
@@ -72,17 +71,11 @@ export interface GetProjectResponse {
    */
   isArchived: boolean;
   /**
-   * Internal id of the offer associated with the project.
-   * @type {string}
+   *
+   * @type {GetTeamResponse}
    * @memberof GetProjectResponse
    */
-  offerId: string;
-  /**
-   * The company that is responsible for the project.
-   * @type {string}
-   * @memberof GetProjectResponse
-   */
-  company: string;
+  team?: GetTeamResponse;
   /**
    *
    * @type {CompanyState}
@@ -109,16 +102,9 @@ export function instanceOfGetProjectResponse(
     return false;
   if (!('clientName' in value) || value['clientName'] === undefined)
     return false;
-  if (!('businessUnit' in value) || value['businessUnit'] === undefined)
-    return false;
-  if (!('teamNumber' in value) || value['teamNumber'] === undefined)
-    return false;
-  if (!('department' in value) || value['department'] === undefined)
-    return false;
+  if (!('company' in value) || value['company'] === undefined) return false;
   if (!('isArchived' in value) || value['isArchived'] === undefined)
     return false;
-  if (!('offerId' in value) || value['offerId'] === undefined) return false;
-  if (!('company' in value) || value['company'] === undefined) return false;
   if (!('companyState' in value) || value['companyState'] === undefined)
     return false;
   if (!('ismsLevel' in value) || value['ismsLevel'] === undefined) return false;
@@ -141,12 +127,11 @@ export function GetProjectResponseFromJSONTyped(
     slug: json['slug'],
     projectName: json['projectName'],
     clientName: json['clientName'],
-    businessUnit: json['businessUnit'],
-    teamNumber: json['teamNumber'],
-    department: json['department'],
-    isArchived: json['isArchived'],
-    offerId: json['offerId'],
+    offerId: json['offerId'] == null ? undefined : json['offerId'],
     company: json['company'],
+    isArchived: json['isArchived'],
+    team:
+      json['team'] == null ? undefined : GetTeamResponseFromJSON(json['team']),
     companyState: CompanyStateFromJSON(json['companyState']),
     ismsLevel: SecurityLevelFromJSON(json['ismsLevel']),
   };
@@ -169,12 +154,10 @@ export function GetProjectResponseToJSONTyped(
     slug: value['slug'],
     projectName: value['projectName'],
     clientName: value['clientName'],
-    businessUnit: value['businessUnit'],
-    teamNumber: value['teamNumber'],
-    department: value['department'],
-    isArchived: value['isArchived'],
     offerId: value['offerId'],
     company: value['company'],
+    isArchived: value['isArchived'],
+    team: GetTeamResponseToJSON(value['team']),
     companyState: CompanyStateToJSON(value['companyState']),
     ismsLevel: SecurityLevelToJSON(value['ismsLevel']),
   };

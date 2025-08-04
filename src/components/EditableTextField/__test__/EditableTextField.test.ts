@@ -13,6 +13,13 @@ interface EditableTextFieldInstance {
   isLoading: boolean;
 }
 
+vi.mock('vue-auth3', () => ({
+  useAuth: () => ({
+    ready: vi.fn().mockResolvedValue(undefined),
+    check: vi.fn().mockReturnValue(true),
+  }),
+}));
+
 describe('EditableTextField', () => {
   const generateWrapper = () => {
     setActivePinia(createPinia());

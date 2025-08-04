@@ -1,19 +1,20 @@
 <script setup lang="ts">
   import { type FormStore, type FormSubmitType } from '@/components/Form';
   import { message } from 'ant-design-vue';
-  import { useGlobalPluginsStore } from '@/store';
+  import { useGlobalPluginStore } from '@/store';
   import { onMounted, reactive } from 'vue';
   import { useRoute } from 'vue-router';
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
   import type { GlobalPluginFormData } from '../GlobalPluginForm';
+  import type { PatchGlobalPluginRequest } from '@/api/generated';
 
   const { formStore } = defineProps<{
     formStore: FormStore;
   }>();
 
-  const globalPluginStore = useGlobalPluginsStore();
+  const globalPluginStore = useGlobalPluginStore();
 
-  const onSubmit: FormSubmitType = (fields) => {
+  const onSubmit: FormSubmitType = (fields: PatchGlobalPluginRequest) => {
     if (!pluginIdRef.value) {
       return;
     }

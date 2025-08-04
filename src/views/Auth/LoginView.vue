@@ -6,9 +6,11 @@
   import useBreakpoint from 'ant-design-vue/es/_util/hooks/useBreakpoint';
   import { useAuth } from 'vue-auth3';
   import axios from 'axios';
+  import { useRoute } from 'vue-router';
 
   const auth = useAuth();
   const router = useRouter();
+  const route = useRoute();
   const formStore = useFormStore('loginForm');
 
   const feedbackMessage = ref('');
@@ -23,6 +25,7 @@
         staySignedIn: fields.remember,
       })
       .then((response) => {
+        callback();
         console.log(response);
       })
       .catch((error) => {
@@ -41,8 +44,8 @@
   const refreshToken = computed(() => auth.token()?.split('|')[1]);
 
   const callback = () => {
-    window.location.href =
-      (router.currentRoute.value.query.redirect as string) ?? '/';
+    const redirect = (route.query.redirect as string) ?? '/';
+    router.push(redirect);
   };
 
   onMounted(() => {

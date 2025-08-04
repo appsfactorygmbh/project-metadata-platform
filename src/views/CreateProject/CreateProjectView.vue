@@ -1,25 +1,24 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue';
   import {
-    BankOutlined,
     FontColorsOutlined,
     PlusOutlined,
-    ShoppingOutlined,
     NumberOutlined,
     UserOutlined,
-    FieldNumberOutlined,
     SafetyCertificateOutlined,
     TrademarkOutlined,
     SwapOutlined,
+    TeamOutlined,
   } from '@ant-design/icons-vue';
   import type { UnwrapRef } from 'vue';
   import type { CreateProjectModel } from '@/models/Project';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
-  import { useProjectStore } from '@/store';
+  import { useProjectStore, useTeamStore } from '@/store';
   import { projectRoutingSymbol } from '@/store/injectionSymbols';
   import { useThemeToken } from '@/utils/hooks';
   import { message } from 'ant-design-vue';
-  import { isANumber } from '@/utils/form/userValidation';
+  import { storeToRefs } from 'pinia';
+  import type { SelectValue } from 'ant-design-vue/es/select';
 
   const token = useThemeToken();
 
@@ -34,14 +33,18 @@
   // TableStore to refetch Table after Project was added
 
   const projectStore = useProjectStore();
+
+  const teamStore = useTeamStore();
+
+  const { getTeams } = storeToRefs(teamStore);
+
   const { setProjectId } = inject(projectRoutingSymbol)!;
 
   const isAdding = computed(() => projectStore.getIsLoadingAdd);
 
-  const formState: UnwrapRef<Partial<CreateProjectModel>> = reactive({
+  const formState: UnwrapRef<CreateProjectModel> = reactive({
     projectName: '',
     businessUnit: '',
-    teamNumber: undefined,
     department: '',
     clientName: '',
     offerId: '',
@@ -49,16 +52,23 @@
     companyState: 'EXTERNAL',
     ismsLevel: 'NORMAL',
     isArchived: false,
+    teamId: undefined,
+  });
+
+  // needed for mapping type null -> undefined in form input
+  const displayOfferId = computed({
+    get() {
+      return formState.offerId === null ? undefined : formState.offerId;
+    },
+    set(newValue: string | undefined) {
+      formState.offerId =
+        newValue === undefined || newValue === '' ? null : newValue;
+    },
   });
 
   const validateMessages = {
     required: 'Please enter valid input.',
-    types: {
-      number: 'Team number is not a valid number!',
-    },
-    number: {
-      range: 'Team number must be positive number.',
-    },
+    whitespace: 'Please enter valid input.',
   };
 
   const button: FloatButtonModel = {
@@ -102,16 +112,14 @@
   // sends PUT request to the backend
   const submit = async () => {
     const projectData: CreateProjectModel = {
-      projectName: formState.projectName!,
-      businessUnit: formState.businessUnit!,
-      teamNumber: formState.teamNumber!,
-      department: formState.department!,
-      clientName: formState.clientName!,
+      projectName: formState.projectName,
+      teamId: formState.teamId!,
+      clientName: formState.clientName,
       isArchived: false,
-      offerId: formState.offerId!,
-      company: formState.company!,
-      companyState: formState.companyState!,
-      ismsLevel: formState.ismsLevel!,
+      offerId: formState.offerId,
+      company: formState.company,
+      companyState: formState.companyState,
+      ismsLevel: formState.ismsLevel,
     };
 
     try {
@@ -130,6 +138,42 @@
       (project) => project.projectName === projectData.projectName,
     );
     setProjectId(newProject?.id ?? undefined);
+  };
+
+  // mapping team name on the select input -> id / id -> name
+  const selectedTeamForSelect = computed<SelectValue>({
+    get() {
+      if (formState.teamId === undefined || formState.teamId === null) {
+        return undefined;
+      }
+      const name = teamStore.getNameToId(formState.teamId);
+      return name;
+    },
+    set(newValue: SelectValue) {
+      if (newValue === undefined || newValue === null) {
+        formState.teamId = undefined;
+      } else if (typeof newValue === 'string') {
+        const id = teamStore.getIdToName(newValue);
+        formState.teamId = id;
+      } else {
+        console.warn(
+          'Unexpected newValue type for selectedTeamForSelect:',
+          newValue,
+        );
+        formState.teamId = undefined;
+      }
+    },
+  });
+
+  const getDropdownContainer = () => {
+    const globalContainer = document.querySelector(
+      '.team-local-popup-container',
+    );
+    if (globalContainer instanceof HTMLElement) {
+      return globalContainer;
+    } else {
+      return document.body;
+    }
   };
 </script>
 
@@ -158,7 +202,6 @@
           name="projectName"
           :rules="[{ required: true, whitespace: true }]"
           class="column"
-          :no-style="true"
         >
           <a-input
             v-model:value="formState.projectName"
@@ -170,58 +213,8 @@
           </a-input>
         </a-form-item>
         <a-form-item
-          name="teamNumber"
-          :rules="[
-            {
-              required: true,
-              whitespace: true,
-              validator: isANumber,
-            },
-          ]"
-          class="column"
-          :no-style="true"
-        >
-          <a-input
-            v-model:value="formState.teamNumber"
-            placeholder="Team Number"
-          >
-            <template #suffix>
-              <FieldNumberOutlined class="icon" />
-            </template>
-          </a-input>
-        </a-form-item>
-        <a-form-item
-          name="businessUnit"
-          :rules="[{ required: true, whitespace: true }]"
-          :no-style="true"
-        >
-          <a-input
-            v-model:value="formState.businessUnit"
-            placeholder="Business Unit"
-          >
-            <template #suffix>
-              <ShoppingOutlined class="icon" />
-            </template>
-          </a-input>
-        </a-form-item>
-        <a-form-item
-          name="department"
-          :rules="[{ required: true, whitespace: true }]"
-          :no-style="true"
-        >
-          <a-input
-            v-model:value="formState.department"
-            placeholder="Department"
-          >
-            <template #suffix>
-              <BankOutlined class="icon" />
-            </template>
-          </a-input>
-        </a-form-item>
-        <a-form-item
           name="clientName"
           :rules="[{ required: true, whitespace: true }]"
-          :no-style="true"
         >
           <a-input
             v-model:value="formState.clientName"
@@ -232,12 +225,8 @@
             </template>
           </a-input>
         </a-form-item>
-        <a-form-item
-          name="offerId"
-          :rules="[{ required: true, whitespace: true }]"
-          :no-style="true"
-        >
-          <a-input v-model:value="formState.offerId" placeholder="Offer ID">
+        <a-form-item name="offerId" :no-style="true">
+          <a-input v-model:value="displayOfferId" placeholder="Offer ID">
             <template #suffix>
               <NumberOutlined class="icon" />
             </template>
@@ -246,7 +235,6 @@
         <a-form-item
           name="company"
           :rules="[{ required: true, whitespace: true }]"
-          :no-style="true"
         >
           <a-input v-model:value="formState.company" placeholder="Company">
             <template #suffix>
@@ -254,11 +242,7 @@
             </template>
           </a-input>
         </a-form-item>
-        <a-form-item
-          name="companyState"
-          :rules="[{ required: true }]"
-          :no-style="true"
-        >
+        <a-form-item name="companyState" :rules="[{ required: true }]">
           <a-select
             v-model:value="formState.companyState"
             placeholder="Company State"
@@ -270,11 +254,7 @@
             <a-select-option value="EXTERNAL">External</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item
-          name="ismsLevel"
-          :rules="[{ required: true }]"
-          :no-style="true"
-        >
+        <a-form-item name="ismsLevel" :rules="[{ required: true }]">
           <a-select
             v-model:value="formState.ismsLevel"
             placeholder="ISMS Level"
@@ -285,6 +265,35 @@
             <a-select-option value="NORMAL">Normal</a-select-option>
             <a-select-option value="HIGH">High</a-select-option>
             <a-select-option value="VERY_HIGH">Very High</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item name="teamId" :rules="[{ required: false }]">
+          <div
+            ref="localPopupContainer"
+            class="team-local-popup-container"
+          ></div>
+          <a-select
+            v-model:value="selectedTeamForSelect"
+            placeholder="Team"
+            class="team-select"
+            show-search
+            allow-clear
+            data-test="team-id-select"
+            :get-popup-container="getDropdownContainer"
+          >
+            <template #suffixIcon>
+              <TeamOutlined class="icon" />
+            </template>
+            <a-select-option :value="undefined">{{
+              'No Team'
+            }}</a-select-option>
+            <a-select-option
+              v-for="(team, index) in getTeams"
+              :key="team.teamName"
+              :value="team.teamName"
+              :data-testid="'team-select-' + index"
+              >{{ team.teamName }}</a-select-option
+            >
           </a-select>
         </a-form-item>
       </a-form>
@@ -306,5 +315,8 @@
   }
   :deep(.ant-select .ant-select-arrow) {
     color: unset;
+  }
+  :deep(.ant-col-14) {
+    max-width: 100%;
   }
 </style>

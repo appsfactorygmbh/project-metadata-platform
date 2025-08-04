@@ -18,7 +18,7 @@
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import { usePluginStore, useProjectStore } from '@/store';
+  import { usePluginStore, useProjectStore, useTeamStore } from '@/store';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
   import IconButton from '@/components/Button/IconButton.vue';
@@ -27,7 +27,7 @@
   import {
     EditableTextField,
     ProjectInformationInputField,
-    ProjectInformationSelectField,
+    ProjectInformationSearchSelectField,
   } from '@/components/EditableTextField';
   import { useThemeToken } from '@/utils/hooks';
   import { CompanyState, SecurityLevel } from '@/api/generated';
@@ -36,6 +36,7 @@
   const projectStore = useProjectStore();
   const projectEditStore = inject(projectEditStoreSymbol)!;
   const pluginStore = usePluginStore();
+  const teamStore = useTeamStore();
   const projectRouting = inject(projectRoutingSymbol)!;
   const token = useThemeToken();
 
@@ -57,6 +58,7 @@
 
   onMounted(async () => {
     const project = projectStore.getProject;
+    teamStore.fetchAll();
     if (project) addData(project);
 
     const data: ComputedRef<DetailedProjectModel | null> = computed(
@@ -82,12 +84,14 @@
         projectEditStore.resetPluginChanges();
         BUInputStatus.value = '';
         teamNumberInputStatus.value = '';
-        departmentInputStatus.value = '';
+        PtlInputStatus.value = '';
         clientNameInputStatus.value = '';
         offerIdInputStatus.value = '';
         companyInputStatus.value = '';
         companyStateInputState.value = '';
         ismsLevelInputState.value = '';
+        teamNameInputStatus.value = '';
+        teamNameInput.value = '';
         addData(projectStore.getProject!);
       }
     },
@@ -106,8 +110,9 @@
     slug: ref<string>(''),
     projectName: ref<string>(''),
     businessUnit: ref<string>(''),
-    teamNumber: ref<number>(0),
-    department: ref<string>(''),
+    teamId: ref<number | undefined>(undefined),
+    teamName: ref<string>(''),
+    ptl: ref<string>(''),
     clientName: ref<string>(''),
     offerId: ref<string>(''),
     company: ref<DetailedProjectModel['company']>(''),
@@ -119,28 +124,28 @@
   type Status = '' | 'error' | 'warning' | undefined;
 
   const BUInputStatus = ref<Status>('');
+  const teamNameInputStatus = ref<Status>('');
   const teamNumberInputStatus = ref<Status>('');
-  const departmentInputStatus = ref<Status>('');
+  const PtlInputStatus = ref<Status>('');
   const clientNameInputStatus = ref<Status>('');
   const offerIdInputStatus = ref<Status>('');
   const companyInputStatus = ref<Status>('');
   const companyStateInputState = ref<Status>('');
   const ismsLevelInputState = ref<Status>('');
 
-  const BUInput = ref(projectData.businessUnit);
-  const teamNumberInput = ref(projectData.teamNumber);
-  const departmentInput = ref(projectData.department);
   const clientNameInput = ref(projectData.clientName);
+  const teamNameInput = ref(projectData.teamName);
   const offerIdInput = ref(projectData.offerId);
   const companyInput = ref(projectData.company);
   const companyStateInput = ref(projectData.companyState);
   const ismsLevelInput = ref(projectData.ismsLevel);
 
-  type BaseInputField<T = string | number> = {
+  type BaseInputField<T = string | number | undefined | null> = {
     label: string;
     name: string;
     value: Ref<T>;
     status: Ref<Status>;
+    requiredValue: boolean;
     displayValue?: (value: T) => string | number | boolean | undefined;
   };
 
@@ -156,42 +161,27 @@
         }
     );
 
-  const textFields = ref<InputField[]>([
-    {
-      label: 'Business\xa0Unit',
-      name: 'businessUnit',
-      value: BUInput,
-      status: BUInputStatus,
-    },
-    {
-      label: 'Team\xa0Number',
-      name: 'teamNumber',
-      value: teamNumberInput,
-      status: teamNumberInputStatus,
-    },
-    {
-      label: 'Department',
-      name: 'department',
-      value: departmentInput,
-      status: departmentInputStatus,
-    },
+  const requieredTextFields = ref<InputField[]>([
     {
       label: 'Client\xa0Name',
       name: 'clientName',
       value: clientNameInput,
       status: clientNameInputStatus,
+      requiredValue: true,
     },
     {
       label: 'Offer\xa0ID',
       name: 'offerId',
       value: offerIdInput,
       status: offerIdInputStatus,
+      requiredValue: false,
     },
     {
       label: 'Company',
       name: 'company',
       value: companyInput,
       status: companyInputStatus,
+      requiredValue: true,
     },
     {
       label: 'Company\xa0State',
@@ -205,6 +195,7 @@
         ),
       getValue: (value) => CompanyState[value as keyof typeof CompanyState],
       inputType: 'select',
+      requiredValue: true,
     },
     {
       label: 'ISMS\xa0Level',
@@ -218,21 +209,21 @@
         ),
       getValue: (value) => SecurityLevel[value as keyof typeof SecurityLevel],
       inputType: 'select',
+      requiredValue: true,
     },
   ]);
 
-  //Function to update the project information
+  // Function to update the project information
   function updateProjectInformation(): void {
+    const mappedTeamId = teamStore.getIdToName(teamNameInput.value);
     const updatedProject: EditProjectModel = {
       projectName: projectData.projectName.value,
-      businessUnit: BUInput.value,
-      teamNumber: teamNumberInput.value,
-      department: departmentInput.value,
       clientName: clientNameInput.value,
       offerId: offerIdInput.value,
       company: companyInput.value,
       companyState: companyStateInput.value,
       ismsLevel: ismsLevelInput.value,
+      teamId: mappedTeamId,
     };
     projectEditStore.updateProjectInformationChanges(updatedProject);
   }
@@ -243,12 +234,15 @@
       projectEditStore.setProjectInformation(projectStore.getProject);
     projectData.id.value = loadedData.id;
     projectData.slug.value = loadedData.slug;
+    projectData.businessUnit.value =
+      loadedData.team == undefined ? '' : loadedData.team.businessUnit;
+    projectData.teamName.value =
+      loadedData.team == undefined ? '' : loadedData.team.teamName;
+    projectData.ptl.value =
+      loadedData.team?.ptl == undefined ? '' : loadedData.team.ptl;
     projectData.projectName.value = loadedData.projectName;
-    projectData.businessUnit.value = loadedData.businessUnit;
-    projectData.teamNumber.value = loadedData.teamNumber;
-    projectData.department.value = loadedData.department;
     projectData.clientName.value = loadedData.clientName;
-    projectData.offerId.value = loadedData.offerId;
+    projectData.offerId.value = loadedData.offerId ?? '';
     projectData.company.value = loadedData.company;
     projectData.companyState.value = loadedData.companyState;
     projectData.ismsLevel.value = loadedData.ismsLevel;
@@ -340,23 +334,6 @@
     <div v-if="projectData.id.value" class="main">
       <!-- create box for the project name -->
       <div class="projectNameContainer">
-        <h1 v-if="!isLoading" class="projectName">
-          {{ projectData.projectName.value }}
-        </h1>
-        <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
-
-        <!-- Edit Button -->
-        <IconButton
-          v-if="!projectStore.getProject?.isArchived && !isEditing"
-          tooltip-position="left"
-          tooltip="Click here to activate Edit-View"
-          @click="toggleEditingMode"
-        >
-          <template #icon>
-            <EditOutlined class="icon" />
-          </template>
-        </IconButton>
-
         <!-- Reactivate Button -->
         <IconButton
           v-if="projectStore.getProject?.isArchived"
@@ -402,6 +379,18 @@
           </template>
         </IconButton>
 
+        <!-- Edit Button -->
+        <IconButton
+          v-if="!projectStore.getProject?.isArchived && !isEditing"
+          tooltip-position="left"
+          tooltip="Click here to activate Edit-View"
+          @click="toggleEditingMode"
+        >
+          <template #icon>
+            <EditOutlined class="icon" />
+          </template>
+        </IconButton>
+
         <ConfirmAction
           :is-open="isArchiveModalOpen"
           title="Archive Project"
@@ -410,6 +399,10 @@
           @cancel="isArchiveModalOpen = false"
           @update:is-open="(value) => (isArchiveModalOpen = value)"
         />
+        <h1 v-if="!isLoading" class="projectName">
+          {{ projectData.projectName.value }}
+        </h1>
+        <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
       </div>
 
       <!-- create box for project description (BU, Team Nr, Department, Client Name) -->
@@ -419,6 +412,9 @@
           height: 'fit-content',
         }"
       >
+        <a-divider class="SectionSeperator" orientation="left"
+          >General Information</a-divider
+        >
         <EditableTextField
           v-if="!isEditing"
           class="infoCard non-editing-mode"
@@ -429,7 +425,7 @@
         />
 
         <EditableTextField
-          v-for="field in textFields"
+          v-for="field in requieredTextFields"
           :key="field.name"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
@@ -439,7 +435,7 @@
           :has-edit-keys="false"
           :display-value="field.displayValue"
         >
-          <ProjectInformationSelectField
+          <ProjectInformationSearchSelectField
             v-if="field.inputType === 'select'"
             class="editField"
             :column-name="field.name"
@@ -449,6 +445,7 @@
             :options="field.options!"
             :get-value="field.getValue!"
             :display-value="field.displayValue!"
+            :is-editing="true"
             @updated="
               (newValue) => {
                 field.value = newValue;
@@ -465,6 +462,7 @@
             :input-value="field.value"
             :input-status="field.status"
             :edit-store="projectEditStore"
+            :required-value="field.requiredValue"
             @updated="
               (newValue) => {
                 field.value = newValue;
@@ -475,6 +473,61 @@
             @success="field.status = ''"
           />
         </EditableTextField>
+
+        <!-- team specific inputs -->
+        <a-divider orientation="left" class="SectionSeperator">Team</a-divider>
+        <EditableTextField
+          v-if="isEditing"
+          :key="'Team'"
+          class="infoCard"
+          :class="[editingClass, nonEditingClass]"
+          :value="teamNameInput"
+          :is-loading="isLoading"
+          :label="'Team\xa0Select'"
+          :has-edit-keys="false"
+          :display-value="() => 'Team\xa0Select'"
+          ><ProjectInformationSearchSelectField
+            class="editField"
+            :column-name="'TeamName'"
+            :input-value="teamNameInput"
+            :input-status="'error'"
+            :options="teamStore.getTeamNames"
+            :edit-store="projectEditStore"
+            :is-editing="isEditing"
+            @updated="
+              (newValue) => {
+                teamNameInput = newValue;
+                updateProjectInformation();
+              }
+            "
+        /></EditableTextField>
+
+        <EditableTextField
+          v-if="!isEditing"
+          class="infoCard non-editing-mode teamNameField"
+          :value="projectData.teamName.value"
+          :is-loading="isLoading"
+          :label="'Team\xa0Name'"
+          :has-edit-keys="false"
+        />
+
+        <EditableTextField
+          v-if="!isEditing"
+          class="infoCard non-editing-mode buField"
+          :value="projectData.businessUnit.value"
+          :is-loading="isLoading"
+          :label="'Business\xa0Unit'"
+          :has-edit-keys="false"
+        />
+
+        <EditableTextField
+          v-if="!isEditing"
+          class="infoCard non-editing-mode ptlField"
+          :value="projectData.ptl.value"
+          :is-loading="isLoading"
+          :label="'PTL'"
+          :has-edit-keys="false"
+        />
       </a-flex>
     </div>
     <a-flex
@@ -491,6 +544,11 @@
 </template>
 
 <style scoped lang="scss">
+  /* Style for the seperator */
+  .SectionSeperator {
+    font-size: large;
+  }
+
   /* Style for the middle section */
   .main {
     width: 100%;
@@ -545,6 +603,9 @@
     font-weight: bold;
     color: v-bind('token.colorText');
     margin: 10px;
+    max-width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .projectInformationBox {

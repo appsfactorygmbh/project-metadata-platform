@@ -68,7 +68,7 @@ export const useApiStore = <Api extends ApiTypes>(
             args,
             this.api as Api,
           );
-        } catch (error) {
+        } catch (error: unknown) {
           await handleFetchError(error);
         } finally {
           this.setIsLoading(false);

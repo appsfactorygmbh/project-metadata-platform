@@ -15,30 +15,40 @@
   const isLoading = computed(() => getIsLoading.value);
   const usersData = computed(() => getUsers.value);
 
-  userStore.fetchMe(); // fetch me for information
+  const selectedUserId = ref<string>('');
+
+  userStore.fetchMe();
 
   watch(
     () => routerUserId.value,
     async () => {
+      // if no query is present -> check if data is in store -> if so set the userId query
+      if (routerUserId.value == '') {
+        if (selectedUserId.value != '') {
+          setUserId(selectedUserId.value);
+        }
+      }
       await userStore?.fetchUser(routerUserId.value);
       selectedKeys.value = [routerUserId.value];
     },
   );
 
   const clickTab = async (userID: string) => {
+    selectedUserId.value = userID;
     setUserId(userID);
   };
 
   const getNameFromEmail = (email: string) => email.split('@')[0];
 
+  // when mounted -> look if there is already data loaded into the store -> if so set the userId to the one in the store
+  // this is used for when coming back to the User Management tab to have the same user selected as before
   onMounted(async () => {
-    await userStore?.fetchAll();
-    if (routerUserId.value === 'undefined') {
-      setUserId(userStore?.getUsers[0]?.id ?? '0');
-    } else {
-      await userStore?.fetchUser(routerUserId.value);
-      selectedKeys.value = [routerUserId.value];
+    if (userStore.getUser?.id != undefined) {
+      setUserId(userStore.getUser?.id);
     }
+    await userStore?.fetchAll();
+    await userStore?.fetchUser(routerUserId.value);
+    selectedKeys.value = [routerUserId.value];
   });
 </script>
 

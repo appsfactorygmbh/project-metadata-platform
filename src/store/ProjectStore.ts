@@ -5,7 +5,7 @@ import type {
   UpdateProjectModel,
 } from '@/models/Project';
 
-import { type GetProjectResponse, ProjectsApi } from '@/api/generated';
+import { ProjectsApi } from '@/api/generated';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import { type ApiStore, useApiStore } from './ApiStore';
 import { piniaInstance } from './piniaInstance';
@@ -48,7 +48,7 @@ type StoreActions = {
   update: (
     id: ProjectModel['id'],
     project: UpdateProjectModel,
-  ) => Promise<GetProjectResponse | null>;
+  ) => Promise<DetailedProjectModel | null>;
   archive: (id: ProjectModel['id']) => Promise<void>;
   unarchive: (id: ProjectModel['id']) => Promise<void>;
   delete: (id: ProjectModel['id']) => Promise<void>;
@@ -226,7 +226,7 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingAdd(true);
             this.setAddedSuccessfully(false);
             const response = await this.callApi('projectsPut', {
-              createProjectRequest: projectData,
+              putProjectRequest: projectData,
             });
             if (response) {
               this.fetchAll();
@@ -244,7 +244,7 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingUpdate(true);
             this.setUpdatedSuccessfully(false);
             const response = await this.callApi('projectsPut', {
-              createProjectRequest: projectData,
+              putProjectRequest: projectData,
               projectId: id,
             });
             if (response) {
@@ -264,7 +264,11 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
             fullObjectNeeded: true,
           });
           if (!project) throw new Error(`Project with id ${id} not found`);
-          await this.update(id, { ...project, isArchived: true });
+          await this.update(id, {
+            ...project,
+            isArchived: true,
+            teamId: project.team?.id,
+          });
           await this.fetchAll();
         },
 
@@ -273,7 +277,11 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
             fullObjectNeeded: true,
           });
           if (!project) throw new Error(`Project with id ${id} not found`);
-          await this.update(id, { ...project, isArchived: false });
+          await this.update(id, {
+            ...project,
+            isArchived: false,
+            teamId: project.team?.id,
+          });
           await this.fetchAll();
         },
 

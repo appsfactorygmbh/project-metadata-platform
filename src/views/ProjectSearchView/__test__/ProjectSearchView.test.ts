@@ -24,6 +24,13 @@ interface ProjectSearchViewInstance {
   handleRowClick: (project: ProjectModel) => void;
 }
 
+vi.mock('vue-auth3', () => ({
+  useAuth: () => ({
+    ready: vi.fn().mockResolvedValue(undefined),
+    check: vi.fn().mockReturnValue(true),
+  }),
+}));
+
 describe('ProjectSearchView.vue', () => {
   const generateWrapper = (pWidth: number) => {
     return mount(ProjectSearchView, {
@@ -79,8 +86,11 @@ describe('ProjectSearchView.vue', () => {
       id: 200,
       projectName: 'test',
       clientName: 'test',
-      businessUnit: 'test',
-      teamNumber: 1,
+      team: {
+        id: 1,
+        businessUnit: 'test',
+        teamName: '1',
+      },
       isArchived: false,
       slug: 'test-project',
       company: 'test',

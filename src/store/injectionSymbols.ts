@@ -6,9 +6,11 @@ import { useLogsStore } from './LogsStore';
 import { useProjectRouting } from '@/utils/hooks/useProjectRouting.ts';
 import { useLocalLogStore } from './LocalLogStore';
 import type { InjectionKey } from 'vue';
-import type { GlobalPluginsStore } from './GlobalPluginStore.ts';
+import type { GlobalPluginStore } from './GlobalPluginStore.ts';
 import type { AuthStore } from './AuthStore.ts';
 import { useUserRouting } from '@/utils/hooks/useUserRouting.ts';
+import type { TeamStore } from './TeamStore.ts';
+import type { useTeamRouting } from '@/utils/hooks/useTeamRouting.ts';
 
 const projectStoreSymbol = Symbol() as InjectionKey<ProjectStore>;
 
@@ -18,7 +20,9 @@ const projectEditStoreSymbol = Symbol() as InjectionKey<ProjectEditStore>;
 
 const userStoreSymbol = Symbol() as InjectionKey<UserStore>;
 
-const globalPluginStoreSymbol = Symbol() as InjectionKey<GlobalPluginsStore>;
+const globalPluginStoreSymbol = Symbol() as InjectionKey<GlobalPluginStore>;
+
+const teamStoreSymbol = Symbol() as InjectionKey<TeamStore>;
 
 const authStoreSymbol = Symbol() as InjectionKey<AuthStore>;
 
@@ -38,6 +42,10 @@ const userRoutingSymbol = Symbol() as InjectionKey<
   ReturnType<typeof useUserRouting>
 >;
 
+const teamRoutingSymbol = Symbol() as InjectionKey<
+  ReturnType<typeof useTeamRouting>
+>;
+
 export {
   projectStoreSymbol,
   pluginStoreSymbol,
@@ -49,4 +57,6 @@ export {
   projectRoutingSymbol,
   localLogStoreSymbol,
   userRoutingSymbol,
+  teamStoreSymbol,
+  teamRoutingSymbol,
 };

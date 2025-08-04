@@ -14,8 +14,11 @@ const testProjects: ProjectModel[] = [
     id: 200,
     projectName: 'test 1',
     clientName: 'test',
-    businessUnit: 'test',
-    teamNumber: 1,
+    team: {
+      id: 1,
+      businessUnit: 'test',
+      teamName: 'Team_1',
+    },
     isArchived: false,
     slug: 'test-1',
     company: 'test',
@@ -25,8 +28,11 @@ const testProjects: ProjectModel[] = [
     id: 300,
     projectName: 'test 2',
     clientName: 'test',
-    businessUnit: 'test',
-    teamNumber: 1,
+    team: {
+      id: 1,
+      businessUnit: 'test',
+      teamName: '1',
+    },
     isArchived: false,
     slug: 'test-2',
     company: 'test',
@@ -82,7 +88,7 @@ describe('ProjectSlugResolver.vue', () => {
     return mount(ProjectSlugResolver, {
       plugins: [createTestingPinia(piniaOptions)],
       global: {
-        plugins: [mockRouter, initAuth(mockRouter)],
+        plugins: [mockRouter, initAuth()],
       },
     });
   };

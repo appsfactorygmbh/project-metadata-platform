@@ -13,6 +13,10 @@ import { UserListView } from '@/views/SettingView/UserManagementView/UserListVie
 import { CreateUserView } from '@/views/SettingView/UserManagementView/CreateUser';
 import GlobalLogsView from '@/views/SettingView/GlobalLogsView/GlobalLogsView.vue';
 import { UserInformationView } from '@/views/SettingView/UserManagementView/UserInformationView';
+import { useAuth } from 'vue-auth3';
+import { TeamListView } from '@/views/SettingView/TeamManagementView/TeamListView';
+import TeamInformationView from '@/views/SettingView/TeamManagementView/TeamInformationView/TeamInformationView.vue';
+import CreateTeamView from '@/views/SettingView/TeamManagementView/CreateTeam/CreateTeamView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,13 +25,16 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: LoginView,
-      meta: { title: 'Project Metadata Platform - Login' },
+      meta: {
+        title: 'Project Metadata Platform - Login',
+        noAuthRequired: true,
+      },
     },
     {
       path: '/',
       name: 'Provider',
       component: ProviderCollection,
-      meta: { auth: true },
+      meta: {},
       children: [
         {
           name: 'ProjectNameResolver',
@@ -73,6 +80,32 @@ const router = createRouter({
                       component: CreateUserView,
                       meta: {
                         title: 'Project Metadata Platform - User Creation',
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: '/settings/team-management',
+              name: 'teamList',
+              component: TeamListView,
+              meta: { title: 'Project Metadata Platform - Team Management' },
+              children: [
+                {
+                  path: '/settings/team-management',
+                  name: 'teamsInformation',
+                  component: TeamInformationView,
+                  meta: {
+                    title: 'Project Metadata Platform - Team Information',
+                  },
+                  children: [
+                    {
+                      path: '/settings/team-management/create',
+                      name: 'createTeams',
+                      component: CreateTeamView,
+                      meta: {
+                        title: 'Project Metadata Platform - Team Creation',
                       },
                     },
                   ],
@@ -127,6 +160,25 @@ const router = createRouter({
       meta: { title: 'Project Metadata Platform - Forbidden' },
     },
   ],
+});
+
+router.beforeEach(async (to, _, next) => {
+  const auth = useAuth();
+
+  auth.ready();
+
+  const noAuthRequired = to.meta.noAuthRequired;
+  const isAuthenticated = auth.check();
+
+  if (!noAuthRequired && !isAuthenticated) {
+    const redirectUrl = to.fullPath; // Get the full path of the route the user tried to access
+    next({
+      path: '/login',
+      query: { redirect: redirectUrl },
+    });
+  } else {
+    next();
+  }
 });
 
 // Dynamic title changes

@@ -7,6 +7,8 @@ import {
   type PluginsApi as PluginsApiType,
   ProjectsApi,
   type ProjectsApi as ProjectsApiType,
+  TeamsApi,
+  type TeamsApi as TeamsApiType,
   UsersApi,
   type UsersApi as UsersApiType,
 } from './generated';
@@ -16,7 +18,8 @@ export type ApiTypes =
   | ProjectsApiType
   | PluginsApiType
   | UsersApiType
-  | LogsApiType;
+  | LogsApiType
+  | TeamsApiType;
 
 export type ApiInstance<T extends ApiTypes> = T extends AuthApiType
   ? typeof AuthApi
@@ -28,4 +31,6 @@ export type ApiInstance<T extends ApiTypes> = T extends AuthApiType
         ? typeof UsersApi
         : T extends LogsApiType
           ? typeof LogsApi
-          : never;
+          : T extends TeamsApiType
+            ? typeof TeamsApi
+            : never;

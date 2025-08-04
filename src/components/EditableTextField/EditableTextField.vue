@@ -50,8 +50,8 @@
     :body-style="{
       display: 'flex',
       padding: '5px',
-      alignItems: 'center',
-      height: '2rem',
+      alignItems: 'top',
+      height: 'fit-content',
     }"
     class="info"
   >
@@ -70,7 +70,11 @@
         :is-loading="props.isLoading"
         :safe-disabled="props.isLoading"
         :form-store="props.formStore!"
-        @saved-changes="emit('savedChanges')"
+        @saved-changes="
+          {
+            emit('savedChanges');
+          }
+        "
       />
     </template>
     <a-skeleton

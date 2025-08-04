@@ -7,4 +7,6 @@ export type FloatButtonModel = FloatButtonProps & {
   specialType?: 'danger' | 'success';
   color?: { color: string };
   status?: 'activated' | 'disabled' | 'deactivated';
+  isLink?: boolean;
+  destination?: string;
 };

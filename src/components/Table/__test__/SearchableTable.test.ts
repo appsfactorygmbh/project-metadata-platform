@@ -8,14 +8,18 @@ import type { SearchableColumns } from '../SearchableTableTypes';
 import { Button, Input } from 'ant-design-vue';
 import router from '@/router';
 import type { ProjectModel } from '@/models/Project';
+import { projectRoutingSymbol } from '@/store/injectionSymbols';
 
 const testData: ProjectModel[] = [
   {
     id: 1,
     projectName: 'C',
     clientName: 'A',
-    businessUnit: 'A',
-    teamNumber: 1,
+    team: {
+      id: 1,
+      businessUnit: 'A',
+      teamName: 'Team_1',
+    },
     isArchived: false,
     slug: 'c',
     company: 'test',
@@ -25,8 +29,11 @@ const testData: ProjectModel[] = [
     id: 2,
     projectName: 'A',
     clientName: 'B',
-    businessUnit: 'B',
-    teamNumber: 2,
+    team: {
+      id: 1,
+      businessUnit: 'A',
+      teamName: 'Team_1',
+    },
     isArchived: false,
     slug: 'a',
     company: 'test',
@@ -54,6 +61,13 @@ const testColumns: SearchableColumns = [
   },
 ];
 
+vi.mock('vue-auth3', () => ({
+  useAuth: () => ({
+    ready: vi.fn().mockResolvedValue(undefined),
+    check: vi.fn().mockReturnValue(true),
+  }),
+}));
+
 describe('SearchableTable.vue', () => {
   enableAutoUnmount(afterEach);
   setActivePinia(createPinia());
@@ -64,7 +78,9 @@ describe('SearchableTable.vue', () => {
     sessionStorage.clear();
   });
 
-  const generateWrapper = () => {
+  const generateWrapper = (
+    mockRouterProjectId: number | undefined | null = undefined,
+  ) => {
     return mount(SearchableTable, {
       plugins: [
         createTestingPinia({
@@ -74,6 +90,9 @@ describe('SearchableTable.vue', () => {
       global: {
         provide: {
           [searchStoreSymbol as symbol]: searchStore,
+          [projectRoutingSymbol as symbol]: {
+            routerProjectId: mockRouterProjectId,
+          },
         },
         plugins: [router],
       },
@@ -96,6 +115,20 @@ describe('SearchableTable.vue', () => {
     const wrapper = generateWrapper();
 
     expect(wrapper.findAll('.ant-table-column-title')).toHaveLength(2);
+  });
+
+  it('no row highlighted if no project is selected', () => {
+    const wrapper = generateWrapper();
+    expect(wrapper.findAll('.selected-row')).toHaveLength(0);
+  });
+
+  it('correct row highlighted if a project is selected', async () => {
+    const wrapper = generateWrapper(1);
+    await loadData();
+    expect(wrapper.findAll('.selected-row')).toHaveLength(1);
+    expect(
+      wrapper.findAll('.selected-row')[0]?.find('.ant-table-cell').text(),
+    ).toBe('C');
   });
 
   it('show 1 sorter and 1 search filter', () => {
@@ -238,10 +271,9 @@ describe('SearchableTable.vue', () => {
     );
   });
 
-  createTestingPinia({});
-  const searchStoreTest = useSearchStore('test');
-
   it('to wont use search store actions that it is not allowed to', async () => {
+    createTestingPinia({});
+    const searchStoreTest = useSearchStore('test');
     await flushPromises();
     expect(searchStoreTest.setBaseSet).toHaveBeenCalledTimes(0);
     expect(searchStoreTest.setSearchQuery).toHaveBeenCalledTimes(0);

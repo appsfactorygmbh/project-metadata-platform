@@ -1,34 +1,31 @@
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 export const useEditing = (queryKey: string = 'isEditing') => {
   const router = useRouter();
+  const route = useRoute();
 
-  const isEditing = ref<boolean>(
-    router.currentRoute.value.query[queryKey] === 'true',
-  );
+  const isEditing = ref<boolean>(route.query[queryKey] === 'true');
 
   // Update isEditing when the URL query changes
   watch(
-    () => router.currentRoute.value.query[queryKey],
+    () => route.query[queryKey],
     (newQueryIsEditing) => {
       isEditing.value = newQueryIsEditing === 'true';
     },
   );
 
   const startEditing = async () => {
-    console.log('start editing');
-    const currentQueries = router.currentRoute.value.query;
+    const currentQueries = route.query;
     await router.push({
-      path: router.currentRoute.value.path,
+      path: route.path,
       query: { ...currentQueries, [queryKey]: 'true' },
     });
   };
 
   const stopEditing = async () => {
-    console.log('stop editing');
-    const currentQueries = router.currentRoute.value.query;
+    const currentQueries = route.query;
     await router.push({
-      path: router.currentRoute.value.path,
+      path: route.path,
       query: { ...currentQueries, [queryKey]: 'false' },
     });
   };

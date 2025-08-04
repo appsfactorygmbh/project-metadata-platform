@@ -1,10 +1,37 @@
 import { mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import SettingView from '@/views/SettingView/SettingView.vue';
-import { useRouter } from 'vue-router';
-import router from '@/router';
+import {
+  type RouteRecordRaw,
+  type Router,
+  createRouter,
+  createWebHistory,
+} from 'vue-router';
 
-vi.mock('vue-router');
+interface actualRouter {
+  createRouter: typeof createRouter;
+  createWebHistory: typeof createWebHistory;
+  useRouter: typeof useRouter;
+}
+
+// Mock the entire vue-router module
+vi.mock('vue-router', async () => {
+  const actual: actualRouter = await vi.importActual('vue-router');
+  const mockRouter: Router = {
+    ...actual.createRouter({
+      history: actual.createWebHistory(),
+      routes: [],
+    }),
+    push: vi.fn(),
+  } as Router;
+  return {
+    ...actual,
+    useRouter: () => mockRouter,
+    createRouter: vi.fn().mockImplementation(() => {
+      return mockRouter;
+    }),
+  };
+});
 
 interface SettingViewObject {
   collapsed: boolean;
@@ -15,44 +42,82 @@ interface SettingViewObject {
 }
 
 describe('SettingView.vue', () => {
-  vi.mocked(useRouter).mockReturnValue({
-    ...router,
-    push: vi.fn(),
-  });
+  let mockRouter: Router;
 
   beforeEach(() => {
-    vi.mocked(useRouter().push).mockReset();
+    const MockComponent = { template: '<div></div>' };
+    const routes: RouteRecordRaw[] = [
+      { path: '/', name: 'Home', component: MockComponent },
+      {
+        path: '/settings/user-management',
+        name: 'UserManagement',
+        component: MockComponent,
+      },
+      {
+        path: '/settings/global-plugins',
+        name: 'GlobalPlugins',
+        component: MockComponent,
+      },
+      {
+        path: '/settings/global-logs',
+        name: 'GlobalLogs',
+        component: MockComponent,
+      },
+    ];
+
+    mockRouter = createRouter({
+      history: createWebHistory(),
+      routes,
+    });
+
+    // No need for vi.mocked here, we directly control the return value in vi.mock
   });
 
   it('renders correctly', () => {
-    const wrapper = mount(SettingView);
+    const wrapper = mount(SettingView, {
+      global: {
+        plugins: [mockRouter],
+      },
+    });
     expect(wrapper.find('.layout').exists()).toBe(true);
     expect(wrapper.find('.sideSlider').exists()).toBe(true);
     expect(wrapper.find('.menuItem').exists()).toBe(true);
     expect(wrapper.find('.addressBar').exists()).toBe(true);
+    expect(wrapper.find('.backButton button').exists()).toBe(true);
   });
 
   it('has initial state', () => {
-    const wrapper = mount(SettingView);
+    const wrapper = mount(SettingView, {
+      global: {
+        plugins: [mockRouter],
+      },
+    });
     const vm = wrapper.vm as unknown as SettingViewObject;
     expect(vm.collapsed).toBe(false);
     expect(vm.tab).toBe('Global Plugins');
   });
 
   it('go to main menu when back click', async () => {
-    const wrapper = mount(SettingView);
-    await wrapper.find('.iconBack').trigger('click');
+    const wrapper = mount(SettingView, {
+      global: {
+        plugins: [mockRouter],
+      },
+    });
+    await wrapper.find('.backButton button').trigger('click');
 
-    expect(useRouter().push).toHaveBeenCalledWith('/');
+    expect(mockRouter.push).toHaveBeenCalledWith('/');
   });
 
   it('go to other tab when tab click', async () => {
-    const wrapper = mount(SettingView);
-
+    const wrapper = mount(SettingView, {
+      global: {
+        plugins: [mockRouter],
+      },
+    });
     await wrapper.find('.userManagement').trigger('click');
-    expect(useRouter().push).toHaveBeenCalledWith('/settings/user-management');
+    expect(mockRouter.push).toHaveBeenCalledWith('/settings/user-management');
 
     await wrapper.find('.globalLogs').trigger('click');
-    expect(useRouter().push).toHaveBeenCalledWith('/settings/global-logs');
+    expect(mockRouter.push).toHaveBeenCalledWith('/settings/global-logs');
   });
 });

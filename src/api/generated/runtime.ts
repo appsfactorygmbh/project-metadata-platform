@@ -102,7 +102,7 @@ export const DefaultConfig = new Configuration();
  */
 export class BaseAPI {
   private static readonly jsonRegex = new RegExp(
-    '^(:?application/json|[^;/ \t]+/[^;/ \t]+[+]json)[ \t]*(:?;.*)?$',
+    '^(:?application\/json|[^;/ \t]+\/[^;/ \t]+[+]json)[ \t]*(:?;.*)?$',
     'i',
   );
   private middleware: Middleware[];
@@ -424,9 +424,7 @@ function querystringSingleKey(
     return querystringSingleKey(key, valueAsArray, keyPrefix);
   }
   if (value instanceof Date) {
-    return `${encodeURIComponent(fullKey)}=${encodeURIComponent(
-      value.toISOString(),
-    )}`;
+    return `${encodeURIComponent(fullKey)}=${encodeURIComponent(value.toISOString())}`;
   }
   if (value instanceof Object) {
     return querystring(value, fullKey);

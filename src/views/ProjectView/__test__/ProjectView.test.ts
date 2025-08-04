@@ -2,19 +2,36 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import { ProjectView } from '..';
 import router from '@/router';
-import { EditOutlined, SaveOutlined } from '@ant-design/icons-vue';
+import { EditOutlined } from '@ant-design/icons-vue';
 import {
   localLogStoreSymbol,
   projectEditStoreSymbol,
+  projectStoreSymbol,
+  teamStoreSymbol,
 } from '@/store/injectionSymbols';
-import { useLocalLogStore, useProjectEditStore } from '@/store';
+import {
+  useLocalLogStore,
+  useProjectEditStore,
+  useProjectStore,
+  useTeamStore,
+} from '@/store';
 import { createTestingPinia } from '@pinia/testing';
 import type { PluginModel } from '@/models/Plugin';
-import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
-import type {
-  DetailedProjectModel,
-  UpdateProjectModel,
-} from '@/models/Project';
+import type { DetailedProjectModel } from '@/models/Project';
+
+vi.mock('vue-auth3', () => ({
+  useAuth: () => ({
+    ready: vi.fn().mockResolvedValue(undefined),
+    check: vi.fn().mockReturnValue(true),
+  }),
+}));
+
+vi.mock('vue-auth3', () => ({
+  useAuth: () => ({
+    ready: vi.fn().mockResolvedValue(undefined),
+    check: vi.fn().mockReturnValue(true),
+  }),
+}));
 
 const testPlugins: PluginModel[] = [
   {
@@ -44,9 +61,11 @@ const testProject: DetailedProjectModel = {
   id: 1,
   projectName: 'Test Project',
   clientName: 'Test Client',
-  businessUnit: 'Test Business Unit',
-  department: 'Test Department',
-  teamNumber: 1,
+  team: {
+    businessUnit: 'Test Business Unit',
+    id: 1,
+    teamName: '1',
+  },
   isArchived: false,
   slug: 'test_project',
   offerId: '1',
@@ -55,19 +74,25 @@ const testProject: DetailedProjectModel = {
   ismsLevel: 'HIGH',
 };
 
-const testUpdatedProject: UpdateProjectModel = {
-  projectName: 'Test Project',
-  clientName: 'Test Client',
-  businessUnit: 'Test Business Unit',
-  department: 'Test Department',
-  teamNumber: 1,
-  pluginList: testPlugins,
-  isArchived: false,
-  offerId: '1',
-  company: 'AppsFactory',
-  companyState: 'EXTERNAL',
-  ismsLevel: 'HIGH',
-};
+const pinia = createTestingPinia({
+  stubActions: false,
+  initialState: {
+    project: { project: testProject },
+    plugin: {
+      plugins: testPlugins,
+      unarchivedPlugins: testUnarchivedPlugins,
+    },
+    team: {
+      teams: [
+        {
+          businessUnit: 'Test Business Unit',
+          id: 1,
+          teamName: '1',
+        },
+      ],
+    },
+  },
+});
 
 describe('ProjectView.vue', () => {
   const generateWrapper = () => {
@@ -76,55 +101,33 @@ describe('ProjectView.vue', () => {
         provide: {
           [localLogStoreSymbol as symbol]: useLocalLogStore(),
           [projectEditStoreSymbol as symbol]: useProjectEditStore(),
+          [teamStoreSymbol as symbol]: useTeamStore(),
+          [projectStoreSymbol as symbol]: useProjectStore(),
         },
-        plugins: [
-          router,
-          createTestingPinia({
-            stubActions: false,
-            initialState: {
-              project: { project: testProject },
-              plugin: {
-                plugins: testPlugins,
-                unarchivedPlugins: testUnarchivedPlugins,
-              },
-            },
-          }),
-        ],
+        plugins: [router, pinia],
       },
     });
   };
-  it('doesnt delete archived plugins when editing', async () => {
-    const logSpy = vi.spyOn(console, 'log');
 
+  it('hides the project slug + team fields when editing', async () => {
     const wrapper = generateWrapper();
     await flushPromises();
 
-    const editButton = wrapper.findComponent(EditOutlined);
-    editButton.trigger('click');
-    await flushPromises();
-
-    const saveButton = wrapper
-      .findComponent(ProjectEditButtons)
-      .findComponent(SaveOutlined);
-    saveButton.trigger('click');
-    await flushPromises();
-
-    expect(logSpy).toHaveBeenNthCalledWith(2, testUpdatedProject);
-  });
-
-  it('hides the project slug when editing', async () => {
-    const wrapper = generateWrapper();
-    await flushPromises();
-
-    // check if slug is visible
+    // check if fields are visible
     expect(wrapper.find('.label').text()).toBe('Project\xa0Slug:');
+    expect(wrapper.find('.teamNameField').exists()).toBe(true);
+    expect(wrapper.find('.buField').exists()).toBe(true);
+    expect(wrapper.find('.ptlField').exists()).toBe(true);
 
     // click on edit button
     const editButton = wrapper.findComponent(EditOutlined);
     await editButton.trigger('click');
     await flushPromises();
 
-    // check if slug is hidden
-    expect(wrapper.find('.label')).not.toBe('Project\xa0Slug:');
+    // check if fields are hidden
+    expect(wrapper.find('.label').text()).not.toBe('Project\xa0Slug:');
+    expect(wrapper.find('.teamNameField').exists()).toBe(false);
+    expect(wrapper.find('.buField').exists()).toBe(false);
+    expect(wrapper.find('.ptlField').exists()).toBe(false);
   });
 });

@@ -16,6 +16,7 @@ declare module 'vue' {
     ACard: typeof import('ant-design-vue/es')['Card']
     ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
+    ADivider: typeof import('ant-design-vue/es')['Divider']
     AEmpty: typeof import('ant-design-vue/es')['Empty']
     AFlex: typeof import('ant-design-vue/es')['Flex']
     AFloatButton: typeof import('ant-design-vue/es')['FloatButton']
@@ -66,10 +67,12 @@ declare module 'vue' {
     PopupComponent: typeof import('./../src/components/Popup/PopupComponent.vue')['default']
     ProjectEditButtons: typeof import('./../src/components/ProjectEditButtons/ProjectEditButtons.vue')['default']
     ProjectInformationInputField: typeof import('./../src/components/EditableTextField/InputFields/ProjectInformationInputField.vue')['default']
-    ProjectInformationSelectField: typeof import('./../src/components/EditableTextField/InputFields/ProjectInformationSelectField.vue')['default']
+    ProjectInformationSearchSelectField: typeof import('./../src/components/EditableTextField/InputFields/ProjectInformationSearchSelectField.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchableTable: typeof import('./../src/components/Table/SearchableTable.vue')['default']
     SearchBar: typeof import('./../src/components/Searchbar/SearchBar.vue')['default']
+    TeamInformationInputField: typeof import('./../src/components/EditableTextField/InputFields/TeamInformationInputField.vue')['default']
+    TeamNameInputField: typeof import('./../src/components/EditableTextField/InputFields/TeamNameInputField.vue')['default']
   }
 }

@@ -13,9 +13,10 @@
 <template>
   <a-float-button-group>
     <FloatingButton
-      v-for="button in props.buttons"
+      v-for="(button, index) in props.buttons"
       :key="button.name"
       :button="button"
+      :is-last="index === props.buttons.length - 1"
     />
   </a-float-button-group>
 </template>

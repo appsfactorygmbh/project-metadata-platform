@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { FormStore, FormSubmitType } from '@/components/Form';
-  import { useGlobalPluginsStore } from '@/store';
+  import { useGlobalPluginStore } from '@/store';
   import { reactive } from 'vue';
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
   import type { GlobalPluginFormData } from '../GlobalPluginForm';
@@ -11,7 +11,7 @@
     formStore: FormStore;
   }>();
 
-  const globalPluginStore = useGlobalPluginsStore();
+  const globalPluginStore = useGlobalPluginStore();
 
   const onSubmit: FormSubmitType = (fields: CreatePluginRequest) => {
     globalPluginStore

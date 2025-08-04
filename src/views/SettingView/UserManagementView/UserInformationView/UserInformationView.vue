@@ -21,8 +21,9 @@
   const token = useThemeToken();
 
   const router = useRouter();
+  const route = useRoute();
   const userStore = inject(userStoreSymbol)!;
-  const { setUserId } = inject(userRoutingSymbol)!;
+  const { setUserId, routerUserId } = inject(userRoutingSymbol)!;
   const { getIsLoadingUser, getIsLoading, getUser, getMe } =
     storeToRefs(userStore);
   const user = computed(() => getUser.value);
@@ -56,6 +57,7 @@
         size: 'large',
         status: 'activated',
         tooltip: 'Click here to delete this user',
+        isLink: false,
       },
       {
         name: 'CreateUserButton',
@@ -67,9 +69,11 @@
         size: 'large',
         status: 'activated',
         tooltip: 'Click here to create a new user',
+        isLink: false,
       },
     ];
-    if (me.value?.id == user.value?.id) tempButtons[0].status = 'deactivated';
+    if (me.value?.id == user.value?.id || !routerUserId.value)
+      tempButtons[0].status = 'deactivated';
 
     return tempButtons;
   });
@@ -84,7 +88,6 @@
     setUserId(myId);
   };
 </script>
-
 <template>
   <ConfirmationDialog
     :is-open="isConfirmModalOpen"
@@ -94,8 +97,7 @@
     @cancel="closeModal"
     @update:is-open="isConfirmModalOpen = $event"
   />
-  <div class="panel">
-    <!-- avatar components -->
+  <div v-if="user?.id" class="panel">
     <a-flex class="avatar">
       <a-avatar :size="150">
         <template #icon>
@@ -104,14 +106,12 @@
       </a-avatar>
     </a-flex>
 
-    <!-- User informations components -->
     <a-flex
       class="userInfoBox"
       :body-style="{
         height: 'fit-content',
       }"
     >
-      <!-- Email Text Field -->
       <EditableTextField
         class="textField email"
         :value="user?.email ?? ''"
@@ -132,7 +132,6 @@
         />
       </EditableTextField>
 
-      <!-- Password Text Field -->
       <EditableTextField
         v-if="me?.id && me.id === user?.id"
         :value="'**********'"
@@ -141,6 +140,9 @@
         :is-loading="isLoading"
         :form-store="passwordFormStore"
         :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.id))
+        "
       >
         <PasswordInputField
           :user-id="user?.id ?? ''"
@@ -149,15 +151,29 @@
       </EditableTextField>
     </a-flex>
   </div>
+  <a-empty
+    v-else-if="route.query.userId"
+    :description="`No User Found for Id ${route.query.userId}`"
+  ></a-empty>
+  <a-empty v-else description="No User Selected"></a-empty>
+  <FloatingButtonGroup :buttons="buttons" class="floating-buttons" />
   <RouterView />
-  <FloatingButtonGroup :buttons="buttons" />
 </template>
 
 <style scoped>
   .panel {
+    position: relative; /* Make sure the panel is a positioning context */
     min-width: 150px;
+    max-height: 100vh;
+    overflow-y: auto;
   }
-
+  .ant-float-btn-group {
+    height: max-content !important;
+    width: max-content !important;
+    position: absolute;
+    right: 20px;
+    bottom: 40px;
+  }
   .userInfoBox {
     padding: 1em 3em;
     margin: 2em 1em;
@@ -180,11 +196,5 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-  }
-
-  .panel {
-    position: relative;
-    max-height: 100vh; /* Set a maximum height */
-    overflow-y: auto; /* Enable vertical scrolling */
   }
 </style>

@@ -26,6 +26,10 @@
       type: Array as PropType<string[]>,
       required: true,
     },
+    isEditing: {
+      type: Boolean,
+      required: true,
+    },
     displayValue: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       type: Function as PropType<(value: any) => any>,
@@ -61,9 +65,11 @@
 
 <template>
   <a-select
+    v-if="isEditing"
     v-model:value="selectField"
-    class="selectField"
-    :status="inputStatus"
+    show-search
+    placeholder="Select a team"
+    style="width: 200px"
     @change="handleChange"
     @select="handleSelect"
   >

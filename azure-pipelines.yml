@@ -1,0 +1,261 @@
+# ASP.NET
+# Build and test ASP.NET projects.
+# Add steps that publish symbols, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+
+trigger:
+  - develop
+  - master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  # cache key -> different -> cache miss (based on the used deps -> invalidate caches)
+  - name: cacheKey
+    value: 'dependencies | $(Agent.OS) | $(Build.SourcesDirectory)/yarn.lock'
+  - name: CACHE_RESTORED_NODEMODULES
+    value: 'false'
+  - name: dockerRegistryServiceConnection
+    value: 3d0f8345-5e44-44d3-af44-68f089b5d843 # SC-DockerHub
+  - name: dockerImageRepository
+    value: appsfactorylej/project-metadata-platform-frontend
+  - name: dockerfilePath
+    value: Dockerfile 
+  - name: sonarCloudProjectKey
+    value: "1efbc6d1-5ad3-4fc9-bcf7-070a68663af4_2d2612ea-b14c-416e-bbc6-e55c1ee3b6a7"
+  - name: SonarCloudOrg
+    value: "appsfactory" 
+  - name: today
+    value: $[ format('{0:yyyy}.{0:MM}.{0:dd}-{0:HH}.{0:mm}', pipeline.startTime) ]
+  - group: ProdCreds
+stages:
+  - stage: Prepare_Cache
+    displayName: Prepare Cache
+    jobs:
+      - job: Prepare_Caches
+        displayName: Prepare Caches
+        steps:
+          - task: Cache@2
+            displayName: Cache node_modules
+            inputs:
+              key: '$(cacheKey) | node_modules'
+              path: '$(System.DefaultWorkingDirectory)/node_modules'
+              cacheHitVar: CACHE_RESTORED_NODEMODULES
+          
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Install Node.js'
+
+          - script: |
+              npm install -g corepack
+              corepack enable
+              echo 'yarn-offline-mirror ".yarn-cache/"' >> .yarnrc
+              echo 'yarn-offline-mirror-pruning true' >> .yarnrc
+              yarn install --immutable
+            displayName: 'Install Dependencies'
+            # only executed when reading from cache failed
+            condition: ne(variables.CACHE_RESTORED_NODEMODULES, 'true')
+
+  - stage: style_check
+    displayName: Style Checking
+    dependsOn: Prepare_Cache
+    jobs:
+      - job: Run_Prettier
+        displayName: Run Prettier
+        steps:
+          - task: Cache@2 # read cache
+            displayName: Restore node_modules cache
+            inputs:
+              key: '$(cacheKey) | node_modules'
+              path: '$(System.DefaultWorkingDirectory)/node_modules'
+
+          - script: |
+              npx prettier --check .
+            displayName: 'Run Prettier Check'
+
+  - stage: type_check
+    displayName: Type Checking
+    dependsOn: style_check
+    jobs:
+      - job: Run_Type_Check
+        displayName: Run Type Check
+        steps:
+          - task: Cache@2
+            displayName: Restore node_modules cache
+            inputs:
+              key: '$(cacheKey) | node_modules'
+              path: '$(System.DefaultWorkingDirectory)/node_modules'
+              cacheHitVar: CACHE_RESTORED_NODEMODULES
+
+          - script: |
+              corepack enable
+              yarn type-check
+            displayName: 'Run Type Check'
+
+  - stage: lint_check
+    displayName: Lint Checking
+    dependsOn: type_check
+    jobs:
+      - job: Run_Lint_Check
+        displayName: Run Lint Check
+        steps:
+          - task: Cache@2
+            displayName: Restore node_modules cache
+            inputs:
+              key: '$(cacheKey) | node_modules'
+              path: '$(System.DefaultWorkingDirectory)/node_modules'
+              cacheHitVar: CACHE_RESTORED_NODEMODULES
+
+          - script: |
+              corepack enable
+              npm install -g eslint
+              yarn lint:check --format gitlab .
+            displayName: 'Run Lint Check'
+
+  - stage: coverage_test
+    displayName: Unit Tests with Coverage + SonarCloud
+    dependsOn: lint_check
+    jobs:
+      - job: Run_Coverage_Tests
+        displayName: Run Coverage Tests
+        steps:
+          - task: Cache@2
+            displayName: Restore node_modules cache
+            inputs:
+              key: '$(cacheKey) | node_modules'
+              path: '$(System.DefaultWorkingDirectory)/node_modules'
+              cacheHitVar: CACHE_RESTORED_NODEMODULES
+
+          - script: |
+              corepack enable
+              yarn coverage
+            displayName: 'Run Coverage Tests'
+            env:
+              DEBUG: true'
+
+          - task: PublishCodeCoverageResults@2
+            displayName: Publish Code Coverage
+            inputs:
+              summaryFileLocation:  "coverage/cobertura-coverage.xml"
+
+          - script: |
+              cat coverage/lcov.info
+            displayName: Debug
+
+          - task: SonarCloudPrepare@3
+            displayName: "Prepare analysis on SonarCloud"
+            inputs:
+              SonarCloud: "SC-SonarCloud-frontend"
+              organization: $(SonarCloudOrg)
+              cliprojectKey: $(sonarCloudProjectKey)
+              scannerMode: "CLI"
+              configMode: manual
+              extraProperties: |
+                sonar.javascript.lcov.reportPaths=coverage/lcov.info
+                sonar.language=js
+                sonar.sources=src
+                sonar.exclusions=**/__tests__/**,**/__mocks__/**,**/*.spec.ts,**/*.test.ts,**/generated/** 
+          
+          - task: SonarCloudAnalyze@3
+            displayName: "Run analysis on SonarCloud"
+
+          - task: SonarCloudPublish@3
+            displayName: "Publish results on SonarCloud"
+            inputs:
+              pollingTimeoutSec: "300"
+  
+  - stage: integration_test
+    displayName: Integration Tests
+    dependsOn: coverage_test
+    jobs:
+      - job: Run_Integration_Tests
+        displayName: Run Integration Tests
+        steps:
+          - task: Cache@2
+            displayName: Restore node_modules cache
+            inputs:
+              key: '$(cacheKey) | node_modules'
+              path: '$(System.DefaultWorkingDirectory)/node_modules'
+              cacheHitVar: CACHE_RESTORED_NODEMODULES
+          - script: |
+              corepack enable
+              npx cypress install              
+              yarn build
+              yarn preview --host 127.0.0.1 --port 8080 &
+              npx cypress run --headless --e2e
+            displayName: 'Run Cypress Tests'
+        variables:
+          DEVELOP_BRANCH: develop
+
+
+  - stage: Build
+    displayName: Build + Push Stage
+    dependsOn: integration_test
+    condition:  and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+    jobs:
+    - job: Build
+      displayName: Build job
+      steps:
+
+      - task: Docker@2
+        displayName: Build docker image
+        inputs:
+          command: build
+          containerRegistry: $(dockerRegistryServiceConnection)
+          repository: $(dockerImageRepository)
+          Dockerfile: $(dockerfilePath)
+          arguments: >-
+            --build-arg BUILD_ENV=production
+            --progress=plain
+          tags: $(today),dev
+
+      - task: Docker@2
+        displayName: Push image to container registry with build number and prod tag
+        inputs:
+          command: push
+          containerRegistry: $(dockerRegistryServiceConnection)
+          repository: $(dockerImageRepository)
+          tags: $(today),dev
+    
+  - stage: DeployProd
+    displayName: Deploy Production
+    dependsOn: integration_test
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    jobs:
+    - job: DeployProd
+      displayName: Deploy Production
+      steps:
+        - task: Docker@2
+          displayName: Login to registry
+          inputs: 
+            command: login
+            containerRegistry: $(dockerRegistryServiceConnection)
+
+        - script: docker pull $(dockerImageRepository):dev
+          displayName: Pull dev image
+
+        - script: docker tag $(dockerImageRepository):dev $(dockerImageRepository):prod
+          displayName: Retag dev image
+
+        - script: docker push $(dockerImageRepository):prod
+          displayName: Push prod image to DockerHub
+          
+        - task: CopyFilesOverSSH@0
+          displayName: Copy compose file to VM
+          inputs:
+            sshEndpoint: 'SC-AfItDocker01-VM'
+            contents: '**/docker-compose-production.yml'
+            targetFolder: '~/pmp-frontend/'
+
+        - task: SSH@0
+          displayName: Add credentials to compose file + compose up
+          inputs:
+            sshEndpoint: 'SC-AfItDocker01-VM' # Service connection
+            interactiveSession: true
+            commands:  |
+              echo $(DOCKER_HUB_PAT) | docker login -u $(DOCKER_HUB_NAME) --password-stdin        
+              docker compose -f ~/pmp-frontend/docker-compose-production.yml pull
+              docker compose -f ~/pmp-frontend/docker-compose-production.yml up -d
+              rm ~/.docker/config.json

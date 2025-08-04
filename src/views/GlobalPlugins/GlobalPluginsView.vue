@@ -108,14 +108,14 @@
   import { useRouter } from 'vue-router';
   import { message } from 'ant-design-vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
-  import { useGlobalPluginsStore } from '@/store';
+  import { useGlobalPluginStore } from '@/store';
   import { useToggle } from '@vueuse/core';
-  import type { GlobalPluginModel } from '@/models/Plugin';
+  import type { GlobalPluginModel } from '@/models/GlobalPlugin';
   import { useThemeToken } from '@/utils/hooks';
 
   const token = useThemeToken();
 
-  const globalPluginsStore = useGlobalPluginsStore();
+  const globalPluginsStore = useGlobalPluginStore();
 
   const isLoading = computed(
     () => globalPluginsStore?.getIsLoadingGlobalPlugins,

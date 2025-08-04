@@ -1,17 +1,21 @@
 services:
   frontend:
-    image: gitlab.dit.htwk-leipzig.de:5050/projekt2024_a_appsfactory_project_metadata_platform/frontend/production:latest
+    image: ghcr.io/appsfactorygmbh/project-metadata-platform-frontend:prod
     container_name: frontend-production
     networks:
-      - frontend-production
+      - proxy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.frontend-production.rule=Host(`www.htwk.appsfactory.app`)
-      - traefik.http.routers.frontend-production.entrypoints=websecure
-      - traefik.http.routers.frontend-production.tls.certresolver=le-tls
-      - traefik.http.services.frontend-production-service.loadbalancer.server.port=80
+      - traefik.http.routers.pmp-fe.rule=Host(`pmp.appsfactory.app`)
+      - traefik.http.routers.pmp-fe.tls.certresolver=le-tls
+      - traefik.http.routers.pmp-fe.middlewares=pmp-fe-ipallowlist,external-secure
+      - traefik.http.middlewares.pmp-fe-ipallowlist.ipallowlist.sourcerange=85.239.102.130/32,213.187.82.10/32
 
 networks:
-  frontend-production:
-    name: frontend-production
-    driver: bridge
+  proxy:
+    external: true

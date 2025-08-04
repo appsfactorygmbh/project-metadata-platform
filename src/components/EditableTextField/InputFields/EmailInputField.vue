@@ -74,13 +74,14 @@
 
   const [notificationApi] = useNotification();
 
-  const onSubmit: FormSubmitType = (fields) => {
+  const onSubmit: FormSubmitType = async (fields) => {
     const newEmail = {
       email: toRaw(fields).email,
     };
-    userStore
+    await userStore
       .update(props.userId, newEmail)
-      .then(() => {
+      .then((res) => {
+        console.log('err successfull ' + JSON.stringify(res));
         notificationApi.success({
           message: 'E-Mail updated',
         });
@@ -91,6 +92,7 @@
         });
         console.error('Error updating email:', error);
       });
+    console.log('test after fetch');
   };
 
   props.formStore.setModel(dynamicValidateForm);

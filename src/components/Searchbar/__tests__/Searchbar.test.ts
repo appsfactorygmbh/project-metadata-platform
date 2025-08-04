@@ -6,6 +6,13 @@ import { createTestingPinia } from '@pinia/testing';
 import router from '@/router';
 import { createPinia, setActivePinia } from 'pinia';
 
+vi.mock('vue-auth3', () => ({
+  useAuth: () => ({
+    ready: vi.fn().mockResolvedValue(undefined),
+    check: vi.fn().mockReturnValue(true),
+  }),
+}));
+
 describe('SearchBar.vue', () => {
   setActivePinia(createPinia());
 

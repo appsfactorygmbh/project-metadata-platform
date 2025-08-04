@@ -1,5 +1,5 @@
 import type { UserListModel } from '@/models/User';
-import { usePluginStore, useUserStore } from '@/store';
+import { type TeamStore, usePluginStore, useUserStore } from '@/store';
 import type { Rule } from 'ant-design-vue/es/form';
 
 const userStore = useUserStore();
@@ -86,4 +86,14 @@ export const isUniqueUrl = (_rule: Rule, value: string) => {
     return Promise.resolve();
   }
   return Promise.reject(new Error('This Url is already in use.'));
+};
+
+export const CreateIsUniqueTeamName = (teamStore: TeamStore) => {
+  return (_rule: Rule, value: string) => {
+    const teams = teamStore.getIdToName(value);
+    if (teams != undefined) {
+      return Promise.reject(new Error('This Team Name is already in use.'));
+    }
+    return Promise.resolve();
+  };
 };

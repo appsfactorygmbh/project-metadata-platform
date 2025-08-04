@@ -139,9 +139,7 @@
 
     const updatedProject: UpdateProjectModel = {
       projectName: updateProjectInformation?.projectName,
-      businessUnit: updateProjectInformation?.businessUnit,
-      teamNumber: updateProjectInformation?.teamNumber,
-      department: updateProjectInformation?.department,
+      teamId: updateProjectInformation?.teamId,
       clientName: updateProjectInformation?.clientName,
       pluginList: updatedPluginList.value,
       isArchived: projectStore.getProject.isArchived,

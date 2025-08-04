@@ -199,7 +199,7 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
             await this.callApi('usersPut', {
               createUserRequest: newUser,
             });
-            this.fetchAll();
+            await this.fetchAll();
             this.setCreatedSuccessfully(true);
           } catch (e) {
             this.setCreatedSuccessfully(false);
@@ -223,7 +223,11 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
                 password: userUpdate.password ?? null,
               },
             });
+            this.setIsLoadingUsers(true);
+            this.setIsLoadingUser(true);
             this.fetchAll();
+            this.setIsLoadingUser(false);
+            this.setIsLoadingUsers(false);
             this.setUpdatedSuccessfully(true);
           } catch (e) {
             this.setUpdatedSuccessfully(false);

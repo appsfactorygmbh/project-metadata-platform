@@ -7,7 +7,7 @@
   } from '@/store/injectionSymbols';
   import { inject, onMounted, provide, reactive } from 'vue';
   import { type SearchStore, useSearchStore } from '@/store/SearchStore';
-  import type { ProjectModel } from '@/models/Project';
+  import type { ProjectModel, ProjectSearchModel } from '@/models/Project';
   import { useEditing } from '@/utils/hooks/useEditing';
   import _ from 'lodash';
   import { useSessionStorage, useToggle, useWindowSize } from '@vueuse/core';
@@ -32,7 +32,7 @@
     },
   });
 
-  type ProjectSearchStore = SearchStore<ProjectModel>;
+  type ProjectSearchStore = SearchStore<ProjectSearchModel>;
 
   const { stopEditing, isEditing } = useEditing();
   const { routerProjectId, routerProjectSlug, setProjectId } =
@@ -41,9 +41,24 @@
 
   const pluginStore = usePluginStore();
   const projectStore = useProjectStore();
-  const searchStore = useSearchStore<ProjectModel>('projects');
+  const searchStore = useSearchStore<ProjectSearchModel>('projects');
   const searchStoreSymbol = Symbol('projectSearchStore');
   const isLoading = computed(() => projectStore.getIsLoadingProjects);
+
+  const toSearchModelConverter = (model: ProjectModel) => {
+    return {
+      id: model.id,
+      slug: model.slug,
+      projectName: model.projectName,
+      clientName: model.clientName,
+      company: model.company,
+      isArchived: model.isArchived,
+      ismsLevel: model.ismsLevel,
+      teamName: model.team === undefined ? '' : model.team.teamName,
+      businessUnit: model.team === undefined ? '' : model.team.businessUnit,
+    } as ProjectSearchModel;
+  };
+
   provide<ProjectSearchStore>(searchStoreSymbol, searchStore);
 
   const searchQuery = useQuery(queryNames);
@@ -90,7 +105,7 @@
   watch(
     () => projectStore.getProjects,
     (newData) => {
-      searchStore?.setBaseSet(newData || []);
+      searchStore?.setBaseSet(newData.map(toSearchModelConverter) || []);
       if (newData.length === 0) {
         searchStore?.applySearch();
       }
@@ -122,7 +137,7 @@
       () => searchStore.getSearchQuery,
       () => {
         debouncedFetchData(searchStore.getSearchQuery)?.then((data) => {
-          searchStore?.setBaseSet(data ?? []);
+          searchStore?.setBaseSet(data?.map(toSearchModelConverter) ?? []);
         });
         searchStore?.setSearchQuery('');
       },
@@ -180,7 +195,9 @@
       await fetchProject(routerProjectId.value);
     }
 
-    searchStore.setBaseSet(projectStore.getProjects ?? []);
+    searchStore.setBaseSet(
+      projectStore.getProjects.map(toSearchModelConverter) ?? [],
+    );
     changeColumns(props.paneWidth);
   });
 
@@ -298,13 +315,13 @@
       width: NaN,
     },
     {
-      title: 'Team Number',
-      dataIndex: 'teamNumber',
-      key: 'teamNumber',
+      title: 'Team Name',
+      dataIndex: 'teamName',
+      key: 'teamName',
       searchable: true,
       ellipsis: true,
       align: 'center' as const,
-      sortMethod: 'number',
+      sortMethod: 'string',
       defaultSortOrder: 'ascend' as const,
       hidden: false,
     },

@@ -12,7 +12,7 @@
     type RulesObject,
   } from '@/components/Form/types';
   import type { GlobalPluginFormData } from './';
-  import type { GlobalPluginKey } from '@/models/Plugin';
+  import type { GlobalPluginKey } from '@/models/GlobalPlugin';
   import _ from 'lodash';
 
   const { formStore, initialValues } = defineProps<{

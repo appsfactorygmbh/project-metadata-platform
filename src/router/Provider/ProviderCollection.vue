@@ -5,30 +5,36 @@
     LocalLogProvider,
     ProjectEditProvider,
     UserProvider,
+    TeamProvider,
   } from '@/router/Provider';
   import ProjectRoutingProvider from './ProjectRoutingProvider.vue';
   import LogsProvider from './LogsProvider.vue';
   import UserRoutingProvider from './UserRoutingProvider.vue';
+  import TeamRoutingProvider from './TeamRoutingProvider.vue';
 </script>
 
 <template>
   <UserRoutingProvider>
     <AuthProvider>
-      <ProjectRoutingProvider>
-        <UserProvider>
-          <LogsProvider>
-            <LocalLogProvider>
-              <ProjectEditProvider>
-                <GlobalPluginProvider>
-                  <slot>
-                    <RouterView />
-                  </slot>
-                </GlobalPluginProvider>
-              </ProjectEditProvider>
-            </LocalLogProvider>
-          </LogsProvider>
-        </UserProvider>
-      </ProjectRoutingProvider>
+      <TeamProvider>
+        <ProjectRoutingProvider>
+          <UserProvider>
+            <LogsProvider>
+              <LocalLogProvider>
+                <ProjectEditProvider>
+                  <GlobalPluginProvider>
+                    <TeamRoutingProvider>
+                      <slot>
+                        <RouterView />
+                      </slot>
+                    </TeamRoutingProvider>
+                  </GlobalPluginProvider>
+                </ProjectEditProvider>
+              </LocalLogProvider>
+            </LogsProvider>
+          </UserProvider>
+        </ProjectRoutingProvider>
+      </TeamProvider>
     </AuthProvider>
   </UserRoutingProvider>
 </template>

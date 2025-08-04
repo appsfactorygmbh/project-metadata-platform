@@ -5,6 +5,7 @@
     AppstoreAddOutlined,
     BarsOutlined,
     LeftOutlined,
+    TeamOutlined,
     UserOutlined,
   } from '@ant-design/icons-vue';
   import { onMounted, ref } from 'vue';
@@ -32,6 +33,8 @@
     name: 'Back',
     size: 'large',
     type: 'primary',
+    isLink: false,
+    status: 'activated',
   };
 
   //Methods for URL link  by clickin the navigation buttons
@@ -44,6 +47,10 @@
       }
       case 'Global Plugins': {
         router.push(`/settings/global-plugins`);
+        break;
+      }
+      case 'Team': {
+        router.push(`/settings/team-management`);
         break;
       }
       case 'Global Logs': {
@@ -65,16 +72,20 @@
           selectedKeys.value = ['1'];
           break;
         }
-        case '/settings/global-plugins': {
+        case '/settings/team-management': {
           selectedKeys.value = ['2'];
           break;
         }
-        case '/settings/global-logs': {
+        case '/settings/global-plugins': {
           selectedKeys.value = ['3'];
           break;
         }
+        case '/settings/global-logs': {
+          selectedKeys.value = ['4'];
+          break;
+        }
         default: {
-          selectedKeys.value = ['2'];
+          selectedKeys.value = ['3'];
           break;
         }
       }
@@ -93,7 +104,10 @@
     >
       <!-- return to homepage button-->
       <a-layout-header class="listHeader" />
-      <FloatingButton :button="backButton" class="iconBack" />
+      <FloatingButtonGroup
+        class="backButton"
+        :buttons="[backButton]"
+      ></FloatingButtonGroup>
 
       <!-- navigation elements -->
       <a-menu
@@ -105,8 +119,12 @@
           <UserOutlined class="icons" />
           <span>User Management</span>
         </a-menu-item>
+        <a-menu-item key="2" class="teamManagement" @click="clickTab('Team')">
+          <TeamOutlined class="icons" />
+          <span>Team Management</span>
+        </a-menu-item>
         <a-menu-item
-          key="2"
+          key="3"
           class="globalPlugins"
           @click="clickTab('Global Plugins')"
         >
@@ -114,7 +132,7 @@
           <span>Global Plugins</span>
         </a-menu-item>
         <a-menu-item
-          key="3"
+          key="4"
           class="globalLogs"
           @click="clickTab('Global Logs')"
         >
@@ -139,9 +157,13 @@
 </template>
 
 <style scoped>
-  .iconBack {
+  .ant-float-btn-group {
+    position: absolute;
     left: 20px;
     top: 20px;
+    z-index: 1; /* Ensure they're above other elements */
+    height: fit-content;
+    width: fit-content;
   }
   /* Style for the sidebar icons */
   .icons * {

@@ -3,13 +3,14 @@
   import { provide, watch } from 'vue';
   import { useAuth } from 'vue-auth3';
   import {
-    useGlobalPluginsStore,
+    useGlobalPluginStore,
     useLocalLogStore,
     useLogsStore,
     useUserStore,
     useAuthStore,
     usePluginStore,
     useProjectStore,
+    useTeamStore,
   } from '@/store';
 
   const router = useRouter();
@@ -17,10 +18,11 @@
   const authStore = useAuthStore();
   const projectStore = useProjectStore();
   const pluginStore = usePluginStore();
-  const globalPluginStore = useGlobalPluginsStore();
+  const globalPluginStore = useGlobalPluginStore();
   const localLogStore = useLocalLogStore();
   const logsStore = useLogsStore();
   const userStore = useUserStore();
+  const teamStore = useTeamStore();
 
   provide<typeof authStore>(authStoreSymbol, authStore);
 
@@ -33,6 +35,7 @@
   localLogStore.refreshAuth();
   logsStore.refreshAuth();
   userStore.refreshAuth();
+  teamStore.refreshAuth();
 
   const authInitialized = ref(false);
   const authenticationFailed = ref(false);
@@ -46,9 +49,16 @@
   );
 
   onMounted(() => {
-    auth?.load().then(() => {
-      authInitialized.value = true;
-    });
+    auth
+      ?.load()
+      .then(() => {
+        authenticated.value = true;
+        authInitialized.value = true;
+      })
+      .catch(() => {
+        // Token refresh failed or initial load failed
+        router.push('/login');
+      });
   });
 
   watch(
@@ -74,9 +84,6 @@
       if (failed) {
         router.push({
           path: '/login',
-          query: {
-            redirect: router.currentRoute.value.path,
-          },
         });
       }
     },
@@ -92,6 +99,7 @@
       localLogStore.refreshAuth();
       logsStore.refreshAuth();
       userStore.refreshAuth();
+      teamStore.refreshAuth();
     },
   );
 </script>

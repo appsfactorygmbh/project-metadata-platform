@@ -33,10 +33,12 @@
 
   const safeEdit = async () => {
     await props.formStore.submit();
+
+    emit('savedChanges');
     props.formStore.resetFields();
 
+    console.log('save changes emitted (EDIT BUTTONS)');
     stopEditing();
-    emit('savedChanges');
   };
 
   const cancleEdit = () => {
