@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: appsfactorylej/project-metadata-platform-frontend:prod
+    image: ghcr.io/appsfactorygmbh/project-metadata-platform-frontend:prod
     container_name: frontend-production
     networks:
       - proxy
