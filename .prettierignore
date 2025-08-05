@@ -2,7 +2,6 @@ dist
 coverage
 html
 node_modules
-.gitlab-ci.yml
 types/*.d.ts
 nginx.conf
 docker*
