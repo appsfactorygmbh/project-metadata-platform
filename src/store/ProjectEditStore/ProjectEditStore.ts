@@ -94,7 +94,9 @@ export const useProjectEditStore = defineStore('projectEdit', {
     // Sets the Projectinformation changes
     setProjectInformation(project: DetailedProjectModel): void {
       this.emptyProjectInformationFields.clear();
-      this.projectInformationChanges = { ...project };
+      const projectChanges: EditProjectModel = { ...project };
+      projectChanges.teamId = project.team?.id;
+      this.projectInformationChanges = projectChanges;
     },
 
     // Updates the Projectinformation changes
