@@ -53,6 +53,7 @@
     ismsLevel: 'NORMAL',
     isArchived: false,
     teamId: undefined,
+    notes: '',
   });
 
   // needed for mapping type null -> undefined in form input
@@ -120,6 +121,7 @@
       company: formState.company,
       companyState: formState.companyState,
       ismsLevel: formState.ismsLevel,
+      notes: formState.notes,
     };
 
     try {
@@ -295,6 +297,16 @@
               >{{ team.teamName }}</a-select-option
             >
           </a-select>
+        </a-form-item>
+        <a-form-item
+          name="notes"
+          :rules="[{ required: true, whitespace: true }, { max: 500, message: 'Notes cannot exceed 500 characters.' }]"
+        >
+          <a-input v-model:value="formState.notes" placeholder="Notes">
+            <template #suffix>
+              <TrademarkOutlined class="icon" />
+            </template>
+          </a-input>
         </a-form-item>
       </a-form>
     </a-modal>
