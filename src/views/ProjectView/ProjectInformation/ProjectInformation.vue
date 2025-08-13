@@ -93,6 +93,7 @@
         teamNameInputStatus.value = '';
         teamNameInput.value = '';
         addData(projectStore.getProject!);
+        projectNotesInputStatus.value = '';
       }
     },
   );
@@ -119,6 +120,7 @@
     companyState: ref<DetailedProjectModel['companyState']>('EXTERNAL'), //check if implementation matches with backend
     ismsLevel: ref<DetailedProjectModel['ismsLevel']>('NORMAL'),
     isArchived: ref<boolean>(false),
+    notes: ref<string>(''),
   };
 
   type Status = '' | 'error' | 'warning' | undefined;
@@ -132,6 +134,7 @@
   const companyInputStatus = ref<Status>('');
   const companyStateInputState = ref<Status>('');
   const ismsLevelInputState = ref<Status>('');
+  const projectNotesInputStatus = ref<Status>('');
 
   const clientNameInput = ref(projectData.clientName);
   const teamNameInput = ref(projectData.teamName);
@@ -224,6 +227,7 @@
       companyState: companyStateInput.value,
       ismsLevel: ismsLevelInput.value,
       teamId: mappedTeamId,
+      notes: projectData.notes.value,
     };
     projectEditStore.updateProjectInformationChanges(updatedProject);
   }
@@ -246,6 +250,7 @@
     projectData.company.value = loadedData.company;
     projectData.companyState.value = loadedData.companyState;
     projectData.ismsLevel.value = loadedData.ismsLevel;
+    projectData.notes.value = loadedData.notes;
   }
 
   const isArchiveModalOpen = ref(false);
@@ -528,6 +533,14 @@
           :label="'PTL'"
           :has-edit-keys="false"
         />
+        <!-- notes specific inputs -->
+        <a-divider orientation="left" v-if="isEditing || projectData.notes.value!=''" class="SectionSeperator">Notes</a-divider>
+        <EditableTextField
+          class="notesCard"
+          :value="projectData.notes.value"
+          :is-loading="isLoading"
+          :has-edit-keys="false"
+          />
       </a-flex>
     </div>
     <a-flex
@@ -645,6 +658,18 @@
     display: table;
     padding: 0 0 0 1em;
     white-space: nowrap;
+    overflow: hidden;
+    max-width: 100%;
+    background-color: v-bind('token.colorBgElevated ');
+  }
+
+  .notesCard{
+    border: none;
+    width: 100%;
+    display: flex;
+    padding: 0 0 0 1em;
+    word-break: break-all;
+    white-space: wrap;
     overflow: hidden;
     max-width: 100%;
     background-color: v-bind('token.colorBgElevated ');

@@ -76,5 +76,6 @@ declare module 'vue' {
     SearchBar: typeof import('./../src/components/Searchbar/SearchBar.vue')['default']
     TeamInformationInputField: typeof import('./../src/components/EditableTextField/InputFields/TeamInformationInputField.vue')['default']
     TeamNameInputField: typeof import('./../src/components/EditableTextField/InputFields/TeamNameInputField.vue')['default']
+    TextArea: typeof import('./../src/components/EditableTextArea/InputAreas/TextArea.vue')['default']
   }
 }
