@@ -9,6 +9,7 @@
     TrademarkOutlined,
     SwapOutlined,
     TeamOutlined,
+    CommentOutlined,
   } from '@ant-design/icons-vue';
   import type { UnwrapRef } from 'vue';
   import type { CreateProjectModel } from '@/models/Project';
@@ -121,7 +122,7 @@
       company: formState.company,
       companyState: formState.companyState,
       ismsLevel: formState.ismsLevel,
-      notes: formState.notes,
+      notes: formState.notes ?? '',
     };
 
     try {
@@ -300,13 +301,13 @@
         </a-form-item>
         <a-form-item
           name="notes"
-          :rules="[{ required: true, whitespace: true }, { max: 500, message: 'Notes cannot exceed 500 characters.' }]"
+          :rules="[{ required: false }]"
         >
-          <a-input v-model:value="formState.notes" placeholder="Notes">
-            <template #suffix>
-              <TrademarkOutlined class="icon" />
+          <a-textarea v-model:value="formState.notes" placeholder="Notes" :auto-size="true" :maxlength=500 :show-count="true">
+            <template #suffixIcon>
+              <CommentOutlined class="icon"/>
             </template>
-          </a-input>
+          </a-textarea />
         </a-form-item>
       </a-form>
     </a-modal>
