@@ -47,8 +47,10 @@
     v-model:value="inputField"
     class="textArea"
     :status="inputStatus"
+    :auto-size="{ minRows: 3, maxRows: 10 }"
+    :maxlength="500"
+    :show-count="true"
     @input="$emit('updated', inputField)"
     @change="handleChange"
-    :auto-size="{ minRows: 3, maxRows: 10 }" :maxlength=500 :show-count="true"
   />
 </template>

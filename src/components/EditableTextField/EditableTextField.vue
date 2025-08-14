@@ -11,6 +11,7 @@
     label: {
       type: String,
       required: false,
+      default: undefined,
     },
     isLoading: {
       type: Boolean,
@@ -56,7 +57,7 @@
     }"
     class="info"
   >
-    <label class="label" v-if="label != null"> {{ label }}:</label>
+    <label v-if="label != null" class="label"> {{ label }}:</label>
     <template v-if="!isLoading">
       <p v-if="!isEditing" class="text">
         {{ displayValue(value) ?? '' }}

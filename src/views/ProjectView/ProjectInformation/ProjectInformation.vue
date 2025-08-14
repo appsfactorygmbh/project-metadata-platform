@@ -535,32 +535,37 @@
           :has-edit-keys="false"
         />
         <!-- notes specific inputs -->
-        <a-divider orientation="left" v-if="isEditing || projectData.notes.value!=''" class="SectionSeperator">Notes</a-divider>
-        <EditableTextField v-if="!isEditing"
+        <a-divider
+          v-if="isEditing || projectData.notes.value != ''"
+          orientation="left"
+          class="SectionSeperator"
+          >Notes</a-divider
+        >
+        <EditableTextField
+          v-if="!isEditing"
           class="notesCard"
           :value="projectData.notes.value"
           :is-loading="isLoading"
           :has-edit-keys="false"
-          />
+        />
         <NotesTextArea
           v-else
-            :column-name="'notes'"
-            class="editArea"
-            :input-value="projectData.notes.value"
-            :input-status="projectNotesInputStatus"
-            :edit-store="projectEditStore"
-            :is-editing="true"
-            :required-value="false"
-            @updated="
-              (newValue) => {
-                projectData.notes.value = newValue;
-                updateProjectInformation();
-              }
-            "
-            @error="projectNotesInputStatus = 'error'"
-            @success="projectNotesInputStatus = ''"
-          />
-
+          :column-name="'notes'"
+          class="editArea"
+          :input-value="projectData.notes.value"
+          :input-status="projectNotesInputStatus"
+          :edit-store="projectEditStore"
+          :is-editing="true"
+          :required-value="false"
+          @updated="
+            (newValue) => {
+              projectData.notes.value = newValue;
+              updateProjectInformation();
+            }
+          "
+          @error="projectNotesInputStatus = 'error'"
+          @success="projectNotesInputStatus = ''"
+        />
       </a-flex>
     </div>
     <a-flex
@@ -683,7 +688,7 @@
     background-color: v-bind('token.colorBgElevated ');
   }
 
-  .notesCard{
+  .notesCard {
     border: none;
     width: 100%;
     display: flex;
@@ -693,13 +698,13 @@
     max-width: 100%;
     max-height: 200px;
     background-color: v-bind('token.colorBgElevated ');
-    font-size: 1.0em;
+    font-size: 1em;
   }
 
   .editField {
     margin: 0 2em 0 1em;
   }
-  .editArea{
+  .editArea {
     border: none;
     width: 100%;
     display: flex;

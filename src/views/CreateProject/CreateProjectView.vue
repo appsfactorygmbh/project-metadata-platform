@@ -9,7 +9,6 @@
     TrademarkOutlined,
     SwapOutlined,
     TeamOutlined,
-    CommentOutlined,
   } from '@ant-design/icons-vue';
   import type { UnwrapRef } from 'vue';
   import type { CreateProjectModel } from '@/models/Project';
@@ -299,12 +298,14 @@
             >
           </a-select>
         </a-form-item>
-        <a-form-item
-          name="notes"
-          :rules="[{ required: false }]"
-        >
-          <a-textarea v-model:value="formState.notes" placeholder="Notes" :auto-size="{ minRows: 3, maxRows: 15 }" :maxlength=500 :show-count="true">
-          </a-textarea />
+        <a-form-item name="notes" :rules="[{ required: false }]">
+          <a-textarea
+            v-model:value="formState.notes"
+            placeholder="Notes"
+            :auto-size="{ minRows: 3, maxRows: 15 }"
+            :maxlength="500"
+            :show-count="true"
+          />
         </a-form-item>
       </a-form>
     </a-modal>
