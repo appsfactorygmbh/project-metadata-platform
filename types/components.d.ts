@@ -64,6 +64,7 @@ declare module 'vue' {
     LogTimeFilter: typeof import('./../src/components/LogsDisplay/LogTimeFilter/LogTimeFilter.vue')['default']
     LogTimeline: typeof import('./../src/components/LogsDisplay/LogTimeline/LogTimeline.vue')['default']
     MenuButtons: typeof import('./../src/components/MenuButtons/MenuButtons.vue')['default']
+    NotesTextArea: typeof import('./../src/components/EditableTextField/InputTextAreas/NotesTextArea.vue')['default']
     PasswordInputField: typeof import('./../src/components/EditableTextField/InputFields/PasswordInputField.vue')['default']
     PluginComponent: typeof import('./../src/components/Plugin/PluginComponent.vue')['default']
     PopupComponent: typeof import('./../src/components/Popup/PopupComponent.vue')['default']
@@ -76,6 +77,6 @@ declare module 'vue' {
     SearchBar: typeof import('./../src/components/Searchbar/SearchBar.vue')['default']
     TeamInformationInputField: typeof import('./../src/components/EditableTextField/InputFields/TeamInformationInputField.vue')['default']
     TeamNameInputField: typeof import('./../src/components/EditableTextField/InputFields/TeamNameInputField.vue')['default']
-    TextArea: typeof import('./../src/components/EditableTextArea/InputAreas/TextArea.vue')['default']
+    TextArea: typeof import('./../src/components/EditableTextField/InputTextAreas/TextArea.vue')['default']
   }
 }

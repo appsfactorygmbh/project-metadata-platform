@@ -303,10 +303,7 @@
           name="notes"
           :rules="[{ required: false }]"
         >
-          <a-textarea v-model:value="formState.notes" placeholder="Notes" :auto-size="true" :maxlength=500 :show-count="true">
-            <template #suffixIcon>
-              <CommentOutlined class="icon"/>
-            </template>
+          <a-textarea v-model:value="formState.notes" placeholder="Notes" :auto-size="{ minRows: 3, maxRows: 15 }" :maxlength=500 :show-count="true">
           </a-textarea />
         </a-form-item>
       </a-form>

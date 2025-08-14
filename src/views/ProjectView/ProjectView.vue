@@ -147,6 +147,7 @@
       company: updateProjectInformation?.company,
       companyState: updateProjectInformation?.companyState,
       ismsLevel: updateProjectInformation?.ismsLevel,
+      notes: updateProjectInformation?.notes,
     };
     console.log(updatedProject);
 

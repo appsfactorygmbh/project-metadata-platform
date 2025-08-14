@@ -52,6 +52,7 @@
       padding: '5px',
       alignItems: 'top',
       height: 'fit-content',
+      overflow: 'auto',
     }"
     class="info"
   >

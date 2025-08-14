@@ -142,6 +142,7 @@
   const companyInput = ref(projectData.company);
   const companyStateInput = ref(projectData.companyState);
   const ismsLevelInput = ref(projectData.ismsLevel);
+  const notesInput = ref(projectData.notes);
 
   type BaseInputField<T = string | number | undefined | null> = {
     label: string;
@@ -227,7 +228,7 @@
       companyState: companyStateInput.value,
       ismsLevel: ismsLevelInput.value,
       teamId: mappedTeamId,
-      notes: projectData.notes.value,
+      notes: notesInput.value,
     };
     projectEditStore.updateProjectInformationChanges(updatedProject);
   }
@@ -535,12 +536,31 @@
         />
         <!-- notes specific inputs -->
         <a-divider orientation="left" v-if="isEditing || projectData.notes.value!=''" class="SectionSeperator">Notes</a-divider>
-        <EditableTextField
+        <EditableTextField v-if="!isEditing"
           class="notesCard"
           :value="projectData.notes.value"
           :is-loading="isLoading"
           :has-edit-keys="false"
           />
+        <NotesTextArea
+          v-else
+            :column-name="'notes'"
+            class="editArea"
+            :input-value="projectData.notes.value"
+            :input-status="projectNotesInputStatus"
+            :edit-store="projectEditStore"
+            :is-editing="true"
+            :required-value="false"
+            @updated="
+              (newValue) => {
+                projectData.notes.value = newValue;
+                updateProjectInformation();
+              }
+            "
+            @error="projectNotesInputStatus = 'error'"
+            @success="projectNotesInputStatus = ''"
+          />
+
       </a-flex>
     </div>
     <a-flex
@@ -669,16 +689,26 @@
     display: flex;
     padding: 0 0 0 1em;
     word-break: break-all;
-    white-space: wrap;
-    overflow: hidden;
+    white-space: pre-line;
     max-width: 100%;
+    max-height: 200px;
     background-color: v-bind('token.colorBgElevated ');
+    font-size: 1.0em;
   }
 
   .editField {
     margin: 0 2em 0 1em;
   }
-
+  .editArea{
+    border: none;
+    width: 100%;
+    display: flex;
+    padding: 0 0 0 1em;
+    word-break: break-all;
+    white-space: pre-wrap;
+    max-width: 100%;
+    background-color: v-bind('token.colorBgElevated ');
+  }
   .button {
     margin-bottom: 10px;
     height: 40px;
