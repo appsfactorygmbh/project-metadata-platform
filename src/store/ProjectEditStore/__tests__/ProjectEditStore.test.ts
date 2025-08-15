@@ -3,6 +3,7 @@ import { useProjectEditStore } from '../ProjectEditStore';
 import { createPinia, setActivePinia } from 'pinia';
 import type { PluginEditModel, PluginModel } from '../../../models/Plugin';
 import type { DetailedProjectModel } from '@/models/Project';
+import NotesTextArea from '@/components/EditableTextField/InputTextAreas/NotesTextArea.vue';
 
 describe('ProjectEditStore', () => {
   let store: ReturnType<typeof useProjectEditStore>;
@@ -22,6 +23,7 @@ describe('ProjectEditStore', () => {
       company: '',
       ismsLevel: 'NORMAL',
       companyState: 'EXTERNAL',
+      notes: '',
     });
     expect(store.canBeCreated).toBe(true);
     expect(store.duplicatedUrls.size).toBe(0);
@@ -122,6 +124,7 @@ describe('ProjectEditStore', () => {
       company: '',
       ismsLevel: 'NORMAL',
       companyState: 'EXTERNAL',
+      notes: '',
     });
 
     const plugin: PluginModel = {
@@ -150,6 +153,7 @@ describe('ProjectEditStore', () => {
       ismsLevel: 'VERY_HIGH',
       companyState: 'EXTERNAL',
       team: undefined,
+      notes: '',
     });
 
     expect(store.getCanBeAdded).toBe(false);
@@ -161,6 +165,7 @@ describe('ProjectEditStore', () => {
       company: 'Test Firma',
       ismsLevel: 'VERY_HIGH',
       companyState: 'EXTERNAL',
+      notes: '',
     });
 
     store.setProjectInformation({
@@ -174,6 +179,7 @@ describe('ProjectEditStore', () => {
       company: 'Test Firma',
       ismsLevel: 'VERY_HIGH',
       companyState: 'EXTERNAL',
+      notes: '',
     });
 
     expect(store.getCanBeAdded).toBe(true);
@@ -215,6 +221,7 @@ describe('ProjectEditStore', () => {
       ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
       companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
       slug: 'test_project',
+      notes: 'TestNotes',
     };
     store.updateProjectInformationChanges(project);
     expect(store.getProjectInformationChanges).toEqual(project);
@@ -232,6 +239,7 @@ describe('ProjectEditStore', () => {
       company: 'New Firma',
       ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
       companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
+      notes: 'Initial notes',
     };
     store.setProjectInformation(projectInfo);
     expect(store.projectInformationChanges).toEqual(projectInfo);
@@ -251,6 +259,7 @@ describe('ProjectEditStore', () => {
       ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
       companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
       slug: 'updated_project',
+      notes: 'Updated notes',
     };
     store.updateProjectInformationChanges(updatedProjectInfo);
     expect(store.projectInformationChanges).toEqual(updatedProjectInfo);
