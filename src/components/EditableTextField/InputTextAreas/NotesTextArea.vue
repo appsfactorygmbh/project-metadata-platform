@@ -10,6 +10,10 @@
         type: String,
         required: true,
       },
+      requiredValue: {
+        type: Boolean,
+        required: true,
+      },
       inputValue: {
         type: [Number, String],
         required: true,
@@ -22,17 +26,13 @@
         type: Object as PropType<ProjectEditStore>,
         required: true,
       },
-      requiredValue: {
-        type: Boolean,
-        required: true,
-      },
     });
 
   const emit = defineEmits(['updated', 'error', 'success']);
-  const inputField = ref(inputValue);
+  const textArea = ref(inputValue);
 
   const handleChange = () => {
-    if (!inputField.value && requiredValue) {
+    if (!textArea.value && requiredValue) {
       emit('error');
       editStore?.addEmptyProjectInformationField(columnName);
     } else {
@@ -44,13 +44,13 @@
 
 <template>
   <a-textarea
-    v-model:value="inputField"
+    v-model:value="textArea"
     class="textArea"
     :status="inputStatus"
     :auto-size="{ minRows: 3, maxRows: 10 }"
     :maxlength="500"
     :show-count="true"
-    @input="$emit('updated', inputField)"
+    @input="$emit('updated', textArea)"
     @change="handleChange"
   />
 </template>
