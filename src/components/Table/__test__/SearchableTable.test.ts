@@ -24,6 +24,7 @@ const testData: ProjectModel[] = [
     slug: 'c',
     company: 'test',
     ismsLevel: 'NORMAL',
+    notes: 'Test Notes',
   },
   {
     id: 2,
@@ -38,6 +39,7 @@ const testData: ProjectModel[] = [
     slug: 'a',
     company: 'test',
     ismsLevel: 'NORMAL',
+    notes: 'Test Notes2',
   },
 ];
 

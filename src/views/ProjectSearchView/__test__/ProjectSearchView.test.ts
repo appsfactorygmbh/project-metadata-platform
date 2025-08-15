@@ -95,6 +95,7 @@ describe('ProjectSearchView.vue', () => {
       slug: 'test-project',
       company: 'test',
       ismsLevel: 'NORMAL',
+      notes: 'Test Notes',
     };
 
     wrapper.vm.handleRowClick(testProject);

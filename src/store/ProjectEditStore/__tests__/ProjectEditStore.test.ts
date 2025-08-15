@@ -3,7 +3,6 @@ import { useProjectEditStore } from '../ProjectEditStore';
 import { createPinia, setActivePinia } from 'pinia';
 import type { PluginEditModel, PluginModel } from '../../../models/Plugin';
 import type { DetailedProjectModel } from '@/models/Project';
-import NotesTextArea from '@/components/EditableTextField/InputTextAreas/NotesTextArea.vue';
 
 describe('ProjectEditStore', () => {
   let store: ReturnType<typeof useProjectEditStore>;

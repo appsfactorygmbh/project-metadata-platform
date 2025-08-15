@@ -33,6 +33,7 @@ const testData: DetailedProjectModel = {
   company: 'Appsfactory',
   companyState: 'EXTERNAL',
   ismsLevel: 'NORMAL',
+  notes: 'TestNotes',
 };
 
 describe('ProjectInformation.vue', () => {
