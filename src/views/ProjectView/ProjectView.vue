@@ -245,7 +245,7 @@
   .pluginView {
     display: flex;
     justify-content: center;
-    padding-top: 1em;
+    padding-top: 10vh;
   }
   .LocalLog {
     margin: 2em 3.5em 2em 3em;
