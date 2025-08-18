@@ -72,6 +72,7 @@ const testProject: DetailedProjectModel = {
   company: 'AppsFactory',
   companyState: 'EXTERNAL',
   ismsLevel: 'HIGH',
+  notes: 'Test Notes',
 };
 
 const pinia = createTestingPinia({

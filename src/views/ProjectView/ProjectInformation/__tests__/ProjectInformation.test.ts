@@ -33,6 +33,7 @@ const testData: DetailedProjectModel = {
   company: 'Appsfactory',
   companyState: 'EXTERNAL',
   ismsLevel: 'NORMAL',
+  notes: 'TestNotes',
 };
 
 describe('ProjectInformation.vue', () => {
@@ -84,6 +85,7 @@ describe('ProjectInformation.vue', () => {
       'Business\xa0Unit:BU Health',
     );
     expect(wrapper.findAll('.infoCard')[8].text()).toBe('PTL:Max Mustermann');
+    expect(wrapper.findAll('.notesCard')[0].text()).toBe('TestNotes');
   });
 
   it('opens the confirmation modal when DeleteOutlined button is clicked', async () => {

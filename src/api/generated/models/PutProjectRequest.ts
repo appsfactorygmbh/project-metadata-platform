@@ -71,6 +71,12 @@ export interface PutProjectRequest {
    */
   ismsLevel: SecurityLevel;
   /**
+   * Additonal Notes on the project
+   * @type {string}
+   * @memberof PutProjectRequest
+   */
+  notes: string;
+  /**
    * An optional list of plugins associated to the project.
    * @type {Array<UpdateProjectPluginRequest>}
    * @memberof PutProjectRequest
@@ -98,6 +104,7 @@ export function instanceOfPutProjectRequest(
   if (!('companyState' in value) || value['companyState'] === undefined)
     return false;
   if (!('ismsLevel' in value) || value['ismsLevel'] === undefined) return false;
+  if (!('notes' in value) || value['notes'] === undefined) return false;
   if (!('isArchived' in value) || value['isArchived'] === undefined)
     return false;
   return true;
@@ -122,6 +129,7 @@ export function PutProjectRequestFromJSONTyped(
     teamId: json['teamId'] == null ? undefined : json['teamId'],
     companyState: CompanyStateFromJSON(json['companyState']),
     ismsLevel: SecurityLevelFromJSON(json['ismsLevel']),
+    notes: json['notes'],
     pluginList:
       json['pluginList'] == null
         ? undefined
@@ -152,6 +160,7 @@ export function PutProjectRequestToJSONTyped(
     teamId: value['teamId'],
     companyState: CompanyStateToJSON(value['companyState']),
     ismsLevel: SecurityLevelToJSON(value['ismsLevel']),
+    notes: value['notes'],
     pluginList:
       value['pluginList'] == null
         ? undefined
