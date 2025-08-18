@@ -81,6 +81,7 @@ describe('ProjectPlugins', () => {
       company: 'AppsFactory',
       companyState: 'EXTERNAL',
       ismsLevel: 'HIGH',
+      notes: 'Test Notes',
     };
 
     const mockArchivedProject: DetailedProjectModel = {
@@ -98,6 +99,7 @@ describe('ProjectPlugins', () => {
       company: 'AppsFactory',
       companyState: 'EXTERNAL',
       ismsLevel: 'HIGH',
+      notes: 'Test Notes',
     };
 
     const unarchivedPluginsSpy = vi

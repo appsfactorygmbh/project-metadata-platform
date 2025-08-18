@@ -53,6 +53,7 @@
     ismsLevel: 'NORMAL',
     isArchived: false,
     teamId: undefined,
+    notes: '',
   });
 
   // needed for mapping type null -> undefined in form input
@@ -120,6 +121,7 @@
       company: formState.company,
       companyState: formState.companyState,
       ismsLevel: formState.ismsLevel,
+      notes: formState.notes ?? '',
     };
 
     try {
@@ -295,6 +297,15 @@
               >{{ team.teamName }}</a-select-option
             >
           </a-select>
+        </a-form-item>
+        <a-form-item name="notes" :rules="[{ required: false }]">
+          <a-textarea
+            v-model:value="formState.notes"
+            placeholder="Notes"
+            :auto-size="{ minRows: 3, maxRows: 15 }"
+            :maxlength="500"
+            :show-count="true"
+          />
         </a-form-item>
       </a-form>
     </a-modal>

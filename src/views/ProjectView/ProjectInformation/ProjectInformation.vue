@@ -93,6 +93,7 @@
         teamNameInputStatus.value = '';
         teamNameInput.value = '';
         addData(projectStore.getProject!);
+        projectNotesInputStatus.value = '';
       }
     },
   );
@@ -119,6 +120,7 @@
     companyState: ref<DetailedProjectModel['companyState']>('EXTERNAL'), //check if implementation matches with backend
     ismsLevel: ref<DetailedProjectModel['ismsLevel']>('NORMAL'),
     isArchived: ref<boolean>(false),
+    notes: ref<string>(''),
   };
 
   type Status = '' | 'error' | 'warning' | undefined;
@@ -132,6 +134,7 @@
   const companyInputStatus = ref<Status>('');
   const companyStateInputState = ref<Status>('');
   const ismsLevelInputState = ref<Status>('');
+  const projectNotesInputStatus = ref<Status>('');
 
   const clientNameInput = ref(projectData.clientName);
   const teamNameInput = ref(projectData.teamName);
@@ -139,6 +142,7 @@
   const companyInput = ref(projectData.company);
   const companyStateInput = ref(projectData.companyState);
   const ismsLevelInput = ref(projectData.ismsLevel);
+  const notesInput = ref(projectData.notes);
 
   type BaseInputField<T = string | number | undefined | null> = {
     label: string;
@@ -224,6 +228,7 @@
       companyState: companyStateInput.value,
       ismsLevel: ismsLevelInput.value,
       teamId: mappedTeamId,
+      notes: notesInput.value,
     };
     projectEditStore.updateProjectInformationChanges(updatedProject);
   }
@@ -246,6 +251,7 @@
     projectData.company.value = loadedData.company;
     projectData.companyState.value = loadedData.companyState;
     projectData.ismsLevel.value = loadedData.ismsLevel;
+    projectData.notes.value = loadedData.notes;
   }
 
   const isArchiveModalOpen = ref(false);
@@ -528,6 +534,38 @@
           :label="'PTL'"
           :has-edit-keys="false"
         />
+        <!-- notes specific inputs -->
+        <a-divider
+          v-if="isEditing || projectData.notes.value != ''"
+          orientation="left"
+          class="SectionSeperator"
+          >Notes</a-divider
+        >
+        <EditableTextField
+          v-if="!isEditing"
+          class="notesCard"
+          :value="projectData.notes.value"
+          :is-loading="isLoading"
+          :has-edit-keys="false"
+        />
+        <NotesTextArea
+          v-else
+          :column-name="'notes'"
+          class="editArea"
+          :input-value="projectData.notes.value"
+          :input-status="projectNotesInputStatus"
+          :edit-store="projectEditStore"
+          :is-editing="true"
+          :required-value="false"
+          @updated="
+            (newValue) => {
+              projectData.notes.value = newValue;
+              updateProjectInformation();
+            }
+          "
+          @error="projectNotesInputStatus = 'error'"
+          @success="projectNotesInputStatus = ''"
+        />
       </a-flex>
     </div>
     <a-flex
@@ -650,10 +688,32 @@
     background-color: v-bind('token.colorBgElevated ');
   }
 
+  .notesCard {
+    border: none;
+    width: 100%;
+    display: flex;
+    padding: 0 0 0 1em;
+    word-break: break-all;
+    white-space: pre-line;
+    max-width: 100%;
+    max-height: 200px;
+    background-color: v-bind('token.colorBgElevated ');
+    font-size: 1em;
+  }
+
   .editField {
     margin: 0 2em 0 1em;
   }
-
+  .editArea {
+    border: none;
+    width: 100%;
+    display: flex;
+    padding: 0 0 0 1em;
+    word-break: break-all;
+    white-space: pre-wrap;
+    max-width: 100%;
+    background-color: v-bind('token.colorBgElevated ');
+  }
   .button {
     margin-bottom: 10px;
     height: 40px;

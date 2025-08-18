@@ -23,6 +23,7 @@ const testProjects: ProjectModel[] = [
     slug: 'test-1',
     company: 'test',
     ismsLevel: 'NORMAL',
+    notes: 'Test Notes',
   },
   {
     id: 300,
@@ -37,6 +38,7 @@ const testProjects: ProjectModel[] = [
     slug: 'test-2',
     company: 'test',
     ismsLevel: 'NORMAL',
+    notes: 'Test Notes2',
   },
 ];
 

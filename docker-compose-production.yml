@@ -13,8 +13,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.pmp-fe.rule=Host(`pmp.appsfactory.app`)
       - traefik.http.routers.pmp-fe.tls.certresolver=le-tls
-      - traefik.http.routers.pmp-fe.middlewares=pmp-fe-ipallowlist,external-secure
-      - traefik.http.middlewares.pmp-fe-ipallowlist.ipallowlist.sourcerange=85.239.102.130/32,213.187.82.10/32
+      - traefik.http.routers.pmp-fe.middlewares=external-secure
 
 networks:
   proxy:

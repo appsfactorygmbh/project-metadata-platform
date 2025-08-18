@@ -10,7 +10,8 @@
     },
     label: {
       type: String,
-      required: true,
+      required: false,
+      default: undefined,
     },
     isLoading: {
       type: Boolean,
@@ -52,10 +53,11 @@
       padding: '5px',
       alignItems: 'top',
       height: 'fit-content',
+      overflow: 'auto',
     }"
     class="info"
   >
-    <label class="label">{{ label }}:</label>
+    <label v-if="label != null" class="label"> {{ label }}:</label>
     <template v-if="!isLoading">
       <p v-if="!isEditing" class="text">
         {{ displayValue(value) ?? '' }}

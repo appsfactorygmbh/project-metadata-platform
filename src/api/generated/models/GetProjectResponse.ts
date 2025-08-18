@@ -88,6 +88,12 @@ export interface GetProjectResponse {
    * @memberof GetProjectResponse
    */
   ismsLevel: SecurityLevel;
+  /**
+   * Additonal Notes on the project
+   * @type {string}
+   * @memberof GetProjectResponse
+   */
+  notes: string;
 }
 
 /**
@@ -108,6 +114,7 @@ export function instanceOfGetProjectResponse(
   if (!('companyState' in value) || value['companyState'] === undefined)
     return false;
   if (!('ismsLevel' in value) || value['ismsLevel'] === undefined) return false;
+  if (!('notes' in value) || value['notes'] === undefined) return false;
   return true;
 }
 
@@ -134,6 +141,7 @@ export function GetProjectResponseFromJSONTyped(
       json['team'] == null ? undefined : GetTeamResponseFromJSON(json['team']),
     companyState: CompanyStateFromJSON(json['companyState']),
     ismsLevel: SecurityLevelFromJSON(json['ismsLevel']),
+    notes: json['notes'],
   };
 }
 
@@ -160,5 +168,6 @@ export function GetProjectResponseToJSONTyped(
     team: GetTeamResponseToJSON(value['team']),
     companyState: CompanyStateToJSON(value['companyState']),
     ismsLevel: SecurityLevelToJSON(value['ismsLevel']),
+    notes: value['notes'],
   };
 }
