@@ -119,6 +119,7 @@ describe('ProjectView.vue', () => {
     expect(wrapper.find('.teamNameField').exists()).toBe(true);
     expect(wrapper.find('.buField').exists()).toBe(true);
     expect(wrapper.find('.ptlField').exists()).toBe(true);
+    expect(wrapper.find('.projectName').exists()).toBe(true);
 
     // click on edit button
     const editButton = wrapper.findComponent(EditOutlined);
@@ -130,5 +131,9 @@ describe('ProjectView.vue', () => {
     expect(wrapper.find('.teamNameField').exists()).toBe(false);
     expect(wrapper.find('.buField').exists()).toBe(false);
     expect(wrapper.find('.ptlField').exists()).toBe(false);
+    expect(wrapper.find('.projectNameContainer').exists()).toBe(false);
+
+    // check if project name input is visible
+    expect(wrapper.find('.projectNameInput').exists()).toBe(true);
   });
 });
