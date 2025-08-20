@@ -94,6 +94,7 @@
         teamNameInput.value = '';
         addData(projectStore.getProject!);
         projectNotesInputStatus.value = '';
+        projectNameInputStatus.value = '';
       }
     },
   );
@@ -135,6 +136,7 @@
   const companyStateInputState = ref<Status>('');
   const ismsLevelInputState = ref<Status>('');
   const projectNotesInputStatus = ref<Status>('');
+  const projectNameInputStatus = ref<Status>('');
 
   const clientNameInput = ref(projectData.clientName);
   const teamNameInput = ref(projectData.teamName);
@@ -143,6 +145,7 @@
   const companyStateInput = ref(projectData.companyState);
   const ismsLevelInput = ref(projectData.ismsLevel);
   const notesInput = ref(projectData.notes);
+  const projectNameInput = ref(projectData.projectName);
 
   type BaseInputField<T = string | number | undefined | null> = {
     label: string;
@@ -221,7 +224,7 @@
   function updateProjectInformation(): void {
     const mappedTeamId = teamStore.getIdToName(teamNameInput.value);
     const updatedProject: EditProjectModel = {
-      projectName: projectData.projectName.value,
+      projectName: projectNameInput.value,
       clientName: clientNameInput.value,
       offerId: offerIdInput.value,
       company: companyInput.value,
@@ -339,7 +342,7 @@
   <div class="pane">
     <div v-if="projectData.id.value" class="main">
       <!-- create box for the project name -->
-      <div class="projectNameContainer">
+      <div v-if="!isEditing" class="projectNameContainer">
         <!-- Reactivate Button -->
         <IconButton
           v-if="projectStore.getProject?.isArchived"
@@ -410,7 +413,25 @@
         </h1>
         <a-skeleton v-else active :paragraph="false" style="max-width: 20em" />
       </div>
-
+      <div v-else class="projectNameInput">
+        <ProjectInformationInputField
+          :column-name="'projectName'"
+          class="editField projectName"
+          :input-value="projectData.projectName.value"
+          :input-status="projectNameInputStatus"
+          :edit-store="projectEditStore"
+          :is-editing="true"
+          :required-value="true"
+          @updated="
+            (newValue) => {
+              projectData.projectName.value = newValue;
+              updateProjectInformation();
+            }
+          "
+          @error="projectNameInputStatus = 'error'"
+          @success="projectNameInputStatus = ''"
+        />
+      </div>
       <!-- create box for project description (BU, Team Nr, Department, Client Name) -->
       <a-flex
         class="projectInformationBox"
@@ -613,20 +634,22 @@
 
   /* Style for the Project name input box */
   .projectNameInput {
-    font-size: 2.8em;
-    width: 80%;
-    height: 2.8em;
+    width: 100%;
+    height: 5%;
+    margin: 10px;
+    border-radius: 10px;
     text-align: center;
-    border: none;
-    border-bottom: 2px solid #a5a4a4;
-    color: black;
-    background-color: rgb(250, 250, 250);
+    align-items: center;
+    flex-direction: row;
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
   }
-
   /* Style for the Project title box */
   .projectNameContainer {
     width: 100%;
     height: 5%;
+
     margin: 10px;
     border-radius: 10px;
     text-align: center;
@@ -644,6 +667,7 @@
     max-width: 80%;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: center;
   }
 
   .projectInformationBox {
