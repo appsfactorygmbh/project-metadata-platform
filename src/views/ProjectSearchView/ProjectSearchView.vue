@@ -89,11 +89,14 @@
       falsyValue: 'archived',
     },
   );
-  const toggleShowFilter = () => {
+  const toggleShowFilter = async () => {
     toggleFilterType();
     searchStore.setFilter(
       filterType.value === 'archived' ? showOnlyArchived : showOnlyActive,
     );
+    if (isEditing) await stopEditing();
+    setProjectId(undefined);
+
   };
 
   // on mount, set the filter to show only active projects

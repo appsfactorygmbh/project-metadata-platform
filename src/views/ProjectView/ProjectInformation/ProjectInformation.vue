@@ -29,7 +29,7 @@
     ProjectInformationInputField,
     ProjectInformationSearchSelectField,
   } from '@/components/EditableTextField';
-  import { useThemeToken } from '@/utils/hooks';
+  import { useDeselect, useThemeToken } from '@/utils/hooks';
   import { CompanyState, SecurityLevel } from '@/api/generated';
 
   const localLogStore = inject(localLogStoreSymbol);
@@ -55,6 +55,8 @@
   );
 
   const { isEditing, stopEditing, startEditing } = useEditing();
+
+  const { isDeselected }= useDeselect();
 
   onMounted(async () => {
     const project = projectStore.getProject;
@@ -303,10 +305,10 @@
     return nextProject.id;
   };
 
-  const getNextActiveProjectId = (currentProjectId: number): number => {
+  const getNextActiveProjectId = (currentProjectId: number): number | undefined => {
     const projects = projectStore.getProjects;
     const nextProject = projects.find((project) => !project.isArchived);
-    if (!nextProject) return currentProjectId;
+    if (!nextProject) return undefined;
     return nextProject.id;
   };
 
@@ -323,6 +325,7 @@
         isModalOpen.value = false;
         await localLogStore?.fetch(projectID);
         const newProjectId = getNextActiveProjectId(projectID);
+        if (!newProjectId) projectRouting.setProjectId(undefined);
         projectRouting.setProjectId(newProjectId);
       }
     }
@@ -335,12 +338,14 @@
 
     await projectStore.unarchive(projectId!);
     await localLogStore?.fetch(projectId!);
+    const newProjectId = getNextArchivedProjectId();
+    projectRouting.setProjectId(newProjectId);
   };
 </script>
 
 <template>
   <div class="pane">
-    <div v-if="projectData.id.value" class="main">
+    <div v-if="!isDeselected" class="main">
       <!-- create box for the project name -->
       <div v-if="!isEditing" class="projectNameContainer">
         <!-- Reactivate Button -->
