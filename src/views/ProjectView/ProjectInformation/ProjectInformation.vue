@@ -298,8 +298,7 @@
     return nextProject.id;
   };
 
-  const getNextActiveProjectId = (
-  ): number | undefined => {
+  const getNextActiveProjectId = (): number | undefined => {
     const projects = projectStore.getProjects;
     const nextProject = projects.find((project) => !project.isArchived);
     if (!nextProject) return undefined;
