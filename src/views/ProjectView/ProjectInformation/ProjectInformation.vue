@@ -318,7 +318,7 @@
         isArchiveModalOpen.value = false;
         isModalOpen.value = false;
         await localLogStore?.fetch(projectID);
-        const newProjectId = getNextActiveProjectId(projectID);
+        const newProjectId = getNextActiveProjectId();
         if (!newProjectId) projectRouting.setProjectId(undefined);
         projectRouting.setProjectId(newProjectId);
       }
