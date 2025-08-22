@@ -22,7 +22,6 @@
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
   import IconButton from '@/components/Button/IconButton.vue';
-  import router from '@/router';
   import _ from 'lodash';
   import {
     EditableTextField,
@@ -56,7 +55,7 @@
 
   const { isEditing, stopEditing, startEditing } = useEditing();
 
-  const { isDeselected }= useDeselect();
+  const { isDeselected } = useDeselect();
 
   onMounted(async () => {
     const project = projectStore.getProject;
@@ -285,15 +284,9 @@
       console.error('Error deleting project:', error);
     } finally {
       isDeleteModalOpen.value = false;
-      const newProjectId =
-        getNextActiveProjectId(project.id) === project.id
-          ? getNextArchivedProjectId()!
-          : getNextActiveProjectId(project.id);
-      if (newProjectId === undefined) {
-        await router.push('/');
-      } else {
-        projectRouting.setProjectId(newProjectId);
-      }
+      const newProjectId = getNextArchivedProjectId();
+
+      projectRouting.setProjectId(newProjectId);
     }
     return;
   };
@@ -305,7 +298,8 @@
     return nextProject.id;
   };
 
-  const getNextActiveProjectId = (currentProjectId: number): number | undefined => {
+  const getNextActiveProjectId = (
+  ): number | undefined => {
     const projects = projectStore.getProjects;
     const nextProject = projects.find((project) => !project.isArchived);
     if (!nextProject) return undefined;

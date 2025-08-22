@@ -1,8 +1,7 @@
-import { useRoute} from 'vue-router';
+import { useRoute } from 'vue-router';
 
 export const useDeselect = (queryKey: string = 'isDeselected') => {
   const route = useRoute();
-
 
   const isDeselected = ref<boolean>(route.fullPath === '/');
 
@@ -13,7 +12,6 @@ export const useDeselect = (queryKey: string = 'isDeselected') => {
       isDeselected.value = fullRoute === '/';
     },
   );
-
 
   return { isDeselected };
 };

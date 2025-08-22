@@ -190,7 +190,7 @@ describe('ProjectSearchView.vue', () => {
     expect(router.currentRoute.value.query.projectName).toBe('test');
   });
   it('sets route to root when switching between archived and unarchived', async () => {
-     await router.push({
+    await router.push({
       path: '/',
       query: { projectId: '300' },
     });
@@ -199,7 +199,7 @@ describe('ProjectSearchView.vue', () => {
     const wrapper = generateWrapper(800);
     expect(router.currentRoute.value.fullPath).not.toBe('/');
     console.log(useProjectRouting(router).routerProjectId.value);
-    const archiveViewButton = wrapper.find('[name="archiveToggle"]')
+    const archiveViewButton = wrapper.find('[name="archiveToggle"]');
     archiveViewButton.trigger('click');
     await flushPromises();
     expect(router.currentRoute.value.fullPath).toBe('/');
