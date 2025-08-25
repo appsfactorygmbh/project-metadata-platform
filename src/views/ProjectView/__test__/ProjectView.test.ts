@@ -113,6 +113,10 @@ describe('ProjectView.vue', () => {
   it('hides the project slug + team fields when editing', async () => {
     const wrapper = generateWrapper();
     await flushPromises();
+    await router.push({
+      path: '/',
+      query: { projectId: '300' },
+    });
 
     // check if fields are visible
     expect(wrapper.find('.label').text()).toBe('Project\xa0Slug:');

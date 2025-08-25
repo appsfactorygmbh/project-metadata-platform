@@ -13,13 +13,10 @@ export const useProjectRouting = (router: Router = useRouter()) => {
 
   const setProjectId = (id: number | undefined) => {
     if (id === undefined) {
-      const { query, path } = router.currentRoute.value;
-      const { projectId, ...remainingQuery } = query;
-
-      router.replace({
-        path,
-        query: remainingQuery,
+      router.push({
+        path: '/',
       });
+      routerProjectId.value = undefined;
 
       routerProjectSlug.value = undefined;
     } else {
