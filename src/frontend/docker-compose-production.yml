@@ -1,0 +1,20 @@
+services:
+  frontend:
+    image: ghcr.io/appsfactorygmbh/project-metadata-platform-frontend:prod
+    container_name: frontend-production
+    networks:
+      - proxy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pmp-fe.rule=Host(`pmp.appsfactory.app`)
+      - traefik.http.routers.pmp-fe.tls.certresolver=le-tls
+      - traefik.http.routers.pmp-fe.middlewares=external-secure
+
+networks:
+  proxy:
+    external: true

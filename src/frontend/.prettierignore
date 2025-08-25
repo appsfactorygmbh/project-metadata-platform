@@ -1,0 +1,9 @@
+dist
+coverage
+html
+node_modules
+types/*.d.ts
+nginx.conf
+docker*
+Docker*
+azure-pipelines.yml
