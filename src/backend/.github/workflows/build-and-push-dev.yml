@@ -1,0 +1,39 @@
+name: Build_and_Push_Docker_Image
+
+on:
+  workflow_run:
+    workflows:
+      - Unit_Tests_and_SonarCloud_Analysis
+    types:
+      - completed
+    branches:
+      - develop
+
+jobs:
+  build-and-push:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:dev
+          build-args: |
+            BUILD_CONFIGURATION=Release

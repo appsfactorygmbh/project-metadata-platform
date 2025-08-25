@@ -1,0 +1,100 @@
+name: Unit_Tests_and_SonarCloud_Analysis
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  SONAR_ORGANIZATION_KEY: 'appsfactory'
+  SONAR_PROJECT_KEY: 'appsfactory_project-metadata-platform-backend'
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      security-events: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore packages (dotnet restore)
+        run: dotnet restore
+
+      - name: Restore .NET tools (dotnet tool restore)
+        run: dotnet tool restore
+
+      - name: Install CSharpier global tool
+        run: |
+          dotnet tool install --global csharpier
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Verify Formatting with CSharpier
+        run: csharpier check ${{ github.workspace }}
+
+      - name: Install SonarCloud .NET Global Tool
+        run: dotnet tool install --global dotnet-sonarscanner --version 6.*
+
+      - name: Install dotnet-coverage global tool
+        run: dotnet tool install --global dotnet-coverage --version 1.*
+
+      - name: SonarCloud Prepare / Begin (Pull Request)
+        if: github.event_name == 'pull_request'
+        run: |
+          dotnet-sonarscanner begin \
+            /k:"$SONAR_PROJECT_KEY" \
+            /o:"$SONAR_ORGANIZATION_KEY" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml" \
+            /d:sonar.exclusions=/ProjectMetadataPlatform.Infrastructure/Migrations/** \
+            /d:sonar.pullrequest.key="${{ github.event.number }}" \
+            /d:sonar.pullrequest.branch="${{ github.head_ref }}" \
+            /d:sonar.pullrequest.base="${{ github.base_ref }}" \
+            /d:sonar.scm.revision="${{ github.event.pull_request.head.sha }}"
+        env:
+          SONAR_PROJECT_KEY: ${{ env.SONAR_PROJECT_KEY }}
+          SONAR_ORGANIZATION_KEY: ${{ env.SONAR_ORGANIZATION_KEY }}
+
+      - name: SonarCloud Prepare / Begin (Push)
+        if: github.event_name == 'push'
+        run: |
+          dotnet-sonarscanner begin \
+            /k:"$SONAR_PROJECT_KEY" \
+            /o:"$SONAR_ORGANIZATION_KEY" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml" \
+            /d:sonar.exclusions=/ProjectMetadataPlatform.Infrastructure/Migrations/** \
+        env:
+          SONAR_PROJECT_KEY: ${{ env.SONAR_PROJECT_KEY }}
+          SONAR_ORGANIZATION_KEY: ${{ env.SONAR_ORGANIZATION_KEY }}
+
+      - name: Build project
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Run tests and collect coverage
+        run: dotnet tool run dotnet-coverage collect "dotnet test --no-build --no-restore --configuration Release" -f xml -o "coverage.xml"
+
+      - name: SonarCloud Analyze / End
+        run: |
+          dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

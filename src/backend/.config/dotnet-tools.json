@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "roslynator.dotnet.cli": {
+      "version": "0.8.9",
+      "commands": [
+        "roslynator"
+      ],
+      "rollForward": false
+    },
+    "dotnet-reportgenerator-globaltool": {
+      "version": "5.3.5",
+      "commands": [
+        "reportgenerator"
+      ],
+      "rollForward": false
+    },
+    "codequalitytogitlab": {
+      "version": "1.0.0",
+      "commands": [
+        "cq"
+      ],
+      "rollForward": false
+    },
+    "dotnet-coverage": {
+      "version": "17.11.3",
+      "commands": [
+        "dotnet-coverage"
+      ],
+      "rollForward": false
+    },
+    "dotnet-ef": {
+      "version": "9.0.0",
+      "commands": [
+        "dotnet-ef"
+      ],
+      "rollForward": false
+    }
+  }
+}
