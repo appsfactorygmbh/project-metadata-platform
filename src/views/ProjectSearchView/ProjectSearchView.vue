@@ -89,11 +89,13 @@
       falsyValue: 'archived',
     },
   );
-  const toggleShowFilter = () => {
+  const toggleShowFilter = async () => {
     toggleFilterType();
     searchStore.setFilter(
       filterType.value === 'archived' ? showOnlyArchived : showOnlyActive,
     );
+    if (isEditing) await stopEditing();
+    setProjectId(undefined);
   };
 
   // on mount, set the filter to show only active projects
@@ -233,7 +235,11 @@
           placement="left"
           title="Click here to toggle between active and archived projects"
         >
-          <a-button class="button" @click="toggleShowFilter">
+          <a-button
+            class="button"
+            name="archiveToggle"
+            @click="toggleShowFilter"
+          >
             <template #icon>
               <InboxOutlined v-if="filterType === 'active'" />
               <BulbOutlined v-else />

@@ -22,14 +22,13 @@
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
   import IconButton from '@/components/Button/IconButton.vue';
-  import router from '@/router';
   import _ from 'lodash';
   import {
     EditableTextField,
     ProjectInformationInputField,
     ProjectInformationSearchSelectField,
   } from '@/components/EditableTextField';
-  import { useThemeToken } from '@/utils/hooks';
+  import { useDeselect, useThemeToken } from '@/utils/hooks';
   import { CompanyState, SecurityLevel } from '@/api/generated';
 
   const localLogStore = inject(localLogStoreSymbol);
@@ -55,6 +54,8 @@
   );
 
   const { isEditing, stopEditing, startEditing } = useEditing();
+
+  const { isDeselected } = useDeselect();
 
   onMounted(async () => {
     const project = projectStore.getProject;
@@ -283,15 +284,9 @@
       console.error('Error deleting project:', error);
     } finally {
       isDeleteModalOpen.value = false;
-      const newProjectId =
-        getNextActiveProjectId(project.id) === project.id
-          ? getNextArchivedProjectId()!
-          : getNextActiveProjectId(project.id);
-      if (newProjectId === undefined) {
-        await router.push('/');
-      } else {
-        projectRouting.setProjectId(newProjectId);
-      }
+      const newProjectId = getNextArchivedProjectId();
+
+      projectRouting.setProjectId(newProjectId);
     }
     return;
   };
@@ -303,10 +298,10 @@
     return nextProject.id;
   };
 
-  const getNextActiveProjectId = (currentProjectId: number): number => {
+  const getNextActiveProjectId = (): number | undefined => {
     const projects = projectStore.getProjects;
     const nextProject = projects.find((project) => !project.isArchived);
-    if (!nextProject) return currentProjectId;
+    if (!nextProject) return undefined;
     return nextProject.id;
   };
 
@@ -322,7 +317,8 @@
         isArchiveModalOpen.value = false;
         isModalOpen.value = false;
         await localLogStore?.fetch(projectID);
-        const newProjectId = getNextActiveProjectId(projectID);
+        const newProjectId = getNextActiveProjectId();
+        if (!newProjectId) projectRouting.setProjectId(undefined);
         projectRouting.setProjectId(newProjectId);
       }
     }
@@ -335,12 +331,14 @@
 
     await projectStore.unarchive(projectId!);
     await localLogStore?.fetch(projectId!);
+    const newProjectId = getNextArchivedProjectId();
+    projectRouting.setProjectId(newProjectId);
   };
 </script>
 
 <template>
   <div class="pane">
-    <div v-if="projectData.id.value" class="main">
+    <div v-if="!isDeselected" class="main">
       <!-- create box for the project name -->
       <div v-if="!isEditing" class="projectNameContainer">
         <!-- Reactivate Button -->
