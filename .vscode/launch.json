@@ -9,6 +9,25 @@
         "type": "dotnet",
         "request": "launch",
         "projectPath": "${workspaceFolder}/src/backend/ProjectMetadataPlatform.Api/ProjectMetadataPlatform.Api.csproj"
-    }
+    },
+    {
+      "name": "Firefox: PMP Frontend Debug",
+      "preLaunchTask": "yarn: dev",
+      "type": "firefox",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/src/frontend",
+      "reAttach": true,
+      //"tmpDir": "<pathToDirectory>" // https://askubuntu.com/a/1426553
+    },
+    {
+      "name": "Chrome: PMP Frontend Debug",
+      "preLaunchTask": "yarn: dev",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/src/frontend",
+    }, 
+
     ]
 }

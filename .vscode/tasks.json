@@ -1,0 +1,29 @@
+// .vscode/tasks.json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "yarn: dev", 
+      "type": "npm",
+      "path": "/src/frontend",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "custom",
+        "pattern": {
+
+          "regexp": "(Local:|ready in)"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "(Starting the development server|vite)"
+          },
+          "endsPattern": {
+            "regexp": "(Compiled successfully|ready in)"
+          }
+        }
+      }
+    }
+  ]
+}
