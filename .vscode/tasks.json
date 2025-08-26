@@ -24,6 +24,24 @@
           }
         }
       }
+    },
+        {
+      "label": "yarn: stop",
+      "command": "${input:terminate}",
+      "type": "shell",
+      "presentation": {
+        "close": true
+      }
+    },
+    
+  ],
+    "inputs": [
+    {
+      "id": "terminate",
+      "type": "command",
+      "command": "workbench.action.tasks.terminate",
+      "args": "yarn: dev"
     }
-  ]
+],
+
 }

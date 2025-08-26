@@ -13,6 +13,7 @@
     {
       "name": "Firefox: PMP Frontend Debug",
       "preLaunchTask": "yarn: dev",
+      "postDebugTask": "yarn: stop",
       "type": "firefox",
       "request": "launch",
       "url": "http://localhost:5173",
@@ -23,6 +24,7 @@
     {
       "name": "Chrome: PMP Frontend Debug",
       "preLaunchTask": "yarn: dev",
+      "postDebugTask": "yarn: stop",
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:5173",
