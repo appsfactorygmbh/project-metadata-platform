@@ -6,7 +6,7 @@ env:
 
 defaults:
   run:
-    working-directory: src/backend
+    working-directory: src/frontend
     
 on:
   push:
@@ -181,7 +181,7 @@ jobs:
           node-version: '18.x'
           cache: 'yarn'
           cache-dependency-path: 'src/frontend'
-          
+
       - name: Install Dependencies
         run: yarn install --immutable
 
