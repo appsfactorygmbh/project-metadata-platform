@@ -63,6 +63,7 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'yarn'
+          cache-dependency-path: 'src/frontend'
 
       - name: Install Dependencies
         run: yarn install --immutable
@@ -86,6 +87,7 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'yarn'
+          cache-dependency-path: 'src/frontend'
 
       - name: Install Dependencies
         run: yarn install --immutable
@@ -111,6 +113,7 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'yarn'
+          cache-dependency-path: 'src/frontend'
 
       - name: Install Dependencies
         run: yarn install --immutable
@@ -138,6 +141,7 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'yarn'
+          cache-dependency-path: 'src/frontend'
 
       - name: Install Dependencies
         run: yarn install --immutable
@@ -176,7 +180,8 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'yarn'
-
+          cache-dependency-path: 'src/frontend'
+          
       - name: Install Dependencies
         run: yarn install --immutable
 
