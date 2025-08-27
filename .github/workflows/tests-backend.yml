@@ -4,7 +4,9 @@ env:
   DOTNET_VERSION: '8.0.x'
   SONAR_ORGANIZATION_KEY: 'appsfactory'
   SONAR_PROJECT_KEY: 'appsfactory_project-metadata-platform'
-
+defaults:
+  run:
+    working-directory: src/backend
 on:
   
   push:

@@ -1,5 +1,13 @@
 name: CI_Pipeline
 
+env:
+  SONAR_ORGANIZATION_KEY: 'appsfactory'
+  SONAR_PROJECT_KEY: 'appsfactory_project-metadata-platform'
+
+defaults:
+  run:
+    working-directory: src/backend
+    
 on:
   push:
     paths:
@@ -13,11 +21,7 @@ on:
     branches:
       - develop
       - main
-
-env:
-  SONAR_ORGANIZATION_KEY: 'appsfactory'
-  SONAR_PROJECT_KEY: 'appsfactory_project-metadata-platform'
-
+      
 jobs:
   install:
     name: Install Dependencies
