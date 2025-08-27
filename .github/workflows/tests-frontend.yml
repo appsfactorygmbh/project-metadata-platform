@@ -2,17 +2,21 @@ name: CI_Pipeline
 
 on:
   push:
+    paths:
+      - 'src/frontend/**'
     branches:
       - develop
       - main
   pull_request:
+    paths:
+      - 'src/frontend/**'
     branches:
       - develop
       - main
 
 env:
   SONAR_ORGANIZATION_KEY: 'appsfactory'
-  SONAR_PROJECT_KEY: 'appsfactory_project-metadata-platform-frontend'
+  SONAR_PROJECT_KEY: 'appsfactory_project-metadata-platform'
 
 jobs:
   install:

@@ -3,16 +3,19 @@ name: Unit_Tests_and_SonarCloud_Analysis
 env:
   DOTNET_VERSION: '8.0.x'
   SONAR_ORGANIZATION_KEY: 'appsfactory'
-  SONAR_PROJECT_KEY: 'appsfactory_project-metadata-platform-backend'
+  SONAR_PROJECT_KEY: 'appsfactory_project-metadata-platform'
 
 on:
+  
   push:
+    paths:
+      - src/backend/**
     branches:
-      - develop
       - main
   pull_request:
+    paths:
+      - src/backend/**
     branches:
-      - develop
       - main
 
 jobs:
