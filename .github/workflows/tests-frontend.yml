@@ -1,4 +1,4 @@
-name: CI_Pipeline
+name: Frontend_Unit_Tests_and_SonarCloud_Analysis
 
 env:
   SONAR_ORGANIZATION_KEY: 'appsfactory'
@@ -13,13 +13,11 @@ on:
     paths:
       - 'src/frontend/**'
     branches:
-      - develop
       - main
   pull_request:
     paths:
       - 'src/frontend/**'
     branches:
-      - develop
       - main
       
 jobs:
