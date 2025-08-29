@@ -6,6 +6,8 @@
     "configurations": [
     {
         "name": "C#: PMP Backend Debug",
+        "preLaunchTask": "Backend: start Database",
+        "postDebugTask": "Backend: stop Database",
         "type": "dotnet",
         "request": "launch",
         "projectPath": "${workspaceFolder}/src/backend/ProjectMetadataPlatform.Api/ProjectMetadataPlatform.Api.csproj"
