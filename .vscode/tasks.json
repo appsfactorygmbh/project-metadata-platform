@@ -25,7 +25,7 @@
         }
       }
     },
-        {
+      {
       "label": "yarn: stop",
       "command": "${input:terminate}",
       "type": "shell",
@@ -33,6 +33,20 @@
         "close": true
       }
     },
+    {
+      "label": "Backend: start Database",
+      "command": "docker compose -f deployment/docker/docker-compose-database.yml up -d",
+      "type": "shell",
+
+    },
+        {
+      "label": "Backend: stop Database",
+      "command": "docker compose -f deployment/docker/docker-compose-database.yml down",
+      "type": "shell",
+      "presentation": {
+        "close": true
+      }
+    }
     
   ],
     "inputs": [

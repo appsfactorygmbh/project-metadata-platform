@@ -1,7 +1,9 @@
 # Backend and database service for local frontend development
 services:
-  backend:
-    image: ghcr.io/appsfactorygmbh/project-metadata-platform-backend:dev
+  pmp:
+    build:
+      context: ../../
+      dockerfile: deployment/docker/Dockerfile
     depends_on:
       - db
     ports:
@@ -19,7 +21,7 @@ services:
       - REFRESH_TOKEN_EXPIRATION_HOURS=6
       - ACCESS_TOKEN_EXPIRATION_MINUTES=15
     networks:
-      - backend-local
+      - pmp-local
 
   db:
     image: postgres:15
@@ -32,11 +34,11 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
-      - backend-local
+      - pmp-local
 
 volumes:
   db_data:
 
 networks:
-  backend-local:
+  pmp-local:
     driver: bridge
