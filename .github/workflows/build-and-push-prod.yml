@@ -42,7 +42,5 @@ jobs:
           file: deployment/docker/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:prod
+            ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ steps.date.outputs.tag }}
-          build-args: |
-            BUILD_CONFIGURATION=Release
