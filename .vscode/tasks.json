@@ -1,0 +1,61 @@
+// .vscode/tasks.json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "yarn: dev", 
+      "type": "npm",
+      "path": "/src/frontend",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "custom",
+        "pattern": {
+
+          "regexp": "(Local:|ready in)"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "(Starting the development server|vite)"
+          },
+          "endsPattern": {
+            "regexp": "(Compiled successfully|ready in)"
+          }
+        }
+      }
+    },
+      {
+      "label": "yarn: stop",
+      "command": "${input:terminate}",
+      "type": "shell",
+      "presentation": {
+        "close": true
+      }
+    },
+    {
+      "label": "Backend: start Database",
+      "command": "docker compose -f deployment/docker/docker-compose-database.yml up -d",
+      "type": "shell",
+
+    },
+        {
+      "label": "Backend: stop Database",
+      "command": "docker compose -f deployment/docker/docker-compose-database.yml down",
+      "type": "shell",
+      "presentation": {
+        "close": true
+      }
+    }
+    
+  ],
+    "inputs": [
+    {
+      "id": "terminate",
+      "type": "command",
+      "command": "workbench.action.tasks.terminate",
+      "args": "yarn: dev"
+    }
+],
+
+}

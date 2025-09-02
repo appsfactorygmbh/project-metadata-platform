@@ -1,19 +1,25 @@
-name: CI_Pipeline
-
-on:
-  push:
-    branches:
-      - develop
-      - main
-  pull_request:
-    branches:
-      - develop
-      - main
+name: Frontend_Unit_Tests_and_SonarCloud_Analysis
 
 env:
   SONAR_ORGANIZATION_KEY: 'appsfactory'
   SONAR_PROJECT_KEY: 'appsfactory_project-metadata-platform-frontend'
 
+defaults:
+  run:
+    working-directory: src/frontend
+    
+on:
+  push:
+    paths:
+      - 'src/frontend/**'
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'src/frontend/**'
+    branches:
+      - main
+      
 jobs:
   install:
     name: Install Dependencies
@@ -31,6 +37,7 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'yarn'
+          cache-dependency-path: 'src/frontend/yarn.lock'
 
       - name: Install Dependencies
         run: |
@@ -54,6 +61,7 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'yarn'
+          cache-dependency-path: 'src/frontend/yarn.lock'
 
       - name: Install Dependencies
         run: yarn install --immutable
@@ -77,6 +85,7 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'yarn'
+          cache-dependency-path: 'src/frontend/yarn.lock'
 
       - name: Install Dependencies
         run: yarn install --immutable
@@ -102,6 +111,7 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'yarn'
+          cache-dependency-path: 'src/frontend/yarn.lock'
 
       - name: Install Dependencies
         run: yarn install --immutable
@@ -129,6 +139,7 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'yarn'
+          cache-dependency-path: 'src/frontend/yarn.lock'
 
       - name: Install Dependencies
         run: yarn install --immutable
@@ -167,6 +178,7 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'yarn'
+          cache-dependency-path: 'src/frontend/yarn.lock'
 
       - name: Install Dependencies
         run: yarn install --immutable
@@ -178,3 +190,4 @@ jobs:
           wait-on: 'http://127.0.0.1:8080'
           command: npx cypress run --headless --e2e
           build: yarn build
+          working-directory: src/frontend
