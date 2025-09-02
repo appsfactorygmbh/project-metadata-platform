@@ -5,11 +5,15 @@
 This project is an application for the storage and management of project metadata. This repository contains both an ASP.NET Core backend providing a RESTful API and a VUE 3 web frontend.
 
 ### Project Structure
+- `.github`:
+  - `workflows`: Github Actions
+- `.vscode`: Config for IDE
 - `deployment`: Files needed to build and deploy the project
   - `docker`: Docker compose files and dockerfiles
+- `screenshots`: Screenshots of the frontend webpage
 - `src`: Source files
-  - `backend`: files of the backend project
-  - `frontend`: files of the frontend project
+  - `backend`: Files of the backend project
+  - `frontend`: Files of the frontend project
 
 ### Prerequisites
 
@@ -44,8 +48,11 @@ The folder deployment/docker folder contains a minimal docker compose file for l
    docker compose -f docker-compose-local-build.yml up --build -d
    ```
 The frontend is available at `http://localhost:8090` and the Swagger UI of the backend API is available at `http://localhost:8090/swagger/index.html`.
-## Appsfactory "Metadata Platform" Backend
 
+## Appsfactory "Metadata Platform" Backend
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=alert_status&token=5f57f891ffaebd55ed420b414289cd82d7806371)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=code_smells&token=5f57f891ffaebd55ed420b414289cd82d7806371)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=coverage&token=5f57f891ffaebd55ed420b414289cd82d7806371)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
 ### Overview
 
 This project is an ASP.NET Core application using Entity Framework Core and PostgreSQL. It provides a RESTful API for managing metadata of projects.
@@ -173,7 +180,9 @@ When changing the domain models or their configurations in the infrastructure la
 9. Run the migration script on the database once the merge request is approved and merged onto main.
 
 ## Appsfactory "Metadata Platform" Frontend
-
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-frontend&metric=alert_status&token=3abdbe96e97d687c6ccdc0c60dfd2aa12ca74b24)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-frontend)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-frontend&metric=code_smells&token=3abdbe96e97d687c6ccdc0c60dfd2aa12ca74b24)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-frontend)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-frontend&metric=coverage&token=3abdbe96e97d687c6ccdc0c60dfd2aa12ca74b24)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-frontend)
 ### Overview
 
 This project is a Vue 3 web application with TypeScript integration, utilizing modern tools like Vite, ESLint, Prettier, and Vitest for development and testing.
@@ -276,3 +285,23 @@ To use the backend service during development, one needs to run the backend serv
 3. The env files are already configured to use the correct backend URLs in the staging and production environments. No further changes are necessary after local development is over.
 4. The Swagger UI of the backend service is available at `http://localhost:5173/swagger/index.html`.
 5. To stop the backend service, hit `Ctrl+C` in the terminal where the service is running or when using Visual Studio Code stop the backend debugging session.
+
+### Frontend Screenshots
+Login Screen
+![Login Screen](./screenshots/Screenshot-2025-09-02-at-08-37-44-Project-Metadata-Platform-Login.png)
+Project View
+![Project View](./screenshots/Screenshot-2025-09-02-at-08-39-18-Project-Metadata-Platform-Project-View.png)
+Project View - Light Mode
+![Project View - Light Mode](./screenshots/Screenshot-2025-09-02-at-08-44-47-Project-Metadata-Platform-Project-View-Light-Mode.png)
+Create Project View
+![Create Project View](./screenshots/Screenshot-2025-09-02-at-08-48-31-Project-Metadata-Platform-Create-Project.png)
+Edit Project View
+![Edit Project View](./screenshots/Screenshot-2025-09-02-at-08-51-37-Project-Metadata-Platform-Edit%20Project.png)
+Settings View - User Management
+![Settings View - User Management](./screenshots/Screenshot-2025-09-02-at-08-48-16-Project-Metadata-Platform-User-Information.png)
+Settings View - Team Management
+![Settings View - Team Management](./screenshots/Screenshot-2025-09-02-at-08-46-26-Project-Metadata-Platform-Team-Information.png)
+Settings View - Global Plugins
+![Settings View - Global Plugins](./screenshots/Screenshot-2025-09-02-at-08-45-55-Project-Metadata-Platform-Plugins.png)
+Settings View - Global Logins - Light Mode
+![Settings View - Global Logins - Light Mode](./screenshots/Screenshot-2025-09-02-at-08-45-33-Project-Metadata-Platform-Global-Logs.png)
