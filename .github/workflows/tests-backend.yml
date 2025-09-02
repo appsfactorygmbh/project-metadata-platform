@@ -11,12 +11,11 @@ on:
   
   push:
     paths:
-      - src/backend/**
+      - 'src/backend/**'
     branches:
       - main
   pull_request:
-    paths:
-      - src/backend/**
+
     branches:
       - main
 
