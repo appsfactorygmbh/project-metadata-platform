@@ -303,5 +303,5 @@ Settings View - Team Management
 ![Settings View - Team Management](./screenshots/Screenshot-2025-09-02-at-08-46-26-Project-Metadata-Platform-Team-Information.png)
 Settings View - Global Plugins
 ![Settings View - Global Plugins](./screenshots/Screenshot-2025-09-02-at-08-45-55-Project-Metadata-Platform-Plugins.png)
-Settings View - Global Logins - Light Mode
-![Settings View - Global Logins - Light Mode](./screenshots/Screenshot-2025-09-02-at-08-45-33-Project-Metadata-Platform-Global-Logs.png)
+Settings View - Global Logs - Light Mode
+![Settings View - Global Logs - Light Mode](./screenshots/Screenshot-2025-09-02-at-08-45-33-Project-Metadata-Platform-Global-Logs.png)
