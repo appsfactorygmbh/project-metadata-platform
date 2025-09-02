@@ -15,8 +15,7 @@ on:
     branches:
       - main
   pull_request:
-    paths:
-      - 'src/frontend/**'
+
     branches:
       - main
       
