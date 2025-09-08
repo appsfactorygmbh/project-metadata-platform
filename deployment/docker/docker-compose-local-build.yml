@@ -4,6 +4,8 @@ services:
     build:
       context: ../../
       dockerfile: deployment/docker/Dockerfile
+      args:
+        - BUILD_ENV=localbuild
     depends_on:
       - db
     ports:
