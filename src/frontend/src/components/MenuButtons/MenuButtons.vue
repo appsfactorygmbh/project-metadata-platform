@@ -1,5 +1,7 @@
 <script lang="ts" setup>
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
+  import { msalService } from '@/services/msalService';
+  import { authStore } from '@/store/AuthStore';
   import { useTheme } from '@/utils/hooks';
   import { LogoutOutlined, SettingOutlined } from '@ant-design/icons-vue';
   import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline';
@@ -32,10 +34,14 @@
         },
         {
           name: 'LogoutButton',
-          onClick: () => {
-            auth.logout({
-              makeRequest: false,
-            });
+          onClick: async () => {
+            if (authStore._authMethod == 'oidc') {
+              await msalService.logout();
+            } else {
+              auth.logout({
+                makeRequest: false,
+              });
+            }
             window.location.reload();
           },
           icon: LogoutOutlined,

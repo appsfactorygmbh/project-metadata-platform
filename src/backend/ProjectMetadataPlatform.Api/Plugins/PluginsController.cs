@@ -15,7 +15,7 @@ namespace ProjectMetadataPlatform.Api.Plugins;
 /// Endpoints for managing plugins.
 /// </summary>
 [ApiController]
-[Authorize]
+[Authorize(AuthenticationSchemes = "Azure,Basic")]
 [Route("[controller]")]
 public class PluginsController : ControllerBase
 {

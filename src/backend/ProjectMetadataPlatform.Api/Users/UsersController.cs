@@ -17,7 +17,7 @@ namespace ProjectMetadataPlatform.Api.Users;
 /// Endpoint for user management.
 /// </summary>
 [ApiController]
-[Authorize]
+[Authorize(AuthenticationSchemes = "Azure,Basic")]
 [Route("[controller]")]
 public class UsersController : ControllerBase
 {

@@ -19,7 +19,11 @@
         "JWT_ISSUER_SIGNING_KEY" : "superSecretKeyThatIsAtLeast257BitLong@345",
         "REFRESH_TOKEN_EXPIRATION_HOURS" : "6",
         "ACCESS_TOKEN_EXPIRATION_MINUTES" : "0.05",
-        "PMP_MIGRATE_DB_ON_STARTUP": "true"
+        "PMP_MIGRATE_DB_ON_STARTUP": "true",
+        "AZURE_AUTHORITY":"https://placeholder.placeholder",
+        "AZURE_BACKEND_CLIENT_ID":"Placeholder",
+        "AZURE_SCOPE":"Placeholder",
+        "AZURE_FRONTEND_CLIENT_ID":"Placeholder",
       }
     },
     "https": {
@@ -40,7 +44,12 @@
         "JWT_ISSUER_SIGNING_KEY" : "superSecretKeyThatIsAtLeast257BitLong@345",
         "REFRESH_TOKEN_EXPIRATION_HOURS" : "6",
         "ACCESS_TOKEN_EXPIRATION_MINUTES" : "0.05",
-        "PMP_MIGRATE_DB_ON_STARTUP": "true"
+        "PMP_MIGRATE_DB_ON_STARTUP": "true",
+        "AZURE_AUTHORITY":"https://placeholder.placeholder",
+        "AZURE_BACKEND_CLIENT_ID":"Placeholder",
+        "AZURE_SCOPE":"Placeholder",
+        "AZURE_FRONTEND_CLIENT_ID":"Placeholder",
+
       }
     }
   }

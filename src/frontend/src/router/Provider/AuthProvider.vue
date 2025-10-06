@@ -12,7 +12,7 @@
     useProjectStore,
     useTeamStore,
   } from '@/store';
-
+  import { msalService } from '@/services/msalService';
   const router = useRouter();
 
   const authStore = useAuthStore();
@@ -27,8 +27,12 @@
   provide<typeof authStore>(authStoreSymbol, authStore);
 
   const auth = useAuth();
-
-  authStore.setAuth(auth?.token() ?? null);
+  const jwttoken = auth?.token();
+  const ssotoken = await msalService.getAccessToken();
+  authStore.setAuth(
+    jwttoken ?? ssotoken,
+    jwttoken != null ? 'basic' : ssotoken != null ? 'oidc' : null,
+  );
   globalPluginStore.refreshAuth();
   projectStore.refreshAuth();
   pluginStore.refreshAuth();
@@ -44,28 +48,48 @@
   watch(
     () => auth?.check(),
     (check) => {
-      authenticated.value = check;
+      if (authStore._authMethod == 'basic') authenticated.value = check;
+    },
+  );
+
+  watch(
+    () => msalService.getActiveUser(),
+    (user) => {
+      if (authStore._authMethod == 'oicd') authenticated.value = user == null;
     },
   );
 
   onMounted(() => {
-    auth
-      ?.load()
-      .then(() => {
-        authenticated.value = true;
-        authInitialized.value = true;
-      })
-      .catch(() => {
-        // Token refresh failed or initial load failed
-        router.push('/login');
-      });
+    if (authStore._authMethod == 'basic') {
+      auth
+        ?.load()
+        .then(() => {
+          authenticated.value = true;
+          authInitialized.value = true;
+        })
+        .catch(() => {
+          // Token refresh failed or initial load failed
+          router.push('/login');
+        });
+    } else {
+      msalService
+        .getAccessToken()
+        .then(() => {
+          authenticated.value = true;
+          authInitialized.value = true;
+        })
+        .catch(() => {
+          // Token refresh failed or initial load failed
+          router.push('/login');
+        });
+    }
   });
 
   watch(
     () => authInitialized.value && !authenticated.value,
     (initialized) => {
       if (!initialized) return;
-      if (!auth?.check()) {
+      if (!auth?.check() && authStore.authMethod == 'basic') {
         auth
           ?.refresh()
           .then(() => {
@@ -74,6 +98,12 @@
           .catch(() => {
             authenticationFailed.value = true;
           });
+      }
+      if (
+        msalService.getAccessToken == null &&
+        authStore.authMethod == 'oidc'
+      ) {
+        authenticationFailed.value = true;
       }
     },
   );
@@ -92,14 +122,32 @@
   watch(
     () => auth?.token(),
     (token) => {
-      authStore.setAuth(token ?? null);
-      globalPluginStore.refreshAuth();
-      projectStore.refreshAuth();
-      pluginStore.refreshAuth();
-      localLogStore.refreshAuth();
-      logsStore.refreshAuth();
-      userStore.refreshAuth();
-      teamStore.refreshAuth();
+      if (authStore._authMethod != 'oidc') {
+        authStore.setAuth(token, 'basic');
+        globalPluginStore.refreshAuth();
+        projectStore.refreshAuth();
+        pluginStore.refreshAuth();
+        localLogStore.refreshAuth();
+        logsStore.refreshAuth();
+        userStore.refreshAuth();
+        teamStore.refreshAuth();
+      }
+    },
+  );
+
+  watch(
+    () => msalService.getAccessToken(),
+    async (token) => {
+      if (authStore._authMethod != 'basic') {
+        authStore.setAuth(await token, 'oidc');
+        globalPluginStore.refreshAuth();
+        projectStore.refreshAuth();
+        pluginStore.refreshAuth();
+        localLogStore.refreshAuth();
+        logsStore.refreshAuth();
+        userStore.refreshAuth();
+        teamStore.refreshAuth();
+      }
     },
   );
 </script>

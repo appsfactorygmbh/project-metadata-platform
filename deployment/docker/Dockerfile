@@ -43,6 +43,10 @@ ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "ProjectMetadataPlatform.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
+ENV AZURE_AUTHORITY='https://placeholder.placeholder'
+ENV AZURE_BACKEND_CLIENT_ID='Placeholder'
+ENV AZURE_SCOPE='Placeholder'
+ENV AZURE_FRONTEND_CLIENT_ID='Placeholder'
 WORKDIR /app
 COPY --from=frontend_build --chown=app /app/dist /app/wwwroot
 COPY --chown=app --from=publish /app/publish .

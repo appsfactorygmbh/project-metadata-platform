@@ -8,6 +8,7 @@ import axios, { type AxiosError } from 'axios';
 import { REFRESH_TOKEN_EXPIRATION, TOKEN_REFRESH_INTERVAL } from './constants';
 import { appEventBus } from './utils/errors/eventBus';
 import { InvalidRefreshTokenError } from './utils/errors/invalidRefreshTokenError';
+import { authStore } from './store/AuthStore';
 
 // configure the axios client used for the auth handling
 // to emit an event on the global event bus that the auth failed
@@ -18,7 +19,11 @@ axios.interceptors.response.use(
     const config = error.config;
     const response = error.response;
 
-    if (response?.status === 400 && config?.url?.endsWith('/Auth/refresh')) {
+    if (
+      response?.status === 400 &&
+      config?.url?.endsWith('/Auth/refresh') &&
+      authStore._authMethod != 'oidc'
+    ) {
       appEventBus.emit('criticalAuthFailure');
       return new InvalidRefreshTokenError();
     } else {

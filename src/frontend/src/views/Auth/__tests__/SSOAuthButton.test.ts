@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { LogoutButton } from '../';
+import { SSOAuthButton } from '../';
 
-describe('LogoutButton.vue', () => {
+describe('SSOAuthButton.vue', () => {
   it('renders correctly', () => {
-    const wrapper = mount(LogoutButton);
+    const wrapper = mount(SSOAuthButton);
 
     expect(wrapper.exists()).toBe(true);
   });

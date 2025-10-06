@@ -49,7 +49,6 @@ declare module 'vue' {
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
     ATypographyText: typeof import('ant-design-vue/es')['TypographyText']
     ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
-    Comment: typeof import('ant-design-vue/es')['Comment']
     ConfirmAction: typeof import('./../src/components/Modal/ConfirmAction.vue')['default']
     EditableTextField: typeof import('./../src/components/EditableTextField/EditableTextField.vue')['default']
     EditButtons: typeof import('./../src/components/EditableTextField/EditButtons.vue')['default']

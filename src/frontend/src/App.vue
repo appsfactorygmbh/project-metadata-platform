@@ -4,6 +4,8 @@
 
 <template>
   <ThemeProvider>
-    <RouterView />
+    <Suspense>
+      <RouterView />
+    </Suspense>
   </ThemeProvider>
 </template>

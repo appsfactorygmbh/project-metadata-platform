@@ -72,7 +72,7 @@ public interface ILogRepository
     Task<List<Log>> GetLogsWithSearch(string search);
 
     /// <summary>
-    /// Retrieves the logs for a specific project.
+    /// Retrieves the logs for a specific user.
     /// </summary>
     /// <param name="userId">The unique identifier of the user.</param>
     /// <returns> A list of logs associated with the specified user.</returns>

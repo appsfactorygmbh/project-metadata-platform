@@ -17,7 +17,7 @@ namespace ProjectMetadataPlatform.Api.Logs;
 /// Endpoints for managing log entries.
 /// </summary>
 [ApiController]
-[Authorize]
+[Authorize(AuthenticationSchemes = "Azure,Basic")]
 [Route("[controller]")]
 public class LogsController : ControllerBase
 {
