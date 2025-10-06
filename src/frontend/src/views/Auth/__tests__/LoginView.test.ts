@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { mount, VueWrapper } from '@vue/test-utils';
-import { LoginView } from '..';
+import { LoginView, SSOAuthButton } from '..';
 import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import router from '@/router';
 import initAuth from '@/auth';
+import { msalInstance } from '@/services/msalService';
 
 const mockRoute = {
   path: '/mock-path',
@@ -58,4 +59,14 @@ describe('LoginView.vue', () => {
     expect(wrapper.find('form').exists()).toBe(true);
     expect(wrapper.findComponent({ name: 'LoginForm' }).exists()).toBe(true);
   });
+  it("should have a azure login button", async () => {
+    expect(wrapper.findComponent(SSOAuthButton).exists()).toBe(true);
+  });
+  it("should call login redirect when clicking login button", async()=>{
+    const loginButton = wrapper.findComponent(SSOAuthButton);
+
+        await loginButton.trigger('click');
+
+        expect(msalInstance.loginRedirect).toHaveBeenCalledTimes(1);
+  })
 });
