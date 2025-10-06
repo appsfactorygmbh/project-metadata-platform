@@ -9,7 +9,6 @@ import initAuth from './auth';
 import { appEventBus } from './utils/errors/eventBus';
 import { msalInstance } from './services/msalService';
 
-
 const app = createApp(App);
 const pinia = createPinia();
 await msalInstance.initialize();

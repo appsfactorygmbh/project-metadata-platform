@@ -14,7 +14,7 @@ export const useAuthStore = (pinia: Pinia = piniaInstance) => {
     }),
 
     actions: {
-      setAuth(auth: string | null,method: string | null ) {
+      setAuth(auth: string | null, method: string | null) {
         if (!auth) return;
         this._authToken = auth.split('|')[0];
         this._authMethod = method;
@@ -27,7 +27,7 @@ export const useAuthStore = (pinia: Pinia = piniaInstance) => {
       },
       authMethod(state): string | null {
         return state._authMethod;
-      }
+      },
     },
   })(pinia);
 };

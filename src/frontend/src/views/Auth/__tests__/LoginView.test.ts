@@ -59,14 +59,14 @@ describe('LoginView.vue', () => {
     expect(wrapper.find('form').exists()).toBe(true);
     expect(wrapper.findComponent({ name: 'LoginForm' }).exists()).toBe(true);
   });
-  it("should have a azure login button", async () => {
+  it('should have a azure login button', async () => {
     expect(wrapper.findComponent(SSOAuthButton).exists()).toBe(true);
   });
-  it("should call login redirect when clicking login button", async()=>{
+  it('should call login redirect when clicking login button', async () => {
     const loginButton = wrapper.findComponent(SSOAuthButton);
 
-        await loginButton.trigger('click');
+    await loginButton.trigger('click');
 
-        expect(msalInstance.loginRedirect).toHaveBeenCalledTimes(1);
-  })
+    expect(msalInstance.loginRedirect).toHaveBeenCalledTimes(1);
+  });
 });

@@ -68,8 +68,8 @@ export default defineConfig(({ mode }: ConfigEnv) => {
     ],
     esbuild: {
       supported: {
-        'top-level-await': true
-      }
+        'top-level-await': true,
+      },
     },
     build: {
       chunkSizeWarningLimit: 4096,

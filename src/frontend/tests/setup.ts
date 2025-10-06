@@ -67,14 +67,14 @@ vi.mock('vue-auth3', async (importOriginal) => {
 const mockMsalBrowser = {
   loginRedirect: vi.fn(),
   getActiveAccount: vi.fn(),
-  handleRedirectPromise: vi.fn(()=> Promise.resolve())
+  handleRedirectPromise: vi.fn(() => Promise.resolve()),
 };
 vi.mock('@azure/msal-browser', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@azure/msal-browser')>();
 
   return {
     ...actual,
-    PublicClientApplication: vi.fn(()=>mockMsalBrowser),
+    PublicClientApplication: vi.fn(() => mockMsalBrowser),
   };
 });
 

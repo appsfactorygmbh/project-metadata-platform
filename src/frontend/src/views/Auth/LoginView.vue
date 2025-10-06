@@ -7,7 +7,7 @@
   import { useAuth } from 'vue-auth3';
   import axios from 'axios';
   import { useRoute } from 'vue-router';
-import { msalInstance } from '@/services/msalService';
+  import { msalInstance } from '@/services/msalService';
 
   const auth = useAuth();
   const router = useRouter();
@@ -50,13 +50,12 @@ import { msalInstance } from '@/services/msalService';
   };
 
   onMounted(() => {
-     msalInstance.handleRedirectPromise()
-    .then((response) => {
+    msalInstance.handleRedirectPromise().then((response) => {
       if (response && response.account) {
         msalInstance.setActiveAccount(response.account);
         return callback();
       }
-    })
+    });
     auth?.load().then(() => {
       const authCheck = auth.check();
       if (authCheck) return callback();
@@ -91,10 +90,8 @@ import { msalInstance } from '@/services/msalService';
     </div>
     <LoginForm :form-store="formStore" :feedback-message="feedbackMessage" />
     <div :style="styles.header">
-    <a-typography-text :style="styles.text">
-        or
-      </a-typography-text>
-      </div>
-    <SSOAuthButton/>
+      <a-typography-text :style="styles.text"> or </a-typography-text>
+    </div>
+    <SSOAuthButton />
   </AuthLayout>
 </template>
