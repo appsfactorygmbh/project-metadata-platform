@@ -66,6 +66,11 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         dirs: ['src/components'],
       }),
     ],
+    esbuild: {
+      supported: {
+        'top-level-await': true
+      }
+    },
     build: {
       chunkSizeWarningLimit: 4096,
       outDir: 'dist',

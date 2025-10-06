@@ -16,7 +16,7 @@ namespace ProjectMetadataPlatform.Api.Teams;
 /// Endpoints for managing teams.
 /// </summary>
 [ApiController]
-[Authorize]
+[Authorize(AuthenticationSchemes = "Azure,Basic")]
 [Route("[controller]")]
 public class TeamsController : ControllerBase
 {

@@ -1,12 +1,15 @@
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ProjectMetadataPlatform.Api;
 using ProjectMetadataPlatform.Api.Errors;
@@ -43,6 +46,32 @@ builder.Services.AddSwaggerGen(options =>
     options.AddSecurityRequirement(
         new OpenApiSecurityRequirement { { jwtSecurityScheme, Array.Empty<string>() } }
     );
+    options.AddSecurityDefinition(
+        "OIDC",
+        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+        {
+            Type = Microsoft.OpenApi.Models.SecuritySchemeType.OpenIdConnect,
+            OpenIdConnectUrl = new Uri(
+                $"{EnvironmentUtils.GetEnvVarOrLoadFromFile("AZURE_AUTHORITY")}/v2.0/.well-known/openid-configuration"
+            ),
+        }
+    );
+    options.AddSecurityRequirement(
+        new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+        {
+            {
+                new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                {
+                    Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                    {
+                        Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                        Id = "OIDC",
+                    },
+                },
+                Array.Empty<string>()
+            },
+        }
+    );
 });
 
 builder
@@ -74,15 +103,24 @@ builder.Services.AddCors(options =>
 );
 
 var app = builder.Build();
-
 app.Services.MigrateDatabase();
 app.Services.AddAdminUser();
 app.UseCors();
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(options =>
+{
+    options.OAuthClientId(EnvironmentUtils.GetEnvVarOrLoadFromFile("AZURE_FRONTEND_CLIENT_ID")); // Client-ID der SPA-Registrierung
+    options.OAuthScopes(EnvironmentUtils.GetEnvVarOrLoadFromFile("AZURE_SCOPE")); // Vollständiger API-Bereich
+    options.OAuthUsePkce();
+});
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
+
+if (app.Environment.IsProduction())
+{
+    EnvironmentUtils.AddEnvToStaticFiles();
+}
 app.UseFileServer();
 app.MapControllers();
 app.MapFallbackToFile("index.html");

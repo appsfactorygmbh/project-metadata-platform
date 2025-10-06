@@ -23,9 +23,10 @@
             Include="Microsoft.Extensions.DependencyInjection.Abstractions"
             Version="8.0.*"
         />
+        <PackageReference Include="Microsoft.Identity.Web" Version="3.14.1" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.*" />
-        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.1.*" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.*" />
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.14.*" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.*" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\ProjectMetadataPlatform.Application\ProjectMetadataPlatform.Application.csproj" />

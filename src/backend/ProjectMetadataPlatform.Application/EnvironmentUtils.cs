@@ -28,4 +28,23 @@ public static class EnvironmentUtils
 
         return File.ReadAllText(path);
     }
+
+    /// <summary>
+    /// Replaces Placeholder Strings in the static files of the frontend with their actual value taken from the environment.
+    /// </summary>
+    public static void AddEnvToStaticFiles()
+    {
+        string[] placeholders = ["AZURE_FRONTEND_CLIENT_ID", "AZURE_AUTHORITY", "AZURE_SCOPE"];
+        var path = "wwwroot/assets/";
+        var assets = Directory.GetFiles(path);
+        foreach (var file in assets)
+        {
+            var text = File.ReadAllText(file);
+            foreach (var placeholder in placeholders)
+            {
+                text = text.Replace(placeholder, GetEnvVarOrLoadFromFile(placeholder));
+            }
+            File.WriteAllText(file, text);
+        }
+    }
 }

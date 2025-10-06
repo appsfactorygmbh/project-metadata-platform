@@ -49,6 +49,14 @@ The folder deployment/docker folder contains a minimal docker compose file for l
    ```
 The frontend is available at `http://localhost:8090` and the Swagger UI of the backend API is available at `http://localhost:8090/swagger/index.html`.
 
+If SSO should be enabled add the following env variables to `deployment/docker/docker-compose-local-build.yml`:
+```yml
+- AZURE_AUTHORITY=<Valid Authority Url>
+- AZURE_BACKEND_CLIENT_ID=<Valid Webapi App Registration>
+- AZURE_SCOPE=<Valid API Scope>
+- AZURE_FRONTEND_CLIENT_ID=<Valid SPA App Registration>
+```
+
 ## Appsfactory "Metadata Platform" Backend
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=alert_status&token=5f57f891ffaebd55ed420b414289cd82d7806371)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=code_smells&token=5f57f891ffaebd55ed420b414289cd82d7806371)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
@@ -125,6 +133,16 @@ The project is build following the Clean Architecture principles. The project is
 #### Running the application
 
 See the [Run-Script](#run) section for how to run the application with a local database.
+
+### Auth
+
+The Application supports authentication via basic login and SSO with Microsoft Entra ID (modeled after BFF pattern). By default the config for SSO is filled with placeholder values. When needing to debug SSO the following values in `ProjectMetadataPlatform.Api/Properties/launchsettings.json` have to be changed:
+```json
+        "AZURE_AUTHORITY":"<Valid Authority URI>",
+        "AZURE_BACKEND_CLIENT_ID":"<Valid Client ID for WebApi App Registration>",
+        "AZURE_SCOPE":"<Valid API Scope>",
+        "AZURE_FRONTEND_CLIENT_ID":"<Valid Client ID for SPA App Registration>",
+```
 
 #### Database Migrations
 
@@ -257,10 +275,6 @@ Runs the Vitest UI.
   - `store`: Pinia stores
   - `views`: Vue views/pages
 
-### Environment Variables
-
-...
-
 
 ### Development
 
@@ -276,15 +290,24 @@ yarn dev
 To use the backend service during development, one needs to run the backend service locally. 
 
 1. Start the backend as described in the [Run-Script](#run) section.
-2. The backend service should now be available at `http://localhost:5173`. This URL is already configured in the `.env` file of the frontend. Simply use `import.meta.env.VITE_BACKEND_URL + "/<your-endpoint>"` to access the api. For example:
+2. The backend service should now be available at `http://localhost:5091`. This URL is already configured in the `.env` file of the frontend. Simply use `import.meta.env.VITE_BACKEND_URL + "/<your-endpoint>"` to access the api. For example:
 
    ```ts
    const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/projects');
    ```
 
 3. The env files are already configured to use the correct backend URLs in the staging and production environments. No further changes are necessary after local development is over.
-4. The Swagger UI of the backend service is available at `http://localhost:5173/swagger/index.html`.
+4. The Swagger UI of the backend service is available at `http://localhost:5091/swagger/index.html`.
 5. To stop the backend service, hit `Ctrl+C` in the terminal where the service is running or when using Visual Studio Code stop the backend debugging session.
+
+#### Auth
+The Frontend supports authentication via basic login and SSO with Microsoft Entra ID (modeled after BFF pattern). By default the config for SSO is not set. When debugging SSO add the following env variables to `.env`:
+```env
+VITE_AZURE_FRONTEND_CLIENT_ID=<Valid Client ID for SPA App Registration>
+VITE_AZURE_AUTHORITY=<Valid Authority URI>
+VITE_AZURE_SCOPE=<Valid API SCope>
+```
+Auth also has to be configured in the backend as described in [Backend-Auth](#auth).
 
 ### Frontend Screenshots
 Login Screen

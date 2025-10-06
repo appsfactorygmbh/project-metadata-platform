@@ -1,12 +1,13 @@
 <script lang="ts" setup>
   import { type FormSubmitType, useFormStore } from '@/components/Form';
-  import { AuthLayout, LoginForm } from '.';
+  import { AuthLayout, LoginForm, SSOAuthButton } from '.';
   import { computed } from 'vue';
   import { useToken } from 'ant-design-vue/es/theme/internal';
   import useBreakpoint from 'ant-design-vue/es/_util/hooks/useBreakpoint';
   import { useAuth } from 'vue-auth3';
   import axios from 'axios';
   import { useRoute } from 'vue-router';
+import { msalInstance } from '@/services/msalService';
 
   const auth = useAuth();
   const router = useRouter();
@@ -49,6 +50,13 @@
   };
 
   onMounted(() => {
+     msalInstance.handleRedirectPromise()
+    .then((response) => {
+      if (response && response.account) {
+        msalInstance.setActiveAccount(response.account);
+        return callback();
+      }
+    })
     auth?.load().then(() => {
       const authCheck = auth.check();
       if (authCheck) return callback();
@@ -82,5 +90,11 @@
       </a-typography-text>
     </div>
     <LoginForm :form-store="formStore" :feedback-message="feedbackMessage" />
+    <div :style="styles.header">
+    <a-typography-text :style="styles.text">
+        or
+      </a-typography-text>
+      </div>
+    <SSOAuthButton/>
   </AuthLayout>
 </template>

@@ -64,7 +64,7 @@
     @keyup.enter="submit"
   >
     <a-form-item name="email" v-bind="formStore.validateInfos.email">
-      <a-input v-model:value="modelRef.email" placeholder="email">
+      <a-input v-model:value="modelRef.email" placeholder="Email">
         <template #prefix>
           <UserOutlined />
         </template>

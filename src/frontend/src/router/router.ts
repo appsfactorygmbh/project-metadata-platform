@@ -17,6 +17,7 @@ import { useAuth } from 'vue-auth3';
 import { TeamListView } from '@/views/SettingView/TeamManagementView/TeamListView';
 import TeamInformationView from '@/views/SettingView/TeamManagementView/TeamInformationView/TeamInformationView.vue';
 import CreateTeamView from '@/views/SettingView/TeamManagementView/CreateTeam/CreateTeamView.vue';
+import {msalService } from '@/services/msalService';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -168,9 +169,12 @@ router.beforeEach(async (to, _, next) => {
   auth.ready();
 
   const noAuthRequired = to.meta.noAuthRequired;
-  const isAuthenticated = auth.check();
+  const isAuthenticated = auth.check() ||  await msalService.getAccessToken() != null;
 
   if (!noAuthRequired && !isAuthenticated) {
+    if (to.hash.includes('code=') || to.hash.includes('access_token=')) {
+      return next();
+    }
     const redirectUrl = to.fullPath; // Get the full path of the route the user tried to access
     next({
       path: '/login',

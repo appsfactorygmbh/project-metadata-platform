@@ -3,10 +3,13 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
 using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Application.Auth;
@@ -97,7 +100,7 @@ public static class DependencyInjection
         });
 
         _ = serviceCollection
-            .AddIdentity<IdentityUser, IdentityRole>()
+            .AddIdentityCore<IdentityUser>()
             .AddEntityFrameworkStores<ProjectMetadataPlatformDbContext>()
             .AddDefaultTokenProviders();
 
@@ -105,35 +108,48 @@ public static class DependencyInjection
         _ = serviceCollection.Configure<IdentityOptions>(options =>
             options.User.RequireUniqueEmail = true
         );
-        _ = serviceCollection
-            .AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = tokenDescriptorInformation.ValidIssuer,
-                    ValidAudience = tokenDescriptorInformation.ValidAudience,
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(tokenDescriptorInformation.IssuerSigningKey)
-                    ),
-                    ClockSkew = Environment.GetEnvironmentVariable("PMP_JWT_CLOCK_SKEW_SECONDS")
-                        is { } clockSkew
-                        ? TimeSpan.FromSeconds(
-                            double.Parse(clockSkew, CultureInfo.InvariantCulture)
-                        )
-                        : TimeSpan.FromMinutes(5),
-                };
 
-                options.Events = jwtBearerEvents;
-            });
+        _ = serviceCollection
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddMicrosoftIdentityWebApi(
+                options => { },
+                options =>
+                {
+                    options.Authority = EnvironmentUtils.GetEnvVarOrLoadFromFile("AZURE_AUTHORITY");
+                    options.ClientId = EnvironmentUtils.GetEnvVarOrLoadFromFile(
+                        "AZURE_BACKEND_CLIENT_ID"
+                    );
+                },
+                "Azure"
+            );
+        _ = serviceCollection
+            .AddAuthentication()
+            .AddJwtBearer(
+                "Basic",
+                options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = tokenDescriptorInformation.ValidIssuer,
+                        ValidAudience = tokenDescriptorInformation.ValidAudience,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(tokenDescriptorInformation.IssuerSigningKey)
+                        ),
+                        ClockSkew = Environment.GetEnvironmentVariable("PMP_JWT_CLOCK_SKEW_SECONDS")
+                            is { } clockSkew
+                            ? TimeSpan.FromSeconds(
+                                double.Parse(clockSkew, CultureInfo.InvariantCulture)
+                            )
+                            : TimeSpan.FromMinutes(5),
+                    };
+
+                    options.Events = jwtBearerEvents;
+                }
+            );
     }
 
     /// <summary>

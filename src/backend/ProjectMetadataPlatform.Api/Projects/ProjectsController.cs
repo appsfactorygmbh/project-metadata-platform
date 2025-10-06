@@ -19,7 +19,7 @@ namespace ProjectMetadataPlatform.Api.Projects;
 /// Endpoints for managing projects.
 /// </summary>
 [ApiController]
-[Authorize]
+[Authorize(AuthenticationSchemes = "Azure,Basic")]
 [Route("[controller]")]
 public class ProjectsController : ControllerBase
 {
