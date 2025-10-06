@@ -47,6 +47,10 @@ public class IntegrationTestsBase : IDisposable
         Environment.SetEnvironmentVariable("REFRESH_TOKEN_EXPIRATION_HOURS", "6");
         Environment.SetEnvironmentVariable("ACCESS_TOKEN_EXPIRATION_MINUTES", "15");
         Environment.SetEnvironmentVariable("PMP_MIGRATE_DB_ON_STARTUP", "true");
+        Environment.SetEnvironmentVariable("AZURE_AUTHORITY", "https://placeholder.placeholder");
+        Environment.SetEnvironmentVariable("AZURE_BACKEND_CLIENT_ID", "Placeholder");
+        Environment.SetEnvironmentVariable("AZURE_FRONTEND_CLIENT_ID", "Placeholder");
+        Environment.SetEnvironmentVariable("AZURE_SCOPE", "Placeholder");
 
         var platformDbContext =
             _factory.Services.GetRequiredService<ProjectMetadataPlatformDbContext>();

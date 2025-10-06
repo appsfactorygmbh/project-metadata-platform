@@ -36,7 +36,12 @@ public static class EnvironmentUtils
     {
         string[] placeholders = ["AZURE_FRONTEND_CLIENT_ID", "AZURE_AUTHORITY", "AZURE_SCOPE"];
         var path = "wwwroot/assets/";
-        var assets = Directory.GetFiles(path);
+        string[] assets = [];
+        if (Directory.Exists(path))
+        {
+            assets = Directory.GetFiles(path);
+        }
+
         foreach (var file in assets)
         {
             var text = File.ReadAllText(file);
