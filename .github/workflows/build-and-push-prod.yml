@@ -1,9 +1,12 @@
 name: Build_and_Push_Docker_Image
 
 on:
-  pull_request:
+  workflow_run:
+    workflows:
+      - Backend_Unit_Tests_and_SonarCloud_Analysis
+      - Frontend_Unit_Tests_and_SonarCloud_Analysis
     types:
-      - closed
+      - completed
     branches:
       - main
 
