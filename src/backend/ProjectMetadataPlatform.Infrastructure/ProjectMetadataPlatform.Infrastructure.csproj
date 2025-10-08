@@ -27,6 +27,8 @@
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.*" />
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.14.*" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.*" />
+        <PackageReference Include="Casbin.NET" Version="2.16.0" />
+        <PackageReference Include="Casbin.NET.Adapter.EFCore" Version="2.6.0" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\ProjectMetadataPlatform.Application\ProjectMetadataPlatform.Application.csproj" />

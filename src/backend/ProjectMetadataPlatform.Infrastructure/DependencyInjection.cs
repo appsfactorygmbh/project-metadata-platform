@@ -2,6 +2,8 @@
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Casbin;
+using Casbin.Persist.Adapter.EFCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -9,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql.Replication;
 using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -71,6 +74,9 @@ public static class DependencyInjection
             $"Host={url};Port={port};User Id={user};Password={password};Database={database}";
 
         _ = serviceCollection.AddDbContext<ProjectMetadataPlatformDbContext>(options =>
+            options.UseNpgsql(connectionString)
+        );
+        _ = serviceCollection.AddDbContext<CasbinDbContext>(options =>
             options.UseNpgsql(connectionString)
         );
     }
@@ -155,6 +161,21 @@ public static class DependencyInjection
     /// <param name="serviceProvider"></param>
     public static void AddAdminUser(this IServiceProvider serviceProvider)
     {
+        using var scope = serviceProvider.CreateScope();
+        var connection = scope.ServiceProvider.GetRequiredService<CasbinDbContext>();
+        var adapter = new EFCoreAdapter<int>(connection);
+
+        var e = new Enforcer(
+            "/home/finn-wulfert/projects/project-metadata-platform/src/backend/ProjectMetadataPlatform.Infrastructure/DataAccess/ModelConfigs/test.conf",
+            adapter
+        );
+        e.AcceptJsonRequest = true;
+        e.LoadPolicy();
+
+        e.AddPolicy(["a", "b", "c"]);
+        if (e.Enforce("a", "b", "c"))
+            throw new Exception("Hello World");
+
         string password;
         try
         {
@@ -164,8 +185,6 @@ public static class DependencyInjection
         {
             password = "admin";
         }
-
-        using var scope = serviceProvider.CreateScope();
 
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
