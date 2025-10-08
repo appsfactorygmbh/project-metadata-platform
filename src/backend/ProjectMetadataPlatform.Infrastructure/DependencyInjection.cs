@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -9,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
+using Polly.Registry;
 using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -211,5 +214,23 @@ public static class DependencyInjection
             var dbContext = services.GetRequiredService<ProjectMetadataPlatformDbContext>();
             dbContext.Database.Migrate();
         }
+    }
+
+    /// <summary>
+    /// Checks the Connection to the database context. Retries if no connection.
+    /// </summary>
+    public static async Task CheckConnection(this IServiceProvider serviceProvider)
+    {
+        using var serviceScope = serviceProvider.CreateScope();
+        var services = serviceScope.ServiceProvider;
+        var pipelineProvider = services.GetRequiredService<ResiliencePipelineProvider<string>>();
+        var pipeline = pipelineProvider.GetPipeline("DbCheck-Pipeline");
+        var dbContext = services.GetRequiredService<ProjectMetadataPlatformDbContext>();
+
+        await pipeline.ExecuteAsync(async token =>
+        {
+            if (!await dbContext.Database.CanConnectAsync(token))
+                throw new ArgumentException("Can't Connect to DB");
+        });
     }
 }
