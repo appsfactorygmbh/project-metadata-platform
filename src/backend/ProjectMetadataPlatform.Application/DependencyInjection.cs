@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using ProjectMetadataPlatform.Application.Authorization;
 using ProjectMetadataPlatform.Application.Helper;
 using ProjectMetadataPlatform.Application.Interfaces;
 
@@ -21,6 +23,11 @@ public static class DependencyInjection
         _ = serviceCollection.AddScoped<ISlugHelper, SlugHelper>();
         _ = serviceCollection.AddMediatR(configuration =>
             configuration.RegisterServicesFromAssemblyContaining(typeof(DependencyInjection))
+        );
+
+        _ = serviceCollection.AddTransient(
+            typeof(IPipelineBehavior<,>),
+            typeof(AuthorizationBehavior<,>)
         );
         return serviceCollection;
     }

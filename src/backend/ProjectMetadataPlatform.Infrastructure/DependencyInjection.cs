@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Casbin;
@@ -45,6 +46,8 @@ public static class DependencyInjection
         _ = serviceCollection.AddScoped<IUnitOfWork>(provider =>
             provider.GetRequiredService<ProjectMetadataPlatformDbContext>()
         );
+
+        _ = serviceCollection.AddScoped<IEnforcer>(provider => provider.AddEnforcer());
         serviceCollection.ConfigureAuth(jwtBearerEvents);
         _ = serviceCollection.AddScoped<IPluginRepository, PluginRepository>();
         _ = serviceCollection.AddScoped<IProjectsRepository, ProjectsRepository>();
@@ -57,6 +60,7 @@ public static class DependencyInjection
         >();
 
         _ = serviceCollection.AddScoped<ILogRepository, LogRepository>();
+
         return serviceCollection;
     }
 
@@ -162,19 +166,6 @@ public static class DependencyInjection
     public static void AddAdminUser(this IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
-        var connection = scope.ServiceProvider.GetRequiredService<CasbinDbContext>();
-        var adapter = new EFCoreAdapter<int>(connection);
-
-        var e = new Enforcer(
-            "/home/finn-wulfert/projects/project-metadata-platform/src/backend/ProjectMetadataPlatform.Infrastructure/DataAccess/ModelConfigs/test.conf",
-            adapter
-        );
-        e.AcceptJsonRequest = true;
-        e.LoadPolicy();
-
-        e.AddPolicy(["a", "b", "c"]);
-        if (e.Enforce("a", "b", "c"))
-            throw new Exception("Hello World");
 
         string password;
         try
@@ -230,5 +221,16 @@ public static class DependencyInjection
             var dbContext = services.GetRequiredService<ProjectMetadataPlatformDbContext>();
             dbContext.Database.Migrate();
         }
+    }
+
+    public static Enforcer AddEnforcer(this IServiceProvider serviceProvider)
+    {
+        var dbContext = serviceProvider.GetRequiredService<CasbinDbContext>();
+        var adapter = new EFCoreAdapter<int>(dbContext);
+        var test = Directory.GetCurrentDirectory();
+        return new Enforcer(
+            $"{Directory.GetCurrentDirectory()}/../ProjectMetadataPlatform.Infrastructure/DataAccess/ModelConfigs/abac_model.conf",
+            adapter
+        );
     }
 }
