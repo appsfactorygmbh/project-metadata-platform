@@ -23,6 +23,7 @@
             Include="Microsoft.Extensions.DependencyInjection.Abstractions"
             Version="8.0.*"
         />
+        <PackageReference Include="Microsoft.Extensions.Resilience" Version="9.9.0" />
         <PackageReference Include="Microsoft.Identity.Web" Version="3.14.1" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.*" />
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.14.*" />

@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Polly;
+using Polly.Retry;
 using ProjectMetadataPlatform.Api;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Swagger;
@@ -102,7 +104,19 @@ builder.Services.AddCors(options =>
     )
 );
 
+builder.Services.AddResiliencePipeline(
+    "DbCheck-Pipeline",
+    builder =>
+    {
+        _ = builder.AddRetry(
+            new RetryStrategyOptions() { MaxRetryAttempts = 10, Delay = TimeSpan.FromSeconds(5) }
+        );
+    }
+);
+
 var app = builder.Build();
+await app.Services.CheckConnection();
+
 app.Services.MigrateDatabase();
 app.Services.AddAdminUser();
 app.UseCors();
