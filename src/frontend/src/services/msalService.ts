@@ -97,7 +97,6 @@ export const msalService = {
         return null;
       }
     }
-
   },
   async getAccessTokenSilent() {
     const account = msalInstance.getActiveAccount();
@@ -116,6 +115,5 @@ export const msalService = {
     } catch (error) {
       return null;
     }
-
   },
 };

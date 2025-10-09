@@ -62,7 +62,7 @@
   onMounted(() => {
     msalInstance.handleRedirectPromise().then((response) => {
       if (response && response.accessToken) {
-        authStore.setAuth(response.accessToken,"oidc")
+        authStore.setAuth(response.accessToken, 'oidc');
       }
     });
     if (authStore._authMethod == 'basic') {
@@ -105,7 +105,7 @@
           });
       }
       if (
-        await msalService.getAccessTokenSilent() == null &&
+        (await msalService.getAccessTokenSilent()) == null &&
         authStore.authMethod == 'oidc'
       ) {
         authenticationFailed.value = true;
