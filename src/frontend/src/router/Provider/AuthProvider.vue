@@ -12,7 +12,7 @@
     useProjectStore,
     useTeamStore,
   } from '@/store';
-  import { msalService } from '@/services/msalService';
+  import { msalInstance, msalService } from '@/services/msalService';
   const router = useRouter();
 
   const authStore = useAuthStore();
@@ -55,11 +55,16 @@
   watch(
     () => msalService.getActiveUser(),
     (user) => {
-      if (authStore._authMethod == 'oicd') authenticated.value = user == null;
+      if (authStore._authMethod == 'oidc') authenticated.value = user == null;
     },
   );
 
   onMounted(() => {
+    msalInstance.handleRedirectPromise().then((response) => {
+      if (response && response.accessToken) {
+        authStore.setAuth(response.accessToken, 'oidc');
+      }
+    });
     if (authStore._authMethod == 'basic') {
       auth
         ?.load()
@@ -73,7 +78,7 @@
         });
     } else {
       msalService
-        .getAccessToken()
+        .getAccessTokenSilent()
         .then(() => {
           authenticated.value = true;
           authInitialized.value = true;
@@ -87,7 +92,7 @@
 
   watch(
     () => authInitialized.value && !authenticated.value,
-    (initialized) => {
+    async (initialized) => {
       if (!initialized) return;
       if (!auth?.check() && authStore.authMethod == 'basic') {
         auth
@@ -100,7 +105,7 @@
           });
       }
       if (
-        msalService.getAccessToken == null &&
+        (await msalService.getAccessTokenSilent()) == null &&
         authStore.authMethod == 'oidc'
       ) {
         authenticationFailed.value = true;

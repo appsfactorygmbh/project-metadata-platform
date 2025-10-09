@@ -11,7 +11,7 @@ export const msalConfig = {
     authority: import.meta.env.VITE_AZURE_AUTHORITY ?? 'AZURE_AUTHORITY', // Replace the placeholder with your tenant info
     redirectUri: window.location.origin + '/login', // Points to window.location.origin. You must register this URI on Microsoft Entra admin center/App Registration.
     postLogoutRedirectUri: '/login', // Indicates the page to navigate after logout.
-    navigateToLoginRequestUrl: true, // If "true", will navigate back to the original request location before processing the auth code response.
+    navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
   },
   cache: {
     cacheLocation: 'localStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
@@ -92,11 +92,28 @@ export const msalService = {
         console.warn(
           'Silent token acquisition failed. Acquiring token using redirect.',
         );
-        await msalInstance.acquireTokenRedirect(request);
+        return null;
       } else {
         return null;
       }
     }
-    return null;
+  },
+  async getAccessTokenSilent() {
+    const account = msalInstance.getActiveAccount();
+    if (!account) {
+      return null;
+    }
+
+    const request = {
+      ...TokenRequest,
+      account: account,
+    };
+
+    try {
+      const response = await msalInstance.acquireTokenSilent(request);
+      return response.accessToken;
+    } catch (error) {
+      return null;
+    }
   },
 };
