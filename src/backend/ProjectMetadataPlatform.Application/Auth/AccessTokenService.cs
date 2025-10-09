@@ -28,7 +28,9 @@ public static class AccessTokenService
         );
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity([new Claim(ClaimTypes.Email, email)]),
+            Subject = new ClaimsIdentity(
+                [new Claim(ClaimTypes.Email, email), new Claim("Type", "Admin")]
+            ),
             Expires = DateTime.UtcNow.AddMinutes(expirationTime),
             Issuer = tokenDescriptorInformation.ValidIssuer,
             Audience = tokenDescriptorInformation.ValidAudience,

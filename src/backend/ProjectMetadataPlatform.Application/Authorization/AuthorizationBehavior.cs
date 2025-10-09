@@ -31,31 +31,16 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
     )
     {
         var user = _httpContextAccessor.HttpContext.User;
-        var requesttype = typeof(TRequest).Name;
-        var a = user.FindFirstValue("name");
-        _enforcer.AddPolicy(
-            "r.sub.FindFirst(\"name\").Value == \"Finn Wulfert\"",
-            "r.obj.Email == \"string\"",
-            "true",
-            requesttype,
-            "allow"
-        );
-        _enforcer.AddPolicy(
-            "r.sub.FindFirst(\"name\").Value == \"Finn Wulfert\"",
-            "r.obj.Email == \"string\"",
-            "true",
-            requesttype,
-            "deny"
-        );
+        var requestType = typeof(TRequest).Name;
 
-        if (requesttype.EndsWith("Command"))
+        if (requestType.EndsWith("Command"))
         {
             await AuthorizeCommandAsync(user, request);
         }
 
         var response = await next();
 
-        if (requesttype.EndsWith("Query"))
+        if (requestType.EndsWith("Query"))
         {
             if (typeof(TResponse).Name == typeof(IEnumerable<>).Name)
             {
