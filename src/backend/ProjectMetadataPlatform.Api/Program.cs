@@ -105,7 +105,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 app.Services.MigrateDatabase();
 app.Services.AddAdminUser();
-app.Services.AddBasePolicies();
+app.Services.AddBasePolicy();
 app.UseCors();
 app.UseSwagger();
 app.UseSwaggerUI(options =>

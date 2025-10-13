@@ -235,7 +235,7 @@ public static class DependencyInjection
         return e;
     }
 
-    public static void AddBasePolicies(this IServiceProvider serviceProvider)
+    public static void AddBasePolicy(this IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
         var services = scope.ServiceProvider;
@@ -244,13 +244,16 @@ public static class DependencyInjection
         enforcer.LoadPolicy();
 
         var test = enforcer.RemovePolicies(enforcer.GetPolicy());
-        enforcer.AddPolicy(
-            "r.sub.Departments.Contains(\"IT Admin\") || r.sub.Departments.Contains(\"IT Development\") ",
-            "true",
-            "true",
-            "All",
-            "allow"
-        );
-        enforcer.SavePolicy();
+        if (!enforcer.GetPolicy().Any())
+        {
+            enforcer.AddPolicy(
+                "r.sub.Departments.Contains(\"IT Admin\") || r.sub.Departments.Contains(\"IT Development\") ",
+                "true",
+                "true",
+                "All",
+                "allow"
+            );
+            enforcer.SavePolicy();
+        }
     }
 }
