@@ -1,14 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Casbin;
-using Casbin.Persist;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
-using Microsoft.VisualBasic;
+using ProjectMetadataPlatform.Domain.Errors.UserException;
 
 namespace ProjectMetadataPlatform.Application.Authorization;
 
@@ -30,7 +27,9 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
         CancellationToken cancellationToken
     )
     {
-        var user = _httpContextAccessor.HttpContext.User;
+        var user = AuthorizationSubject.ConvertClaimsToAuthorizationSubject(
+            _httpContextAccessor.HttpContext.User
+        );
         var requestType = typeof(TRequest).Name;
 
         if (requestType.EndsWith("Command"))
@@ -40,7 +39,11 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
 
         var response = await next();
 
-        if (requestType.EndsWith("Query"))
+        if (
+            requestType != "LoginQuery"
+            && requestType != "RefreshTokenQuery"
+            && requestType.EndsWith("Query")
+        )
         {
             if (typeof(TResponse).Name == typeof(IEnumerable<>).Name)
             {
@@ -55,31 +58,32 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
         return response;
     }
 
-    private async Task AuthorizeCommandAsync(ClaimsPrincipal? user, TRequest request)
+    private async Task AuthorizeCommandAsync(AuthorizationSubject user, TRequest request)
     {
         if (!await _enforcer.EnforceAsync(user, request, "", typeof(TRequest).Name))
         {
-            throw new System.Exception();
+            throw new UserUnauthorizedException();
         }
         ;
     }
 
-    private async Task AuthorizeGetAsync(ClaimsPrincipal? user, TResponse response)
+    private async Task AuthorizeGetAsync(AuthorizationSubject user, TResponse response)
     {
         if (!await _enforcer.EnforceAsync(user, response, "", typeof(TRequest).Name))
         {
-            throw new System.Exception();
+            throw new UserUnauthorizedException();
         }
         ;
     }
 
-    private async Task AuthorizeGetAllAsync(ClaimsPrincipal? user, TResponse response)
+    private async Task AuthorizeGetAllAsync(AuthorizationSubject user, TResponse response)
     {
+        var test = _enforcer.GetPolicy();
         foreach (var responseobject in (IEnumerable)response!)
         {
             if (!await _enforcer.EnforceAsync(user, responseobject, "", typeof(TRequest).Name))
             {
-                throw new System.Exception();
+                throw new UserUnauthorizedException();
             }
         }
     }

@@ -1,5 +1,4 @@
 using MediatR;
-using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Teams;
 
 namespace ProjectMetadataPlatform.Application.Teams;

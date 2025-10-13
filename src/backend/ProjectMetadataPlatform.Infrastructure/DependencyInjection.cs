@@ -227,10 +227,30 @@ public static class DependencyInjection
     {
         var dbContext = serviceProvider.GetRequiredService<CasbinDbContext>();
         var adapter = new EFCoreAdapter<int>(dbContext);
-        var test = Directory.GetCurrentDirectory();
-        return new Enforcer(
+        var e = new Enforcer(
             $"{Directory.GetCurrentDirectory()}/../ProjectMetadataPlatform.Infrastructure/DataAccess/ModelConfigs/abac_model.conf",
             adapter
         );
+        e.EnableAutoSave(false);
+        return e;
+    }
+
+    public static void AddBasePolicies(this IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var services = scope.ServiceProvider;
+
+        var enforcer = services.GetRequiredService<IEnforcer>();
+        enforcer.LoadPolicy();
+
+        var test = enforcer.RemovePolicies(enforcer.GetPolicy());
+        enforcer.AddPolicy(
+            "r.sub.Departments.Contains(\"IT Admin\") || r.sub.Departments.Contains(\"IT Development\") ",
+            "true",
+            "true",
+            "All",
+            "allow"
+        );
+        enforcer.SavePolicy();
     }
 }
