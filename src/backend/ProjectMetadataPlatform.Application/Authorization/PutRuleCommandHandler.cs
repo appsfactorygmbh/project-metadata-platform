@@ -28,14 +28,16 @@ public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
         var obj_rule = ConvertToPolicyRuleString(request.PolicyRule.ObjectRule, "r.obj");
         var env_rule = ConvertToPolicyRuleString(request.PolicyRule.EnvironmentRule, "r.env");
 
-        await _enforcer.AddPolicyAsync(
+        var result = await _enforcer.AddPolicyAsync(
             sub_rule,
             obj_rule,
             env_rule,
             request.PolicyRule.Action,
             request.PolicyRule.Effect.ToString().ToLower()
         );
-        return await _enforcer.SavePolicyAsync();
+        await _enforcer.SavePolicyAsync();
+
+        return result;
     }
 
     public string ConvertToPolicyRuleString(
@@ -51,8 +53,6 @@ public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
             foreach (var ruleElement in rule.RuleElements)
             {
                 var value = ruleElement.Value.ToString();
-                var a = (ruleElement.Value as JsonElement?).GetValueOrDefault().ValueKind;
-                var b = JsonValueKind.String;
                 if (
                     (ruleElement.Value as JsonElement?).GetValueOrDefault().ValueKind
                     == JsonValueKind.String

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Casbin;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 
 namespace ProjectMetadataPlatform.Application.Authorization;
@@ -62,7 +63,7 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
     {
         if (!await _enforcer.EnforceAsync(user, request, "", typeof(TRequest).Name))
         {
-            throw new UserUnauthorizedException();
+            throw new UnauthorizedException();
         }
         ;
     }
@@ -71,7 +72,7 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
     {
         if (!await _enforcer.EnforceAsync(user, response, "", typeof(TRequest).Name))
         {
-            throw new UserUnauthorizedException();
+            throw new UnauthorizedException();
         }
         ;
     }
@@ -83,7 +84,7 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
         {
             if (!await _enforcer.EnforceAsync(user, responseobject, "", typeof(TRequest).Name))
             {
-                throw new UserUnauthorizedException();
+                throw new UnauthorizedException();
             }
         }
     }

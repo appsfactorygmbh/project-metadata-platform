@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Authorization.Models;
+using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Authorization;
 
 namespace ProjectMetadataPlatform.Api.Authorization;
@@ -32,10 +33,11 @@ public class AuthorizationController : ControllerBase
 
     [HttpPut("Rule")]
     [ProducesResponseType(typeof(PolicyResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Put([FromBody] PutRuleRequest putRuleRequest)
     {
         var query = new PutRuleCommand(putRuleRequest.PolicyRule);
-        await _mediator.Send(query);
-        return new OkResult();
+        var result = await _mediator.Send(query);
+        return result ? new CreatedResult() : new BadRequestResult();
     }
 }

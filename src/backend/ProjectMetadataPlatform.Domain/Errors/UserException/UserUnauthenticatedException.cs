@@ -3,11 +3,11 @@
 /// <summary>
 /// Exception thrown when a user is not authenticated.
 /// </summary>
-public class UserUnauthorizedException : UserException
+public class UserUnauthenticatedException : UserException
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="UserUnauthorizedException"/> class.
+    /// Initializes a new instance of the <see cref="UserUnauthenticatedException"/> class.
     /// </summary>
-    public UserUnauthorizedException()
+    public UserUnauthenticatedException()
         : base("User not authenticated.") { }
 }

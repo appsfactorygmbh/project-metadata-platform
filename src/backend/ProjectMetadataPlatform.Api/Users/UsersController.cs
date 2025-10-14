@@ -141,7 +141,7 @@ public class UsersController : ControllerBase
     {
         var email =
             _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
-            ?? throw new UserUnauthorizedException();
+            ?? throw new UserUnauthenticatedException();
 
         var query = new GetUserByEmailQuery(email);
 

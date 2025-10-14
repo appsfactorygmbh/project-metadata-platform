@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.LogExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
@@ -28,6 +29,8 @@ public class ExceptionFilter : IExceptionFilter
     private readonly IExceptionHandler<PluginException> _pluginExceptionHandler;
     private readonly IExceptionHandler<AuthException> _authExceptionHandler;
 
+    private readonly IExceptionHandler<AuthorizationException> _authorizationExceptionHandler;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ExceptionFilter"/> class.
     /// </summary>
@@ -45,7 +48,8 @@ public class ExceptionFilter : IExceptionFilter
         IExceptionHandler<TeamException> teamExceptionHandler,
         IExceptionHandler<PluginException> pluginExceptionHandler,
         IExceptionHandler<AuthException> authExceptionHandler,
-        IExceptionHandler<UserException> userExceptionHandler
+        IExceptionHandler<UserException> userExceptionHandler,
+        IExceptionHandler<AuthorizationException> authorizationExceptionHandler
     )
     {
         _basicExceptionHandler = basicExceptionHandler;
@@ -55,6 +59,7 @@ public class ExceptionFilter : IExceptionFilter
         _logExceptionHandler = logExceptionHandler;
         _authExceptionHandler = authExceptionHandler;
         _userExceptionHandler = userExceptionHandler;
+        _authorizationExceptionHandler = authorizationExceptionHandler;
     }
 
     /// <summary>
@@ -74,6 +79,7 @@ public class ExceptionFilter : IExceptionFilter
             TeamException teamEx => _teamExceptionHandler.Handle(teamEx),
             AuthException authEx => _authExceptionHandler.Handle(authEx),
             UserException userEx => _userExceptionHandler.Handle(userEx),
+            AuthorizationException authEx => _authorizationExceptionHandler.Handle(authEx),
             PmpException basicEx => _basicExceptionHandler.Handle(basicEx),
             _ => HandleUnknownError(exception),
         };
