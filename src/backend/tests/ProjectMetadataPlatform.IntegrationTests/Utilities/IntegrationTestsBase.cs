@@ -51,7 +51,6 @@ public class IntegrationTestsBase : IDisposable
         Environment.SetEnvironmentVariable("AZURE_BACKEND_CLIENT_ID", "Placeholder");
         Environment.SetEnvironmentVariable("AZURE_FRONTEND_CLIENT_ID", "Placeholder");
         Environment.SetEnvironmentVariable("AZURE_SCOPE", "Placeholder");
-
         var platformDbContext =
             _factory.Services.GetRequiredService<ProjectMetadataPlatformDbContext>();
         var allEntitiesPlugins = platformDbContext.Plugins.ToList();

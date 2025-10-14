@@ -230,11 +230,10 @@ public static class DependencyInjection
     public static Enforcer AddEnforcer(this IServiceProvider serviceProvider)
     {
         var dbContext = serviceProvider.GetRequiredService<CasbinDbContext>();
+        dbContext.Database.EnsureCreated();
         var adapter = new EFCoreAdapter<int>(dbContext);
-        var e = new Enforcer(
-            $"{Directory.GetCurrentDirectory()}/../ProjectMetadataPlatform.Infrastructure/DataAccess/ModelConfigs/abac_model.conf",
-            adapter
-        );
+        var test = AppContext.BaseDirectory;
+        var e = new Enforcer($"{AppContext.BaseDirectory}/abac_model.conf", adapter);
         e.EnableAutoSave(false);
         return e;
     }

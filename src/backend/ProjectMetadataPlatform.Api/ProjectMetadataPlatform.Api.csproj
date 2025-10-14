@@ -25,4 +25,9 @@
         <ProjectReference Include="..\ProjectMetadataPlatform.Application\ProjectMetadataPlatform.Application.csproj" />
         <ProjectReference Include="..\ProjectMetadataPlatform.Infrastructure\ProjectMetadataPlatform.Infrastructure.csproj" />
     </ItemGroup>
+    <ItemGroup>
+        <Content Include="..\ProjectMetadataPlatform.Infrastructure\DataAccess\ModelConfigs\abac_model.conf">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 </Project>

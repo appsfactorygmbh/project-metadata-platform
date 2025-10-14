@@ -1,5 +1,7 @@
 ﻿using System.Data.Common;
 using System.Linq;
+using Casbin.Persist;
+using Casbin.Persist.Adapter.EFCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +25,15 @@ public class PmpWebApplicationFactory : WebApplicationFactory<Program>
                 services.Remove(dbContextDescriptor);
             }
 
+            var casbinDbContextDescriptor = services.SingleOrDefault(descriptor =>
+                descriptor.ServiceType == typeof(DbContextOptions<CasbinDbContext>)
+            );
+
+            if (casbinDbContextDescriptor != null)
+            {
+                services.Remove(casbinDbContextDescriptor);
+            }
+
             var dbConnectionDescriptor = services.SingleOrDefault(descriptor =>
                 descriptor.ServiceType == typeof(DbConnection)
             );
@@ -35,8 +46,10 @@ public class PmpWebApplicationFactory : WebApplicationFactory<Program>
             services.AddDbContext<ProjectMetadataPlatformDbContext>(options =>
                 options.UseSqlite("Datasource=unittest-db.db")
             );
+            services.AddDbContext<CasbinDbContext>(options =>
+                options.UseSqlite("Datasource=unittest-db-casbin.db")
+            );
         });
-
         builder.UseEnvironment("Production");
     }
 }
