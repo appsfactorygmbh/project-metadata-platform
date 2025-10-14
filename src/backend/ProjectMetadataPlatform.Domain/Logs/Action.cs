@@ -103,4 +103,9 @@ public enum Action
     /// Represents the action of removing a team.
     /// </summary>
     REMOVED_TEAM,
+
+    /// <summary>
+    /// Represents the action of creating a new authorization rule.
+    /// </summary>
+    ADDED_RULE,
 }

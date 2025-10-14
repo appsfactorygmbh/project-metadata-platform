@@ -48,6 +48,7 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
         { Action.ADDED_TEAM, "created a new team with properties: ," },
         { Action.UPDATED_TEAM, "updated team properties: set from to," },
         { Action.REMOVED_TEAM, "removed team" },
+        { Action.ADDED_RULE, "added new policy rule" },
     };
 
     /// <summary>
@@ -188,6 +189,20 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
         log.Team = team;
         log.TeamId = team.Id;
         log.TeamName = team.TeamName;
+        _ = _context.Logs.Add(log);
+    }
+
+    ///  <inheritdoc />
+    public async Task AddAuthorizationLogForCurrentUser(Action action, List<LogChange> changes)
+    {
+        var actionWhiteList = new List<Action> { Action.ADDED_RULE };
+
+        if (!actionWhiteList.Contains(action))
+        {
+            throw new LogActionNotSupportedException(action, "Authorization");
+        }
+
+        var log = await PrepareGenericLogForCurrentUser(action, changes);
         _ = _context.Logs.Add(log);
     }
 

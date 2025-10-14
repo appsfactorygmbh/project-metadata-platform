@@ -58,6 +58,14 @@ public interface ILogRepository
     Task AddTeamLogForCurrentUser(Team team, Action action, List<LogChange> changes);
 
     /// <summary>
+    /// Adds Logs for changes made to the Authorization Policy. Sets the current User as the Author.
+    /// </summary>
+    /// <param name="action">The type of change that was made.</param>
+    /// <param name="changes">A list of the changed properties.</param>
+    /// <returns></returns>
+    Task AddAuthorizationLogForCurrentUser(Action action, List<LogChange> changes);
+
+    /// <summary>
     /// Retrieves the logs for a specific project.
     /// </summary>
     /// <param name="projectId">The unique identifier of the project.</param>

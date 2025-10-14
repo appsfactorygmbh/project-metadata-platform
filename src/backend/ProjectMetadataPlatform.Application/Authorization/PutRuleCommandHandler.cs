@@ -7,7 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Casbin;
 using MediatR;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Authorization;
 
@@ -18,13 +20,24 @@ public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
 {
     private readonly IEnforcer _enforcer;
 
+    private readonly ILogRepository _logRepository;
+    private readonly IUnitOfWork _unitOfWork;
+
     /// <summary>
     /// Creates a new Instance of  <see cref="PutRuleCommandHandler"/>"
     /// </summary>
     /// <param name="enforcer">Authorization Enforcer</param>
-    public PutRuleCommandHandler(IEnforcer enforcer)
+    /// <param name="logRepository">Log Repository</param>
+    /// <param name="unitOfWork"></param>
+    public PutRuleCommandHandler(
+        IEnforcer enforcer,
+        ILogRepository logRepository,
+        IUnitOfWork unitOfWork
+    )
     {
         _enforcer = enforcer;
+        _logRepository = logRepository;
+        _unitOfWork = unitOfWork;
     }
 
     /// <summary>
@@ -41,6 +54,20 @@ public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
         var obj_rule = ConvertToPolicyRuleString(request.PolicyRule.ObjectRule, "r.obj");
         var env_rule = ConvertToPolicyRuleString(request.PolicyRule.EnvironmentRule, "r.env");
 
+        var changes = new List<LogChange>
+        {
+            new()
+            {
+                OldValue = "",
+                NewValue =
+                    $"{sub_rule} && {obj_rule} && {env_rule} && {request.PolicyRule.Action} && {request.PolicyRule.Effect.ToString().ToLower()}",
+                Property = nameof(request.PolicyRule),
+            },
+        };
+        await _logRepository.AddAuthorizationLogForCurrentUser(
+            Domain.Logs.Action.ADDED_RULE,
+            changes
+        );
         var result = await _enforcer.AddPolicyAsync(
             sub_rule,
             obj_rule,
@@ -49,7 +76,7 @@ public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
             request.PolicyRule.Effect.ToString().ToLower()
         );
         result = result && await _enforcer.SavePolicyAsync();
-
+        await _unitOfWork.CompleteAsync();
         return result;
     }
 
@@ -71,7 +98,7 @@ public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
             IEnumerable<string> rulePart = [];
             foreach (var ruleElement in rule.RuleElements)
             {
-                var value = ruleElement.Value.ToString();
+                var value = ruleElement.Value?.ToString() ?? "";
                 if (
                     (ruleElement.Value as JsonElement?).GetValueOrDefault().ValueKind
                     == JsonValueKind.String

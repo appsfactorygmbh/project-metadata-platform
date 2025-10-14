@@ -73,6 +73,7 @@ public class LogConverter : ILogConverter
                     log.TeamName ?? "<Unknown Team>"
                 ),
                 Action.REMOVED_TEAM => BuildRemovedTeamMessage(log.TeamName ?? "<Unknown Team>"),
+                Action.ADDED_RULE => BuildAddedRuleMessage(log.Changes),
                 _ => "",
             };
 
@@ -405,6 +406,11 @@ public class LogConverter : ILogConverter
     private static string BuildRemovedGlobalPluginMessage(string pluginName)
     {
         return "removed global plugin " + pluginName;
+    }
+
+    private static string BuildAddedRuleMessage(List<LogChange>? changes)
+    {
+        return "added new policy rule " + changes?.FirstOrDefault()?.NewValue;
     }
 
     /// <summary>

@@ -54,6 +54,6 @@ public class AuthorizationController : ControllerBase
     {
         var query = new PutRuleCommand(putRuleRequest.PolicyRule);
         var result = await _mediator.Send(query);
-        return result ? new CreatedResult() : new BadRequestResult();
+        return result ? new CreatedResult("/Policy/", null) : new BadRequestResult();
     }
 }
