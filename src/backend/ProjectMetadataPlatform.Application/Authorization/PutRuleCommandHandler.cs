@@ -11,15 +11,28 @@ using ProjectMetadataPlatform.Domain.Authorization;
 
 namespace ProjectMetadataPlatform.Application.Authorization;
 
+/// <summary>
+/// Handler for the <see cref="PutRuleCommand" />
+/// </summary>
 public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
 {
     private readonly IEnforcer _enforcer;
 
+    /// <summary>
+    /// Creates a new Instance of  <see cref="PutRuleCommandHandler"/>"
+    /// </summary>
+    /// <param name="enforcer">Authorization Enforcer</param>
     public PutRuleCommandHandler(IEnforcer enforcer)
     {
         _enforcer = enforcer;
     }
 
+    /// <summary>
+    /// Creates a new Policy Rule.
+    /// </summary>
+    /// <param name="request">Contains the Policy Rule to be created.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Bool signifying if the rule could be added.</returns>
     public async Task<bool> Handle(PutRuleCommand request, CancellationToken cancellationToken)
     {
         await _enforcer.LoadPolicyAsync();
@@ -35,12 +48,18 @@ public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
             request.PolicyRule.Action,
             request.PolicyRule.Effect.ToString().ToLower()
         );
-        await _enforcer.SavePolicyAsync();
+        result = result && await _enforcer.SavePolicyAsync();
 
         return result;
     }
 
-    public string ConvertToPolicyRuleString(
+    /// <summary>
+    /// Converts a Policy Rule object into an string enforcable by Casbin.
+    /// </summary>
+    /// <param name="ruleElementGroups">Policy Rule object.</param>
+    /// <param name="target">Either Subject, Object or Environment.</param>
+    /// <returns>Policy Rule as a Sring</returns>
+    public static string ConvertToPolicyRuleString(
         IEnumerable<PolicyRule.RuleElementGroup> ruleElementGroups,
         string target
     )

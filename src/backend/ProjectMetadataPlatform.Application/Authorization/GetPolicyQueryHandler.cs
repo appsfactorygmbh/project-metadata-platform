@@ -7,15 +7,28 @@ using MediatR;
 
 namespace ProjectMetadataPlatform.Application.Authorization;
 
+/// <summary>
+/// Handler for the <see cref="GetPolicyQuery" />
+/// </summary>
 public class GetPolicyQueryHandler : IRequestHandler<GetPolicyQuery, IEnumerable<string>>
 {
     private readonly IEnforcer _enforcer;
 
+    /// <summary>
+    /// Creates a new Instance of  <see cref="GetPolicyQueryHandler"/>"
+    /// </summary>
+    /// <param name="enforcer">Authorization Enforcer</param>
     public GetPolicyQueryHandler(IEnforcer enforcer)
     {
         _enforcer = enforcer;
     }
 
+    /// <summary>
+    /// Gets all Policy rules.
+    /// </summary>
+    /// <param name="request">Request to get the authorization policy.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Array of policy rules.</returns>
     public async Task<IEnumerable<string>> Handle(
         GetPolicyQuery request,
         CancellationToken cancellationToken

@@ -223,6 +223,10 @@ public static class DependencyInjection
         }
     }
 
+    /// <summary>
+    /// Creates and Configures Casbin Policy Enforcer.
+    /// </summary>
+    /// <returns>Authorization Enforcer</returns>
     public static Enforcer AddEnforcer(this IServiceProvider serviceProvider)
     {
         var dbContext = serviceProvider.GetRequiredService<CasbinDbContext>();
@@ -235,6 +239,9 @@ public static class DependencyInjection
         return e;
     }
 
+    /// <summary>
+    /// Adds rule that authorizes admins for all operations.
+    /// </summary>
     public static void AddBasePolicy(this IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();

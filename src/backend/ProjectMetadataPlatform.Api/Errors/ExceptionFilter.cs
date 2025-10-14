@@ -41,6 +41,7 @@ public class ExceptionFilter : IExceptionFilter
     /// <param name="pluginExceptionHandler">The handler for global plugin exceptions.</param>
     /// <param name="authExceptionHandler">The handler for authentication exceptions.</param>
     /// <param name="userExceptionHandler">The handler</param>
+    /// <param name="authorizationExceptionHandler">The handler for authorization exceptions.</param>
     public ExceptionFilter(
         IExceptionHandler<PmpException> basicExceptionHandler,
         IExceptionHandler<ProjectException> projectExceptionHandler,

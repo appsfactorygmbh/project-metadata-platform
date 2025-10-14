@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -10,6 +11,7 @@ using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BasicExceptions;
 using ProjectMetadataPlatform.Domain.Errors.LogExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
@@ -29,6 +31,8 @@ public class ExceptionFilterTest
     private Mock<IExceptionHandler<TeamException>> _teamExceptionHandler;
     private Mock<IExceptionHandler<PluginException>> _pluginsExceptionHandler;
     private Mock<IExceptionHandler<AuthException>> _authExceptionHandler;
+
+    private Mock<IExceptionHandler<AuthorizationException>> _authorizationExceptionHandler;
     private Mock<ExceptionContext> _context;
 
     [SetUp]
@@ -40,6 +44,8 @@ public class ExceptionFilterTest
         _logExceptionHandler = new Mock<IExceptionHandler<LogException>>();
         _authExceptionHandler = new Mock<IExceptionHandler<AuthException>>();
         _userExceptionHandler = new Mock<IExceptionHandler<UserException>>();
+        _authorizationExceptionHandler = new Mock<IExceptionHandler<AuthorizationException>>();
+
         _teamExceptionHandler = new();
         _context = SetupExceptionContext();
         _filter = new ExceptionFilter(
@@ -49,7 +55,8 @@ public class ExceptionFilterTest
             pluginExceptionHandler: _pluginsExceptionHandler.Object,
             authExceptionHandler: _authExceptionHandler.Object,
             userExceptionHandler: _userExceptionHandler.Object,
-            teamExceptionHandler: _teamExceptionHandler.Object
+            teamExceptionHandler: _teamExceptionHandler.Object,
+            authorizationExceptionHandler: _authorizationExceptionHandler.Object
         );
     }
 

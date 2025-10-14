@@ -10,18 +10,34 @@ using ProjectMetadataPlatform.Domain.Errors.UserException;
 
 namespace ProjectMetadataPlatform.Application.Authorization;
 
-public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+/// <summary>
+/// Pipeline Behavior that checks Authorization before commands are handled and before queries are returned.
+/// </summary>
+/// <typeparam name="TRequest">Request to be handled.</typeparam>
+/// <typeparam name="TResponse">Response from Handler.</typeparam>
+public class AuthorizationBehavior<TRequest, TResponse>
+    where TRequest : notnull, IPipelineBehavior<TRequest, TResponse>
 {
     private readonly IEnforcer _enforcer;
 
     private readonly IHttpContextAccessor _httpContextAccessor;
 
+    /// <summary>
+    /// Creates a new Instance of <see cref="AuthorizationBehavior{TRequest,TResponse}"/> "
+    /// </summary>
     public AuthorizationBehavior(IEnforcer enforcer, IHttpContextAccessor httpContextAccessor)
     {
         _enforcer = enforcer;
         _httpContextAccessor = httpContextAccessor;
     }
 
+    /// <summary>
+    /// Checks Authorization.
+    /// </summary>
+    /// <param name="request">Request to be handled.</param>
+    /// <param name="next">Next Pipeline step.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Response for the Request.</returns>
     public async Task<TResponse> Handle(
         TRequest request,
         RequestHandlerDelegate<TResponse> next,
@@ -59,8 +75,16 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
         return response;
     }
 
+    /// <summary>
+    /// Enforces Authorization for a Subject for a Request
+    /// </summary>
+    /// <param name="user">Subject requesting access.</param>
+    /// <param name="request">Request to update or create an object.</param>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedException">Thrown if the access is unauthorized</exception>
     private async Task AuthorizeCommandAsync(AuthorizationSubject user, TRequest request)
     {
+        await _enforcer.LoadPolicyAsync();
         if (!await _enforcer.EnforceAsync(user, request, "", typeof(TRequest).Name))
         {
             throw new UnauthorizedException();
@@ -68,8 +92,16 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
         ;
     }
 
+    /// <summary>
+    /// Enforces Authorization for Subject requesting access to a object.
+    /// </summary>
+    /// <param name="user">Subject requesting access.</param>
+    /// <param name="response">Requested object.</param>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedException">Thrown if the access is unauthorized</exception>
     private async Task AuthorizeGetAsync(AuthorizationSubject user, TResponse response)
     {
+        await _enforcer.LoadPolicyAsync();
         if (!await _enforcer.EnforceAsync(user, response, "", typeof(TRequest).Name))
         {
             throw new UnauthorizedException();
@@ -77,9 +109,16 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
         ;
     }
 
+    /// <summary>
+    /// Enforces Authorization for Subject requesting access to a list of objects.
+    /// </summary>
+    /// <param name="user">Subject requesting access.</param>
+    /// <param name="response">Requested list of objects.</param>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedException">>Thrown if the access is unauthorized</exception>
     private async Task AuthorizeGetAllAsync(AuthorizationSubject user, TResponse response)
     {
-        var test = _enforcer.GetPolicy();
+        await _enforcer.LoadPolicyAsync();
         foreach (var responseobject in (IEnumerable)response!)
         {
             if (!await _enforcer.EnforceAsync(user, responseobject, "", typeof(TRequest).Name))
