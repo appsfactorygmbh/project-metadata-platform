@@ -15,8 +15,8 @@ namespace ProjectMetadataPlatform.Application.Authorization;
 /// </summary>
 /// <typeparam name="TRequest">Request to be handled.</typeparam>
 /// <typeparam name="TResponse">Response from Handler.</typeparam>
-public class AuthorizationBehavior<TRequest, TResponse>
-    where TRequest : notnull, IPipelineBehavior<TRequest, TResponse>
+public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : notnull
 {
     private readonly IEnforcer _enforcer;
 
@@ -119,12 +119,22 @@ public class AuthorizationBehavior<TRequest, TResponse>
     private async Task AuthorizeGetAllAsync(AuthorizationSubject user, TResponse response)
     {
         await _enforcer.LoadPolicyAsync();
-        foreach (var responseobject in (IEnumerable)response!)
+
+        foreach (dynamic responseobject in (IEnumerable)response!)
         {
-            if (!await _enforcer.EnforceAsync(user, responseobject, "", typeof(TRequest).Name))
+            if (!await EnforceDynamic(user, responseobject, typeof(TRequest).Name))
             {
                 throw new UnauthorizedException();
             }
         }
+    }
+
+    private async Task<bool> EnforceDynamic<TResponseItem>(
+        AuthorizationSubject user,
+        TResponseItem responseItem,
+        string requestName
+    )
+    {
+        return await _enforcer.EnforceAsync(user, responseItem, "", requestName);
     }
 }

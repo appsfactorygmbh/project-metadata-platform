@@ -106,6 +106,15 @@ public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
                 {
                     value = "\"" + value + "\"";
                 }
+                if (
+                    (ruleElement.Value as JsonElement?).GetValueOrDefault().ValueKind
+                        == JsonValueKind.True
+                    || (ruleElement.Value as JsonElement?).GetValueOrDefault().ValueKind
+                        == JsonValueKind.False
+                )
+                {
+                    value = value.ToLower();
+                }
                 string ruleOperation = ruleElement.Operation switch
                 {
                     Operation.EQUAL => $"{target}.{ruleElement.Attribute} == {value}",
@@ -124,7 +133,7 @@ public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
                 "(" + String.Join(rule.Logic == Logic.AND ? " && " : " || ", rulePart) + ")";
         }
 
-        if (!ruleString.Any())
+        if (!ruleString.Any() || ruleString == "()")
             ruleString = "true";
         return ruleString;
     }

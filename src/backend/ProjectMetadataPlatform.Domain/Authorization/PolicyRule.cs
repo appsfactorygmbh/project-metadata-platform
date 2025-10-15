@@ -40,7 +40,7 @@ public record PolicyRule
         /// <summary>
         /// Logic Operator to combine rule elements.
         /// </summary>
-        public Logic Logic { get; set; }
+        public required Logic Logic { get; set; }
 
         /// <summary>
         /// Smallest Element of a policy rule.
@@ -60,7 +60,7 @@ public record PolicyRule
             /// <summary>
             /// Operation for the Condition.
             /// </summary>
-            public Operation Operation { get; set; }
+            public required Operation Operation { get; set; }
 
             /// <summary>
             /// Value to check against.

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using Casbin;
 using Casbin.Persist.Adapter.EFCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -240,6 +242,7 @@ public static class DependencyInjection
 
     /// <summary>
     /// Adds rule that authorizes admins for all operations.
+    /// It also reads rules from a file and adds it to the policy.
     /// </summary>
     public static void AddBasePolicy(this IServiceProvider serviceProvider)
     {
@@ -249,7 +252,7 @@ public static class DependencyInjection
         var enforcer = services.GetRequiredService<IEnforcer>();
         enforcer.LoadPolicy();
 
-        var test = enforcer.RemovePolicies(enforcer.GetPolicy());
+        enforcer.RemovePolicies(enforcer.GetPolicy());
         if (!enforcer.GetPolicy().Any())
         {
             enforcer.AddPolicy(
@@ -259,7 +262,14 @@ public static class DependencyInjection
                 "All",
                 "allow"
             );
-            enforcer.SavePolicy();
         }
+        var filepath = Environment.GetEnvironmentVariable("POLICY_RULES_FILE");
+        if (filepath != null && filepath.Any())
+        {
+            var rulesfile = File.ReadAllLines(filepath);
+            var rules = rulesfile.Select(rule => rule.Split(','));
+            enforcer.AddPolicies(rules);
+        }
+        enforcer.SavePolicy();
     }
 }

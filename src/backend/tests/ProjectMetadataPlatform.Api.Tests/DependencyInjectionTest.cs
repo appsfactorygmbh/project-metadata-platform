@@ -3,6 +3,7 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.LogExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 
@@ -31,6 +32,10 @@ public class DependencyInjectionTests
             Assert.That(serviceProvider.GetService<IExceptionHandler<LogException>>(), Is.Not.Null);
             Assert.That(
                 serviceProvider.GetService<IExceptionHandler<AuthException>>(),
+                Is.Not.Null
+            );
+            Assert.That(
+                serviceProvider.GetService<IExceptionHandler<AuthorizationException>>(),
                 Is.Not.Null
             );
         });
