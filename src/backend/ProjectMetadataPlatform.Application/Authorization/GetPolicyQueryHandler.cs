@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Casbin;
 using MediatR;
+using ProjectMetadataPlatform.Application.Interfaces;
 
 namespace ProjectMetadataPlatform.Application.Authorization;
 
@@ -12,13 +13,13 @@ namespace ProjectMetadataPlatform.Application.Authorization;
 /// </summary>
 public class GetPolicyQueryHandler : IRequestHandler<GetPolicyQuery, IEnumerable<string>>
 {
-    private readonly IEnforcer _enforcer;
+    private readonly IEnforcerWrapper _enforcer;
 
     /// <summary>
     /// Creates a new Instance of  <see cref="GetPolicyQueryHandler"/>"
     /// </summary>
     /// <param name="enforcer">Authorization Enforcer</param>
-    public GetPolicyQueryHandler(IEnforcer enforcer)
+    public GetPolicyQueryHandler(IEnforcerWrapper enforcer)
     {
         _enforcer = enforcer;
     }

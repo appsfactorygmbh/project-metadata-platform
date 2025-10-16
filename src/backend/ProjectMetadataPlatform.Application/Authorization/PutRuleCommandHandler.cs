@@ -18,7 +18,7 @@ namespace ProjectMetadataPlatform.Application.Authorization;
 /// </summary>
 public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
 {
-    private readonly IEnforcer _enforcer;
+    private readonly IEnforcerWrapper _enforcer;
 
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -30,7 +30,7 @@ public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
     /// <param name="logRepository">Log Repository</param>
     /// <param name="unitOfWork"></param>
     public PutRuleCommandHandler(
-        IEnforcer enforcer,
+        IEnforcerWrapper enforcer,
         ILogRepository logRepository,
         IUnitOfWork unitOfWork
     )
@@ -60,7 +60,7 @@ public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
             {
                 OldValue = "",
                 NewValue =
-                    $"{sub_rule} && {obj_rule} && {env_rule} && {request.PolicyRule.Action} && {request.PolicyRule.Effect.ToString().ToLower()}",
+                    $"{sub_rule} && {obj_rule} && {env_rule} && \"{request.PolicyRule.Action}\" && {request.PolicyRule.Effect.ToString().ToLower()}",
                 Property = nameof(request.PolicyRule),
             },
         };
@@ -75,8 +75,11 @@ public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
             request.PolicyRule.Action,
             request.PolicyRule.Effect.ToString().ToLower()
         );
-        result = result && await _enforcer.SavePolicyAsync();
-        await _unitOfWork.CompleteAsync();
+        if (result)
+        {
+            await _enforcer.SavePolicyAsync();
+            await _unitOfWork.CompleteAsync();
+        }
         return result;
     }
 
@@ -91,11 +94,11 @@ public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
         string target
     )
     {
-        var ruleString = "";
+        IEnumerable<string> ruleGroupStrings = [];
 
         foreach (var rule in ruleElementGroups)
         {
-            IEnumerable<string> rulePart = [];
+            IEnumerable<string> ruleElementStrings = [];
             foreach (var ruleElement in rule.RuleElements)
             {
                 var value = ruleElement.Value?.ToString() ?? "";
@@ -127,12 +130,16 @@ public class PutRuleCommandHandler : IRequestHandler<PutRuleCommand, bool>
                     Operation.EMPTY => $"!{target}.{ruleElement.Attribute}.Any()",
                     _ => "",
                 };
-                rulePart = rulePart.Append(ruleOperation);
+                ruleElementStrings = ruleElementStrings.Append(ruleOperation);
             }
-            ruleString +=
-                "(" + String.Join(rule.Logic == Logic.AND ? " && " : " || ", rulePart) + ")";
+            if (ruleElementStrings.Any())
+                ruleGroupStrings = ruleGroupStrings.Append(
+                    "("
+                        + String.Join(rule.Logic == Logic.AND ? " && " : " || ", ruleElementStrings)
+                        + ")"
+                );
         }
-
+        var ruleString = String.Join(" && ", ruleGroupStrings);
         if (!ruleString.Any() || ruleString == "()")
             ruleString = "true";
         return ruleString;

@@ -19,6 +19,7 @@ using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Infrastructure.Auth;
+using ProjectMetadataPlatform.Infrastructure.Authorization;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 using ProjectMetadataPlatform.Infrastructure.Logs;
 using ProjectMetadataPlatform.Infrastructure.Plugins;
@@ -49,7 +50,9 @@ public static class DependencyInjection
             provider.GetRequiredService<ProjectMetadataPlatformDbContext>()
         );
 
-        _ = serviceCollection.AddScoped<IEnforcer>(provider => provider.AddEnforcer());
+        _ = serviceCollection.AddScoped<IEnforcerWrapper>(provider => new EnforcerWrapper(
+            provider.AddEnforcer()
+        ));
         serviceCollection.ConfigureAuth(jwtBearerEvents);
         _ = serviceCollection.AddScoped<IPluginRepository, PluginRepository>();
         _ = serviceCollection.AddScoped<IProjectsRepository, ProjectsRepository>();
@@ -249,7 +252,7 @@ public static class DependencyInjection
         using var scope = serviceProvider.CreateScope();
         var services = scope.ServiceProvider;
 
-        var enforcer = services.GetRequiredService<IEnforcer>();
+        var enforcer = services.GetRequiredService<IEnforcerWrapper>();
         enforcer.LoadPolicy();
 
         enforcer.RemovePolicies(enforcer.GetPolicy());

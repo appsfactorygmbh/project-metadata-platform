@@ -49,7 +49,11 @@ public class AuthorizationControllerTest
             .ReturnsAsync(true);
 
         var request = new PutRuleRequest(
-            new Domain.Authorization.PolicyRule { Action = "aAction" }
+            new Domain.Authorization.PolicyRule
+            {
+                Action = "aAction",
+                Effect = Domain.Authorization.Effect.DENY,
+            }
         );
 
         var result = await _authorizationController.Put(request);
@@ -64,7 +68,11 @@ public class AuthorizationControllerTest
             .ReturnsAsync(false);
 
         var request = new PutRuleRequest(
-            new Domain.Authorization.PolicyRule { Action = "aAction" }
+            new Domain.Authorization.PolicyRule
+            {
+                Action = "aAction",
+                Effect = Domain.Authorization.Effect.ALLOW,
+            }
         );
 
         var result = await _authorizationController.Put(request);

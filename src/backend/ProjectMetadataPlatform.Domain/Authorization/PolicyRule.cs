@@ -30,7 +30,7 @@ public record PolicyRule
     /// <summary>
     /// Effect of the rule.
     /// </summary>
-    public Effect Effect { get; set; }
+    public required Effect Effect { get; set; }
 
     /// <summary>
     /// Record representing part of a policy rule.

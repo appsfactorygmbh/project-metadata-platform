@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
-namespace ProjectMetadataPlatform.Application.Authorization;
+namespace ProjectMetadataPlatform.Application.Authorization.Models;
 
 /// <summary>
 /// Suject requesting access to a ressource.
@@ -17,7 +17,7 @@ public class AuthorizationSubject
     /// <summary>
     /// List of special Jobtitles of the Subject.
     /// </summary>
-    public IEnumerable<string> JobTitle { get; }
+    public IEnumerable<string> JobTitles { get; }
 
     /// <summary>
     /// List of Business Units the subject belongs to.
@@ -55,7 +55,7 @@ public class AuthorizationSubject
     )
     {
         Email = email;
-        JobTitle = employeeType;
+        JobTitles = employeeType;
         BusinessUnits = jobTitle;
         Departments = departments;
         Teams = teams;

@@ -5,6 +5,7 @@ using Casbin;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Authorization;
+using ProjectMetadataPlatform.Application.Interfaces;
 
 namespace ProjectMetadataPlatform.Application.Tests.Authorization;
 
@@ -13,12 +14,12 @@ public class GetPolicyQueryHandlerTest
 {
     private GetPolicyQueryHandler _handler;
 
-    private Mock<IEnforcer> _enforcer;
+    private Mock<IEnforcerWrapper> _enforcer;
 
     [SetUp]
     public void Setup()
     {
-        _enforcer = new Mock<IEnforcer>();
+        _enforcer = new Mock<IEnforcerWrapper>();
         _handler = new GetPolicyQueryHandler(_enforcer.Object);
     }
 
@@ -47,7 +48,7 @@ public class GetPolicyQueryHandlerTest
             );
             Assert.That(
                 result.Last(),
-                Is.EqualTo("aCondition2 && anotherCondition2 && anAction2 && aEffect2")
+                Is.EqualTo("aCondition2 && anotherCondition2 && anAction2 && aEffect")
             );
         });
     }

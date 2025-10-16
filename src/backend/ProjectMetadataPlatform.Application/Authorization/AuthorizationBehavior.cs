@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -5,6 +6,8 @@ using System.Threading.Tasks;
 using Casbin;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using ProjectMetadataPlatform.Application.Authorization.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 
@@ -18,14 +21,17 @@ namespace ProjectMetadataPlatform.Application.Authorization;
 public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull
 {
-    private readonly IEnforcer _enforcer;
+    private readonly IEnforcerWrapper _enforcer;
 
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     /// <summary>
     /// Creates a new Instance of <see cref="AuthorizationBehavior{TRequest,TResponse}"/> "
     /// </summary>
-    public AuthorizationBehavior(IEnforcer enforcer, IHttpContextAccessor httpContextAccessor)
+    public AuthorizationBehavior(
+        IEnforcerWrapper enforcer,
+        IHttpContextAccessor httpContextAccessor
+    )
     {
         _enforcer = enforcer;
         _httpContextAccessor = httpContextAccessor;
@@ -47,11 +53,15 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
         var user = AuthorizationSubject.ConvertClaimsToAuthorizationSubject(
             _httpContextAccessor.HttpContext.User
         );
+        var environment = AuthorizationEnvironment.CreateAuthorizationEnvironment(
+            TimeProvider.System
+        );
+
         var requestType = typeof(TRequest).Name;
 
         if (requestType.EndsWith("Command"))
         {
-            await AuthorizeCommandAsync(user, request);
+            await AuthorizeCommandAsync(user, request, environment);
         }
 
         var response = await next();
@@ -64,11 +74,11 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
         {
             if (typeof(TResponse).Name == typeof(IEnumerable<>).Name)
             {
-                await AuthorizeGetAllAsync(user, response);
+                await AuthorizeGetAllAsync(user, response, environment);
             }
             else
             {
-                await AuthorizeGetAsync(user, response);
+                await AuthorizeGetAsync(user, response, environment);
             }
         }
 
@@ -82,10 +92,14 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
     /// <param name="request">Request to update or create an object.</param>
     /// <returns></returns>
     /// <exception cref="UnauthorizedException">Thrown if the access is unauthorized</exception>
-    private async Task AuthorizeCommandAsync(AuthorizationSubject user, TRequest request)
+    private async Task AuthorizeCommandAsync(
+        AuthorizationSubject user,
+        TRequest request,
+        AuthorizationEnvironment environment
+    )
     {
         await _enforcer.LoadPolicyAsync();
-        if (!await _enforcer.EnforceAsync(user, request, "", typeof(TRequest).Name))
+        if (!await _enforcer.EnforceAsync(user, request, environment, typeof(TRequest).Name))
         {
             throw new UnauthorizedException();
         }
@@ -99,10 +113,14 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
     /// <param name="response">Requested object.</param>
     /// <returns></returns>
     /// <exception cref="UnauthorizedException">Thrown if the access is unauthorized</exception>
-    private async Task AuthorizeGetAsync(AuthorizationSubject user, TResponse response)
+    private async Task AuthorizeGetAsync(
+        AuthorizationSubject user,
+        TResponse response,
+        AuthorizationEnvironment environment
+    )
     {
         await _enforcer.LoadPolicyAsync();
-        if (!await _enforcer.EnforceAsync(user, response, "", typeof(TRequest).Name))
+        if (!await _enforcer.EnforceAsync(user, response, environment, typeof(TRequest).Name))
         {
             throw new UnauthorizedException();
         }
@@ -116,13 +134,17 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
     /// <param name="response">Requested list of objects.</param>
     /// <returns></returns>
     /// <exception cref="UnauthorizedException">>Thrown if the access is unauthorized</exception>
-    private async Task AuthorizeGetAllAsync(AuthorizationSubject user, TResponse response)
+    private async Task AuthorizeGetAllAsync(
+        AuthorizationSubject user,
+        TResponse response,
+        AuthorizationEnvironment environment
+    )
     {
         await _enforcer.LoadPolicyAsync();
 
         foreach (dynamic responseobject in (IEnumerable)response!)
         {
-            if (!await EnforceDynamic(user, responseobject, typeof(TRequest).Name))
+            if (!await EnforceDynamic(user, responseobject, environment, typeof(TRequest).Name))
             {
                 throw new UnauthorizedException();
             }
@@ -132,9 +154,10 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
     private async Task<bool> EnforceDynamic<TResponseItem>(
         AuthorizationSubject user,
         TResponseItem responseItem,
+        AuthorizationEnvironment environment,
         string requestName
     )
     {
-        return await _enforcer.EnforceAsync(user, responseItem, "", requestName);
+        return await _enforcer.EnforceAsync(user, responseItem, environment, requestName);
     }
 }
