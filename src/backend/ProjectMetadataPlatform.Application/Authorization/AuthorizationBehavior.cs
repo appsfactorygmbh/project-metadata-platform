@@ -90,6 +90,7 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
     /// </summary>
     /// <param name="user">Subject requesting access.</param>
     /// <param name="request">Request to update or create an object.</param>
+    /// <param name="environment">Environment object for the current request</param>
     /// <returns></returns>
     /// <exception cref="UnauthorizedException">Thrown if the access is unauthorized</exception>
     private async Task AuthorizeCommandAsync(
@@ -111,6 +112,7 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
     /// </summary>
     /// <param name="user">Subject requesting access.</param>
     /// <param name="response">Requested object.</param>
+    /// <param name="environment">Environment object for the current request</param>
     /// <returns></returns>
     /// <exception cref="UnauthorizedException">Thrown if the access is unauthorized</exception>
     private async Task AuthorizeGetAsync(
@@ -132,6 +134,7 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
     /// </summary>
     /// <param name="user">Subject requesting access.</param>
     /// <param name="response">Requested list of objects.</param>
+    /// <param name="environment">Environment object for the current request</param>
     /// <returns></returns>
     /// <exception cref="UnauthorizedException">>Thrown if the access is unauthorized</exception>
     private async Task AuthorizeGetAllAsync(

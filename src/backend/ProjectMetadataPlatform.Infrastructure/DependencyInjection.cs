@@ -237,7 +237,6 @@ public static class DependencyInjection
         var dbContext = serviceProvider.GetRequiredService<CasbinDbContext>();
         dbContext.Database.EnsureCreated();
         var adapter = new EFCoreAdapter<int>(dbContext);
-        var test = AppContext.BaseDirectory;
         var e = new Enforcer($"{AppContext.BaseDirectory}/abac_model.conf", adapter);
         e.EnableAutoSave(false);
         return e;
