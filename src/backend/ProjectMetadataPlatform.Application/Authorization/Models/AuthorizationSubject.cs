@@ -46,8 +46,8 @@ public class AuthorizationSubject
 
     private AuthorizationSubject(
         string email,
-        IEnumerable<string> employeeType,
-        IEnumerable<string> jobTitle,
+        IEnumerable<string> jobtitle,
+        IEnumerable<string> buisinessunits,
         IEnumerable<string> departments,
         IEnumerable<string> teams,
         IEnumerable<string> teamSupport,
@@ -55,8 +55,8 @@ public class AuthorizationSubject
     )
     {
         Email = email;
-        JobTitles = employeeType;
-        BusinessUnits = jobTitle;
+        JobTitles = jobtitle;
+        BusinessUnits = buisinessunits;
         Departments = departments;
         Teams = teams;
         TeamSupport = teamSupport;
