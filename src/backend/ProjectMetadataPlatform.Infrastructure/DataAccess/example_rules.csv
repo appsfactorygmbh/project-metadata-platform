@@ -2,11 +2,17 @@
 true,true, "r.env.DateTime.TimeOfDay >= new TimeSpan(8,0,0) && r.env.DateTime.TimeOfDay <= new TimeSpan(22,0,0)", All, deny
 true, true, true, GetProjectIdBySlugQuery, allow
 
-true, r.obj.IsmsLevel == NORMAL, true, GetAllProjectsQuery, allow
-true, r.obj.IsmsLevel == NORMAL, true, GetProjectQuery, allow
-
-r.sub.JobTitles.Select(x => x.StartsWith("Head of") || x.StartsWith("Director of")).Any(), r.obj.IsmsLevel == HIGH || r.obj.IsmsLevel == VERY_HIGH, true, GetAllProjectsQuery, allow
-r.sub.JobTitles.Select(x => x.StartsWith("Head of") || x.StartsWith("Director of")).Any(), r.obj.IsmsLevel == HIGH || r.obj.IsmsLevel == VERY_HIGH, true, GetProjectQuery, allow
-
+true, r.obj.IsmsLevel == NORMAL && r.obj.IsArchived == false, true, GetAllProjectsQuery, allow
+true, r.obj.IsmsLevel == NORMAL && r.obj.IsArchived == false, true, GetProjectQuery, allow
+r.sub.JobTitles.Select(x => x.StartsWith(\"Head of\") || x.StartsWith("Director of\")).Any(), r.obj.IsmsLevel == HIGH || r.obj.IsmsLevel == VERY_HIGH || r.obj.IsArchived == true, true, GetAllProjectsQuery, allow
+r.sub.JobTitles.Select(x => x.StartsWith(\"Head of\") || x.StartsWith(\"Director of\")).Any(), r.obj.IsmsLevel == HIGH || r.obj.IsmsLevel == VERY_HIGH || r.obj.IsArchived == true, true, GetProjectQuery, allow
 r.sub.Teams.Contains(r.obj.Team.TeamName) || r.sub.TeamSupport.Contains(r.obj.Team.TeamName), true, true, GetAllProjectsQuery, allow
 r.sub.Teams.Contains(r.obj.Team.TeamName) || r.sub.TeamSupport.Contains(r.obj.Team.TeamName), true, true, GetProjectQuery, allow
+
+r.sub.JobTitles.Contains(\"PTL\"), r.obj.OfferId == null, true, CreateProjectCommand, allow
+r.sub.JobTitles.Contains(\"PTL\"),  r.obj.OfferId == null, true, UpdateProjectCommand, allow
+r.sub.JobTitles.Contains(\"PTL\"),  true, true, DeleProjectCommand, allow
+
+r.sub.BusinessUnits.Contains)(\"Accounting\"), r.obj.IsArchived == false, true, GetAllProjectsQuery, allow
+r.sub.BusinessUnits.Contains)(\"Accounting\"), r.obj.IsArchived == false, true, GetProjectQuery, allow
+r.sub.BusinessUnits.Contains(\"Accounting\"), r.obj.ProjectName == null && r.obj.Company == null && r.obj.CompanyState == null && r.obj.TeamId == null && r.obj.Plugins == null && r.obj.IsArchived == null, true, UpdateProjectCommand, allow
