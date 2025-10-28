@@ -36,7 +36,13 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, JwtTokens>
         {
             throw new AuthInvalidLoginCredentialsException();
         }
-        var stringToken = AccessTokenService.CreateAccessToken(request.Email);
+        var stringToken = AccessTokenService.CreateAccessToken(
+            request.Email,
+            request.JobTitle,
+            request.Department,
+            request.TeamSupport,
+            request.Company
+        );
         var refreshToken = Guid.NewGuid().ToString();
         if (await _authRepository.CheckRefreshTokenExists(request.Email))
         {

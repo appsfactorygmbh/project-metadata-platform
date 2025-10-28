@@ -39,7 +39,14 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<LoginResponse>> Post([FromBody] LoginRequest request)
     {
-        var query = new LoginQuery(request.Email, request.Password);
+        var query = new LoginQuery(
+            request.Email,
+            request.Password,
+            request.JobTitle,
+            request.Department,
+            request.TeamSupport,
+            request.Company
+        );
         var tokens = await _mediator.Send(query);
         return new LoginResponse(tokens.AccessToken!, tokens.RefreshToken!);
     }

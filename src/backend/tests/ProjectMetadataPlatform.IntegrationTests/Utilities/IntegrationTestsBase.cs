@@ -85,7 +85,12 @@ public class IntegrationTestsBase : IDisposable
     {
         var response = await client.PostAsJsonAsync(
             "/auth/basic",
-            new { Email = email, Password = password }
+            new
+            {
+                Email = email,
+                Password = password,
+                Department = "IT Admin",
+            }
         );
         response.EnsureSuccessStatusCode();
 

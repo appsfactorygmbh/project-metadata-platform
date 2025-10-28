@@ -15,8 +15,18 @@ public static class AccessTokenService
     /// Creates an access token for the given username.
     /// </summary>
     /// <param name="email">Email for user the access token belongs to</param>
+    /// <param name="jobTitle">Comma Separated List of JobTitles of the User</param>
+    /// <param name="department">Comma Separated List of Departments, Teams and BUs of the User</param>
+    /// <param name="teamSupport">Comma Separated List of Teams the User is a Supporter on</param>
+    /// <param name="company">Company of the User</param>
     /// <returns>access token value as a string</returns>
-    public static string CreateAccessToken(string email)
+    public static string CreateAccessToken(
+        string email = "",
+        string jobTitle = "",
+        string department = "",
+        string teamSupport = "",
+        string company = ""
+    )
     {
         var tokenDescriptorInformation = TokenDescriptorInformation.ReadFromEnvVariables();
         var issuerSigningKey = new SymmetricSecurityKey(
@@ -29,7 +39,13 @@ public static class AccessTokenService
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(
-                [new Claim(ClaimTypes.Email, email), new Claim("Department", "IT Admin")]
+                [
+                    new Claim(ClaimTypes.Email, email),
+                    new Claim("Department", department),
+                    new Claim("JobTitle", jobTitle),
+                    new Claim("TeamSupport", teamSupport),
+                    new Claim("Company", company),
+                ]
             ),
             Expires = DateTime.UtcNow.AddMinutes(expirationTime),
             Issuer = tokenDescriptorInformation.ValidIssuer,
