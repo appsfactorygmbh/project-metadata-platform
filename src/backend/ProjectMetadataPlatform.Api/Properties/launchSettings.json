@@ -24,6 +24,7 @@
         "AZURE_BACKEND_CLIENT_ID":"Placeholder",
         "AZURE_SCOPE":"Placeholder",
         "AZURE_FRONTEND_CLIENT_ID":"Placeholder",
+        "POLICY_RULES_FILE": "PlaceholderFilePath",
       }
     },
     "https": {

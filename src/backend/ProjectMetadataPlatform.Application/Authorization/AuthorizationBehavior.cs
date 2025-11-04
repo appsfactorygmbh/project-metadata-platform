@@ -3,13 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Casbin;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using ProjectMetadataPlatform.Application.Authorization.Models;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
-using ProjectMetadataPlatform.Domain.Errors.UserException;
 
 namespace ProjectMetadataPlatform.Application.Authorization;
 

@@ -33,7 +33,7 @@ public class AuthorizationModelsTest
             Assert.That(result.Email, Is.EqualTo("max.musterman@test.de"));
 
             Assert.That(result.JobTitles.Count, Is.EqualTo(2));
-            Assert.That(result.JobTitles.ToList()[0], Is.EqualTo("Head of BU"));
+            Assert.That(result.JobTitles.ToList()[0], Is.EqualTo("Head"));
             Assert.That(result.JobTitles.ToList()[1], Is.EqualTo("Manager"));
 
             Assert.That(result.BusinessUnits.Count, Is.EqualTo(1));

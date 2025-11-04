@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Casbin;
 using Casbin.Persist.Adapter.EFCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -237,7 +238,12 @@ public static class DependencyInjection
         var dbContext = serviceProvider.GetRequiredService<CasbinDbContext>();
         dbContext.Database.EnsureCreated();
         var adapter = new EFCoreAdapter<int>(dbContext);
-        var e = new Enforcer($"{AppContext.BaseDirectory}/abac_model.conf", adapter);
+        var e = new Enforcer(
+            $"{AppContext.BaseDirectory}/abac_model.conf",
+            adapter,
+            new EnforcerOptions { }
+        );
+
         e.EnableAutoSave(false);
         return e;
     }
@@ -258,7 +264,7 @@ public static class DependencyInjection
         if (!enforcer.GetPolicy().Any())
         {
             enforcer.AddPolicy(
-                "r.sub.Departments.Contains(\"IT Admin\") || r.sub.Departments.Contains(\"IT Development\") ",
+                "r.sub.Departments.Contains(\"IT Admin\") || r.sub.Departments.Contains(\"IT Development\")",
                 "true",
                 "true",
                 "All",
@@ -269,7 +275,11 @@ public static class DependencyInjection
         if (filepath != null && filepath.Any())
         {
             var rulesfile = File.ReadAllLines(filepath);
-            var rules = rulesfile.Select(rule => rule.Split(','));
+            var rules = rulesfile.Select(rule =>
+                Regex
+                    .Split(rule, @"(?<!\\),")
+                    .Select(ruleelement => ruleelement.Replace("\\,", ",").Trim())
+            );
             enforcer.AddPolicies(rules);
         }
         enforcer.SavePolicy();

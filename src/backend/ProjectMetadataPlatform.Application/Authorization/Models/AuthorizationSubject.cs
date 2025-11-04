@@ -75,7 +75,12 @@ public class AuthorizationSubject
         var jobTitle =
             user.FindFirstValue("JobTitle")
                 ?.Split(',')
-                .Select(x => x.Replace("[", "").Replace("]", "").Trim()) ?? [];
+                .Select(x => x.Replace("[", "").Replace("]", "").Trim())
+                .Select(x =>
+                    x.StartsWith("Head")
+                        ? x = "Head"
+                        : (x.StartsWith("Director") ? x = "Director" : x)
+                ) ?? [];
 
         var departmentsBUsTeams =
             user.FindFirstValue("Department")

@@ -91,7 +91,7 @@ public class AuthorizationBehaviorTest
                     It.Is<AuthorizationSubject>(subject =>
                         subject.Email == "max.musterman@test.de"
                         && subject.JobTitles.Count() == 2
-                        && subject.JobTitles.ToList()[0] == "Head of BU"
+                        && subject.JobTitles.ToList()[0] == "Head"
                         && subject.JobTitles.ToList()[1] == "Manager"
                         && subject.BusinessUnits.Count() == 1
                         && subject.BusinessUnits.ToList()[0] == "BU Media"
@@ -172,7 +172,7 @@ public class AuthorizationBehaviorTest
                     It.Is<AuthorizationSubject>(subject =>
                         subject.Email == "max.musterman@test.de"
                         && subject.JobTitles.Count() == 2
-                        && subject.JobTitles.ToList()[0] == "Head of BU"
+                        && subject.JobTitles.ToList()[0] == "Head"
                         && subject.JobTitles.ToList()[1] == "Manager"
                         && subject.BusinessUnits.Count() == 1
                         && subject.BusinessUnits.ToList()[0] == "BU Media"
@@ -245,7 +245,7 @@ public class AuthorizationBehaviorTest
                     It.Is<AuthorizationSubject>(subject =>
                         subject.Email == "max.musterman@test.de"
                         && subject.JobTitles.Count() == 2
-                        && subject.JobTitles.ToList()[0] == "Head of BU"
+                        && subject.JobTitles.ToList()[0] == "Head"
                         && subject.JobTitles.ToList()[1] == "Manager"
                         && subject.BusinessUnits.Count() == 1
                         && subject.BusinessUnits.ToList()[0] == "BU Media"
@@ -319,7 +319,7 @@ public class AuthorizationBehaviorTest
                     It.Is<AuthorizationSubject>(subject =>
                         subject.Email == "max.musterman@test.de"
                         && subject.JobTitles.Count() == 2
-                        && subject.JobTitles.ToList()[0] == "Head of BU"
+                        && subject.JobTitles.ToList()[0] == "Head"
                         && subject.JobTitles.ToList()[1] == "Manager"
                         && subject.BusinessUnits.Count() == 1
                         && subject.BusinessUnits.ToList()[0] == "BU Media"
@@ -395,7 +395,7 @@ public class AuthorizationBehaviorTest
                     It.Is<AuthorizationSubject>(subject =>
                         subject.Email == "max.musterman@test.de"
                         && subject.JobTitles.Count() == 2
-                        && subject.JobTitles.ToList()[0] == "Head of BU"
+                        && subject.JobTitles.ToList()[0] == "Head"
                         && subject.JobTitles.ToList()[1] == "Manager"
                         && subject.BusinessUnits.Count() == 1
                         && subject.BusinessUnits.ToList()[0] == "BU Media"
@@ -472,7 +472,7 @@ public class AuthorizationBehaviorTest
                     It.Is<AuthorizationSubject>(subject =>
                         subject.Email == "max.musterman@test.de"
                         && subject.JobTitles.Count() == 2
-                        && subject.JobTitles.ToList()[0] == "Head of BU"
+                        && subject.JobTitles.ToList()[0] == "Head"
                         && subject.JobTitles.ToList()[1] == "Manager"
                         && subject.BusinessUnits.Count() == 1
                         && subject.BusinessUnits.ToList()[0] == "BU Media"
