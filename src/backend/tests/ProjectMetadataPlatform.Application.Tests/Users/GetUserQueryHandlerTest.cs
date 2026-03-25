@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Tests.Users;
 
@@ -24,14 +25,14 @@ public class GetUserQueryHandlerTest
     [Test]
     public async Task HandleGetUserRequest_Test()
     {
-        var userResponseContent = new IdentityUser { Id = "1", Email = "Hinz" };
+        var userResponseContent = new ApplicationUser { Id = "1", Email = "Hinz" };
 
         _mockUserRepo.Setup(m => m.GetUserByIdAsync("1")).ReturnsAsync(userResponseContent);
         var request = new GetUserQuery("1");
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.InstanceOf<IdentityUser>());
+        Assert.That(result, Is.InstanceOf<ApplicationUser>());
         Assert.Multiple(() =>
         {
             Assert.That(result.Id, Is.EqualTo("1"));

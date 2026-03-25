@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -10,6 +10,7 @@ using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Users.Models;
 using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Api.Users;
 

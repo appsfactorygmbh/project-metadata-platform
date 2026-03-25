@@ -1,5 +1,6 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Users;
 
@@ -8,4 +9,4 @@ namespace ProjectMetadataPlatform.Application.Users;
 /// </summary>
 /// <param name="Email">The email of the user to retrieve.</param>
 /// <returns>The user with the specified email, or null if not found.</returns>
-public record GetUserByEmailQuery(string Email) : IRequest<IdentityUser>;
+public record GetUserByEmailQuery(string Email) : IRequest<ApplicationUser>;

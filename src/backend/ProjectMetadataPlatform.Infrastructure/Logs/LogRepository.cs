@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -11,6 +11,7 @@ using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
+using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 using static System.DateTimeOffset;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
@@ -106,7 +107,7 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
 
     ///  <inheritdoc />
     public async Task AddUserLogForCurrentUser(
-        IdentityUser affectedUser,
+        ApplicationUser affectedUser,
         Action action,
         List<LogChange> changes
     )
@@ -129,7 +130,7 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
         log.AffectedUserId = affectedUser.Id;
         log.AffectedUserEmail = _context
             .Entry(affectedUser)
-            .Property<string?>(nameof(IdentityUser.Email))
+            .Property<string?>(nameof(ApplicationUser.Email))
             .OriginalValue;
 
         _ = _context.Logs.Add(log);

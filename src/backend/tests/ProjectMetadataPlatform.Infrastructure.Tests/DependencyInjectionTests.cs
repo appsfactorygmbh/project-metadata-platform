@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 
 namespace ProjectMetadataPlatform.Infrastructure.Tests;
@@ -56,13 +57,13 @@ public class DependencyInjectionTests : TestsWithDatabase
     {
         const string hash = "hash";
         Environment.SetEnvironmentVariable("PMP_ADMIN_PASSWORD", envPassword);
-        var mockPasswordHasher = new Mock<IPasswordHasher<IdentityUser>>();
+        var mockPasswordHasher = new Mock<IPasswordHasher<ApplicationUser>>();
         mockPasswordHasher
-            .Setup(m => m.HashPassword(It.IsAny<IdentityUser>(), expectedPassword))
+            .Setup(m => m.HashPassword(It.IsAny<ApplicationUser>(), expectedPassword))
             .Returns(hash);
 
-        var mockUserManager = new Mock<UserManager<IdentityUser>>(
-            new Mock<IUserStore<IdentityUser>>().Object,
+        var mockUserManager = new Mock<UserManager<ApplicationUser>>(
+            new Mock<IUserStore<ApplicationUser>>().Object,
             null!,
             mockPasswordHasher.Object,
             null!,
@@ -73,13 +74,13 @@ public class DependencyInjectionTests : TestsWithDatabase
             null!
         );
         var services = new ServiceCollection();
-        services.AddScoped<UserManager<IdentityUser>>(_ => mockUserManager.Object);
+        services.AddScoped<UserManager<ApplicationUser>>(_ => mockUserManager.Object);
 
         var mockUnitOfWork = new Mock<IUnitOfWork>();
         services.AddScoped(_ => mockUnitOfWork.Object);
 
         mockUserManager
-            .Setup(m => m.CreateAsync(It.IsAny<IdentityUser>()))
+            .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Success);
 
         services.BuildServiceProvider().AddAdminUser();
@@ -87,7 +88,7 @@ public class DependencyInjectionTests : TestsWithDatabase
         mockPasswordHasher.Verify(
             m =>
                 m.HashPassword(
-                    It.Is<IdentityUser>(u =>
+                    It.Is<ApplicationUser>(u =>
                         u.UserName == "admin@admin.admin" && u.Email == "admin@admin.admin"
                     ),
                     expectedPassword
@@ -97,7 +98,7 @@ public class DependencyInjectionTests : TestsWithDatabase
         mockUserManager.Verify(
             m =>
                 m.CreateAsync(
-                    It.Is<IdentityUser>(u =>
+                    It.Is<ApplicationUser>(u =>
                         u.UserName == "admin@admin.admin"
                         && u.PasswordHash == hash
                         && u.Email == "admin@admin.admin"

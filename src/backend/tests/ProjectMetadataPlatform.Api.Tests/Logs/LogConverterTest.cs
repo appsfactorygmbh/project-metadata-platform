@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using NUnit.Framework;
@@ -6,6 +6,7 @@ using ProjectMetadataPlatform.Api.Logs;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
+using ProjectMetadataPlatform.Domain.Users;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
 namespace ProjectMetadataPlatform.Api.Tests.Logs;
@@ -29,7 +30,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Slartibartfast",
-            Author = new IdentityUser { Email = "Slartibartfast" },
+            Author = new ApplicationUser { Email = "Slartibartfast" },
             ProjectId = 43,
             ProjectName = "Norway",
             Action = Action.UPDATED_PROJECT,
@@ -65,7 +66,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "43",
             AuthorEmail = "Deep Thought",
-            Author = new IdentityUser { Email = "Deep Thought" },
+            Author = new ApplicationUser { Email = "Deep Thought" },
             ProjectId = 44,
             Project = new Project
             {
@@ -100,7 +101,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "44",
             AuthorEmail = "Infinite Improbability Drive",
-            Author = new IdentityUser { Email = "Infinite Improbability Drive" },
+            Author = new ApplicationUser { Email = "Infinite Improbability Drive" },
             ProjectId = 45,
             Project = new Project
             {
@@ -144,7 +145,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "45",
             AuthorEmail = "Ground",
-            Author = new IdentityUser { Email = "Ground" },
+            Author = new ApplicationUser { Email = "Ground" },
             ProjectId = 46,
             Project = new Project
             {
@@ -188,7 +189,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "46",
             AuthorEmail = "Prostetnic Vogon Jeltz",
-            Author = new IdentityUser { Email = "Prostetnic Vogon Jeltz" },
+            Author = new ApplicationUser { Email = "Prostetnic Vogon Jeltz" },
             ProjectId = 47,
             Project = new Project
             {
@@ -232,7 +233,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "47",
             AuthorEmail = "Earth",
-            Author = new IdentityUser { Email = "Earth" },
+            Author = new ApplicationUser { Email = "Earth" },
             ProjectId = 48,
             Project = new Project
             {
@@ -304,7 +305,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Infinite Improbability Drive",
-            Author = new IdentityUser { Email = "Infinite Improbability Drive" },
+            Author = new ApplicationUser { Email = "Infinite Improbability Drive" },
             Action = Action.ADDED_USER,
             Changes =
             [
@@ -334,7 +335,7 @@ public class LogConverterTest
     [Test]
     public void ConvertToLogUpdatedUser_Test()
     {
-        var gandalf = new IdentityUser { Email = "Gandalf" };
+        var gandalf = new ApplicationUser { Email = "Gandalf" };
         var log = new Log
         {
             Id = 42,
@@ -379,7 +380,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Ground",
-            Author = new IdentityUser { Email = "Ground" },
+            Author = new ApplicationUser { Email = "Ground" },
             Action = Action.REMOVED_USER,
             AffectedUserEmail = "whale@air.com",
             Changes =
@@ -411,7 +412,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Luke Skywalker",
-            Author = new IdentityUser { Email = "Luke Skywalker" },
+            Author = new ApplicationUser { Email = "Luke Skywalker" },
             Action = Action.REMOVED_PROJECT,
             ProjectName = "DeathStar",
         };
@@ -437,7 +438,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Chancellor Palpatine",
-            Author = new IdentityUser { Email = "Chancellor Palpatine" },
+            Author = new ApplicationUser { Email = "Chancellor Palpatine" },
             Action = Action.ADDED_GLOBAL_PLUGIN,
             Changes =
             [
@@ -473,7 +474,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Darth Sidious",
-            Author = new IdentityUser { Email = "Darth Sidious" },
+            Author = new ApplicationUser { Email = "Darth Sidious" },
             Action = Action.UPDATED_GLOBAL_PLUGIN,
             Changes =
             [
@@ -510,7 +511,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Zip",
-            Author = new IdentityUser { Email = "Zip" },
+            Author = new ApplicationUser { Email = "Zip" },
             Action = Action.ARCHIVED_GLOBAL_PLUGIN,
             GlobalPluginName = "Directory",
         };
@@ -533,7 +534,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Unzip",
-            Author = new IdentityUser { Email = "Unzip" },
+            Author = new ApplicationUser { Email = "Unzip" },
             Action = Action.UNARCHIVED_GLOBAL_PLUGIN,
             GlobalPluginName = "Directory",
         };
@@ -559,7 +560,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Recursively",
-            Author = new IdentityUser { Email = "Recursively" },
+            Author = new ApplicationUser { Email = "Recursively" },
             Action = Action.REMOVED_GLOBAL_PLUGIN,
             GlobalPluginName = "root",
         };
@@ -587,7 +588,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Recursively",
-            Author = new IdentityUser { Email = "Recursively" },
+            Author = new ApplicationUser { Email = "Recursively" },
             Action = Action.ADDED_TEAM,
             TeamName = "root",
             Changes =
@@ -630,7 +631,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Recursively",
-            Author = new IdentityUser { Email = "Recursively" },
+            Author = new ApplicationUser { Email = "Recursively" },
             Action = Action.UPDATED_TEAM,
             TeamName = "root",
             Changes =
@@ -667,7 +668,7 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Recursively",
-            Author = new IdentityUser { Email = "Recursively" },
+            Author = new ApplicationUser { Email = "Recursively" },
             Action = Action.REMOVED_TEAM,
             TeamName = "New_Team_Name",
         };

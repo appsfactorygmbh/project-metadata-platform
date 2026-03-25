@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +10,7 @@ using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.Users;
 using UserAction = ProjectMetadataPlatform.Domain.Logs.Action;
 
 namespace ProjectMetadataPlatform.Application.Tests.Users;
@@ -53,20 +54,20 @@ public class DeleteUserCommandHandlerTest
     [Test]
     public async Task DeleteUser_Test()
     {
-        var user = new IdentityUser { Id = "1", Email = "user@example.com" };
+        var user = new ApplicationUser { Id = "1", Email = "user@example.com" };
         _mockUsersRepo.Setup(m => m.GetUserByIdAsync("1")).ReturnsAsync(user);
         _mockUsersRepo.Setup(m => m.DeleteUserAsync(user)).ReturnsAsync(user);
         var result = await _handler.Handle(new DeleteUserCommand("1"), CancellationToken.None);
         _mockLogRepository.Verify(
             m =>
                 m.AddUserLogForCurrentUser(
-                    It.Is<IdentityUser>(u => u.Id == "1"),
+                    It.Is<ApplicationUser>(u => u.Id == "1"),
                     UserAction.REMOVED_USER,
                     It.Is<List<LogChange>>(changes =>
                         changes.Count == 1
                         && changes[0].OldValue == "user@example.com"
                         && changes[0].NewValue == ""
-                        && changes[0].Property == nameof(IdentityUser.Email)
+                        && changes[0].Property == nameof(ApplicationUser.Email)
                     )
                 ),
             Times.Once
@@ -89,7 +90,7 @@ public class DeleteUserCommandHandlerTest
     [Test]
     public void DeleteUser_SelfDeletionAttempt_Test()
     {
-        var user = new IdentityUser { Email = "camo", Id = "1" };
+        var user = new ApplicationUser { Email = "camo", Id = "1" };
 
         _mockUsersRepo.Setup(m => m.GetUserByIdAsync("1")).ReturnsAsync(user);
         _mockUsersRepo.Setup(m => m.GetUserByEmailAsync("camo")).ReturnsAsync(user);

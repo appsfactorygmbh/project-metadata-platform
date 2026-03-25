@@ -15,6 +15,7 @@ using Polly.Registry;
 using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.Auth;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 using ProjectMetadataPlatform.Infrastructure.Logs;
@@ -52,8 +53,8 @@ public static class DependencyInjection
         _ = serviceCollection.AddScoped<IUsersRepository, UsersRepository>();
         _ = serviceCollection.AddScoped<ITeamRepository, TeamRepository>();
         _ = serviceCollection.AddScoped<
-            IPasswordHasher<IdentityUser>,
-            PasswordHasher<IdentityUser>
+            IPasswordHasher<ApplicationUser>,
+            PasswordHasher<ApplicationUser>
         >();
 
         _ = serviceCollection.AddScoped<ILogRepository, LogRepository>();
@@ -86,10 +87,10 @@ public static class DependencyInjection
         JwtBearerEvents jwtBearerEvents
     )
     {
-        _ = serviceCollection.AddScoped<IUserStore<IdentityUser>>(provider =>
+        _ = serviceCollection.AddScoped<IUserStore<ApplicationUser>>(provider =>
         {
             var userStore = new UserStore<
-                IdentityUser,
+                ApplicationUser,
                 IdentityRole,
                 ProjectMetadataPlatformDbContext,
                 string
@@ -101,7 +102,7 @@ public static class DependencyInjection
         });
 
         _ = serviceCollection
-            .AddIdentity<IdentityUser, IdentityRole>()
+            .AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ProjectMetadataPlatformDbContext>()
             .AddDefaultTokenProviders();
 
@@ -170,14 +171,14 @@ public static class DependencyInjection
 
         using var scope = serviceProvider.CreateScope();
 
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
         if (userManager.Users.Any())
         {
             return;
         }
 
-        var user = new IdentityUser
+        var user = new ApplicationUser
         {
             UserName = "admin@admin.admin",
             Email = "admin@admin.admin",

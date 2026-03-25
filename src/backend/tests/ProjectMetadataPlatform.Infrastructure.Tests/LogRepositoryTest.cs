@@ -12,6 +12,7 @@ using ProjectMetadataPlatform.Domain.Errors.LogExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
+using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 using ProjectMetadataPlatform.Infrastructure.Logs;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
@@ -65,7 +66,7 @@ public class LogRepositoryTest : TestsWithDatabase
         };
         await _context.Projects.AddAsync(exampleProject);
 
-        var user = new IdentityUser { Id = "42", Email = "camo" };
+        var user = new ApplicationUser { Id = "42", Email = "camo" };
         await _context.Users.AddAsync(user);
 
         await _context.SaveChangesAsync();
@@ -121,9 +122,9 @@ public class LogRepositoryTest : TestsWithDatabase
     [Test]
     public async Task UpdateUserLogTest()
     {
-        var author = new IdentityUser { Id = "42", Email = "camo" };
+        var author = new ApplicationUser { Id = "42", Email = "camo" };
 
-        var affectedUser = new IdentityUser { Id = "12", Email = "gagarin@vostok.su" };
+        var affectedUser = new ApplicationUser { Id = "12", Email = "gagarin@vostok.su" };
         await _context.Users.AddAsync(author);
         await _context.Users.AddAsync(affectedUser);
 
@@ -172,7 +173,7 @@ public class LogRepositoryTest : TestsWithDatabase
     [Test]
     public async Task UpdateGlobalPluginLogTest()
     {
-        var author = new IdentityUser { Id = "42", Email = "camo" };
+        var author = new ApplicationUser { Id = "42", Email = "camo" };
         await _context.Users.AddAsync(author);
 
         var globalPlugin = new Plugin { PluginName = "Canadarm2", Id = 13 };
@@ -240,7 +241,7 @@ public class LogRepositoryTest : TestsWithDatabase
         };
         await _context.Projects.AddAsync(exampleProject);
 
-        var user = new IdentityUser { Id = "42", Email = "camo" };
+        var user = new ApplicationUser { Id = "42", Email = "camo" };
 
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
@@ -275,9 +276,9 @@ public class LogRepositoryTest : TestsWithDatabase
     [TestCase(Action.REMOVED_GLOBAL_PLUGIN)]
     public async Task UserLogTest_RejectsActionNotInWhitelist(Action action)
     {
-        var author = new IdentityUser { Id = "42", Email = "camo" };
+        var author = new ApplicationUser { Id = "42", Email = "camo" };
 
-        var affectedUser = new IdentityUser { Id = "12", Email = "gagarin@vostok.su" };
+        var affectedUser = new ApplicationUser { Id = "12", Email = "gagarin@vostok.su" };
         await _context.Users.AddAsync(author);
         await _context.Users.AddAsync(affectedUser);
 
@@ -311,7 +312,7 @@ public class LogRepositoryTest : TestsWithDatabase
     [TestCase(Action.REMOVED_PROJECT)]
     public async Task GlobalPluginLogTest_RejectsActionNotInWhitelist(Action action)
     {
-        var author = new IdentityUser { Id = "42", Email = "camo" };
+        var author = new ApplicationUser { Id = "42", Email = "camo" };
         await _context.Users.AddAsync(author);
 
         var globalPlugin = new Plugin { PluginName = "Canadarm2", Id = 13 };
@@ -642,7 +643,7 @@ public class LogRepositoryTest : TestsWithDatabase
             ],
         };
 
-        var exampleUser = new IdentityUser
+        var exampleUser = new ApplicationUser
         {
             Id = "Newton",
             Email = "newton@royalastronomicalsociety.co.uk",

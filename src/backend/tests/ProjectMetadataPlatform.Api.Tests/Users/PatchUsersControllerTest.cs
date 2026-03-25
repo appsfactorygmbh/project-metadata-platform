@@ -9,6 +9,7 @@ using ProjectMetadataPlatform.Api.Users;
 using ProjectMetadataPlatform.Api.Users.Models;
 using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Api.Tests.Users;
 
@@ -27,7 +28,7 @@ public class PatchUsersControllerTest
     [Test]
     public async Task PatchUser_Test()
     {
-        var user = new IdentityUser
+        var user = new ApplicationUser
         {
             Id = "42",
             Email = "dr@core.fr",

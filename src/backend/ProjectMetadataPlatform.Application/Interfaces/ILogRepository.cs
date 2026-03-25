@@ -1,10 +1,11 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
 
@@ -30,7 +31,7 @@ public interface ILogRepository
     /// <param name="changes">A list of the changed properties.</param>
     /// <returns></returns>
     Task AddUserLogForCurrentUser(
-        IdentityUser affectedUser,
+        ApplicationUser affectedUser,
         Action action,
         List<LogChange> changes
     );

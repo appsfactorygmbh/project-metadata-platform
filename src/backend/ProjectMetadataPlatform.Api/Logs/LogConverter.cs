@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Api.Logs.Models;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.Users;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
 namespace ProjectMetadataPlatform.Api.Logs;
@@ -304,7 +305,7 @@ public class LogConverter : ILogConverter
             log.Changes!.Select(change =>
                 change.Property switch
                 {
-                    nameof(IdentityUser.PasswordHash) => "changed password",
+                    nameof(ApplicationUser.PasswordHash) => "changed password",
                     _ => $"set {change.Property} from {change.OldValue} to {change.NewValue}",
                 }
             )

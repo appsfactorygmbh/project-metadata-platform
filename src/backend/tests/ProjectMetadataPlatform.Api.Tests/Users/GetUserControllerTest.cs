@@ -10,6 +10,7 @@ using ProjectMetadataPlatform.Api.Users;
 using ProjectMetadataPlatform.Api.Users.Models;
 using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Api.Tests.Users;
 
@@ -29,7 +30,7 @@ public class GetUserControllerTest
     [Test]
     public async Task Get_ReturnsUser()
     {
-        var user = new IdentityUser { Id = "1", Email = "Hinz" };
+        var user = new ApplicationUser { Id = "1", Email = "Hinz" };
         _mediator
             .Setup(m => m.Send(It.IsAny<GetUserQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);

@@ -9,6 +9,7 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.Users;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
 namespace ProjectMetadataPlatform.Application.Tests.Users;
@@ -38,13 +39,13 @@ public class CreateUserCommandHandlerTest
     public async Task CreateUser_Test()
     {
         _mockUsersRepo
-            .Setup(m => m.CreateUserAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
+            .Setup(m => m.CreateUserAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync("1");
         _mockUnitOfWork.Setup(m => m.CompleteAsync()).Returns(Task.CompletedTask);
         _mockLogRepo
             .Setup(m =>
                 m.AddUserLogForCurrentUser(
-                    It.IsAny<IdentityUser>(),
+                    It.IsAny<ApplicationUser>(),
                     It.IsAny<Action>(),
                     It.IsAny<List<LogChange>>()
                 )
@@ -63,13 +64,13 @@ public class CreateUserCommandHandlerTest
     public void CreateUser_ThrowsException_Test()
     {
         _mockUsersRepo
-            .Setup(m => m.CreateUserAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
+            .Setup(m => m.CreateUserAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ThrowsAsync(new Exception("Error"));
         _mockUnitOfWork.Setup(m => m.CompleteAsync()).Returns(Task.CompletedTask);
         _mockLogRepo
             .Setup(m =>
                 m.AddUserLogForCurrentUser(
-                    It.IsAny<IdentityUser>(),
+                    It.IsAny<ApplicationUser>(),
                     It.IsAny<Action>(),
                     It.IsAny<List<LogChange>>()
                 )
@@ -88,7 +89,7 @@ public class CreateUserCommandHandlerTest
     public async Task CreateUserLog_Test()
     {
         _mockUsersRepo
-            .Setup(m => m.CreateUserAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
+            .Setup(m => m.CreateUserAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync("1");
         _mockUnitOfWork.Setup(m => m.CompleteAsync()).Returns(Task.CompletedTask);
         await _handler.Handle(
@@ -99,7 +100,7 @@ public class CreateUserCommandHandlerTest
         _mockLogRepo.Verify(
             m =>
                 m.AddUserLogForCurrentUser(
-                    It.Is<IdentityUser>(user =>
+                    It.Is<ApplicationUser>(user =>
                         user.Email == "thetruestrepairmanwillrepairmen@greendale.edu"
                     ),
                     Action.ADDED_USER,

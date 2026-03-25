@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
+using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 using ProjectMetadataPlatform.Infrastructure.Users;
 
@@ -16,8 +17,8 @@ public class UsersRepositoryTest : TestsWithDatabase
     [SetUp]
     public void Setup()
     {
-        _mockUserManager = new Mock<UserManager<IdentityUser>>(
-            new Mock<IUserStore<IdentityUser>>().Object,
+        _mockUserManager = new Mock<UserManager<ApplicationUser>>(
+            new Mock<IUserStore<ApplicationUser>>().Object,
             null!,
             null!,
             null!,
@@ -35,7 +36,7 @@ public class UsersRepositoryTest : TestsWithDatabase
 
     private ProjectMetadataPlatformDbContext _context;
     private UsersRepository _repository;
-    private Mock<UserManager<IdentityUser>> _mockUserManager;
+    private Mock<UserManager<ApplicationUser>> _mockUserManager;
 
     [TearDown]
     public void TearDown()
@@ -48,10 +49,10 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task CreateUserAsync_Test()
     {
-        var user = new IdentityUser { Email = "Example Email" };
+        var user = new ApplicationUser { Email = "Example Email" };
         const string password = "test";
         _mockUserManager
-            .Setup(m => m.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
+            .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
         var id = await _repository.CreateUserAsync(user, password);
         Assert.That(id, Is.EqualTo("1"));
@@ -60,11 +61,11 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void CreateUserAsync_InvalidPassword_Test()
     {
-        _context.Users.Add(new IdentityUser { Email = "Example Email", Id = "1" });
-        var user = new IdentityUser { Email = "Example Email" };
+        _context.Users.Add(new ApplicationUser { Email = "Example Email", Id = "1" });
+        var user = new ApplicationUser { Email = "Example Email" };
         const string password = "test";
         _mockUserManager
-            .Setup(m => m.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
+            .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed());
 
         Assert.ThrowsAsync<UserCouldNotBeCreatedException>(() =>
@@ -75,11 +76,11 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void CreateUserAsync_DuplicateEmail_Test()
     {
-        _context.Users.Add(new IdentityUser { Email = "Example Email", Id = "1" });
-        var user = new IdentityUser { Email = "Example Email" };
+        _context.Users.Add(new ApplicationUser { Email = "Example Email", Id = "1" });
+        var user = new ApplicationUser { Email = "Example Email" };
         const string password = "test";
         _mockUserManager
-            .Setup(m => m.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
+            .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateUserName" }));
 
         var exception = Assert.ThrowsAsync<UserAlreadyExistsException>(() =>
@@ -99,7 +100,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetAllUsersAsync_Test()
     {
-        var usersResponseContent = new List<IdentityUser>
+        var usersResponseContent = new List<ApplicationUser>
         {
             new() { Id = "1", Email = "Hinz" },
         };
@@ -120,13 +121,13 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetUserByIdAsync_Test()
     {
-        var user = new IdentityUser { Id = "1", Email = "Hinz" };
+        var user = new ApplicationUser { Id = "1", Email = "Hinz" };
         _mockUserManager.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
 
         var result = await _repository.GetUserByIdAsync("1");
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.InstanceOf<IdentityUser>());
+        Assert.That(result, Is.InstanceOf<ApplicationUser>());
         Assert.Multiple(() =>
         {
             Assert.That(result.Id, Is.EqualTo("1"));
@@ -146,7 +147,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetUserByEmailAsync_Test()
     {
-        var user = new IdentityUser { Email = "bigboss@bankofevil.com", Id = "1" };
+        var user = new ApplicationUser { Email = "bigboss@bankofevil.com", Id = "1" };
         _mockUserManager.Setup(m => m.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
         var result = await _repository.GetUserByEmailAsync("bigboss@bankofevil.com");
         Assert.That(result, Is.EqualTo(user));
@@ -165,9 +166,9 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task StoreUser_CreatesUser_Test()
     {
-        var user = new IdentityUser { Id = "", Email = "notblackmidi@geordiegreep.com" };
+        var user = new ApplicationUser { Id = "", Email = "notblackmidi@geordiegreep.com" };
         _mockUserManager
-            .Setup(m => m.CreateAsync(It.IsAny<IdentityUser>()))
+            .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Success);
         var result = await _repository.StoreUser(user);
 
@@ -179,9 +180,9 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task StoreUser_UpdatesUser_Test()
     {
-        var user = new IdentityUser { Id = "13", Email = "emily.armstrong@linkinpark.leipzig.de" };
+        var user = new ApplicationUser { Id = "13", Email = "emily.armstrong@linkinpark.leipzig.de" };
         _mockUserManager
-            .Setup(m => m.UpdateAsync(It.IsAny<IdentityUser>()))
+            .Setup(m => m.UpdateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Success);
         var result = await _repository.StoreUser(user);
 
@@ -193,10 +194,10 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void StoreUserAsync_Create_DuplicateEmail_Test()
     {
-        _context.Users.Add(new IdentityUser { Email = "Example Email", Id = "1" });
-        var user = new IdentityUser { Email = "Example Email", Id = "" };
+        _context.Users.Add(new ApplicationUser { Email = "Example Email", Id = "1" });
+        var user = new ApplicationUser { Email = "Example Email", Id = "" };
         _mockUserManager
-            .Setup(m => m.CreateAsync(It.IsAny<IdentityUser>()))
+            .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateUserName" }));
 
         Assert.ThrowsAsync<UserAlreadyExistsException>(() => _repository.StoreUser(user));
@@ -205,10 +206,10 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void StoreUserAsync_Update_DuplicateEmail_Test()
     {
-        _context.Users.Add(new IdentityUser { Email = "Example Email", Id = "1" });
-        var user = new IdentityUser { Email = "Example Email", Id = "5" };
+        _context.Users.Add(new ApplicationUser { Email = "Example Email", Id = "1" });
+        var user = new ApplicationUser { Email = "Example Email", Id = "5" };
         _mockUserManager
-            .Setup(m => m.UpdateAsync(It.IsAny<IdentityUser>()))
+            .Setup(m => m.UpdateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateUserName" }));
 
         Assert.ThrowsAsync<UserAlreadyExistsException>(() => _repository.StoreUser(user));
@@ -217,7 +218,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task DeleteUserAsync_Test()
     {
-        var user = new IdentityUser { Id = "1" };
+        var user = new ApplicationUser { Id = "1" };
         _mockUserManager.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
         _mockUserManager.Setup(m => m.DeleteAsync(user)).ReturnsAsync(IdentityResult.Success);
 
@@ -231,7 +232,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void DeleteUser_Failed_Test()
     {
-        var user = new IdentityUser { Id = "1" };
+        var user = new ApplicationUser { Id = "1" };
         _mockUserManager.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
         _mockUserManager.Setup(m => m.DeleteAsync(user)).ReturnsAsync(IdentityResult.Failed());
 

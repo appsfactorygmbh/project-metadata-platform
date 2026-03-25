@@ -1,20 +1,21 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Users;
 
 /// <summary>
 /// Handles the command to patch user information.
 /// </summary>
-public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, IdentityUser>
+public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, ApplicationUser>
 {
     private readonly IUsersRepository _usersRepository;
-    private readonly IPasswordHasher<IdentityUser> _passwordHasher;
+    private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogRepository _logRepository;
 
@@ -27,7 +28,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Identit
     /// <param name="logRepository">The repository for logging user actions.</param>
     public PatchUserCommandHandler(
         IUsersRepository usersRepository,
-        IPasswordHasher<IdentityUser> passwordHasher,
+        IPasswordHasher<ApplicationUser> passwordHasher,
         IUnitOfWork unitOfWork,
         ILogRepository logRepository
     )
@@ -44,7 +45,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Identit
     /// <param name="request">The command containing the user information to be patched.</param>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     /// <returns>The updated user information, or null if the user was not found.</returns>
-    public async Task<IdentityUser> Handle(
+    public async Task<ApplicationUser> Handle(
         PatchUserCommand request,
         CancellationToken cancellationToken
     )
@@ -82,7 +83,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Identit
                 {
                     OldValue = oldEmail,
                     NewValue = request.Email,
-                    Property = nameof(IdentityUser.Email),
+                    Property = nameof(ApplicationUser.Email),
                 }
             );
         }
@@ -94,7 +95,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Identit
                 {
                     OldValue = "old password was changed",
                     NewValue = "new password *****",
-                    Property = nameof(IdentityUser.PasswordHash),
+                    Property = nameof(ApplicationUser.PasswordHash),
                 }
             );
         }

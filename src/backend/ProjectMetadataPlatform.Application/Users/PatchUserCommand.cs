@@ -1,5 +1,6 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Users;
 
@@ -10,4 +11,4 @@ namespace ProjectMetadataPlatform.Application.Users;
 /// <param name="Email">The new email address of the user, or null to leave unchanged.</param>
 /// <param name="Password">The new password of the user, or null to leave unchanged.</param>
 public record PatchUserCommand(string Id, string? Email = null, string? Password = null)
-    : IRequest<IdentityUser>;
+    : IRequest<ApplicationUser>;

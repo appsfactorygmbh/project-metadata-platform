@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Tests.Users;
 
@@ -30,9 +31,9 @@ public class GetAllUsersQueryHandlerTest
         var request = new GetAllUsersQuery();
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
-        IdentityUser[] resultArray = result as IdentityUser[] ?? result.ToArray();
+        ApplicationUser[] resultArray = result as ApplicationUser[] ?? result.ToArray();
         Assert.That(resultArray, Is.Not.Null);
-        Assert.That(resultArray, Is.InstanceOf<IEnumerable<IdentityUser>>());
+        Assert.That(resultArray, Is.InstanceOf<IEnumerable<ApplicationUser>>());
 
         Assert.That(resultArray, Has.Length.EqualTo(0));
     }
@@ -40,7 +41,7 @@ public class GetAllUsersQueryHandlerTest
     [Test]
     public async Task HandleGetAllUsersRequest_Test()
     {
-        var usersResponseContent = new List<IdentityUser>
+        var usersResponseContent = new List<ApplicationUser>
         {
             new() { Id = "1", Email = "Hinz" },
         };
@@ -50,7 +51,7 @@ public class GetAllUsersQueryHandlerTest
         var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).ToList();
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.InstanceOf<IEnumerable<IdentityUser>>());
+        Assert.That(result, Is.InstanceOf<IEnumerable<ApplicationUser>>());
 
         var resultArray = result.ToArray();
         Assert.That(resultArray, Has.Length.EqualTo(1));

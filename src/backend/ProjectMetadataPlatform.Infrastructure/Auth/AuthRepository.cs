@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 using ProjectMetadataPlatform.Infrastructure.Projects;
 
@@ -16,7 +17,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Auth;
 /// </summary>
 public class AuthRepository : RepositoryBase<RefreshToken>, IAuthRepository
 {
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ProjectMetadataPlatformDbContext _context;
 
     /// <summary>
@@ -26,7 +27,7 @@ public class AuthRepository : RepositoryBase<RefreshToken>, IAuthRepository
     /// <param name="userManager"></param>
     public AuthRepository(
         ProjectMetadataPlatformDbContext dbContext,
-        UserManager<IdentityUser> userManager
+        UserManager<ApplicationUser> userManager
     )
         : base(dbContext)
     {

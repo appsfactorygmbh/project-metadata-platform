@@ -29,9 +29,9 @@ public class LogsExceptionHandlerTest
     [TestCase(Action.ARCHIVED_GLOBAL_PLUGIN, "Plugin")]
     [TestCase(Action.UNARCHIVED_GLOBAL_PLUGIN, "Plugin")]
     [TestCase(Action.REMOVED_GLOBAL_PLUGIN, "Plugin")]
-    [TestCase(Action.ADDED_USER, "IdentityUser")]
-    [TestCase(Action.UPDATED_USER, "IdentityUser")]
-    [TestCase(Action.REMOVED_USER, "IdentityUser")]
+    [TestCase(Action.ADDED_USER, "ApplicationUser")]
+    [TestCase(Action.UPDATED_USER, "ApplicationUser")]
+    [TestCase(Action.REMOVED_USER, "ApplicationUser")]
     public void Handle_LogsNotSupportedAction_ReturnsInternalServerError(
         Action action,
         string logType

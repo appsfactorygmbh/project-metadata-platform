@@ -1,5 +1,6 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Users;
 
@@ -8,4 +9,4 @@ namespace ProjectMetadataPlatform.Application.Users;
 /// </summary>
 /// <param name="Id">The unique identifier of the user to be deleted.</param>
 /// <returns>A task that represents the asynchronous operation. The task result contains the deleted user if the operation was successful, otherwise null.</returns>
-public record DeleteUserCommand(string Id) : IRequest<IdentityUser>;
+public record DeleteUserCommand(string Id) : IRequest<ApplicationUser>;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using MediatR;
@@ -11,6 +11,7 @@ using ProjectMetadataPlatform.Api.Users;
 using ProjectMetadataPlatform.Api.Users.Models;
 using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Api.Tests.Users;
 
@@ -27,7 +28,7 @@ public class GetMeControllerTest
     [Test]
     public async Task getMe_Test()
     {
-        var user = new IdentityUser { Id = "42", Email = "moonstealer@gruhq.com" };
+        var user = new ApplicationUser { Id = "42", Email = "moonstealer@gruhq.com" };
 
         _mediator
             .Setup(m =>

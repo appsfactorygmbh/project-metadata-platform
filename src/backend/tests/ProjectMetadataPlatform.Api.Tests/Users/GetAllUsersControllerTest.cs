@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,6 +11,7 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Users;
 using ProjectMetadataPlatform.Api.Users.Models;
 using ProjectMetadataPlatform.Application.Users;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Api.Tests.Users;
 
@@ -30,10 +31,10 @@ public class GetAllUsersControllerTest
     [Test]
     public async Task Get_ReturnsAllUsers()
     {
-        var users = new List<IdentityUser>
+        var users = new List<ApplicationUser>
         {
-            new IdentityUser { Id = "1", Email = "Hinz" },
-            new IdentityUser { Id = "2", Email = "Kunz" },
+            new ApplicationUser { Id = "1", Email = "Hinz" },
+            new ApplicationUser { Id = "2", Email = "Kunz" },
         };
         _mediator
             .Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>()))
@@ -62,7 +63,7 @@ public class GetAllUsersControllerTest
     {
         _mediator
             .Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<IdentityUser>());
+            .ReturnsAsync(new List<ApplicationUser>());
 
         var result = await _controller.Get();
 
