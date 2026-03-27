@@ -183,6 +183,8 @@ public static class DependencyInjection
             UserName = "admin@admin.admin",
             Email = "admin@admin.admin",
             Id = "1",
+            IsActive = true,
+            IsScimProvisioned = false,
         };
         user.PasswordHash = userManager.PasswordHasher.HashPassword(user, password);
         var identityResult = userManager.CreateAsync(user).Result;

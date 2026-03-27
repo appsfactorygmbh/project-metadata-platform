@@ -25,7 +25,13 @@ public class GetUserQueryHandlerTest
     [Test]
     public async Task HandleGetUserRequest_Test()
     {
-        var userResponseContent = new ApplicationUser { Id = "1", Email = "Hinz" };
+        var userResponseContent = new ApplicationUser
+        {
+            Id = "1",
+            Email = "Hinz",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
 
         _mockUserRepo.Setup(m => m.GetUserByIdAsync("1")).ReturnsAsync(userResponseContent);
         var request = new GetUserQuery("1");

@@ -49,7 +49,12 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task CreateUserAsync_Test()
     {
-        var user = new ApplicationUser { Email = "Example Email" };
+        var user = new ApplicationUser
+        {
+            Email = "Example Email",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         const string password = "test";
         _mockUserManager
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
@@ -61,8 +66,21 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void CreateUserAsync_InvalidPassword_Test()
     {
-        _context.Users.Add(new ApplicationUser { Email = "Example Email", Id = "1" });
-        var user = new ApplicationUser { Email = "Example Email" };
+        _context.Users.Add(
+            new ApplicationUser
+            {
+                Email = "Example Email",
+                Id = "1",
+                IsActive = true,
+                IsScimProvisioned = false,
+            }
+        );
+        var user = new ApplicationUser
+        {
+            Email = "Example Email",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         const string password = "test";
         _mockUserManager
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
@@ -76,8 +94,21 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void CreateUserAsync_DuplicateEmail_Test()
     {
-        _context.Users.Add(new ApplicationUser { Email = "Example Email", Id = "1" });
-        var user = new ApplicationUser { Email = "Example Email" };
+        _context.Users.Add(
+            new ApplicationUser
+            {
+                Email = "Example Email",
+                Id = "1",
+                IsActive = true,
+                IsScimProvisioned = false,
+            }
+        );
+        var user = new ApplicationUser
+        {
+            Email = "Example Email",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         const string password = "test";
         _mockUserManager
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
@@ -102,7 +133,13 @@ public class UsersRepositoryTest : TestsWithDatabase
     {
         var usersResponseContent = new List<ApplicationUser>
         {
-            new() { Id = "1", Email = "Hinz" },
+            new()
+            {
+                Id = "1",
+                Email = "Hinz",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
         };
 
         _context.Users.AddRange(usersResponseContent);
@@ -121,7 +158,13 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetUserByIdAsync_Test()
     {
-        var user = new ApplicationUser { Id = "1", Email = "Hinz" };
+        var user = new ApplicationUser
+        {
+            Id = "1",
+            Email = "Hinz",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         _mockUserManager.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
 
         var result = await _repository.GetUserByIdAsync("1");
@@ -147,7 +190,13 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetUserByEmailAsync_Test()
     {
-        var user = new ApplicationUser { Email = "bigboss@bankofevil.com", Id = "1" };
+        var user = new ApplicationUser
+        {
+            Email = "bigboss@bankofevil.com",
+            Id = "1",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         _mockUserManager.Setup(m => m.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
         var result = await _repository.GetUserByEmailAsync("bigboss@bankofevil.com");
         Assert.That(result, Is.EqualTo(user));
@@ -166,7 +215,13 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task StoreUser_CreatesUser_Test()
     {
-        var user = new ApplicationUser { Id = "", Email = "notblackmidi@geordiegreep.com" };
+        var user = new ApplicationUser
+        {
+            Id = "",
+            Email = "notblackmidi@geordiegreep.com",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         _mockUserManager
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Success);
@@ -180,7 +235,13 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task StoreUser_UpdatesUser_Test()
     {
-        var user = new ApplicationUser { Id = "13", Email = "emily.armstrong@linkinpark.leipzig.de" };
+        var user = new ApplicationUser
+        {
+            Id = "13",
+            Email = "emily.armstrong@linkinpark.leipzig.de",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         _mockUserManager
             .Setup(m => m.UpdateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Success);
@@ -194,8 +255,22 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void StoreUserAsync_Create_DuplicateEmail_Test()
     {
-        _context.Users.Add(new ApplicationUser { Email = "Example Email", Id = "1" });
-        var user = new ApplicationUser { Email = "Example Email", Id = "" };
+        _context.Users.Add(
+            new ApplicationUser
+            {
+                Email = "Example Email",
+                Id = "1",
+                IsActive = true,
+                IsScimProvisioned = false,
+            }
+        );
+        var user = new ApplicationUser
+        {
+            Email = "Example Email",
+            Id = "",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         _mockUserManager
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateUserName" }));
@@ -206,8 +281,22 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void StoreUserAsync_Update_DuplicateEmail_Test()
     {
-        _context.Users.Add(new ApplicationUser { Email = "Example Email", Id = "1" });
-        var user = new ApplicationUser { Email = "Example Email", Id = "5" };
+        _context.Users.Add(
+            new ApplicationUser
+            {
+                Email = "Example Email",
+                Id = "1",
+                IsActive = true,
+                IsScimProvisioned = false,
+            }
+        );
+        var user = new ApplicationUser
+        {
+            Email = "Example Email",
+            Id = "5",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         _mockUserManager
             .Setup(m => m.UpdateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateUserName" }));
@@ -218,7 +307,12 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task DeleteUserAsync_Test()
     {
-        var user = new ApplicationUser { Id = "1" };
+        var user = new ApplicationUser
+        {
+            Id = "1",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         _mockUserManager.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
         _mockUserManager.Setup(m => m.DeleteAsync(user)).ReturnsAsync(IdentityResult.Success);
 
@@ -232,7 +326,12 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void DeleteUser_Failed_Test()
     {
-        var user = new ApplicationUser { Id = "1" };
+        var user = new ApplicationUser
+        {
+            Id = "1",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         _mockUserManager.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
         _mockUserManager.Setup(m => m.DeleteAsync(user)).ReturnsAsync(IdentityResult.Failed());
 

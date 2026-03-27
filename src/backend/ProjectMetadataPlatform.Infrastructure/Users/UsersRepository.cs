@@ -132,7 +132,7 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
         var passwordValidator = new PasswordValidator<ApplicationUser>();
         var identityResult = await passwordValidator.ValidateAsync(
             _userManager,
-            new ApplicationUser(),
+            new ApplicationUser() { IsActive = true, IsScimProvisioned = true },
             password
         );
         return !identityResult.Succeeded

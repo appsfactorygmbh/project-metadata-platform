@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ProjectMetadataPlatform.Domain.Teams;
 
@@ -20,6 +20,12 @@ public class TeamModelConfig : IEntityTypeConfiguration<Team>
 
         // One to many relation one Team can work on many projects
         _ = builder.HasMany(t => t.Projects).WithOne(p => p.Team).HasForeignKey(p => p.TeamId);
+
+        // One to many relationship many Users can work on one Team
+        _ = builder.HasMany(t => t.Users).WithOne(u => u.Team).HasForeignKey(u => u.TeamId);
+
+        // Many to Many relationship many Users can support many Teams
+        _ = builder.HasMany(t => t.TeamSupportUsers).WithMany(u => u.TeamSupport);
 
         // Team Name should be unique
         _ = builder.HasIndex(t => t.TeamName).IsUnique();

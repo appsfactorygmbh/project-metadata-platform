@@ -40,8 +40,20 @@ public class PatchUserCommandHandlerTest
     [Test]
     public async Task PatchUser_Test()
     {
-        var user = new ApplicationUser { Id = "42", Email = "candela@hip-hop.dancehall" };
-        var newUser = new ApplicationUser { Id = "42", Email = "angela@hip-hop.dancehall" };
+        var user = new ApplicationUser
+        {
+            Id = "42",
+            Email = "candela@hip-hop.dancehall",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
+        var newUser = new ApplicationUser
+        {
+            Id = "42",
+            Email = "angela@hip-hop.dancehall",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
 
         _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("42")).ReturnsAsync(user);
         _mockUsersRepo
@@ -74,7 +86,13 @@ public class PatchUserCommandHandlerTest
     [Test]
     public async Task PatchUser_ChangeNothing_Test()
     {
-        var user = new ApplicationUser { Id = "42", Email = "cold@play.co.uk" };
+        var user = new ApplicationUser
+        {
+            Id = "42",
+            Email = "cold@play.co.uk",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
 
         _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("42")).ReturnsAsync(user);
         _mockUsersRepo
@@ -108,7 +126,13 @@ public class PatchUserCommandHandlerTest
     [Test]
     public async Task PatchUser_LogTest()
     {
-        var user = new ApplicationUser { Id = "42", Email = "oldButGold@htwk.com" };
+        var user = new ApplicationUser
+        {
+            Id = "42",
+            Email = "oldButGold@htwk.com",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         var newEmail = "newAndShiny@htwk.com";
 
         _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("42")).ReturnsAsync(user);
@@ -143,6 +167,8 @@ public class PatchUserCommandHandlerTest
             Id = "42",
             Email = "hanSolo",
             PasswordHash = "oldPassword",
+            IsActive = true,
+            IsScimProvisioned = false,
         };
         var newPassword = "newPassword";
         var newPasswordHash = "newPasswordHash";
@@ -181,7 +207,13 @@ public class PatchUserCommandHandlerTest
     [Test]
     public async Task PatchUser_EmailNotChanged_Test()
     {
-        var user = new ApplicationUser { Id = "42", Email = "oldButGold@htwk.com" };
+        var user = new ApplicationUser
+        {
+            Id = "42",
+            Email = "oldButGold@htwk.com",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         var newEmail = "oldButGold@htwk.com";
 
         _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("42")).ReturnsAsync(user);
@@ -210,6 +242,8 @@ public class PatchUserCommandHandlerTest
             Id = "42",
             Email = "never",
             PasswordHash = "password",
+            IsActive = true,
+            IsScimProvisioned = false,
         };
         var newPassword = "password";
 

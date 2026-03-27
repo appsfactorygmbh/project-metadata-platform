@@ -28,7 +28,13 @@ public class GetMeControllerTest
     [Test]
     public async Task getMe_Test()
     {
-        var user = new ApplicationUser { Id = "42", Email = "moonstealer@gruhq.com" };
+        var user = new ApplicationUser
+        {
+            Id = "42",
+            Email = "moonstealer@gruhq.com",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
 
         _mediator
             .Setup(m =>

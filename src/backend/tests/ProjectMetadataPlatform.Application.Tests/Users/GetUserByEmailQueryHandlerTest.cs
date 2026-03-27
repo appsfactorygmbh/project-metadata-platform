@@ -25,7 +25,13 @@ public class GetUserByEmailQueryHandlerTest
     [Test]
     public async Task HandleGetUserByEmail_Test()
     {
-        var user = new ApplicationUser { Id = "13", Email = "squidlauncher@bankofevil.com" };
+        var user = new ApplicationUser
+        {
+            Id = "13",
+            Email = "squidlauncher@bankofevil.com",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
 
         _mockUserRepo
             .Setup(m => m.GetUserByEmailAsync("squidlauncher@bankofevil.com"))
@@ -47,7 +53,9 @@ public class GetUserByEmailQueryHandlerTest
     [Test]
     public async Task HandleGetUserByEmail_NotFound_Test()
     {
-        _mockUserRepo.Setup(m => m.GetUserByEmailAsync("Vector")).ReturnsAsync((ApplicationUser)null!);
+        _mockUserRepo
+            .Setup(m => m.GetUserByEmailAsync("Vector"))
+            .ReturnsAsync((ApplicationUser)null!);
 
         var request = new GetUserByEmailQuery("Vector");
 

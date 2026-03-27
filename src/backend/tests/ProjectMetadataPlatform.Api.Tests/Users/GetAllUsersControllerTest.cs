@@ -33,8 +33,20 @@ public class GetAllUsersControllerTest
     {
         var users = new List<ApplicationUser>
         {
-            new ApplicationUser { Id = "1", Email = "Hinz" },
-            new ApplicationUser { Id = "2", Email = "Kunz" },
+            new ApplicationUser
+            {
+                Id = "1",
+                Email = "Hinz",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            new ApplicationUser
+            {
+                Id = "2",
+                Email = "Kunz",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
         };
         _mediator
             .Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>()))

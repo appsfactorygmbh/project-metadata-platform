@@ -30,7 +30,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Slartibartfast",
-            Author = new ApplicationUser { Email = "Slartibartfast" },
+            Author = new ApplicationUser
+            {
+                Email = "Slartibartfast",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             ProjectId = 43,
             ProjectName = "Norway",
             Action = Action.UPDATED_PROJECT,
@@ -66,7 +71,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "43",
             AuthorEmail = "Deep Thought",
-            Author = new ApplicationUser { Email = "Deep Thought" },
+            Author = new ApplicationUser
+            {
+                Email = "Deep Thought",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             ProjectId = 44,
             Project = new Project
             {
@@ -101,7 +111,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "44",
             AuthorEmail = "Infinite Improbability Drive",
-            Author = new ApplicationUser { Email = "Infinite Improbability Drive" },
+            Author = new ApplicationUser
+            {
+                Email = "Infinite Improbability Drive",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             ProjectId = 45,
             Project = new Project
             {
@@ -145,7 +160,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "45",
             AuthorEmail = "Ground",
-            Author = new ApplicationUser { Email = "Ground" },
+            Author = new ApplicationUser
+            {
+                Email = "Ground",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             ProjectId = 46,
             Project = new Project
             {
@@ -189,7 +209,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "46",
             AuthorEmail = "Prostetnic Vogon Jeltz",
-            Author = new ApplicationUser { Email = "Prostetnic Vogon Jeltz" },
+            Author = new ApplicationUser
+            {
+                Email = "Prostetnic Vogon Jeltz",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             ProjectId = 47,
             Project = new Project
             {
@@ -233,7 +258,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "47",
             AuthorEmail = "Earth",
-            Author = new ApplicationUser { Email = "Earth" },
+            Author = new ApplicationUser
+            {
+                Email = "Earth",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             ProjectId = 48,
             Project = new Project
             {
@@ -305,7 +335,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Infinite Improbability Drive",
-            Author = new ApplicationUser { Email = "Infinite Improbability Drive" },
+            Author = new ApplicationUser
+            {
+                Email = "Infinite Improbability Drive",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             Action = Action.ADDED_USER,
             Changes =
             [
@@ -335,7 +370,12 @@ public class LogConverterTest
     [Test]
     public void ConvertToLogUpdatedUser_Test()
     {
-        var gandalf = new ApplicationUser { Email = "Gandalf" };
+        var gandalf = new ApplicationUser
+        {
+            Email = "Gandalf",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         var log = new Log
         {
             Id = 42,
@@ -380,7 +420,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Ground",
-            Author = new ApplicationUser { Email = "Ground" },
+            Author = new ApplicationUser
+            {
+                Email = "Ground",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             Action = Action.REMOVED_USER,
             AffectedUserEmail = "whale@air.com",
             Changes =
@@ -412,7 +457,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Luke Skywalker",
-            Author = new ApplicationUser { Email = "Luke Skywalker" },
+            Author = new ApplicationUser
+            {
+                Email = "Luke Skywalker",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             Action = Action.REMOVED_PROJECT,
             ProjectName = "DeathStar",
         };
@@ -438,7 +488,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Chancellor Palpatine",
-            Author = new ApplicationUser { Email = "Chancellor Palpatine" },
+            Author = new ApplicationUser
+            {
+                Email = "Chancellor Palpatine",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             Action = Action.ADDED_GLOBAL_PLUGIN,
             Changes =
             [
@@ -474,7 +529,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Darth Sidious",
-            Author = new ApplicationUser { Email = "Darth Sidious" },
+            Author = new ApplicationUser
+            {
+                Email = "Darth Sidious",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             Action = Action.UPDATED_GLOBAL_PLUGIN,
             Changes =
             [
@@ -511,7 +571,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Zip",
-            Author = new ApplicationUser { Email = "Zip" },
+            Author = new ApplicationUser
+            {
+                Email = "Zip",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             Action = Action.ARCHIVED_GLOBAL_PLUGIN,
             GlobalPluginName = "Directory",
         };
@@ -534,7 +599,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Unzip",
-            Author = new ApplicationUser { Email = "Unzip" },
+            Author = new ApplicationUser
+            {
+                Email = "Unzip",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             Action = Action.UNARCHIVED_GLOBAL_PLUGIN,
             GlobalPluginName = "Directory",
         };
@@ -560,7 +630,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Recursively",
-            Author = new ApplicationUser { Email = "Recursively" },
+            Author = new ApplicationUser
+            {
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             Action = Action.REMOVED_GLOBAL_PLUGIN,
             GlobalPluginName = "root",
         };
@@ -588,7 +663,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Recursively",
-            Author = new ApplicationUser { Email = "Recursively" },
+            Author = new ApplicationUser
+            {
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             Action = Action.ADDED_TEAM,
             TeamName = "root",
             Changes =
@@ -631,7 +711,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Recursively",
-            Author = new ApplicationUser { Email = "Recursively" },
+            Author = new ApplicationUser
+            {
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             Action = Action.UPDATED_TEAM,
             TeamName = "root",
             Changes =
@@ -668,7 +753,12 @@ public class LogConverterTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Recursively",
-            Author = new ApplicationUser { Email = "Recursively" },
+            Author = new ApplicationUser
+            {
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             Action = Action.REMOVED_TEAM,
             TeamName = "New_Team_Name",
         };

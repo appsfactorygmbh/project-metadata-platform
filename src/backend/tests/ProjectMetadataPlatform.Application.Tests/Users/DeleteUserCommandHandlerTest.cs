@@ -54,7 +54,13 @@ public class DeleteUserCommandHandlerTest
     [Test]
     public async Task DeleteUser_Test()
     {
-        var user = new ApplicationUser { Id = "1", Email = "user@example.com" };
+        var user = new ApplicationUser
+        {
+            Id = "1",
+            Email = "user@example.com",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         _mockUsersRepo.Setup(m => m.GetUserByIdAsync("1")).ReturnsAsync(user);
         _mockUsersRepo.Setup(m => m.DeleteUserAsync(user)).ReturnsAsync(user);
         var result = await _handler.Handle(new DeleteUserCommand("1"), CancellationToken.None);
@@ -90,7 +96,13 @@ public class DeleteUserCommandHandlerTest
     [Test]
     public void DeleteUser_SelfDeletionAttempt_Test()
     {
-        var user = new ApplicationUser { Email = "camo", Id = "1" };
+        var user = new ApplicationUser
+        {
+            Email = "camo",
+            Id = "1",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
 
         _mockUsersRepo.Setup(m => m.GetUserByIdAsync("1")).ReturnsAsync(user);
         _mockUsersRepo.Setup(m => m.GetUserByEmailAsync("camo")).ReturnsAsync(user);

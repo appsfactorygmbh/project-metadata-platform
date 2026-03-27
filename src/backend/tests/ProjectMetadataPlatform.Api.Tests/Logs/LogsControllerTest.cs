@@ -43,7 +43,12 @@ public class LogsControllerTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Slartibartfast",
-            Author = new ApplicationUser { Email = "Slartibartfast" },
+            Author = new ApplicationUser
+            {
+                Email = "Slartibartfast",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             ProjectId = 42,
             Action = Action.UPDATED_PROJECT,
             Changes =
@@ -90,7 +95,12 @@ public class LogsControllerTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Slartibartfast",
-            Author = new ApplicationUser { Email = "Slartibartfast" },
+            Author = new ApplicationUser
+            {
+                Email = "Slartibartfast",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             ProjectId = 42,
             Action = Action.UPDATED_PROJECT,
             Changes =
@@ -140,7 +150,12 @@ public class LogsControllerTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Slartibartfast",
-            Author = new ApplicationUser { Email = "Slartibartfast" },
+            Author = new ApplicationUser
+            {
+                Email = "Slartibartfast",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             ProjectId = 42,
             Action = Action.UPDATED_PROJECT,
             Changes =
@@ -190,7 +205,12 @@ public class LogsControllerTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Slartibartfast",
-            Author = new ApplicationUser { Email = "Slartibartfast" },
+            Author = new ApplicationUser
+            {
+                Email = "Slartibartfast",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             Action = Action.UPDATED_USER,
             AffectedUserId = "Newton",
             Changes =
@@ -240,7 +260,12 @@ public class LogsControllerTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "newton",
-            Author = new ApplicationUser { Email = "newton" },
+            Author = new ApplicationUser
+            {
+                Email = "newton",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             Action = Action.UPDATED_GLOBAL_PLUGIN,
             GlobalPluginId = 42,
             GlobalPluginName = "Gravity",
@@ -291,7 +316,12 @@ public class LogsControllerTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Slartibartfast",
-            Author = new ApplicationUser { Email = "Slartibartfast" },
+            Author = new ApplicationUser
+            {
+                Email = "Slartibartfast",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             ProjectId = 42,
             Action = Action.UPDATED_PROJECT,
             Changes =
@@ -352,7 +382,12 @@ public class LogsControllerTest
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
             AuthorEmail = "Slartibartfast",
-            Author = new ApplicationUser { Email = "Slartibartfast" },
+            Author = new ApplicationUser
+            {
+                Email = "Slartibartfast",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
             ProjectId = 42,
             Action = Action.UPDATED_PROJECT,
             Changes =

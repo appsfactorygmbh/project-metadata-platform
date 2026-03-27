@@ -66,7 +66,13 @@ public class LogRepositoryTest : TestsWithDatabase
         };
         await _context.Projects.AddAsync(exampleProject);
 
-        var user = new ApplicationUser { Id = "42", Email = "camo" };
+        var user = new ApplicationUser
+        {
+            Id = "42",
+            Email = "camo",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         await _context.Users.AddAsync(user);
 
         await _context.SaveChangesAsync();
@@ -122,9 +128,21 @@ public class LogRepositoryTest : TestsWithDatabase
     [Test]
     public async Task UpdateUserLogTest()
     {
-        var author = new ApplicationUser { Id = "42", Email = "camo" };
+        var author = new ApplicationUser
+        {
+            Id = "42",
+            Email = "camo",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
 
-        var affectedUser = new ApplicationUser { Id = "12", Email = "gagarin@vostok.su" };
+        var affectedUser = new ApplicationUser
+        {
+            Id = "12",
+            Email = "gagarin@vostok.su",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         await _context.Users.AddAsync(author);
         await _context.Users.AddAsync(affectedUser);
 
@@ -173,7 +191,13 @@ public class LogRepositoryTest : TestsWithDatabase
     [Test]
     public async Task UpdateGlobalPluginLogTest()
     {
-        var author = new ApplicationUser { Id = "42", Email = "camo" };
+        var author = new ApplicationUser
+        {
+            Id = "42",
+            Email = "camo",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         await _context.Users.AddAsync(author);
 
         var globalPlugin = new Plugin { PluginName = "Canadarm2", Id = 13 };
@@ -241,7 +265,13 @@ public class LogRepositoryTest : TestsWithDatabase
         };
         await _context.Projects.AddAsync(exampleProject);
 
-        var user = new ApplicationUser { Id = "42", Email = "camo" };
+        var user = new ApplicationUser
+        {
+            Id = "42",
+            Email = "camo",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
 
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
@@ -276,9 +306,21 @@ public class LogRepositoryTest : TestsWithDatabase
     [TestCase(Action.REMOVED_GLOBAL_PLUGIN)]
     public async Task UserLogTest_RejectsActionNotInWhitelist(Action action)
     {
-        var author = new ApplicationUser { Id = "42", Email = "camo" };
+        var author = new ApplicationUser
+        {
+            Id = "42",
+            Email = "camo",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
 
-        var affectedUser = new ApplicationUser { Id = "12", Email = "gagarin@vostok.su" };
+        var affectedUser = new ApplicationUser
+        {
+            Id = "12",
+            Email = "gagarin@vostok.su",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         await _context.Users.AddAsync(author);
         await _context.Users.AddAsync(affectedUser);
 
@@ -312,7 +354,13 @@ public class LogRepositoryTest : TestsWithDatabase
     [TestCase(Action.REMOVED_PROJECT)]
     public async Task GlobalPluginLogTest_RejectsActionNotInWhitelist(Action action)
     {
-        var author = new ApplicationUser { Id = "42", Email = "camo" };
+        var author = new ApplicationUser
+        {
+            Id = "42",
+            Email = "camo",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         await _context.Users.AddAsync(author);
 
         var globalPlugin = new Plugin { PluginName = "Canadarm2", Id = 13 };
@@ -647,6 +695,8 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Id = "Newton",
             Email = "newton@royalastronomicalsociety.co.uk",
+            IsActive = true,
+            IsScimProvisioned = false,
         };
 
         var exampleLog2 = new Log

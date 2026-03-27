@@ -43,7 +43,13 @@ public class GetAllUsersQueryHandlerTest
     {
         var usersResponseContent = new List<ApplicationUser>
         {
-            new() { Id = "1", Email = "Hinz" },
+            new()
+            {
+                Id = "1",
+                Email = "Hinz",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
         };
 
         _mockUserRepo.Setup(m => m.GetAllUsersAsync()).ReturnsAsync(usersResponseContent);

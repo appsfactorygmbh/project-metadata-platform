@@ -149,7 +149,8 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
         return await GetIf(p => p.Id == id)
                 .Include(p => p.ProjectPlugins)
                 .Include(p => p.Team)
-                .FirstOrDefaultAsync() ?? throw new ProjectNotFoundException(id);
+                .FirstOrDefaultAsync()
+            ?? throw new ProjectNotFoundException(id);
     }
 
     /// <summary>
@@ -192,6 +193,7 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
         return await _context
                 .Projects.Where(p => p.Slug == slug)
                 .Select(p => (int?)p.Id)
-                .FirstOrDefaultAsync() ?? throw new ProjectNotFoundException(slug);
+                .FirstOrDefaultAsync()
+            ?? throw new ProjectNotFoundException(slug);
     }
 }

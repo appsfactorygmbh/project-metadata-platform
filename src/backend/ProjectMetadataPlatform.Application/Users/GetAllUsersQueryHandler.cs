@@ -11,7 +11,8 @@ namespace ProjectMetadataPlatform.Application.Users;
 /// <summary>
 /// Query for retrieving all users.
 /// </summary>
-public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, IEnumerable<ApplicationUser>>
+public class GetAllUsersQueryHandler
+    : IRequestHandler<GetAllUsersQuery, IEnumerable<ApplicationUser>>
 {
     private readonly IUsersRepository _usersRepository;
 

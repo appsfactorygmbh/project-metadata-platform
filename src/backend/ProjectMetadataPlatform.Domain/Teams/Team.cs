@@ -1,5 +1,6 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ProjectMetadataPlatform.Domain.Projects;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Domain.Teams;
 
@@ -32,4 +33,8 @@ public class Team
     /// Holds the relation between Projects and Teams.
     /// </summary>
     public ICollection<Project>? Projects { get; set; }
+
+    public ICollection<ApplicationUser>? Users { get; set; }
+
+    public ICollection<ApplicationUser>? TeamSupportUsers { get; set; }
 }

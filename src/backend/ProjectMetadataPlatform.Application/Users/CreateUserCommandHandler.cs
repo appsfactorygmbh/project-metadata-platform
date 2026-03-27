@@ -46,7 +46,13 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, strin
         await _usersRepository.CheckPasswordFormat(request.Password);
 
         // Uses Email as Username because: Username cant be empty + Username cant be duplicate.
-        var user = new ApplicationUser { Email = request.Email, UserName = request.Email };
+        var user = new ApplicationUser
+        {
+            Email = request.Email,
+            UserName = request.Email,
+            IsActive = false,
+            IsScimProvisioned = false,
+        };
         var result = await _usersRepository.CreateUserAsync(user, request.Password);
 
         var changes = new List<LogChange>

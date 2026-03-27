@@ -30,7 +30,13 @@ public class GetUserControllerTest
     [Test]
     public async Task Get_ReturnsUser()
     {
-        var user = new ApplicationUser { Id = "1", Email = "Hinz" };
+        var user = new ApplicationUser
+        {
+            Id = "1",
+            Email = "Hinz",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         _mediator
             .Setup(m => m.Send(It.IsAny<GetUserQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);

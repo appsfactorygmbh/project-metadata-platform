@@ -111,6 +111,7 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
     {
         return await _context
                 .Teams.Include(team => team.Projects)
-                .FirstOrDefaultAsync(team => team.Id == id) ?? throw new TeamNotFoundException(id);
+                .FirstOrDefaultAsync(team => team.Id == id)
+            ?? throw new TeamNotFoundException(id);
     }
 }

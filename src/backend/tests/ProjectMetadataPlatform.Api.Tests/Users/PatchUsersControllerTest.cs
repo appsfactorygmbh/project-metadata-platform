@@ -33,6 +33,8 @@ public class PatchUsersControllerTest
             Id = "42",
             Email = "dr@core.fr",
             PasswordHash = "someHash",
+            IsActive = true,
+            IsScimProvisioned = false,
         };
 
         _mediator

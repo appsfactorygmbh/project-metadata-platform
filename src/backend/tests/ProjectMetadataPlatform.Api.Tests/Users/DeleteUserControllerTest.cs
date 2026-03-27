@@ -28,7 +28,13 @@ public class DeleteUserControllerTest
     [Test]
     public async Task DeleteUser_Test()
     {
-        var user = new ApplicationUser { Id = "1", Email = "John" };
+        var user = new ApplicationUser
+        {
+            Id = "1",
+            Email = "John",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         _mediator
             .Setup(m => m.Send(It.IsAny<DeleteUserCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);

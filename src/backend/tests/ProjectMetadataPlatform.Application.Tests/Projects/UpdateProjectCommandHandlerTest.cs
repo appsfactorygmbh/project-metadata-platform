@@ -351,13 +351,11 @@ public class UpdateProjectCommandHandlerTest
             .ReturnsAsync(project);
         _mockPluginRepo
             .Setup(repo => repo.GetGlobalPluginsAsync())
-            .ReturnsAsync(
-                [
-                    new Plugin { Id = 1, PluginName = "Plugin1" },
-                    new Plugin { Id = 2, PluginName = "Plugin2" },
-                    new Plugin { Id = 3, PluginName = "Plugin3" },
-                ]
-            );
+            .ReturnsAsync([
+                new Plugin { Id = 1, PluginName = "Plugin1" },
+                new Plugin { Id = 2, PluginName = "Plugin2" },
+                new Plugin { Id = 3, PluginName = "Plugin3" },
+            ]);
 
         //Act
         await _handler.Handle(updateCommand, CancellationToken.None);
