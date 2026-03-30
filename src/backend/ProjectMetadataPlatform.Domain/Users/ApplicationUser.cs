@@ -16,11 +16,11 @@ public class ApplicationUser : IdentityUser
 
     public required bool IsScimProvisioned { get; set; }
 
-    public List<string> BusinessUnits { get; set; } = [];
+    public List<string>? BusinessUnits { get; set; }
 
-    public List<string> JobTitles { get; set; } = [];
+    public List<string>? JobTitles { get; set; }
 
-    public List<string> Departments { get; set; } = [];
+    public List<string>? Departments { get; set; }
 
     public string? Company { get; set; }
 }
