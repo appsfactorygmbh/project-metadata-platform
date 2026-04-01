@@ -564,10 +564,10 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool?>("IsActive")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsScimProvisioned")
+                    b.Property<bool?>("IsScimProvisioned")
                         .HasColumnType("boolean");
 
                     b.Property<List<string>>("JobTitles")

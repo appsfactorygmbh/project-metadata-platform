@@ -12,9 +12,9 @@ public class ApplicationUser : IdentityUser
 
     public ICollection<Team>? TeamSupport { get; set; }
 
-    public required bool IsActive { get; set; }
+    public bool? IsActive { get; set; }
 
-    public required bool IsScimProvisioned { get; set; }
+    public bool? IsScimProvisioned { get; set; }
 
     public List<string>? BusinessUnits { get; set; }
 

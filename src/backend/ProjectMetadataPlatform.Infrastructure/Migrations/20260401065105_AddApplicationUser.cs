@@ -33,15 +33,13 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                 name: "IsActive",
                 table: "AspNetUsers",
                 type: "boolean",
-                nullable: false,
-                defaultValue: false);
+                nullable: true);
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsScimProvisioned",
                 table: "AspNetUsers",
                 type: "boolean",
-                nullable: false,
-                defaultValue: false);
+                nullable: true);
 
             migrationBuilder.AddColumn<List<string>>(
                 name: "JobTitles",
