@@ -6,9 +6,7 @@ namespace ProjectMetadataPlatform.Domain.Users;
 
 public class ApplicationUser : IdentityUser
 {
-    public Team? Team { get; set; }
-
-    public int? TeamId { get; set; }
+    public ICollection<Team>? Teams { get; set; }
 
     public ICollection<Team>? TeamSupport { get; set; }
 

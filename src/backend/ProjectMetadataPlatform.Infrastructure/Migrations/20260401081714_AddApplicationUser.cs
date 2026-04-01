@@ -47,14 +47,32 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                 type: "text[]",
                 nullable: true);
 
-            migrationBuilder.AddColumn<int>(
-                name: "TeamId",
-                table: "AspNetUsers",
-                type: "integer",
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "ApplicationUserTeam",
+                columns: table => new
+                {
+                    TeamsId = table.Column<int>(type: "integer", nullable: false),
+                    UsersId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApplicationUserTeam", x => new { x.TeamsId, x.UsersId });
+                    table.ForeignKey(
+                        name: "FK_ApplicationUserTeam_AspNetUsers_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ApplicationUserTeam_Teams_TeamsId",
+                        column: x => x.TeamsId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ApplicationUserTeam1",
                 columns: table => new
                 {
                     TeamSupportId = table.Column<int>(type: "integer", nullable: false),
@@ -62,15 +80,15 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApplicationUserTeam", x => new { x.TeamSupportId, x.TeamSupportUsersId });
+                    table.PrimaryKey("PK_ApplicationUserTeam1", x => new { x.TeamSupportId, x.TeamSupportUsersId });
                     table.ForeignKey(
-                        name: "FK_ApplicationUserTeam_AspNetUsers_TeamSupportUsersId",
+                        name: "FK_ApplicationUserTeam1_AspNetUsers_TeamSupportUsersId",
                         column: x => x.TeamSupportUsersId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ApplicationUserTeam_Teams_TeamSupportId",
+                        name: "FK_ApplicationUserTeam1_Teams_TeamSupportId",
                         column: x => x.TeamSupportId,
                         principalTable: "Teams",
                         principalColumn: "Id",
@@ -78,36 +96,24 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_TeamId",
-                table: "AspNetUsers",
-                column: "TeamId");
+                name: "IX_ApplicationUserTeam_UsersId",
+                table: "ApplicationUserTeam",
+                column: "UsersId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ApplicationUserTeam_TeamSupportUsersId",
-                table: "ApplicationUserTeam",
+                name: "IX_ApplicationUserTeam1_TeamSupportUsersId",
+                table: "ApplicationUserTeam1",
                 column: "TeamSupportUsersId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_AspNetUsers_Teams_TeamId",
-                table: "AspNetUsers",
-                column: "TeamId",
-                principalTable: "Teams",
-                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_AspNetUsers_Teams_TeamId",
-                table: "AspNetUsers");
-
             migrationBuilder.DropTable(
                 name: "ApplicationUserTeam");
 
-            migrationBuilder.DropIndex(
-                name: "IX_AspNetUsers_TeamId",
-                table: "AspNetUsers");
+            migrationBuilder.DropTable(
+                name: "ApplicationUserTeam1");
 
             migrationBuilder.DropColumn(
                 name: "BusinessUnits",
@@ -131,10 +137,6 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
             migrationBuilder.DropColumn(
                 name: "JobTitles",
-                table: "AspNetUsers");
-
-            migrationBuilder.DropColumn(
-                name: "TeamId",
                 table: "AspNetUsers");
         }
     }

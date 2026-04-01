@@ -21,8 +21,8 @@ public class TeamModelConfig : IEntityTypeConfiguration<Team>
         // One to many relation one Team can work on many projects
         _ = builder.HasMany(t => t.Projects).WithOne(p => p.Team).HasForeignKey(p => p.TeamId);
 
-        // One to many relationship many Users can work on one Team
-        _ = builder.HasMany(t => t.Users).WithOne(u => u.Team).HasForeignKey(u => u.TeamId);
+        // Many to many relationship many Users can work on many Team
+        _ = builder.HasMany(t => t.Users).WithMany(u => u.Teams);
 
         // Many to Many relationship many Users can support many Teams
         _ = builder.HasMany(t => t.TeamSupportUsers).WithMany(u => u.TeamSupport);

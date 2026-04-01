@@ -13,7 +13,7 @@ using ProjectMetadataPlatform.Infrastructure.DataAccess;
 namespace ProjectMetadataPlatform.Infrastructure.Migrations
 {
     [DbContext(typeof(ProjectMetadataPlatformDbContext))]
-    [Migration("20260401065105_AddApplicationUser")]
+    [Migration("20260401081714_AddApplicationUser")]
     partial class AddApplicationUser
     {
         /// <inheritdoc />
@@ -28,6 +28,21 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
             modelBuilder.Entity("ApplicationUserTeam", b =>
                 {
+                    b.Property<int>("TeamsId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("text");
+
+                    b.HasKey("TeamsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("ApplicationUserTeam");
+                });
+
+            modelBuilder.Entity("ApplicationUserTeam1", b =>
+                {
                     b.Property<int>("TeamSupportId")
                         .HasColumnType("integer");
 
@@ -38,7 +53,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TeamSupportUsersId");
 
-                    b.ToTable("ApplicationUserTeam");
+                    b.ToTable("ApplicationUserTeam1");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -602,9 +617,6 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
-                    b.Property<int?>("TeamId")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
@@ -621,12 +633,25 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.HasIndex("TeamId");
-
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationUserTeam", b =>
+                {
+                    b.HasOne("ProjectMetadataPlatform.Domain.Teams.Team", null)
+                        .WithMany()
+                        .HasForeignKey("TeamsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectMetadataPlatform.Domain.Users.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ApplicationUserTeam1", b =>
                 {
                     b.HasOne("ProjectMetadataPlatform.Domain.Teams.Team", null)
                         .WithMany()
@@ -779,15 +804,6 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Navigation("Team");
                 });
 
-            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Users.ApplicationUser", b =>
-                {
-                    b.HasOne("ProjectMetadataPlatform.Domain.Teams.Team", "Team")
-                        .WithMany("Users")
-                        .HasForeignKey("TeamId");
-
-                    b.Navigation("Team");
-                });
-
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Logs.Log", b =>
                 {
                     b.Navigation("Changes");
@@ -808,8 +824,6 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Teams.Team", b =>
                 {
                     b.Navigation("Projects");
-
-                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }
