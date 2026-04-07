@@ -46,7 +46,7 @@ public record PmpScimUser
 
         public List<string>? JobTitles { get; set; }
 
-        public List<string>? Teams { get; set; }
+        public List<string>? Team { get; set; }
         public List<string>? BusinessUnits { get; set; }
     }
 

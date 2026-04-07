@@ -58,4 +58,6 @@ public interface IUsersRepository
     /// <param name="password">password to be checked</param>
     /// <returns>true if the format is correct. Otherwise throws exception</returns>
     Task<bool> CheckPasswordFormat(string password);
+
+    Task<bool> CheckUserExists(string id);
 }

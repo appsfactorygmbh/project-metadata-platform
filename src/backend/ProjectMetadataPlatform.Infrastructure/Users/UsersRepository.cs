@@ -151,4 +151,10 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
             ? throw new UserInvalidPasswordFormatException(identityResult)
             : true;
     }
+
+    public async Task<bool> CheckUserExists(string id)
+    {
+        return await _context.Users.AnyAsync(user => user.Id == id);
+    }
+
 }
