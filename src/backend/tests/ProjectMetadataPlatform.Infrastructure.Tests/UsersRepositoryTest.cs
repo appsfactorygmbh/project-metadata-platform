@@ -123,7 +123,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetAllUsersAsync_EmptyResponse_Test()
     {
-        var result = await _repository.GetAllUsersAsync();
+        var result = await _repository.GetUsersAsync();
 
         Assert.That(result, Is.Empty);
     }
@@ -145,7 +145,7 @@ public class UsersRepositoryTest : TestsWithDatabase
         _context.Users.AddRange(usersResponseContent);
         await _context.SaveChangesAsync();
 
-        var result = (await _repository.GetAllUsersAsync()).ToList();
+        var result = (await _repository.GetUsersAsync()).ToList();
 
         Assert.Multiple(() =>
         {

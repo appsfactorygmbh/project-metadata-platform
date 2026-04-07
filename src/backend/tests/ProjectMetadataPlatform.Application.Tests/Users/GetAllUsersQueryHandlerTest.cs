@@ -27,7 +27,7 @@ public class GetAllUsersQueryHandlerTest
     [Test]
     public async Task HandleGetAllUsersRequest_EmptyResponse_Test()
     {
-        _mockUserRepo.Setup(m => m.GetAllUsersAsync()).ReturnsAsync([]);
+        _mockUserRepo.Setup(m => m.GetUsersAsync()).ReturnsAsync([]);
         var request = new GetAllUsersQuery();
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
@@ -52,7 +52,7 @@ public class GetAllUsersQueryHandlerTest
             },
         };
 
-        _mockUserRepo.Setup(m => m.GetAllUsersAsync()).ReturnsAsync(usersResponseContent);
+        _mockUserRepo.Setup(m => m.GetUsersAsync()).ReturnsAsync(usersResponseContent);
         var request = new GetAllUsersQuery();
         var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).ToList();
 

@@ -32,6 +32,6 @@ public class GetAllUsersQueryHandler
         CancellationToken cancellationToken
     )
     {
-        return await _usersRepository.GetAllUsersAsync();
+        return await _usersRepository.GetUsersAsync(request.Filter);
     }
 }

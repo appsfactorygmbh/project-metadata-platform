@@ -18,7 +18,7 @@ namespace ProjectMetadataPlatform.Api.Users;
 /// Endpoint for user management.
 /// </summary>
 [ApiController]
-[Authorize(AuthenticationSchemes = "Azure,Basic")]
+//[Authorize(AuthenticationSchemes = "Azure,Basic")]
 [Route("[controller]")]
 public class UsersController : ControllerBase
 {
@@ -44,21 +44,52 @@ public class UsersController : ControllerBase
     /// <response code="201">The user was created successfully.</response>
     /// <response code="500">An internal error occurred.</response>
     /// <response code="400">The request was invalid.</response>
-    [HttpPut]
-    [ProducesResponseType(typeof(CreateUserResponse), StatusCodes.Status201Created)]
+    [HttpPost]
+    [ProducesResponseType(typeof(PmpScimUser), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<CreateUserResponse>> Put([FromBody] CreateUserRequest request)
+    public async Task<ActionResult<PmpScimUser>> Post([FromBody] PmpScimUser request)
     {
-        if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+        if (string.IsNullOrWhiteSpace(request.UserName))
         {
-            return BadRequest(new ErrorResponse("email and password can't be empty."));
+            return BadRequest(new ErrorResponse("email can't be empty."));
         }
 
-        var command = new CreateUserCommand(request.Email, request.Password);
-        var id = await _mediator.Send(command);
+        var isScimProvisioned = true;
+        var command = new CreateUserCommand(
+            Id: request.ExternalId,
+            Email: request.UserName,
+            Password: request.Password,
+            IsActive: request.Active,
+            IsScimProvisioned: isScimProvisioned,
+            Teams: request.PmpUser?.Teams,
+            TeamSupport: request.PmpUser?.TeamSupport,
+            BusinessUnits: request.PmpUser?.BusinessUnits,
+            JobTitles: request.PmpUser?.JobTitles,
+            Departments: request.PmpUser?.Departments,
+            Company: request.EnterpriseUser?.Organization
+        );
+        var user = await _mediator.Send(command);
 
-        var response = new CreateUserResponse(id);
-        var uri = "/Users/" + id;
+        var response = new PmpScimUser
+        {
+            Id = user.Email,
+            ExternalId = user.Id,
+            UserName = user.Email!,
+            Active = user.IsActive,
+            EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
+            {
+                Organization = user.Company,
+            },
+            PmpUser = new PmpScimUser.PmpUserExtension
+            {
+                Departments = user.Departments,
+                TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
+                JobTitles = user.JobTitles,
+                Teams = user.Teams?.Select(team => team.TeamName).ToList(),
+                BusinessUnits = user.BusinessUnits,
+            },
+        };
+        var uri = "/Users/" + response.Id;
         return Created(uri, response);
     }
 
@@ -69,13 +100,36 @@ public class UsersController : ControllerBase
     /// <response code="200">The users are returned successfully.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<GetUserResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<GetUserResponse>>> Get()
+    [ProducesResponseType(typeof(GetUsersResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<GetUsersResponse>> Get([FromQuery] string filter = "")
     {
-        var query = new GetAllUsersQuery();
+        var query = new GetAllUsersQuery(filter);
         var users = await _mediator.Send(query);
 
-        var response = users.Select(user => new GetUserResponse(user.Id, user.Email ?? ""));
+        var response = new GetUsersResponse
+        {
+            Resources = users.Select(user => new PmpScimUser
+            {
+                Id = user.Email,
+                ExternalId = user.Id,
+                UserName = user.Email!,
+                Active = user.IsActive,
+                EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
+                {
+                    Organization = user.Company,
+                },
+                PmpUser = new PmpScimUser.PmpUserExtension
+                {
+                    Departments = user.Departments,
+                    TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
+                    JobTitles = user.JobTitles,
+                    Teams = user.Teams?.Select(team => team.TeamName).ToList(),
+                    BusinessUnits = user.BusinessUnits,
+                },
+                Meta = new PmpScimUser.MetaResourceData { ResourceType = "User" },
+            }),
+            TotalResults = 1,
+        };
         return Ok(response);
     }
 
@@ -88,14 +142,32 @@ public class UsersController : ControllerBase
     /// <response code="404">The user with the specified ID was not found.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpGet("{userId}")]
-    [ProducesResponseType(typeof(GetUserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PmpScimUser), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GetUserResponse>> GetUserById(string userId)
+    public async Task<ActionResult<PmpScimUser>> GetUserById(string userId)
     {
         var query = new GetUserQuery(userId);
         var user = await _mediator.Send(query);
 
-        var response = new GetUserResponse(user.Id, user.Email ?? "");
+        var response = new PmpScimUser
+        {
+            Id = user.Email,
+            ExternalId = user.Id,
+            UserName = user.Email!,
+            Active = user.IsActive,
+            EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
+            {
+                Organization = user.Company,
+            },
+            PmpUser = new PmpScimUser.PmpUserExtension
+            {
+                Departments = user.Departments,
+                TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
+                JobTitles = user.JobTitles,
+                Teams = user.Teams?.Select(team => team.TeamName).ToList(),
+                BusinessUnits = user.BusinessUnits,
+            },
+        };
         return Ok(response);
     }
 
@@ -109,20 +181,49 @@ public class UsersController : ControllerBase
     /// <response code="400">The request was invalid.</response>
     /// <response code="404">The user with the specified ID was not found.</response>
     /// <response code="500">An internal error occurred.</response>
-    [ProducesResponseType(typeof(GetUserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PmpScimUser), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [HttpPatch("{userId}")]
-    public async Task<ActionResult<GetUserResponse>> Patch(
+    public async Task<ActionResult<PmpScimUser>> Patch(
         string userId,
         [FromBody] PatchUserRequest request
     )
     {
-        var command = new PatchUserCommand(userId, request.Email, request.Password);
+        var command = new PatchUserCommand
+        {
+            Id = userId,
+            Operations = request
+                .Operations.Select(op => new PatchUserCommand.OperationRecord
+                {
+                    Operation = op.Op,
+                    Path = op.Path,
+                    Value = op.Value,
+                })
+                .ToList(),
+        };
 
         var user = await _mediator.Send(command);
 
-        var response = new GetUserResponse(user.Id, user.Email ?? "");
+        var response = new PmpScimUser
+        {
+            Id = user.Email,
+            ExternalId = user.Id,
+            UserName = user.Email!,
+            Active = user.IsActive,
+            EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
+            {
+                Organization = user.Company,
+            },
+            PmpUser = new PmpScimUser.PmpUserExtension
+            {
+                Departments = user.Departments,
+                TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
+                JobTitles = user.JobTitles,
+                Teams = user.Teams?.Select(team => team.TeamName).ToList(),
+                BusinessUnits = user.BusinessUnits,
+            },
+        };
         return Ok(response);
     }
 
@@ -135,10 +236,10 @@ public class UsersController : ControllerBase
     /// <response code="404">The user was not found.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpGet("Me")]
-    [ProducesResponseType(typeof(GetUserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PmpScimUser), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GetUserResponse>> GetMe()
+    public async Task<ActionResult<PmpScimUser>> GetMe()
     {
         var email =
             _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
@@ -148,7 +249,25 @@ public class UsersController : ControllerBase
 
         var user = await _mediator.Send(query);
 
-        var response = new GetUserResponse(user.Id, user.Email ?? "");
+        var response = new PmpScimUser
+        {
+            Id = user.Email,
+            ExternalId = user.Id,
+            UserName = user.Email!,
+            Active = user.IsActive,
+            EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
+            {
+                Organization = user.Company,
+            },
+            PmpUser = new PmpScimUser.PmpUserExtension
+            {
+                Departments = user.Departments,
+                TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
+                JobTitles = user.JobTitles,
+                Teams = user.Teams?.Select(team => team.TeamName).ToList(),
+                BusinessUnits = user.BusinessUnits,
+            },
+        };
         return Ok(response);
     }
 

@@ -57,7 +57,7 @@ public class GetAllUsersControllerTest
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var response = (okResult.Value as IEnumerable<GetUserResponse>)?.ToList();
+        var response = (okResult.Value as IEnumerable<PmpScimUser>)?.ToList();
 
         Assert.That(response, Is.Not.Null);
         Assert.Multiple(() =>
@@ -82,7 +82,7 @@ public class GetAllUsersControllerTest
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var response = okResult.Value as IEnumerable<GetUserResponse>;
+        var response = okResult.Value as IEnumerable<PmpScimUser>;
         Assert.That(response, Is.Not.Null.And.Empty);
     }
 

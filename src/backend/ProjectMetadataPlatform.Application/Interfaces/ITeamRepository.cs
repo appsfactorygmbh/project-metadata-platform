@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ProjectMetadataPlatform.Domain.Teams;
 
@@ -23,6 +23,8 @@ public interface ITeamRepository
     /// <param name="id">Id of the team.</param>
     /// <returns>The team specified by the given id.</returns>
     Task<Team> GetTeamAsync(int id);
+
+    Task<Team> GetTeamByNameAsync(string teamName);
 
     /// <summary>
     /// Retrieves the team by the given id.

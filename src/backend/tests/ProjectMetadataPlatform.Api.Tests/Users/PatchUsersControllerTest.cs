@@ -45,7 +45,7 @@ public class PatchUsersControllerTest
 
         var result = await _controller.Patch("42", request);
         var okResult = result.Result as OkObjectResult;
-        var resultValue = okResult?.Value as GetUserResponse;
+        var resultValue = okResult?.Value as PmpScimUser;
 
         Assert.That(resultValue, Is.Not.Null);
         Assert.Multiple(() =>

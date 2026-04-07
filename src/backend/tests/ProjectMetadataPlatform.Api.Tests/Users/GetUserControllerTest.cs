@@ -46,7 +46,7 @@ public class GetUserControllerTest
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var response = okResult.Value as GetUserResponse;
+        var response = okResult.Value as PmpScimUser;
         Assert.That(response, Is.Not.Null);
         Assert.Multiple(() =>
         {

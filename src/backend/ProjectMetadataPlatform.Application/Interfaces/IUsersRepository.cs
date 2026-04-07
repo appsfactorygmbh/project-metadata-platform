@@ -16,13 +16,13 @@ public interface IUsersRepository
     /// <param name="user">User to be created.</param>
     /// <param name="password">Password of the user.</param>
     /// <returns>Id of the created user.</returns>
-    Task<string> CreateUserAsync(ApplicationUser user, string password);
+    Task<string> CreateUserAsync(ApplicationUser user, string? password);
 
     /// <summary>
     /// Returns all users.
     /// </summary>
     /// <returns>Enumerable of all User-Objects</returns>
-    Task<IEnumerable<ApplicationUser>> GetAllUsersAsync();
+    Task<IEnumerable<ApplicationUser>> GetUsersAsync(string filter);
 
     /// <summary>
     /// Returns a user by their ID.

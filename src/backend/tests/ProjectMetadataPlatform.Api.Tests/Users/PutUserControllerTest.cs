@@ -37,9 +37,9 @@ public class PutUserControllerTest
         var createdResult = result.Result as CreatedResult;
 
         Assert.That(createdResult, Is.Not.Null);
-        Assert.That(createdResult.Value, Is.InstanceOf<CreateUserResponse>());
+        Assert.That(createdResult.Value, Is.InstanceOf<PmpScimUser>());
 
-        var userResponse = createdResult.Value as CreateUserResponse;
+        var userResponse = createdResult.Value as PmpScimUser;
         Assert.That(userResponse, Is.Not.Null);
         Assert.Multiple(() =>
         {

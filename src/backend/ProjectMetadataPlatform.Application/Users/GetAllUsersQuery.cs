@@ -8,4 +8,4 @@ namespace ProjectMetadataPlatform.Application.Users;
 /// <summary>
 /// Query to retrieve all projects.
 /// </summary>
-public record GetAllUsersQuery : IRequest<IEnumerable<ApplicationUser>>;
+public record GetAllUsersQuery(string Filter) : IRequest<IEnumerable<ApplicationUser>>;
