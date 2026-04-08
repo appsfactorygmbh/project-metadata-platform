@@ -53,6 +53,14 @@ public interface IUsersRepository
     Task<ApplicationUser> DeleteUserAsync(ApplicationUser user);
 
     /// <summary>
+    /// Checks if the given login credentials are correct.
+    /// </summary>
+    /// <param name="email">Email of the user</param>
+    /// <param name="password">Password of the user</param>
+    /// <returns>True, if the credentials are correct</returns>
+    Task<bool> CheckLogin(string email, string password);
+
+    /// <summary>
     /// Checks if the given password is in the correct format.
     /// </summary>
     /// <param name="password">password to be checked</param>

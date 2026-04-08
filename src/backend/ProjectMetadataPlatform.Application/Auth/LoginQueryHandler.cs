@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -13,15 +13,21 @@ namespace ProjectMetadataPlatform.Application.Auth;
 /// </summary>
 public class LoginQueryHandler : IRequestHandler<LoginQuery, JwtTokens>
 {
-    private readonly IAuthRepository _authRepository;
+    private readonly IRefreshTokenRepository _authRepository;
+
+    private readonly IUsersRepository _userRepository;
 
     /// <summary>
     /// Creates a new instance of<see cref="LoginQueryHandler" />.
     /// </summary>
     /// <param name="authRepository"></param>
-    public LoginQueryHandler(IAuthRepository authRepository)
+    public LoginQueryHandler(
+        IRefreshTokenRepository authRepository,
+        IUsersRepository usersRepository
+    )
     {
         _authRepository = authRepository;
+        _userRepository = usersRepository;
     }
 
     /// <summary>
@@ -32,7 +38,7 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, JwtTokens>
     /// <returns>JwtTokens when successful.</returns>
     public async Task<JwtTokens> Handle(LoginQuery request, CancellationToken cancellationToken)
     {
-        if (!_authRepository.CheckLogin(request.Email, request.Password).Result)
+        if (!_userRepository.CheckLogin(request.Email, request.Password).Result)
         {
             throw new AuthInvalidLoginCredentialsException();
         }

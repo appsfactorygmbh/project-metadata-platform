@@ -1,4 +1,4 @@
-using System.Security.Authentication;
+﻿using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -13,13 +13,13 @@ namespace ProjectMetadataPlatform.Application.Auth;
 /// </summary>
 public class RefreshTokenQueryHandler : IRequestHandler<RefreshTokenQuery, JwtTokens>
 {
-    private readonly IAuthRepository _authRepository;
+    private readonly IRefreshTokenRepository _authRepository;
 
     /// <summary>
     /// Creates a new instance of<see cref="RefreshTokenQueryHandler" />.
     /// </summary>
     /// <param name="authRepository"></param>
-    public RefreshTokenQueryHandler(IAuthRepository authRepository)
+    public RefreshTokenQueryHandler(IRefreshTokenRepository authRepository)
     {
         _authRepository = authRepository;
     }

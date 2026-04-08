@@ -49,7 +49,7 @@ public static class DependencyInjection
         serviceCollection.ConfigureAuth(jwtBearerEvents);
         _ = serviceCollection.AddScoped<IPluginRepository, PluginRepository>();
         _ = serviceCollection.AddScoped<IProjectsRepository, ProjectsRepository>();
-        _ = serviceCollection.AddScoped<IAuthRepository, AuthRepository>();
+        _ = serviceCollection.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         _ = serviceCollection.AddScoped<IUsersRepository, UsersRepository>();
         _ = serviceCollection.AddScoped<ITeamRepository, TeamRepository>();
         _ = serviceCollection.AddScoped<

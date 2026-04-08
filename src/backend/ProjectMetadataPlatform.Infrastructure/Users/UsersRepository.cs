@@ -142,6 +142,18 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
     }
 
     /// <summary>
+    /// Checks if the given login credentials are correct.
+    /// </summary>
+    /// <param name="email">Email of the user</param>
+    /// <param name="password">Password of the user</param>
+    /// <returns>True, if the credentials are correct</returns>
+    public async Task<bool> CheckLogin(string email, string password)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        return user != null && await _userManager.CheckPasswordAsync(user, password);
+    }
+    
+    /// <summary>
     /// Checks if the given password is in the correct format.
     /// </summary>
     /// <param name="password"> password to be checked.</param>
