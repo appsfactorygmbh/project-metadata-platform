@@ -10,7 +10,7 @@ namespace ProjectMetadataPlatform.Application.Users;
 /// <param name="Email">Email of the user.</param>
 /// <param name="Password">Password of the user.</param>
 public record CreateUserCommand(
-    string Id,
+    string EmployeeId,
     string Email,
     string? Password,
     bool? IsActive,

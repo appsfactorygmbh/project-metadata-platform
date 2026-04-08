@@ -34,6 +34,6 @@ public class GetUserQueryHandler : IRequestHandler<GetUserQuery, ApplicationUser
     /// <returns>A task that represents the asynchronous operation. The task result contains the user with the specified ID, or null if no user is found.</returns>
     public Task<ApplicationUser> Handle(GetUserQuery request, CancellationToken cancellationToken)
     {
-        return _usersRepository.GetUserByIdAsync(request.UserId);
+        return _usersRepository.GetUserByIdAsync(request.EmployeeId);
     }
 }

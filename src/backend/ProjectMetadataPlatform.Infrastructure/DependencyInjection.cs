@@ -182,7 +182,7 @@ public static class DependencyInjection
         {
             UserName = "admin@admin.admin",
             Email = "admin@admin.admin",
-            Id = "1",
+            EmployeeId = "0",
             IsActive = true,
             IsScimProvisioned = false,
         };

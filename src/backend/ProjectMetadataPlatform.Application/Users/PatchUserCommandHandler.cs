@@ -79,9 +79,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
                 ? operation.Path
                 : await ScimAttributeNameToTypeAttributeName(operation.Path);
 
-            //TODO: Add Handling for Id update
-            if (attribute == "Id" && operation.Operation != PatchOperations.Remove) { }
-            else if (attribute == "Email" && operation.Operation != PatchOperations.Remove)
+            if (attribute == "Email" && operation.Operation != PatchOperations.Remove)
             {
                 user.Email = await JsonElementToPrimitive((JsonElement)operation.Value!) as string;
                 user.UserName =
@@ -184,7 +182,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
     {
         return attributeName switch
         {
-            "id" or "externalId" => "Id",
+            "id" or "externalId" => "EmployeeId",
             "userName" => "Email",
             "active" => "IsActive",
             "password" => "PasswordHash",

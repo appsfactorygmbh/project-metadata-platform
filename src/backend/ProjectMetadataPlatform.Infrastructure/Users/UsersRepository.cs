@@ -49,7 +49,7 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
             if (filterElements[0] == "externalId")
             {
                 filteredQuery = filteredQuery.Where(user =>
-                    user.Id == filterElements[2].Replace("\"", "")
+                    user.EmployeeId == filterElements[2].Replace("\"", "")
                 );
             }
             else if (filterElements[0] == "userName")
@@ -70,7 +70,11 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
     /// <returns>The user with the specified email, or null if not found.</returns>
     public async Task<ApplicationUser> GetUserByEmailAsync(string email)
     {
-        return await _userManager.FindByEmailAsync(email) ?? throw new UserNotFoundException(email);
+        return await _context
+                .Users.Include(p => p.Teams)
+                .Include(u => u.TeamSupport)
+                .FirstOrDefaultAsync(u => u.Email == email)
+            ?? throw new UserNotFoundException(email);
     }
 
     /// <summary>
@@ -98,7 +102,11 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
     /// <returns>The user with the specified identifier, or null if not found.</returns>
     public async Task<ApplicationUser> GetUserByIdAsync(string id)
     {
-        return await _userManager.FindByIdAsync(id) ?? throw new UserNotFoundException(id);
+        return await _context
+                .Users.Include(p => p.Teams)
+                .Include(u => u.TeamSupport)
+                .FirstOrDefaultAsync(u => u.EmployeeId == id)
+            ?? throw new UserNotFoundException(id);
     }
 
     /// <summary>
@@ -144,7 +152,12 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
         var passwordValidator = new PasswordValidator<ApplicationUser>();
         var identityResult = await passwordValidator.ValidateAsync(
             _userManager,
-            new ApplicationUser() { IsActive = true, IsScimProvisioned = true },
+            new ApplicationUser()
+            {
+                IsActive = true,
+                IsScimProvisioned = true,
+                EmployeeId = "",
+            },
             password
         );
         return !identityResult.Succeeded
@@ -154,7 +167,6 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
 
     public async Task<bool> CheckUserExists(string id)
     {
-        return await _context.Users.AnyAsync(user => user.Id == id);
+        return await _context.Users.AnyAsync(user => user.EmployeeId == id);
     }
-
 }

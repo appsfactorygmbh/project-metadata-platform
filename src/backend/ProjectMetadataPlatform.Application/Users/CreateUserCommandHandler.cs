@@ -79,7 +79,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
         // Uses Email as Username because: Username cant be empty + Username cant be duplicate.
         var user = new ApplicationUser
         {
-            Id = request.Id,
+            EmployeeId = request.EmployeeId,
             Email = request.Email,
             UserName = request.Email,
             IsActive = request.IsActive,
@@ -109,6 +109,17 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
                 Property = nameof(ApplicationUser.Email),
             },
         };
+        if (user.EmployeeId != null)
+        {
+            changes.Add(
+                new()
+                {
+                    OldValue = "",
+                    NewValue = user.EmployeeId,
+                    Property = nameof(ApplicationUser.EmployeeId),
+                }
+            );
+        }
         if (user.Teams != null)
         {
             changes.Add(

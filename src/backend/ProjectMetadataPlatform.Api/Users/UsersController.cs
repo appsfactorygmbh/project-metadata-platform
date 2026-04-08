@@ -56,12 +56,12 @@ public class UsersController : ControllerBase
 
         var isScimProvisioned = true;
         var command = new CreateUserCommand(
-            Id: request.ExternalId,
+            EmployeeId: request.ExternalId,
             Email: request.UserName,
             Password: request.Password,
             IsActive: request.Active,
             IsScimProvisioned: isScimProvisioned,
-            Teams: request.PmpUser?.Teams,
+            Teams: request.PmpUser?.Team,
             TeamSupport: request.PmpUser?.TeamSupport,
             BusinessUnits: request.PmpUser?.BusinessUnits,
             JobTitles: request.PmpUser?.JobTitles,
@@ -72,8 +72,8 @@ public class UsersController : ControllerBase
 
         var response = new PmpScimUser
         {
-            Id = user.Email,
-            ExternalId = user.Id,
+            Id = user.EmployeeId,
+            ExternalId = user.EmployeeId,
             UserName = user.Email!,
             Active = user.IsActive,
             EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
@@ -85,7 +85,7 @@ public class UsersController : ControllerBase
                 Departments = user.Departments,
                 TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
                 JobTitles = user.JobTitles,
-                Teams = user.Teams?.Select(team => team.TeamName).ToList(),
+                Team = user.Teams?.Select(team => team.TeamName).ToList(),
                 BusinessUnits = user.BusinessUnits,
             },
         };
@@ -110,8 +110,8 @@ public class UsersController : ControllerBase
         {
             Resources = users.Select(user => new PmpScimUser
             {
-                Id = user.Email,
-                ExternalId = user.Id,
+                Id = user.EmployeeId,
+                ExternalId = user.EmployeeId,
                 UserName = user.Email!,
                 Active = user.IsActive,
                 EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
@@ -123,7 +123,7 @@ public class UsersController : ControllerBase
                     Departments = user.Departments,
                     TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
                     JobTitles = user.JobTitles,
-                    Teams = user.Teams?.Select(team => team.TeamName).ToList(),
+                    Team = user.Teams?.Select(team => team.TeamName).ToList(),
                     BusinessUnits = user.BusinessUnits,
                 },
                 Meta = new PmpScimUser.MetaResourceData { ResourceType = "User" },
@@ -151,8 +151,8 @@ public class UsersController : ControllerBase
 
         var response = new PmpScimUser
         {
-            Id = user.Email,
-            ExternalId = user.Id,
+            Id = user.EmployeeId,
+            ExternalId = user.EmployeeId,
             UserName = user.Email!,
             Active = user.IsActive,
             EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
@@ -164,7 +164,7 @@ public class UsersController : ControllerBase
                 Departments = user.Departments,
                 TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
                 JobTitles = user.JobTitles,
-                Teams = user.Teams?.Select(team => team.TeamName).ToList(),
+                Team = user.Teams?.Select(team => team.TeamName).ToList(),
                 BusinessUnits = user.BusinessUnits,
             },
         };
@@ -207,8 +207,8 @@ public class UsersController : ControllerBase
 
         var response = new PmpScimUser
         {
-            Id = user.Email,
-            ExternalId = user.Id,
+            Id = user.EmployeeId,
+            ExternalId = user.EmployeeId,
             UserName = user.Email!,
             Active = user.IsActive,
             EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
@@ -220,7 +220,7 @@ public class UsersController : ControllerBase
                 Departments = user.Departments,
                 TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
                 JobTitles = user.JobTitles,
-                Teams = user.Teams?.Select(team => team.TeamName).ToList(),
+                Team = user.Teams?.Select(team => team.TeamName).ToList(),
                 BusinessUnits = user.BusinessUnits,
             },
         };
@@ -251,8 +251,8 @@ public class UsersController : ControllerBase
 
         var response = new PmpScimUser
         {
-            Id = user.Email,
-            ExternalId = user.Id,
+            Id = user.EmployeeId,
+            ExternalId = user.EmployeeId,
             UserName = user.Email!,
             Active = user.IsActive,
             EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
@@ -264,7 +264,7 @@ public class UsersController : ControllerBase
                 Departments = user.Departments,
                 TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
                 JobTitles = user.JobTitles,
-                Teams = user.Teams?.Select(team => team.TeamName).ToList(),
+                Team = user.Teams?.Select(team => team.TeamName).ToList(),
                 BusinessUnits = user.BusinessUnits,
             },
         };
