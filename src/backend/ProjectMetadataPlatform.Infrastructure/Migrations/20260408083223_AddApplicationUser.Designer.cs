@@ -13,7 +13,7 @@ using ProjectMetadataPlatform.Infrastructure.DataAccess;
 namespace ProjectMetadataPlatform.Infrastructure.Migrations
 {
     [DbContext(typeof(ProjectMetadataPlatformDbContext))]
-    [Migration("20260401081714_AddApplicationUser")]
+    [Migration("20260408083223_AddApplicationUser")]
     partial class AddApplicationUser
     {
         /// <inheritdoc />
@@ -582,6 +582,10 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("EmployeeId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<bool?>("IsActive")
                         .HasColumnType("boolean");
 
@@ -625,6 +629,9 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId")
+                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
