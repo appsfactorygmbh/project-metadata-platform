@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Users.Models;
 using ProjectMetadataPlatform.Application.Users;
+using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 using ProjectMetadataPlatform.Domain.Users;
 
@@ -18,7 +19,7 @@ namespace ProjectMetadataPlatform.Api.Users;
 /// Endpoint for user management.
 /// </summary>
 [ApiController]
-//[Authorize(AuthenticationSchemes = "Azure,Basic")]
+[Authorize(AuthenticationSchemes = "Azure,Basic,ApiToken")]
 [Route("[controller]")]
 public class UsersController : ControllerBase
 {
@@ -53,8 +54,15 @@ public class UsersController : ControllerBase
         {
             return BadRequest(new ErrorResponse("email can't be empty."));
         }
+        var isScimProvisioned = _httpContextAccessor.HttpContext?.User.FindFirstValue(
+            ClaimTypes.AuthenticationMethod
+        ) switch
+        {
+            "JWT Token" => false,
+            "API Token" => true,
+            _ => throw new UnknownAuthentificationMethodException(),
+        };
 
-        var isScimProvisioned = true;
         var command = new CreateUserCommand(
             EmployeeId: request.ExternalId,
             Email: request.UserName,
@@ -87,6 +95,7 @@ public class UsersController : ControllerBase
                 JobTitles = user.JobTitles,
                 Team = user.Teams?.Select(team => team.TeamName).ToList(),
                 BusinessUnits = user.BusinessUnits,
+                IsScimProvisioned = user.IsScimProvisioned,
             },
         };
         var uri = "/Users/" + response.Id;
@@ -94,9 +103,10 @@ public class UsersController : ControllerBase
     }
 
     /// <summary>
-    /// Gets all users.
+    /// Gets all user that correspond to a filter. Filter only works for equality to username or employee id.
     /// </summary>
-    /// <returns>All users.</returns>
+    /// <param name="filter">String Scim filter. </param>
+    /// <returns>List object containing the users.</returns>
     /// <response code="200">The users are returned successfully.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpGet]
@@ -125,6 +135,7 @@ public class UsersController : ControllerBase
                     JobTitles = user.JobTitles,
                     Team = user.Teams?.Select(team => team.TeamName).ToList(),
                     BusinessUnits = user.BusinessUnits,
+                    IsScimProvisioned = user.IsScimProvisioned,
                 },
                 Meta = new PmpScimUser.MetaResourceData { ResourceType = "User" },
             }),
@@ -134,9 +145,9 @@ public class UsersController : ControllerBase
     }
 
     /// <summary>
-    /// Gets a user by their ID.
+    /// Gets a user by their employee number.
     /// </summary>
-    /// <param name="userId">The ID of the user to retrieve.</param>
+    /// <param name="userId">The employee number of the user to retrieve.</param>
     /// <returns>The user with the specified ID.</returns>
     /// <response code="200">The user is returned successfully.</response>
     /// <response code="404">The user with the specified ID was not found.</response>
@@ -166,6 +177,7 @@ public class UsersController : ControllerBase
                 JobTitles = user.JobTitles,
                 Team = user.Teams?.Select(team => team.TeamName).ToList(),
                 BusinessUnits = user.BusinessUnits,
+                IsScimProvisioned = user.IsScimProvisioned,
             },
         };
         return Ok(response);
@@ -174,8 +186,8 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Patches the user information.
     /// </summary>
-    /// <param name="userId">The unique identifier of the user to be patched.</param>
-    /// <param name="request">The request model containing the new user information.</param>
+    /// <param name="userId">The employee number of the user to be patched.</param>
+    /// <param name="request">The request model containing the update operations.</param>
     /// <returns>The updated user information.</returns>
     /// <response code="200">The user was patched successfully.</response>
     /// <response code="400">The request was invalid.</response>
@@ -203,6 +215,23 @@ public class UsersController : ControllerBase
                 .ToList(),
         };
 
+        var isScimProvisioned = _httpContextAccessor.HttpContext?.User.FindFirstValue(
+            ClaimTypes.AuthenticationMethod
+        ) switch
+        {
+            "JWT Token" => false,
+            "API Token" => true,
+            _ => throw new UnknownAuthentificationMethodException(),
+        };
+
+        command.Operations.Add(
+            new PatchUserCommand.OperationRecord
+            {
+                Operation = PatchOperations.Replace,
+                Path = "IsScimProvisioned",
+                Value = isScimProvisioned,
+            }
+        );
         var user = await _mediator.Send(command);
 
         var response = new PmpScimUser
@@ -222,6 +251,7 @@ public class UsersController : ControllerBase
                 JobTitles = user.JobTitles,
                 Team = user.Teams?.Select(team => team.TeamName).ToList(),
                 BusinessUnits = user.BusinessUnits,
+                IsScimProvisioned = user.IsScimProvisioned,
             },
         };
         return Ok(response);
@@ -266,13 +296,14 @@ public class UsersController : ControllerBase
                 JobTitles = user.JobTitles,
                 Team = user.Teams?.Select(team => team.TeamName).ToList(),
                 BusinessUnits = user.BusinessUnits,
+                IsScimProvisioned = user.IsScimProvisioned,
             },
         };
         return Ok(response);
     }
 
     /// <summary>
-    /// Deletes a user by their userId.
+    /// Deletes a user by their employee id.
     /// </summary>
     /// <param name="userId">The userId of the user to delete.</param>
     /// <returns>A status code representing the result of the delete operation.</returns>

@@ -152,7 +152,7 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
         var user = await _userManager.FindByEmailAsync(email);
         return user != null && await _userManager.CheckPasswordAsync(user, password);
     }
-    
+
     /// <summary>
     /// Checks if the given password is in the correct format.
     /// </summary>
@@ -177,6 +177,7 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
             : true;
     }
 
+    /// <inheritdoc/>
     public async Task<bool> CheckUserExists(string id)
     {
         return await _context.Users.AnyAsync(user => user.EmployeeId == id);

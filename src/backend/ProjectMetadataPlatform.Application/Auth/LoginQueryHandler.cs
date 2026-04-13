@@ -13,20 +13,21 @@ namespace ProjectMetadataPlatform.Application.Auth;
 /// </summary>
 public class LoginQueryHandler : IRequestHandler<LoginQuery, JwtTokens>
 {
-    private readonly IRefreshTokenRepository _authRepository;
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
 
     private readonly IUsersRepository _userRepository;
 
     /// <summary>
     /// Creates a new instance of<see cref="LoginQueryHandler" />.
     /// </summary>
-    /// <param name="authRepository"></param>
+    /// <param name="refreshTokenRepository"></param>
+    /// <param name="usersRepository"></param>
     public LoginQueryHandler(
-        IRefreshTokenRepository authRepository,
+        IRefreshTokenRepository refreshTokenRepository,
         IUsersRepository usersRepository
     )
     {
-        _authRepository = authRepository;
+        _refreshTokenRepository = refreshTokenRepository;
         _userRepository = usersRepository;
     }
 
@@ -44,13 +45,13 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, JwtTokens>
         }
         var stringToken = AccessTokenService.CreateAccessToken(request.Email);
         var refreshToken = Guid.NewGuid().ToString();
-        if (await _authRepository.CheckRefreshTokenExists(request.Email))
+        if (await _refreshTokenRepository.CheckRefreshTokenExists(request.Email))
         {
-            await _authRepository.UpdateRefreshToken(request.Email, refreshToken);
+            await _refreshTokenRepository.UpdateRefreshToken(request.Email, refreshToken);
         }
         else
         {
-            await _authRepository.StoreRefreshToken(request.Email, refreshToken);
+            await _refreshTokenRepository.StoreRefreshToken(request.Email, refreshToken);
         }
         return new JwtTokens { AccessToken = stringToken, RefreshToken = refreshToken };
     }

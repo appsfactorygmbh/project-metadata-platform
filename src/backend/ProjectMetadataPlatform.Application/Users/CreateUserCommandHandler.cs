@@ -29,6 +29,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
     /// </summary>
     /// <param name="usersRepository">Repository for accessing user data.</param>
     /// <param name="logRepository">Repository for logging data.</param>
+    /// <param name="teamRepository">Repository for accessing team data.</param>
     /// <param name="unitOfWork">Unit of work for managing transactions.</param>
     public CreateUserCommandHandler(
         IUsersRepository usersRepository,
@@ -98,6 +99,12 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
         return user;
     }
 
+    /// <summary>
+    /// Adds a log entry for creating a user.
+    /// </summary>
+    /// <param name="user">User that was created.
+    /// </param>
+    /// <returns></returns>
     private async Task AddCreatedUserLog(ApplicationUser user)
     {
         var changes = new List<LogChange>
@@ -208,7 +215,11 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
                 }
             );
         }
-        //TODO: handling for scim change log
-        //await _logRepository.AddUserLogForCurrentUser(user, Domain.Logs.Action.ADDED_USER, changes);
+
+        await _logRepository.AddUserLogForCurrentActor(
+            user,
+            Domain.Logs.Action.ADDED_USER,
+            changes
+        );
     }
 }

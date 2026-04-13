@@ -9,7 +9,7 @@ using ProjectMetadataPlatform.Domain.Users;
 namespace ProjectMetadataPlatform.Application.Users;
 
 /// <summary>
-/// Query for retrieving all users.
+/// Handler for Query for retrieving all users.
 /// </summary>
 public class GetAllUsersQueryHandler
     : IRequestHandler<GetAllUsersQuery, IEnumerable<ApplicationUser>>
@@ -25,7 +25,7 @@ public class GetAllUsersQueryHandler
     }
 
     /// <summary>
-    /// Handles the request to retrieve all users.
+    /// Handles the request to retrieve all filtered users.
     /// </summary>
     public async Task<IEnumerable<ApplicationUser>> Handle(
         GetAllUsersQuery request,

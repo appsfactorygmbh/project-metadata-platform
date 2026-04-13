@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
+using ProjectMetadataPlatform.Domain.Auth;
 
 namespace ProjectMetadataPlatform.Application.Auth;
 
@@ -26,9 +27,13 @@ public static class AccessTokenService
             EnvironmentUtils.GetEnvVarOrLoadFromFile("ACCESS_TOKEN_EXPIRATION_MINUTES"),
             CultureInfo.InvariantCulture
         );
+        
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity([new Claim(ClaimTypes.Email, email)]),
+            Subject = new ClaimsIdentity([
+                new Claim(ClaimTypes.Email, email),
+                new Claim(ClaimTypes.AuthenticationMethod, "JWT Token"),
+            ]),
             Expires = DateTime.UtcNow.AddMinutes(expirationTime),
             Issuer = tokenDescriptorInformation.ValidIssuer,
             Audience = tokenDescriptorInformation.ValidAudience,

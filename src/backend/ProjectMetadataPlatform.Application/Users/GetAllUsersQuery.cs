@@ -6,6 +6,6 @@ using ProjectMetadataPlatform.Domain.Users;
 namespace ProjectMetadataPlatform.Application.Users;
 
 /// <summary>
-/// Query to retrieve all projects.
+/// Query to retrieve all projects with a scim filter.
 /// </summary>
 public record GetAllUsersQuery(string Filter) : IRequest<IEnumerable<ApplicationUser>>;

@@ -31,6 +31,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
     /// </summary>
     /// <param name="usersRepository">The repository for accessing user data.</param>
     /// <param name="passwordHasher">The service for hashing user passwords.</param>
+    /// <param name="teamRepository">The repository for accessing team data.</param>
     /// <param name="unitOfWork">The unit of work for managing transactions.</param>
     /// <param name="logRepository">The repository for logging user actions.</param>
     public PatchUserCommandHandler(
@@ -171,13 +172,19 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
 
         if (changes.Count > 0)
         {
-            //await _logRepository.AddUserLogForCurrentUser(user, Action.UPDATED_USER, changes);
+            await _logRepository.AddUserLogForCurrentActor(user, Action.UPDATED_USER, changes);
         }
 
         await _unitOfWork.CompleteAsync();
         return response;
     }
 
+    /// <summary>
+    /// Returns the fitting ApplicationUser Attribute for the given scim attribute name.
+    /// </summary>
+    /// <param name="attributeName">Name of the scim attribute</param>
+    /// <returns>Name of the Application User attribute</returns>
+    /// <exception cref="NotSupportedException">Thrown if the given AttributeName has no equivalent in the ApplicationUser class,</exception>
     private static async Task<string> ScimAttributeNameToTypeAttributeName(string attributeName)
     {
         return attributeName switch
@@ -196,6 +203,12 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         };
     }
 
+    /// <summary>
+    /// Converts an object of the type JsonElement to its c# primitive type.
+    /// </summary>
+    /// <param name="value">JsonElement that should be converted.</param>
+    /// <returns>Value as a C# primitive type.</returns>
+    /// <exception cref="NotSupportedException">Thrown if the Type of value is unsupported in the current implementation.</exception>
     private static async Task<object?> JsonElementToPrimitive(JsonElement value)
     {
         switch (value.ValueKind)
@@ -214,7 +227,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
             case JsonValueKind.True:
             case JsonValueKind.False:
                 return value.GetBoolean();
-
+            //! Only handles string arrays for now
             case JsonValueKind.Array:
                 List<string> list = [];
 
@@ -227,6 +240,10 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
             case JsonValueKind.Null:
             case JsonValueKind.Undefined:
                 return null;
+            // Only handles objects of the type:
+            // {
+            // "value": "objectValue",
+            // }
             case JsonValueKind.Object:
                 return await JsonElementToPrimitive(value.GetProperty("value"));
             default:

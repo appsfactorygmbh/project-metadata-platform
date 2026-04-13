@@ -58,6 +58,7 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
             ?? throw new TeamNotFoundException(id);
     }
 
+    /// <inheritdoc/>
     public async Task<Team> GetTeamByNameAsync(string teamName)
     {
         return await _context.Teams.FirstOrDefaultAsync(team => team.TeamName == teamName)

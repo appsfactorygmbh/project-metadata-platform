@@ -58,7 +58,7 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Appli
         CancellationToken cancellationToken
     )
     {
-        var user = await _usersRepository.GetUserByIdAsync(request.Id);
+        var user = await _usersRepository.GetUserByIdAsync(request.EmployeeId);
         var email =
             _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
             ?? "Unknown user";
@@ -75,7 +75,7 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Appli
             NewValue = "",
             Property = nameof(ApplicationUser.Email),
         };
-        await _logRepository.AddUserLogForCurrentUser(user, Action.REMOVED_USER, [change]);
+        await _logRepository.AddUserLogForCurrentActor(user, Action.REMOVED_USER, [change]);
 
         var response = await _usersRepository.DeleteUserAsync(user);
         await _unitOfWork.CompleteAsync();

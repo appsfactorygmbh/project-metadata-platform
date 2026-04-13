@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -83,7 +83,7 @@ public class PatchGlobalPluginCommandHandler : IRequestHandler<PatchGlobalPlugin
         if (request.IsArchived != null && plugin.IsArchived != request.IsArchived.Value)
         {
             plugin.IsArchived = request.IsArchived.Value;
-            await _logRepository.AddGlobalPluginLogForCurrentUser(
+            await _logRepository.AddGlobalPluginLogForCurrentActor(
                 plugin,
                 plugin.IsArchived ? Action.ARCHIVED_GLOBAL_PLUGIN : Action.UNARCHIVED_GLOBAL_PLUGIN,
                 []
@@ -132,7 +132,7 @@ public class PatchGlobalPluginCommandHandler : IRequestHandler<PatchGlobalPlugin
 
         if (changes.Count > 0)
         {
-            await _logRepository.AddGlobalPluginLogForCurrentUser(
+            await _logRepository.AddGlobalPluginLogForCurrentActor(
                 plugin,
                 Action.UPDATED_GLOBAL_PLUGIN,
                 changes

@@ -5,6 +5,7 @@ using ProjectMetadataPlatform.Domain.Users;
 namespace ProjectMetadataPlatform.Application.Users;
 
 /// <summary>
-/// Query to get a user by id.
+/// Query to get a user by his employee number.
 /// </summary>
+/// <param name="EmployeeId">Employee Number of the user.</param>
 public record GetUserQuery(string EmployeeId) : IRequest<ApplicationUser>;

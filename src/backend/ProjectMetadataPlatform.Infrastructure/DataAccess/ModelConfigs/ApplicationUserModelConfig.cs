@@ -4,8 +4,15 @@ using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Infrastructure.DataAccess.ModelConfigs;
 
+/// <summary>
+/// Data Base Configuration for the Application Users.
+/// </summary>
 public class ApplicationUserModelConfig : IEntityTypeConfiguration<ApplicationUser>
 {
+    /// <summary>
+    /// Configures ApplicationUser entity
+    /// </summary>
+    /// <param name="builder"></param>
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
         //One to many relationship one team can have many users

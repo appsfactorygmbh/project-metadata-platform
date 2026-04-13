@@ -3,6 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace ProjectMetadataPlatform.Api.Users.Models;
 
+/// <summary>
+/// Response for getting a List of Users. Follow the Scim standard for a List Response.
+/// </summary>
 public record GetUsersResponse
 {
     /// <summary>

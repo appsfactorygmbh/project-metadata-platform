@@ -25,7 +25,7 @@ public class Team
     public required string BusinessUnit { get; set; }
 
     /// <summary>
-    /// Gets or sets the PTL associated with the team. 
+    /// Gets or sets the PTL associated with the team.
     /// </summary>
     public string? PTL { get; set; }
 
@@ -34,7 +34,13 @@ public class Team
     /// </summary>
     public ICollection<Project>? Projects { get; set; }
 
+    /// <summary>
+    /// Holds the relation between Users and Teams.
+    /// </summary>
     public ICollection<ApplicationUser>? Users { get; set; }
 
+    /// <summary>
+    /// Holds the relation between Users and Teams they support.
+    /// </summary>
     public ICollection<ApplicationUser>? TeamSupportUsers { get; set; }
 }

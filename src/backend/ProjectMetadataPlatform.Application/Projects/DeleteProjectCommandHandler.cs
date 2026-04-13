@@ -97,6 +97,6 @@ public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand,
             );
         }
 
-        await _logRepository.AddProjectLogForCurrentUser(project, Action.REMOVED_PROJECT, changes);
+        await _logRepository.AddProjectLogForCurrentActor(project, Action.REMOVED_PROJECT, changes);
     }
 }

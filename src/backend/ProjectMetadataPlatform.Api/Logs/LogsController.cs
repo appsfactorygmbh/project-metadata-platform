@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
@@ -17,7 +17,7 @@ namespace ProjectMetadataPlatform.Api.Logs;
 /// Endpoints for managing log entries.
 /// </summary>
 [ApiController]
-[Authorize(AuthenticationSchemes = "Azure,Basic")]
+[Authorize(AuthenticationSchemes = "Azure,Basic,ApiToken")]
 [Route("[controller]")]
 public class LogsController : ControllerBase
 {

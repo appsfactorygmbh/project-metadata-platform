@@ -96,7 +96,7 @@ public class PatchTeamCommandHandler : IRequestHandler<PatchTeamCommand, Team>
         if (changesLogs.Count > 0)
         {
             var patchedTeam = await _teamRepository.UpdateTeamAsync(team);
-            await _logRepository.AddTeamLogForCurrentUser(
+            await _logRepository.AddTeamLogForCurrentActor(
                 team: team,
                 action: Action.UPDATED_TEAM,
                 changes: changesLogs

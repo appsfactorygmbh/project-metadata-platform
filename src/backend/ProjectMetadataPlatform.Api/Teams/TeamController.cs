@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
@@ -16,7 +16,7 @@ namespace ProjectMetadataPlatform.Api.Teams;
 /// Endpoints for managing teams.
 /// </summary>
 [ApiController]
-[Authorize(AuthenticationSchemes = "Azure,Basic")]
+[Authorize(AuthenticationSchemes = "Azure,Basic,ApiToken")]
 [Route("[controller]")]
 public class TeamsController : ControllerBase
 {

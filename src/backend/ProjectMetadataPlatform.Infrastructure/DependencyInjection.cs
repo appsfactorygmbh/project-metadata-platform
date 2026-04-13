@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -15,6 +16,7 @@ using Polly.Registry;
 using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.Auth;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -50,13 +52,14 @@ public static class DependencyInjection
         _ = serviceCollection.AddScoped<IPluginRepository, PluginRepository>();
         _ = serviceCollection.AddScoped<IProjectsRepository, ProjectsRepository>();
         _ = serviceCollection.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        _ = serviceCollection.AddScoped<IApiTokenRepository, ApiTokenRepository>();
         _ = serviceCollection.AddScoped<IUsersRepository, UsersRepository>();
         _ = serviceCollection.AddScoped<ITeamRepository, TeamRepository>();
         _ = serviceCollection.AddScoped<
             IPasswordHasher<ApplicationUser>,
             PasswordHasher<ApplicationUser>
         >();
-
+        _ = serviceCollection.AddScoped<IPasswordHasher<ApiToken>, PasswordHasher<ApiToken>>();
         _ = serviceCollection.AddScoped<ILogRepository, LogRepository>();
         return serviceCollection;
     }
@@ -150,6 +153,13 @@ public static class DependencyInjection
 
                     options.Events = jwtBearerEvents;
                 }
+            );
+
+        _ = serviceCollection
+            .AddAuthentication("ApiToken")
+            .AddScheme<AuthenticationSchemeOptions, ApiTokenAuthenticationHandler>(
+                "ApiToken",
+                options => { }
             );
     }
 

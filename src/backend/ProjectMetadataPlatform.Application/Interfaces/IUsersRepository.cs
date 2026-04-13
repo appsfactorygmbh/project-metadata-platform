@@ -19,9 +19,10 @@ public interface IUsersRepository
     Task<string> CreateUserAsync(ApplicationUser user, string? password);
 
     /// <summary>
-    /// Returns all users.
+    /// Returns all users that conform to the given filter.
     /// </summary>
-    /// <returns>Enumerable of all User-Objects</returns>
+    /// <param name="filter">Scim style filter.</param>
+    /// <returns>Enumerable of all filtered User-Objects</returns>
     Task<IEnumerable<ApplicationUser>> GetUsersAsync(string filter);
 
     /// <summary>
@@ -67,5 +68,10 @@ public interface IUsersRepository
     /// <returns>true if the format is correct. Otherwise throws exception</returns>
     Task<bool> CheckPasswordFormat(string password);
 
+    /// <summary>
+    /// Checks if a user exists with the given employee id.
+    /// </summary>
+    /// <param name="id">Employee Id of the user.</param>
+    /// <returns>boolean representing the existence of the user.</returns>
     Task<bool> CheckUserExists(string id);
 }

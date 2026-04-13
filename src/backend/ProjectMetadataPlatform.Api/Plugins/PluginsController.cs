@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
@@ -15,7 +15,7 @@ namespace ProjectMetadataPlatform.Api.Plugins;
 /// Endpoints for managing plugins.
 /// </summary>
 [ApiController]
-[Authorize(AuthenticationSchemes = "Azure,Basic")]
+[Authorize(AuthenticationSchemes = "Azure,Basic,ApiToken")]
 [Route("[controller]")]
 public class PluginsController : ControllerBase
 {

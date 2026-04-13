@@ -24,6 +24,11 @@ public interface ITeamRepository
     /// <returns>The team specified by the given id.</returns>
     Task<Team> GetTeamAsync(int id);
 
+    /// <summary>
+    /// Retrieves the team by the given name.
+    /// </summary>
+    /// <param name="teamName">Name of the team</param>
+    /// <returns>The team specified by the given name.</returns>
     Task<Team> GetTeamByNameAsync(string teamName);
 
     /// <summary>

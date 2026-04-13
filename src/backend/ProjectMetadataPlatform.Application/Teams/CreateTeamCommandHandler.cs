@@ -92,6 +92,6 @@ public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, int>
                 }
             );
         }
-        await _logRepository.AddTeamLogForCurrentUser(team, Action.ADDED_TEAM, logChanges);
+        await _logRepository.AddTeamLogForCurrentActor(team, Action.ADDED_TEAM, logChanges);
     }
 }

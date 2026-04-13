@@ -3,7 +3,7 @@
 namespace ProjectMetadataPlatform.Application.Interfaces;
 
 /// <summary>
-/// Repository for authentication.
+/// Repository for refresh tokens.
 /// </summary>
 public interface IRefreshTokenRepository
 {
