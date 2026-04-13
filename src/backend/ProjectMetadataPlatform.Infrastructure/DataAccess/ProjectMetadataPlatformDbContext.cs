@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Errors.BasicExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Plugins;
@@ -44,6 +45,11 @@ public sealed class ProjectMetadataPlatformDbContext
     /// Represents the table for log entities.
     /// </summary>
     public DbSet<Log> Logs { get; set; }
+
+    /// <summary>
+    /// Represents the table for api tokens.
+    /// </summary>
+    public DbSet<ApiToken> ApiTokens { get; set; }
 
     /// <inheritdoc />
     public ProjectMetadataPlatformDbContext() { }
