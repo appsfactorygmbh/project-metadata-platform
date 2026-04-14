@@ -13,6 +13,7 @@ using ProjectMetadataPlatform.Api.Logs;
 using ProjectMetadataPlatform.Api.Logs.Models;
 using ProjectMetadataPlatform.Application.Logs;
 using ProjectMetadataPlatform.Application.Projects;
+using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Users;
@@ -42,13 +43,16 @@ public class LogsControllerTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Slartibartfast",
+            AuthorName = "Slartibartfast",
             Author = new ApplicationUser
             {
+                EmployeeId = "",
                 Email = "Slartibartfast",
                 IsActive = true,
                 IsScimProvisioned = false,
             },
+            AuthorTokenId = null,
+            AuthorToken = null,
             ProjectId = 42,
             Action = Action.UPDATED_PROJECT,
             Changes =
@@ -93,14 +97,11 @@ public class LogsControllerTest
         {
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
-            AuthorId = "42",
-            AuthorEmail = "Slartibartfast",
-            Author = new ApplicationUser
-            {
-                Email = "Slartibartfast",
-                IsActive = true,
-                IsScimProvisioned = false,
-            },
+            AuthorId = null,
+            AuthorName = "Slartibartfast",
+            Author = null,
+            AuthorTokenId = 24,
+            AuthorToken = new ApiToken { Name = "Name", Token = "Token" },
             ProjectId = 42,
             Action = Action.UPDATED_PROJECT,
             Changes =
@@ -149,13 +150,16 @@ public class LogsControllerTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Slartibartfast",
+            AuthorName = "Slartibartfast",
             Author = new ApplicationUser
             {
+                EmployeeId = "helloworld",
                 Email = "Slartibartfast",
                 IsActive = true,
                 IsScimProvisioned = false,
             },
+            AuthorTokenId = null,
+            AuthorToken = null,
             ProjectId = 42,
             Action = Action.UPDATED_PROJECT,
             Changes =
@@ -204,13 +208,16 @@ public class LogsControllerTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Slartibartfast",
+            AuthorName = "Slartibartfast",
             Author = new ApplicationUser
             {
                 Email = "Slartibartfast",
+                EmployeeId = "Id",
                 IsActive = true,
                 IsScimProvisioned = false,
             },
+            AuthorTokenId = null,
+            AuthorToken = null,
             Action = Action.UPDATED_USER,
             AffectedUserId = "Newton",
             Changes =
@@ -259,13 +266,16 @@ public class LogsControllerTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "newton",
+            AuthorName = "newton",
             Author = new ApplicationUser
             {
                 Email = "newton",
                 IsActive = true,
                 IsScimProvisioned = false,
+                EmployeeId = "lorem",
             },
+            AuthorTokenId = null,
+            AuthorToken = null,
             Action = Action.UPDATED_GLOBAL_PLUGIN,
             GlobalPluginId = 42,
             GlobalPluginName = "Gravity",
@@ -315,13 +325,16 @@ public class LogsControllerTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Slartibartfast",
+            AuthorName = "Slartibartfast",
             Author = new ApplicationUser
             {
                 Email = "Slartibartfast",
                 IsActive = true,
                 IsScimProvisioned = false,
+                EmployeeId = "ipsum",
             },
+            AuthorTokenId = null,
+            AuthorToken = null,
             ProjectId = 42,
             Action = Action.UPDATED_PROJECT,
             Changes =
@@ -381,13 +394,16 @@ public class LogsControllerTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Slartibartfast",
+            AuthorName = "Slartibartfast",
             Author = new ApplicationUser
             {
                 Email = "Slartibartfast",
                 IsActive = true,
                 IsScimProvisioned = false,
+                EmployeeId = "EmployeeId",
             },
+            AuthorTokenId = null,
+            AuthorToken = null,
             ProjectId = 42,
             Action = Action.UPDATED_PROJECT,
             Changes =

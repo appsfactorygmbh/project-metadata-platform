@@ -32,7 +32,7 @@ public class GetUserControllerTest
     {
         var user = new ApplicationUser
         {
-            Id = "1",
+            EmployeeId = "Id",
             Email = "Hinz",
             IsActive = true,
             IsScimProvisioned = false,
@@ -50,8 +50,11 @@ public class GetUserControllerTest
         Assert.That(response, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(response.Id, Is.EqualTo("1"));
-            Assert.That(response.Email, Is.EqualTo("Hinz"));
+            Assert.That(response.Id, Is.EqualTo("Id"));
+            Assert.That(response.UserName, Is.EqualTo("Hinz"));
+            Assert.That(response.ExternalId, Is.EqualTo("Id"));
+            Assert.That(response.Active, Is.EqualTo(true));
+            Assert.That(response.PmpUser!.IsScimProvisioned, Is.EqualTo(false));
         });
     }
 

@@ -19,10 +19,13 @@ public class LogConverter : ILogConverter
     /// <inheritdoc />
     public LogResponse BuildLogMessage(Log log)
     {
-        var message =
-            log.Author is { Email: not null } ? GetNameFromEmail(log.Author.Email)
-            : log.AuthorName != null ? GetNameFromEmail(log.AuthorName) + " (deleted user)"
-            : "<Deleted User>";
+        var message = log switch
+        {
+            { Author.Email: not null } => GetNameFromEmail(log.Author.Email),
+            { AuthorToken.Name: not null } => log.AuthorToken.Name,
+            { AuthorName: not null } => GetNameFromEmail(log.AuthorName) + " (deleted actor)",
+            _ => "<Deleted Actor>",
+        };
 
         message +=
             " "
@@ -453,7 +456,7 @@ public class LogConverter : ILogConverter
         message += " with properties: ";
         message += string.Join(
             ", ",
-            changes.Select(change => $"{change.Property} = {change.NewValue}")
+            changes.Select(change => $"{change.Property} = {change.OldValue}")
         );
         return message;
     }

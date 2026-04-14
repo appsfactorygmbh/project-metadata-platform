@@ -139,7 +139,7 @@ public class UsersController : ControllerBase
                 },
                 Meta = new PmpScimUser.MetaResourceData { ResourceType = "User" },
             }),
-            TotalResults = 1,
+            TotalResults = users.Count(),
         };
         return Ok(response);
     }

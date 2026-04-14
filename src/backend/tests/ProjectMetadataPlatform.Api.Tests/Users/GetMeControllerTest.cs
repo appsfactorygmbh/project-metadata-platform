@@ -31,6 +31,7 @@ public class GetMeControllerTest
         var user = new ApplicationUser
         {
             Id = "42",
+            EmployeeId = "Test",
             Email = "moonstealer@gruhq.com",
             IsActive = true,
             IsScimProvisioned = false,
@@ -57,8 +58,11 @@ public class GetMeControllerTest
         Assert.That(response, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(response.Id, Is.EqualTo("42"));
-            Assert.That(response.Email, Is.EqualTo("moonstealer@gruhq.com"));
+            Assert.That(response.Id, Is.EqualTo("Test"));
+            Assert.That(response.UserName, Is.EqualTo("moonstealer@gruhq.com"));
+            Assert.That(response.ExternalId, Is.EqualTo("Test"));
+            Assert.That(response.Active, Is.EqualTo(true));
+            Assert.That(response.PmpUser!.IsScimProvisioned, Is.EqualTo(false));
         });
     }
 

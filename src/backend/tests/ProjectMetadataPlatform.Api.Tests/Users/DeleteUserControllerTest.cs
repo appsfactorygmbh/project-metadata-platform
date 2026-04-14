@@ -30,6 +30,7 @@ public class DeleteUserControllerTest
     {
         var user = new ApplicationUser
         {
+            EmployeeId = "2",
             Id = "1",
             Email = "John",
             IsActive = true,
@@ -42,7 +43,7 @@ public class DeleteUserControllerTest
         Assert.That(result, Is.InstanceOf<NoContentResult>());
         _mediator.Verify(mediator =>
             mediator.Send(
-                It.Is<DeleteUserCommand>(command => command.Id == "1"),
+                It.Is<DeleteUserCommand>(command => command.EmployeeId == "1"),
                 It.IsAny<CancellationToken>()
             )
         );
