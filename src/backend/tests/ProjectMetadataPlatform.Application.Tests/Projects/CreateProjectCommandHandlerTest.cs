@@ -82,7 +82,7 @@ public class CreateProjectCommandHandlerTest
         Assert.That(result, Is.EqualTo(1));
         _mockLogRepo.Verify(
             m =>
-                m.AddProjectLogForCurrentUser(
+                m.AddProjectLogForCurrentActor(
                     It.IsAny<Project>(),
                     Action.ADDED_PROJECT,
                     It.IsAny<List<LogChange>>()
@@ -91,7 +91,7 @@ public class CreateProjectCommandHandlerTest
         );
         _mockLogRepo.Verify(
             m =>
-                m.AddProjectLogForCurrentUser(
+                m.AddProjectLogForCurrentActor(
                     It.IsAny<Project>(),
                     Action.ADDED_PROJECT_PLUGIN,
                     It.IsAny<List<LogChange>>()
@@ -135,7 +135,7 @@ public class CreateProjectCommandHandlerTest
 
         _mockLogRepo.Verify(
             m =>
-                m.AddProjectLogForCurrentUser(
+                m.AddProjectLogForCurrentActor(
                     It.IsAny<Project>(),
                     Action.ADDED_PROJECT,
                     It.IsAny<List<LogChange>>()
@@ -144,7 +144,7 @@ public class CreateProjectCommandHandlerTest
         );
         _mockLogRepo.Verify(
             m =>
-                m.AddProjectLogForCurrentUser(
+                m.AddProjectLogForCurrentActor(
                     It.IsAny<Project>(),
                     Action.ADDED_PROJECT_PLUGIN,
                     It.IsAny<List<LogChange>>()
@@ -195,7 +195,7 @@ public class CreateProjectCommandHandlerTest
 
         _mockLogRepo.Verify(
             m =>
-                m.AddProjectLogForCurrentUser(
+                m.AddProjectLogForCurrentActor(
                     It.IsAny<Project>(),
                     Action.ADDED_PROJECT,
                     It.IsAny<List<LogChange>>()
@@ -204,7 +204,7 @@ public class CreateProjectCommandHandlerTest
         );
         _mockLogRepo.Verify(
             m =>
-                m.AddProjectLogForCurrentUser(
+                m.AddProjectLogForCurrentActor(
                     It.IsAny<Project>(),
                     Action.ADDED_PROJECT_PLUGIN,
                     It.IsAny<List<LogChange>>()

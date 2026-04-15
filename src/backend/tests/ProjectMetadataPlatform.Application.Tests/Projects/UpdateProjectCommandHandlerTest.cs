@@ -41,8 +41,7 @@ public class UpdateProjectCommandHandlerTest
             _mockPluginRepo.Object,
             _mockTeamRepository.Object,
             _mockLogRepository.Object,
-            _mockUnitOfWork.Object,
-            _mockSlugHelper.Object
+            _mockUnitOfWork.Object
         );
     }
 
@@ -486,7 +485,7 @@ public class UpdateProjectCommandHandlerTest
 
         _mockLogRepository.Verify(
             logRepo =>
-                logRepo.AddProjectLogForCurrentUser(
+                logRepo.AddProjectLogForCurrentActor(
                     project,
                     Action.UPDATED_PROJECT,
                     It.Is<List<LogChange>>(changes =>
@@ -572,7 +571,7 @@ public class UpdateProjectCommandHandlerTest
 
         _mockLogRepository.Verify(
             logRepo =>
-                logRepo.AddProjectLogForCurrentUser(
+                logRepo.AddProjectLogForCurrentActor(
                     It.IsAny<Project>(),
                     It.IsAny<Action>(),
                     It.IsAny<List<LogChange>>()
@@ -622,7 +621,7 @@ public class UpdateProjectCommandHandlerTest
 
         _mockLogRepository.Verify(
             logRepo =>
-                logRepo.AddProjectLogForCurrentUser(
+                logRepo.AddProjectLogForCurrentActor(
                     project,
                     Action.UPDATED_PROJECT,
                     It.Is<List<LogChange>>(changes =>
@@ -680,7 +679,7 @@ public class UpdateProjectCommandHandlerTest
 
         _mockLogRepository
             .Setup(logRepo =>
-                logRepo.AddProjectLogForCurrentUser(
+                logRepo.AddProjectLogForCurrentActor(
                     It.IsAny<Project>(),
                     It.IsAny<Action>(),
                     It.IsAny<List<LogChange>>()
@@ -695,7 +694,7 @@ public class UpdateProjectCommandHandlerTest
 
         _mockLogRepository.Verify(
             logRepo =>
-                logRepo.AddProjectLogForCurrentUser(
+                logRepo.AddProjectLogForCurrentActor(
                     It.IsAny<Project>(),
                     It.IsAny<Action>(),
                     It.IsAny<List<LogChange>>()
@@ -746,7 +745,7 @@ public class UpdateProjectCommandHandlerTest
 
         _mockLogRepository.Verify(
             logRepo =>
-                logRepo.AddProjectLogForCurrentUser(
+                logRepo.AddProjectLogForCurrentActor(
                     project,
                     Action.ARCHIVED_PROJECT, // Expect Action.ARCHIVED_PROJECT since the project was archived
                     It.Is<List<LogChange>>(changes =>
@@ -805,7 +804,7 @@ public class UpdateProjectCommandHandlerTest
 
         _mockLogRepository.Verify(
             logRepo =>
-                logRepo.AddProjectLogForCurrentUser(
+                logRepo.AddProjectLogForCurrentActor(
                     project,
                     Action.UNARCHIVED_PROJECT,
                     It.Is<List<LogChange>>(changes =>
@@ -864,7 +863,7 @@ public class UpdateProjectCommandHandlerTest
 
         _mockLogRepository.Verify(
             logRepo =>
-                logRepo.AddProjectLogForCurrentUser(
+                logRepo.AddProjectLogForCurrentActor(
                     project,
                     Action.UPDATED_PROJECT,
                     It.IsAny<List<LogChange>>()
@@ -924,7 +923,7 @@ public class UpdateProjectCommandHandlerTest
 
         _mockLogRepository.Verify(
             logRepo =>
-                logRepo.AddProjectLogForCurrentUser(
+                logRepo.AddProjectLogForCurrentActor(
                     project,
                     Action.REMOVED_PROJECT_PLUGIN,
                     It.Is<List<LogChange>>(changes =>
@@ -1000,7 +999,7 @@ public class UpdateProjectCommandHandlerTest
 
         _mockLogRepository.Verify(
             logRepo =>
-                logRepo.AddProjectLogForCurrentUser(
+                logRepo.AddProjectLogForCurrentActor(
                     project,
                     Action.ADDED_PROJECT_PLUGIN,
                     It.Is<List<LogChange>>(changes =>
@@ -1084,7 +1083,7 @@ public class UpdateProjectCommandHandlerTest
 
         _mockLogRepository.Verify(
             logRepo =>
-                logRepo.AddProjectLogForCurrentUser(
+                logRepo.AddProjectLogForCurrentActor(
                     project,
                     Action.UPDATED_PROJECT_PLUGIN,
                     It.Is<List<LogChange>>(changes =>
@@ -1157,7 +1156,7 @@ public class UpdateProjectCommandHandlerTest
 
         _mockLogRepository.Verify(
             logRepo =>
-                logRepo.AddProjectLogForCurrentUser(
+                logRepo.AddProjectLogForCurrentActor(
                     It.IsAny<Project>(),
                     It.IsAny<Action>(),
                     It.IsAny<List<LogChange>>()

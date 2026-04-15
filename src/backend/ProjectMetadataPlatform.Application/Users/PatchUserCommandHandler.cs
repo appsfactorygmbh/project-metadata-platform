@@ -60,17 +60,16 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         CancellationToken cancellationToken
     )
     {
-        ApplicationUser userOld;
+        ApplicationUser user;
         if (await _usersRepository.CheckUserExists(request.Id))
         {
-            userOld = await _usersRepository.GetUserByIdAsync(request.Id);
+            user = await _usersRepository.GetUserByIdAsync(request.Id);
         }
         else
         {
-            userOld = await _usersRepository.GetUserByEmailAsync(request.Id);
+            user = await _usersRepository.GetUserByEmailAsync(request.Id);
         }
 
-        var user = userOld;
         var properties = typeof(ApplicationUser).GetProperties().Select(prop => prop.Name);
         var changes = new List<LogChange>();
 
@@ -79,12 +78,27 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
             var attribute = properties.Contains(operation.Path)
                 ? operation.Path
                 : await ScimAttributeNameToTypeAttributeName(operation.Path);
-
+            var oldValue = user.GetType().GetProperty(attribute)?.GetValue(user);
             if (attribute == "Email" && operation.Operation != PatchOperations.Remove)
             {
                 user.Email = await JsonElementToPrimitive((JsonElement)operation.Value!) as string;
                 user.UserName =
                     await JsonElementToPrimitive((JsonElement)operation.Value!) as string;
+
+                if ((string?)oldValue != user.Email)
+                {
+                    changes.Add(
+                        new LogChange
+                        {
+                            OldValue = oldValue?.ToString() ?? "null",
+                            NewValue =
+                                (
+                                    await JsonElementToPrimitive((JsonElement)operation.Value!)
+                                )?.ToString() ?? "null",
+                            Property = nameof(ApplicationUser.Email),
+                        }
+                    );
+                }
             }
             else if (
                 attribute == "PasswordHash"
@@ -98,15 +112,29 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
                     user,
                     (await JsonElementToPrimitive((JsonElement)operation.Value!) as string)!
                 );
+
+                if ((string?)oldValue != user.PasswordHash)
+                {
+                    changes.Add(
+                        new LogChange
+                        {
+                            OldValue = oldValue == null ? "null" : "old password was changed",
+                            NewValue =
+                                operation.Value?.ToString() == null ? "null" : "new password *****",
+                            Property = nameof(ApplicationUser.PasswordHash),
+                        }
+                    );
+                }
             }
-            else if (
-                (attribute == "Teams" || attribute == "TeamSupport")
-                && operation.Operation != PatchOperations.Remove
-            )
+            else if (attribute == "Teams" || attribute == "TeamSupport")
             {
-                var teamNames = (
-                    await JsonElementToPrimitive((JsonElement)operation.Value!) as List<string>
-                )!;
+                List<string> teamNames = [];
+                if (operation.Operation != PatchOperations.Remove)
+                {
+                    teamNames = (
+                        await JsonElementToPrimitive((JsonElement)operation.Value!) as List<string>
+                    )!;
+                }
                 Collection<Team> teams = [];
 
                 foreach (var team in teamNames)
@@ -116,6 +144,23 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
                     teams.Add(teamObject);
                 }
                 user.GetType().GetProperty(attribute)?.SetValue(user, teams);
+                var oldValueNamesList =
+                    oldValue == null ? [] : ((List<Team>)oldValue).Select(t => t.TeamName);
+                if (!oldValueNamesList.SequenceEqual(teamNames))
+                {
+                    changes.Add(
+                        new LogChange
+                        {
+                            OldValue = oldValueNamesList.Any()
+                                ? string.Join(", ", oldValueNamesList)
+                                : "null",
+                            NewValue = oldValueNamesList.Any()
+                                ? string.Join(", ", teamNames)
+                                : "null",
+                            Property = attribute,
+                        }
+                    );
+                }
             }
             else
             {
@@ -127,40 +172,19 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
                             ? null
                             : await JsonElementToPrimitive((JsonElement)operation.Value!)
                     );
-            }
 
-            if (
-                userOld.GetType().GetField(attribute)?.GetValue(userOld)
-                != user.GetType().GetField(attribute)?.GetValue(user)
-            )
-            {
-                if (attribute == "PasswordHash")
+                if (oldValue != user.GetType().GetProperty(attribute)?.GetValue(user))
                 {
                     changes.Add(
                         new LogChange
                         {
-                            OldValue =
-                                userOld.GetType().GetField(attribute)?.GetValue(userOld) == null
+                            OldValue = oldValue?.ToString() ?? "null",
+                            NewValue =
+                                operation.Operation == PatchOperations.Remove
                                     ? "null"
-                                    : "old password was changed",
-                            NewValue =
-                                operation.Value?.ToString() == null ? "null" : "new password *****",
-                            Property = attribute,
-                        }
-                    );
-                }
-                else
-                {
-                    changes.Add(
-                        new LogChange
-                        {
-                            OldValue =
-                                userOld.GetType().GetField(attribute)?.GetValue(userOld)?.ToString()
-                                ?? "null",
-                            NewValue =
-                                (
-                                    await JsonElementToPrimitive((JsonElement)operation.Value!)
-                                )?.ToString() ?? "null",
+                                    : (
+                                        await JsonElementToPrimitive((JsonElement)operation.Value!)
+                                    )?.ToString() ?? "null",
                             Property = attribute,
                         }
                     );

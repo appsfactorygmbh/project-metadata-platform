@@ -32,7 +32,8 @@ public class GetLogsQueryHandlerTest
             Id = 1,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "1",
-            AuthorEmail = "Zitronenfalter",
+            AuthorName = "Zitronenfalter",
+            AuthorTokenId = null,
             ProjectId = 1,
             Action = Action.UPDATED_PROJECT,
             Changes =
@@ -49,8 +50,9 @@ public class GetLogsQueryHandlerTest
         {
             Id = 2,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
-            AuthorId = "2",
-            AuthorEmail = "Halbleiter",
+            AuthorTokenId = 2,
+            AuthorId = null,
+            AuthorName = "Halbleiter",
             ProjectId = 2,
             Action = Action.UPDATED_PROJECT,
             Changes =
@@ -87,7 +89,8 @@ public class GetLogsQueryHandlerTest
             Id = 1,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "1",
-            AuthorEmail = "Zitronenfalter",
+            AuthorTokenId = null,
+            AuthorName = "Zitronenfalter",
             ProjectId = 1,
             Action = Action.UPDATED_PROJECT,
             Changes =
@@ -120,7 +123,8 @@ public class GetLogsQueryHandlerTest
             Id = 1,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "1",
-            AuthorEmail = "Derivative",
+            AuthorTokenId = null,
+            AuthorName = "Derivative",
             ProjectId = 1,
             Action = Action.UPDATED_PROJECT,
             Changes =
@@ -155,8 +159,9 @@ public class GetLogsQueryHandlerTest
         {
             Id = 1,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
-            AuthorId = "1",
-            AuthorEmail = "Newton",
+            AuthorTokenId = 1,
+            AuthorId = null,
+            AuthorName = "Newton",
             AffectedUserId = "Newton",
             Action = Action.UPDATED_USER,
             Changes =
@@ -192,7 +197,8 @@ public class GetLogsQueryHandlerTest
             Id = 1,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "1",
-            AuthorEmail = "Newton",
+            AuthorTokenId = null,
+            AuthorName = "Newton",
             Action = Action.UPDATED_GLOBAL_PLUGIN,
             GlobalPluginId = 42,
             GlobalPluginName = "Gravity",

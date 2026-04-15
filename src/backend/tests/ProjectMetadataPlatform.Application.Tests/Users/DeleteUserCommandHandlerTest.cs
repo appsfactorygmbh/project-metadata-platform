@@ -56,17 +56,18 @@ public class DeleteUserCommandHandlerTest
     {
         var user = new ApplicationUser
         {
+            EmployeeId = "2",
             Id = "1",
             Email = "user@example.com",
             IsActive = true,
             IsScimProvisioned = false,
         };
-        _mockUsersRepo.Setup(m => m.GetUserByIdAsync("1")).ReturnsAsync(user);
+        _mockUsersRepo.Setup(m => m.GetUserByIdAsync("2")).ReturnsAsync(user);
         _mockUsersRepo.Setup(m => m.DeleteUserAsync(user)).ReturnsAsync(user);
-        var result = await _handler.Handle(new DeleteUserCommand("1"), CancellationToken.None);
+        var result = await _handler.Handle(new DeleteUserCommand("2"), CancellationToken.None);
         _mockLogRepository.Verify(
             m =>
-                m.AddUserLogForCurrentUser(
+                m.AddUserLogForCurrentActor(
                     It.Is<ApplicationUser>(u => u.Id == "1"),
                     UserAction.REMOVED_USER,
                     It.Is<List<LogChange>>(changes =>
@@ -98,17 +99,18 @@ public class DeleteUserCommandHandlerTest
     {
         var user = new ApplicationUser
         {
+            EmployeeId = "200",
             Email = "camo",
             Id = "1",
             IsActive = true,
             IsScimProvisioned = false,
         };
 
-        _mockUsersRepo.Setup(m => m.GetUserByIdAsync("1")).ReturnsAsync(user);
+        _mockUsersRepo.Setup(m => m.GetUserByIdAsync("200")).ReturnsAsync(user);
         _mockUsersRepo.Setup(m => m.GetUserByEmailAsync("camo")).ReturnsAsync(user);
 
         Assert.ThrowsAsync<UserCantDeleteThemselfException>(() =>
-            _handler.Handle(new DeleteUserCommand("1"), CancellationToken.None)
+            _handler.Handle(new DeleteUserCommand("200"), CancellationToken.None)
         );
     }
 }

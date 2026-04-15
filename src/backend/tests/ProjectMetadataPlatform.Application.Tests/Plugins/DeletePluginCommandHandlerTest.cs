@@ -103,7 +103,7 @@ public class DeletePluginCommandHandlerTest
         // Assert
         Assert.That(result, Is.EqualTo(true));
         var addLogCall = _mockLogRepo.Invocations.FirstOrDefault(i =>
-            i.Method.Name == nameof(ILogRepository.AddGlobalPluginLogForCurrentUser)
+            i.Method.Name == nameof(ILogRepository.AddGlobalPluginLogForCurrentActor)
         );
         Assert.That(addLogCall, Is.Not.Null);
         Assert.Multiple(() =>
@@ -132,7 +132,7 @@ public class DeletePluginCommandHandlerTest
             _handler.Handle(new DeleteGlobalPluginCommand(42), CancellationToken.None)
         );
         var addLogCall = _mockLogRepo.Invocations.FirstOrDefault(i =>
-            i.Method.Name == nameof(ILogRepository.AddGlobalPluginLogForCurrentUser)
+            i.Method.Name == nameof(ILogRepository.AddGlobalPluginLogForCurrentActor)
         );
         Assert.That(addLogCall, Is.Null);
     }
@@ -148,7 +148,7 @@ public class DeletePluginCommandHandlerTest
             _handler.Handle(new DeleteGlobalPluginCommand(42), CancellationToken.None)
         );
         var addLogCall = _mockLogRepo.Invocations.FirstOrDefault(i =>
-            i.Method.Name == nameof(ILogRepository.AddGlobalPluginLogForCurrentUser)
+            i.Method.Name == nameof(ILogRepository.AddGlobalPluginLogForCurrentActor)
         );
         Assert.That(addLogCall, Is.Null);
     }

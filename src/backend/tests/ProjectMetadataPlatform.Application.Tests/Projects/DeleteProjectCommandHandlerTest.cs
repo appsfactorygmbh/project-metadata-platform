@@ -113,7 +113,7 @@ public class DeleteProjectCommandHandlerTest
 
         _mockLogRepo.Verify(
             m =>
-                m.AddProjectLogForCurrentUser(
+                m.AddProjectLogForCurrentActor(
                     It.Is<Project>(p => p.ProjectName == "Heather" && p.ClientName == "Metatron"),
                     Action.REMOVED_PROJECT,
                     It.Is<List<LogChange>>(changes =>

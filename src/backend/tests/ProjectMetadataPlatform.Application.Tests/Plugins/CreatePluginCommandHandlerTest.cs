@@ -52,7 +52,7 @@ public class CreatePluginCommandHandlerTest
 
         _mockLogRepo.Verify(
             logRepo =>
-                logRepo.AddGlobalPluginLogForCurrentUser(
+                logRepo.AddGlobalPluginLogForCurrentActor(
                     It.Is<Plugin>(plugin =>
                         plugin.PluginName == "Airlock" && plugin.IsArchived && plugin.Id == 13
                     ),

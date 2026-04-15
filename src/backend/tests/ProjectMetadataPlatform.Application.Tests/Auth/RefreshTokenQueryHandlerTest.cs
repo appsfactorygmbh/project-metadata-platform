@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -14,13 +14,13 @@ namespace ProjectMetadataPlatform.Application.Tests.Auth;
 public class RefreshTokenQueryHandlerTest
 {
     private RefreshTokenQueryHandler _handler;
-    private Mock<IAuthRepository> _mockAuthRepo;
+    private Mock<IRefreshTokenRepository> _mockRefreshTokenRepo;
 
     [SetUp]
     public void Setup()
     {
-        _mockAuthRepo = new Mock<IAuthRepository>();
-        _handler = new RefreshTokenQueryHandler(_mockAuthRepo.Object);
+        _mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
+        _handler = new RefreshTokenQueryHandler(_mockRefreshTokenRepo.Object);
     }
 
     [Test]
@@ -34,8 +34,8 @@ public class RefreshTokenQueryHandlerTest
         );
         Environment.SetEnvironmentVariable("ACCESS_TOKEN_EXPIRATION_MINUTES", "1");
 
-        _mockAuthRepo.Setup(m => m.CheckRefreshTokenRequest(It.IsAny<string>())).ReturnsAsync(true);
-        _mockAuthRepo
+        _mockRefreshTokenRepo.Setup(m => m.CheckRefreshTokenRequest(It.IsAny<string>())).ReturnsAsync(true);
+        _mockRefreshTokenRepo
             .Setup(m => m.GetEmailByRefreshToken(It.IsAny<string>()))
             .ReturnsAsync("admin");
         var request = new RefreshTokenQuery("refreshToken");
@@ -48,7 +48,7 @@ public class RefreshTokenQueryHandlerTest
     [Test]
     public void HandleRefreshTokenQueryHandler_InvalidToken_Test()
     {
-        _mockAuthRepo
+        _mockRefreshTokenRepo
             .Setup(m => m.CheckRefreshTokenRequest(It.IsAny<string>()))
             .ReturnsAsync(false);
         var request = new RefreshTokenQuery("invalidRefreshToken");

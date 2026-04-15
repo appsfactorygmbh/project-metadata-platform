@@ -27,6 +27,7 @@ public class GetUserByEmailQueryHandlerTest
     {
         var user = new ApplicationUser
         {
+            EmployeeId = "abc",
             Id = "13",
             Email = "squidlauncher@bankofevil.com",
             IsActive = true,
@@ -47,6 +48,9 @@ public class GetUserByEmailQueryHandlerTest
         {
             Assert.That(result.Id, Is.EqualTo("13"));
             Assert.That(result.Email, Is.EqualTo("squidlauncher@bankofevil.com"));
+            Assert.That(result.EmployeeId, Is.EqualTo("abc"));
+            Assert.That(result.IsActive, Is.EqualTo(true));
+            Assert.That(result.IsScimProvisioned, Is.EqualTo(false));
         });
     }
 

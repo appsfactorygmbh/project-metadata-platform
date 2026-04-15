@@ -65,7 +65,7 @@ public class CreateTeamCommandHandlerTest
         Assert.That(result, Is.EqualTo(1));
         _mockLogRepo.Verify(
             m =>
-                m.AddTeamLogForCurrentUser(
+                m.AddTeamLogForCurrentActor(
                     It.IsAny<Team>(),
                     Action.ADDED_TEAM,
                     It.IsAny<List<LogChange>>()

@@ -27,8 +27,8 @@ public class GetAllUsersQueryHandlerTest
     [Test]
     public async Task HandleGetAllUsersRequest_EmptyResponse_Test()
     {
-        _mockUserRepo.Setup(m => m.GetUsersAsync()).ReturnsAsync([]);
-        var request = new GetAllUsersQuery();
+        _mockUserRepo.Setup(m => m.GetUsersAsync("")).ReturnsAsync([]);
+        var request = new GetAllUsersQuery("");
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
         ApplicationUser[] resultArray = result as ApplicationUser[] ?? result.ToArray();
@@ -45,6 +45,7 @@ public class GetAllUsersQueryHandlerTest
         {
             new()
             {
+                EmployeeId = "abc",
                 Id = "1",
                 Email = "Hinz",
                 IsActive = true,
@@ -52,8 +53,8 @@ public class GetAllUsersQueryHandlerTest
             },
         };
 
-        _mockUserRepo.Setup(m => m.GetUsersAsync()).ReturnsAsync(usersResponseContent);
-        var request = new GetAllUsersQuery();
+        _mockUserRepo.Setup(m => m.GetUsersAsync("qweqweqwe")).ReturnsAsync(usersResponseContent);
+        var request = new GetAllUsersQuery("qweqweqwe");
         var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).ToList();
 
         Assert.That(result, Is.Not.Null);
@@ -65,6 +66,9 @@ public class GetAllUsersQueryHandlerTest
         {
             Assert.That(resultArray[0].Id, Is.EqualTo("1"));
             Assert.That(resultArray[0].Email, Is.EqualTo("Hinz"));
+            Assert.That(resultArray[0].EmployeeId, Is.EqualTo("abc"));
+            Assert.That(resultArray[0].IsActive, Is.EqualTo(true));
+            Assert.That(resultArray[0].IsScimProvisioned, Is.EqualTo(false));
         });
     }
 }
