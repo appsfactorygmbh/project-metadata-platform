@@ -46,7 +46,7 @@ public class DependencyInjectionTests : TestsWithDatabase
         {
             Assert.That(serviceProvider.GetService<IProjectsRepository>(), Is.Not.Null);
             Assert.That(serviceProvider.GetService<IPluginRepository>(), Is.Not.Null);
-            Assert.That(serviceProvider.GetService<IAuthRepository>(), Is.Not.Null);
+            Assert.That(serviceProvider.GetService<IRefreshTokenRepository>(), Is.Not.Null);
         });
     }
 

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Errors.LogExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Plugins;
@@ -26,26 +27,34 @@ public class LogRepositoryTest : TestsWithDatabase
     private LogRepository _loggingRepository;
     private Mock<IUsersRepository> _mockUserRepository;
 
+    private Mock<IApiTokenRepository> _mockApiTokenRepository;
+    private Mock<IHttpContextAccessor> _httpContextAccessorMock;
+
     [SetUp]
     public void Setup()
     {
         _context = DbContext();
-        var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+        _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
 
         var identity = new ClaimsIdentity(
-            new[] { new Claim(ClaimTypes.Email, "camo") },
+            new[]
+            {
+                new Claim(ClaimTypes.Email, "camo"),
+                new Claim(ClaimTypes.AuthenticationMethod, "JWT Token"),
+            },
             "TestAuth"
         );
         var contextUser = new ClaimsPrincipal(identity); //add claims as needed
         var httpContext = new DefaultHttpContext { User = contextUser };
-        httpContextAccessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        _httpContextAccessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
 
         _mockUserRepository = new Mock<IUsersRepository>();
-
+        _mockApiTokenRepository = new Mock<IApiTokenRepository>();
         _loggingRepository = new LogRepository(
             _context,
-            httpContextAccessorMock.Object,
-            _mockUserRepository.Object
+            _httpContextAccessorMock.Object,
+            _mockUserRepository.Object,
+            _mockApiTokenRepository.Object
         );
     }
 
@@ -68,6 +77,7 @@ public class LogRepositoryTest : TestsWithDatabase
 
         var user = new ApplicationUser
         {
+            EmployeeId = "123",
             Id = "42",
             Email = "camo",
             IsActive = true,
@@ -97,7 +107,7 @@ public class LogRepositoryTest : TestsWithDatabase
             .Setup(repository => repository.GetUserByEmailAsync("camo"))
             .ReturnsAsync(user);
 
-        await _loggingRepository.AddProjectLogForCurrentUser(
+        await _loggingRepository.AddProjectLogForCurrentActor(
             exampleProject,
             Action.ADDED_PROJECT,
             logChanges
@@ -116,7 +126,7 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Assert.That(dbLog.Id, Is.EqualTo(1));
             Assert.That(dbLog.Action, Is.EqualTo(Action.ADDED_PROJECT));
-            Assert.That(dbLog.AuthorEmail, Is.EqualTo("camo"));
+            Assert.That(dbLog.AuthorName, Is.EqualTo("camo"));
             Assert.That(dbLog.AuthorId, Is.EqualTo("42"));
             Assert.That(dbLog.Author, Is.EqualTo(user));
             Assert.That(dbLog.ProjectId, Is.EqualTo(exampleProject.Id));
@@ -130,6 +140,7 @@ public class LogRepositoryTest : TestsWithDatabase
     {
         var author = new ApplicationUser
         {
+            EmployeeId = "abc",
             Id = "42",
             Email = "camo",
             IsActive = true,
@@ -138,6 +149,7 @@ public class LogRepositoryTest : TestsWithDatabase
 
         var affectedUser = new ApplicationUser
         {
+            EmployeeId = "123",
             Id = "12",
             Email = "gagarin@vostok.su",
             IsActive = true,
@@ -162,7 +174,7 @@ public class LogRepositoryTest : TestsWithDatabase
             .Setup(repository => repository.GetUserByEmailAsync("camo"))
             .ReturnsAsync(author);
 
-        await _loggingRepository.AddUserLogForCurrentUser(
+        await _loggingRepository.AddUserLogForCurrentActor(
             affectedUser,
             Action.UPDATED_USER,
             logChanges
@@ -179,7 +191,7 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Assert.That(dbLog.Id, Is.EqualTo(1));
             Assert.That(dbLog.Action, Is.EqualTo(Action.UPDATED_USER));
-            Assert.That(dbLog.AuthorEmail, Is.EqualTo("camo"));
+            Assert.That(dbLog.AuthorName, Is.EqualTo("camo"));
             Assert.That(dbLog.AuthorId, Is.EqualTo("42"));
             Assert.That(dbLog.Author, Is.EqualTo(author));
             Assert.That(dbLog.AffectedUserId, Is.EqualTo("12"));
@@ -193,6 +205,7 @@ public class LogRepositoryTest : TestsWithDatabase
     {
         var author = new ApplicationUser
         {
+            EmployeeId = "123",
             Id = "42",
             Email = "camo",
             IsActive = true,
@@ -219,7 +232,7 @@ public class LogRepositoryTest : TestsWithDatabase
             .Setup(repository => repository.GetUserByEmailAsync("camo"))
             .ReturnsAsync(author);
 
-        await _loggingRepository.AddGlobalPluginLogForCurrentUser(
+        await _loggingRepository.AddGlobalPluginLogForCurrentActor(
             globalPlugin,
             Action.UPDATED_GLOBAL_PLUGIN,
             logChanges
@@ -237,12 +250,148 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Assert.That(dbLog.Id, Is.EqualTo(1));
             Assert.That(dbLog.Action, Is.EqualTo(Action.UPDATED_GLOBAL_PLUGIN));
-            Assert.That(dbLog.AuthorEmail, Is.EqualTo("camo"));
+            Assert.That(dbLog.AuthorName, Is.EqualTo("camo"));
             Assert.That(dbLog.AuthorId, Is.EqualTo("42"));
             Assert.That(dbLog.Author, Is.EqualTo(author));
             Assert.That(dbLog.GlobalPluginId, Is.EqualTo(13));
             Assert.That(dbLog.GlobalPlugin, Is.EqualTo(globalPlugin));
             Assert.That(dbLog.GlobalPluginName, Is.EqualTo("Canadarm2"));
+            Assert.That(dbLog.Changes, Has.Count.EqualTo(1));
+        });
+    }
+
+    [Test]
+    public async Task AddApiTokenLogTest()
+    {
+        var identity = new ClaimsIdentity(
+            new[]
+            {
+                new Claim(ClaimTypes.Name, "camo"),
+                new Claim(ClaimTypes.AuthenticationMethod, "API Token"),
+            },
+            "TestAuth"
+        );
+        var contextUser = new ClaimsPrincipal(identity); //add claims as needed
+        var httpContext = new DefaultHttpContext { User = contextUser };
+        _httpContextAccessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        var authorToken = new ApiToken
+        {
+            Id = 1,
+            Name = "camo",
+            Token = "TokenHash",
+        };
+        await _context.ApiTokens.AddAsync(authorToken);
+
+        var token = new ApiToken
+        {
+            Id = 2,
+            Name = "AnotherToken",
+            Token = "TokenHash",
+        };
+        await _context.ApiTokens.AddAsync(token);
+
+        await _context.SaveChangesAsync();
+
+        var logChanges = new List<LogChange>
+        {
+            new()
+            {
+                OldValue = "in storage",
+                NewValue = "installed",
+                Property = "status",
+            },
+        };
+
+        _mockApiTokenRepository
+            .Setup(repository => repository.GetApiTokenByName("camo"))
+            .ReturnsAsync(authorToken);
+
+        await _loggingRepository.AddApiTokenLogForCurrentActor(
+            token,
+            Action.ADDED_API_TOKEN,
+            logChanges
+        );
+
+        await _context.SaveChangesAsync();
+
+        var dbLog = await _context
+            .Logs.Include(log => log.AffectedToken)
+            .Include(log => log.Changes)
+            .Include(log => log.AuthorToken)
+            .FirstOrDefaultAsync();
+        Assert.That(dbLog, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dbLog.Id, Is.EqualTo(1));
+            Assert.That(dbLog.Action, Is.EqualTo(Action.ADDED_API_TOKEN));
+            Assert.That(dbLog.AuthorName, Is.EqualTo("camo"));
+            Assert.That(dbLog.AuthorTokenId, Is.EqualTo(1));
+            Assert.That(dbLog.AuthorToken, Is.EqualTo(authorToken));
+            Assert.That(dbLog.AffectedTokenId, Is.EqualTo(2));
+            Assert.That(dbLog.AffectedToken, Is.EqualTo(token));
+            Assert.That(dbLog.Changes, Has.Count.EqualTo(1));
+        });
+    }
+
+    [Test]
+    public async Task RemoveApiTokenLogTest()
+    {
+        var author = new ApplicationUser
+        {
+            EmployeeId = "123",
+            Id = "42",
+            Email = "camo",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
+        await _context.Users.AddAsync(author);
+
+        var apiToken = new ApiToken
+        {
+            Id = 1,
+            Name = "Token",
+            Token = "TokenHash",
+        };
+        await _context.ApiTokens.AddAsync(apiToken);
+
+        await _context.SaveChangesAsync();
+
+        var logChanges = new List<LogChange>
+        {
+            new()
+            {
+                OldValue = "in storage",
+                NewValue = "installed",
+                Property = "status",
+            },
+        };
+
+        _mockUserRepository
+            .Setup(repository => repository.GetUserByEmailAsync("camo"))
+            .ReturnsAsync(author);
+
+        await _loggingRepository.AddApiTokenLogForCurrentActor(
+            apiToken,
+            Action.REMOVED_API_TOKEN,
+            logChanges
+        );
+        await _context.SaveChangesAsync();
+        var dbLog = await _context
+            .Logs.Include(log => log.AffectedToken)
+            .Include(log => log.Changes)
+            .Include(log => log.Author)
+            .FirstOrDefaultAsync();
+        Assert.That(dbLog, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dbLog.Id, Is.EqualTo(1));
+            Assert.That(dbLog.Action, Is.EqualTo(Action.REMOVED_API_TOKEN));
+            Assert.That(dbLog.AuthorName, Is.EqualTo("camo"));
+            Assert.That(dbLog.AuthorId, Is.EqualTo("42"));
+            Assert.That(dbLog.Author, Is.EqualTo(author));
+            Assert.That(dbLog.AffectedTokenId, Is.EqualTo(1));
+            Assert.That(dbLog.AffectedToken, Is.EqualTo(apiToken));
+            Assert.That(dbLog.AffectedTokenName, Is.EqualTo("Token"));
             Assert.That(dbLog.Changes, Has.Count.EqualTo(1));
         });
     }
@@ -267,6 +416,7 @@ public class LogRepositoryTest : TestsWithDatabase
 
         var user = new ApplicationUser
         {
+            EmployeeId = "123",
             Id = "42",
             Email = "camo",
             IsActive = true,
@@ -287,7 +437,7 @@ public class LogRepositoryTest : TestsWithDatabase
         };
 
         Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
-            _loggingRepository.AddProjectLogForCurrentUser(exampleProject, action, logChanges)
+            _loggingRepository.AddProjectLogForCurrentActor(exampleProject, action, logChanges)
         );
     }
 
@@ -308,6 +458,7 @@ public class LogRepositoryTest : TestsWithDatabase
     {
         var author = new ApplicationUser
         {
+            EmployeeId = "123",
             Id = "42",
             Email = "camo",
             IsActive = true,
@@ -316,6 +467,7 @@ public class LogRepositoryTest : TestsWithDatabase
 
         var affectedUser = new ApplicationUser
         {
+            EmployeeId = "125",
             Id = "12",
             Email = "gagarin@vostok.su",
             IsActive = true,
@@ -337,7 +489,7 @@ public class LogRepositoryTest : TestsWithDatabase
         };
 
         Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
-            _loggingRepository.AddUserLogForCurrentUser(affectedUser, action, logChanges)
+            _loggingRepository.AddUserLogForCurrentActor(affectedUser, action, logChanges)
         );
     }
 
@@ -356,6 +508,7 @@ public class LogRepositoryTest : TestsWithDatabase
     {
         var author = new ApplicationUser
         {
+            EmployeeId = "123",
             Id = "42",
             Email = "camo",
             IsActive = true,
@@ -379,7 +532,50 @@ public class LogRepositoryTest : TestsWithDatabase
         };
 
         Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
-            _loggingRepository.AddGlobalPluginLogForCurrentUser(globalPlugin, action, logChanges)
+            _loggingRepository.AddGlobalPluginLogForCurrentActor(globalPlugin, action, logChanges)
+        );
+    }
+
+    [TestCase(Action.ADDED_USER)]
+    [TestCase(Action.UPDATED_USER)]
+    [TestCase(Action.REMOVED_USER)]
+    [TestCase(Action.ADDED_PROJECT)]
+    [TestCase(Action.ADDED_PROJECT_PLUGIN)]
+    [TestCase(Action.UPDATED_PROJECT)]
+    [TestCase(Action.UPDATED_PROJECT_PLUGIN)]
+    [TestCase(Action.REMOVED_PROJECT_PLUGIN)]
+    [TestCase(Action.ARCHIVED_PROJECT)]
+    [TestCase(Action.UNARCHIVED_PROJECT)]
+    [TestCase(Action.REMOVED_PROJECT)]
+    public async Task ApiTokenLogTest_RejectsActionNotInWhitelist(Action action)
+    {
+        var author = new ApplicationUser
+        {
+            EmployeeId = "123",
+            Id = "42",
+            Email = "camo",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
+        await _context.Users.AddAsync(author);
+
+        var apiToken = new ApiToken { Name = "Token", Token = "Value" };
+        await _context.ApiTokens.AddAsync(apiToken);
+
+        await _context.SaveChangesAsync();
+
+        var logChanges = new List<LogChange>
+        {
+            new()
+            {
+                OldValue = "in storage",
+                NewValue = "installed",
+                Property = "status",
+            },
+        };
+
+        Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+            _loggingRepository.AddApiTokenLogForCurrentActor(apiToken, action, logChanges)
         );
     }
 
@@ -390,7 +586,8 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Id = 1,
             AuthorId = null,
-            AuthorEmail = "camo",
+            AuthorName = "camo",
+            AuthorTokenId = null,
             TimeStamp = DateTimeOffset.UtcNow,
             ProjectId = 301,
             Action = Action.ADDED_PROJECT,
@@ -427,7 +624,7 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Assert.That(log.Id, Is.EqualTo(1));
             Assert.That(log.AuthorId, Is.Null);
-            Assert.That(log.AuthorEmail, Is.EqualTo("camo"));
+            Assert.That(log.AuthorName, Is.EqualTo("camo"));
             Assert.That(log.ProjectId, Is.EqualTo(301));
             Assert.That(log.Action, Is.EqualTo(Action.ADDED_PROJECT));
             Assert.That(log.Changes, Has.Count.EqualTo(1));
@@ -459,7 +656,8 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Id = 1,
             AuthorId = null,
-            AuthorEmail = "camo",
+            AuthorTokenId = null,
+            AuthorName = "camo",
             TimeStamp = DateTimeOffset.UtcNow,
             ProjectId = 301,
             Action = Action.ADDED_PROJECT,
@@ -486,7 +684,8 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Id = 2,
             AuthorId = null,
-            AuthorEmail = "someUserName",
+            AuthorTokenId = null,
+            AuthorName = "someUserName",
             TimeStamp = DateTimeOffset.UtcNow,
             ProjectId = 302,
             Action = Action.UPDATED_PROJECT,
@@ -524,7 +723,8 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Id = 1,
             AuthorId = null,
-            AuthorEmail = "camo",
+            AuthorTokenId = null,
+            AuthorName = "camo",
             TimeStamp = DateTimeOffset.UtcNow,
             ProjectId = 301,
             Action = Action.ADDED_PROJECT,
@@ -551,7 +751,8 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Id = 2,
             AuthorId = null,
-            AuthorEmail = "someUserName",
+            AuthorTokenId = null,
+            AuthorName = "someUserName",
             TimeStamp = DateTimeOffset.UtcNow,
             ProjectId = 302,
             Action = Action.UPDATED_PROJECT,
@@ -586,7 +787,7 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Assert.That(log.Id, Is.EqualTo(2));
             Assert.That(log.AuthorId, Is.Null);
-            Assert.That(log.AuthorEmail, Is.EqualTo("someUserName"));
+            Assert.That(log.AuthorName, Is.EqualTo("someUserName"));
             Assert.That(log.ProjectId, Is.EqualTo(302));
             Assert.That(log.Action, Is.EqualTo(Action.UPDATED_PROJECT));
             Assert.That(log.Changes, Has.Count.EqualTo(1));
@@ -600,7 +801,8 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Id = 1,
             AuthorId = null,
-            AuthorEmail = "camo",
+            AuthorTokenId = null,
+            AuthorName = "camo",
             TimeStamp = DateTimeOffset.UtcNow,
             ProjectId = 301,
             Action = Action.ADDED_PROJECT,
@@ -627,7 +829,8 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Id = 2,
             AuthorId = null,
-            AuthorEmail = "someUserName",
+            AuthorTokenId = null,
+            AuthorName = "someUserName",
             TimeStamp = DateTimeOffset.UtcNow,
             ProjectId = 302,
             Action = Action.UPDATED_PROJECT,
@@ -662,7 +865,7 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Assert.That(log.Id, Is.EqualTo(2));
             Assert.That(log.AuthorId, Is.Null);
-            Assert.That(log.AuthorEmail, Is.EqualTo("someUserName"));
+            Assert.That(log.AuthorName, Is.EqualTo("someUserName"));
             Assert.That(log.ProjectId, Is.EqualTo(302));
             Assert.That(log.Action, Is.EqualTo(Action.UPDATED_PROJECT));
             Assert.That(log.Changes, Has.Count.EqualTo(1));
@@ -676,7 +879,8 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Id = 1,
             AuthorId = null,
-            AuthorEmail = "camo",
+            AuthorName = "camo",
+            AuthorTokenId = null,
             TimeStamp = DateTimeOffset.UtcNow,
             ProjectId = null,
             Action = Action.REMOVED_PROJECT,
@@ -694,6 +898,7 @@ public class LogRepositoryTest : TestsWithDatabase
         var exampleUser = new ApplicationUser
         {
             Id = "Newton",
+            EmployeeId = "123",
             Email = "newton@royalastronomicalsociety.co.uk",
             IsActive = true,
             IsScimProvisioned = false,
@@ -703,7 +908,8 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Id = 2,
             AuthorId = null,
-            AuthorEmail = "someUserName",
+            AuthorTokenId = null,
+            AuthorName = "someUserName",
             TimeStamp = DateTimeOffset.UtcNow,
             Action = Action.UPDATED_USER,
             AffectedUserId = "Newton",
@@ -734,7 +940,7 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Assert.That(log.Id, Is.EqualTo(2));
             Assert.That(log.AuthorId, Is.Null);
-            Assert.That(log.AuthorEmail, Is.EqualTo("someUserName"));
+            Assert.That(log.AuthorName, Is.EqualTo("someUserName"));
             Assert.That(log.Action, Is.EqualTo(Action.UPDATED_USER));
             Assert.That(log.AffectedUserEmail, Is.EqualTo("Newton@royalastronomicalsociety.co.uk"));
             Assert.That(log.AffectedUserId, Is.EqualTo("Newton"));
@@ -751,7 +957,8 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Id = 1,
             AuthorId = null,
-            AuthorEmail = "camo",
+            AuthorTokenId = null,
+            AuthorName = "camo",
             TimeStamp = DateTimeOffset.UtcNow,
             ProjectId = null,
             Action = Action.REMOVED_PROJECT,
@@ -772,7 +979,8 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Id = 2,
             AuthorId = null,
-            AuthorEmail = "someUserName",
+            AuthorName = "someUserName",
+            AuthorTokenId = null,
             TimeStamp = DateTimeOffset.UtcNow,
             Action = Action.UPDATED_GLOBAL_PLUGIN,
             GlobalPluginId = 42,
@@ -803,7 +1011,7 @@ public class LogRepositoryTest : TestsWithDatabase
         {
             Assert.That(log.Id, Is.EqualTo(2));
             Assert.That(log.AuthorId, Is.Null);
-            Assert.That(log.AuthorEmail, Is.EqualTo("someUserName"));
+            Assert.That(log.AuthorName, Is.EqualTo("someUserName"));
             Assert.That(log.Action, Is.EqualTo(Action.UPDATED_GLOBAL_PLUGIN));
             Assert.That(log.GlobalPluginId, Is.EqualTo(42));
             Assert.That(log.GlobalPluginName, Is.EqualTo("Gravity"));

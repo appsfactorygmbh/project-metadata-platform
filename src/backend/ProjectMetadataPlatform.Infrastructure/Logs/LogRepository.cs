@@ -294,6 +294,7 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
             AuthorName = author.Name,
             AuthorId = null,
             AuthorTokenId = author.Id,
+            AuthorToken = author,
             Action = action,
             TimeStamp = UtcNow,
             Changes = changes,
@@ -363,11 +364,12 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
     ///  <inheritdoc />
     public async Task<List<Log>> GetLogsForUser(string userId)
     {
+        var test = await _context.Logs.ToListAsync();
         var res = _context
             .Logs.Include(l => l.Changes)
             .Include(l => l.AffectedUser)
-            .Include(l => l.Author)
             .Include(l => l.AuthorToken)
+            .Include(l => l.Author)
             .Where(log => log.AffectedUserId == userId);
         return SortByTimestamp(await res.ToListAsync());
     }

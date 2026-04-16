@@ -10,10 +10,10 @@ using ProjectMetadataPlatform.Infrastructure.DataAccess;
 
 namespace ProjectMetadataPlatform.Infrastructure.Tests;
 
-public class AuthRepositoryTest : TestsWithDatabase
+public class RefreshTokenRepositoryTest : TestsWithDatabase
 {
     private ProjectMetadataPlatformDbContext _context;
-    private AuthRepository _repository;
+    private RefreshTokenRepository _repository;
     private Mock<UserManager<ApplicationUser>> _mockUserManager;
 
     [SetUp]
@@ -31,7 +31,7 @@ public class AuthRepositoryTest : TestsWithDatabase
             null!
         );
         _context = DbContext();
-        _repository = new AuthRepository(_context, _mockUserManager.Object);
+        _repository = new RefreshTokenRepository(_context, _mockUserManager.Object);
         ClearData(_context);
     }
 
@@ -41,54 +41,6 @@ public class AuthRepositoryTest : TestsWithDatabase
         using var context = DbContext();
 
         context.Database.EnsureDeleted();
-    }
-
-    [Test]
-    public async Task CheckLogin_Successful_Test()
-    {
-        const string email = "test";
-        const string password = "test";
-
-        _mockUserManager
-            .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync(
-                new ApplicationUser
-                {
-                    Email = email,
-                    IsActive = true,
-                    IsScimProvisioned = false,
-                }
-            );
-        _mockUserManager
-            .Setup(m => m.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
-            .ReturnsAsync(true);
-
-        var result = await _repository.CheckLogin(email, password);
-        Assert.That(result, Is.True);
-    }
-
-    [Test]
-    public async Task CheckLogin_Unsuccessful_Test()
-    {
-        const string email = "test";
-        const string password = "test";
-
-        _mockUserManager
-            .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync(
-                new ApplicationUser
-                {
-                    Email = email,
-                    IsActive = true,
-                    IsScimProvisioned = false,
-                }
-            );
-        _mockUserManager
-            .Setup(m => m.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
-            .ReturnsAsync(false);
-
-        var result = await _repository.CheckLogin(email, password);
-        Assert.That(result, Is.False);
     }
 
     [Test]
@@ -103,6 +55,7 @@ public class AuthRepositoryTest : TestsWithDatabase
             .ReturnsAsync(
                 new ApplicationUser
                 {
+                    EmployeeId = "123",
                     Email = email,
                     IsActive = true,
                     IsScimProvisioned = false,
@@ -127,6 +80,7 @@ public class AuthRepositoryTest : TestsWithDatabase
             .ReturnsAsync(
                 new ApplicationUser
                 {
+                    EmployeeId = "123",
                     Email = email,
                     IsActive = true,
                     IsScimProvisioned = false,
@@ -158,6 +112,7 @@ public class AuthRepositoryTest : TestsWithDatabase
             .ReturnsAsync(
                 new ApplicationUser
                 {
+                    EmployeeId = "123",
                     Email = email,
                     IsActive = true,
                     IsScimProvisioned = false,
@@ -190,6 +145,7 @@ public class AuthRepositoryTest : TestsWithDatabase
         _context.Users.Add(
             new ApplicationUser
             {
+                EmployeeId = "123",
                 Email = email,
                 IsActive = true,
                 IsScimProvisioned = false,
@@ -214,6 +170,7 @@ public class AuthRepositoryTest : TestsWithDatabase
             .ReturnsAsync(
                 new ApplicationUser
                 {
+                    EmployeeId = "123",
                     Email = email,
                     IsActive = true,
                     IsScimProvisioned = false,
@@ -235,6 +192,7 @@ public class AuthRepositoryTest : TestsWithDatabase
             .ReturnsAsync(
                 new ApplicationUser
                 {
+                    EmployeeId = "123",
                     Email = email,
                     IsActive = true,
                     IsScimProvisioned = false,
@@ -254,6 +212,7 @@ public class AuthRepositoryTest : TestsWithDatabase
         _context.Users.Add(
             new ApplicationUser
             {
+                EmployeeId = "123",
                 Email = email,
                 IsActive = true,
                 IsScimProvisioned = false,
@@ -267,6 +226,7 @@ public class AuthRepositoryTest : TestsWithDatabase
             .ReturnsAsync(
                 new ApplicationUser
                 {
+                    EmployeeId = "LoremIpsum",
                     Email = email,
                     IsActive = true,
                     IsScimProvisioned = false,
