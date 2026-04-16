@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Auth.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Auth;
+using ProjectMetadataPlatform.Domain.Auth;
 
 namespace ProjectMetadataPlatform.Api.Auth;
 
@@ -80,7 +81,7 @@ public class AuthController : ControllerBase
     /// <returns>List of Api Tokens.</returns>
     /// <response code="200">Returns the Api Tokens.</response>
     [HttpGet("ApiTokens")]
-    [Authorize(AuthenticationSchemes = "Azure,Basic,ApiToken")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
     [ProducesResponseType(typeof(IEnumerable<GetApiTokenResponse>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GetApiTokenResponse>>> GetApiTokens()
     {
@@ -98,7 +99,7 @@ public class AuthController : ControllerBase
     /// <response code="200">Returns the Api Token.</response>
     /// <response code="404">If the token wasn't found.</response>
     [HttpGet("ApiTokens/{tokenId}")]
-    [Authorize(AuthenticationSchemes = "Azure,Basic,ApiToken")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<GetApiTokenDetailsResponse>> GetApiToken(int tokenId)
@@ -122,7 +123,7 @@ public class AuthController : ControllerBase
     /// <response code="201">If the token was created succesfully.</response>
     /// <response code="400">If the token could not be created.</response>
     [HttpPost("ApiTokens")]
-    [Authorize(AuthenticationSchemes = "Azure,Basic,ApiToken")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
     [ProducesResponseType(typeof(GetApiTokenResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<GetApiTokenDetailsResponse>> PostApiToken(
@@ -150,7 +151,7 @@ public class AuthController : ControllerBase
     /// <response code="200">Returns the Api Token with the new value.</response>
     /// <response code="404">If the token wasn't found.</response>
     [HttpPatch("ApiTokens/{tokenId}")]
-    [Authorize(AuthenticationSchemes = "Azure,Basic,ApiToken")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<GetApiTokenDetailsResponse>> RegenerateApiToken(int tokenId)
@@ -175,7 +176,7 @@ public class AuthController : ControllerBase
     /// <response code="200">If the token was deleted succesfully.</response>
     /// <response code="404">If the token wasn't found.</response>
     [HttpDelete("ApiTokens/{tokenId}")]
-    [Authorize(AuthenticationSchemes = "Azure,Basic,ApiToken")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteApiToken(int tokenId)

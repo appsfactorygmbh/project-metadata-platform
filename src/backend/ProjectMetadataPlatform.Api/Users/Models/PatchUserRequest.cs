@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using ProjectMetadataPlatform.Domain.Users;
 
@@ -39,7 +40,7 @@ public record PatchUserRequest
         /// <summary>
         /// New Value for the Attribute. Ignored for Remove Operations.
         /// </summary>
-        public object? Value { get; init; }
+        public JsonElement? Value { get; init; }
     }
 
 };

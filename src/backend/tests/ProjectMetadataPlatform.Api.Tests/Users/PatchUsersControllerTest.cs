@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -100,7 +101,7 @@ public class PatchUsersControllerTest
                 {
                     Op = PatchOperations.Add,
                     Path = "Password",
-                    Value = "1234",
+                    Value = JsonDocument.Parse("\"1234\"").RootElement,
                 },
             },
         };
@@ -134,7 +135,7 @@ public class PatchUsersControllerTest
                 {
                     Op = PatchOperations.Add,
                     Path = "Password",
-                    Value = "1234",
+                    Value = JsonDocument.Parse("\"1234\"").RootElement,
                 },
             },
         };

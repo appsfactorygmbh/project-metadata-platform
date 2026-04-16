@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using Polly.Registry;
 using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Application.Auth;
@@ -113,23 +115,54 @@ public static class DependencyInjection
         _ = serviceCollection.Configure<IdentityOptions>(options =>
             options.User.RequireUniqueEmail = true
         );
+
         _ = serviceCollection
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddMicrosoftIdentityWebApi(
-                options => { },
+            .AddAuthentication(AuthenticationSchemes.SELECTOR)
+            .AddPolicyScheme(
+                AuthenticationSchemes.SELECTOR,
+                AuthenticationSchemes.SELECTOR,
                 options =>
                 {
-                    options.Authority = EnvironmentUtils.GetEnvVarOrLoadFromFile("AZURE_AUTHORITY");
-                    options.ClientId = EnvironmentUtils.GetEnvVarOrLoadFromFile(
-                        "AZURE_BACKEND_CLIENT_ID"
-                    );
-                },
-                "Azure"
-            );
-        _ = serviceCollection
-            .AddAuthentication()
+                    options.ForwardDefaultSelector = context =>
+                    {
+                        string? authorizationHeader = context.Request.Headers[
+                            HeaderNames.Authorization
+                        ];
+                        if (
+                            !string.IsNullOrEmpty(authorizationHeader)
+                            && authorizationHeader.StartsWith("Bearer ")
+                        )
+                        {
+                            var token = authorizationHeader.Replace("Bearer ", "");
+                            var jwtHandler = new JwtSecurityTokenHandler();
+                            if (!jwtHandler.CanReadToken(token))
+                            {
+                                return AuthenticationSchemes.API_TOKEN;
+                            }
+                            if (
+                                jwtHandler.ReadJwtToken(token).Issuer
+                                == tokenDescriptorInformation.ValidIssuer
+                            )
+                            {
+                                return AuthenticationSchemes.BASIC;
+                            }
+                            if (
+                                jwtHandler
+                                    .ReadJwtToken(token)
+                                    .Issuer.Contains(
+                                        EnvironmentUtils.GetEnvVarOrLoadFromFile("AZURE_AUTHORITY")
+                                    )
+                            )
+                            {
+                                return AuthenticationSchemes.AZURE;
+                            }
+                        }
+                        return AuthenticationSchemes.BASIC;
+                    };
+                }
+            )
             .AddJwtBearer(
-                "Basic",
+                AuthenticationSchemes.BASIC,
                 options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -153,13 +186,21 @@ public static class DependencyInjection
 
                     options.Events = jwtBearerEvents;
                 }
-            );
-
-        _ = serviceCollection
-            .AddAuthentication("ApiToken")
+            )
             .AddScheme<AuthenticationSchemeOptions, ApiTokenAuthenticationHandler>(
-                "ApiToken",
+                AuthenticationSchemes.API_TOKEN,
                 options => { }
+            )
+            .AddMicrosoftIdentityWebApi(
+                options => { },
+                options =>
+                {
+                    options.Authority = EnvironmentUtils.GetEnvVarOrLoadFromFile("AZURE_AUTHORITY");
+                    options.ClientId = EnvironmentUtils.GetEnvVarOrLoadFromFile(
+                        "AZURE_BACKEND_CLIENT_ID"
+                    );
+                },
+                AuthenticationSchemes.AZURE
             );
     }
 

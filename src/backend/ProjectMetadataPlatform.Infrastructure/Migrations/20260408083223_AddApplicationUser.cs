@@ -40,9 +40,24 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                 defaultValue: ""
             );
 
-            migrationBuilder.Sql(
-                "UPDATE \"AspNetUsers\" SET \"EmployeeId\" = gen_random_uuid()::text WHERE \"EmployeeId\" = '' ;"
-            );
+            if (migrationBuilder.ActiveProvider == "Npgsql.EntityFrameworkCore.PostgreSQL")
+            {
+                migrationBuilder.Sql(
+                    @"
+            UPDATE ""AspNetUsers""
+            SET ""EmployeeId"" = gen_random_uuid()::text
+            WHERE ""EmployeeId"" = '';"
+                );
+            }
+            else if (migrationBuilder.ActiveProvider == "Microsoft.EntityFrameworkCore.Sqlite")
+            {
+                migrationBuilder.Sql(
+                    @"
+            UPDATE ""AspNetUsers""
+            SET ""EmployeeId"" = lower(hex(randomblob(16)))
+            WHERE ""EmployeeId"" = '';"
+                );
+            }
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsActive",

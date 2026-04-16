@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Users.Models;
 using ProjectMetadataPlatform.Application.Users;
+using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 using ProjectMetadataPlatform.Domain.Users;
@@ -19,7 +21,7 @@ namespace ProjectMetadataPlatform.Api.Users;
 /// Endpoint for user management.
 /// </summary>
 [ApiController]
-[Authorize(AuthenticationSchemes = "Azure,Basic,ApiToken")]
+[Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
 [Route("[controller]")]
 public class UsersController : ControllerBase
 {
@@ -118,27 +120,29 @@ public class UsersController : ControllerBase
 
         var response = new GetUsersResponse
         {
-            Resources = users.Select(user => new PmpScimUser
-            {
-                Id = user.EmployeeId,
-                ExternalId = user.EmployeeId,
-                UserName = user.Email!,
-                Active = user.IsActive,
-                EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
+            Resources = users
+                .Select(user => new PmpScimUser
                 {
-                    Organization = user.Company,
-                },
-                PmpUser = new PmpScimUser.PmpUserExtension
-                {
-                    Departments = user.Departments,
-                    TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
-                    JobTitles = user.JobTitles,
-                    Team = user.Teams?.Select(team => team.TeamName).ToList(),
-                    BusinessUnits = user.BusinessUnits,
-                    IsScimProvisioned = user.IsScimProvisioned,
-                },
-                Meta = new PmpScimUser.MetaResourceData { ResourceType = "User" },
-            }),
+                    Id = user.EmployeeId,
+                    ExternalId = user.EmployeeId,
+                    UserName = user.Email!,
+                    Active = user.IsActive,
+                    EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
+                    {
+                        Organization = user.Company,
+                    },
+                    PmpUser = new PmpScimUser.PmpUserExtension
+                    {
+                        Departments = user.Departments,
+                        TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
+                        JobTitles = user.JobTitles,
+                        Team = user.Teams?.Select(team => team.TeamName).ToList(),
+                        BusinessUnits = user.BusinessUnits,
+                        IsScimProvisioned = user.IsScimProvisioned,
+                    },
+                    Meta = new PmpScimUser.MetaResourceData { ResourceType = "User" },
+                })
+                .OrderBy(u => u.UserName),
             TotalResults = users.Count(),
         };
         return Ok(response);
@@ -229,7 +233,7 @@ public class UsersController : ControllerBase
             {
                 Operation = PatchOperations.Replace,
                 Path = "IsScimProvisioned",
-                Value = isScimProvisioned,
+                Value = JsonDocument.Parse($"{isScimProvisioned}".ToLower()).RootElement,
             }
         );
         var user = await _mediator.Send(command);

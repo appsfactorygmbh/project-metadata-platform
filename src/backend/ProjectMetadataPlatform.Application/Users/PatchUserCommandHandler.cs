@@ -72,125 +72,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
 
         var properties = typeof(ApplicationUser).GetProperties().Select(prop => prop.Name);
         var changes = new List<LogChange>();
-
-        foreach (var operation in request.Operations)
-        {
-            var attribute = properties.Contains(operation.Path)
-                ? operation.Path
-                : await ScimAttributeNameToTypeAttributeName(operation.Path);
-            var oldValue = user.GetType().GetProperty(attribute)?.GetValue(user);
-            if (attribute == "Email" && operation.Operation != PatchOperations.Remove)
-            {
-                user.Email = await JsonElementToPrimitive((JsonElement)operation.Value!) as string;
-                user.UserName =
-                    await JsonElementToPrimitive((JsonElement)operation.Value!) as string;
-
-                if ((string?)oldValue != user.Email)
-                {
-                    changes.Add(
-                        new LogChange
-                        {
-                            OldValue = oldValue?.ToString() ?? "null",
-                            NewValue =
-                                (
-                                    await JsonElementToPrimitive((JsonElement)operation.Value!)
-                                )?.ToString() ?? "null",
-                            Property = nameof(ApplicationUser.Email),
-                        }
-                    );
-                }
-            }
-            else if (
-                attribute == "PasswordHash"
-                && operation.Operation != PatchOperations.Remove
-                && await _usersRepository.CheckPasswordFormat(
-                    (await JsonElementToPrimitive((JsonElement)operation.Value!) as string)!
-                )
-            )
-            {
-                user.PasswordHash = _passwordHasher.HashPassword(
-                    user,
-                    (await JsonElementToPrimitive((JsonElement)operation.Value!) as string)!
-                );
-
-                if ((string?)oldValue != user.PasswordHash)
-                {
-                    changes.Add(
-                        new LogChange
-                        {
-                            OldValue = oldValue == null ? "null" : "old password was changed",
-                            NewValue =
-                                operation.Value?.ToString() == null ? "null" : "new password *****",
-                            Property = nameof(ApplicationUser.PasswordHash),
-                        }
-                    );
-                }
-            }
-            else if (attribute == "Teams" || attribute == "TeamSupport")
-            {
-                List<string> teamNames = [];
-                if (operation.Operation != PatchOperations.Remove)
-                {
-                    teamNames = (
-                        await JsonElementToPrimitive((JsonElement)operation.Value!) as List<string>
-                    )!;
-                }
-                Collection<Team> teams = [];
-
-                foreach (var team in teamNames)
-                {
-                    var teamObject = await _teamRepository.GetTeamByNameAsync(team);
-
-                    teams.Add(teamObject);
-                }
-                user.GetType().GetProperty(attribute)?.SetValue(user, teams);
-                var oldValueNamesList =
-                    oldValue == null ? [] : ((List<Team>)oldValue).Select(t => t.TeamName);
-                if (!oldValueNamesList.SequenceEqual(teamNames))
-                {
-                    changes.Add(
-                        new LogChange
-                        {
-                            OldValue = oldValueNamesList.Any()
-                                ? string.Join(", ", oldValueNamesList)
-                                : "null",
-                            NewValue = oldValueNamesList.Any()
-                                ? string.Join(", ", teamNames)
-                                : "null",
-                            Property = attribute,
-                        }
-                    );
-                }
-            }
-            else
-            {
-                user.GetType()
-                    .GetProperty(attribute)
-                    ?.SetValue(
-                        user,
-                        operation.Operation == PatchOperations.Remove
-                            ? null
-                            : await JsonElementToPrimitive((JsonElement)operation.Value!)
-                    );
-
-                if (oldValue != user.GetType().GetProperty(attribute)?.GetValue(user))
-                {
-                    changes.Add(
-                        new LogChange
-                        {
-                            OldValue = oldValue?.ToString() ?? "null",
-                            NewValue =
-                                operation.Operation == PatchOperations.Remove
-                                    ? "null"
-                                    : (
-                                        await JsonElementToPrimitive((JsonElement)operation.Value!)
-                                    )?.ToString() ?? "null",
-                            Property = attribute,
-                        }
-                    );
-                }
-            }
-        }
+        await UpdateUser(request, user, properties, changes);
 
         var response = await _usersRepository.StoreUser(user);
 
@@ -201,6 +83,214 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
 
         await _unitOfWork.CompleteAsync();
         return response;
+    }
+
+    /// <summary>
+    /// Method for updating all relevent user attributes.
+    /// </summary>
+    /// <param name="request">The command containing the user information to be patched.</param>
+    /// <param name="user">User that should be updated.</param>
+    /// <param name="properties">List of user property names.</param>
+    /// <param name="changes">List of Changes for logging purposes.</param>
+    /// <returns></returns>
+    private async Task UpdateUser(
+        PatchUserCommand request,
+        ApplicationUser user,
+        IEnumerable<string> properties,
+        List<LogChange> changes
+    )
+    {
+        foreach (var operation in request.Operations)
+        {
+            var attribute = properties.Contains(operation.Path)
+                ? operation.Path
+                : await ScimAttributeNameToTypeAttributeName(operation.Path);
+            var oldValue = user.GetType().GetProperty(attribute)?.GetValue(user);
+            if (attribute == "Email" && operation.Operation != PatchOperations.Remove)
+            {
+                await UpdateEmail(user, changes, operation, oldValue);
+            }
+            else if (
+                attribute == "PasswordHash"
+                && operation.Operation != PatchOperations.Remove
+                && await _usersRepository.CheckPasswordFormat(
+                    (await JsonElementToPrimitive((JsonElement)operation.Value!) as string)!
+                )
+            )
+            {
+                await UpdatePassword(user, changes, operation, oldValue);
+            }
+            else if (attribute == "Teams" || attribute == "TeamSupport")
+            {
+                await UpdateTeamPropery(user, changes, operation, attribute, oldValue);
+            }
+            else
+            {
+                await UpdateProperty(user, changes, operation, attribute, oldValue);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Updates the users email and username.
+    /// </summary>
+    /// <param name="user">user that is being changed.</param>
+    /// <param name="changes">List of Changes for logging purposes.</param>
+    /// <param name="operation">Email Update Operation.</param>
+    /// <param name="oldValue">old email value.</param>
+    /// <returns></returns>
+    private static async Task UpdateEmail(
+        ApplicationUser user,
+        List<LogChange> changes,
+        PatchUserCommand.OperationRecord operation,
+        object? oldValue
+    )
+    {
+        user.Email = await JsonElementToPrimitive((JsonElement)operation.Value!) as string;
+        user.UserName = await JsonElementToPrimitive((JsonElement)operation.Value!) as string;
+
+        if ((string?)oldValue != user.Email)
+        {
+            changes.Add(
+                new LogChange
+                {
+                    OldValue = oldValue?.ToString() ?? "null",
+                    NewValue =
+                        (await JsonElementToPrimitive((JsonElement)operation.Value!))?.ToString()
+                        ?? "null",
+                    Property = nameof(ApplicationUser.Email),
+                }
+            );
+        }
+    }
+
+    /// <summary>
+    /// Updated the user password.
+    /// </summary>
+    /// <param name="user">user that is being changed.</param>
+    /// <param name="changes">List of Changes for logging purposes.</param>
+    /// <param name="operation">Password Update Operation.</param>
+    /// <param name="oldValue">old passwordhash value.</param>
+    /// <returns></returns>
+    private async Task UpdatePassword(
+        ApplicationUser user,
+        List<LogChange> changes,
+        PatchUserCommand.OperationRecord operation,
+        object? oldValue
+    )
+    {
+        user.PasswordHash = _passwordHasher.HashPassword(
+            user,
+            (await JsonElementToPrimitive((JsonElement)operation.Value!) as string)!
+        );
+
+        if ((string?)oldValue != user.PasswordHash)
+        {
+            changes.Add(
+                new LogChange
+                {
+                    OldValue = oldValue == null ? "null" : "old password was changed",
+                    NewValue = operation.Value?.ToString() == null ? "null" : "new password *****",
+                    Property = nameof(ApplicationUser.PasswordHash),
+                }
+            );
+        }
+    }
+
+    /// <summary>
+    /// Updates the user teams or teamsupport.
+    /// </summary>
+    /// <param name="user">user that is being changed.</param>
+    /// <param name="changes">List of Changes for logging purposes.</param>
+    /// <param name="operation">Team Update Operation.</param>
+    /// <param name="attribute">Name of the attribute that is being changed.</param>
+    /// <param name="oldValue">old teams or teamsupport value.</param>
+    /// <returns></returns>
+    private async Task UpdateTeamPropery(
+        ApplicationUser user,
+        List<LogChange> changes,
+        PatchUserCommand.OperationRecord operation,
+        string attribute,
+        object? oldValue
+    )
+    {
+        List<string> teamNames = [];
+        if (operation.Operation != PatchOperations.Remove)
+        {
+            teamNames = (
+                await JsonElementToPrimitive((JsonElement)operation.Value!) as List<string>
+            )!;
+        }
+        Collection<Team> teams = [];
+
+        foreach (var team in teamNames)
+        {
+            var teamObject = await _teamRepository.GetTeamByNameAsync(team);
+
+            teams.Add(teamObject);
+        }
+        user.GetType().GetProperty(attribute)?.SetValue(user, teams);
+        var oldValueNamesList =
+            oldValue == null ? [] : ((List<Team>)oldValue).Select(t => t.TeamName);
+        if (!oldValueNamesList.SequenceEqual(teamNames))
+        {
+            changes.Add(
+                new LogChange
+                {
+                    OldValue = oldValueNamesList.Any()
+                        ? string.Join(", ", oldValueNamesList)
+                        : "null",
+                    NewValue = oldValueNamesList.Any() ? string.Join(", ", teamNames) : "null",
+                    Property = attribute,
+                }
+            );
+        }
+    }
+
+    /// <summary>
+    /// Updates any Property of the User
+    /// </summary>
+    /// <param name="user">User that is being updated.</param>
+    /// <param name="changes">List of changes for Logging purposes.</param>
+    /// <param name="operation">One Update Operation.</param>
+    /// <param name="attribute">Attribute that is being changed.</param>
+    /// <param name="oldValue">Pre Update value of the attribute.</param>
+    /// <returns></returns>
+    private static async Task UpdateProperty(
+        ApplicationUser user,
+        List<LogChange> changes,
+        PatchUserCommand.OperationRecord operation,
+        string attribute,
+        object? oldValue
+    )
+    {
+        user.GetType()
+            .GetProperty(attribute)
+            ?.SetValue(
+                user,
+                operation.Operation == PatchOperations.Remove
+                    ? null
+                    : await JsonElementToPrimitive((JsonElement)operation.Value!)
+            );
+        if (
+            (oldValue?.ToString() ?? "null")
+            != (user.GetType().GetProperty(attribute)?.GetValue(user)?.ToString() ?? "null")
+        )
+        {
+            changes.Add(
+                new LogChange
+                {
+                    OldValue = oldValue?.ToString() ?? "null",
+                    NewValue =
+                        operation.Operation == PatchOperations.Remove
+                            ? "null"
+                            : (
+                                await JsonElementToPrimitive((JsonElement)operation.Value!)
+                            )?.ToString() ?? "null",
+                    Property = attribute,
+                }
+            );
+        }
     }
 
     /// <summary>

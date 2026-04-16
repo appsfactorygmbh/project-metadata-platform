@@ -9,6 +9,7 @@ using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Teams.Models;
 using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Application.Teams;
+using ProjectMetadataPlatform.Domain.Auth;
 
 namespace ProjectMetadataPlatform.Api.Teams;
 
@@ -16,7 +17,7 @@ namespace ProjectMetadataPlatform.Api.Teams;
 /// Endpoints for managing teams.
 /// </summary>
 [ApiController]
-[Authorize(AuthenticationSchemes = "Azure,Basic,ApiToken")]
+[Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
 [Route("[controller]")]
 public class TeamsController : ControllerBase
 {
