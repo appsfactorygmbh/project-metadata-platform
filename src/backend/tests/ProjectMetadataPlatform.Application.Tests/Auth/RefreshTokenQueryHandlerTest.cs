@@ -34,7 +34,9 @@ public class RefreshTokenQueryHandlerTest
         );
         Environment.SetEnvironmentVariable("ACCESS_TOKEN_EXPIRATION_MINUTES", "1");
 
-        _mockRefreshTokenRepo.Setup(m => m.CheckRefreshTokenRequest(It.IsAny<string>())).ReturnsAsync(true);
+        _mockRefreshTokenRepo
+            .Setup(m => m.CheckRefreshTokenRequest(It.IsAny<string>()))
+            .ReturnsAsync(true);
         _mockRefreshTokenRepo
             .Setup(m => m.GetEmailByRefreshToken(It.IsAny<string>()))
             .ReturnsAsync("admin");

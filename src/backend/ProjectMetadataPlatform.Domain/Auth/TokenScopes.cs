@@ -13,5 +13,4 @@ public enum TokenScopes
     /// Scope for a Scim Token.
     /// </summary>
     SCIM,
-
 }

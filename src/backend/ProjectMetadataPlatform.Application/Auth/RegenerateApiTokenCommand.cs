@@ -10,4 +10,3 @@ namespace ProjectMetadataPlatform.Application.Auth;
 /// </summary>
 /// <param name="TokenId">Id of the token.</param>
 public record RegenerateApiTokenCommand(int TokenId) : IRequest<ApiToken>;
-

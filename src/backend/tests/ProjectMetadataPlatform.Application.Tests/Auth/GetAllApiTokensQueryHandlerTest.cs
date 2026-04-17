@@ -42,4 +42,3 @@ public class GetAllApiTokensQueryHandlerTest
         Assert.That(result, Is.EqualTo(tokens));
     }
 }
-

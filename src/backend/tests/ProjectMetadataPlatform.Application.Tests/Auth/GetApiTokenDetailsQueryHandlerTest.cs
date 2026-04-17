@@ -39,4 +39,3 @@ public class GetApiTokenDetailsQueryHandlerTest
         Assert.That(result, Is.EqualTo(token));
     }
 }
-

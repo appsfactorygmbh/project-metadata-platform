@@ -27,7 +27,7 @@ public static class AccessTokenService
             EnvironmentUtils.GetEnvVarOrLoadFromFile("ACCESS_TOKEN_EXPIRATION_MINUTES"),
             CultureInfo.InvariantCulture
         );
-        
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity([

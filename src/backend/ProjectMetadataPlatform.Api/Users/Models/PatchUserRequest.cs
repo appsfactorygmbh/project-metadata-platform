@@ -42,5 +42,4 @@ public record PatchUserRequest
         /// </summary>
         public JsonElement? Value { get; init; }
     }
-
 };
