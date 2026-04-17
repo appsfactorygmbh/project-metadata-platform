@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Errors.UserException;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Domain.Users;
@@ -55,6 +56,10 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
         CancellationToken cancellationToken
     )
     {
+        if (await _usersRepository.CheckUserExists(request.EmployeeId))
+        {
+            throw new UserAlreadyExistsException("DuplicateEmployeeNumber");
+        }
         if (request.Password != null)
         {
             await _usersRepository.CheckPasswordFormat(request.Password);

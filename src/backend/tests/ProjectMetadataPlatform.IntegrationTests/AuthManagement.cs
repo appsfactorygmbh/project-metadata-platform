@@ -8,6 +8,7 @@ using ProjectMetadataPlatform.IntegrationTests.Utilities;
 
 namespace ProjectMetadataPlatform.IntegrationTests;
 
+[NonParallelizable]
 public class AuthManagement : IntegrationTestsBase
 {
     [Test]
@@ -129,5 +130,52 @@ public class AuthManagement : IntegrationTestsBase
 
         //Assert
         response.Message.Should().Be("Invalid refresh token.");
+    }
+
+    [Test]
+    public async Task DeletedApiTokenIsNotAccepted()
+    {
+        var client = CreateClient();
+        await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
+        await CreateApiTokenAndAddItToDefaultRequestHeadersOfClient(client);
+
+        var tokens = await ToJsonElement(client.GetAsync("auth/ApiTokens"), HttpStatusCode.OK);
+        tokens.GetArrayLength().Should().Be(1);
+
+        var tokenId = tokens[0].GetProperty("id").GetInt32();
+
+        var deleteResponse = await client.DeleteAsync($"auth/ApiTokens/{tokenId}");
+        deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+        var error = await client.GetAsync("auth/ApiTokens");
+
+        error.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Test]
+    public async Task OldApiTokenAfterRegenerationIsNotAccepted()
+    {
+        var client = CreateClient();
+        await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
+        await CreateApiTokenAndAddItToDefaultRequestHeadersOfClient(client);
+
+        var tokens = await ToJsonElement(client.GetAsync("auth/ApiTokens"), HttpStatusCode.OK);
+        tokens.GetArrayLength().Should().Be(1);
+
+        var tokenId = tokens[0].GetProperty("id").GetInt32();
+
+        var token = await ToJsonElement(client.PatchAsync($"auth/ApiTokens/{tokenId}", null));
+
+        var error = await client.GetAsync("auth/ApiTokens");
+
+        error.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+
+        client.DefaultRequestHeaders.Clear();
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token.GetProperty("token")}");
+        var tokensAfterRegen = await ToJsonElement(
+            client.GetAsync("auth/ApiTokens"),
+            HttpStatusCode.OK
+        );
+        tokensAfterRegen.GetArrayLength().Should().Be(1);
     }
 }

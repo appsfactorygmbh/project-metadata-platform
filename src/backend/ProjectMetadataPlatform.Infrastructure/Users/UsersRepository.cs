@@ -90,7 +90,7 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
                 ? await _userManager.CreateAsync(user, password)
                 : await _userManager.CreateAsync(user);
         return identityResult.Errors.Any(e => e.Code == "DuplicateUserName")
-                ? throw new UserAlreadyExistsException()
+                ? throw new UserAlreadyExistsException("DuplicateEmail")
             : !identityResult.Succeeded ? throw new UserCouldNotBeCreatedException(identityResult)
             : user.Id;
     }
@@ -121,7 +121,7 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
                 ? await _userManager.CreateAsync(user)
                 : await _userManager.UpdateAsync(user);
         return identityResult.Errors.Any(e => e.Code == "DuplicateUserName")
-                ? throw new UserAlreadyExistsException()
+                ? throw new UserAlreadyExistsException("DuplicateEmail")
             : !identityResult.Succeeded ? throw new UserCouldNotBeCreatedException(identityResult)
             : user;
     }

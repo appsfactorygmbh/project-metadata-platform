@@ -12,12 +12,12 @@ public class TeamNotFoundException : EntityNotFoundException
     /// </summary>
     /// <param name="teamId">The ID of the team that was not found.</param>
     public TeamNotFoundException(int teamId)
-        : base("The team  with id " + teamId + " was not found.") { }
+        : base("The team with id " + teamId + " was not found.") { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TeamNotFoundException"/> class with a specified team name.
     /// </summary>
     /// <param name="teamName">The name of the team that was not found.</param>
     public TeamNotFoundException(string teamName)
-        : base("The team  with name " + teamName + " was not found.") { }
+        : base("The team with name " + teamName + " was not found.") { }
 }
