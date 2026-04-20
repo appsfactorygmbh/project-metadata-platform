@@ -13,8 +13,36 @@
  */
 
 import * as runtime from '../runtime';
-import type { LoginRequest, LoginResponse } from '../models/index';
-import { LoginRequestToJSON, LoginResponseFromJSON } from '../models/index';
+import type {
+  CreateApiTokenRequest,
+  GetApiTokenDetailsResponse,
+  GetApiTokenResponse,
+  LoginRequest,
+  LoginResponse,
+} from '../models/index';
+import {
+  CreateApiTokenRequestToJSON,
+  GetApiTokenDetailsResponseFromJSON,
+  GetApiTokenResponseFromJSON,
+  LoginRequestToJSON,
+  LoginResponseFromJSON,
+} from '../models/index';
+
+export interface AuthApiTokensPostRequest {
+  createApiTokenRequest?: CreateApiTokenRequest;
+}
+
+export interface AuthApiTokensTokenIdDeleteRequest {
+  tokenId: number;
+}
+
+export interface AuthApiTokensTokenIdGetRequest {
+  tokenId: number;
+}
+
+export interface AuthApiTokensTokenIdPatchRequest {
+  tokenId: number;
+}
 
 export interface AuthBasicPostRequest {
   loginRequest?: LoginRequest;
@@ -31,6 +59,108 @@ export interface AuthRefreshGetRequest {
  * @interface AuthApiInterface
  */
 export interface AuthApiInterface {
+  /**
+   *
+   * @summary Returns a List of all Api Tokens without details.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AuthApiInterface
+   */
+  authApiTokensGetRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<Array<GetApiTokenResponse>>>;
+
+  /**
+   * Returns a List of all Api Tokens without details.
+   */
+  authApiTokensGet(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<Array<GetApiTokenResponse>>;
+
+  /**
+   *
+   * @summary Creates a new token.
+   * @param {CreateApiTokenRequest} [createApiTokenRequest] Request to create the token.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AuthApiInterface
+   */
+  authApiTokensPostRaw(
+    requestParameters: AuthApiTokensPostRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<GetApiTokenResponse>>;
+
+  /**
+   * Creates a new token.
+   */
+  authApiTokensPost(
+    requestParameters: AuthApiTokensPostRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<GetApiTokenResponse>;
+
+  /**
+   *
+   * @summary Deletes the token with the given id.
+   * @param {number} tokenId Id of the token.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AuthApiInterface
+   */
+  authApiTokensTokenIdDeleteRaw(
+    requestParameters: AuthApiTokensTokenIdDeleteRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<void>>;
+
+  /**
+   * Deletes the token with the given id.
+   */
+  authApiTokensTokenIdDelete(
+    requestParameters: AuthApiTokensTokenIdDeleteRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<void>;
+
+  /**
+   *
+   * @summary Gets the Api Token with the given id.
+   * @param {number} tokenId Id of the requested token.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AuthApiInterface
+   */
+  authApiTokensTokenIdGetRaw(
+    requestParameters: AuthApiTokensTokenIdGetRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<GetApiTokenDetailsResponse>>;
+
+  /**
+   * Gets the Api Token with the given id.
+   */
+  authApiTokensTokenIdGet(
+    requestParameters: AuthApiTokensTokenIdGetRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<GetApiTokenDetailsResponse>;
+
+  /**
+   *
+   * @summary Generates a new Token value for an existing token.
+   * @param {number} tokenId Id of the token that should be regenerated.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AuthApiInterface
+   */
+  authApiTokensTokenIdPatchRaw(
+    requestParameters: AuthApiTokensTokenIdPatchRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<GetApiTokenDetailsResponse>>;
+
+  /**
+   * Generates a new Token value for an existing token.
+   */
+  authApiTokensTokenIdPatch(
+    requestParameters: AuthApiTokensTokenIdPatchRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<GetApiTokenDetailsResponse>;
+
   /**
    *
    * @summary Logs in a user with the given credentials.
@@ -78,6 +208,255 @@ export interface AuthApiInterface {
  *
  */
 export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
+  /**
+   * Returns a List of all Api Tokens without details.
+   */
+  async authApiTokensGetRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<Array<GetApiTokenResponse>>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/Auth/ApiTokens`,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      jsonValue.map(GetApiTokenResponseFromJSON),
+    );
+  }
+
+  /**
+   * Returns a List of all Api Tokens without details.
+   */
+  async authApiTokensGet(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<Array<GetApiTokenResponse>> {
+    const response = await this.authApiTokensGetRaw(initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Creates a new token.
+   */
+  async authApiTokensPostRaw(
+    requestParameters: AuthApiTokensPostRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<GetApiTokenResponse>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/Auth/ApiTokens`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: CreateApiTokenRequestToJSON(
+          requestParameters['createApiTokenRequest'],
+        ),
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      GetApiTokenResponseFromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Creates a new token.
+   */
+  async authApiTokensPost(
+    requestParameters: AuthApiTokensPostRequest = {},
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<GetApiTokenResponse> {
+    const response = await this.authApiTokensPostRaw(
+      requestParameters,
+      initOverrides,
+    );
+    return await response.value();
+  }
+
+  /**
+   * Deletes the token with the given id.
+   */
+  async authApiTokensTokenIdDeleteRaw(
+    requestParameters: AuthApiTokensTokenIdDeleteRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters['tokenId'] == null) {
+      throw new runtime.RequiredError(
+        'tokenId',
+        'Required parameter "tokenId" was null or undefined when calling authApiTokensTokenIdDelete().',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/Auth/ApiTokens/{tokenId}`.replace(
+          `{${'tokenId'}}`,
+          encodeURIComponent(String(requestParameters['tokenId'])),
+        ),
+        method: 'DELETE',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Deletes the token with the given id.
+   */
+  async authApiTokensTokenIdDelete(
+    requestParameters: AuthApiTokensTokenIdDeleteRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<void> {
+    await this.authApiTokensTokenIdDeleteRaw(requestParameters, initOverrides);
+  }
+
+  /**
+   * Gets the Api Token with the given id.
+   */
+  async authApiTokensTokenIdGetRaw(
+    requestParameters: AuthApiTokensTokenIdGetRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<GetApiTokenDetailsResponse>> {
+    if (requestParameters['tokenId'] == null) {
+      throw new runtime.RequiredError(
+        'tokenId',
+        'Required parameter "tokenId" was null or undefined when calling authApiTokensTokenIdGet().',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/Auth/ApiTokens/{tokenId}`.replace(
+          `{${'tokenId'}}`,
+          encodeURIComponent(String(requestParameters['tokenId'])),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      GetApiTokenDetailsResponseFromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Gets the Api Token with the given id.
+   */
+  async authApiTokensTokenIdGet(
+    requestParameters: AuthApiTokensTokenIdGetRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<GetApiTokenDetailsResponse> {
+    const response = await this.authApiTokensTokenIdGetRaw(
+      requestParameters,
+      initOverrides,
+    );
+    return await response.value();
+  }
+
+  /**
+   * Generates a new Token value for an existing token.
+   */
+  async authApiTokensTokenIdPatchRaw(
+    requestParameters: AuthApiTokensTokenIdPatchRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<GetApiTokenDetailsResponse>> {
+    if (requestParameters['tokenId'] == null) {
+      throw new runtime.RequiredError(
+        'tokenId',
+        'Required parameter "tokenId" was null or undefined when calling authApiTokensTokenIdPatch().',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && this.configuration.apiKey) {
+      headerParameters['Authorization'] =
+        await this.configuration.apiKey('Authorization'); // Bearer authentication
+    }
+
+    const response = await this.request(
+      {
+        path: `/Auth/ApiTokens/{tokenId}`.replace(
+          `{${'tokenId'}}`,
+          encodeURIComponent(String(requestParameters['tokenId'])),
+        ),
+        method: 'PATCH',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      GetApiTokenDetailsResponseFromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Generates a new Token value for an existing token.
+   */
+  async authApiTokensTokenIdPatch(
+    requestParameters: AuthApiTokensTokenIdPatchRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<GetApiTokenDetailsResponse> {
+    const response = await this.authApiTokensTokenIdPatchRaw(
+      requestParameters,
+      initOverrides,
+    );
+    return await response.value();
+  }
+
   /**
    * Logs in a user with the given credentials.
    */

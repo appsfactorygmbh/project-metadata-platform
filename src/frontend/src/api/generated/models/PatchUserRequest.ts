@@ -12,24 +12,30 @@
  * Do not edit the class manually.
  */
 
+import type { OperationRecord } from './OperationRecord';
+import {
+  OperationRecordFromJSON,
+  OperationRecordToJSON,
+} from './OperationRecord';
+
 /**
- * Represents a request model for patching user information.
+ * Represents a request model for patching user information. Follows Scim Patch schema.
  * @export
  * @interface PatchUserRequest
  */
 export interface PatchUserRequest {
   /**
-   * The new email address of the user, or null to leave unchanged.
-   * @type {string}
+   * Schema of the Request.
+   * @type {Array<string>}
    * @memberof PatchUserRequest
    */
-  email?: string | null;
+  schemas?: Array<string> | null;
   /**
-   * The new password of the user, or null to leave unchanged.
-   * @type {string}
+   * List of requested Update operations.
+   * @type {Array<OperationRecord>}
    * @memberof PatchUserRequest
    */
-  password?: string | null;
+  operations: Array<OperationRecord>;
 }
 
 /**
@@ -38,6 +44,8 @@ export interface PatchUserRequest {
 export function instanceOfPatchUserRequest(
   value: object,
 ): value is PatchUserRequest {
+  if (!('operations' in value) || value['operations'] === undefined)
+    return false;
   return true;
 }
 
@@ -53,8 +61,8 @@ export function PatchUserRequestFromJSONTyped(
     return json;
   }
   return {
-    email: json['email'] == null ? undefined : json['email'],
-    password: json['password'] == null ? undefined : json['password'],
+    schemas: json['schemas'] == null ? undefined : json['schemas'],
+    operations: (json['Operations'] as Array<any>).map(OperationRecordFromJSON),
   };
 }
 
@@ -71,7 +79,7 @@ export function PatchUserRequestToJSONTyped(
   }
 
   return {
-    email: value['email'],
-    password: value['password'],
+    schemas: value['schemas'],
+    Operations: (value['operations'] as Array<any>).map(OperationRecordToJSON),
   };
 }
