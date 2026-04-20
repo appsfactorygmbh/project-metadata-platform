@@ -68,10 +68,10 @@
       >
         <a-menu-item
           v-for="user in usersData"
-          :key="user.id"
-          @click="clickTab(user.id)"
+          :key="user.externalId"
+          @click="clickTab(user.externalId)"
         >
-          <span>{{ getNameFromEmail(user.email) }}</span>
+          <span>{{ getNameFromEmail(user.userName) }}</span>
         </a-menu-item>
       </a-menu>
       <a-skeleton
@@ -120,6 +120,7 @@
     color: white !important;
     height: 0;
   }
+
   .menuItem {
     background-color: v-bind('token.colorBgElevated');
   }

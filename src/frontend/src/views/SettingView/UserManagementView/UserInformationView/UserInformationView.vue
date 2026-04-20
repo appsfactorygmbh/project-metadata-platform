@@ -32,8 +32,17 @@
     () => getIsLoadingUser.value || getIsLoading.value,
   );
 
+  const employeeNrFormStore = useFormStore('editemployeeNrForm');
   const emailFormStore = useFormStore('editEmailForm');
   const passwordFormStore = useFormStore('patchPasswordForm');
+  const isActiveFormStore = useFormStore('editIsActiveForm');
+  const isScimProvisionedFormStore = useFormStore('editIsScimProvisionedForm');
+  const companyFormStore = useFormStore('editCompanyForm');
+  const departmentsFormStore = useFormStore('editDepartmentsForm');
+  const jobTitlesFormStore = useFormStore('editJobTitlesForm');
+  const teamsFormStore = useFormStore('editTeamsForm');
+  const teamSupportFormStore = useFormStore('editTeamSupportForm');
+  const businessUnitFormStore = useFormStore('editbusinessUnitsForm');
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
@@ -72,7 +81,7 @@
         isLink: false,
       },
     ];
-    if (me.value?.id == user.value?.id || !routerUserId.value)
+    if (me.value?.externalId == user.value?.externalId || !routerUserId.value)
       tempButtons[0].status = 'deactivated';
 
     return tempButtons;
@@ -80,11 +89,11 @@
 
   const deleteUser = async () => {
     if (!user.value) return;
-    await userStore.delete(user.value?.id);
+    await userStore.delete(user.value?.externalId);
     await userStore.fetchAll();
     await userStore.fetchMe();
     const myId: string =
-      userStore.getMe?.id ?? userStore.getUsers[0]?.id ?? '1';
+      userStore.getMe?.externalId ?? userStore.getUsers[0]?.externalId ?? '1';
     setUserId(myId);
   };
 </script>
@@ -97,7 +106,7 @@
     @cancel="closeModal"
     @update:is-open="isConfirmModalOpen = $event"
   />
-  <div v-if="user?.id" class="panel">
+  <div v-if="user?.externalId" class="panel">
     <a-flex class="avatar">
       <a-avatar :size="150">
         <template #icon>
@@ -113,22 +122,43 @@
       }"
     >
       <EditableTextField
+        class="textField employeeNr"
+        :value="user?.externalId ?? ''"
+        :is-loading="isLoading"
+        :label="'Employee Nr.'"
+        :is-editing-key="'isEditingEmployeeNr'"
+        :form-store="employeeNrFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      >
+        <UserInformationInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'externalId'"
+          :form-store="employeeNrFormStore"
+          :placeholder="user?.externalId ?? ''"
+          :default="user?.externalId ?? ''"
+        />
+      </EditableTextField>
+
+      <EditableTextField
         class="textField email"
-        :value="user?.email ?? ''"
+        :value="user?.userName ?? ''"
         :is-loading="isLoading"
         :label="'Email'"
         :is-editing-key="'isEditingEmail'"
         :form-store="emailFormStore"
         :has-edit-keys="true"
         @saved-changes="
-          async () => user && (await userStore.fetchUser(user.id))
+          async () => user && (await userStore.fetchUser(user.externalId))
         "
       >
         <EmailInputField
           :user-id="user?.id ?? ''"
           :form-store="emailFormStore"
-          :placeholder="user?.email ?? ''"
-          :default="user?.email ?? ''"
+          :placeholder="user?.userName ?? ''"
+          :default="user?.userName ?? ''"
         />
       </EditableTextField>
 
@@ -141,7 +171,7 @@
         :form-store="passwordFormStore"
         :has-edit-keys="true"
         @saved-changes="
-          async () => user && (await userStore.fetchUser(user.id))
+          async () => user && (await userStore.fetchUser(user.externalId))
         "
       >
         <PasswordInputField
@@ -162,11 +192,13 @@
 
 <style scoped>
   .panel {
-    position: relative; /* Make sure the panel is a positioning context */
+    position: relative;
+    /* Make sure the panel is a positioning context */
     min-width: 150px;
     max-height: 100vh;
     overflow-y: auto;
   }
+
   .ant-float-btn-group {
     height: max-content !important;
     width: max-content !important;
@@ -174,6 +206,7 @@
     right: 20px;
     bottom: 40px;
   }
+
   .userInfoBox {
     padding: 1em 3em;
     margin: 2em 1em;

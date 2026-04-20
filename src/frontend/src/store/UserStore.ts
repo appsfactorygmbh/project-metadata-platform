@@ -56,6 +56,7 @@ type StoreActions = {
   setUpdatedSuccessfully: (updatedSuccessfully: boolean) => void;
   fetchAll: () => Promise<void>;
   fetchUser: (userId: string) => Promise<void>;
+  fetchUserByEmail: (email: string) => Promise<void>;
   fetchMe: () => Promise<void>;
   create: (newUser: CreateUserModel) => Promise<void>;
   update: (
@@ -164,7 +165,13 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
           this.setIsLoadingUsers(true);
           try {
             const users: UserListModel[] =
-              (await this.callApi('usersGet', {})) ?? [];
+              (await this.callApi('usersGet', {})).resources.map((user) => ({
+                externalId: user.externalId,
+                userName: user.userName,
+                isScimProvisioned:
+                  user.urnIetfParamsScimSchemasExtensionPmpUser
+                    .isScimProvisioned,
+              })) ?? [];
             this.setUsers(users);
           } finally {
             this.setIsLoadingUsers(false);
@@ -176,6 +183,21 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
           try {
             const user =
               (await this.callApi('usersUserIdGet', { userId })) ?? null;
+            this.setUser(user);
+          } finally {
+            this.setIsLoadingUser(false);
+          }
+        },
+
+        async fetchUserByEmail(email: string): Promise<void> {
+          this.setIsLoadingUser(true);
+          try {
+            const user =
+              (
+                await this.callApi('usersGet', {
+                  filter: 'username eq ' + email,
+                })
+              ).resources[0] ?? null;
             this.setUser(user);
           } finally {
             this.setIsLoadingUser(false);
@@ -196,8 +218,8 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
           try {
             this.setIsLoadingCreate(true);
             this.setCreatedSuccessfully(false);
-            await this.callApi('usersPut', {
-              createUserRequest: newUser,
+            await this.callApi('usersPost', {
+              pmpScimUser: newUser,
             });
             await this.fetchAll();
             this.setCreatedSuccessfully(true);
@@ -210,17 +232,19 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         },
 
         async update(
-          userId: string,
+          userId: string | null | undefined,
           userUpdate: UpdateUserModel,
         ): Promise<void> {
           try {
+            if (!userId) {
+              return;
+            }
             this.setIsLoadingUpdate(true);
             this.setUpdatedSuccessfully(false);
             await this.callApi('usersUserIdPatch', {
               userId,
               patchUserRequest: {
-                email: userUpdate.email ?? null,
-                password: userUpdate.password ?? null,
+                operations: userUpdate.operations,
               },
             });
             this.setIsLoadingUsers(true);
@@ -237,8 +261,11 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
           }
         },
 
-        async delete(userId: string): Promise<void> {
+        async delete(userId: string | null | undefined): Promise<void> {
           try {
+            if (!userId) {
+              return;
+            }
             this.setIsLoadingDelete(true);
             this.setRemovedSuccessfully(false);
             await this.callApi('usersUserIdDelete', { userId });

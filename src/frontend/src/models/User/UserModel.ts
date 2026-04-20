@@ -1,5 +1,7 @@
-import type { GetUserResponse } from '@/api/generated';
+import type { PmpScimUser, PmpUserExtension } from '@/api/generated';
 
-export type UserListModel = Pick<GetUserResponse, 'id' | 'email'>;
+export type UserListModel = Pick<PmpScimUser, 'externalId' | 'userName'> & {
+  isScimProvisioned: PmpUserExtension['isScimProvisioned'];
+};
 
-export type UserModel = GetUserResponse;
+export type UserModel = PmpScimUser;
