@@ -155,7 +155,7 @@
 <style lang="css" scoped>
   .formItem {
     margin: 0;
-    min-width: 200px;
+    min-width: 210px;
     max-width: 100%;
   }
 </style>
