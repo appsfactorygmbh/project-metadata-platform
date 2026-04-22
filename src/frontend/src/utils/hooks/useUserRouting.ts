@@ -26,7 +26,7 @@ export const useUserRouting = (): UserRoutingReturnType => {
     const currentPath = route.path;
     const currentQuery = { ...route.query };
 
-    if (id && id !== '0' && id !== 'undefined') {
+    if (id && id !== 'undefined') {
       currentQuery.userId = id;
     } else {
       delete currentQuery.userId;

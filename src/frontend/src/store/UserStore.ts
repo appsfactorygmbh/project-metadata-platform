@@ -195,7 +195,7 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
             const user =
               (
                 await this.callApi('usersGet', {
-                  filter: 'username eq ' + email,
+                  filter: 'userName eq ' + email,
                 })
               ).resources[0] ?? null;
             this.setUser(user);

@@ -43,8 +43,8 @@
   // when mounted -> look if there is already data loaded into the store -> if so set the userId to the one in the store
   // this is used for when coming back to the User Management tab to have the same user selected as before
   onMounted(async () => {
-    if (userStore.getUser?.id != undefined) {
-      setUserId(userStore.getUser?.id);
+    if (userStore.getUser?.externalId != undefined) {
+      setUserId(userStore.getUser?.externalId);
     }
     await userStore?.fetchAll();
     await userStore?.fetchUser(routerUserId.value);

@@ -1,9 +1,8 @@
 <script lang="ts" setup>
   import type { FormSubmitType } from '@/components/Form/types';
   import { type FormStore } from '@/components/Form';
-  import { type PropType, reactive } from 'vue';
   import type { UpdateUserModel } from '@/models/User';
-  import InputField from './InputField.vue';
+  import { type PropType, reactive, ref } from 'vue';
   import { useUserStore } from '@/store';
   import useNotification from 'ant-design-vue/es/notification/useNotification';
   import { PatchOperations } from '@/api/generated';
@@ -21,6 +20,10 @@
       type: Object as PropType<FormStore>,
       required: true,
     },
+    options: {
+      type: Array as PropType<string[]>,
+      required: true,
+    },
     placeholder: {
       type: String,
       required: true,
@@ -33,11 +36,19 @@
 
   const userStore = useUserStore();
 
-  const dynamicValidateForm = reactive<Record<string, string>>({
-    [props.attributeName]: props.default,
+  const dynamicValidateForm = reactive<Record<string, string[] | string>>({
+    [props.attributeName]: props.default
+      ? props.default.split(',').map((item) => item.trim())
+      : [],
   });
 
   const [notificationApi] = useNotification();
+
+  const searchValue = ref('');
+
+  const onSearch = (val: string) => {
+    searchValue.value = val;
+  };
 
   const onSubmit: FormSubmitType = async (fields) => {
     const value = fields[props.attributeName];
@@ -52,12 +63,19 @@
       });
       return;
     }
+    if (searchValue.value.trim()) {
+      const newTag = searchValue.value.trim();
+      if (!value.includes(newTag)) {
+        value.push(newTag);
+      }
+      searchValue.value = '';
+    }
 
     const payload: UpdateUserModel = {
       operations: [
         {
           op:
-            value === null || value === ''
+            value === null || value.length == 0
               ? PatchOperations.Remove
               : PatchOperations.Replace,
           path: props.attributeName,
@@ -90,7 +108,25 @@
       });
   };
 
-  props.formStore.setModel(dynamicValidateForm);
+  const handlePaste = (e: ClipboardEvent) => {
+    e.preventDefault();
+
+    const pastedData = e.clipboardData?.getData('text');
+    if (!pastedData) return;
+
+    const newTags = pastedData
+      .split(',')
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
+
+    const currentValues = dynamicValidateForm[props.attributeName] as string[];
+
+    dynamicValidateForm[props.attributeName] = Array.from(
+      new Set([...currentValues, ...newTags]),
+    );
+  };
+
+  props.formStore.setModel(dynamicValidateForm as any);
   props.formStore.setOnSubmit(onSubmit);
 
   const formRef = ref();
@@ -98,12 +134,20 @@
 
 <template>
   <a-form ref="formRef" :model="dynamicValidateForm">
-    <a-form-item name="props.attributeName" class="formItem">
-      <InputField
+    <a-form-item :name="props.attributeName" class="formItem">
+      <a-select
         v-model:value="dynamicValidateForm[props.attributeName]"
+        mode="multiple"
         :placeholder="props.placeholder"
-        :default="props.default"
-      />
+      >
+        <a-select-option
+          v-for="option in options"
+          :key="option"
+          :value="option"
+        >
+          {{ option }}
+        </a-select-option>
+      </a-select>
     </a-form-item>
   </a-form>
 </template>
@@ -111,5 +155,7 @@
 <style lang="css" scoped>
   .formItem {
     margin: 0;
+    min-width: 200px;
+    max-width: 100%;
   }
 </style>

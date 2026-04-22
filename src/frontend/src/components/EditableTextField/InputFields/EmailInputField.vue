@@ -3,11 +3,7 @@
   import type { Rule } from 'ant-design-vue/es/form';
   import { type FormStore } from '@/components/Form';
   import { type PropType, reactive, toRaw } from 'vue';
-  import type {
-    UserListModel,
-    UserModel,
-    UpdateUserModel,
-  } from '@/models/User';
+  import type { UserListModel, UserModel } from '@/models/User';
   import InputField from './InputField.vue';
   import { isValidEmail } from '@/utils/form/userValidation.ts';
   import { useUserStore } from '@/store';

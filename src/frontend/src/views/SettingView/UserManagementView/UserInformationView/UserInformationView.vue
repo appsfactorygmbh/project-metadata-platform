@@ -17,6 +17,7 @@
     PasswordInputField,
   } from '@/components/EditableTextField';
   import { useThemeToken } from '@/utils/hooks';
+  import { useTeamStore } from '@/store';
 
   const token = useThemeToken();
 
@@ -31,18 +32,22 @@
   const isLoading = computed(
     () => getIsLoadingUser.value || getIsLoading.value,
   );
+  const teamStore = useTeamStore();
 
   const employeeNrFormStore = useFormStore('editemployeeNrForm');
   const emailFormStore = useFormStore('editEmailForm');
   const passwordFormStore = useFormStore('patchPasswordForm');
   const isActiveFormStore = useFormStore('editIsActiveForm');
-  const isScimProvisionedFormStore = useFormStore('editIsScimProvisionedForm');
   const companyFormStore = useFormStore('editCompanyForm');
   const departmentsFormStore = useFormStore('editDepartmentsForm');
   const jobTitlesFormStore = useFormStore('editJobTitlesForm');
   const teamsFormStore = useFormStore('editTeamsForm');
   const teamSupportFormStore = useFormStore('editTeamSupportForm');
   const businessUnitFormStore = useFormStore('editbusinessUnitsForm');
+
+  onMounted(async () => {
+    teamStore.fetchAll();
+  });
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
@@ -130,7 +135,7 @@
         :form-store="employeeNrFormStore"
         :has-edit-keys="true"
         @saved-changes="
-          async () => user && (await userStore.fetchUser(user.externalId))
+          async () => user && (await userStore.fetchUserByEmail(user.userName))
         "
       >
         <UserInformationInputField
@@ -177,6 +182,213 @@
         <PasswordInputField
           :user-id="user?.id ?? ''"
           :form-store="passwordFormStore"
+        />
+      </EditableTextField>
+
+      <EditableInputSwitch
+        class="switch IsActive"
+        :user-id="user?.id ?? ''"
+        :attribute-name="'IsActive'"
+        :label="'Active'"
+        :form-store="isActiveFormStore"
+        :default="user?.active ?? true"
+        :is-loading="isLoading"
+        :has-edit-keys="true"
+        :is-editing-key="'isActive'"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      />
+
+      <EditableTextField
+        class="textField jobtitles"
+        :value="
+          user?.urnIetfParamsScimSchemasExtensionPmpUser.jobTitles?.join(
+            ', ',
+          ) ?? ''
+        "
+        :is-loading="isLoading"
+        :label="'Jobtitles'"
+        :is-editing-key="'isEditingJobTitles'"
+        :form-store="jobTitlesFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      >
+        <UserInformationListInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'JobTitles'"
+          :form-store="jobTitlesFormStore"
+          :placeholder="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.jobTitles?.join(
+              ', ',
+            ) ?? ''
+          "
+          :default="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.jobTitles?.join(
+              ', ',
+            ) ?? ''
+          "
+        />
+      </EditableTextField>
+
+      <EditableTextField
+        class="textField teams"
+        :value="
+          user?.urnIetfParamsScimSchemasExtensionPmpUser.team?.join(', ') ?? ''
+        "
+        :is-loading="isLoading"
+        :label="'Teams'"
+        :is-editing-key="'isEditingTeams'"
+        :form-store="teamsFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      >
+        <UnserInformationTeamsInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'Teams'"
+          :form-store="teamsFormStore"
+          :options="teamStore.getTeamNames"
+          :placeholder="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.team?.join(', ') ??
+            ''
+          "
+          :default="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.team?.join(', ') ??
+            ''
+          "
+        />
+      </EditableTextField>
+
+      <EditableTextField
+        class="textField teamSupport"
+        :value="
+          user?.urnIetfParamsScimSchemasExtensionPmpUser.teamSupport?.join(
+            ', ',
+          ) ?? ''
+        "
+        :is-loading="isLoading"
+        :label="'TeamSupport'"
+        :is-editing-key="'isEditingTeamSupport'"
+        :form-store="teamSupportFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      >
+        <UnserInformationTeamsInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'TeamSupport'"
+          :form-store="teamSupportFormStore"
+          :options="teamStore.getTeamNames"
+          :placeholder="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.teamSupport?.join(
+              ', ',
+            ) ?? ''
+          "
+          :default="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.teamSupport?.join(
+              ', ',
+            ) ?? ''
+          "
+        />
+      </EditableTextField>
+
+      <EditableTextField
+        class="textField departments"
+        :value="
+          user?.urnIetfParamsScimSchemasExtensionPmpUser.departments?.join(
+            ', ',
+          ) ?? ''
+        "
+        :is-loading="isLoading"
+        :label="'Departments'"
+        :is-editing-key="'isEditingDepartment'"
+        :form-store="departmentsFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      >
+        <UserInformationListInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'Departments'"
+          :form-store="departmentsFormStore"
+          :placeholder="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.departments?.join(
+              ', ',
+            ) ?? ''
+          "
+          :default="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.departments?.join(
+              ', ',
+            ) ?? ''
+          "
+        />
+      </EditableTextField>
+
+      <EditableTextField
+        class="textField businessUnits"
+        :value="
+          user?.urnIetfParamsScimSchemasExtensionPmpUser.businessUnits?.join(
+            ', ',
+          ) ?? ''
+        "
+        :is-loading="isLoading"
+        :label="'Business Units'"
+        :is-editing-key="'isEditingBusinessUnits'"
+        :form-store="businessUnitFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      >
+        <UserInformationListInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'BusinessUnits'"
+          :form-store="businessUnitFormStore"
+          :placeholder="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.businessUnits?.join(
+              ', ',
+            ) ?? ''
+          "
+          :default="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.businessUnits?.join(
+              ', ',
+            ) ?? ''
+          "
+        />
+      </EditableTextField>
+      <EditableTextField
+        class="textField company"
+        :value="
+          user?.urnIetfParamsScimSchemasExtensionEnterprise20User
+            .organization ?? ''
+        "
+        :is-loading="isLoading"
+        :label="'Company'"
+        :is-editing-key="'isEditingCompany'"
+        :form-store="companyFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      >
+        <UserInformationInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'Company'"
+          :form-store="companyFormStore"
+          :placeholder="
+            user?.urnIetfParamsScimSchemasExtensionEnterprise20User
+              .organization ?? ''
+          "
+          :default="
+            user?.urnIetfParamsScimSchemasExtensionEnterprise20User
+              .organization ?? ''
+          "
         />
       </EditableTextField>
     </a-flex>
