@@ -6,7 +6,7 @@ const userStore = useUserStore();
 const pluginStore = usePluginStore();
 
 export const hasEightCharacters = (_rule: Rule, value: string) => {
-  if (value.length >= 8) {
+  if (value == '' || value.length >= 8) {
     return Promise.resolve();
   }
   return Promise.reject(new Error('Please insert at least 8 characters.'));
@@ -14,7 +14,7 @@ export const hasEightCharacters = (_rule: Rule, value: string) => {
 
 export const hasSpecialCharacter = (_rule: Rule, value: string) => {
   const specialCharRegex = /(?=.*[^A-Za-z0-9])/;
-  if (specialCharRegex.test(value)) {
+  if (value == '' || specialCharRegex.test(value)) {
     return Promise.resolve();
   }
   return Promise.reject(new Error('Please insert a special character.'));
@@ -22,7 +22,7 @@ export const hasSpecialCharacter = (_rule: Rule, value: string) => {
 
 export const hasDigit = (_rule: Rule, value: string) => {
   const digitRegex = /(?=.*\d)/;
-  if (digitRegex.test(value)) {
+  if (value == '' || digitRegex.test(value)) {
     return Promise.resolve();
   }
   return Promise.reject(new Error('Please insert a digit.'));
@@ -33,7 +33,7 @@ export const isANumber = (_rule: Rule, value: string) => {
   const isNumber = digitRegex.test(value);
   const isSafeInteger = Number.isSafeInteger(Number(value));
 
-  if (isNumber && isSafeInteger) {
+  if (value == '' || (isNumber && isSafeInteger)) {
     return Promise.resolve();
   }
 
@@ -44,7 +44,7 @@ export const isANumber = (_rule: Rule, value: string) => {
 
 export const hasUpperCaseLetter = (_rule: Rule, value: string) => {
   const upperCaseRegex = /(?=.*[A-Z])/;
-  if (upperCaseRegex.test(value)) {
+  if (value == '' || upperCaseRegex.test(value)) {
     return Promise.resolve();
   }
   return Promise.reject(new Error('Please insert an upper case letter.'));
@@ -52,7 +52,7 @@ export const hasUpperCaseLetter = (_rule: Rule, value: string) => {
 
 export const hasLowerCaseLetter = (_rule: Rule, value: string) => {
   const lowerCaseRegex = /(?=.*[a-z])/;
-  if (lowerCaseRegex.test(value)) {
+  if (value == '' || lowerCaseRegex.test(value)) {
     return Promise.resolve();
   }
   return Promise.reject(new Error('Please insert a lower case letter.'));
@@ -73,10 +73,18 @@ export const isValidEmail = (_rule: Rule, value: string) => {
 export const isUniqueEmail = (_rule: Rule, value: string) => {
   const users: UserListModel[] = userStore.getUsers;
 
-  if (users?.every((user) => user.email !== value)) {
+  if (users?.every((user) => user.userName !== value)) {
     return Promise.resolve();
   }
   return Promise.reject(new Error('This email is already in use.'));
+};
+
+export const isUniqueEmployeeNr = (_rule: Rule, value: string) => {
+  const users: UserListModel[] = userStore.getUsers;
+  if (users?.every((user) => user.externalId !== value)) {
+    return Promise.resolve();
+  }
+  return Promise.reject(new Error('This Employee Nr is already in use.'));
 };
 
 export const isUniqueUrl = (_rule: Rule, value: string) => {

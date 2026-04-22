@@ -14,9 +14,17 @@
   const formStore = useFormStore('createUserForm');
   const userStore = inject(userStoreSymbol)!;
   const initialFormValues: CreateUserFormData = {
+    employeeNumber: '',
     email: '',
     password: '',
     confirmPassword: '',
+    active: false,
+    jobTitles: [],
+    teams: [],
+    teamSupport: [],
+    departments: [],
+    businessUnits: [],
+    company: undefined,
     inputsDisabled: false,
   };
 </script>

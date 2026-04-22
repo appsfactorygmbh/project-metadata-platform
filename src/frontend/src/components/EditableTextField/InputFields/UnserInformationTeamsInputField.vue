@@ -46,10 +46,6 @@
 
   const searchValue = ref('');
 
-  const onSearch = (val: string) => {
-    searchValue.value = val;
-  };
-
   const onSubmit: FormSubmitType = async (fields) => {
     const value = fields[props.attributeName];
     console.log(`value read from the store (${props.attributeName}): ${value}`);
@@ -106,24 +102,6 @@
           error,
         );
       });
-  };
-
-  const handlePaste = (e: ClipboardEvent) => {
-    e.preventDefault();
-
-    const pastedData = e.clipboardData?.getData('text');
-    if (!pastedData) return;
-
-    const newTags = pastedData
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter((tag) => tag.length > 0);
-
-    const currentValues = dynamicValidateForm[props.attributeName] as string[];
-
-    dynamicValidateForm[props.attributeName] = Array.from(
-      new Set([...currentValues, ...newTags]),
-    );
   };
 
   props.formStore.setModel(dynamicValidateForm as any);

@@ -15,21 +15,38 @@
     hasDigit,
     hasLowerCaseLetter,
     hasUpperCaseLetter,
+    isUniqueEmployeeNr,
   } from '@/utils/form/userValidation.ts';
+  import { useTeamStore } from '@/store/TeamStore.ts';
+  import { storeToRefs } from 'pinia';
 
   const { formStore, initialValues, userStore } = defineProps<{
     formStore: FormStore;
     initialValues: CreateUserFormData;
     userStore: UserStore;
   }>();
+  const teamStore = useTeamStore();
 
+  const { getTeams } = storeToRefs(teamStore);
   const [notificationApi, contextHolder] = notification.useNotification();
 
   const onSubmit: FormSubmitType = (fields) => {
     try {
       const userDef: CreateUserModel = {
-        email: toRaw(fields).email,
-        password: toRaw(fields).password,
+        externalId: toRaw(fields).employeeNumber,
+        userName: toRaw(fields).email,
+        password: toRaw(fields).password === '' ? null : toRaw(fields).password,
+        active: toRaw(fields).active,
+        urnIetfParamsScimSchemasExtensionEnterprise20User: {
+          organization: toRaw(fields).company,
+        },
+        urnIetfParamsScimSchemasExtensionPmpUser: {
+          departments: toRaw(fields).departments,
+          jobTitles: toRaw(fields).jobTitles,
+          businessUnits: toRaw(fields).businessUnits,
+          team: toRaw(fields).teams,
+        },
+        meta: {},
       };
       userStore?.create(userDef);
     } catch (error) {
@@ -52,7 +69,7 @@
   const dynamicValidateForm = reactive<CreateUserFormData>(initialValues);
 
   const validateConfirmPassword = async (_rule: Rule, value: string) => {
-    if (value === '') {
+    if (value === '' && dynamicValidateForm.password !== '') {
       return Promise.reject(new Error('Please confirm the password.'));
     } else if (value !== dynamicValidateForm.password) {
       return Promise.reject(new Error("The passwords don't match."));
@@ -78,7 +95,22 @@
         type: 'email',
       },
     ],
+    employeeNumber: [
+      {
+        required: true,
+      },
+      {
+        required: true,
+        message: 'Please insert an unique employee number.',
+        validator: isUniqueEmployeeNr,
+        trigger: 'change',
+        type: 'string',
+      },
+    ],
     password: [
+      {
+        required: false,
+      },
       {
         required: true,
         message: 'Please insert at least 8 characters.',
@@ -132,7 +164,7 @@
   });
 
   formStore.setOnSubmit(onSubmit);
-  formStore.setModel(dynamicValidateForm);
+  formStore.setModel(dynamicValidateForm as any);
   formStore.setRules(rulesRef);
 
   const formRef = ref();
@@ -145,6 +177,23 @@
     v-bind="formItemLayoutWithOutLabel"
     :wrapper-col="{ span: 24 }"
   >
+    <a-form-item
+      has-feedback
+      name="employeeNr"
+      class="column"
+      :whitespace="false"
+      :rules="rulesRef.employeeNumber"
+    >
+      <a-input
+        id="inputCreateUserEmployeeNumber"
+        v-model:value="dynamicValidateForm.employeeNumber"
+        class="inputField"
+        placeholder="Employee Number"
+        :disabled="dynamicValidateForm.inputsDisabled"
+        :rules="rulesRef.employeeNumber"
+      />
+    </a-form-item>
+
     <a-form-item
       has-feedback
       name="email"
@@ -161,6 +210,7 @@
         :rules="rulesRef.email"
       />
     </a-form-item>
+
     <a-form-item
       has-feedback
       name="password"
@@ -178,7 +228,9 @@
         type="password"
       />
     </a-form-item>
+
     <a-form-item
+      v-if="dynamicValidateForm.password != ''"
       has-feedback
       name="confirmPassword"
       class="column"
@@ -194,6 +246,124 @@
         :rules="rulesRef.confirmPassword"
         type="password"
       />
+    </a-form-item>
+
+    <a-form-item
+      has-feedback
+      name="company"
+      class="column"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-input
+        id="inputCreateUserCompany"
+        v-model:value="dynamicValidateForm.company"
+        class="inputField"
+        placeholder="Company"
+        :disabled="dynamicValidateForm.inputsDisabled"
+      />
+    </a-form-item>
+
+    <a-form-item
+      has-feedback
+      name="jobTitles"
+      class="column"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-select
+        id="inputCreateUserJobTitles"
+        v-model:value="dynamicValidateForm.jobTitles"
+        mode="tags"
+        placeholder="Jobtitles"
+        :token-separators="[',']"
+      >
+      </a-select>
+    </a-form-item>
+    <a-form-item
+      has-feedback
+      name="departments"
+      class="column"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-select
+        id="inputCreateUserDepartments"
+        v-model:value="dynamicValidateForm.departments"
+        mode="tags"
+        placeholder="Departments"
+        :token-separators="[',']"
+      >
+      </a-select>
+    </a-form-item>
+
+    <a-form-item
+      has-feedback
+      name="businessUnits"
+      class="column"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-select
+        id="inputCreateUserBusinessUnits"
+        v-model:value="dynamicValidateForm.businessUnits"
+        mode="tags"
+        placeholder="Business Units"
+        :token-separators="[',']"
+      >
+      </a-select>
+    </a-form-item>
+
+    <a-form-item
+      has-feedback
+      name="teams"
+      class="column"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-select
+        id="inputCreateUserTeams"
+        v-model:value="dynamicValidateForm.teams"
+        mode="tags"
+        placeholder="Teams"
+      >
+        <a-select-option
+          v-for="team in getTeams"
+          :key="team.teamName"
+          :value="team.teamName"
+        ></a-select-option>
+      </a-select>
+    </a-form-item>
+
+    <a-form-item
+      has-feedback
+      name="teamSupport"
+      class="column"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-select
+        id="inputCreateUserTeamSupport"
+        v-model:value="dynamicValidateForm.teamSupport"
+        mode="tags"
+        placeholder="TeamSupport"
+      >
+        <a-select-option
+          v-for="team in getTeams"
+          :key="team.teamName"
+          :value="team.teamName"
+        ></a-select-option>
+      </a-select>
+    </a-form-item>
+
+    <a-form-item
+      has-feedback
+      name="active"
+      class="column"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-switch v-model:checked="dynamicValidateForm.active" />
     </a-form-item>
   </a-form>
   <contextHolder />
