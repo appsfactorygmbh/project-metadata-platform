@@ -61,7 +61,7 @@ onMounted(async () => {
           <div class="menu-item-content">
             <span class="user-name">{{ getNameFromEmail(user.userName) }}</span>
 
-            <a-tag v-if="!user.isScimProvisioned" color="blue" class="scim-tag">
+            <a-tag v-if="user.isScimProvisioned" color="blue" class="scim-tag">
               SCIM
             </a-tag>
           </div>
