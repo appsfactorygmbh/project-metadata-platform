@@ -11,6 +11,8 @@ import type { AuthStore } from './AuthStore.ts';
 import { useUserRouting } from '@/utils/hooks/useUserRouting.ts';
 import type { TeamStore } from './TeamStore.ts';
 import type { useTeamRouting } from '@/utils/hooks/useTeamRouting.ts';
+import type { ApiTokenStore } from './ApiTokenStore.ts';
+import type { useApiTokenRouting } from '@/utils/hooks/useApiTokenRouting.ts';
 
 const projectStoreSymbol = Symbol() as InjectionKey<ProjectStore>;
 
@@ -25,6 +27,8 @@ const globalPluginStoreSymbol = Symbol() as InjectionKey<GlobalPluginStore>;
 const teamStoreSymbol = Symbol() as InjectionKey<TeamStore>;
 
 const authStoreSymbol = Symbol() as InjectionKey<AuthStore>;
+
+const apiTokenStoreSymbol = Symbol() as InjectionKey<ApiTokenStore>;
 
 const logsStoreSymbol = Symbol() as InjectionKey<
   ReturnType<typeof useLogsStore>
@@ -46,6 +50,10 @@ const teamRoutingSymbol = Symbol() as InjectionKey<
   ReturnType<typeof useTeamRouting>
 >;
 
+const apiTokenRoutingSymbol = Symbol() as InjectionKey<
+  ReturnType<typeof useApiTokenRouting>
+>;
+
 export {
   projectStoreSymbol,
   pluginStoreSymbol,
@@ -59,4 +67,6 @@ export {
   userRoutingSymbol,
   teamStoreSymbol,
   teamRoutingSymbol,
+  apiTokenStoreSymbol,
+  apiTokenRoutingSymbol,
 };

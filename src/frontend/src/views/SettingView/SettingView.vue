@@ -7,6 +7,7 @@
     LeftOutlined,
     TeamOutlined,
     UserOutlined,
+    RobotOutlined,
   } from '@ant-design/icons-vue';
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
@@ -57,6 +58,10 @@
         router.push(`/settings/global-logs`);
         break;
       }
+      case 'API-Token': {
+        router.push(`/settings/apiToken-management`);
+        break;
+      }
       default: {
         router.push(`/settings`);
         break;
@@ -76,14 +81,19 @@
           selectedKeys.value = ['2'];
           break;
         }
-        case '/settings/global-plugins': {
+        case '/settings/apiToken-management': {
           selectedKeys.value = ['3'];
           break;
         }
-        case '/settings/global-logs': {
+        case '/settings/global-plugins': {
           selectedKeys.value = ['4'];
           break;
         }
+        case '/settings/global-logs': {
+          selectedKeys.value = ['5'];
+          break;
+        }
+
         default: {
           selectedKeys.value = ['3'];
           break;
@@ -100,7 +110,7 @@
       v-model:collapsed="collapsed"
       class="sideSlider"
       collapsible
-      :width="280"
+      :width="300"
     >
       <!-- return to homepage button-->
       <a-layout-header class="listHeader" />
@@ -125,14 +135,23 @@
         </a-menu-item>
         <a-menu-item
           key="3"
+          class="apiTokenManagement"
+          @click="clickTab('API-Token')"
+        >
+          <RobotOutlined class="icons" />
+          <span>API-Token Management</span>
+        </a-menu-item>
+        <a-menu-item
+          key="4"
           class="globalPlugins"
           @click="clickTab('Global Plugins')"
         >
           <AppstoreAddOutlined class="icons" />
           <span>Global Plugins</span>
         </a-menu-item>
+
         <a-menu-item
-          key="4"
+          key="5"
           class="globalLogs"
           @click="clickTab('Global Logs')"
         >
@@ -161,10 +180,12 @@
     position: absolute;
     left: 20px;
     top: 20px;
-    z-index: 1; /* Ensure they're above other elements */
+    z-index: 1;
+    /* Ensure they're above other elements */
     height: fit-content;
     width: fit-content;
   }
+
   /* Style for the sidebar icons */
   .icons * {
     width: 1.4em;
@@ -190,9 +211,11 @@
     background-color: v-bind('token.colorFillContentHover');
     color: v-bind('token.colorText');
   }
+
   :deep(.ant-menu-item):hover {
     background-color: v-bind('token.colorFillContentHover') !important;
   }
+
   :deep(.ant-menu-item-selected):hover {
     background-color: v-bind('token.colorBgElevated');
   }
@@ -217,16 +240,20 @@
   :deep(.ant-layout-sider-trigger) {
     background-color: v-bind('token.colorPrimary');
   }
+
   .sideSlider {
     background-color: v-bind('token.colorBgElevated');
   }
+
   .listHeader {
     height: 80px;
     background-color: v-bind('token.colorBgElevated');
   }
+
   :deep(.ant-layout-content) {
     background-color: v-bind('token.colorFill');
   }
+
   .menuItem {
     background-color: v-bind('token.colorBgElevated');
   }

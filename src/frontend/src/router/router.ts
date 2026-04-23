@@ -18,6 +18,7 @@ import { TeamListView } from '@/views/SettingView/TeamManagementView/TeamListVie
 import TeamInformationView from '@/views/SettingView/TeamManagementView/TeamInformationView/TeamInformationView.vue';
 import CreateTeamView from '@/views/SettingView/TeamManagementView/CreateTeam/CreateTeamView.vue';
 import { msalService } from '@/services/msalService';
+import ApiTokenListView from '@/views/SettingView/ApiTokenManagement/ApiTokenListView/ApiTokenListView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -107,6 +108,35 @@ const router = createRouter({
                       component: CreateTeamView,
                       meta: {
                         title: 'Project Metadata Platform - Team Creation',
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: '/settings/apiToken-management',
+              name: 'apiTokenList',
+              component: ApiTokenListView,
+              meta: {
+                title: 'Project Metadata Platform - API-Token Management',
+              },
+              children: [
+                {
+                  path: '/settings/apiToken-management',
+                  name: 'apiTokensInformation',
+                  component: TeamInformationView,
+                  meta: {
+                    title: 'Project Metadata Platform - API-Token Information',
+                  },
+                  children: [
+                    {
+                      path: '/settings/apiToken-management/create',
+                      name: 'createApiTokens',
+                      component: CreateTeamView,
+                      meta: {
+                        title:
+                          'Project Metadata Platform -  API-Token Creation',
                       },
                     },
                   ],
