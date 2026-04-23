@@ -45,6 +45,7 @@
           jobTitles: toRaw(fields).jobTitles,
           businessUnits: toRaw(fields).businessUnits,
           team: toRaw(fields).teams,
+          teamSupport: toRaw(fields).teamSupport,
         },
         meta: {},
       };
@@ -82,68 +83,74 @@
     email: [
       {
         required: true,
+        message: 'Email is required.',
+        trigger: ['change', 'blur'],
+        type: 'string',
+      },
+      {
+        required: true,
         message: 'Please insert a valid email.',
         validator: isValidEmail,
-        trigger: 'change',
+        trigger: ['change', 'blur'],
         type: 'string',
       },
       {
         required: true,
         message: 'Please insert an unique email.',
         validator: isUniqueEmail,
-        trigger: 'change',
+        trigger: ['change', 'blur'],
         type: 'email',
       },
     ],
     employeeNumber: [
       {
         required: true,
+        message: 'Employee Number is required.',
+        trigger: ['change', 'blur'],
+        type: 'string',
       },
       {
         required: true,
         message: 'Please insert an unique employee number.',
         validator: isUniqueEmployeeNr,
-        trigger: 'change',
+        trigger: ['change', 'blur'],
         type: 'string',
       },
     ],
     password: [
       {
-        required: false,
-      },
-      {
         required: true,
         message: 'Please insert at least 8 characters.',
         validator: hasEightCharacters,
-        trigger: 'change',
+        trigger: ['change', 'blur'],
         type: 'string',
       },
       {
         required: true,
         message: 'Please insert a special character.',
         validator: hasSpecialCharacter,
-        trigger: 'change',
+        trigger: ['change', 'blur'],
         type: 'string',
       },
       {
         required: true,
         message: 'Please insert a number.',
         validator: hasDigit,
-        trigger: 'change',
+        trigger: ['change', 'blur'],
         type: 'string',
       },
       {
         required: true,
         message: 'Please insert a upper case letter.',
         validator: hasUpperCaseLetter,
-        trigger: 'change',
+        trigger: ['change', 'blur'],
         type: 'string',
       },
       {
         required: true,
         message: 'Please insert a lower case letter.',
         validator: hasLowerCaseLetter,
-        trigger: 'change',
+        trigger: ['change', 'blur'],
         type: 'string',
       },
     ],
@@ -152,7 +159,7 @@
         required: true,
         message: 'Please confirm the password.',
         validator: validateConfirmPassword,
-        trigger: 'change',
+        trigger: ['change', 'blur'],
         type: 'string',
       },
     ],
@@ -164,7 +171,7 @@
   });
 
   formStore.setOnSubmit(onSubmit);
-  formStore.setModel(dynamicValidateForm as any);
+  formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
 
   const formRef = ref();
@@ -179,7 +186,7 @@
   >
     <a-form-item
       has-feedback
-      name="employeeNr"
+      name="employeeNumber"
       class="column"
       :whitespace="false"
       :rules="rulesRef.employeeNumber"
@@ -208,6 +215,22 @@
         placeholder="E-Mail"
         :disabled="dynamicValidateForm.inputsDisabled"
         :rules="rulesRef.email"
+      />
+    </a-form-item>
+
+    <a-form-item
+      has-feedback
+      name="active"
+      class="column"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-switch
+        v-model:checked="dynamicValidateForm.active"
+        class="custom-color-switch"
+        :disabled="dynamicValidateForm.inputsDisabled"
+        checked-children="Active"
+        un-checked-children="Inactive"
       />
     </a-form-item>
 
@@ -250,6 +273,109 @@
 
     <a-form-item
       has-feedback
+      name="jobTitles"
+      class="selectcolumntop"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-select
+        id="inputCreateUserJobTitles"
+        v-model:value="dynamicValidateForm.jobTitles"
+        mode="tags"
+        placeholder="Jobtitles"
+        :token-separators="[',']"
+        :not-found-content="null"
+        :open="false"
+        :disabled="dynamicValidateForm.inputsDisabled"
+      >
+      </a-select>
+    </a-form-item>
+
+    <a-form-item
+      has-feedback
+      name="teams"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-select
+        id="inputCreateUserTeams"
+        v-model:value="dynamicValidateForm.teams"
+        mode="tags"
+        placeholder="Teams"
+        :disabled="dynamicValidateForm.inputsDisabled"
+        :token-separators="[',']"
+      >
+        <a-select-option
+          v-for="team in getTeams"
+          :key="team.teamName"
+          :value="team.teamName"
+        ></a-select-option>
+      </a-select>
+    </a-form-item>
+
+    <a-form-item
+      has-feedback
+      name="teamSupport"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-select
+        id="inputCreateUserTeamSupport"
+        v-model:value="dynamicValidateForm.teamSupport"
+        mode="tags"
+        placeholder="TeamSupport"
+        :disabled="dynamicValidateForm.inputsDisabled"
+        :token-separators="[',']"
+      >
+        <a-select-option
+          v-for="team in getTeams"
+          :key="team.teamName"
+          :value="team.teamName"
+        ></a-select-option>
+      </a-select>
+    </a-form-item>
+
+    <a-form-item
+      has-feedback
+      name="departments"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-select
+        id="inputCreateUserDepartments"
+        v-model:value="dynamicValidateForm.departments"
+        mode="tags"
+        placeholder="Departments"
+        :token-separators="[',']"
+        :not-found-content="null"
+        :open="false"
+        :disabled="dynamicValidateForm.inputsDisabled"
+      >
+      </a-select>
+    </a-form-item>
+
+    <a-form-item
+      has-feedback
+      name="businessUnits"
+      class="selectcolumnbottom"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-select
+        id="inputCreateUserBusinessUnits"
+        v-model:value="dynamicValidateForm.businessUnits"
+        mode="tags"
+        placeholder="Business Units"
+        :token-separators="[',']"
+        :not-found-content="null"
+        :open="false"
+        :disabled="dynamicValidateForm.inputsDisabled"
+      >
+      </a-select>
+    </a-form-item>
+
+    <a-form-item
+      has-feedback
       name="company"
       class="column"
       :whitespace="false"
@@ -263,108 +389,6 @@
         :disabled="dynamicValidateForm.inputsDisabled"
       />
     </a-form-item>
-
-    <a-form-item
-      has-feedback
-      name="jobTitles"
-      class="column"
-      :whitespace="false"
-      :rules="[{ required: false }]"
-    >
-      <a-select
-        id="inputCreateUserJobTitles"
-        v-model:value="dynamicValidateForm.jobTitles"
-        mode="tags"
-        placeholder="Jobtitles"
-        :token-separators="[',']"
-      >
-      </a-select>
-    </a-form-item>
-    <a-form-item
-      has-feedback
-      name="departments"
-      class="column"
-      :whitespace="false"
-      :rules="[{ required: false }]"
-    >
-      <a-select
-        id="inputCreateUserDepartments"
-        v-model:value="dynamicValidateForm.departments"
-        mode="tags"
-        placeholder="Departments"
-        :token-separators="[',']"
-      >
-      </a-select>
-    </a-form-item>
-
-    <a-form-item
-      has-feedback
-      name="businessUnits"
-      class="column"
-      :whitespace="false"
-      :rules="[{ required: false }]"
-    >
-      <a-select
-        id="inputCreateUserBusinessUnits"
-        v-model:value="dynamicValidateForm.businessUnits"
-        mode="tags"
-        placeholder="Business Units"
-        :token-separators="[',']"
-      >
-      </a-select>
-    </a-form-item>
-
-    <a-form-item
-      has-feedback
-      name="teams"
-      class="column"
-      :whitespace="false"
-      :rules="[{ required: false }]"
-    >
-      <a-select
-        id="inputCreateUserTeams"
-        v-model:value="dynamicValidateForm.teams"
-        mode="tags"
-        placeholder="Teams"
-      >
-        <a-select-option
-          v-for="team in getTeams"
-          :key="team.teamName"
-          :value="team.teamName"
-        ></a-select-option>
-      </a-select>
-    </a-form-item>
-
-    <a-form-item
-      has-feedback
-      name="teamSupport"
-      class="column"
-      :whitespace="false"
-      :rules="[{ required: false }]"
-    >
-      <a-select
-        id="inputCreateUserTeamSupport"
-        v-model:value="dynamicValidateForm.teamSupport"
-        mode="tags"
-        placeholder="TeamSupport"
-      >
-        <a-select-option
-          v-for="team in getTeams"
-          :key="team.teamName"
-          :value="team.teamName"
-        ></a-select-option>
-      </a-select>
-    </a-form-item>
-
-    <a-form-item
-      has-feedback
-      name="active"
-      class="column"
-      :whitespace="false"
-      :rules="[{ required: false }]"
-    >
-      <a-switch v-model:checked="dynamicValidateForm.active" />
-    </a-form-item>
   </a-form>
   <contextHolder />
 </template>
@@ -372,5 +396,22 @@
 <style scoped>
   .column {
     margin: 0;
+  }
+
+  .selectcolumnbottom {
+    margin-bottom: 5%;
+  }
+  .selectcolumntop {
+    margin-top: 5%;
+  }
+
+  :deep(.custom-color-switch.ant-switch-checked),
+  :deep(.custom-color-switch.ant-switch-checked:hover) {
+    background-color: #27d157;
+  }
+
+  :deep(.custom-color-switch:not(.ant-switch-checked)),
+  :deep(.custom-color-switch:not(.ant-switch-checked):hover) {
+    background-color: #ff002e;
   }
 </style>

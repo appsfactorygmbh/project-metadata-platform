@@ -123,7 +123,7 @@
     );
   };
 
-  props.formStore.setModel(dynamicValidateForm as any);
+  props.formStore.setModel(dynamicValidateForm);
   props.formStore.setOnSubmit(onSubmit);
 
   const formRef = ref();
@@ -137,6 +137,7 @@
         mode="tags"
         :placeholder="props.placeholder"
         :token-separators="[',']"
+        :not-found-content="null"
         @paste="handlePaste"
         @search="onSearch"
       >
