@@ -283,7 +283,6 @@
         v-model:value="dynamicValidateForm.jobTitles"
         mode="tags"
         placeholder="Jobtitles"
-        :token-separators="[',']"
         :not-found-content="null"
         :open="false"
         :disabled="dynamicValidateForm.inputsDisabled"
@@ -300,10 +299,9 @@
       <a-select
         id="inputCreateUserTeams"
         v-model:value="dynamicValidateForm.teams"
-        mode="tags"
+        mode="multiple"
         placeholder="Teams"
         :disabled="dynamicValidateForm.inputsDisabled"
-        :token-separators="[',']"
       >
         <a-select-option
           v-for="team in getTeams"
@@ -322,10 +320,9 @@
       <a-select
         id="inputCreateUserTeamSupport"
         v-model:value="dynamicValidateForm.teamSupport"
-        mode="tags"
+        mode="multiple"
         placeholder="TeamSupport"
         :disabled="dynamicValidateForm.inputsDisabled"
-        :token-separators="[',']"
       >
         <a-select-option
           v-for="team in getTeams"
@@ -346,7 +343,6 @@
         v-model:value="dynamicValidateForm.departments"
         mode="tags"
         placeholder="Departments"
-        :token-separators="[',']"
         :not-found-content="null"
         :open="false"
         :disabled="dynamicValidateForm.inputsDisabled"
@@ -366,7 +362,6 @@
         v-model:value="dynamicValidateForm.businessUnits"
         mode="tags"
         placeholder="Business Units"
-        :token-separators="[',']"
         :not-found-content="null"
         :open="false"
         :disabled="dynamicValidateForm.inputsDisabled"
