@@ -88,7 +88,7 @@ export interface AuthApiInterface {
   authApiTokensPostRaw(
     requestParameters: AuthApiTokensPostRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetApiTokenResponse>>;
+  ): Promise<runtime.ApiResponse<GetApiTokenDetailsResponse>>;
 
   /**
    * Creates a new token.
@@ -96,7 +96,7 @@ export interface AuthApiInterface {
   authApiTokensPost(
     requestParameters: AuthApiTokensPostRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetApiTokenResponse>;
+  ): Promise<GetApiTokenDetailsResponse>;
 
   /**
    *
@@ -254,7 +254,7 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
   async authApiTokensPostRaw(
     requestParameters: AuthApiTokensPostRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetApiTokenResponse>> {
+  ): Promise<runtime.ApiResponse<GetApiTokenDetailsResponse>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -280,7 +280,7 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetApiTokenResponseFromJSON(jsonValue),
+      GetApiTokenDetailsResponseFromJSON(jsonValue),
     );
   }
 
@@ -290,7 +290,7 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
   async authApiTokensPost(
     requestParameters: AuthApiTokensPostRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetApiTokenResponse> {
+  ): Promise<GetApiTokenDetailsResponse> {
     const response = await this.authApiTokensPostRaw(
       requestParameters,
       initOverrides,

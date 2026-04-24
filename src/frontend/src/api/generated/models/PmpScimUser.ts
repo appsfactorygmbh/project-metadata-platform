@@ -63,7 +63,7 @@ export interface PmpScimUser {
    * @type {boolean}
    * @memberof PmpScimUser
    */
-  active?: boolean | null;
+  active: boolean;
   /**
    * Password of the user. Not managed by entra.
    * @type {string}
@@ -97,6 +97,7 @@ export function instanceOfPmpScimUser(value: object): value is PmpScimUser {
   if (!('externalId' in value) || value['externalId'] === undefined)
     return false;
   if (!('userName' in value) || value['userName'] === undefined) return false;
+  if (!('active' in value) || value['active'] === undefined) return false;
   if (
     !('urnIetfParamsScimSchemasExtensionEnterprise20User' in value) ||
     value['urnIetfParamsScimSchemasExtensionEnterprise20User'] === undefined
@@ -127,7 +128,7 @@ export function PmpScimUserFromJSONTyped(
     id: json['id'] == null ? undefined : json['id'],
     externalId: json['externalId'],
     userName: json['userName'],
-    active: json['active'] == null ? undefined : json['active'],
+    active: json['active'],
     password: json['password'] == null ? undefined : json['password'],
     urnIetfParamsScimSchemasExtensionEnterprise20User:
       EnterpriseUserExtensionFromJSON(
