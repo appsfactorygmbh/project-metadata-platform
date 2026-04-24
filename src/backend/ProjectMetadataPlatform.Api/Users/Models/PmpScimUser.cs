@@ -36,7 +36,7 @@ public record PmpScimUser
     /// <summary>
     /// Wether the user is an active employee.
     /// </summary>
-    public bool? Active { get; set; }
+    public bool Active { get; set; }
 
     /// <summary>
     /// Password of the user. Not managed by entra.

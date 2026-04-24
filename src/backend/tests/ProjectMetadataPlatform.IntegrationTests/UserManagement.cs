@@ -113,14 +113,14 @@ public class UserManagement : IntegrationTestsBase
             .GetString()
             .Should()
             .Be(
-                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsScimProvisioned = False"
+                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
             );
         logs[0]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be(
-                "test added a new user with properties: Email = foo@bar.de, EmployeeId = 1234, IsScimProvisioned = False"
+                "test added a new user with properties: Email = foo@bar.de, EmployeeId = 1234, IsActive = False, IsScimProvisioned = False"
             );
     }
 
@@ -210,7 +210,7 @@ public class UserManagement : IntegrationTestsBase
             .GetString()
             .Should()
             .Be(
-                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsScimProvisioned = False"
+                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
             );
         logs[1]
             .GetProperty("logMessage")
@@ -223,7 +223,7 @@ public class UserManagement : IntegrationTestsBase
             .GetString()
             .Should()
             .Be(
-                "ApiToken added a new user with properties: Email = foo@bar.de, EmployeeId = 1234, IsScimProvisioned = True"
+                "ApiToken added a new user with properties: Email = foo@bar.de, EmployeeId = 1234, IsActive = False, IsScimProvisioned = True"
             );
     }
 
@@ -262,7 +262,7 @@ public class UserManagement : IntegrationTestsBase
             .GetString()
             .Should()
             .Be(
-                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsScimProvisioned = False"
+                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
             );
 
         logs[0]
@@ -333,14 +333,14 @@ public class UserManagement : IntegrationTestsBase
             .GetString()
             .Should()
             .Be(
-                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsScimProvisioned = False"
+                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
             );
         logs[2]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be(
-                "test (deleted actor) added a new user with properties: Email = foo@bar.de, EmployeeId = 1234, IsScimProvisioned = False"
+                "test (deleted actor) added a new user with properties: Email = foo@bar.de, EmployeeId = 1234, IsActive = False, IsScimProvisioned = False"
             );
         logs[1]
             .GetProperty("logMessage")
@@ -399,14 +399,14 @@ public class UserManagement : IntegrationTestsBase
             .GetString()
             .Should()
             .Be(
-                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsScimProvisioned = False"
+                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
             );
         logs[2]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be(
-                "test (deleted actor) added a new user with properties: Email = mail@m.de, EmployeeId = a, IsScimProvisioned = False"
+                "test (deleted actor) added a new user with properties: Email = mail@m.de, EmployeeId = a, IsActive = False, IsScimProvisioned = False"
             );
     }
 

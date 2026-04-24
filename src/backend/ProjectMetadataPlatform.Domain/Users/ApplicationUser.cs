@@ -27,12 +27,12 @@ public class ApplicationUser : IdentityUser
     /// <summary>
     /// Signals wether the user is active or not.
     /// </summary>
-    public bool? IsActive { get; set; }
+    public bool IsActive { get; set; }
 
     /// <summary>
     /// Signals wether the user was scimprovisioned or not.
     /// </summary>
-    public bool? IsScimProvisioned { get; set; }
+    public bool IsScimProvisioned { get; set; }
 
     /// <summary>
     /// List of BUs of the user.

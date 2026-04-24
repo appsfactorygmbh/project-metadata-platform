@@ -124,7 +124,7 @@ public class AuthController : ControllerBase
     /// <response code="400">If the token could not be created.</response>
     [HttpPost("ApiTokens")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
-    [ProducesResponseType(typeof(GetApiTokenResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(GetApiTokenDetailsResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<GetApiTokenDetailsResponse>> PostApiToken(
         [FromBody] CreateApiTokenRequest request
@@ -152,7 +152,7 @@ public class AuthController : ControllerBase
     /// <response code="404">If the token wasn't found.</response>
     [HttpPatch("ApiTokens/{tokenId}")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetApiTokenDetailsResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<GetApiTokenDetailsResponse>> RegenerateApiToken(int tokenId)
     {

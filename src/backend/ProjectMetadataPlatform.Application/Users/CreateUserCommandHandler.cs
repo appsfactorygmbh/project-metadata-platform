@@ -154,28 +154,25 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
                 }
             );
         }
-        if (user.IsActive != null)
-        {
-            changes.Add(
-                new()
-                {
-                    OldValue = "",
-                    NewValue = user.IsActive.ToString()!,
-                    Property = nameof(ApplicationUser.IsActive),
-                }
-            );
-        }
-        if (user.IsScimProvisioned != null)
-        {
-            changes.Add(
-                new()
-                {
-                    OldValue = "",
-                    NewValue = user.IsScimProvisioned.ToString()!,
-                    Property = nameof(ApplicationUser.IsScimProvisioned),
-                }
-            );
-        }
+
+        changes.Add(
+            new()
+            {
+                OldValue = "",
+                NewValue = user.IsActive.ToString()!,
+                Property = nameof(ApplicationUser.IsActive),
+            }
+        );
+
+        changes.Add(
+            new()
+            {
+                OldValue = "",
+                NewValue = user.IsScimProvisioned.ToString()!,
+                Property = nameof(ApplicationUser.IsScimProvisioned),
+            }
+        );
+
         if (user.BusinessUnits != null)
         {
             changes.Add(

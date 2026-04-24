@@ -231,7 +231,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         }
         user.GetType().GetProperty(attribute)?.SetValue(user, teams);
         var oldValueNamesList =
-            oldValue == null ? [] : ((List<Team>)oldValue).Select(t => t.TeamName);
+            oldValue == null ? [] : ((HashSet<Team>)oldValue).Select(t => t.TeamName);
         if (!oldValueNamesList.SequenceEqual(teamNames))
         {
             changes.Add(

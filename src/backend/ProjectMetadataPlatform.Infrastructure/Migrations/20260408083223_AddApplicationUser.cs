@@ -49,7 +49,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
             WHERE ""EmployeeId"" = '';"
                 );
             }
-            else if (migrationBuilder.ActiveProvider == "Microsoft.EntityFrameworkCore.Sqlite")
+            else
             {
                 migrationBuilder.Sql(
                     @"
@@ -63,14 +63,16 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                 name: "IsActive",
                 table: "AspNetUsers",
                 type: "boolean",
-                nullable: true
+                nullable: false,
+                defaultValue: true
             );
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsScimProvisioned",
                 table: "AspNetUsers",
                 type: "boolean",
-                nullable: true
+                nullable: false,
+                defaultValue: true
             );
 
             migrationBuilder.AddColumn<List<string>>(
