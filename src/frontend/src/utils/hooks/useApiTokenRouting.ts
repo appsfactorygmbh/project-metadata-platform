@@ -10,10 +10,10 @@ export const useApiTokenRouting = (): ApiTokenRoutingReturnType => {
   const router = useRouter();
   const route = useRoute();
 
-  const routerApiTokenId = ref<string>(String(route.query.apiTokenId ?? ''));
+  const routerApiTokenId = ref<string>(String(route.query.tokenId ?? ''));
 
   watch(
-    () => route.query.apiTokenId,
+    () => route.query.tokenId,
     (newQueryApiTokenId) => {
       const newIdString = String(newQueryApiTokenId ?? '');
       if (routerApiTokenId.value !== newIdString) {
@@ -27,9 +27,9 @@ export const useApiTokenRouting = (): ApiTokenRoutingReturnType => {
     const currentQuery = { ...route.query };
 
     if (id && id !== '0' && id !== 'undefined') {
-      currentQuery.apiTokenId = id;
+      currentQuery.tokenId = id;
     } else {
-      delete currentQuery.apiTokenId;
+      delete currentQuery.tokenId;
     }
     router.push({ path: currentPath, query: currentQuery }).catch((err) => {
       if (err.name !== 'NavigationDuplicated') {

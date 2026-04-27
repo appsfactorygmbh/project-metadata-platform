@@ -11,7 +11,9 @@ import { AuthApi } from '@/api/generated';
 
 type StoreState = {
   apiTokens: ApiTokenModel[];
-  apiToken: DetailedApiTokenModel | null;
+  apiToken: DetailedApiTokenModel;
+  tokenValue: string | null | undefined;
+  hasTokenValue: boolean;
   isLoading: boolean;
   isLoadingCreate: boolean;
   isLoadingApiToken: boolean;
@@ -25,7 +27,9 @@ type StoreState = {
 
 type StoreGetters = {
   getApiTokens: () => ApiTokenModel[];
-  getApiToken: () => DetailedApiTokenModel | null;
+  getApiToken: () => DetailedApiTokenModel;
+  getTokenValue: () => string | null | undefined;
+  getHasTokenValue: () => boolean;
   getIsLoading: () => boolean;
   getIsLoadingCreate: () => boolean;
   getIsLoadingApiToken: () => boolean;
@@ -40,7 +44,8 @@ type StoreGetters = {
 type StoreActions = {
   refreshAuth: () => void;
   setApiTokens: (apiTokens: ApiTokenModel[]) => void;
-  setApiToken: (apiToken: DetailedApiTokenModel | null) => void;
+  setApiToken: (apiToken: DetailedApiTokenModel) => void;
+  setTokenValue: (tokenValue: string | null | undefined) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsLoadingCreate: (isLoadingCreate: boolean) => void;
   setIsLoadingApiToken: (isLoadingApiToken: boolean) => void;
@@ -52,8 +57,8 @@ type StoreActions = {
   setRegeneratedSuccessfully: (regeneratedSuccessfully: boolean) => void;
   fetchAll: () => Promise<void>;
   fetchApiToken: (tokenId: number) => Promise<void>;
-  create: (newToken: CreateApiTokenModel) => Promise<void>;
-  regenerate: (tokenId: ApiTokenModel['id']) => Promise<void>;
+  create: (newToken: CreateApiTokenModel) => Promise<number>;
+  regenerate: (tokenId: ApiTokenModel['id']) => Promise<number>;
   delete: (tokenId: ApiTokenModel['id']) => Promise<void>;
 };
 
@@ -66,6 +71,8 @@ export const useApiTokenStore = (pinia: Pinia = piniaInstance): Store => {
       state: {
         apiTokens: [],
         apiToken: null,
+        tokenValue: null,
+        hasTokenValue: false,
         isLoadingCreate: false,
         isLoadingApiToken: false,
         isLoadingApiTokens: false,
@@ -79,8 +86,14 @@ export const useApiTokenStore = (pinia: Pinia = piniaInstance): Store => {
         getApiTokens(): ApiTokenModel[] {
           return this.apiTokens;
         },
-        getApiToken(): DetailedApiTokenModel | null {
+        getApiToken(): DetailedApiTokenModel {
           return this.apiToken;
+        },
+        getTokenValue(): string | null | undefined {
+          return this.tokenValue;
+        },
+        getHasTokenValue(): boolean {
+          return this.tokenValue != null && this.tokenValue != undefined;
         },
         getIsLoading(): boolean {
           return this.isLoadingCreate || this.isLoadingApiTokens;
@@ -117,8 +130,11 @@ export const useApiTokenStore = (pinia: Pinia = piniaInstance): Store => {
         setApiTokens(apiTokens: ApiTokenModel[]): void {
           this.apiTokens = apiTokens;
         },
-        setApiToken(apiToken: DetailedApiTokenModel | null): void {
+        setApiToken(apiToken: DetailedApiTokenModel): void {
           this.apiToken = apiToken;
+        },
+        setTokenValue(tokenValue: string | null | undefined): void {
+          this.tokenValue = tokenValue;
         },
         setIsLoadingCreate(isLoadingCreate: boolean): void {
           this.isLoadingCreate = isLoadingCreate;
@@ -150,6 +166,7 @@ export const useApiTokenStore = (pinia: Pinia = piniaInstance): Store => {
           try {
             const tokens: ApiTokenModel[] =
               (await this.callApi('authApiTokensGet', {})) ?? [];
+            tokens.sort((a, b) => a.id - b.id);
             this.setApiTokens(tokens);
           } finally {
             this.setIsLoadingApiTokens(false);
@@ -169,15 +186,17 @@ export const useApiTokenStore = (pinia: Pinia = piniaInstance): Store => {
           }
         },
 
-        async create(newToken: CreateApiTokenModel): Promise<void> {
+        async create(newToken: CreateApiTokenModel): Promise<number> {
           try {
             this.setIsLoadingCreate(true);
             this.setCreatedSuccessfully(false);
-            await this.callApi('authApiTokensPost', {
+            const token = await this.callApi('authApiTokensPost', {
               createApiTokenRequest: newToken,
             });
+            this.setTokenValue(token.token);
             await this.fetchAll();
             this.setCreatedSuccessfully(true);
+            return token.id;
           } catch (e) {
             this.setCreatedSuccessfully(false);
             throw e;
@@ -186,22 +205,24 @@ export const useApiTokenStore = (pinia: Pinia = piniaInstance): Store => {
           }
         },
 
-        async regenerate(tokenId: number | null | undefined): Promise<void> {
+        async regenerate(tokenId: number | null | undefined): Promise<number> {
           try {
             if (!tokenId) {
-              return;
+              throw new Error('Token id cant be undefined');
             }
             this.setIsLoadingRegenerate(true);
             this.setRegeneratedSuccessfully(false);
-            await this.callApi('authApiTokensTokenIdPatch', {
+            const token = await this.callApi('authApiTokensTokenIdPatch', {
               tokenId: tokenId,
             });
+            this.setTokenValue(token.token);
             this.setIsLoadingApiTokens(true);
             this.setIsLoadingApiToken(true);
             this.fetchAll();
             this.setIsLoadingApiToken(false);
             this.setIsLoadingApiTokens(false);
             this.setRegeneratedSuccessfully(true);
+            return token.id;
           } catch (e) {
             this.setRegeneratedSuccessfully(false);
             throw e;

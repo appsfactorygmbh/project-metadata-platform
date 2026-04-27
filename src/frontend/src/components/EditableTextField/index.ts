@@ -6,9 +6,10 @@ import ProjectInformationSearchSelectField from './InputFields/ProjectInformatio
 import TeamNameInputField from './InputFields/TeamNameInputField.vue';
 import UserInformationInputField from './InputFields/UserInformationInputField.vue';
 import UserInformationListInputField from './InputFields/UserInformationListInputField.vue';
-
+import EditableTagList from './EditableTagList.vue';
 export {
   EditableTextField,
+  EditableTagList,
   EmailInputField,
   PasswordInputField,
   UserInformationInputField,

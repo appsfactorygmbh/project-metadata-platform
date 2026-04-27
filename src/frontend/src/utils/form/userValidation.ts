@@ -1,5 +1,11 @@
+import type { ApiTokenModel } from '@/models/ApiToken';
 import type { UserListModel } from '@/models/User';
-import { type TeamStore, usePluginStore, useUserStore } from '@/store';
+import {
+  type ApiTokenStore,
+  type TeamStore,
+  usePluginStore,
+  useUserStore,
+} from '@/store';
 import type { Rule } from 'ant-design-vue/es/form';
 
 const userStore = useUserStore();
@@ -101,6 +107,29 @@ export const CreateIsUniqueTeamName = (teamStore: TeamStore) => {
     const teams = teamStore.getIdToName(value);
     if (teams != undefined) {
       return Promise.reject(new Error('This Team Name is already in use.'));
+    }
+    return Promise.resolve();
+  };
+};
+
+export const CreateisUniqueTokenName = (apiTokenStore: ApiTokenStore) => {
+  return (_rule: Rule, value: string) => {
+    const tokens: ApiTokenModel[] = apiTokenStore.getApiTokens;
+    if (tokens?.every((token) => token.name !== value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error('This Token Name is already in use.'));
+  };
+};
+
+export const CreateOnlyOneScimToken = (apiTokenStore: ApiTokenStore) => {
+  return (_rule: Rule, value: Array<string>) => {
+    const tokens: ApiTokenModel[] = apiTokenStore.getApiTokens;
+    if (
+      value.includes('SCIM') &&
+      tokens?.some((token) => token.scopes.includes('SCIM'))
+    ) {
+      return Promise.reject(new Error('This Token Name is already in use.'));
     }
     return Promise.resolve();
   };

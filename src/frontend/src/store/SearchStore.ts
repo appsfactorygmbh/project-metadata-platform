@@ -63,7 +63,7 @@ export const useSearchStore = <T extends AnyObject>(name: string) =>
         }
 
         this.isLoading = true;
-        let searchResults: T[] = [];
+        let searchResults: T[];
         if (_.isEmpty(this.searchQuery)) {
           // filter only by custom filter function
           searchResults = this.baseSet;

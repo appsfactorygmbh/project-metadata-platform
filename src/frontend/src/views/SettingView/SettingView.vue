@@ -59,7 +59,7 @@
         break;
       }
       case 'API-Token': {
-        router.push(`/settings/apiToken-management`);
+        router.push(`/settings/api-token-management`);
         break;
       }
       default: {
@@ -81,7 +81,7 @@
           selectedKeys.value = ['2'];
           break;
         }
-        case '/settings/apiToken-management': {
+        case '/settings/api-token-management': {
           selectedKeys.value = ['3'];
           break;
         }
@@ -95,7 +95,7 @@
         }
 
         default: {
-          selectedKeys.value = ['3'];
+          selectedKeys.value = ['5'];
           break;
         }
       }

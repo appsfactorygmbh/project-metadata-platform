@@ -1,8 +1,3 @@
-import type {
-  GetApiTokenDetailsResponse,
-  GetApiTokenResponse,
-} from '@/api/generated';
+import type { GetApiTokenDetailsResponse } from '@/api/generated';
 
-export type ApiTokenModel = GetApiTokenResponse;
-
-export type DetailedApiTokenModel = GetApiTokenDetailsResponse;
+export type ApiTokenModel = GetApiTokenDetailsResponse;

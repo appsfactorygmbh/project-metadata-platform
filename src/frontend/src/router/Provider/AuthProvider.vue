@@ -11,8 +11,10 @@
     usePluginStore,
     useProjectStore,
     useTeamStore,
+    useApiTokenStore,
   } from '@/store';
   import { msalInstance, msalService } from '@/services/msalService';
+
   const router = useRouter();
 
   const authStore = useAuthStore();
@@ -23,6 +25,7 @@
   const logsStore = useLogsStore();
   const userStore = useUserStore();
   const teamStore = useTeamStore();
+  const apiTokenStore = useApiTokenStore();
 
   provide<typeof authStore>(authStoreSymbol, authStore);
 
@@ -40,6 +43,7 @@
   logsStore.refreshAuth();
   userStore.refreshAuth();
   teamStore.refreshAuth();
+  apiTokenStore.refreshAuth();
 
   const authInitialized = ref(false);
   const authenticationFailed = ref(false);

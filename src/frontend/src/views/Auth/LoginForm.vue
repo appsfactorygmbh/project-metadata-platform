@@ -5,7 +5,7 @@
   import { LockOutlined, UserOutlined } from '@ant-design/icons-vue';
   import { useToken } from 'ant-design-vue/es/theme/internal';
 
-  const { formStore, feedbackMessage } = defineProps<{
+  const { formStore, feedbackMessage = '' } = defineProps<{
     formStore: FormStore;
     feedbackMessage?: string;
   }>();

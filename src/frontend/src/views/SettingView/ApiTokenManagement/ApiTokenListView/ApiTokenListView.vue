@@ -12,20 +12,20 @@
   const collapsed = ref<boolean>(false);
   const selectedKeys = ref<string[]>([]);
   const apiTokenStore = inject(apiTokenStoreSymbol)!;
-
   const { routerApiTokenId, setApiTokenId } = inject(apiTokenRoutingSymbol)!;
-  const { getApiTokens, getIsLoadingApiTokens } = storeToRefs(apiTokenStore);
+  const { getIsLoading, getApiTokens } = storeToRefs(apiTokenStore);
 
-  const isLoading = computed(() => getIsLoadingApiTokens.value);
-  const apiTokenData = computed(() => getApiTokens.value);
+  const isLoading = computed(() => getIsLoading.value);
+  const tokensData = computed(() => getApiTokens.value);
 
   const selectedApiTokenId = ref<string>('');
+
   watch(
     () => routerApiTokenId.value,
     async () => {
+      // if no query is present -> check if data is in store -> if so set the userId query
       if (routerApiTokenId.value == '') {
         if (selectedApiTokenId.value != '') {
-          console.log('write ');
           setApiTokenId(selectedApiTokenId.value);
         }
       }
@@ -34,53 +34,26 @@
     },
   );
 
-  interface VueComponentWithEl extends HTMLElement {
-    $el: HTMLElement;
-  }
-
-  // used for scrolling to the selected team on mount
-  const siderRef = ref<VueComponentWithEl | null>(null);
-
-  const scrollToSelectedMenuItem = async () => {
-    await nextTick();
-    if (siderRef.value && selectedKeys.value && selectedKeys.value.length > 0) {
-      const siderElement = siderRef.value.$el || siderRef.value;
-
-      const selectedItemElement = siderElement.querySelector(
-        '.ant-menu-item-selected',
-      ) as HTMLElement;
-
-      if (selectedItemElement) {
-        selectedItemElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-        });
-      }
-    }
-  };
-
   const clickTab = async (apiTokenId: string) => {
     selectedApiTokenId.value = apiTokenId;
     setApiTokenId(apiTokenId);
   };
 
+  // when mounted -> look if there is already data loaded into the store -> if so set the tokenId to the one in the store
+  // this is used for when coming back to the API-Token Management tab to have the same user selected as before
   onMounted(async () => {
     if (apiTokenStore.getApiToken?.id != undefined) {
       setApiTokenId(String(apiTokenStore.getApiToken?.id));
     }
     await apiTokenStore?.fetchAll();
-    if (routerApiTokenId.value) {
-      await apiTokenStore?.fetchApiToken(Number(routerApiTokenId.value));
-      selectedKeys.value = [routerApiTokenId.value];
-      scrollToSelectedMenuItem();
-    }
+    await apiTokenStore?.fetchApiToken(Number(routerApiTokenId.value));
+    selectedKeys.value = [routerApiTokenId.value];
   });
 </script>
 
 <template>
   <a-layout class="layout">
     <a-layout-sider
-      ref="siderRef"
       v-model:collapsed="collapsed"
       class="sideSlider"
       collapsible
@@ -93,11 +66,14 @@
         class="menuItem"
       >
         <a-menu-item
-          v-for="apiToken in apiTokenData"
-          :key="String(apiToken.id)"
-          @click="clickTab(String(apiToken.id))"
+          v-for="ApiToken in tokensData"
+          :key="ApiToken.id"
+          :title="ApiToken.name"
+          @click="clickTab(String(ApiToken.id))"
         >
-          <span>{{ apiToken.name }}</span>
+          <div class="menu-item-content">
+            <span class="user-name">{{ ApiToken.name }}</span>
+          </div>
         </a-menu-item>
       </a-menu>
       <a-skeleton
@@ -108,10 +84,9 @@
       />
     </a-layout-sider>
     <a-layout-content>
-      <!-- renders the TeamInformationView -->
-      <RouterView v-slot="{ Component }">
-        <component :is="Component" @team-deleted="selectedApiTokenId = ''" />
-      </RouterView>
+      <div class="content">
+        <RouterView />
+      </div>
     </a-layout-content>
   </a-layout>
 </template>
@@ -150,5 +125,35 @@
 
   .menuItem {
     background-color: v-bind('token.colorBgElevated');
+  }
+
+  .menu-item-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .user-name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .scim-tag {
+    flex-shrink: 0;
+    margin-left: 8px;
+    margin-right: 0;
+    font-size: 10px;
+    line-height: 16px;
+    height: 18px;
+  }
+
+  :deep(.ant-menu-title-content) {
+    display: flex;
+    overflow: hidden;
   }
 </style>

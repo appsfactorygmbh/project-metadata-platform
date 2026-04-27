@@ -6,7 +6,7 @@ export type SavedTokenOptions = {
 };
 
 export const getSavedTokens = ({ storage, key }: SavedTokenOptions): string => {
-  let tokens = '';
+  let tokens;
   switch (storage) {
     case 'localStorage':
       tokens = localStorage.getItem(key) ?? '';
