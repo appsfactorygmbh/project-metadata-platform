@@ -16,14 +16,12 @@ import * as runtime from '../runtime';
 import type {
   CreateApiTokenRequest,
   GetApiTokenDetailsResponse,
-  GetApiTokenResponse,
   LoginRequest,
   LoginResponse,
 } from '../models/index';
 import {
   CreateApiTokenRequestToJSON,
   GetApiTokenDetailsResponseFromJSON,
-  GetApiTokenResponseFromJSON,
   LoginRequestToJSON,
   LoginResponseFromJSON,
 } from '../models/index';
@@ -68,14 +66,14 @@ export interface AuthApiInterface {
    */
   authApiTokensGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetApiTokenResponse>>>;
+  ): Promise<runtime.ApiResponse<Array<GetApiTokenDetailsResponse>>>;
 
   /**
    * Returns a List of all Api Tokens without details.
    */
   authApiTokensGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetApiTokenResponse>>;
+  ): Promise<Array<GetApiTokenDetailsResponse>>;
 
   /**
    *
@@ -213,7 +211,7 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
    */
   async authApiTokensGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetApiTokenResponse>>> {
+  ): Promise<runtime.ApiResponse<Array<GetApiTokenDetailsResponse>>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -234,7 +232,7 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(GetApiTokenResponseFromJSON),
+      jsonValue.map(GetApiTokenDetailsResponseFromJSON),
     );
   }
 
@@ -243,7 +241,7 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
    */
   async authApiTokensGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetApiTokenResponse>> {
+  ): Promise<Array<GetApiTokenDetailsResponse>> {
     const response = await this.authApiTokensGetRaw(initOverrides);
     return await response.value();
   }

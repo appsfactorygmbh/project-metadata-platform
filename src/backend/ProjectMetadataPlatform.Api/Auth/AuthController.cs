@@ -82,12 +82,17 @@ public class AuthController : ControllerBase
     /// <response code="200">Returns the Api Tokens.</response>
     [HttpGet("ApiTokens")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
-    [ProducesResponseType(typeof(IEnumerable<GetApiTokenResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<GetApiTokenResponse>>> GetApiTokens()
+    [ProducesResponseType(typeof(IEnumerable<GetApiTokenDetailsResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<GetApiTokenDetailsResponse>>> GetApiTokens()
     {
         var query = new GetAllApiTokensQuery();
         var tokens = await _mediator.Send(query);
-        var response = tokens.Select(t => new GetApiTokenResponse(t.Id, t.Name));
+        var response = tokens.Select(t => new GetApiTokenDetailsResponse(
+            t.Id,
+            t.Name,
+            t.Scopes ?? [],
+            t.ExpirationDate
+        ));
         return Ok(response);
     }
 

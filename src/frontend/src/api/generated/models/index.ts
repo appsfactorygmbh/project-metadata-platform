@@ -11,7 +11,6 @@ export * from './DeleteTeamResponse';
 export * from './EnterpriseUserExtension';
 export * from './ErrorResponse';
 export * from './GetApiTokenDetailsResponse';
-export * from './GetApiTokenResponse';
 export * from './GetGlobalPluginResponse';
 export * from './GetLinkedProjectsResponse';
 export * from './GetPluginResponse';
