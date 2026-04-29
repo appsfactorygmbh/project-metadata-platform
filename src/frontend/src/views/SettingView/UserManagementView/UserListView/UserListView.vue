@@ -3,7 +3,7 @@
   import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
-
+  import { PlusOutlined } from '@ant-design/icons-vue';
   const token = useThemeToken();
 
   const collapsed = ref<boolean>(false);
@@ -11,6 +11,8 @@
   const userStore = inject(userStoreSymbol)!;
   const { routerUserId, setUserId } = inject(userRoutingSymbol)!;
   const { getIsLoading, getUsers } = storeToRefs(userStore);
+
+  const router = useRouter();
 
   const isLoading = computed(() => getIsLoading.value);
   const usersData = computed(() => getUsers.value);
@@ -66,6 +68,16 @@
         mode="inline"
         class="menuItem"
       >
+        <a-menu-item
+          key="create-user"
+          class="create-menu-item"
+          @click="router.push('/settings/user-management/create')"
+        >
+          <template #icon>
+            <PlusOutlined />
+          </template>
+          <span>Create New User</span>
+        </a-menu-item>
         <a-menu-item
           v-for="user in usersData"
           :key="user.externalId"
@@ -160,5 +172,10 @@
   :deep(.ant-menu-title-content) {
     display: flex;
     overflow: hidden;
+  }
+
+  .button {
+    width: 100%;
+    margin-top: 0.5%;
   }
 </style>

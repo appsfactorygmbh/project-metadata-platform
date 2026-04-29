@@ -1,6 +1,5 @@
 <script lang="ts" setup>
   import {
-    PlusOutlined,
     DeleteOutlined,
     RobotOutlined,
     RedoOutlined,
@@ -12,14 +11,13 @@
     apiTokenStoreSymbol,
   } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
-  import { useRouter } from 'vue-router';
+
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useThemeToken } from '@/utils/hooks';
 
   const token = useThemeToken();
 
-  const router = useRouter();
   const route = useRoute();
   const apiTokenStore = inject(apiTokenStoreSymbol)!;
   const { setApiTokenId, routerApiTokenId } = inject(apiTokenRoutingSymbol)!;
@@ -90,20 +88,11 @@
         tooltip: 'Click here to regnerate this API-token value',
         isLink: false,
       },
-      {
-        name: 'CreateApiTokenButton',
-        onClick: () => {
-          router.push('/settings/api-token-management/create');
-        },
-        icon: PlusOutlined,
-        type: 'primary',
-        size: 'large',
-        status: 'activated',
-        tooltip: 'Click here to create a new API-token',
-        isLink: false,
-      },
     ];
-    if (!routerApiTokenId.value) tempButtons[0].status = 'deactivated';
+    if (!routerApiTokenId.value) {
+      tempButtons[0].status = 'deactivated';
+      tempButtons[1].status = 'deactivated';
+    }
 
     return tempButtons;
   });

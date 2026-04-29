@@ -6,7 +6,7 @@
   } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
-
+  import { PlusOutlined } from '@ant-design/icons-vue';
   const token = useThemeToken();
 
   const collapsed = ref<boolean>(false);
@@ -14,6 +14,8 @@
   const apiTokenStore = inject(apiTokenStoreSymbol)!;
   const { routerApiTokenId, setApiTokenId } = inject(apiTokenRoutingSymbol)!;
   const { getIsLoading, getApiTokens } = storeToRefs(apiTokenStore);
+
+  const router = useRouter();
 
   const isLoading = computed(() => getIsLoading.value);
   const tokensData = computed(() => getApiTokens.value);
@@ -65,6 +67,16 @@
         mode="inline"
         class="menuItem"
       >
+        <a-menu-item
+          key="create-token"
+          class="create-menu-item"
+          @click="router.push('/settings/api-token-management/create')"
+        >
+          <template #icon>
+            <PlusOutlined />
+          </template>
+          <span>Create New API-Token</span>
+        </a-menu-item>
         <a-menu-item
           v-for="ApiToken in tokensData"
           :key="ApiToken.id"

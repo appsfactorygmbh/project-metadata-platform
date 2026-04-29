@@ -1,14 +1,10 @@
 <script lang="ts" setup>
-  import {
-    PlusOutlined,
-    DeleteOutlined,
-    UserOutlined,
-  } from '@ant-design/icons-vue';
+  import { DeleteOutlined, UserOutlined } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { inject, ref } from 'vue';
   import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
-  import { useRouter } from 'vue-router';
+
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useFormStore } from '@/components/Form';
@@ -21,7 +17,6 @@
 
   const token = useThemeToken();
 
-  const router = useRouter();
   const route = useRoute();
   const userStore = inject(userStoreSymbol)!;
   const { setUserId, routerUserId } = inject(userRoutingSymbol)!;
@@ -71,18 +66,6 @@
         size: 'large',
         status: 'activated',
         tooltip: 'Click here to delete this user',
-        isLink: false,
-      },
-      {
-        name: 'CreateUserButton',
-        onClick: () => {
-          router.push('/settings/user-management/create');
-        },
-        icon: PlusOutlined,
-        type: 'primary',
-        size: 'large',
-        status: 'activated',
-        tooltip: 'Click here to create a new user',
         isLink: false,
       },
     ];
