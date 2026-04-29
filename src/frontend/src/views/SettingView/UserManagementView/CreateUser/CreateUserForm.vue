@@ -270,26 +270,26 @@
         type="password"
       />
     </a-form-item>
-
-    <a-form-item
-      has-feedback
-      name="jobTitles"
-      class="selectcolumntop"
-      :whitespace="false"
-      :rules="[{ required: false }]"
-    >
-      <a-select
-        id="inputCreateUserJobTitles"
-        v-model:value="dynamicValidateForm.jobTitles"
-        mode="tags"
-        placeholder="Jobtitles"
-        :not-found-content="null"
-        :open="false"
-        :disabled="dynamicValidateForm.inputsDisabled"
+    <a-tooltip title="Press [Enter] to add a job title to the list.">
+      <a-form-item
+        has-feedback
+        name="jobTitles"
+        class="selectcolumntop"
+        :whitespace="false"
+        :rules="[{ required: false }]"
       >
-      </a-select>
-    </a-form-item>
-
+        <a-select
+          id="inputCreateUserJobTitles"
+          v-model:value="dynamicValidateForm.jobTitles"
+          mode="tags"
+          placeholder="Jobtitles"
+          :not-found-content="null"
+          :open="false"
+          :disabled="dynamicValidateForm.inputsDisabled"
+        >
+        </a-select>
+      </a-form-item>
+    </a-tooltip>
     <a-form-item
       has-feedback
       name="teams"
@@ -331,44 +331,45 @@
         ></a-select-option>
       </a-select>
     </a-form-item>
-
-    <a-form-item
-      has-feedback
-      name="departments"
-      :whitespace="false"
-      :rules="[{ required: false }]"
-    >
-      <a-select
-        id="inputCreateUserDepartments"
-        v-model:value="dynamicValidateForm.departments"
-        mode="tags"
-        placeholder="Departments"
-        :not-found-content="null"
-        :open="false"
-        :disabled="dynamicValidateForm.inputsDisabled"
+    <a-tooltip title="Press [Enter] to add a department to the list.">
+      <a-form-item
+        has-feedback
+        name="departments"
+        :whitespace="false"
+        :rules="[{ required: false }]"
       >
-      </a-select>
-    </a-form-item>
-
-    <a-form-item
-      has-feedback
-      name="businessUnits"
-      class="selectcolumnbottom"
-      :whitespace="false"
-      :rules="[{ required: false }]"
-    >
-      <a-select
-        id="inputCreateUserBusinessUnits"
-        v-model:value="dynamicValidateForm.businessUnits"
-        mode="tags"
-        placeholder="Business Units"
-        :not-found-content="null"
-        :open="false"
-        :disabled="dynamicValidateForm.inputsDisabled"
+        <a-select
+          id="inputCreateUserDepartments"
+          v-model:value="dynamicValidateForm.departments"
+          mode="tags"
+          placeholder="Departments"
+          :not-found-content="null"
+          :open="false"
+          :disabled="dynamicValidateForm.inputsDisabled"
+        >
+        </a-select>
+      </a-form-item>
+    </a-tooltip>
+    <a-tooltip title="Press [Enter] to add a business unit to the list.">
+      <a-form-item
+        has-feedback
+        name="businessUnits"
+        class="selectcolumnbottom"
+        :whitespace="false"
+        :rules="[{ required: false }]"
       >
-      </a-select>
-    </a-form-item>
-
+        <a-select
+          id="inputCreateUserBusinessUnits"
+          v-model:value="dynamicValidateForm.businessUnits"
+          mode="tags"
+          placeholder="Business Units"
+          :not-found-content="null"
+          :open="false"
+          :disabled="dynamicValidateForm.inputsDisabled"
+        >
+        </a-select>
+      </a-form-item>
+    </a-tooltip>
     <a-form-item
       has-feedback
       name="company"
@@ -396,6 +397,7 @@
   .selectcolumnbottom {
     margin-bottom: 5%;
   }
+
   .selectcolumntop {
     margin-top: 5%;
   }
