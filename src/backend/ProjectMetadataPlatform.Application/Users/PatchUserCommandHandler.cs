@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -70,9 +71,8 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
             user = await _usersRepository.GetUserByEmailAsync(request.Id);
         }
 
-        var properties = typeof(ApplicationUser).GetProperties().Select(prop => prop.Name);
         var changes = new List<LogChange>();
-        await UpdateUser(request, user, properties, changes);
+        await UpdateUser(request, user, changes);
 
         var response = await _usersRepository.StoreUser(user);
 
@@ -90,19 +90,18 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
     /// </summary>
     /// <param name="request">The command containing the user information to be patched.</param>
     /// <param name="user">User that should be updated.</param>
-    /// <param name="properties">List of user property names.</param>
     /// <param name="changes">List of Changes for logging purposes.</param>
     /// <returns></returns>
     private async Task UpdateUser(
         PatchUserCommand request,
         ApplicationUser user,
-        IEnumerable<string> properties,
         List<LogChange> changes
     )
     {
+        var properties = typeof(ApplicationUser).GetProperties();
         foreach (var operation in request.Operations)
         {
-            var attribute = properties.Contains(operation.Path)
+            var attribute = properties.Select(prop => prop.Name).Contains(operation.Path)
                 ? operation.Path
                 : await ScimAttributeNameToTypeAttributeName(operation.Path);
             var oldValue = user.GetType().GetProperty(attribute)?.GetValue(user);
@@ -126,7 +125,11 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
             }
             else
             {
-                await UpdateProperty(user, changes, operation, attribute, oldValue);
+                var type = properties
+                    .Where(prop => prop.Name == attribute)
+                    .Select(prop => prop.PropertyType)
+                    .FirstOrDefault(typeof(object));
+                await UpdateProperty(user, changes, operation, attribute, type, oldValue);
             }
         }
     }
@@ -238,9 +241,9 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
                 new LogChange
                 {
                     OldValue = oldValueNamesList.Any()
-                        ? string.Join(", ", oldValueNamesList)
+                        ? "[" + string.Join(", ", oldValueNamesList) + "]"
                         : "null",
-                    NewValue = oldValueNamesList.Any() ? string.Join(", ", teamNames) : "null",
+                    NewValue = teamNames.Any() ? "[" + string.Join(", ", teamNames) + "]" : "null",
                     Property = attribute,
                 }
             );
@@ -261,6 +264,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         List<LogChange> changes,
         PatchUserCommand.OperationRecord operation,
         string attribute,
+        Type type,
         object? oldValue
     )
     {
@@ -272,6 +276,25 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
                     ? null
                     : await JsonElementToPrimitive((JsonElement)operation.Value!)
             );
+
+        if (type == typeof(List<string>))
+        {
+            await AddListPropertyLogChange(changes, operation, attribute, oldValue);
+        }
+        else
+        {
+            await AddSinglePropertyLogChange(user, changes, operation, attribute, oldValue);
+        }
+    }
+
+    private static async Task AddSinglePropertyLogChange(
+        ApplicationUser user,
+        List<LogChange> changes,
+        PatchUserCommand.OperationRecord operation,
+        string attribute,
+        object? oldValue
+    )
+    {
         if (
             (oldValue?.ToString() ?? "null")
             != (user.GetType().GetProperty(attribute)?.GetValue(user)?.ToString() ?? "null")
@@ -287,6 +310,35 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
                             : (
                                 await JsonElementToPrimitive((JsonElement)operation.Value!)
                             )?.ToString() ?? "null",
+                    Property = attribute,
+                }
+            );
+        }
+    }
+
+    private static async Task AddListPropertyLogChange(
+        List<LogChange> changes,
+        PatchUserCommand.OperationRecord operation,
+        string attribute,
+        object? oldValue
+    )
+    {
+        var oldValueList = (oldValue as List<string>) ?? [];
+        var valueList =
+            (await JsonElementToPrimitive((JsonElement)operation.Value!) as List<string>) ?? [];
+
+        if (!oldValueList.SequenceEqual(valueList))
+        {
+            changes.Add(
+                new LogChange
+                {
+                    OldValue = !oldValueList.Any()
+                        ? "null"
+                        : "[" + string.Join(", ", oldValueList) + "]",
+                    NewValue =
+                        operation.Operation == PatchOperations.Remove || !valueList.Any()
+                            ? "null"
+                            : "[" + string.Join(", ", valueList) + "]",
                     Property = attribute,
                 }
             );
