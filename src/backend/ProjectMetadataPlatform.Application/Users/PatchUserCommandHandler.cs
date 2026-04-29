@@ -257,6 +257,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
     /// <param name="changes">List of changes for Logging purposes.</param>
     /// <param name="operation">One Update Operation.</param>
     /// <param name="attribute">Attribute that is being changed.</param>
+    /// <param name="type">Type of the attribute.</param>
     /// <param name="oldValue">Pre Update value of the attribute.</param>
     /// <returns></returns>
     private static async Task UpdateProperty(
@@ -287,6 +288,15 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         }
     }
 
+    /// <summary>
+    /// Adds a change for singlevalue property.
+    /// </summary>
+    /// <param name="user">User that was updated.</param>
+    /// <param name="changes">List of log changes.</param>
+    /// <param name="operation">Update operation.</param>
+    /// <param name="attribute">Attribute that was changed.</param>
+    /// <param name="oldValue">Old Value of the property.</param>
+    /// <returns></returns>
     private static async Task AddSinglePropertyLogChange(
         ApplicationUser user,
         List<LogChange> changes,
@@ -316,6 +326,14 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         }
     }
 
+    /// <summary>
+    /// Adds a change for multivalue property.
+    /// </summary>
+    /// <param name="changes">List of log changes.</param>
+    /// <param name="operation">Update operation.</param>
+    /// <param name="attribute">Attribute that was changed.</param>
+    /// <param name="oldValue">Old Value of the property.</param>
+    /// <returns></returns>
     private static async Task AddListPropertyLogChange(
         List<LogChange> changes,
         PatchUserCommand.OperationRecord operation,
