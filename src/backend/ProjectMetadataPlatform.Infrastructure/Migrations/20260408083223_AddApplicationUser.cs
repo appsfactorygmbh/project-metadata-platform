@@ -43,19 +43,25 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
             if (migrationBuilder.ActiveProvider == "Npgsql.EntityFrameworkCore.PostgreSQL")
             {
                 migrationBuilder.Sql(
-                    @"
-            UPDATE ""AspNetUsers""
-            SET ""EmployeeId"" = gen_random_uuid()::text
-            WHERE ""EmployeeId"" = '';"
+                    @"UPDATE ""AspNetUsers"" SET ""EmployeeId"" = gen_random_uuid()::text WHERE ""EmployeeId"" = '';"
                 );
             }
-            else
+            else if (migrationBuilder.ActiveProvider == "Microsoft.EntityFrameworkCore.SqlServer")
             {
                 migrationBuilder.Sql(
-                    @"
-            UPDATE ""AspNetUsers""
-            SET ""EmployeeId"" = lower(hex(randomblob(16)))
-            WHERE ""EmployeeId"" = '';"
+                    @"UPDATE [AspNetUsers] SET [EmployeeId] = CAST(NEWID() AS NVARCHAR(36)) WHERE [EmployeeId] = '';"
+                );
+            }
+            else if (migrationBuilder.ActiveProvider == "Microsoft.EntityFrameworkCore.Sqlite")
+            {
+                migrationBuilder.Sql(
+                    @"UPDATE ""AspNetUsers"" SET ""EmployeeId"" = lower(hex(randomblob(16))) WHERE ""EmployeeId"" = '';"
+                );
+            }
+            else if (migrationBuilder.ActiveProvider == "Pomelo.EntityFrameworkCore.MySql")
+            {
+                migrationBuilder.Sql(
+                    @"UPDATE `AspNetUsers` SET `EmployeeId` = UUID() WHERE `EmployeeId` = '';"
                 );
             }
 
