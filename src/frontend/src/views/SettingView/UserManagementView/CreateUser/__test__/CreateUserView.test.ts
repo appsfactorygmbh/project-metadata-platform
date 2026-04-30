@@ -5,7 +5,7 @@ import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import { userStoreSymbol } from '@/store/injectionSymbols';
 import { useUserStore } from '@/store';
-import { FormItem } from 'ant-design-vue';
+import { FormItem, Select } from 'ant-design-vue';
 import { useFormStore } from '@/components/Form';
 import type { UserListModel } from '@/models/User';
 
@@ -61,7 +61,7 @@ describe('CreateUserView.vue', () => {
 
       const selectComponent = itemWrapper.findComponent(
         '.ant-select',
-      ) as VueWrapper<any>;
+      ) as VueWrapper<InstanceType<typeof Select>>;
 
       expect(selectComponent.exists()).toBe(true);
       expect(selectComponent.props('placeholder')).toBe(placeholder);

@@ -60,7 +60,14 @@
   };
 
   provide<ProjectSearchStore>(searchStoreSymbol, searchStore);
-
+  const queryNames = [
+    'searchQuery',
+    'clientName',
+    'projectName',
+    'company',
+    'businessUnit',
+    'teamNumber',
+  ];
   const searchQuery = useQuery(queryNames);
   const searchStorage = useSessionStorage('searchStorage', { searchQuery: '' });
   const filterStorage = useSessionStorage<Record<string, string>>(
@@ -332,14 +339,6 @@
       hidden: false,
     },
   ]);
-  const queryNames = [
-    'searchQuery',
-    'clientName',
-    'projectName',
-    'company',
-    'businessUnit',
-    'teamNumber',
-  ];
 
   /*  Column drop implementation  */
 
