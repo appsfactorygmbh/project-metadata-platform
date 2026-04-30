@@ -56,7 +56,7 @@
       ismsLevel: model.ismsLevel,
       teamName: model.team === undefined ? '' : model.team.teamName,
       businessUnit: model.team === undefined ? '' : model.team.businessUnit,
-    } as ProjectSearchModel;
+    };
   };
 
   provide<ProjectSearchStore>(searchStoreSymbol, searchStore);

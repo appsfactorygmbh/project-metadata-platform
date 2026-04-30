@@ -19,8 +19,8 @@ export const useSearchStore = <T extends AnyObject>(name: string) =>
     state: (): SearchStoreState<T> => {
       return {
         searchQuery: '',
-        baseSet: ref<T[]>([]) as Ref<T[]>,
-        searchResults: ref<T[]>([]) as Ref<T[]>,
+        baseSet: ref<T[]>([]),
+        searchResults: ref<T[]>([]),
         isLoading: false,
         onReset: undefined,
         filter: (items: T[]): T[] => items,

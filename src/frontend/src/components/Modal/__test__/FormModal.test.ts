@@ -12,7 +12,7 @@ describe('FormModal.vue', () => {
     resetModal: () => void;
   };
 
-  let wrapper: VueWrapper<FormModalInstance>;
+  let wrapper: VueWrapper<InstanceType<typeof FormModal>>;
 
   beforeEach(() => {
     // Mock formStore and title
@@ -27,7 +27,7 @@ describe('FormModal.vue', () => {
         formStore: mockFormStore as FormStore,
         title: title,
       },
-    }) as unknown as VueWrapper<FormModalInstance>;
+    });
   });
 
   it('modal opens correctly', async () => {
