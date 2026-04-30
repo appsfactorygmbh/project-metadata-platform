@@ -20,8 +20,6 @@ describe('CreateUserView.vue', () => {
   });
 
   it('renders correctly', () => {
-    const inputFields = ['E-Mail', 'Password', 'Confirm Password'];
-
     wrapper = mount(CreateUserView, {
       global: {
         provide: {
@@ -31,20 +29,56 @@ describe('CreateUserView.vue', () => {
     });
 
     const formItems = wrapper.findAllComponents(FormItem);
-    expect(formItems).toHaveLength(3);
 
-    for (let i = 0; i < formItems.length; i++) {
-      expect(formItems[i].find('input').attributes('placeholder')).toBe(
-        inputFields[i],
+    const getFormItem = (name: string) => {
+      const item = formItems.find((c) => c.props('name') === name);
+      if (!item) throw new Error(`FormItem with name '${name}' not found.`);
+      return item;
+    };
+    const expectedInputs = [
+      { name: 'employeeNumber', placeholder: 'Employee Number' },
+      { name: 'email', placeholder: 'E-Mail' },
+      { name: 'password', placeholder: 'Password' },
+      { name: 'company', placeholder: 'Company' },
+    ];
+
+    expectedInputs.forEach(({ name, placeholder }) => {
+      const itemWrapper = getFormItem(name);
+      expect(itemWrapper.find('input').attributes('placeholder')).toBe(
+        placeholder,
       );
-    }
+    });
+
+    const expectedSelects = [
+      { name: 'jobTitles', placeholder: 'Jobtitles' },
+      { name: 'teams', placeholder: 'Teams' },
+      { name: 'teamSupport', placeholder: 'TeamSupport' },
+      { name: 'departments', placeholder: 'Departments' },
+      { name: 'businessUnits', placeholder: 'Business Units' },
+    ];
+    expectedSelects.forEach(({ name, placeholder }) => {
+      const itemWrapper = getFormItem(name);
+
+      const selectComponent = itemWrapper.findComponent(
+        '.ant-select',
+      ) as VueWrapper<any>;
+
+      expect(selectComponent.exists()).toBe(true);
+      expect(selectComponent.props('placeholder')).toBe(placeholder);
+    });
+
+    const confirmPasswordItem = formItems.find(
+      (c) => c.props('name') === 'confirmPassword',
+    );
+    expect(confirmPasswordItem).toBeUndefined();
   });
 
   it('verifies the email correctly', async () => {
     const testData: UserListModel[] = [
       {
-        id: '1',
-        email: 'a@b.cd',
+        externalId: '1',
+        userName: 'a@b.cd',
+        isScimProvisioned: true,
       },
     ];
 
@@ -66,7 +100,7 @@ describe('CreateUserView.vue', () => {
       },
     });
 
-    const emailField = wrapper.findAllComponents(FormItem)[0];
+    const emailField = wrapper.findAllComponents(FormItem)[1];
 
     await emailField.find('.ant-input').setValue('a@bc.de');
     await flushPromises();
@@ -99,7 +133,7 @@ describe('CreateUserView.vue', () => {
       },
     });
 
-    const passwordField = wrapper.findAllComponents(FormItem)[1];
+    const passwordField = wrapper.findAllComponents(FormItem)[3];
     const passwordInput = passwordField.find('.ant-input');
 
     // Test a valid password
@@ -154,10 +188,10 @@ describe('CreateUserView.vue', () => {
       },
     });
 
-    const passwordField = wrapper.findAllComponents(FormItem)[1];
-    const confirmPasswordField = wrapper.findAllComponents(FormItem)[2];
-
+    const passwordField = wrapper.findAllComponents(FormItem)[3];
     await passwordField.find('.ant-input').setValue('a');
+    const confirmPasswordField = wrapper.findAllComponents(FormItem)[4];
+
     await confirmPasswordField.find('.ant-input').setValue('a');
     await flushPromises();
 
@@ -176,10 +210,9 @@ describe('CreateUserView.vue', () => {
   });
 
   it('submits the form correctly', async () => {
-    const testData = ['E@Ma.il', 'Pa$$w0rd', 'Pa$$w0rd'];
-
     const userStore = useUserStore();
     const formStore = useFormStore('createUserForm');
+
     const createSpy = vi
       .spyOn(userStore, 'create')
       .mockImplementation(() => Promise.resolve());
@@ -192,19 +225,31 @@ describe('CreateUserView.vue', () => {
       },
     });
 
-    const formInputs = wrapper.findAllComponents(FormItem);
+    await flushPromises();
 
-    for (let i = 0; i < formInputs.length; i++) {
-      await formInputs[i].find('.ant-input').setValue(testData[i]);
-    }
+    const getFormItem = (name: string) =>
+      wrapper.findAllComponents(FormItem).find((c) => c.props('name') === name);
+
+    await getFormItem('employeeNumber')!.find('.ant-input').setValue('1');
+    await getFormItem('email')!.find('.ant-input').setValue('E@Ma.il');
+    await getFormItem('password')!.find('.ant-input').setValue('Pa$$w0rd');
+
+    await flushPromises();
+
+    await getFormItem('confirmPassword')!
+      .find('.ant-input')
+      .setValue('Pa$$w0rd');
     await flushPromises();
 
     await formStore.submit();
     await flushPromises();
 
-    expect(createSpy).toHaveBeenCalledWith({
-      email: 'E@Ma.il',
-      password: 'Pa$$w0rd',
-    });
+    expect(createSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        externalId: '1',
+        userName: 'E@Ma.il',
+        password: 'Pa$$w0rd',
+      }),
+    );
   });
 });

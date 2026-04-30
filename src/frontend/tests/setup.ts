@@ -74,7 +74,10 @@ vi.mock('@azure/msal-browser', async (importOriginal) => {
 
   return {
     ...actual,
-    PublicClientApplication: vi.fn(() => mockMsalBrowser),
+
+    PublicClientApplication: vi.fn().mockImplementation(function () {
+      return mockMsalBrowser;
+    }),
   };
 });
 
