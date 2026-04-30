@@ -4,14 +4,6 @@ import FormModal from '../FormModal.vue';
 import { type FormStore } from '@/components/Form/FormStore';
 
 describe('FormModal.vue', () => {
-  type FormModalInstance = {
-    open: boolean;
-    title: string;
-    fromStore: FormStore;
-    handleOk: () => Promise<void>;
-    resetModal: () => void;
-  };
-
   let wrapper: VueWrapper<InstanceType<typeof FormModal>>;
 
   beforeEach(() => {
