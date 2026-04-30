@@ -66,19 +66,25 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         dirs: ['src/components'],
       }),
     ],
-    esbuild: {
-      supported: {
-        'top-level-await': true,
-      },
-    },
     build: {
+      target: 'esnext',
       chunkSizeWarningLimit: 4096,
       outDir: 'dist',
       rollupOptions: {
         output: {
-          manualChunks: {
-            vue: ['vue', 'vue-router'],
-            antd: ['ant-design-vue', '@ant-design/icons-vue', 'dayjs'],
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('vue') || id.includes('vue-router')) {
+                return 'vue';
+              }
+              if (
+                id.includes('ant-design-vue') ||
+                id.includes('@ant-design/icons-vue') ||
+                id.includes('dayjs')
+              ) {
+                return 'antd';
+              }
+            }
           },
         },
       },

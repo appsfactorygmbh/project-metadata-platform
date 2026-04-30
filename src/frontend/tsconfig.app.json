@@ -15,12 +15,10 @@
     "verbatimModuleSyntax": true, // Treats all module files as written in ECMAScript modules.
     "allowJs": true, // Allows JavaScript files to be included in the TypeScript project.
     "moduleDetection": "force", // Forces TypeScript to always assume modules are present.
-    "baseUrl": ".",
     "outDir": "./lib/",
     "paths": {
       "@/*": ["./src/*"]
     },
-
     /* Bundler mode */
     "moduleResolution": "bundler", // Resolves module names using a bundler.
     "emitDeclarationOnly": true,
@@ -31,12 +29,10 @@
     "noEmit": false, // Disables emitting compiled output files.
     "jsx": "preserve",
     "jsxImportSource": "vue",
-
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-
     /* Strictness */
     "strict": true // Enables all strict type checking options.
     // "noUncheckedIndexedAccess": true // Checks that indexed accesses are not possibly undefined or null.
