@@ -1,8 +1,4 @@
-import type {
-  ApiTokenModel,
-  CreateApiTokenModel,
-  DetailedApiTokenModel,
-} from '@/models/ApiToken';
+import type { ApiTokenModel, CreateApiTokenModel } from '@/models/ApiToken';
 import { type Pinia } from 'pinia';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
@@ -11,7 +7,7 @@ import { AuthApi } from '@/api/generated';
 
 type StoreState = {
   apiTokens: ApiTokenModel[];
-  apiToken: DetailedApiTokenModel;
+  apiToken: ApiTokenModel | null;
   tokenValue: string | null | undefined;
   hasTokenValue: boolean;
   isLoading: boolean;
@@ -27,7 +23,7 @@ type StoreState = {
 
 type StoreGetters = {
   getApiTokens: () => ApiTokenModel[];
-  getApiToken: () => DetailedApiTokenModel;
+  getApiToken: () => ApiTokenModel | null;
   getTokenValue: () => string | null | undefined;
   getHasTokenValue: () => boolean;
   getIsLoading: () => boolean;
@@ -44,7 +40,7 @@ type StoreGetters = {
 type StoreActions = {
   refreshAuth: () => void;
   setApiTokens: (apiTokens: ApiTokenModel[]) => void;
-  setApiToken: (apiToken: DetailedApiTokenModel) => void;
+  setApiToken: (apiToken: ApiTokenModel | null) => void;
   setTokenValue: (tokenValue: string | null | undefined) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsLoadingCreate: (isLoadingCreate: boolean) => void;
@@ -86,7 +82,7 @@ export const useApiTokenStore = (pinia: Pinia = piniaInstance): Store => {
         getApiTokens(): ApiTokenModel[] {
           return this.apiTokens;
         },
-        getApiToken(): DetailedApiTokenModel {
+        getApiToken(): ApiTokenModel | null {
           return this.apiToken;
         },
         getTokenValue(): string | null | undefined {
@@ -130,7 +126,7 @@ export const useApiTokenStore = (pinia: Pinia = piniaInstance): Store => {
         setApiTokens(apiTokens: ApiTokenModel[]): void {
           this.apiTokens = apiTokens;
         },
-        setApiToken(apiToken: DetailedApiTokenModel): void {
+        setApiToken(apiToken: ApiTokenModel | null): void {
           this.apiToken = apiToken;
         },
         setTokenValue(tokenValue: string | null | undefined): void {

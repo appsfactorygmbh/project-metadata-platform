@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import type { PropType } from 'vue';
-  import { reactive, ref, watch } from 'vue';
+  import { reactive, watch } from 'vue';
   import type { FormSubmitType } from '@/components/Form/types';
   import { type FormStore } from '@/components/Form';
   import type { UpdateUserModel } from '@/models/User';
@@ -131,8 +131,6 @@
 
   props.formStore.setModel(dynamicValidateForm);
   props.formStore.setOnSubmit(onSubmit);
-
-  const formRef = ref();
 </script>
 
 <template>

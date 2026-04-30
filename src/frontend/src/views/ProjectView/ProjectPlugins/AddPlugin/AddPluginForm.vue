@@ -5,7 +5,10 @@
   import { inject, onBeforeMount, reactive, ref, toRaw } from 'vue';
   import type { SelectProps } from 'ant-design-vue';
   import type { PluginEditModel, PluginModel } from '@/models/Plugin';
-  import type { LabeledValue, SelectValue } from 'ant-design-vue/lib/select';
+  import type {
+    DefaultOptionType,
+    SelectValue,
+  } from 'ant-design-vue/lib/select';
   import type { RulesObject } from '@/components/Form/types';
   import type { AddPluginFormData } from './AddPluginFormData.ts';
   import { useGlobalPluginStore } from '@/store/GlobalPluginStore.ts';
@@ -196,7 +199,10 @@
     }
   };
 
-  const filterOption = (input: string, option: LabeledValue) => {
+  const filterOption = (input: string, option?: DefaultOptionType) => {
+    if (!option || option.value == null) {
+      return false;
+    }
     return (
       option.value
         .valueOf()
@@ -209,8 +215,6 @@
   formStore.setOnSubmit(onSubmit);
   formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
-
-  const formRef = ref();
 </script>
 
 <template>

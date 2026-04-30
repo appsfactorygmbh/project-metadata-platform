@@ -25,7 +25,7 @@ const teamData2 = {
 
 describe('TeamListView.vue', () => {
   const generateWrapper = () => {
-    const pinia = createTestingPinia({
+    createTestingPinia({
       stubActions: true,
       initialState: {
         team: { teams: [teamData1, teamData2], isLoading: false },

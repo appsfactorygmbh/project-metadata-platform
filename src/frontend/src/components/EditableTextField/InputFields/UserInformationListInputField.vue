@@ -125,8 +125,6 @@
 
   props.formStore.setModel(dynamicValidateForm);
   props.formStore.setOnSubmit(onSubmit);
-
-  const formRef = ref();
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { type FormStore, type FormSubmitType } from '@/components/Form';
   import { message } from 'ant-design-vue';
-  import { reactive, ref, toRaw } from 'vue';
+  import { reactive, toRaw } from 'vue';
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateApiTokenFormData } from './CreateApiTokenFormData.ts';
   import type { ApiTokenStore } from '@/store/ApiTokenStore.ts';
@@ -94,8 +94,6 @@
   formStore.setOnSubmit(onSubmit);
   formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
-
-  const formRef = ref();
 </script>
 
 <template>

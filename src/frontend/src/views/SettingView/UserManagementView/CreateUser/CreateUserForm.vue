@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { type FormStore, type FormSubmitType } from '@/components/Form';
   import { message, notification } from 'ant-design-vue';
-  import { reactive, ref, toRaw } from 'vue';
+  import { reactive, toRaw } from 'vue';
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateUserFormData } from './CreateUserFormData.ts';
   import type { Rule } from 'ant-design-vue/es/form/interface';
@@ -173,8 +173,6 @@
   formStore.setOnSubmit(onSubmit);
   formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
-
-  const formRef = ref();
 </script>
 
 <template>

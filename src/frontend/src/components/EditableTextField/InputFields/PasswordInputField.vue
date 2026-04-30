@@ -30,7 +30,6 @@
     confirmPassword: string;
   };
 
-  const formRef = ref();
   const userStore = useUserStore();
 
   const dynamicValidateForm = reactive<EditPasswordFormData>({

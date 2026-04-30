@@ -27,8 +27,6 @@ describe('CreateApiTokenView.vue', () => {
   };
 
   it('renders correctly', () => {
-    const inputFields = ['Token Name', 'Scopes'];
-
     wrapper = mount(CreateApiTokenView, {
       global: {
         provide: {
