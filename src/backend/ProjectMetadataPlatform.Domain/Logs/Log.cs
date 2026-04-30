@@ -1,9 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
+using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Domain.Logs;
 
@@ -20,17 +22,27 @@ public class Log
     /// <summary>
     /// Gets or sets the associated user.
     /// </summary>
-    public IdentityUser? Author { get; set; }
+    public ApplicationUser? Author { get; set; }
 
     /// <summary>
-    /// Gets or sets the ID of the user.
+    /// Gets or sets the associated token.
+    /// </summary>
+    public ApiToken? AuthorToken { get; set; }
+
+    /// <summary>
+    /// Gets or sets the ID of the author user.
     /// </summary>
     public required string? AuthorId { get; set; }
 
     /// <summary>
-    /// The Email of the user taking action.
+    /// Gets or sets the ID of the author token.
     /// </summary>
-    public required string? AuthorEmail { get; set; }
+    public required int? AuthorTokenId { get; set; }
+
+    /// <summary>
+    /// The Name of the user or token taking action.
+    /// </summary>
+    public required string? AuthorName { get; set; }
 
     /// <summary>
     /// The TImeStamp when the action was taken
@@ -70,7 +82,7 @@ public class Log
     /// <summary>
     /// Gets or sets the affected user.
     /// </summary>
-    public IdentityUser? AffectedUser { get; set; }
+    public ApplicationUser? AffectedUser { get; set; }
 
     /// <summary>
     /// Gets or sets the ID of the affected user.
@@ -83,7 +95,7 @@ public class Log
     public string? AffectedUserEmail { get; set; }
 
     /// <summary>
-    /// The Team, on wich the action was taken.
+    /// The Team, on which the action was taken.
     /// </summary>
     public Team? Team { get; set; }
 
@@ -96,6 +108,21 @@ public class Log
     /// The Team name of the related project.
     /// </summary>
     public string? TeamName { get; set; }
+
+    /// <summary>
+    /// The Token, on which the action was taken.
+    /// </summary>
+    public ApiToken? AffectedToken { get; set; }
+
+    /// <summary>
+    /// The id of the related token.
+    /// </summary>
+    public int? AffectedTokenId { get; set; }
+
+    /// <summary>
+    /// The id of the related token.
+    /// </summary>
+    public string? AffectedTokenName { get; set; }
 
     /// <summary>
     /// The taken action

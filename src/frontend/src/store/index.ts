@@ -14,7 +14,7 @@ import { type AuthStore, useAuthStore } from './AuthStore';
 import { type LocalLogStore, useLocalLogStore } from './LocalLogStore';
 import { type LogsStore, useLogsStore } from './LogsStore';
 import { type TeamStore, useTeamStore } from './TeamStore.ts';
-
+import { type ApiTokenStore, useApiTokenStore } from './ApiTokenStore.ts';
 export {
   useAuthStore,
   useProjectStore,
@@ -26,6 +26,7 @@ export {
   useLocalLogStore,
   useLogsStore,
   useTeamStore,
+  useApiTokenStore,
 };
 export type {
   PluginStore,
@@ -38,4 +39,5 @@ export type {
   LocalLogStore,
   LogsStore,
   TeamStore,
+  ApiTokenStore,
 };

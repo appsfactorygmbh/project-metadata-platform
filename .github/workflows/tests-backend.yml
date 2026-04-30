@@ -1,17 +1,17 @@
 name: Backend_Unit_Tests_and_SonarCloud_Analysis
 
 env:
-  DOTNET_VERSION: '8.0.x'
-  SONAR_ORGANIZATION_KEY: 'appsfactory'
-  SONAR_PROJECT_KEY: 'appsfactory_project-metadata-platform-backend'
+  DOTNET_VERSION: "8.0.x"
+  SONAR_ORGANIZATION_KEY: "appsfactory"
+  SONAR_PROJECT_KEY: "appsfactory_project-metadata-platform-backend"
 defaults:
   run:
     working-directory: src/backend
 on:
-  
+
   push:
     paths:
-      - 'src/backend/**'
+      - "src/backend/**"
     branches:
       - main
   pull_request:
@@ -64,7 +64,7 @@ jobs:
           dotnet-sonarscanner begin \
             /k:"$SONAR_PROJECT_KEY" \
             /o:"$SONAR_ORGANIZATION_KEY" \
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN_BACKEND }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml" \
             /d:sonar.exclusions=/ProjectMetadataPlatform.Infrastructure/Migrations/** \
@@ -82,7 +82,7 @@ jobs:
           dotnet-sonarscanner begin \
             /k:"$SONAR_PROJECT_KEY" \
             /o:"$SONAR_ORGANIZATION_KEY" \
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN_BACKEND }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml" \
             /d:sonar.exclusions=/ProjectMetadataPlatform.Infrastructure/Migrations/** \
@@ -94,11 +94,12 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: Run tests and collect coverage
-        run: dotnet tool run dotnet-coverage collect "dotnet test --no-build --no-restore --configuration Release" -f xml -o "coverage.xml"
+        run: dotnet tool run dotnet-coverage collect "dotnet test --no-build
+          --no-restore --configuration Release" -f xml -o "coverage.xml"
 
       - name: SonarCloud Analyze / End
         run: |
-          dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN_BACKEND }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACKEND }}

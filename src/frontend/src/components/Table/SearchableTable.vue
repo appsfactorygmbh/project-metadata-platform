@@ -78,10 +78,19 @@
     const index = column.dataIndex;
 
     if (column.searchable) {
-      column.onFilter = (value, record) =>
-        String(record[index] as string)
+      column.onFilter = (value, record) => {
+        const cellValue = record[index];
+        if (cellValue == null) {
+          return false;
+        }
+        if (typeof cellValue === 'object') {
+          console.warn(`Attempted to filter an object at dataIndex: ${index}`);
+          return false;
+        }
+        return String(cellValue)
           .toLowerCase()
-          .includes(value.toString().toLowerCase());
+          .includes(String(value).toLowerCase());
+      };
       column.customFilterDropdown = true;
       column.onFilterDropdownOpenChange = (visible: boolean) => {
         if (visible) {
@@ -329,12 +338,15 @@
   .clickable-table :deep(.table-row) {
     cursor: pointer;
   }
+
   :deep(.ant-table-cell .ant-table-cell-ellipsis .ant-table-column-sort) {
     background-color: white;
   }
+
   :deep(.ant-table-expanded-row-fixed) {
     background-color: v-bind('token.colorBgElevated');
   }
+
   .clickable-table :deep(.table-row.selected-row td) {
     background: v-bind('token.colorHighlight') !important;
   }

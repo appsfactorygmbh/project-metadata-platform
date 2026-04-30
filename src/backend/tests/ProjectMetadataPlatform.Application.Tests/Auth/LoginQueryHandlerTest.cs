@@ -14,13 +14,16 @@ namespace ProjectMetadataPlatform.Application.Tests.Auth;
 public class LoginQueryHandlerTest
 {
     private LoginQueryHandler _handler;
-    private Mock<IAuthRepository> _mockAuthRepo;
+    private Mock<IRefreshTokenRepository> _mockRefreshTokenRepo;
+
+    private Mock<IUsersRepository> _mockUserRepo;
 
     [SetUp]
     public void Setup()
     {
-        _mockAuthRepo = new Mock<IAuthRepository>();
-        _handler = new LoginQueryHandler(_mockAuthRepo.Object);
+        _mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
+        _mockUserRepo = new Mock<IUsersRepository>();
+        _handler = new LoginQueryHandler(_mockRefreshTokenRepo.Object, _mockUserRepo.Object);
     }
 
     [Test]
@@ -34,7 +37,7 @@ public class LoginQueryHandlerTest
         );
         Environment.SetEnvironmentVariable("ACCESS_TOKEN_EXPIRATION_MINUTES", "1");
 
-        _mockAuthRepo
+        _mockUserRepo
             .Setup(m => m.CheckLogin(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(true);
         var request = new LoginQuery("username", "password");
@@ -55,14 +58,16 @@ public class LoginQueryHandlerTest
         );
         Environment.SetEnvironmentVariable("ACCESS_TOKEN_EXPIRATION_MINUTES", "1");
 
-        _mockAuthRepo
+        _mockUserRepo
             .Setup(m => m.CheckLogin(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(true);
-        _mockAuthRepo.Setup(m => m.CheckRefreshTokenExists(It.IsAny<string>())).ReturnsAsync(true);
+        _mockRefreshTokenRepo
+            .Setup(m => m.CheckRefreshTokenExists(It.IsAny<string>()))
+            .ReturnsAsync(true);
         var request = new LoginQuery("username", "password");
         await _handler.Handle(request, It.IsAny<CancellationToken>());
 
-        _mockAuthRepo.Verify(
+        _mockRefreshTokenRepo.Verify(
             m => m.UpdateRefreshToken(It.IsAny<string>(), It.IsAny<string>()),
             Times.Once
         );
@@ -71,7 +76,7 @@ public class LoginQueryHandlerTest
     [Test]
     public void HandleLoginQueryHandler_InvalidLogin_Test()
     {
-        _mockAuthRepo
+        _mockUserRepo
             .Setup(m => m.CheckLogin(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(false);
         var request = new LoginQuery("wrong_username", "password");

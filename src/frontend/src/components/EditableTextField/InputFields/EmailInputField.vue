@@ -8,6 +8,7 @@
   import { isValidEmail } from '@/utils/form/userValidation.ts';
   import { useUserStore } from '@/store';
   import useNotification from 'ant-design-vue/es/notification/useNotification';
+  import { PatchOperations } from '@/api/generated';
 
   const props = defineProps({
     userId: {
@@ -45,7 +46,8 @@
     // checks if email is already in use by another user
     if (
       users?.every(
-        (user) => user.email !== email || user.email === currentUser?.email,
+        (user) =>
+          user.userName !== email || user.userName === currentUser?.userName,
       )
     ) {
       return Promise.resolve();
@@ -75,11 +77,16 @@
   const [notificationApi] = useNotification();
 
   const onSubmit: FormSubmitType = async (fields) => {
-    const newEmail = {
-      email: toRaw(fields).email,
-    };
     await userStore
-      .update(props.userId, newEmail)
+      .update(props.userId, {
+        operations: [
+          {
+            op: PatchOperations.Replace,
+            path: 'userName',
+            value: toRaw(fields).email,
+          },
+        ],
+      })
       .then((res) => {
         console.log('err successfull ' + JSON.stringify(res));
         notificationApi.success({
@@ -98,8 +105,6 @@
   props.formStore.setModel(dynamicValidateForm);
   props.formStore.setRules(rulesRef);
   props.formStore.setOnSubmit(onSubmit);
-
-  const formRef = ref();
 </script>
 
 <template>

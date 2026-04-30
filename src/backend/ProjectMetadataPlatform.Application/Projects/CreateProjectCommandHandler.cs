@@ -186,7 +186,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
                 }
             );
         }
-        await _logRepository.AddProjectLogForCurrentUser(project, Action.ADDED_PROJECT, changes);
+        await _logRepository.AddProjectLogForCurrentActor(project, Action.ADDED_PROJECT, changes);
         if (project.ProjectPlugins != null)
         {
             foreach (var plugin in project.ProjectPlugins)
@@ -212,7 +212,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
                     );
                 }
 
-                await _logRepository.AddProjectLogForCurrentUser(
+                await _logRepository.AddProjectLogForCurrentActor(
                     project,
                     Action.ADDED_PROJECT_PLUGIN,
                     pluginChanges

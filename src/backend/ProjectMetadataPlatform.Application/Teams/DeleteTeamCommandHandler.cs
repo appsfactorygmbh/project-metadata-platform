@@ -57,7 +57,7 @@ public class DeleteTeamCommandHandler : IRequestHandler<DeleteTeamCommand>
 
         var changes = new List<LogChange>();
 
-        await _logRepository.AddTeamLogForCurrentUser(teamToDelete, Action.REMOVED_TEAM, changes);
+        await _logRepository.AddTeamLogForCurrentActor(teamToDelete, Action.REMOVED_TEAM, changes);
         await _unitOfWork.CompleteAsync();
     }
 }

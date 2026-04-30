@@ -73,7 +73,12 @@
     @change="handleChange"
     @select="handleSelect"
   >
-    <a-select-option v-for="option in options" :key="option" :value="option">
+    <a-select-option
+      v-for="option in options"
+      :key="option"
+      mode="multiple"
+      :value="option"
+    >
       {{ option }}
     </a-select-option>
   </a-select>

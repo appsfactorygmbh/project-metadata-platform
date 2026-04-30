@@ -1,121 +1,86 @@
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import SettingView from '@/views/SettingView/SettingView.vue';
-import {
-  type RouteRecordRaw,
-  type Router,
-  createRouter,
-  createWebHistory,
-} from 'vue-router';
+import { createTestingPinia } from '@pinia/testing';
+import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
+import { useUserStore } from '@/store';
+import { PlusOutlined } from '@ant-design/icons-vue';
+import { UserListView } from '..';
 
-interface actualRouter {
-  createRouter: typeof createRouter;
-  createWebHistory: typeof createWebHistory;
-  useRouter: typeof useRouter;
-}
-
-// Mock the entire vue-router module
-vi.mock('vue-router', async () => {
-  const actual: actualRouter = await vi.importActual('vue-router');
-  const mockRouter: Router = {
-    ...actual.createRouter({
-      history: actual.createWebHistory(),
-      routes: [],
-    }),
+vi.mock('vue-router', () => ({
+  useRouter: () => ({
     push: vi.fn(),
-  } as Router;
-  return {
-    ...actual,
-    useRouter: () => mockRouter,
-    createRouter: vi.fn().mockImplementation(() => {
-      return mockRouter;
-    }),
+  }),
+}));
+
+const userData1 = {
+  userName: 'maxmuster1@gmail.com',
+  externalId: '100',
+  isScimProvisioned: false,
+};
+const userData2 = {
+  userName: 'maxmuster2@gmail.com',
+  externalId: '200',
+  isScimProvisioned: true,
+};
+
+describe('UserListView.vue', () => {
+  const generateWrapper = () => {
+    const pinia = createTestingPinia({
+      stubActions: true,
+      initialState: {
+        user: { users: [userData1, userData2], isLoading: false },
+      },
+    });
+
+    const userStore = useUserStore();
+
+    const mockUserRouting = {
+      routerUserId: ref(''),
+      setUserId: vi.fn(),
+    };
+
+    return mount(UserListView, {
+      global: {
+        plugins: [pinia],
+        components: {
+          PlusOutlined,
+        },
+        stubs: {
+          RouterView: true,
+        },
+        provide: {
+          [userStoreSymbol as symbol]: userStore,
+          [userRoutingSymbol as symbol]: mockUserRouting,
+        },
+      },
+    });
   };
-});
 
-interface SettingViewObject {
-  collapsed: boolean;
-  selectedKeys: string[];
-  tab: string;
-  clickTab: (name: string) => void;
-  goToMain: () => void;
-}
+  it('renders correctly', async () => {
+    const wrapper = generateWrapper();
 
-describe('SettingView.vue', () => {
-  let mockRouter: Router;
+    await flushPromises();
 
-  beforeEach(() => {
-    const MockComponent = { template: '<div></div>' };
-    const routes: RouteRecordRaw[] = [
-      { path: '/', name: 'Home', component: MockComponent },
-      {
-        path: '/settings/user-management',
-        name: 'UserManagement',
-        component: MockComponent,
-      },
-      {
-        path: '/settings/global-plugins',
-        name: 'GlobalPlugins',
-        component: MockComponent,
-      },
-      {
-        path: '/settings/global-logs',
-        name: 'GlobalLogs',
-        component: MockComponent,
-      },
-    ];
-
-    mockRouter = createRouter({
-      history: createWebHistory(),
-      routes,
-    });
-  });
-
-  it('renders correctly', () => {
-    const wrapper = mount(SettingView, {
-      global: {
-        plugins: [mockRouter],
-      },
-    });
     expect(wrapper.find('.layout').exists()).toBe(true);
-    expect(wrapper.find('.sideSlider').exists()).toBe(true);
-    expect(wrapper.find('.menuItem').exists()).toBe(true);
-    expect(wrapper.find('.addressBar').exists()).toBe(true);
-    expect(wrapper.find('.backButton button').exists()).toBe(true);
+
+    const icon = wrapper.findComponent(PlusOutlined);
+    expect(icon.exists()).toBe(true);
+
+    expect(wrapper.text()).toContain('Create New User');
+
+    expect(wrapper.text()).toContain('maxmuster1');
+    expect(wrapper.text()).toContain('maxmuster2');
+
+    const tags = wrapper.findAll('.scim-tag');
+    expect(tags.length).toBe(1);
+    expect(tags[0].text()).toBe('SCIM');
   });
 
-  it('has initial state', () => {
-    const wrapper = mount(SettingView, {
-      global: {
-        plugins: [mockRouter],
-      },
-    });
-    const vm = wrapper.vm as unknown as SettingViewObject;
-    expect(vm.collapsed).toBe(false);
-    expect(vm.tab).toBe('Global Plugins');
-  });
+  it('calls fetchMe and fetchAll on mount', () => {
+    generateWrapper();
+    const userStore = useUserStore();
 
-  it('go to main menu when back click', async () => {
-    const wrapper = mount(SettingView, {
-      global: {
-        plugins: [mockRouter],
-      },
-    });
-    await wrapper.find('.backButton button').trigger('click');
-
-    expect(mockRouter.push).toHaveBeenCalledWith('/');
-  });
-
-  it('go to other tab when tab click', async () => {
-    const wrapper = mount(SettingView, {
-      global: {
-        plugins: [mockRouter],
-      },
-    });
-    await wrapper.find('.userManagement').trigger('click');
-    expect(mockRouter.push).toHaveBeenCalledWith('/settings/user-management');
-
-    await wrapper.find('.globalLogs').trigger('click');
-    expect(mockRouter.push).toHaveBeenCalledWith('/settings/global-logs');
+    expect(userStore.fetchMe).toHaveBeenCalled();
+    expect(userStore.fetchAll).toHaveBeenCalled();
   });
 });

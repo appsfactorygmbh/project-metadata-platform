@@ -74,7 +74,10 @@ vi.mock('@azure/msal-browser', async (importOriginal) => {
 
   return {
     ...actual,
-    PublicClientApplication: vi.fn(() => mockMsalBrowser),
+
+    PublicClientApplication: vi.fn().mockImplementation(function () {
+      return mockMsalBrowser;
+    }),
   };
 });
 
@@ -102,12 +105,9 @@ const findElementByText = (
   searchedElement: Parameters<VueWrapperInstance['findAll']>[0],
   text: string,
 ) => {
-  return wrapper
-    .findAll(searchedElement)
-    .filter((c) => {
-      return c.text() === text;
-    })
-    .at(0);
+  return wrapper.findAll(searchedElement).filter((c) => {
+    return c.text() === text;
+  })[0];
 };
 
 const findComponentByText = (
@@ -115,12 +115,9 @@ const findComponentByText = (
   searchedComponent: Parameters<VueWrapperInstance['findComponent']>[0],
   text: string,
 ) => {
-  return wrapper
-    .findAllComponents(searchedComponent)
-    .filter((c) => {
-      return c.text() === text;
-    })
-    .at(0);
+  return wrapper.findAllComponents(searchedComponent).filter((c) => {
+    return c.text() === text;
+  })[0];
 };
 
 // See https://github.com/vuejs/vue-test-utils/issues/960

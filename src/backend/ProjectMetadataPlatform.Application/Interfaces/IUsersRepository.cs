@@ -1,6 +1,7 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
 
@@ -15,41 +16,50 @@ public interface IUsersRepository
     /// <param name="user">User to be created.</param>
     /// <param name="password">Password of the user.</param>
     /// <returns>Id of the created user.</returns>
-    Task<string> CreateUserAsync(IdentityUser user, string password);
+    Task<string> CreateUserAsync(ApplicationUser user, string? password);
 
     /// <summary>
-    /// Returns all users.
+    /// Returns all users that conform to the given filter.
     /// </summary>
-    /// <returns>Enumerable of all User-Objects</returns>
-    Task<IEnumerable<IdentityUser>> GetAllUsersAsync();
+    /// <param name="filter">Scim style filter.</param>
+    /// <returns>Enumerable of all filtered User-Objects</returns>
+    Task<IEnumerable<ApplicationUser>> GetUsersAsync(string filter);
 
     /// <summary>
     /// Returns a user by their ID.
     /// </summary>
     /// <param name="id">The ID of the user to retrieve.</param>
     /// <returns>The User object if found; otherwise, null.</returns>
-    Task<IdentityUser> GetUserByIdAsync(string id);
+    Task<ApplicationUser> GetUserByIdAsync(string id);
 
     /// <summary>
     /// Returns the user with the given email.
     /// </summary>
     /// <param name="email">The email of the searched for user.</param>
     /// <returns>The user that is searched for or null.</returns>
-    Task<IdentityUser> GetUserByEmailAsync(string email);
+    Task<ApplicationUser> GetUserByEmailAsync(string email);
 
     /// <summary>
     /// Stores a user.
     /// </summary>
     /// <param name="user">The User object to store.</param>
     /// <returns>The stored User object.</returns>
-    Task<IdentityUser> StoreUser(IdentityUser user);
+    Task<ApplicationUser> StoreUser(ApplicationUser user);
 
     /// <summary>
     /// Deletes the specified user.
     /// </summary>
     /// <param name="user">The user to be deleted.</param>
     /// <returns>The deleted user.</returns>
-    Task<IdentityUser> DeleteUserAsync(IdentityUser user);
+    Task<ApplicationUser> DeleteUserAsync(ApplicationUser user);
+
+    /// <summary>
+    /// Checks if the given login credentials are correct.
+    /// </summary>
+    /// <param name="email">Email of the user</param>
+    /// <param name="password">Password of the user</param>
+    /// <returns>True, if the credentials are correct</returns>
+    Task<bool> CheckLogin(string email, string password);
 
     /// <summary>
     /// Checks if the given password is in the correct format.
@@ -57,4 +67,11 @@ public interface IUsersRepository
     /// <param name="password">password to be checked</param>
     /// <returns>true if the format is correct. Otherwise throws exception</returns>
     Task<bool> CheckPasswordFormat(string password);
+
+    /// <summary>
+    /// Checks if a user exists with the given employee id.
+    /// </summary>
+    /// <param name="id">Employee Id of the user.</param>
+    /// <returns>boolean representing the existence of the user.</returns>
+    Task<bool> CheckUserExists(string id);
 }

@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ProjectMetadataPlatform.Domain.Logs;
 
@@ -30,6 +30,12 @@ public class LogModelConfig : IEntityTypeConfiguration<Log>
             .OnDelete(DeleteBehavior.SetNull);
 
         _ = builder
+            .HasOne(e => e.AuthorToken)
+            .WithMany()
+            .HasForeignKey(e => e.AuthorTokenId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        _ = builder
             .HasOne(e => e.Team)
             .WithMany()
             .HasForeignKey(e => e.TeamId)
@@ -51,6 +57,11 @@ public class LogModelConfig : IEntityTypeConfiguration<Log>
             .HasOne(e => e.GlobalPlugin)
             .WithMany()
             .HasForeignKey(e => e.GlobalPluginId)
+            .OnDelete(DeleteBehavior.SetNull);
+        _ = builder
+            .HasOne(e => e.AffectedToken)
+            .WithMany()
+            .HasForeignKey(e => e.AffectedTokenId)
             .OnDelete(DeleteBehavior.SetNull);
     }
 }

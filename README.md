@@ -1,4 +1,4 @@
-# Appsfactory "Metadata Platform"
+# Appsfactory “Metadata Platform”
 
 ### Overview
 
@@ -6,7 +6,7 @@ This project is an application for the storage and management of project metadat
 
 ### Project Structure
 - `.github`:
-  - `workflows`: Github Actions
+  - `workflows`: GitHub Actions
 - `.vscode`: Config for IDE
 - `deployment`: Files needed to build and deploy the project
   - `docker`: Docker compose files and dockerfiles
@@ -43,7 +43,7 @@ This project is an application for the storage and management of project metadat
    yarn install
    ```
 ### Local Deployment
-The folder deployment/docker folder contains a minimal docker compose file for local deployment for testing purposes. To build and start the the application run this command in the directory:
+The folder deployment/docker folder contains a minimal docker compose file for local deployment for testing purposes. To build and start the application run this command in the directory:
    ```sh
    docker compose -f docker-compose-local-build.yml up --build -d
    ```
@@ -57,10 +57,26 @@ If SSO should be enabled add the following env variables to `deployment/docker/d
 - AZURE_FRONTEND_CLIENT_ID=<Valid SPA App Registration>
 ```
 
-## Appsfactory "Metadata Platform" Backend
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=alert_status&token=5f57f891ffaebd55ed420b414289cd82d7806371)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=code_smells&token=5f57f891ffaebd55ed420b414289cd82d7806371)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=coverage&token=5f57f891ffaebd55ed420b414289cd82d7806371)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
+### Connecting to an SCIM Provider
+
+This project supports User Provisioning via SCIM. The following user scheme with a custom PMP extension is used:
+
+| SCIM Attribute                                                          | PMP User Attribute | Notes                            |
+|-------------------------------------------------------------------------|--------------------|----------------------------------|
+| externalId                                                              | Employee Number/Id | Matching precedence: 1; required |
+| userName                                                                | Email              | Matching precedence: 2; required |
+| active                                                                  | IsActive           | required                         |
+| urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:organization | Company            |                                  |
+| urn:ietf:params:scim:schemas:extension:pmp:User:teamSupport             | TeamSupport        | checks for existing team         |
+| urn:ietf:params:scim:schemas:extension:pmp:User:team                    | Teams              | checks for existing team         |
+| urn:ietf:params:scim:schemas:extension:pmp:User:jobTitles               | JobTitles          |                                  |
+| urn:ietf:params:scim:schemas:extension:pmp:User:businessUnits           | BusinessUnits      |                                  |
+| urn:ietf:params:scim:schemas:extension:pmp:User:departments             | Departments        |                                  |
+
+## Appsfactory “Metadata Platform” Backend
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=alert_status&token=0c6013f6d8cd878e6d2e9736839f77872d3b5d8e)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=code_smells&token=0c6013f6d8cd878e6d2e9736839f77872d3b5d8e)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=coverage&token=0c6013f6d8cd878e6d2e9736839f77872d3b5d8e)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
 ### Overview
 
 This project is an ASP.NET Core application using Entity Framework Core and PostgreSQL. It provides a RESTful API for managing metadata of projects.
@@ -136,7 +152,7 @@ See the [Run-Script](#run) section for how to run the application with a local d
 
 ### Auth
 
-The Application supports authentication via basic login and SSO with Microsoft Entra ID (modeled after BFF pattern). By default the config for SSO is filled with placeholder values. When needing to debug SSO the following values in `ProjectMetadataPlatform.Api/Properties/launchsettings.json` have to be changed:
+The Application supports authentication via basic login and SSO with Microsoft Entra ID (modeled after BFF pattern). By default, the config for SSO is filled with placeholder values. When needing to debug SSO the following values in `ProjectMetadataPlatform.Api/Properties/launchsettings.json` have to be changed:
 ```json
         "AZURE_AUTHORITY":"<Valid Authority URI>",
         "AZURE_BACKEND_CLIENT_ID":"<Valid Client ID for WebApi App Registration>",
@@ -180,7 +196,7 @@ When changing the domain models or their configurations in the infrastructure la
     ```
 
 6. Commit the generated migration files. The files can be found in the `ProjectMetadataPlatform.Infrastructure/Migrations` directory.
-7. Push the changes to github and create a merge request.
+7. Push the changes to GitHub and create a merge request.
 8. Run the following command to create the migration script, then add it to the merge request description:
 
     With powershell:
@@ -197,10 +213,10 @@ When changing the domain models or their configurations in the infrastructure la
 
 9. Run the migration script on the database once the merge request is approved and merged onto main.
 
-## Appsfactory "Metadata Platform" Frontend
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-frontend&metric=alert_status&token=3abdbe96e97d687c6ccdc0c60dfd2aa12ca74b24)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-frontend)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-frontend&metric=code_smells&token=3abdbe96e97d687c6ccdc0c60dfd2aa12ca74b24)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-frontend)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-frontend&metric=coverage&token=3abdbe96e97d687c6ccdc0c60dfd2aa12ca74b24)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-frontend)
+## Appsfactory “Metadata Platform” Frontend
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-frontend&metric=alert_status&token=e8a8f47687810247f3027043088407c7e0222acc)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-frontend)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-frontend&metric=code_smells&token=e8a8f47687810247f3027043088407c7e0222acc)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-frontend)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-frontend&metric=coverage&token=e8a8f47687810247f3027043088407c7e0222acc)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-frontend)
 ### Overview
 
 This project is a Vue 3 web application with TypeScript integration, utilizing modern tools like Vite, ESLint, Prettier, and Vitest for development and testing.
@@ -280,7 +296,7 @@ Runs the Vitest UI.
 
 #### Debugging the application
 
-When using Visual Studio Code you can debug the application with either Chrome or Firefox when using the debug configurations `Chrome: PMP Frontend Debug` or `Firefox: PMP Frontend Debug`. A pre-launch task will automatically run the application in development mode, so that the browser debugger can attach and a post-debug task will cstop the application. When using a version of Chrome / Firefox that was installed via snap package, Flatpak etc. it might be necessary to alter the launch.json and add a tmp directionary for the browser to use.
+When using Visual Studio Code you can debug the application with either Chrome or Firefox when using the debug configurations `Chrome: PMP Frontend Debug` or `Firefox: PMP Frontend Debug`. A pre-launch task will automatically run the application in development mode, so that the browser debugger can attach, and a post-debug task will cstop the application. When using a version of Chrome / Firefox that was installed via snap package, Flatpak etc. it might be necessary to alter the launch.json and add a tmp directionary for the browser to use.
 Otherwise, when not using Visual Studio Code, just start the application with: 
 ```sh
 yarn dev
@@ -301,7 +317,7 @@ To use the backend service during development, one needs to run the backend serv
 5. To stop the backend service, hit `Ctrl+C` in the terminal where the service is running or when using Visual Studio Code stop the backend debugging session.
 
 #### Auth
-The Frontend supports authentication via basic login and SSO with Microsoft Entra ID (modeled after BFF pattern). By default the config for SSO is not set. When debugging SSO add the following env variables to `.env`:
+The Frontend supports authentication via basic login and SSO with Microsoft Entra ID (modeled after BFF pattern). By default, the config for SSO is not set. When debugging SSO add the following env variables to `.env`:
 ```env
 VITE_AZURE_FRONTEND_CLIENT_ID=<Valid Client ID for SPA App Registration>
 VITE_AZURE_AUTHORITY=<Valid Authority URI>

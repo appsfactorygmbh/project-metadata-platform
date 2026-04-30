@@ -1,20 +1,12 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
 
 /// <summary>
-/// Repository for authentication.
+/// Repository for refresh tokens.
 /// </summary>
-public interface IAuthRepository
+public interface IRefreshTokenRepository
 {
-    /// <summary>
-    /// Checks if the given login credentials are correct.
-    /// </summary>
-    /// <param name="email">Email of the user</param>
-    /// <param name="password">Password of the user</param>
-    /// <returns>True, if the credentials are correct</returns>
-    Task<bool> CheckLogin(string email, string password);
-
     /// <summary>
     /// Saves a refresh Token to the database.
     /// </summary>

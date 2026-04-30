@@ -81,7 +81,7 @@ public class PatchTeamCommandHandlerTest
         );
         _mockLogRepo.Verify(
             m =>
-                m.AddTeamLogForCurrentUser(
+                m.AddTeamLogForCurrentActor(
                     It.IsAny<Team>(),
                     Action.UPDATED_TEAM,
                     It.Is<List<LogChange>>(changes =>
@@ -130,7 +130,7 @@ public class PatchTeamCommandHandlerTest
         // Assert
         _mockLogRepo.Verify(
             m =>
-                m.AddTeamLogForCurrentUser(
+                m.AddTeamLogForCurrentActor(
                     It.IsAny<Team>(),
                     It.IsAny<Action>(),
                     It.IsAny<List<LogChange>>()

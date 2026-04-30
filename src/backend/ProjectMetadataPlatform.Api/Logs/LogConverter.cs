@@ -1,10 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Identity;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Api.Logs.Models;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.Users;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
 namespace ProjectMetadataPlatform.Api.Logs;
@@ -17,10 +19,13 @@ public class LogConverter : ILogConverter
     /// <inheritdoc />
     public LogResponse BuildLogMessage(Log log)
     {
-        var message =
-            log.Author is { Email: not null } ? GetNameFromEmail(log.Author.Email)
-            : log.AuthorEmail != null ? GetNameFromEmail(log.AuthorEmail) + " (deleted user)"
-            : "<Deleted User>";
+        var message = log switch
+        {
+            { Author.Email: not null } => GetNameFromEmail(log.Author.Email),
+            { AuthorToken.Name: not null } => log.AuthorToken.Name,
+            { AuthorName: not null } => GetNameFromEmail(log.AuthorName) + " (deleted actor)",
+            _ => "<Deleted Actor>",
+        };
 
         message +=
             " "
@@ -73,6 +78,14 @@ public class LogConverter : ILogConverter
                     log.TeamName ?? "<Unknown Team>"
                 ),
                 Action.REMOVED_TEAM => BuildRemovedTeamMessage(log.TeamName ?? "<Unknown Team>"),
+                Action.ADDED_API_TOKEN => BuildAddedApiTokenMessage(log.Changes),
+                Action.REMOVED_API_TOKEN => BuildRemovedApiTokenMessage(
+                    log.Changes,
+                    log.AffectedTokenName ?? "<Unknown Token>"
+                ),
+                Action.REGENERATED_API_TOKEN => BuildRegeneratedApiTokenMessage(
+                    log.AffectedTokenName ?? "<Unknown Token>"
+                ),
                 _ => "",
             };
 
@@ -304,7 +317,7 @@ public class LogConverter : ILogConverter
             log.Changes!.Select(change =>
                 change.Property switch
                 {
-                    nameof(IdentityUser.PasswordHash) => "changed password",
+                    nameof(ApplicationUser.PasswordHash) => "changed password",
                     _ => $"set {change.Property} from {change.OldValue} to {change.NewValue}",
                 }
             )
@@ -405,6 +418,57 @@ public class LogConverter : ILogConverter
     private static string BuildRemovedGlobalPluginMessage(string pluginName)
     {
         return "removed global plugin " + pluginName;
+    }
+
+    /// <summary>
+    /// Build a message for an added api token.
+    /// </summary>
+    /// <param name="changes">The list of changes.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildAddedApiTokenMessage(List<LogChange>? changes)
+    {
+        var message = "created a new API token";
+        if (changes == null)
+        {
+            return message;
+        }
+        message += " with properties: ";
+        message += string.Join(
+            ", ",
+            changes.Select(change => $"{change.Property} = {change.NewValue}")
+        );
+        return message;
+    }
+
+    /// <summary>
+    /// Build a message for an removed api token.
+    /// </summary>
+    /// <param name="changes">List of changes.</param>
+    /// <param name="tokenName">Name of the token.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildRemovedApiTokenMessage(List<LogChange>? changes, string tokenName)
+    {
+        var message = "removed the API token " + tokenName;
+        if (changes == null)
+        {
+            return message;
+        }
+        message += " with properties: ";
+        message += string.Join(
+            ", ",
+            changes.Select(change => $"{change.Property} = {change.OldValue}")
+        );
+        return message;
+    }
+
+    /// <summary>
+    /// Builds a message for regenerating a api token.
+    /// </summary>
+    /// <param name="tokenName"></param>
+    /// <returns></returns>
+    private static string BuildRegeneratedApiTokenMessage(string tokenName)
+    {
+        return "regenerated the API token " + tokenName;
     }
 
     /// <summary>

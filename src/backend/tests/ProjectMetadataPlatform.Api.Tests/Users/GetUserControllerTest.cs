@@ -10,6 +10,7 @@ using ProjectMetadataPlatform.Api.Users;
 using ProjectMetadataPlatform.Api.Users.Models;
 using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Api.Tests.Users;
 
@@ -29,7 +30,13 @@ public class GetUserControllerTest
     [Test]
     public async Task Get_ReturnsUser()
     {
-        var user = new IdentityUser { Id = "1", Email = "Hinz" };
+        var user = new ApplicationUser
+        {
+            EmployeeId = "Id",
+            Email = "Hinz",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         _mediator
             .Setup(m => m.Send(It.IsAny<GetUserQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
@@ -39,12 +46,15 @@ public class GetUserControllerTest
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var response = okResult.Value as GetUserResponse;
+        var response = okResult.Value as PmpScimUser;
         Assert.That(response, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(response.Id, Is.EqualTo("1"));
-            Assert.That(response.Email, Is.EqualTo("Hinz"));
+            Assert.That(response.Id, Is.EqualTo("Id"));
+            Assert.That(response.UserName, Is.EqualTo("Hinz"));
+            Assert.That(response.ExternalId, Is.EqualTo("Id"));
+            Assert.That(response.Active, Is.EqualTo(true));
+            Assert.That(response.PmpUser!.IsScimProvisioned, Is.EqualTo(false));
         });
     }
 

@@ -57,7 +57,7 @@ public class DeleteTeamCommandHandlerTest
         // Assert
         _mockLogRepo.Verify(
             m =>
-                m.AddTeamLogForCurrentUser(
+                m.AddTeamLogForCurrentActor(
                     It.IsAny<Team>(),
                     Action.REMOVED_TEAM,
                     It.IsAny<List<LogChange>>()

@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.Users;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
 namespace ProjectMetadataPlatform.Application.Users;
@@ -14,7 +15,7 @@ namespace ProjectMetadataPlatform.Application.Users;
 /// <summary>
 /// Handles the command to delete a user by their unique identifier.
 /// </summary>
-public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, IdentityUser>
+public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, ApplicationUser>
 {
     private readonly IUsersRepository _usersRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -52,12 +53,12 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Ident
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The deleted user, if present, otherwise null.</returns>
     /// <exception cref="UserCantDeleteThemselfException">If the active user tries to delete themselves.</exception>
-    public async Task<IdentityUser> Handle(
+    public async Task<ApplicationUser> Handle(
         DeleteUserCommand request,
         CancellationToken cancellationToken
     )
     {
-        var user = await _usersRepository.GetUserByIdAsync(request.Id);
+        var user = await _usersRepository.GetUserByIdAsync(request.EmployeeId);
         var email =
             _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
             ?? "Unknown user";
@@ -72,9 +73,9 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Ident
         {
             OldValue = user.Email!,
             NewValue = "",
-            Property = nameof(IdentityUser.Email),
+            Property = nameof(ApplicationUser.Email),
         };
-        await _logRepository.AddUserLogForCurrentUser(user, Action.REMOVED_USER, [change]);
+        await _logRepository.AddUserLogForCurrentActor(user, Action.REMOVED_USER, [change]);
 
         var response = await _usersRepository.DeleteUserAsync(user);
         await _unitOfWork.CompleteAsync();

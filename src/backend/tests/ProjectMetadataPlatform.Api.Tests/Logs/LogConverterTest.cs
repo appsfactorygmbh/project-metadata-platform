@@ -1,11 +1,13 @@
-using System;
+﻿using System;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Logs;
+using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
+using ProjectMetadataPlatform.Domain.Users;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
 namespace ProjectMetadataPlatform.Api.Tests.Logs;
@@ -28,8 +30,16 @@ public class LogConverterTest
             Id = 41,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Slartibartfast",
-            Author = new IdentityUser { Email = "Slartibartfast" },
+            AuthorName = "Slartibartfast",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "test",
+                Email = "Slartibartfast",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorToken = null,
+            AuthorTokenId = null,
             ProjectId = 43,
             ProjectName = "Norway",
             Action = Action.UPDATED_PROJECT,
@@ -64,8 +74,16 @@ public class LogConverterTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "43",
-            AuthorEmail = "Deep Thought",
-            Author = new IdentityUser { Email = "Deep Thought" },
+            AuthorName = "Deep Thought",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "12",
+                Email = "Deep Thought",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorToken = null,
+            AuthorTokenId = null,
             ProjectId = 44,
             Project = new Project
             {
@@ -98,9 +116,15 @@ public class LogConverterTest
         {
             Id = 43,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
-            AuthorId = "44",
-            AuthorEmail = "Infinite Improbability Drive",
-            Author = new IdentityUser { Email = "Infinite Improbability Drive" },
+            AuthorId = null,
+            AuthorName = "Infinite Improbability Drive",
+            Author = null,
+            AuthorToken = new Domain.Auth.ApiToken
+            {
+                Name = "Infinite Improbability Drive",
+                Token = "A Token",
+            },
+            AuthorTokenId = 3,
             ProjectId = 45,
             Project = new Project
             {
@@ -143,8 +167,16 @@ public class LogConverterTest
             Id = 44,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "45",
-            AuthorEmail = "Ground",
-            Author = new IdentityUser { Email = "Ground" },
+            AuthorName = "Ground",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "1323213213",
+                Email = "Ground",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
             ProjectId = 46,
             Project = new Project
             {
@@ -186,9 +218,15 @@ public class LogConverterTest
         {
             Id = 45,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
-            AuthorId = "46",
-            AuthorEmail = "Prostetnic Vogon Jeltz",
-            Author = new IdentityUser { Email = "Prostetnic Vogon Jeltz" },
+            AuthorId = null,
+            AuthorName = "Prostetnic Vogon Jeltz",
+            Author = null,
+            AuthorToken = new Domain.Auth.ApiToken
+            {
+                Name = "Prostetnic Vogon Jeltz",
+                Token = "Another Token",
+            },
+            AuthorTokenId = 3,
             ProjectId = 47,
             Project = new Project
             {
@@ -231,8 +269,16 @@ public class LogConverterTest
             Id = 46,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "47",
-            AuthorEmail = "Earth",
-            Author = new IdentityUser { Email = "Earth" },
+            AuthorName = "Earth",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "12313",
+                Email = "Earth",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
             ProjectId = 48,
             Project = new Project
             {
@@ -266,7 +312,9 @@ public class LogConverterTest
             Id = 47,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "48",
-            AuthorEmail = "Earth Population",
+            AuthorName = "Earth Population",
+            AuthorTokenId = null,
+            AuthorToken = null,
             ProjectId = 49,
             Action = Action.UPDATED_PROJECT,
             ProjectName = "Living Beings",
@@ -288,7 +336,7 @@ public class LogConverterTest
             Assert.That(
                 logResponse.LogMessage,
                 Is.EqualTo(
-                    "Earth Population (deleted user) updated project Living Beings:  set Home Planet from Earth to None"
+                    "Earth Population (deleted actor) updated project Living Beings:  set Home Planet from Earth to None"
                 )
             );
             Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
@@ -303,8 +351,16 @@ public class LogConverterTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Infinite Improbability Drive",
-            Author = new IdentityUser { Email = "Infinite Improbability Drive" },
+            AuthorName = "Infinite Improbability Drive",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "HelloWorld",
+                Email = "Infinite Improbability Drive",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
             Action = Action.ADDED_USER,
             Changes =
             [
@@ -334,14 +390,22 @@ public class LogConverterTest
     [Test]
     public void ConvertToLogUpdatedUser_Test()
     {
-        var gandalf = new IdentityUser { Email = "Gandalf" };
+        var gandalf = new ApplicationUser
+        {
+            EmployeeId = "afdasfasf",
+            Email = "Gandalf",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         var log = new Log
         {
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Gandalf",
+            AuthorName = "Gandalf",
             Author = gandalf,
+            AuthorTokenId = null,
+            AuthorToken = null,
             AffectedUser = gandalf,
             AffectedUserEmail = "Gandalf",
             Action = Action.UPDATED_USER,
@@ -378,8 +442,17 @@ public class LogConverterTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Ground",
-            Author = new IdentityUser { Email = "Ground" },
+            AuthorName = "Ground",
+            Author = new ApplicationUser
+            {
+                EmployeeId =
+                    "1312312321312321316328562138765831563287956831256856189561372856136728561825687215632178562318956",
+                Email = "Ground",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
             Action = Action.REMOVED_USER,
             AffectedUserEmail = "whale@air.com",
             Changes =
@@ -409,9 +482,11 @@ public class LogConverterTest
         {
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
-            AuthorId = "42",
-            AuthorEmail = "Luke Skywalker",
-            Author = new IdentityUser { Email = "Luke Skywalker" },
+            AuthorId = null,
+            AuthorName = "Luke Skywalker",
+            Author = null,
+            AuthorTokenId = 0,
+            AuthorToken = new ApiToken { Name = "Luke Skywalker", Token = "" },
             Action = Action.REMOVED_PROJECT,
             ProjectName = "DeathStar",
         };
@@ -436,8 +511,16 @@ public class LogConverterTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Chancellor Palpatine",
-            Author = new IdentityUser { Email = "Chancellor Palpatine" },
+            AuthorName = "Chancellor Palpatine",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "1",
+                Email = "Chancellor Palpatine",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
             Action = Action.ADDED_GLOBAL_PLUGIN,
             Changes =
             [
@@ -472,8 +555,16 @@ public class LogConverterTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Darth Sidious",
-            Author = new IdentityUser { Email = "Darth Sidious" },
+            AuthorName = "Darth Sidious",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "",
+                Email = "Darth Sidious",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
             Action = Action.UPDATED_GLOBAL_PLUGIN,
             Changes =
             [
@@ -509,8 +600,16 @@ public class LogConverterTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Zip",
-            Author = new IdentityUser { Email = "Zip" },
+            AuthorName = "Zip",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "abc",
+                Email = "Zip",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
             Action = Action.ARCHIVED_GLOBAL_PLUGIN,
             GlobalPluginName = "Directory",
         };
@@ -532,8 +631,16 @@ public class LogConverterTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Unzip",
-            Author = new IdentityUser { Email = "Unzip" },
+            AuthorName = "Unzip",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "5",
+                Email = "Unzip",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
             Action = Action.UNARCHIVED_GLOBAL_PLUGIN,
             GlobalPluginName = "Directory",
         };
@@ -558,8 +665,16 @@ public class LogConverterTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Recursively",
-            Author = new IdentityUser { Email = "Recursively" },
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "abc",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
             Action = Action.REMOVED_GLOBAL_PLUGIN,
             GlobalPluginName = "root",
         };
@@ -586,8 +701,16 @@ public class LogConverterTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Recursively",
-            Author = new IdentityUser { Email = "Recursively" },
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "helloworld",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
             Action = Action.ADDED_TEAM,
             TeamName = "root",
             Changes =
@@ -629,8 +752,16 @@ public class LogConverterTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Recursively",
-            Author = new IdentityUser { Email = "Recursively" },
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "id",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
             Action = Action.UPDATED_TEAM,
             TeamName = "root",
             Changes =
@@ -666,8 +797,16 @@ public class LogConverterTest
             Id = 42,
             TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
             AuthorId = "42",
-            AuthorEmail = "Recursively",
-            Author = new IdentityUser { Email = "Recursively" },
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
             Action = Action.REMOVED_TEAM,
             TeamName = "New_Team_Name",
         };
@@ -679,6 +818,181 @@ public class LogConverterTest
             Assert.That(
                 logResponse.LogMessage,
                 Is.EqualTo("Recursively removed team New_Team_Name")
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToProjectLogDeletedToken_Test()
+    {
+        var log = new Log
+        {
+            Id = 47,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = null,
+            AuthorName = "Earth Population",
+            AuthorTokenId = 1,
+            AuthorToken = null,
+            ProjectId = 49,
+            Action = Action.UPDATED_PROJECT,
+            ProjectName = "Living Beings",
+            Changes =
+            [
+                new LogChange
+                {
+                    Property = "Home Planet",
+                    OldValue = "Earth",
+                    NewValue = "None",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Earth Population (deleted actor) updated project Living Beings:  set Home Planet from Earth to None"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogAddedToken_Test()
+    {
+        var createdToken = new ApiToken { Name = "Token", Token = "SuperSecretTokenValue" };
+
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "helloworld",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.ADDED_API_TOKEN,
+            TeamName = "root",
+            AffectedToken = createdToken,
+            AffectedTokenId = createdToken.Id,
+            AffectedTokenName = createdToken.Name,
+            Changes =
+            [
+                new()
+                {
+                    Property = "Name",
+                    OldValue = "",
+                    NewValue = "Token",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo("Recursively created a new API token with properties: Name = Token")
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogRemovedToken_Test()
+    {
+        var createdToken = new ApiToken { Name = "Token", Token = "SuperSecretTokenValue" };
+
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "helloworld",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.REMOVED_API_TOKEN,
+            TeamName = "root",
+            AffectedToken = createdToken,
+            AffectedTokenId = createdToken.Id,
+            AffectedTokenName = createdToken.Name,
+            Changes =
+            [
+                new()
+                {
+                    Property = "Name",
+                    OldValue = "Token",
+                    NewValue = "",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo("Recursively removed the API token Token with properties: Name = Token")
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogRegeneratedToken_Test()
+    {
+        var createdToken = new ApiToken { Name = "Token", Token = "SuperSecretTokenValue" };
+
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "helloworld",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.REGENERATED_API_TOKEN,
+            TeamName = "root",
+            AffectedToken = createdToken,
+            AffectedTokenId = createdToken.Id,
+            AffectedTokenName = createdToken.Name,
+            Changes = [],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo("Recursively regenerated the API token Token")
             );
             Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
         });

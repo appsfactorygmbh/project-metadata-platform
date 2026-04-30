@@ -24,6 +24,8 @@ public class AuthExceptionHandler : ControllerBase, IExceptionHandler<AuthExcept
             AuthInvalidRefreshTokenException authInvalidRefreshTokenException => BadRequest(
                 new ErrorResponse(authInvalidRefreshTokenException.Message)
             ),
+            UnknownAuthentificationMethodException unknownAuthentificationMethodException =>
+                BadRequest(new ErrorResponse(unknownAuthentificationMethodException.Message)),
             _ => null,
         };
     }

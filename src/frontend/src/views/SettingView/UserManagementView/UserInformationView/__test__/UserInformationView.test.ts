@@ -12,11 +12,28 @@ import { UserInformationView } from '..';
 
 const userData1: UserModel = {
   id: '100',
-  email: 'maxmuster1@gmail.com',
+  userName: 'maxmuster1@gmail.com',
+  externalId: '100',
+  active: false,
+  urnIetfParamsScimSchemasExtensionEnterprise20User: {
+    organization: 'MusterCorp',
+  },
+  urnIetfParamsScimSchemasExtensionPmpUser: {
+    departments: ['IT', 'TI'],
+    businessUnits: ['Internal'],
+    team: ['Team 5000'],
+    teamSupport: ['Team 9001'],
+  },
+  meta: {},
 };
 const userData2: UserModel = {
   id: '200',
-  email: 'maxmuster2@gmail.com',
+  userName: 'maxmuster2@gmail.com',
+  externalId: '200',
+  active: false,
+  urnIetfParamsScimSchemasExtensionEnterprise20User: {},
+  urnIetfParamsScimSchemasExtensionPmpUser: {},
+  meta: {},
 };
 
 const mockRoute = {
@@ -89,7 +106,14 @@ describe('UserInformationView.vue', () => {
     expect(wrapper.find('.avatar').exists()).toBe(true);
     expect(wrapper.find('.label').exists()).toBe(true);
     const text = wrapper.findAll('.text');
-    expect(text[0].text()).toBe(userData1.email);
+    expect(text[0].text()).toBe(userData1.externalId);
+    expect(text[1].text()).toBe(userData1.userName);
+    expect(text[3].text()).toBe('');
+    expect(text[4].text()).toBe('Team 5000');
+    expect(text[5].text()).toBe('Team 9001');
+    expect(text[6].text()).toBe('IT, TI');
+    expect(text[7].text()).toBe('Internal');
+    expect(text[8].text()).toBe('MusterCorp');
 
     const button = wrapper.findAllComponents(EditOutlined);
     expect(button[0].exists()).toBe(true);
@@ -102,7 +126,7 @@ describe('UserInformationView.vue', () => {
     userStore.setMe(userData1);
     userStore.setUser(userData1);
     const wrapper = generateWrapper();
-    const textField = wrapper.findAll('.label')[1];
+    const textField = wrapper.findAll('.label')[2];
     expect(textField.text()).toBe('Password:');
   });
 

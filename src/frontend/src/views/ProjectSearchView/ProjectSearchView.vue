@@ -56,11 +56,18 @@
       ismsLevel: model.ismsLevel,
       teamName: model.team === undefined ? '' : model.team.teamName,
       businessUnit: model.team === undefined ? '' : model.team.businessUnit,
-    } as ProjectSearchModel;
+    };
   };
 
   provide<ProjectSearchStore>(searchStoreSymbol, searchStore);
-
+  const queryNames = [
+    'searchQuery',
+    'clientName',
+    'projectName',
+    'company',
+    'businessUnit',
+    'teamNumber',
+  ];
   const searchQuery = useQuery(queryNames);
   const searchStorage = useSessionStorage('searchStorage', { searchQuery: '' });
   const filterStorage = useSessionStorage<Record<string, string>>(
@@ -332,14 +339,6 @@
       hidden: false,
     },
   ]);
-  const queryNames = [
-    'searchQuery',
-    'clientName',
-    'projectName',
-    'company',
-    'businessUnit',
-    'teamNumber',
-  ];
 
   /*  Column drop implementation  */
 

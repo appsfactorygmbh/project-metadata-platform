@@ -3,7 +3,7 @@
   import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
-
+  import { PlusOutlined } from '@ant-design/icons-vue';
   const token = useThemeToken();
 
   const collapsed = ref<boolean>(false);
@@ -11,6 +11,8 @@
   const userStore = inject(userStoreSymbol)!;
   const { routerUserId, setUserId } = inject(userRoutingSymbol)!;
   const { getIsLoading, getUsers } = storeToRefs(userStore);
+
+  const router = useRouter();
 
   const isLoading = computed(() => getIsLoading.value);
   const usersData = computed(() => getUsers.value);
@@ -43,8 +45,8 @@
   // when mounted -> look if there is already data loaded into the store -> if so set the userId to the one in the store
   // this is used for when coming back to the User Management tab to have the same user selected as before
   onMounted(async () => {
-    if (userStore.getUser?.id != undefined) {
-      setUserId(userStore.getUser?.id);
+    if (userStore.getUser?.externalId != undefined) {
+      setUserId(userStore.getUser?.externalId);
     }
     await userStore?.fetchAll();
     await userStore?.fetchUser(routerUserId.value);
@@ -67,11 +69,28 @@
         class="menuItem"
       >
         <a-menu-item
-          v-for="user in usersData"
-          :key="user.id"
-          @click="clickTab(user.id)"
+          key="create-user"
+          class="create-menu-item"
+          @click="router.push('/settings/user-management/create')"
         >
-          <span>{{ getNameFromEmail(user.email) }}</span>
+          <template #icon>
+            <PlusOutlined />
+          </template>
+          <span>Create New User</span>
+        </a-menu-item>
+        <a-menu-item
+          v-for="user in usersData"
+          :key="user.externalId"
+          :title="getNameFromEmail(user.userName)"
+          @click="clickTab(user.externalId)"
+        >
+          <div class="menu-item-content">
+            <span class="user-name">{{ getNameFromEmail(user.userName) }}</span>
+
+            <a-tag v-if="user.isScimProvisioned" color="blue" class="scim-tag">
+              SCIM
+            </a-tag>
+          </div>
         </a-menu-item>
       </a-menu>
       <a-skeleton
@@ -120,7 +139,43 @@
     color: white !important;
     height: 0;
   }
+
   .menuItem {
     background-color: v-bind('token.colorBgElevated');
+  }
+
+  .menu-item-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .user-name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .scim-tag {
+    flex-shrink: 0;
+    margin-left: 8px;
+    margin-right: 0;
+    font-size: 10px;
+    line-height: 16px;
+    height: 18px;
+  }
+
+  :deep(.ant-menu-title-content) {
+    display: flex;
+    overflow: hidden;
+  }
+
+  .button {
+    width: 100%;
+    margin-top: 0.5%;
   }
 </style>

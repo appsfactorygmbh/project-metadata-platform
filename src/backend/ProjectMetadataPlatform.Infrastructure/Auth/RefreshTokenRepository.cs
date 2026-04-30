@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 using ProjectMetadataPlatform.Infrastructure.Projects;
 
@@ -14,9 +15,9 @@ namespace ProjectMetadataPlatform.Infrastructure.Auth;
 /// <summary>
 /// Handles User Management using the UserManager provided by AspNetCore Identity.
 /// </summary>
-public class AuthRepository : RepositoryBase<RefreshToken>, IAuthRepository
+public class RefreshTokenRepository : RepositoryBase<RefreshToken>, IRefreshTokenRepository
 {
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ProjectMetadataPlatformDbContext _context;
 
     /// <summary>
@@ -24,26 +25,14 @@ public class AuthRepository : RepositoryBase<RefreshToken>, IAuthRepository
     /// </summary>
     /// <param name="dbContext"></param>
     /// <param name="userManager"></param>
-    public AuthRepository(
+    public RefreshTokenRepository(
         ProjectMetadataPlatformDbContext dbContext,
-        UserManager<IdentityUser> userManager
+        UserManager<ApplicationUser> userManager
     )
         : base(dbContext)
     {
         _userManager = userManager;
         _context = dbContext;
-    }
-
-    /// <summary>
-    /// Checks if the given login credentials are correct.
-    /// </summary>
-    /// <param name="email">Email of the user</param>
-    /// <param name="password">Password of the user</param>
-    /// <returns>True, if the credentials are correct</returns>
-    public async Task<bool> CheckLogin(string email, string password)
-    {
-        var user = await _userManager.FindByEmailAsync(email);
-        return user != null && await _userManager.CheckPasswordAsync(user, password);
     }
 
     /// <summary>

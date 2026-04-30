@@ -31,7 +31,7 @@ export const callApiFetch = async <
   try {
     if (!api) throw new Error('No Api provided');
     // @ts-expect-error complains about the type of api[apiCall] but it's correct
-    return (await api[apiCall](args as Args)) as FetchResponse<Api, Endpoint>;
+    return (await api[apiCall](args)) as FetchResponse<Api, Endpoint>;
   } catch (err) {
     console.error(err);
     await handleFetchError(err);

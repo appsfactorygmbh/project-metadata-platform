@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-  import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+  import { DeleteOutlined } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { inject, ref } from 'vue';
   import { teamRoutingSymbol, teamStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
-  import { useRouter } from 'vue-router';
+
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useFormStore } from '@/components/Form';
@@ -14,7 +14,6 @@
 
   const token = useThemeToken();
 
-  const router = useRouter();
   const route = useRoute();
   const teamStore = inject(teamStoreSymbol)!;
   const { getTeam, getIsLoadingTeam, getLinkedProjects } =
@@ -59,18 +58,6 @@
         size: 'large',
         status: 'activated',
         tooltip: 'Click here to delete this team',
-        isLink: false,
-      },
-      {
-        name: 'CreateTeamButton',
-        onClick: () => {
-          router.push('/settings/team-management/create');
-        },
-        icon: PlusOutlined,
-        type: 'primary',
-        size: 'large',
-        status: 'activated',
-        tooltip: 'Click here to create a new team',
         isLink: false,
       },
     ];

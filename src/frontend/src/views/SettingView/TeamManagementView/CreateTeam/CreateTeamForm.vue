@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { type FormStore, type FormSubmitType } from '@/components/Form';
   import { message } from 'ant-design-vue';
-  import { reactive, ref, toRaw } from 'vue';
+  import { reactive, toRaw } from 'vue';
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateTeamFormData } from './CreateTeamFormData.ts';
   import { CreateIsUniqueTeamName } from '@/utils/form/userValidation.ts';
@@ -73,8 +73,6 @@
   formStore.setOnSubmit(onSubmit);
   formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
-
-  const formRef = ref();
 </script>
 
 <template>

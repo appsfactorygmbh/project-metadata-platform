@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -11,10 +13,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using Polly.Registry;
 using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.Auth;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 using ProjectMetadataPlatform.Infrastructure.Logs;
@@ -48,14 +53,15 @@ public static class DependencyInjection
         serviceCollection.ConfigureAuth(jwtBearerEvents);
         _ = serviceCollection.AddScoped<IPluginRepository, PluginRepository>();
         _ = serviceCollection.AddScoped<IProjectsRepository, ProjectsRepository>();
-        _ = serviceCollection.AddScoped<IAuthRepository, AuthRepository>();
+        _ = serviceCollection.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        _ = serviceCollection.AddScoped<IApiTokenRepository, ApiTokenRepository>();
         _ = serviceCollection.AddScoped<IUsersRepository, UsersRepository>();
         _ = serviceCollection.AddScoped<ITeamRepository, TeamRepository>();
         _ = serviceCollection.AddScoped<
-            IPasswordHasher<IdentityUser>,
-            PasswordHasher<IdentityUser>
+            IPasswordHasher<ApplicationUser>,
+            PasswordHasher<ApplicationUser>
         >();
-
+        _ = serviceCollection.AddScoped<IPasswordHasher<ApiToken>, PasswordHasher<ApiToken>>();
         _ = serviceCollection.AddScoped<ILogRepository, LogRepository>();
         return serviceCollection;
     }
@@ -86,10 +92,10 @@ public static class DependencyInjection
         JwtBearerEvents jwtBearerEvents
     )
     {
-        _ = serviceCollection.AddScoped<IUserStore<IdentityUser>>(provider =>
+        _ = serviceCollection.AddScoped<IUserStore<ApplicationUser>>(provider =>
         {
             var userStore = new UserStore<
-                IdentityUser,
+                ApplicationUser,
                 IdentityRole,
                 ProjectMetadataPlatformDbContext,
                 string
@@ -101,7 +107,7 @@ public static class DependencyInjection
         });
 
         _ = serviceCollection
-            .AddIdentity<IdentityUser, IdentityRole>()
+            .AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ProjectMetadataPlatformDbContext>()
             .AddDefaultTokenProviders();
 
@@ -109,23 +115,54 @@ public static class DependencyInjection
         _ = serviceCollection.Configure<IdentityOptions>(options =>
             options.User.RequireUniqueEmail = true
         );
+
         _ = serviceCollection
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddMicrosoftIdentityWebApi(
-                options => { },
+            .AddAuthentication(AuthenticationSchemes.SELECTOR)
+            .AddPolicyScheme(
+                AuthenticationSchemes.SELECTOR,
+                AuthenticationSchemes.SELECTOR,
                 options =>
                 {
-                    options.Authority = EnvironmentUtils.GetEnvVarOrLoadFromFile("AZURE_AUTHORITY");
-                    options.ClientId = EnvironmentUtils.GetEnvVarOrLoadFromFile(
-                        "AZURE_BACKEND_CLIENT_ID"
-                    );
-                },
-                "Azure"
-            );
-        _ = serviceCollection
-            .AddAuthentication()
+                    options.ForwardDefaultSelector = context =>
+                    {
+                        string? authorizationHeader = context.Request.Headers[
+                            HeaderNames.Authorization
+                        ];
+                        if (
+                            !string.IsNullOrEmpty(authorizationHeader)
+                            && authorizationHeader.StartsWith("Bearer ")
+                        )
+                        {
+                            var token = authorizationHeader.Replace("Bearer ", "");
+                            var jwtHandler = new JwtSecurityTokenHandler();
+                            if (!jwtHandler.CanReadToken(token))
+                            {
+                                return AuthenticationSchemes.API_TOKEN;
+                            }
+                            if (
+                                jwtHandler.ReadJwtToken(token).Issuer
+                                == tokenDescriptorInformation.ValidIssuer
+                            )
+                            {
+                                return AuthenticationSchemes.BASIC;
+                            }
+                            if (
+                                jwtHandler
+                                    .ReadJwtToken(token)
+                                    .Issuer.Contains(
+                                        EnvironmentUtils.GetEnvVarOrLoadFromFile("AZURE_AUTHORITY")
+                                    )
+                            )
+                            {
+                                return AuthenticationSchemes.AZURE;
+                            }
+                        }
+                        return AuthenticationSchemes.BASIC;
+                    };
+                }
+            )
             .AddJwtBearer(
-                "Basic",
+                AuthenticationSchemes.BASIC,
                 options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -149,6 +186,21 @@ public static class DependencyInjection
 
                     options.Events = jwtBearerEvents;
                 }
+            )
+            .AddScheme<AuthenticationSchemeOptions, ApiTokenAuthenticationHandler>(
+                AuthenticationSchemes.API_TOKEN,
+                options => { }
+            )
+            .AddMicrosoftIdentityWebApi(
+                options => { },
+                options =>
+                {
+                    options.Authority = EnvironmentUtils.GetEnvVarOrLoadFromFile("AZURE_AUTHORITY");
+                    options.ClientId = EnvironmentUtils.GetEnvVarOrLoadFromFile(
+                        "AZURE_BACKEND_CLIENT_ID"
+                    );
+                },
+                AuthenticationSchemes.AZURE
             );
     }
 
@@ -170,18 +222,20 @@ public static class DependencyInjection
 
         using var scope = serviceProvider.CreateScope();
 
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
         if (userManager.Users.Any())
         {
             return;
         }
 
-        var user = new IdentityUser
+        var user = new ApplicationUser
         {
             UserName = "admin@admin.admin",
             Email = "admin@admin.admin",
-            Id = "1",
+            EmployeeId = "0",
+            IsActive = true,
+            IsScimProvisioned = false,
         };
         user.PasswordHash = userManager.PasswordHasher.HashPassword(user, password);
         var identityResult = userManager.CreateAsync(user).Result;

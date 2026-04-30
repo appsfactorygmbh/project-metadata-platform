@@ -11,6 +11,7 @@ using ProjectMetadataPlatform.Api.Projects.Models;
 using ProjectMetadataPlatform.Api.Teams.Models;
 using ProjectMetadataPlatform.Application.Plugins;
 using ProjectMetadataPlatform.Application.Projects;
+using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Plugins;
 
 namespace ProjectMetadataPlatform.Api.Projects;
@@ -19,7 +20,7 @@ namespace ProjectMetadataPlatform.Api.Projects;
 /// Endpoints for managing projects.
 /// </summary>
 [ApiController]
-[Authorize(AuthenticationSchemes = "Azure,Basic")]
+[Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
 [Route("[controller]")]
 public class ProjectsController : ControllerBase
 {

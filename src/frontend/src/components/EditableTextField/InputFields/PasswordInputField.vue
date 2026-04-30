@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { PatchOperations } from '@/api/generated';
   import type { FormStore } from '@/components/Form';
   import type { FormSubmitType, RulesObject } from '@/components/Form/types';
   import { useUserStore } from '@/store';
@@ -29,7 +30,6 @@
     confirmPassword: string;
   };
 
-  const formRef = ref();
   const userStore = useUserStore();
 
   const dynamicValidateForm = reactive<EditPasswordFormData>({
@@ -108,12 +108,16 @@
   const [notificationApi] = useNotification();
 
   const onSubmit: FormSubmitType = (fields) => {
-    const newPassword = {
-      password: toRaw(fields).newPassword,
-    };
-
     userStore
-      ?.update(userId, newPassword)
+      ?.update(userId, {
+        operations: [
+          {
+            op: PatchOperations.Replace,
+            path: 'password',
+            value: toRaw(fields).newPassword,
+          },
+        ],
+      })
       .then(() => {
         notificationApi.success({
           message: 'Password updated',

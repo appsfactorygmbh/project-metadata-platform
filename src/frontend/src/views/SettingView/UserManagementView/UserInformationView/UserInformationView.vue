@@ -1,14 +1,10 @@
 <script lang="ts" setup>
-  import {
-    PlusOutlined,
-    DeleteOutlined,
-    UserOutlined,
-  } from '@ant-design/icons-vue';
+  import { DeleteOutlined, UserOutlined } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { inject, ref } from 'vue';
   import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
-  import { useRouter } from 'vue-router';
+
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useFormStore } from '@/components/Form';
@@ -17,10 +13,10 @@
     PasswordInputField,
   } from '@/components/EditableTextField';
   import { useThemeToken } from '@/utils/hooks';
+  import { useTeamStore } from '@/store';
 
   const token = useThemeToken();
 
-  const router = useRouter();
   const route = useRoute();
   const userStore = inject(userStoreSymbol)!;
   const { setUserId, routerUserId } = inject(userRoutingSymbol)!;
@@ -31,9 +27,22 @@
   const isLoading = computed(
     () => getIsLoadingUser.value || getIsLoading.value,
   );
+  const teamStore = useTeamStore();
 
+  const employeeNrFormStore = useFormStore('editemployeeNrForm');
   const emailFormStore = useFormStore('editEmailForm');
   const passwordFormStore = useFormStore('patchPasswordForm');
+  const isActiveFormStore = useFormStore('editIsActiveForm');
+  const companyFormStore = useFormStore('editCompanyForm');
+  const departmentsFormStore = useFormStore('editDepartmentsForm');
+  const jobTitlesFormStore = useFormStore('editJobTitlesForm');
+  const teamsFormStore = useFormStore('editTeamsForm');
+  const teamSupportFormStore = useFormStore('editTeamSupportForm');
+  const businessUnitFormStore = useFormStore('editbusinessUnitsForm');
+
+  onMounted(async () => {
+    teamStore.fetchAll();
+  });
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
@@ -59,20 +68,8 @@
         tooltip: 'Click here to delete this user',
         isLink: false,
       },
-      {
-        name: 'CreateUserButton',
-        onClick: () => {
-          router.push('/settings/user-management/create');
-        },
-        icon: PlusOutlined,
-        type: 'primary',
-        size: 'large',
-        status: 'activated',
-        tooltip: 'Click here to create a new user',
-        isLink: false,
-      },
     ];
-    if (me.value?.id == user.value?.id || !routerUserId.value)
+    if (me.value?.externalId == user.value?.externalId || !routerUserId.value)
       tempButtons[0].status = 'deactivated';
 
     return tempButtons;
@@ -80,11 +77,11 @@
 
   const deleteUser = async () => {
     if (!user.value) return;
-    await userStore.delete(user.value?.id);
+    await userStore.delete(user.value?.externalId);
     await userStore.fetchAll();
     await userStore.fetchMe();
     const myId: string =
-      userStore.getMe?.id ?? userStore.getUsers[0]?.id ?? '1';
+      userStore.getMe?.externalId ?? userStore.getUsers[0]?.externalId ?? '1';
     setUserId(myId);
   };
 </script>
@@ -97,7 +94,7 @@
     @cancel="closeModal"
     @update:is-open="isConfirmModalOpen = $event"
   />
-  <div v-if="user?.id" class="panel">
+  <div v-if="user?.externalId" class="panel">
     <a-flex class="avatar">
       <a-avatar :size="150">
         <template #icon>
@@ -113,22 +110,43 @@
       }"
     >
       <EditableTextField
+        class="textField employeeNr"
+        :value="user?.externalId ?? ''"
+        :is-loading="isLoading"
+        :label="'Employee Nr.'"
+        :is-editing-key="'isEditingEmployeeNr'"
+        :form-store="employeeNrFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUserByEmail(user.userName))
+        "
+      >
+        <UserInformationInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'externalId'"
+          :form-store="employeeNrFormStore"
+          :placeholder="user?.externalId ?? ''"
+          :default="user?.externalId ?? ''"
+        />
+      </EditableTextField>
+
+      <EditableTextField
         class="textField email"
-        :value="user?.email ?? ''"
+        :value="user?.userName ?? ''"
         :is-loading="isLoading"
         :label="'Email'"
         :is-editing-key="'isEditingEmail'"
         :form-store="emailFormStore"
         :has-edit-keys="true"
         @saved-changes="
-          async () => user && (await userStore.fetchUser(user.id))
+          async () => user && (await userStore.fetchUser(user.externalId))
         "
       >
         <EmailInputField
           :user-id="user?.id ?? ''"
           :form-store="emailFormStore"
-          :placeholder="user?.email ?? ''"
-          :default="user?.email ?? ''"
+          :placeholder="user?.userName ?? ''"
+          :default="user?.userName ?? ''"
         />
       </EditableTextField>
 
@@ -141,12 +159,219 @@
         :form-store="passwordFormStore"
         :has-edit-keys="true"
         @saved-changes="
-          async () => user && (await userStore.fetchUser(user.id))
+          async () => user && (await userStore.fetchUser(user.externalId))
         "
       >
         <PasswordInputField
           :user-id="user?.id ?? ''"
           :form-store="passwordFormStore"
+        />
+      </EditableTextField>
+
+      <EditableInputSwitch
+        class="switch IsActive"
+        :user-id="user?.id ?? ''"
+        :attribute-name="'IsActive'"
+        :label="'Active'"
+        :form-store="isActiveFormStore"
+        :default="user?.active ?? true"
+        :is-loading="isLoading"
+        :has-edit-keys="true"
+        :is-editing-key="'isActive'"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      />
+
+      <EditableTextField
+        class="textField jobtitles"
+        :value="
+          user?.urnIetfParamsScimSchemasExtensionPmpUser.jobTitles?.join(
+            ', ',
+          ) ?? ''
+        "
+        :is-loading="isLoading"
+        :label="'Jobtitles'"
+        :is-editing-key="'isEditingJobTitles'"
+        :form-store="jobTitlesFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      >
+        <UserInformationListInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'JobTitles'"
+          :form-store="jobTitlesFormStore"
+          :placeholder="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.jobTitles?.join(
+              ', ',
+            ) ?? ''
+          "
+          :default="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.jobTitles?.join(
+              ', ',
+            ) ?? ''
+          "
+        />
+      </EditableTextField>
+
+      <EditableTextField
+        class="textField teams"
+        :value="
+          user?.urnIetfParamsScimSchemasExtensionPmpUser.team?.join(', ') ?? ''
+        "
+        :is-loading="isLoading"
+        :label="'Teams'"
+        :is-editing-key="'isEditingTeams'"
+        :form-store="teamsFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      >
+        <UnserInformationTeamsInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'Teams'"
+          :form-store="teamsFormStore"
+          :options="teamStore.getTeamNames"
+          :placeholder="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.team?.join(', ') ??
+            ''
+          "
+          :default="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.team?.join(', ') ??
+            ''
+          "
+        />
+      </EditableTextField>
+
+      <EditableTextField
+        class="textField teamSupport"
+        :value="
+          user?.urnIetfParamsScimSchemasExtensionPmpUser.teamSupport?.join(
+            ', ',
+          ) ?? ''
+        "
+        :is-loading="isLoading"
+        :label="'TeamSupport'"
+        :is-editing-key="'isEditingTeamSupport'"
+        :form-store="teamSupportFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      >
+        <UnserInformationTeamsInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'TeamSupport'"
+          :form-store="teamSupportFormStore"
+          :options="teamStore.getTeamNames"
+          :placeholder="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.teamSupport?.join(
+              ', ',
+            ) ?? ''
+          "
+          :default="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.teamSupport?.join(
+              ', ',
+            ) ?? ''
+          "
+        />
+      </EditableTextField>
+
+      <EditableTextField
+        class="textField departments"
+        :value="
+          user?.urnIetfParamsScimSchemasExtensionPmpUser.departments?.join(
+            ', ',
+          ) ?? ''
+        "
+        :is-loading="isLoading"
+        :label="'Departments'"
+        :is-editing-key="'isEditingDepartment'"
+        :form-store="departmentsFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      >
+        <UserInformationListInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'Departments'"
+          :form-store="departmentsFormStore"
+          :placeholder="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.departments?.join(
+              ', ',
+            ) ?? ''
+          "
+          :default="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.departments?.join(
+              ', ',
+            ) ?? ''
+          "
+        />
+      </EditableTextField>
+
+      <EditableTextField
+        class="textField businessUnits"
+        :value="
+          user?.urnIetfParamsScimSchemasExtensionPmpUser.businessUnits?.join(
+            ', ',
+          ) ?? ''
+        "
+        :is-loading="isLoading"
+        :label="'Business Units'"
+        :is-editing-key="'isEditingBusinessUnits'"
+        :form-store="businessUnitFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      >
+        <UserInformationListInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'BusinessUnits'"
+          :form-store="businessUnitFormStore"
+          :placeholder="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.businessUnits?.join(
+              ', ',
+            ) ?? ''
+          "
+          :default="
+            user?.urnIetfParamsScimSchemasExtensionPmpUser.businessUnits?.join(
+              ', ',
+            ) ?? ''
+          "
+        />
+      </EditableTextField>
+      <EditableTextField
+        class="textField company"
+        :value="
+          user?.urnIetfParamsScimSchemasExtensionEnterprise20User
+            .organization ?? ''
+        "
+        :is-loading="isLoading"
+        :label="'Company'"
+        :is-editing-key="'isEditingCompany'"
+        :form-store="companyFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      >
+        <UserInformationInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'Company'"
+          :form-store="companyFormStore"
+          :placeholder="
+            user?.urnIetfParamsScimSchemasExtensionEnterprise20User
+              .organization ?? ''
+          "
+          :default="
+            user?.urnIetfParamsScimSchemasExtensionEnterprise20User
+              .organization ?? ''
+          "
         />
       </EditableTextField>
     </a-flex>
@@ -162,11 +387,13 @@
 
 <style scoped>
   .panel {
-    position: relative; /* Make sure the panel is a positioning context */
+    position: relative;
+    /* Make sure the panel is a positioning context */
     min-width: 150px;
     max-height: 100vh;
     overflow-y: auto;
   }
+
   .ant-float-btn-group {
     height: max-content !important;
     width: max-content !important;
@@ -174,6 +401,7 @@
     right: 20px;
     bottom: 40px;
   }
+
   .userInfoBox {
     padding: 1em 3em;
     margin: 2em 1em;

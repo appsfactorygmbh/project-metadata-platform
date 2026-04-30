@@ -4,15 +4,7 @@ import FormModal from '../FormModal.vue';
 import { type FormStore } from '@/components/Form/FormStore';
 
 describe('FormModal.vue', () => {
-  type FormModalInstance = {
-    open: boolean;
-    title: string;
-    fromStore: FormStore;
-    handleOk: () => Promise<void>;
-    resetModal: () => void;
-  };
-
-  let wrapper: VueWrapper<FormModalInstance>;
+  let wrapper: VueWrapper<InstanceType<typeof FormModal>>;
 
   beforeEach(() => {
     // Mock formStore and title
@@ -27,7 +19,7 @@ describe('FormModal.vue', () => {
         formStore: mockFormStore as FormStore,
         title: title,
       },
-    }) as unknown as VueWrapper<FormModalInstance>;
+    });
   });
 
   it('modal opens correctly', async () => {

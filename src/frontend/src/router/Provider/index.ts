@@ -9,6 +9,8 @@ import LocalLogProvider from './LocalLogProvider.vue';
 import UserRoutingProvider from './UserRoutingProvider.vue';
 import TeamRoutingProvider from './TeamRoutingProvider.vue';
 import TeamProvider from './TeamProvider.vue';
+import ApiTokenProvider from './ApiTokenProvider.vue';
+import ApiTokenRoutingProvider from './ApiTokenRoutingProvider.vue';
 
 export {
   ThemeProvider,
@@ -17,9 +19,11 @@ export {
   ProjectEditProvider,
   UserProvider,
   TeamProvider,
+  ApiTokenProvider,
   ProjectRoutingProvider,
   AuthProvider,
   LocalLogProvider,
   UserRoutingProvider,
   TeamRoutingProvider,
+  ApiTokenRoutingProvider,
 };

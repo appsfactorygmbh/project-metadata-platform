@@ -26,7 +26,6 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
     private readonly ITeamRepository _teamRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ISlugHelper _slugHelper;
 
     /// <summary>
     /// Creates a new instance of <see cref="UpdateProjectCommand"/>.
@@ -36,8 +35,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
         IPluginRepository pluginRepository,
         ITeamRepository teamRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork,
-        ISlugHelper slugHelper
+        IUnitOfWork unitOfWork
     )
     {
         _projectsRepository = projectsRepository;
@@ -45,7 +43,6 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
         _teamRepository = teamRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
-        _slugHelper = slugHelper;
     }
 
     /// <summary>
@@ -177,8 +174,8 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
             var change = new LogChange
             {
                 Property = nameof(Project.OfferId),
-                OldValue = project.OfferId,
-                NewValue = request.OfferId,
+                OldValue = project.OfferId ?? "",
+                NewValue = request.OfferId ?? "",
             };
             changes.Add(change);
             project.OfferId = request.OfferId;
@@ -252,7 +249,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
             };
             archivedChanges.Add(change);
 
-            await _logRepository.AddProjectLogForCurrentUser(
+            await _logRepository.AddProjectLogForCurrentActor(
                 project,
                 request.IsArchived ? Action.ARCHIVED_PROJECT : Action.UNARCHIVED_PROJECT,
                 archivedChanges
@@ -262,7 +259,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
 
         if (changes.Count > 0)
         {
-            await _logRepository.AddProjectLogForCurrentUser(
+            await _logRepository.AddProjectLogForCurrentActor(
                 project,
                 Action.UPDATED_PROJECT,
                 changes
@@ -300,7 +297,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
             })
         )
         {
-            await _logRepository.AddProjectLogForCurrentUser(
+            await _logRepository.AddProjectLogForCurrentActor(
                 project,
                 Action.ADDED_PROJECT_PLUGIN,
                 addedPluginChanges
@@ -338,7 +335,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
             })
         )
         {
-            await _logRepository.AddProjectLogForCurrentUser(
+            await _logRepository.AddProjectLogForCurrentActor(
                 project,
                 Action.REMOVED_PROJECT_PLUGIN,
                 removedPluginChanges
@@ -387,7 +384,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
 
             if (updatedPluginChanges.Count > 0)
             {
-                await _logRepository.AddProjectLogForCurrentUser(
+                await _logRepository.AddProjectLogForCurrentActor(
                     project,
                     Action.UPDATED_PROJECT_PLUGIN,
                     updatedPluginChanges

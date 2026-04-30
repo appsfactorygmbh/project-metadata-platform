@@ -14,20 +14,23 @@
 
 import * as runtime from '../runtime';
 import type {
-  CreateUserRequest,
-  CreateUserResponse,
-  GetUserResponse,
+  GetUsersResponse,
   PatchUserRequest,
+  PmpScimUser,
 } from '../models/index';
 import {
-  CreateUserRequestToJSON,
-  CreateUserResponseFromJSON,
-  GetUserResponseFromJSON,
+  GetUsersResponseFromJSON,
   PatchUserRequestToJSON,
+  PmpScimUserFromJSON,
+  PmpScimUserToJSON,
 } from '../models/index';
 
-export interface UsersPutRequest {
-  createUserRequest?: CreateUserRequest;
+export interface UsersGetRequest {
+  filter?: string;
+}
+
+export interface UsersPostRequest {
+  pmpScimUser?: PmpScimUser;
 }
 
 export interface UsersUserIdDeleteRequest {
@@ -52,21 +55,24 @@ export interface UsersUserIdPatchRequest {
 export interface UsersApiInterface {
   /**
    *
-   * @summary Gets all users.
+   * @summary Gets all user that correspond to a filter. Filter only works for equality to username or employee id.
+   * @param {string} [filter] String Scim filter.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof UsersApiInterface
    */
   usersGetRaw(
+    requestParameters: UsersGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetUserResponse>>>;
+  ): Promise<runtime.ApiResponse<GetUsersResponse>>;
 
   /**
-   * Gets all users.
+   * Gets all user that correspond to a filter. Filter only works for equality to username or employee id.
    */
   usersGet(
+    requestParameters: UsersGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetUserResponse>>;
+  ): Promise<GetUsersResponse>;
 
   /**
    *
@@ -77,39 +83,39 @@ export interface UsersApiInterface {
    */
   usersMeGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetUserResponse>>;
+  ): Promise<runtime.ApiResponse<PmpScimUser>>;
 
   /**
    * Gets the current authenticated user\'s information.
    */
   usersMeGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetUserResponse>;
+  ): Promise<PmpScimUser>;
 
   /**
    *
    * @summary Creates a new user.
-   * @param {CreateUserRequest} [createUserRequest] Request containing user information
+   * @param {PmpScimUser} [pmpScimUser] Request containing user information
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof UsersApiInterface
    */
-  usersPutRaw(
-    requestParameters: UsersPutRequest,
+  usersPostRaw(
+    requestParameters: UsersPostRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<CreateUserResponse>>;
+  ): Promise<runtime.ApiResponse<PmpScimUser>>;
 
   /**
    * Creates a new user.
    */
-  usersPut(
-    requestParameters: UsersPutRequest,
+  usersPost(
+    requestParameters: UsersPostRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<CreateUserResponse>;
+  ): Promise<PmpScimUser>;
 
   /**
    *
-   * @summary Deletes a user by their userId.
+   * @summary Deletes a user by their employee id.
    * @param {string} userId The userId of the user to delete.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -121,7 +127,7 @@ export interface UsersApiInterface {
   ): Promise<runtime.ApiResponse<void>>;
 
   /**
-   * Deletes a user by their userId.
+   * Deletes a user by their employee id.
    */
   usersUserIdDelete(
     requestParameters: UsersUserIdDeleteRequest,
@@ -130,8 +136,8 @@ export interface UsersApiInterface {
 
   /**
    *
-   * @summary Gets a user by their ID.
-   * @param {string} userId The ID of the user to retrieve.
+   * @summary Gets a user by their employee number.
+   * @param {string} userId The employee number of the user to retrieve.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof UsersApiInterface
@@ -139,21 +145,21 @@ export interface UsersApiInterface {
   usersUserIdGetRaw(
     requestParameters: UsersUserIdGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetUserResponse>>;
+  ): Promise<runtime.ApiResponse<PmpScimUser>>;
 
   /**
-   * Gets a user by their ID.
+   * Gets a user by their employee number.
    */
   usersUserIdGet(
     requestParameters: UsersUserIdGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetUserResponse>;
+  ): Promise<PmpScimUser>;
 
   /**
    *
    * @summary Patches the user information.
-   * @param {string} userId The unique identifier of the user to be patched.
-   * @param {PatchUserRequest} [patchUserRequest] The request model containing the new user information.
+   * @param {string} userId The employee number of the user to be patched.
+   * @param {PatchUserRequest} [patchUserRequest] The request model containing the update operations.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof UsersApiInterface
@@ -161,7 +167,7 @@ export interface UsersApiInterface {
   usersUserIdPatchRaw(
     requestParameters: UsersUserIdPatchRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetUserResponse>>;
+  ): Promise<runtime.ApiResponse<PmpScimUser>>;
 
   /**
    * Patches the user information.
@@ -169,7 +175,7 @@ export interface UsersApiInterface {
   usersUserIdPatch(
     requestParameters: UsersUserIdPatchRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetUserResponse>;
+  ): Promise<PmpScimUser>;
 }
 
 /**
@@ -177,12 +183,17 @@ export interface UsersApiInterface {
  */
 export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
   /**
-   * Gets all users.
+   * Gets all user that correspond to a filter. Filter only works for equality to username or employee id.
    */
   async usersGetRaw(
+    requestParameters: UsersGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetUserResponse>>> {
+  ): Promise<runtime.ApiResponse<GetUsersResponse>> {
     const queryParameters: any = {};
+
+    if (requestParameters['filter'] != null) {
+      queryParameters['filter'] = requestParameters['filter'];
+    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 
@@ -202,17 +213,18 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(GetUserResponseFromJSON),
+      GetUsersResponseFromJSON(jsonValue),
     );
   }
 
   /**
-   * Gets all users.
+   * Gets all user that correspond to a filter. Filter only works for equality to username or employee id.
    */
   async usersGet(
+    requestParameters: UsersGetRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetUserResponse>> {
-    const response = await this.usersGetRaw(initOverrides);
+  ): Promise<GetUsersResponse> {
+    const response = await this.usersGetRaw(requestParameters, initOverrides);
     return await response.value();
   }
 
@@ -221,7 +233,7 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
    */
   async usersMeGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetUserResponse>> {
+  ): Promise<runtime.ApiResponse<PmpScimUser>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -242,7 +254,7 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetUserResponseFromJSON(jsonValue),
+      PmpScimUserFromJSON(jsonValue),
     );
   }
 
@@ -251,7 +263,7 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
    */
   async usersMeGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetUserResponse> {
+  ): Promise<PmpScimUser> {
     const response = await this.usersMeGetRaw(initOverrides);
     return await response.value();
   }
@@ -259,10 +271,10 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
   /**
    * Creates a new user.
    */
-  async usersPutRaw(
-    requestParameters: UsersPutRequest,
+  async usersPostRaw(
+    requestParameters: UsersPostRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<CreateUserResponse>> {
+  ): Promise<runtime.ApiResponse<PmpScimUser>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -277,32 +289,32 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
     const response = await this.request(
       {
         path: `/Users`,
-        method: 'PUT',
+        method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: CreateUserRequestToJSON(requestParameters['createUserRequest']),
+        body: PmpScimUserToJSON(requestParameters['pmpScimUser']),
       },
       initOverrides,
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      CreateUserResponseFromJSON(jsonValue),
+      PmpScimUserFromJSON(jsonValue),
     );
   }
 
   /**
    * Creates a new user.
    */
-  async usersPut(
-    requestParameters: UsersPutRequest = {},
+  async usersPost(
+    requestParameters: UsersPostRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<CreateUserResponse> {
-    const response = await this.usersPutRaw(requestParameters, initOverrides);
+  ): Promise<PmpScimUser> {
+    const response = await this.usersPostRaw(requestParameters, initOverrides);
     return await response.value();
   }
 
   /**
-   * Deletes a user by their userId.
+   * Deletes a user by their employee id.
    */
   async usersUserIdDeleteRaw(
     requestParameters: UsersUserIdDeleteRequest,
@@ -341,7 +353,7 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
   }
 
   /**
-   * Deletes a user by their userId.
+   * Deletes a user by their employee id.
    */
   async usersUserIdDelete(
     requestParameters: UsersUserIdDeleteRequest,
@@ -351,12 +363,12 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
   }
 
   /**
-   * Gets a user by their ID.
+   * Gets a user by their employee number.
    */
   async usersUserIdGetRaw(
     requestParameters: UsersUserIdGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetUserResponse>> {
+  ): Promise<runtime.ApiResponse<PmpScimUser>> {
     if (requestParameters['userId'] == null) {
       throw new runtime.RequiredError(
         'userId',
@@ -387,17 +399,17 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetUserResponseFromJSON(jsonValue),
+      PmpScimUserFromJSON(jsonValue),
     );
   }
 
   /**
-   * Gets a user by their ID.
+   * Gets a user by their employee number.
    */
   async usersUserIdGet(
     requestParameters: UsersUserIdGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetUserResponse> {
+  ): Promise<PmpScimUser> {
     const response = await this.usersUserIdGetRaw(
       requestParameters,
       initOverrides,
@@ -411,7 +423,7 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
   async usersUserIdPatchRaw(
     requestParameters: UsersUserIdPatchRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetUserResponse>> {
+  ): Promise<runtime.ApiResponse<PmpScimUser>> {
     if (requestParameters['userId'] == null) {
       throw new runtime.RequiredError(
         'userId',
@@ -445,7 +457,7 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetUserResponseFromJSON(jsonValue),
+      PmpScimUserFromJSON(jsonValue),
     );
   }
 
@@ -455,7 +467,7 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
   async usersUserIdPatch(
     requestParameters: UsersUserIdPatchRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetUserResponse> {
+  ): Promise<PmpScimUser> {
     const response = await this.usersUserIdPatchRaw(
       requestParameters,
       initOverrides,

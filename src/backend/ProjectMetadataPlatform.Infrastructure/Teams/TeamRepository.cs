@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +59,13 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
     }
 
     /// <inheritdoc/>
+    public async Task<Team> GetTeamByNameAsync(string teamName)
+    {
+        return await _context.Teams.FirstOrDefaultAsync(team => team.TeamName == teamName)
+            ?? throw new TeamNotFoundException(teamName: teamName);
+    }
+
+    /// <inheritdoc/>
     public async Task<bool> CheckIfTeamExistsAsync(int id)
     {
         return await _context.Teams.AnyAsync(team => team.Id == id);
@@ -111,6 +118,7 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
     {
         return await _context
                 .Teams.Include(team => team.Projects)
-                .FirstOrDefaultAsync(team => team.Id == id) ?? throw new TeamNotFoundException(id);
+                .FirstOrDefaultAsync(team => team.Id == id)
+            ?? throw new TeamNotFoundException(id);
     }
 }

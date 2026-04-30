@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using Microsoft.AspNetCore.Identity;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Domain.Auth;
 
@@ -21,7 +22,7 @@ public class RefreshToken
     /// <summary>
     /// User associated with the token.
     /// </summary>
-    public IdentityUser? User { get; set; }
+    public ApplicationUser? User { get; set; }
 
     /// <summary>
     /// Id of the user.

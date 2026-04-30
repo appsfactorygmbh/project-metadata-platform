@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -58,7 +58,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
         _mockLogRepo
             .Setup(m =>
-                m.AddGlobalPluginLogForCurrentUser(
+                m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
                     Action.UPDATED_GLOBAL_PLUGIN,
                     It.IsAny<List<LogChange>>()
@@ -88,7 +88,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
             _mockLogRepo.Verify(
                 m =>
-                    m.AddGlobalPluginLogForCurrentUser(
+                    m.AddGlobalPluginLogForCurrentActor(
                         It.IsAny<Plugin>(),
                         Action.UPDATED_GLOBAL_PLUGIN,
                         It.IsAny<List<LogChange>>()
@@ -129,7 +129,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
         _mockLogRepo
             .Setup(m =>
-                m.AddGlobalPluginLogForCurrentUser(
+                m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
                     Action.ARCHIVED_GLOBAL_PLUGIN,
                     It.IsAny<List<LogChange>>()
@@ -159,7 +159,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
             _mockLogRepo.Verify(
                 m =>
-                    m.AddGlobalPluginLogForCurrentUser(
+                    m.AddGlobalPluginLogForCurrentActor(
                         It.IsAny<Plugin>(),
                         Action.ARCHIVED_GLOBAL_PLUGIN,
                         It.IsAny<List<LogChange>>()
@@ -192,7 +192,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
         _mockLogRepo
             .Setup(m =>
-                m.AddGlobalPluginLogForCurrentUser(
+                m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
                     Action.UPDATED_GLOBAL_PLUGIN,
                     It.IsAny<List<LogChange>>()
@@ -244,7 +244,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
         _mockLogRepo
             .Setup(m =>
-                m.AddGlobalPluginLogForCurrentUser(
+                m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
                     Action.UNARCHIVED_GLOBAL_PLUGIN,
                     It.IsAny<List<LogChange>>()
@@ -274,7 +274,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
             _mockLogRepo.Verify(
                 m =>
-                    m.AddGlobalPluginLogForCurrentUser(
+                    m.AddGlobalPluginLogForCurrentActor(
                         It.IsAny<Plugin>(),
                         Action.UNARCHIVED_GLOBAL_PLUGIN,
                         It.IsAny<List<LogChange>>()
@@ -321,7 +321,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
         _mockLogRepo
             .Setup(m =>
-                m.AddGlobalPluginLogForCurrentUser(
+                m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
                     Action.UPDATED_GLOBAL_PLUGIN,
                     It.IsAny<List<LogChange>>()
@@ -352,7 +352,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
             _mockLogRepo.Verify(
                 m =>
-                    m.AddGlobalPluginLogForCurrentUser(
+                    m.AddGlobalPluginLogForCurrentActor(
                         It.IsAny<Plugin>(),
                         Action.UPDATED_GLOBAL_PLUGIN,
                         It.IsAny<List<LogChange>>()
@@ -415,7 +415,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
         _mockLogRepo
             .Setup(m =>
-                m.AddGlobalPluginLogForCurrentUser(
+                m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
                     Action.UPDATED_GLOBAL_PLUGIN,
                     It.IsAny<List<LogChange>>()
@@ -445,7 +445,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
             _mockLogRepo.Verify(
                 m =>
-                    m.AddGlobalPluginLogForCurrentUser(
+                    m.AddGlobalPluginLogForCurrentActor(
                         It.IsAny<Plugin>(),
                         Action.UPDATED_GLOBAL_PLUGIN,
                         It.IsAny<List<LogChange>>()
@@ -479,7 +479,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
         _mockLogRepo
             .Setup(m =>
-                m.AddGlobalPluginLogForCurrentUser(
+                m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
                     Action.UPDATED_GLOBAL_PLUGIN,
                     It.IsAny<List<LogChange>>()
@@ -509,7 +509,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
             _mockLogRepo.Verify(
                 m =>
-                    m.AddGlobalPluginLogForCurrentUser(
+                    m.AddGlobalPluginLogForCurrentActor(
                         It.IsAny<Plugin>(),
                         Action.UPDATED_GLOBAL_PLUGIN,
                         It.IsAny<List<LogChange>>()
@@ -551,7 +551,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
         _mockLogRepo
             .Setup(m =>
-                m.AddGlobalPluginLogForCurrentUser(
+                m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
                     Action.UPDATED_GLOBAL_PLUGIN,
                     It.IsAny<List<LogChange>>()
@@ -582,7 +582,7 @@ public class PatchGlobalPluginCommandHandlerTest
 
             _mockLogRepo.Verify(
                 m =>
-                    m.AddGlobalPluginLogForCurrentUser(
+                    m.AddGlobalPluginLogForCurrentActor(
                         It.IsAny<Plugin>(),
                         Action.UPDATED_GLOBAL_PLUGIN,
                         It.IsAny<List<LogChange>>()

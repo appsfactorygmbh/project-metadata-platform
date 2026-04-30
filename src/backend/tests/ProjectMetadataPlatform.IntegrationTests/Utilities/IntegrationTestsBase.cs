@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -13,6 +14,7 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Auth.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 
 namespace ProjectMetadataPlatform.IntegrationTests.Utilities;
@@ -46,6 +48,7 @@ public class IntegrationTestsBase : IDisposable
         );
         Environment.SetEnvironmentVariable("REFRESH_TOKEN_EXPIRATION_HOURS", "6");
         Environment.SetEnvironmentVariable("ACCESS_TOKEN_EXPIRATION_MINUTES", "15");
+        Environment.SetEnvironmentVariable("PMP_JWT_CLOCK_SKEW_SECONDS", "0");
         Environment.SetEnvironmentVariable("PMP_MIGRATE_DB_ON_STARTUP", "true");
         Environment.SetEnvironmentVariable("AZURE_AUTHORITY", "https://placeholder.placeholder");
         Environment.SetEnvironmentVariable("AZURE_BACKEND_CLIENT_ID", "Placeholder");
@@ -59,6 +62,8 @@ public class IntegrationTestsBase : IDisposable
         var allEntitiesProjectsPlugins = platformDbContext.ProjectPluginsRelation.ToList();
         var allEntitiesLogs = platformDbContext.Logs.ToList();
         var allEntitiesRefreshTokens = platformDbContext.Set<RefreshToken>().ToList();
+        var allEntitiesApiTokens = platformDbContext.ApiTokens.ToList();
+        var allEntitiesTeams = platformDbContext.Teams.ToList();
         var allEntitiesUsers = platformDbContext
             .Users.Where(user => user.Email != "admin@admin.admin")
             .ToList();
@@ -67,6 +72,8 @@ public class IntegrationTestsBase : IDisposable
         platformDbContext.ProjectPluginsRelation.RemoveRange(allEntitiesProjectsPlugins);
         platformDbContext.Logs.RemoveRange(allEntitiesLogs);
         platformDbContext.Set<RefreshToken>().RemoveRange(allEntitiesRefreshTokens);
+        platformDbContext.ApiTokens.RemoveRange(allEntitiesApiTokens);
+        platformDbContext.Teams.RemoveRange(allEntitiesTeams);
         platformDbContext.Users.RemoveRange(allEntitiesUsers);
 
         await platformDbContext.SaveChangesAsync();
@@ -94,6 +101,24 @@ public class IntegrationTestsBase : IDisposable
 
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {content!.AccessToken}");
+    }
+
+    protected static async Task CreateApiTokenAndAddItToDefaultRequestHeadersOfClient(
+        HttpClient client,
+        string name = "ApiToken",
+        List<TokenScopes>? scopes = null
+    )
+    {
+        var response = await client.PostAsJsonAsync(
+            "/auth/ApiTokens",
+            new { Name = name, Scopes = scopes ?? [] }
+        );
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadFromJsonAsync<GetApiTokenDetailsResponse>();
+
+        client.DefaultRequestHeaders.Clear();
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {content!.Token}");
     }
 
     protected static async Task<JsonElement> ToJsonElement(

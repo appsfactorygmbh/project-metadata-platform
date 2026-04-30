@@ -1,3 +1,3 @@
-import type { CreateUserRequest } from '@/api/generated';
+import type { PmpScimUser } from '@/api/generated';
 
-export type CreateUserModel = CreateUserRequest;
+export type CreateUserModel = PmpScimUser;

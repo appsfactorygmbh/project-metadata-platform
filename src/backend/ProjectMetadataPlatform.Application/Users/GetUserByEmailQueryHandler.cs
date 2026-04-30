@@ -1,15 +1,16 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Users;
 
 /// <summary>
 /// Handles the query to get a user by their email.
 /// </summary>
-public class GetUserByEmailQueryHandler : IRequestHandler<GetUserByEmailQuery, IdentityUser>
+public class GetUserByEmailQueryHandler : IRequestHandler<GetUserByEmailQuery, ApplicationUser>
 {
     private readonly IUsersRepository _usersRepository;
 
@@ -28,7 +29,7 @@ public class GetUserByEmailQueryHandler : IRequestHandler<GetUserByEmailQuery, I
     /// <param name="request">The query request containing the email.</param>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     /// <returns>The user with the specified email, or null if not found.</returns>
-    public Task<IdentityUser> Handle(
+    public Task<ApplicationUser> Handle(
         GetUserByEmailQuery request,
         CancellationToken cancellationToken
     )

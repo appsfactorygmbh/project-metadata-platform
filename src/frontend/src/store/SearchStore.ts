@@ -19,8 +19,8 @@ export const useSearchStore = <T extends AnyObject>(name: string) =>
     state: (): SearchStoreState<T> => {
       return {
         searchQuery: '',
-        baseSet: ref<T[]>([]) as Ref<T[]>,
-        searchResults: ref<T[]>([]) as Ref<T[]>,
+        baseSet: ref<T[]>([]),
+        searchResults: ref<T[]>([]),
         isLoading: false,
         onReset: undefined,
         filter: (items: T[]): T[] => items,
@@ -63,7 +63,7 @@ export const useSearchStore = <T extends AnyObject>(name: string) =>
         }
 
         this.isLoading = true;
-        let searchResults: T[] = [];
+        let searchResults: T[];
         if (_.isEmpty(this.searchQuery)) {
           // filter only by custom filter function
           searchResults = this.baseSet;

@@ -1,10 +1,16 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Auth.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Auth;
+using ProjectMetadataPlatform.Domain.Auth;
 
 namespace ProjectMetadataPlatform.Api.Auth;
 
@@ -67,5 +73,121 @@ public class AuthController : ControllerBase
         var query = new RefreshTokenQuery(refreshToken.Replace("Refresh ", ""));
         var tokens = await _mediator.Send(query);
         return new LoginResponse(tokens.AccessToken!, tokens.RefreshToken!);
+    }
+
+    /// <summary>
+    /// Returns a List of all Api Tokens without details.
+    /// </summary>
+    /// <returns>List of Api Tokens.</returns>
+    /// <response code="200">Returns the Api Tokens.</response>
+    [HttpGet("ApiTokens")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
+    [ProducesResponseType(typeof(IEnumerable<GetApiTokenDetailsResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<GetApiTokenDetailsResponse>>> GetApiTokens()
+    {
+        var query = new GetAllApiTokensQuery();
+        var tokens = await _mediator.Send(query);
+        var response = tokens.Select(t => new GetApiTokenDetailsResponse(
+            t.Id,
+            t.Name,
+            t.Scopes ?? [],
+            t.ExpirationDate
+        ));
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Gets the Api Token with the given id.
+    /// </summary>
+    /// <param name="tokenId">Id of the requested token.</param>
+    /// <returns>The Api Token with its details minus the actual token value.</returns>
+    /// <response code="200">Returns the Api Token.</response>
+    /// <response code="404">If the token wasn't found.</response>
+    [HttpGet("ApiTokens/{tokenId}")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<GetApiTokenDetailsResponse>> GetApiToken(int tokenId)
+    {
+        var command = new GetApiTokenDetailsQuery(tokenId);
+        var token = await _mediator.Send(command);
+        var response = new GetApiTokenDetailsResponse(
+            token.Id,
+            token.Name,
+            token.Scopes ?? [],
+            token.ExpirationDate
+        );
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Creates a new token.
+    /// </summary>
+    /// <param name="request">Request to create the token.</param>
+    /// <returns>The details of the token with its actual value.</returns>
+    /// <response code="201">If the token was created succesfully.</response>
+    /// <response code="400">If the token could not be created.</response>
+    [HttpPost("ApiTokens")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
+    [ProducesResponseType(typeof(GetApiTokenDetailsResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<GetApiTokenDetailsResponse>> PostApiToken(
+        [FromBody] CreateApiTokenRequest request
+    )
+    {
+        var command = new CreateApiTokenCommand(request.Name, request.Scopes);
+        var token = await _mediator.Send(command);
+        var response = new GetApiTokenDetailsResponse(
+            token.Id,
+            token.Name,
+            token.Scopes ?? [],
+            token.ExpirationDate,
+            token.Token
+        );
+        var uri = "/ApiTokens/" + token.Id;
+        return Created(uri, response);
+    }
+
+    /// <summary>
+    /// Generates a new Token value for an existing token.
+    /// </summary>
+    /// <param name="tokenId">Id of the token that should be regenerated.</param>
+    /// <returns>The Api Token details with a new value and expiration date.</returns>
+    /// <response code="200">Returns the Api Token with the new value.</response>
+    /// <response code="404">If the token wasn't found.</response>
+    [HttpPatch("ApiTokens/{tokenId}")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
+    [ProducesResponseType(typeof(GetApiTokenDetailsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<GetApiTokenDetailsResponse>> RegenerateApiToken(int tokenId)
+    {
+        var command = new RegenerateApiTokenCommand(tokenId);
+        var token = await _mediator.Send(command);
+        var response = new GetApiTokenDetailsResponse(
+            token.Id,
+            token.Name,
+            token.Scopes ?? [],
+            token.ExpirationDate,
+            token.Token
+        );
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Deletes the token with the given id.
+    /// </summary>
+    /// <param name="tokenId"> Id of the token.</param>
+    /// <returns>No Content</returns>
+    /// <response code="200">If the token was deleted succesfully.</response>
+    /// <response code="404">If the token wasn't found.</response>
+    [HttpDelete("ApiTokens/{tokenId}")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeleteApiToken(int tokenId)
+    {
+        var command = new DeleteApiTokenCommand(tokenId);
+        await _mediator.Send(command);
+        return NoContent();
     }
 }

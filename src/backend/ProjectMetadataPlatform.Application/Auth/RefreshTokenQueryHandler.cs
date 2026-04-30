@@ -1,4 +1,4 @@
-using System.Security.Authentication;
+﻿using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -13,15 +13,15 @@ namespace ProjectMetadataPlatform.Application.Auth;
 /// </summary>
 public class RefreshTokenQueryHandler : IRequestHandler<RefreshTokenQuery, JwtTokens>
 {
-    private readonly IAuthRepository _authRepository;
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
 
     /// <summary>
     /// Creates a new instance of<see cref="RefreshTokenQueryHandler" />.
     /// </summary>
-    /// <param name="authRepository"></param>
-    public RefreshTokenQueryHandler(IAuthRepository authRepository)
+    /// <param name="refreshTokenRepository"></param>
+    public RefreshTokenQueryHandler(IRefreshTokenRepository refreshTokenRepository)
     {
-        _authRepository = authRepository;
+        _refreshTokenRepository = refreshTokenRepository;
     }
 
     /// <summary>
@@ -36,11 +36,11 @@ public class RefreshTokenQueryHandler : IRequestHandler<RefreshTokenQuery, JwtTo
         CancellationToken cancellationToken
     )
     {
-        if (!await _authRepository.CheckRefreshTokenRequest(request.RefreshToken))
+        if (!await _refreshTokenRepository.CheckRefreshTokenRequest(request.RefreshToken))
         {
             throw new AuthInvalidRefreshTokenException();
         }
-        var email = await _authRepository.GetEmailByRefreshToken(request.RefreshToken);
+        var email = await _refreshTokenRepository.GetEmailByRefreshToken(request.RefreshToken);
         var stringToken = AccessTokenService.CreateAccessToken(email!);
         return new JwtTokens { AccessToken = stringToken, RefreshToken = request.RefreshToken };
     }

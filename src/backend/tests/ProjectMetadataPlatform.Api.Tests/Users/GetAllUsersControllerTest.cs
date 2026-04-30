@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,6 +11,8 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Users;
 using ProjectMetadataPlatform.Api.Users.Models;
 using ProjectMetadataPlatform.Application.Users;
+using ProjectMetadataPlatform.Domain.Teams;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Api.Tests.Users;
 
@@ -30,10 +32,29 @@ public class GetAllUsersControllerTest
     [Test]
     public async Task Get_ReturnsAllUsers()
     {
-        var users = new List<IdentityUser>
+        var users = new List<ApplicationUser>
         {
-            new IdentityUser { Id = "1", Email = "Hinz" },
-            new IdentityUser { Id = "2", Email = "Kunz" },
+            new ApplicationUser
+            {
+                EmployeeId = "Id",
+                Id = "1",
+                Email = "Hinz",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            new ApplicationUser
+            {
+                EmployeeId = "3",
+                Id = "2",
+                Email = "Kunz",
+                IsActive = true,
+                IsScimProvisioned = false,
+                Company = "Appsfactory",
+                Departments = ["Design", "QA"],
+                BusinessUnits = ["Health"],
+                Teams = [new Team { TeamName = "Team", BusinessUnit = "Health" }],
+                TeamSupport = [],
+            },
         };
         _mediator
             .Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>()))
@@ -44,16 +65,48 @@ public class GetAllUsersControllerTest
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var response = (okResult.Value as IEnumerable<GetUserResponse>)?.ToList();
+        var response = (okResult.Value as GetUsersResponse);
 
         Assert.That(response, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(response, Has.Count.EqualTo(2));
-            Assert.That(response.ElementAt(0).Id, Is.EqualTo("1"));
-            Assert.That(response.ElementAt(0).Email, Is.EqualTo("Hinz"));
-            Assert.That(response.ElementAt(1).Id, Is.EqualTo("2"));
-            Assert.That(response.ElementAt(1).Email, Is.EqualTo("Kunz"));
+            Assert.That(response.Resources.ToList(), Has.Count.EqualTo(response.TotalResults));
+            Assert.That(response.Resources.ElementAt(0).Id, Is.EqualTo("Id"));
+            Assert.That(response.Resources.ElementAt(0).UserName, Is.EqualTo("Hinz"));
+            Assert.That(response.Resources.ElementAt(0).ExternalId, Is.EqualTo("Id"));
+            Assert.That(response.Resources.ElementAt(0).Active, Is.EqualTo(true));
+            Assert.That(
+                response.Resources.ElementAt(0).PmpUser!.IsScimProvisioned,
+                Is.EqualTo(false)
+            );
+            Assert.That(response.Resources.ElementAt(1).Id, Is.EqualTo("3"));
+            Assert.That(response.Resources.ElementAt(1).UserName, Is.EqualTo("Kunz"));
+            Assert.That(response.Resources.ElementAt(1).ExternalId, Is.EqualTo("3"));
+            Assert.That(response.Resources.ElementAt(1).Active, Is.EqualTo(true));
+            Assert.That(
+                response.Resources.ElementAt(1).PmpUser!.IsScimProvisioned,
+                Is.EqualTo(false)
+            );
+            Assert.That(
+                response.Resources.ElementAt(1).EnterpriseUser!.Organization,
+                Is.EqualTo("Appsfactory")
+            );
+            Assert.That(
+                response.Resources.ElementAt(1).PmpUser!.Departments,
+                Is.EqualTo(new List<string> { "Design", "QA" })
+            );
+            Assert.That(
+                response.Resources.ElementAt(1).PmpUser!.BusinessUnits,
+                Is.EqualTo(new List<string> { "Health" })
+            );
+            Assert.That(
+                response.Resources.ElementAt(1).PmpUser!.Team,
+                Is.EqualTo(new List<string> { "Team" })
+            );
+            Assert.That(
+                response.Resources.ElementAt(1).PmpUser!.TeamSupport,
+                Is.EqualTo(new List<string> { })
+            );
         });
     }
 
@@ -62,15 +115,15 @@ public class GetAllUsersControllerTest
     {
         _mediator
             .Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<IdentityUser>());
+            .ReturnsAsync(new List<ApplicationUser>());
 
         var result = await _controller.Get();
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var response = okResult.Value as IEnumerable<GetUserResponse>;
-        Assert.That(response, Is.Not.Null.And.Empty);
+        var response = okResult.Value as GetUsersResponse;
+        Assert.That(response!.Resources, Is.Not.Null.And.Empty);
     }
 
     [Test]

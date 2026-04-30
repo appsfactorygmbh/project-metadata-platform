@@ -1,10 +1,12 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
 
@@ -14,48 +16,61 @@ namespace ProjectMetadataPlatform.Application.Interfaces;
 public interface ILogRepository
 {
     /// <summary>
-    /// Adds Logs for changes made to a project. Sets the current User as the Author.
+    /// Adds Logs for changes made to a project. Sets the current User or Token as the Author.
     /// </summary>
     /// <param name="project">The Project changes were made to.</param>
     /// <param name="action">The type of change that was made.</param>
     /// <param name="changes">A list of the changed properties.</param>
     /// <returns></returns>
-    Task AddProjectLogForCurrentUser(Project project, Action action, List<LogChange> changes);
+    Task AddProjectLogForCurrentActor(Project project, Action action, List<LogChange> changes);
 
     /// <summary>
-    /// Adds Logs for changes made to a User. Sets the current User as the Author.
+    /// Adds Logs for changes made to a User. Sets the current User or Token as the Author.
     /// </summary>
     /// <param name="affectedUser">The User changes were made to.</param>
     /// <param name="action">The type of change that was made.</param>
     /// <param name="changes">A list of the changed properties.</param>
     /// <returns></returns>
-    Task AddUserLogForCurrentUser(
-        IdentityUser affectedUser,
+    Task AddUserLogForCurrentActor(
+        ApplicationUser affectedUser,
         Action action,
         List<LogChange> changes
     );
 
     /// <summary>
-    /// Adds Logs for changes made to a GlobalPlugin. Sets the current User as the Author.
+    /// Adds Logs for changes made to a GlobalPlugin. Sets the current User or Token as the Author.
     /// </summary>
     /// <param name="globalPlugin">The GlobalPlugin changes were made to.</param>
     /// <param name="action">The type of change that was made.</param>
     /// <param name="changes">A list of the changed properties.</param>
     /// <returns></returns>
-    Task AddGlobalPluginLogForCurrentUser(
+    Task AddGlobalPluginLogForCurrentActor(
         Plugin globalPlugin,
         Action action,
         List<LogChange> changes
     );
 
     /// <summary>
-    /// Adds Logs for changes made to a team. Sets the current User as the Author.
+    /// Adds Logs for changes made to a team. Sets the current User or Token as the Author.
     /// </summary>
     /// <param name="team">The team changes were made to.</param>
     /// <param name="action">The type of change that was made.</param>
     /// <param name="changes">A list of the changed properties.</param>
     /// <returns></returns>
-    Task AddTeamLogForCurrentUser(Team team, Action action, List<LogChange> changes);
+    Task AddTeamLogForCurrentActor(Team team, Action action, List<LogChange> changes);
+
+    /// <summary>
+    /// Adds Logs for changes made to a api token. Sets the current User or Token as the Author.
+    /// </summary>
+    /// <param name="affectedToken">The token changes were made to.</param>
+    /// <param name="action">The type of change that was made.</param>
+    /// <param name="changes">A list of the changed properties.</param>
+    /// <returns></returns>
+    Task AddApiTokenLogForCurrentActor(
+        ApiToken affectedToken,
+        Action action,
+        List<LogChange> changes
+    );
 
     /// <summary>
     /// Retrieves the logs for a specific project.

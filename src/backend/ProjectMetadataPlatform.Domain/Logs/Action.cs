@@ -1,4 +1,4 @@
-namespace ProjectMetadataPlatform.Domain.Logs;
+﻿namespace ProjectMetadataPlatform.Domain.Logs;
 
 /// <summary>
 ///     Enum for log changes actions
@@ -103,4 +103,19 @@ public enum Action
     /// Represents the action of removing a team.
     /// </summary>
     REMOVED_TEAM,
+
+    /// <summary>
+    /// Represents the action of adding an api token.
+    /// </summary>
+    ADDED_API_TOKEN,
+
+    /// <summary>
+    /// Represents the action of removing an api token.
+    /// </summary>
+    REMOVED_API_TOKEN,
+
+    /// <summary>
+    ///  Represents the action of regenerating an api token value.
+    /// </summary>
+    REGENERATED_API_TOKEN,
 }

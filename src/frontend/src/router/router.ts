@@ -18,6 +18,9 @@ import { TeamListView } from '@/views/SettingView/TeamManagementView/TeamListVie
 import TeamInformationView from '@/views/SettingView/TeamManagementView/TeamInformationView/TeamInformationView.vue';
 import CreateTeamView from '@/views/SettingView/TeamManagementView/CreateTeam/CreateTeamView.vue';
 import { msalService } from '@/services/msalService';
+import ApiTokenListView from '@/views/SettingView/ApiTokenManagement/ApiTokenListView/ApiTokenListView.vue';
+import { ApiTokenInformationView } from '@/views/SettingView/ApiTokenManagement/ApiTokenInformationView';
+import { CreateApiTokenView } from '@/views/SettingView/ApiTokenManagement/CreateApiToken';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -107,6 +110,35 @@ const router = createRouter({
                       component: CreateTeamView,
                       meta: {
                         title: 'Project Metadata Platform - Team Creation',
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: '/settings/api-token-management',
+              name: 'apiTokenList',
+              component: ApiTokenListView,
+              meta: {
+                title: 'Project Metadata Platform - API-Token Management',
+              },
+              children: [
+                {
+                  path: '/settings/api-token-management',
+                  name: 'apiTokensInformation',
+                  component: ApiTokenInformationView,
+                  meta: {
+                    title: 'Project Metadata Platform - API-Token Information',
+                  },
+                  children: [
+                    {
+                      path: '/settings/api-token-management/create',
+                      name: 'createApiTokens',
+                      component: CreateApiTokenView,
+                      meta: {
+                        title:
+                          'Project Metadata Platform -  API-Token Creation',
                       },
                     },
                   ],

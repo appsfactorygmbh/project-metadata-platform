@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { type PropType, reactive, computed, ref } from 'vue';
+  import { type PropType, reactive, computed } from 'vue';
   import type { FormSubmitType } from '@/components/Form/types';
   import type { Rule } from 'ant-design-vue/es/form';
   import { type FormStore } from '@/components/Form';
@@ -35,7 +35,6 @@
   });
   const teamStore = useTeamStore();
   const [notificationApi] = useNotification();
-  const formRef = ref();
 
   const dynamicValidateForm = reactive<Record<string, string>>({
     [props.attributeName]: props.default,

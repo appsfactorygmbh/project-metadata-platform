@@ -8,6 +8,7 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Users;
 using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Api.Tests.Users;
 
@@ -27,7 +28,14 @@ public class DeleteUserControllerTest
     [Test]
     public async Task DeleteUser_Test()
     {
-        var user = new IdentityUser { Id = "1", Email = "John" };
+        var user = new ApplicationUser
+        {
+            EmployeeId = "2",
+            Id = "1",
+            Email = "John",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
         _mediator
             .Setup(m => m.Send(It.IsAny<DeleteUserCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
@@ -35,7 +43,7 @@ public class DeleteUserControllerTest
         Assert.That(result, Is.InstanceOf<NoContentResult>());
         _mediator.Verify(mediator =>
             mediator.Send(
-                It.Is<DeleteUserCommand>(command => command.Id == "1"),
+                It.Is<DeleteUserCommand>(command => command.EmployeeId == "1"),
                 It.IsAny<CancellationToken>()
             )
         );

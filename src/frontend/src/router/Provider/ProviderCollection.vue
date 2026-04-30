@@ -11,29 +11,35 @@
   import LogsProvider from './LogsProvider.vue';
   import UserRoutingProvider from './UserRoutingProvider.vue';
   import TeamRoutingProvider from './TeamRoutingProvider.vue';
+  import ApiTokenRoutingProvider from './ApiTokenRoutingProvider.vue';
+  import ApiTokenProvider from './ApiTokenProvider.vue';
 </script>
 
 <template>
   <UserRoutingProvider>
     <AuthProvider>
       <TeamProvider>
-        <ProjectRoutingProvider>
-          <UserProvider>
-            <LogsProvider>
-              <LocalLogProvider>
-                <ProjectEditProvider>
-                  <GlobalPluginProvider>
-                    <TeamRoutingProvider>
-                      <slot>
-                        <RouterView />
-                      </slot>
-                    </TeamRoutingProvider>
-                  </GlobalPluginProvider>
-                </ProjectEditProvider>
-              </LocalLogProvider>
-            </LogsProvider>
-          </UserProvider>
-        </ProjectRoutingProvider>
+        <ApiTokenProvider>
+          <ProjectRoutingProvider>
+            <UserProvider>
+              <LogsProvider>
+                <LocalLogProvider>
+                  <ProjectEditProvider>
+                    <GlobalPluginProvider>
+                      <TeamRoutingProvider>
+                        <ApiTokenRoutingProvider>
+                          <slot>
+                            <RouterView />
+                          </slot>
+                        </ApiTokenRoutingProvider>
+                      </TeamRoutingProvider>
+                    </GlobalPluginProvider>
+                  </ProjectEditProvider>
+                </LocalLogProvider>
+              </LogsProvider>
+            </UserProvider>
+          </ProjectRoutingProvider>
+        </ApiTokenProvider>
       </TeamProvider>
     </AuthProvider>
   </UserRoutingProvider>

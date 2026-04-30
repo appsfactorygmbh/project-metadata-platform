@@ -1,16 +1,18 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Users;
 
 /// <summary>
-/// Query for retrieving all users.
+/// Handler for Query for retrieving all users.
 /// </summary>
-public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, IEnumerable<IdentityUser>>
+public class GetAllUsersQueryHandler
+    : IRequestHandler<GetAllUsersQuery, IEnumerable<ApplicationUser>>
 {
     private readonly IUsersRepository _usersRepository;
 
@@ -23,13 +25,13 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, IEnumer
     }
 
     /// <summary>
-    /// Handles the request to retrieve all users.
+    /// Handles the request to retrieve all filtered users.
     /// </summary>
-    public async Task<IEnumerable<IdentityUser>> Handle(
+    public async Task<IEnumerable<ApplicationUser>> Handle(
         GetAllUsersQuery request,
         CancellationToken cancellationToken
     )
     {
-        return await _usersRepository.GetAllUsersAsync();
+        return await _usersRepository.GetUsersAsync(request.Filter);
     }
 }

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -54,7 +54,7 @@ public class DeleteGlobalPluginCommandHandler : IRequestHandler<DeleteGlobalPlug
 
             var changes = new List<LogChange>();
 
-            await _logRepository.AddGlobalPluginLogForCurrentUser(
+            await _logRepository.AddGlobalPluginLogForCurrentActor(
                 plugin,
                 Action.REMOVED_GLOBAL_PLUGIN,
                 changes
