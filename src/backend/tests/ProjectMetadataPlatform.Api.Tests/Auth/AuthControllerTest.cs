@@ -120,7 +120,9 @@ public class Tests
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.Value, Is.InstanceOf<IEnumerable<GetApiTokenDetailsResponse>>());
 
-        var getTokensResponseList = (okResult.Value as IEnumerable<GetApiTokenDetailsResponse>)!.ToList();
+        var getTokensResponseList = (
+            okResult.Value as IEnumerable<GetApiTokenDetailsResponse>
+        )!.ToList();
         Assert.That(getTokensResponseList, Is.Not.Null);
 
         Assert.That(getTokensResponseList, Has.Count.EqualTo(0));
@@ -153,7 +155,9 @@ public class Tests
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.Value, Is.InstanceOf<IEnumerable<GetApiTokenDetailsResponse>>());
 
-        var getTokensResponseList = (okResult.Value as IEnumerable<GetApiTokenDetailsResponse>)!.ToList();
+        var getTokensResponseList = (
+            okResult.Value as IEnumerable<GetApiTokenDetailsResponse>
+        )!.ToList();
         Assert.That(getTokensResponseList, Is.Not.Null);
 
         Assert.That(getTokensResponseList, Has.Count.EqualTo(2));

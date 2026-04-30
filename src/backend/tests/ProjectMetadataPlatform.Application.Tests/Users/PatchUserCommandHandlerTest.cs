@@ -52,7 +52,10 @@ public class PatchUserCommandHandlerTest
             Email = "candela@hip-hop.dancehall",
             IsActive = true,
             IsScimProvisioned = false,
-            Teams = new HashSet<Team>{new Team { TeamName = "Team1", BusinessUnit = "BU" }},
+            Teams = new HashSet<Team>
+            {
+                new Team { TeamName = "Team1", BusinessUnit = "BU" },
+            },
         };
         _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(false);
         _mockUsersRepo.Setup(repo => repo.GetUserByEmailAsync("123")).ReturnsAsync(user);
