@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Teams;
@@ -63,7 +64,9 @@ public class Project
     /// <summary>
     /// The company that is responsible for the project.
     /// </summary>
-    public string Company { get; set; } = "";
+    public required Company Company { get; set; }
+
+    public required int CompanyId { get; set; }
 
     /// <summary>
     /// The state of the company.

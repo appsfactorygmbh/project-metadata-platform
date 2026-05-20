@@ -21,6 +21,17 @@ public class ApplicationUserModelConfig : IEntityTypeConfiguration<ApplicationUs
         // Many to many relationship many users can support many teams
         _ = builder.HasMany(u => u.TeamSupport).WithMany(t => t.TeamSupportUsers);
 
+        _ = builder.HasOne(u => u.Company).WithMany(c => c.Users).HasForeignKey(u => u.CompanyId);
+
+        _ = builder
+            .HasOne(u => u.OfficeLocation)
+            .WithMany(c => c.Users)
+            .HasForeignKey(u => u.OfficeLocationId);
+
+        _ = builder.HasMany(u => u.BusinessUnits).WithMany(b => b.Users);
+
+        _ = builder.HasMany(u => u.Departments).WithMany(d => d.Users);
+
         _ = builder.HasIndex(u => u.EmployeeId).IsUnique();
         _ = builder.Property(e => e.EmployeeId).IsRequired();
     }

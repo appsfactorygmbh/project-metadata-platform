@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ProjectMetadataPlatform.Domain.Projects;
 
@@ -28,6 +28,12 @@ public class ProjectModelConfig : IEntityTypeConfiguration<Project>
             .HasOne(p => p.Team)
             .WithMany(t => t.Projects)
             .HasForeignKey(p => p.TeamId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        _ = builder
+            .HasOne(p => p.Company)
+            .WithMany(c => c.Projects)
+            .HasForeignKey(p => p.CompanyId)
             .OnDelete(DeleteBehavior.Restrict);
 
         _ = builder.HasIndex(p => p.Slug).IsUnique();
