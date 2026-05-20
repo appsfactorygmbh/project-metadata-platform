@@ -7,16 +7,49 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Polly;
 using Polly.Retry;
 using ProjectMetadataPlatform.Api;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Swagger;
+using ProjectMetadataPlatform.Api.Telemetry;
 using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var serviceName = "projet-metadata-platform";
+var otlpEndpoint = new Uri("http://alloy:4317");
+
+builder.Logging.AddProvider(new ActivityErrorLoggerProvider());
+
+builder
+    .Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService(serviceName))
+    .WithLogging(logging =>
+        logging.AddConsoleExporter().AddOtlpExporter(options => options.Endpoint = otlpEndpoint)
+    )
+    .WithTracing(tracing =>
+        tracing
+            .SetErrorStatusOnException()
+            .AddAspNetCoreInstrumentation(options => options.RecordException = true)
+            .AddHttpClientInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation()
+            .AddConsoleExporter()
+            .AddOtlpExporter(options => options.Endpoint = otlpEndpoint)
+    )
+    .WithMetrics(metrics =>
+        metrics
+            .AddAspNetCoreInstrumentation()
+            .AddConsoleExporter()
+            .AddOtlpExporter(options => options.Endpoint = otlpEndpoint)
+    );
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
