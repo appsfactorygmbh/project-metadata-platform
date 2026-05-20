@@ -118,4 +118,64 @@ public enum Action
     ///  Represents the action of regenerating an api token value.
     /// </summary>
     REGENERATED_API_TOKEN,
+
+    /// <summary>
+    /// Represents the action of adding a company.
+    /// </summary>
+    ADDED_COMPANY,
+
+    /// <summary>
+    /// Represents the action of updating a company.
+    /// </summary>
+    UPDATED_COMPANY,
+
+    /// <summary>
+    /// Represents the action of removing a company.
+    /// </summary>
+    REMOVED_COMPANY,
+
+    /// <summary>
+    /// Represents the action of adding a department.
+    /// </summary>
+    ADDED_DEPARTMENT,
+
+    /// <summary>
+    /// Represents the action of updating a department.
+    /// </summary>
+    UPDATED_DEPARTMENT,
+
+    /// <summary>
+    /// Represents the action of removing a department.
+    /// </summary>
+    REMOVED_DEPARTMENT,
+
+    /// <summary>
+    /// Represents the action of adding a business unit.
+    /// </summary>
+    ADDED_BUSINESS_UNIT,
+
+    /// <summary>
+    /// Represents the action of updating a business unit.
+    /// </summary>
+    UPDATED_BUSINESS_UNIT,
+
+    /// <summary>
+    /// Represents the action of removing a business unit.
+    /// </summary>
+    REMOVED_BUSINESS_UNIT,
+
+    /// <summary>
+    /// Represents the action of adding a office location.
+    /// </summary>
+    ADDED_OFFICE_LOCATION,
+
+    /// <summary>
+    /// Represents the action of updating a office location.
+    /// </summary>
+    UPDATED_OFFICE_LOCATION,
+
+    /// <summary>
+    /// Represents the action of removing a office location.
+    /// </summary>
+    REMOVED_OFFICE_LOCATION,
 }

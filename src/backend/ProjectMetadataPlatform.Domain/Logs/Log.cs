@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Departments;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
@@ -123,6 +127,66 @@ public class Log
     /// The id of the related token.
     /// </summary>
     public string? AffectedTokenName { get; set; }
+
+    /// <summary>
+    /// The Company, on which the action was taken.
+    /// </summary>
+    public Company? Company { get; set; }
+
+    /// <summary>
+    /// The Company id of the related Company.
+    /// </summary>
+    public int? CompanyId { get; set; }
+
+    /// <summary>
+    /// The Company name of the related Company.
+    /// </summary>
+    public string? CompanyName { get; set; }
+
+    /// <summary>
+    /// The Department, on which the action was taken.
+    /// </summary>
+    public Department? Department { get; set; }
+
+    /// <summary>
+    /// The Department id of the related Department.
+    /// </summary>
+    public int? DepartmentId { get; set; }
+
+    /// <summary>
+    /// The Department name of the related Department.
+    /// </summary>
+    public string? DepartmentName { get; set; }
+
+    /// <summary>
+    /// The BusinessUnit, on which the action was taken.
+    /// </summary>
+    public BusinessUnit? BusinessUnit { get; set; }
+
+    /// <summary>
+    /// The BusinessUnit id of the related BusinessUnit.
+    /// </summary>
+    public int? BusinessUnitId { get; set; }
+
+    /// <summary>
+    /// The BusinessUnit name of the related BusinessUnit.
+    /// </summary>
+    public string? BusinessUnitName { get; set; }
+
+    /// <summary>
+    /// The Office Location, on which the action was taken.
+    /// </summary>
+    public OfficeLocation? OfficeLocation { get; set; }
+
+    /// <summary>
+    /// The Office Location id of the related Office Location.
+    /// </summary>
+    public int? OfficeLocationId { get; set; }
+
+    /// <summary>
+    /// The Office Location name of the related Office Location.
+    /// </summary>
+    public string? OfficeLocationName { get; set; }
 
     /// <summary>
     /// The taken action

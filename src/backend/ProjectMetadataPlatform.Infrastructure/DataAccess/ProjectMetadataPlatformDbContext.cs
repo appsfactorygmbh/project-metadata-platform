@@ -5,8 +5,12 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Errors.BasicExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
@@ -40,6 +44,14 @@ public sealed class ProjectMetadataPlatformDbContext
     /// Represents the table for team entities.
     /// </summary>
     public DbSet<Team> Teams { get; set; }
+
+    public DbSet<Company> Companies { get; set; }
+
+    public DbSet<BusinessUnit> BusinessUnits { get; set; }
+
+    public DbSet<Department> Departments { get; set; }
+
+    public DbSet<OfficeLocation> OfficeLocations { get; set; }
 
     /// <summary>
     /// Represents the table for log entities.
@@ -85,6 +97,8 @@ public sealed class ProjectMetadataPlatformDbContext
     /// <param name="modelBuilder">The model builder used to configure the database.</param>
     private static void SeedData(ModelBuilder modelBuilder)
     {
+        var company1 = new Company { Id = 0, CompanyName = "AppsFactory" };
+        var company2 = new Company { Id = 1, CompanyName = "AppsCompany" };
         var project1 = new Project
         {
             Id = 100,
@@ -92,7 +106,8 @@ public sealed class ProjectMetadataPlatformDbContext
             Slug = "db_app",
             ClientName = "Deutsche Bahn",
             OfferId = "Offer1",
-            Company = "AppsFactory",
+            Company = company1,
+            CompanyId = company1.Id,
             CompanyState = CompanyState.INTERNAL,
             IsmsLevel = SecurityLevel.NORMAL,
         };
@@ -104,7 +119,8 @@ public sealed class ProjectMetadataPlatformDbContext
             Slug = "tagesschau_app",
             ClientName = "ARD",
             OfferId = "Offer2",
-            Company = "AppsCompany",
+            Company = company2,
+            CompanyId = company2.Id,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.HIGH,
         };
@@ -116,7 +132,8 @@ public sealed class ProjectMetadataPlatformDbContext
             Slug = "aok_bonus_app",
             ClientName = "AOK",
             OfferId = "Offer3",
-            Company = "AppsFactory",
+            Company = company1,
+            CompanyId = company1.Id,
             CompanyState = CompanyState.INTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
         };
@@ -126,7 +143,7 @@ public sealed class ProjectMetadataPlatformDbContext
         var plugin2 = new Plugin { Id = 200, PluginName = "SonarQube" };
 
         var plugin3 = new Plugin { Id = 300, PluginName = "Jira" };
-
+        _ = modelBuilder.Entity<Company>().HasData(company1, company2);
         _ = modelBuilder.Entity<Project>().HasData(project1, project2, project3);
         _ = modelBuilder.Entity<Plugin>().HasData(plugin1, plugin2, plugin3);
 

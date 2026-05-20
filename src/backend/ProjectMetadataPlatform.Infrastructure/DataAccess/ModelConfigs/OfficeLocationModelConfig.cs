@@ -1,0 +1,28 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Departments;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
+
+namespace ProjectMetadataPlatform.Infrastructure.DataAccess.ModelConfigs;
+
+public class OfficeLocationModelConfig : IEntityTypeConfiguration<OfficeLocation>
+{
+    /// <summary>
+    /// Configures the Office Location entity.
+    /// </summary>
+    /// <param name="builder"></param>
+    public void Configure(EntityTypeBuilder<OfficeLocation> builder)
+    {
+        _ = builder.HasKey(o => o.Id);
+
+        _ = builder.HasIndex(o => o.OfficeLocationName).IsUnique();
+
+        _ = builder
+            .HasMany(o => o.Users)
+            .WithOne(u => u.OfficeLocation)
+            .HasForeignKey(u => u.OfficeLocationId);
+    }
+}
