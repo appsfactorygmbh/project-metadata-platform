@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using MediatR;
-using ProjectMetadataPlatform.Domain.Auth;
+﻿using MediatR;
 
 namespace ProjectMetadataPlatform.Application.Auth;
 

@@ -64,7 +64,7 @@ public class Project
     /// <summary>
     /// The company that is responsible for the project.
     /// </summary>
-    public required Company Company { get; set; }
+    public Company? Company { get; set; }
 
     public required int CompanyId { get; set; }
 

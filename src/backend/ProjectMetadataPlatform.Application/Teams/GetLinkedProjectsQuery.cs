@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using MediatR;
-using ProjectMetadataPlatform.Domain.Teams;
 
 namespace ProjectMetadataPlatform.Application.Teams;
 

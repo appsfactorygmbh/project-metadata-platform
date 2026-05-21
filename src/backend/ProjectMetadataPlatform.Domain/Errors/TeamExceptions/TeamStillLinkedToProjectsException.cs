@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using ProjectMetadataPlatform.Domain.Projects;
+﻿using System.Collections.Generic;
 using ProjectMetadataPlatform.Domain.Teams;
 
 namespace ProjectMetadataPlatform.Domain.Errors.TeamExceptions;

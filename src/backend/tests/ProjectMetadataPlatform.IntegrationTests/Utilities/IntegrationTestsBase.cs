@@ -14,7 +14,6 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Auth.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Domain.Auth;
-using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 
 namespace ProjectMetadataPlatform.IntegrationTests.Utilities;
