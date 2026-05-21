@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
-using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 
 namespace ProjectMetadataPlatform.Application.Auth;
 

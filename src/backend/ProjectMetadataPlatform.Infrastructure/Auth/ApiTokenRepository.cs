@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
-using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
-using ProjectMetadataPlatform.Infrastructure.Projects;
 
 namespace ProjectMetadataPlatform.Infrastructure.Auth;
 

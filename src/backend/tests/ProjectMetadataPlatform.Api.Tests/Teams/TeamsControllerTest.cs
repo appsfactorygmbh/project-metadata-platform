@@ -13,8 +13,6 @@ using ProjectMetadataPlatform.Api.Teams;
 using ProjectMetadataPlatform.Api.Teams.Models;
 using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Application.Teams;
-using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
-using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Teams;
 

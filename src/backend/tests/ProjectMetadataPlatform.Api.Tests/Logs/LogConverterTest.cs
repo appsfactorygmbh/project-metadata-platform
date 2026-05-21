@@ -1,6 +1,4 @@
 ﻿using System;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Logs;
 using ProjectMetadataPlatform.Domain.Auth;

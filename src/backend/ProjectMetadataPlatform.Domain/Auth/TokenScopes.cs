@@ -1,8 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Identity;
-using ProjectMetadataPlatform.Domain.Users;
-
-namespace ProjectMetadataPlatform.Domain.Auth;
+﻿namespace ProjectMetadataPlatform.Domain.Auth;
 
 /// <summary>
 /// Enum representing different scopes for api tokens.

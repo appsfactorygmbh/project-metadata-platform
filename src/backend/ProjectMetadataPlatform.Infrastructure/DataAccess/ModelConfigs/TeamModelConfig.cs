@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Teams;
 
 namespace ProjectMetadataPlatform.Infrastructure.DataAccess.ModelConfigs;

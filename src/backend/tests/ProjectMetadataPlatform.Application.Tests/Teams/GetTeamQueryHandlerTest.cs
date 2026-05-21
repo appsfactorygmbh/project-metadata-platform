@@ -4,7 +4,6 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Teams;
-using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Teams;
 
 namespace ProjectMetadataPlatform.Application.Tests.Teams;

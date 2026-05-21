@@ -1,6 +1,5 @@
 using ProjectMetadataPlatform.Api.Teams.Models;
 using ProjectMetadataPlatform.Domain.Projects;
-using ProjectMetadataPlatform.Domain.Teams;
 
 namespace ProjectMetadataPlatform.Api.Projects.Models;
 

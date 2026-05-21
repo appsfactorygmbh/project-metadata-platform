@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
-using ProjectMetadataPlatform.Domain.Projects;
-using ProjectMetadataPlatform.Domain.Teams;
 
 namespace ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 

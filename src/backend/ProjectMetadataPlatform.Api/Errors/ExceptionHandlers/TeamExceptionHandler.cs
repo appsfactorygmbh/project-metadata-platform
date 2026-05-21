@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Interfaces;
-using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 
 namespace ProjectMetadataPlatform.Api.Errors.ExceptionHandlers;
 
