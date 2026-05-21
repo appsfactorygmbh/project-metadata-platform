@@ -60,7 +60,14 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
             }
         }
 
-        return await filteredQuery.Include(p => p.Teams).Include(u => u.TeamSupport).ToListAsync();
+        return await filteredQuery
+            .Include(p => p.Teams)
+            .Include(u => u.TeamSupport)
+            .Include(u => u.Company)
+            .Include(u => u.BusinessUnits)
+            .Include(u => u.Departments)
+            .Include(u => u.OfficeLocation)
+            .ToListAsync();
     }
 
     /// <summary>
@@ -73,6 +80,10 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
         return await _context
                 .Users.Include(p => p.Teams)
                 .Include(u => u.TeamSupport)
+                .Include(u => u.Company)
+                .Include(u => u.BusinessUnits)
+                .Include(u => u.Departments)
+                .Include(u => u.OfficeLocation)
                 .FirstOrDefaultAsync(u => u.Email == email)
             ?? throw new UserNotFoundException(email);
     }
@@ -105,6 +116,10 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
         return await _context
                 .Users.Include(p => p.Teams)
                 .Include(u => u.TeamSupport)
+                .Include(u => u.Company)
+                .Include(u => u.BusinessUnits)
+                .Include(u => u.Departments)
+                .Include(u => u.OfficeLocation)
                 .FirstOrDefaultAsync(u => u.EmployeeId == id)
             ?? throw new UserNotFoundException(id);
     }

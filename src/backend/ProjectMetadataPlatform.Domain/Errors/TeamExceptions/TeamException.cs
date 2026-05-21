@@ -1,4 +1,4 @@
-namespace ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
+﻿namespace ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 
 /// <summary>
 /// Represents an abstract base class for project-related exceptions, used to mark exceptions that are related to teams and need specific error responses.
