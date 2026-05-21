@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
 
-namespace ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
+namespace ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 
 /// <summary>
 /// Exception thrown when a project is not archived when trying to delete it.

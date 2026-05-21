@@ -1,6 +1,6 @@
 ﻿using ProjectMetadataPlatform.Domain.Errors.BasicExceptions;
 
-namespace ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
+namespace ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 
 /// <summary>
 /// Exception thrown when a team is not found.
