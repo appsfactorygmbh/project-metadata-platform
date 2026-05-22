@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
@@ -57,6 +61,22 @@ public interface ILogRepository
     /// <param name="changes">A list of the changed properties.</param>
     /// <returns></returns>
     Task AddTeamLogForCurrentActor(Team team, Action action, List<LogChange> changes);
+
+    Task AddBusinessUnitLogForCurrentActor(BusinessUnit bu, Action action, List<LogChange> changes);
+
+    Task AddDepartmentLogForCurrentActor(
+        Department department,
+        Action action,
+        List<LogChange> changes
+    );
+
+    Task AddCompanyLogForCurrentActor(Company company, Action action, List<LogChange> changes);
+
+    Task AddOfficeLocationLogForCurrentActor(
+        OfficeLocation officeLocation,
+        Action action,
+        List<LogChange> changes
+    );
 
     /// <summary>
     /// Adds Logs for changes made to a api token. Sets the current User or Token as the Author.

@@ -17,6 +17,7 @@ namespace ProjectMetadataPlatform.Application.Users;
 /// <param name="BusinessUnits">List of BUs the user belongs to.</param>
 /// <param name="JobTitles">List of jobtitles of the user.</param>
 /// <param name="Departments">List of departments the user belongs to.</param>
+/// <param name="OfficeLocation">Office Location of the user.</param>
 /// <param name="Company">Name of the Company the user belongs to.</param>
 public record CreateUserCommand(
     string EmployeeId,
@@ -29,5 +30,6 @@ public record CreateUserCommand(
     List<string>? BusinessUnits,
     List<string>? JobTitles,
     List<string>? Departments,
+    string OfficeLocation,
     string? Company
 ) : IRequest<ApplicationUser>;

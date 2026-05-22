@@ -6,8 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Domain.Users;
 
@@ -19,8 +23,11 @@ namespace ProjectMetadataPlatform.Application.Users;
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, ApplicationUser>
 {
     private readonly IUsersRepository _usersRepository;
+    private readonly IDepartmentRepository _departmentRepository;
+    private readonly IBusinessUnitRepository _businessUnitRepository;
+    private readonly IOfficeLocationRepository _officeLocationRepository;
+    private readonly ICompanyRepository _companyRepository;
     private readonly ILogRepository _logRepository;
-
     private readonly ITeamRepository _teamRepository;
     private readonly IUnitOfWork _unitOfWork;
 
@@ -30,17 +37,29 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
     /// <param name="usersRepository">Repository for accessing user data.</param>
     /// <param name="logRepository">Repository for logging data.</param>
     /// <param name="teamRepository">Repository for accessing team data.</param>
+    /// <param name="departmentRepository">Repository for accessing department data.</param>
+    /// <param name="businessUnitRepository">Repository for accessing bu data.</param>
+    /// <param name="officeLocationRepository">Repository for accessing office location data.</param>
+    /// <param name="companyRepository">Repository for accessing company data.</param>
     /// <param name="unitOfWork">Unit of work for managing transactions.</param>
     public CreateUserCommandHandler(
         IUsersRepository usersRepository,
         ILogRepository logRepository,
         ITeamRepository teamRepository,
+        IDepartmentRepository departmentRepository,
+        IBusinessUnitRepository businessUnitRepository,
+        IOfficeLocationRepository officeLocationRepository,
+        ICompanyRepository companyRepository,
         IUnitOfWork unitOfWork
     )
     {
         _usersRepository = usersRepository;
         _logRepository = logRepository;
         _teamRepository = teamRepository;
+        _businessUnitRepository = businessUnitRepository;
+        _companyRepository = companyRepository;
+        _officeLocationRepository = officeLocationRepository;
+        _departmentRepository = departmentRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -81,6 +100,23 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
             teamSupport.Add(teamObject);
         }
 
+        Collection<Department> departments = [];
+        foreach (var department in request.Departments ?? [])
+        {
+            var departmentObject = await GetOrCreateDepartment(department);
+            departments.Add(departmentObject);
+        }
+        Collection<BusinessUnit> businessUnits = [];
+        foreach (var bu in request.BusinessUnits ?? [])
+        {
+            var buObject = await GetOrCreateBusinessUnit(bu);
+            businessUnits.Add(buObject);
+        }
+        var company = request.Company == null ? null : await GetOrCreateCompany(request.Company);
+        var officeLocation =
+            request.OfficeLocation == null
+                ? null
+                : await GetOrCreateOfficeLocation(request.OfficeLocation);
         // Uses Email as Username because: Username cant be empty + Username cant be duplicate.
         var user = new ApplicationUser
         {
@@ -89,18 +125,125 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
             UserName = request.Email,
             IsActive = request.IsActive,
             IsScimProvisioned = request.IsScimProvisioned,
-            BusinessUnits = request.BusinessUnits?.Any() == true ? request.BusinessUnits : null,
-            Company = request.Company,
-            Departments = request.Departments?.Any() == true ? request.Departments : null,
+            BusinessUnits = businessUnits.Any() ? businessUnits : null,
+            Company = company,
+            Departments = departments?.Any() == true ? departments : null,
             Teams = teams.Any() ? teams : null,
             TeamSupport = teamSupport.Any() ? teamSupport : null,
             JobTitles = request.JobTitles?.Any() == true ? request.JobTitles : null,
+            OfficeLocation = officeLocation,
         };
         await AddCreatedUserLog(user);
         _ = await _usersRepository.CreateUserAsync(user, request.Password);
 
         await _unitOfWork.CompleteAsync();
         return user;
+    }
+
+    private async Task<Department> GetOrCreateDepartment(string departmentName)
+    {
+        if (await _departmentRepository.CheckIfDepartmentNameExistsAsync(departmentName))
+        {
+            return await _departmentRepository.GetDepartmentByNameAsync(departmentName);
+        }
+        else
+        {
+            var department = new Department { DepartmentName = departmentName };
+            await _logRepository.AddDepartmentLogForCurrentActor(
+                department,
+                Domain.Logs.Action.ADDED_DEPARTMENT,
+                [
+                    new LogChange
+                    {
+                        OldValue = "",
+                        NewValue = department.DepartmentName,
+                        Property = nameof(Department.DepartmentName),
+                    },
+                ]
+            );
+            await _departmentRepository.AddDepartmentAsync(department);
+            return department;
+        }
+    }
+
+    private async Task<BusinessUnit> GetOrCreateBusinessUnit(string buName)
+    {
+        if (await _businessUnitRepository.CheckIfBusinessUnitNameExistsAsync(buName))
+        {
+            return await _businessUnitRepository.GetBusinessUnitByNameAsync(buName);
+        }
+        else
+        {
+            var bu = new BusinessUnit { BusinessUnitName = buName };
+            await _logRepository.AddBusinessUnitLogForCurrentActor(
+                bu,
+                Domain.Logs.Action.ADDED_BUSINESS_UNIT,
+                [
+                    new LogChange
+                    {
+                        OldValue = "",
+                        NewValue = bu.BusinessUnitName,
+                        Property = nameof(BusinessUnit.BusinessUnitName),
+                    },
+                ]
+            );
+            await _businessUnitRepository.AddBusinessUnitAsync(bu);
+            return bu;
+        }
+    }
+
+    private async Task<OfficeLocation> GetOrCreateOfficeLocation(string officeLocationName)
+    {
+        if (
+            await _officeLocationRepository.CheckIfOfficeLocationNameExistsAsync(officeLocationName)
+        )
+        {
+            return await _officeLocationRepository.GetOfficeLocationByNameAsync(officeLocationName);
+        }
+        else
+        {
+            var officeLocation = new OfficeLocation { OfficeLocationName = officeLocationName };
+            await _logRepository.AddOfficeLocationLogForCurrentActor(
+                officeLocation,
+                Domain.Logs.Action.ADDED_OFFICE_LOCATION,
+                [
+                    new LogChange
+                    {
+                        OldValue = "",
+                        NewValue = officeLocation.OfficeLocationName,
+                        Property = nameof(OfficeLocation.OfficeLocationName),
+                    },
+                ]
+            );
+            await _officeLocationRepository.AddOfficeLocationAsync(officeLocation);
+            return officeLocation;
+        }
+    }
+
+    private async Task<Company> GetOrCreateCompany(string companyName)
+    {
+        if (await _companyRepository.CheckIfCompanyNameExistsAsync(companyName))
+        {
+            return await _companyRepository.GetCompanyByNameAsync(companyName);
+        }
+        else
+        {
+            var company = new Company { CompanyName = companyName };
+            await _logRepository.AddCompanyLogForCurrentActor(
+                company,
+                Domain.Logs.Action.ADDED_COMPANY,
+                [
+                    new LogChange
+                    {
+                        OldValue = "",
+                        NewValue = company.CompanyName,
+                        Property = nameof(Company.CompanyName),
+                    },
+                ]
+            );
+            await _companyRepository.AddCompanyAsync(company);
+            return company;
+        }
     }
 
     /// <summary>
@@ -178,7 +321,10 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
                 new()
                 {
                     OldValue = "",
-                    NewValue = String.Join(", ", user.BusinessUnits),
+                    NewValue = String.Join(
+                        ", ",
+                        user.BusinessUnits.Select(b => b.BusinessUnitName)
+                    ),
                     Property = nameof(ApplicationUser.BusinessUnits),
                 }
             );
@@ -200,7 +346,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
                 new()
                 {
                     OldValue = "",
-                    NewValue = String.Join(", ", user.Departments),
+                    NewValue = String.Join(", ", user.Departments.Select(d => d.DepartmentName)),
                     Property = nameof(ApplicationUser.Departments),
                 }
             );
@@ -211,8 +357,19 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
                 new()
                 {
                     OldValue = "",
-                    NewValue = user.Company,
+                    NewValue = user.Company.CompanyName,
                     Property = nameof(ApplicationUser.Company),
+                }
+            );
+        }
+        if (user.OfficeLocation != null)
+        {
+            changes.Add(
+                new()
+                {
+                    OldValue = "",
+                    NewValue = user.OfficeLocation.OfficeLocationName,
+                    Property = nameof(ApplicationUser.OfficeLocation),
                 }
             );
         }

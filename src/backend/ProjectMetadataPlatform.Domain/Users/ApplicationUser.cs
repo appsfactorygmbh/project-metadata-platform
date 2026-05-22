@@ -41,7 +41,7 @@ public class ApplicationUser : IdentityUser
     /// <summary>
     /// List of BUs of the user.
     /// </summary>
-    public ICollection<BusinessUnit> BusinessUnits { get; set; }
+    public ICollection<BusinessUnit>? BusinessUnits { get; set; }
 
     /// <summary>
     /// List of jobtitles of the user.

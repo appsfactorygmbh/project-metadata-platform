@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
+using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
@@ -24,6 +24,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
     private readonly IProjectsRepository _projectsRepository;
     private readonly IPluginRepository _pluginRepository;
     private readonly ITeamRepository _teamRepository;
+    private readonly ICompanyRepository _companyRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
 
@@ -34,6 +35,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
         IProjectsRepository projectsRepository,
         IPluginRepository pluginRepository,
         ITeamRepository teamRepository,
+        ICompanyRepository companyRepository,
         ILogRepository logRepository,
         IUnitOfWork unitOfWork
     )
@@ -41,6 +43,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
         _projectsRepository = projectsRepository;
         _pluginRepository = pluginRepository;
         _teamRepository = teamRepository;
+        _companyRepository = companyRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
     }
@@ -181,16 +184,20 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
             project.OfferId = request.OfferId;
         }
 
-        if (project.Company != request.Company)
+        if (project.CompanyId != request.CompanyId)
         {
+            if (!await _companyRepository.CheckIfCompanyExistsAsync(request.CompanyId))
+            {
+                throw new CompanyNotFoundException(request.CompanyId);
+            }
             var change = new LogChange
             {
-                Property = nameof(Project.Company),
-                OldValue = project.Company,
-                NewValue = request.Company,
+                Property = nameof(project.Company),
+                OldValue = project.Company!.CompanyName,
+                NewValue = await _companyRepository.RetrieveNameForIdAsync(request.CompanyId),
             };
             changes.Add(change);
-            project.Company = request.Company;
+            project.CompanyId = request.CompanyId;
         }
 
         if (project.CompanyState != request.CompanyState)

@@ -6,9 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 using ProjectMetadataPlatform.Domain.Errors.LogExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
@@ -55,6 +59,18 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
         { Action.ADDED_API_TOKEN, "created a new API token with properties: ," },
         { Action.REGENERATED_API_TOKEN, "regenerated the API token" },
         { Action.REMOVED_API_TOKEN, "removed the API token with properties: ," },
+        { Action.ADDED_COMPANY, "created a new company with properties: ," },
+        { Action.UPDATED_COMPANY, "updated company properties: set from to," },
+        { Action.REMOVED_COMPANY, "removed company" },
+        { Action.ADDED_BUSINESS_UNIT, "created a new business unit with properties: ," },
+        { Action.UPDATED_BUSINESS_UNIT, "updated business unit properties: set from to," },
+        { Action.REMOVED_BUSINESS_UNIT, "removed business unit" },
+        { Action.ADDED_DEPARTMENT, "created a new department with properties: ," },
+        { Action.UPDATED_DEPARTMENT, "updated department properties: set from to," },
+        { Action.REMOVED_DEPARTMENT, "removed department" },
+        { Action.ADDED_OFFICE_LOCATION, "created a new office location with properties: ," },
+        { Action.UPDATED_OFFICE_LOCATION, "updated office location properties: set from to," },
+        { Action.REMOVED_OFFICE_LOCATION, "removed office location" },
     };
 
     /// <summary>
@@ -198,6 +214,114 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
         log.Team = team;
         log.TeamId = team.Id;
         log.TeamName = team.TeamName;
+        _ = _context.Logs.Add(log);
+    }
+
+    ///  <inheritdoc />
+    public async Task AddBusinessUnitLogForCurrentActor(
+        BusinessUnit bu,
+        Action action,
+        List<LogChange> changes
+    )
+    {
+        var actionWhiteList = new List<Action>
+        {
+            Action.ADDED_BUSINESS_UNIT,
+            Action.UPDATED_BUSINESS_UNIT,
+            Action.REMOVED_BUSINESS_UNIT,
+        };
+
+        if (!actionWhiteList.Contains(action))
+        {
+            throw new LogActionNotSupportedException(action, nameof(bu));
+        }
+
+        var log = await PrepareGenericLogForCurrentActor(action, changes);
+
+        log.BusinessUnit = bu;
+        log.BusinessUnitId = bu.Id;
+        log.BusinessUnitName = bu.BusinessUnitName;
+        _ = _context.Logs.Add(log);
+    }
+
+    ///  <inheritdoc />
+    public async Task AddDepartmentLogForCurrentActor(
+        Department department,
+        Action action,
+        List<LogChange> changes
+    )
+    {
+        var actionWhiteList = new List<Action>
+        {
+            Action.ADDED_DEPARTMENT,
+            Action.UPDATED_DEPARTMENT,
+            Action.REMOVED_DEPARTMENT,
+        };
+
+        if (!actionWhiteList.Contains(action))
+        {
+            throw new LogActionNotSupportedException(action, nameof(department));
+        }
+
+        var log = await PrepareGenericLogForCurrentActor(action, changes);
+
+        log.Department = department;
+        log.DepartmentId = department.Id;
+        log.DepartmentName = department.DepartmentName;
+        _ = _context.Logs.Add(log);
+    }
+
+    ///  <inheritdoc />
+    public async Task AddCompanyLogForCurrentActor(
+        Company company,
+        Action action,
+        List<LogChange> changes
+    )
+    {
+        var actionWhiteList = new List<Action>
+        {
+            Action.ADDED_COMPANY,
+            Action.UPDATED_COMPANY,
+            Action.REMOVED_COMPANY,
+        };
+
+        if (!actionWhiteList.Contains(action))
+        {
+            throw new LogActionNotSupportedException(action, nameof(company));
+        }
+
+        var log = await PrepareGenericLogForCurrentActor(action, changes);
+
+        log.Company = company;
+        log.CompanyId = company.Id;
+        log.CompanyName = company.CompanyName;
+        _ = _context.Logs.Add(log);
+    }
+
+    ///  <inheritdoc />
+    public async Task AddOfficeLocationLogForCurrentActor(
+        OfficeLocation officeLocation,
+        Action action,
+        List<LogChange> changes
+    )
+    {
+        var actionWhiteList = new List<Action>
+        {
+            Action.ADDED_OFFICE_LOCATION,
+            Action.UPDATED_OFFICE_LOCATION,
+            Action.REMOVED_OFFICE_LOCATION,
+        };
+
+        if (!actionWhiteList.Contains(action))
+        {
+            throw new LogActionNotSupportedException(action, nameof(officeLocation));
+        }
+
+        var log = await PrepareGenericLogForCurrentActor(action, changes);
+
+        log.OfficeLocation = officeLocation;
+        log.OfficeLocationId = officeLocation.Id;
+        log.OfficeLocationName = officeLocation.OfficeLocationName;
         _ = _context.Logs.Add(log);
     }
 
@@ -363,7 +487,6 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
     ///  <inheritdoc />
     public async Task<List<Log>> GetLogsForUser(string userId)
     {
-        var test = await _context.Logs.ToListAsync();
         var res = _context
             .Logs.Include(l => l.Changes)
             .Include(l => l.AffectedUser)
@@ -392,6 +515,11 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
             await GetEverything()
                 .Include(log => log.Project)
                 .Include(log => log.Team)
+                .Include(log => log.AffectedToken)
+                .Include(log => log.Company)
+                .Include(log => log.Department)
+                .Include(log => log.BusinessUnit)
+                .Include(log => log.OfficeLocation)
                 .Include(log => log.Author)
                 .Include(l => l.AuthorToken)
                 .Include(log => log.Changes)
