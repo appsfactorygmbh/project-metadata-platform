@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Plugins;
+using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
@@ -19,6 +20,7 @@ namespace ProjectMetadataPlatform.Application.Teams;
 public class PatchTeamCommandHandler : IRequestHandler<PatchTeamCommand, Team>
 {
     private readonly ITeamRepository _teamRepository;
+    private readonly IBusinessUnitRepository _businessUnitRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
 
@@ -30,11 +32,13 @@ public class PatchTeamCommandHandler : IRequestHandler<PatchTeamCommand, Team>
     /// <param name="unitOfWork">The unit of work to use for transactional operations.</param>
     public PatchTeamCommandHandler(
         ITeamRepository teamRepository,
+        IBusinessUnitRepository businessUnitRepository,
         ILogRepository logRepository,
         IUnitOfWork unitOfWork
     )
     {
         _teamRepository = teamRepository;
+        _businessUnitRepository = businessUnitRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
     }
@@ -69,17 +73,27 @@ public class PatchTeamCommandHandler : IRequestHandler<PatchTeamCommand, Team>
             );
             team.TeamName = request.TeamName;
         }
-        if (request.BusinessUnit != null && request.BusinessUnit != team.BusinessUnit)
+        if (request.BusinessUnitId != null && request.BusinessUnitId != team.BusinessUnitId)
         {
+            if (
+                !await _businessUnitRepository.CheckIfBusinessUnitExistsAsync(
+                    request.BusinessUnitId.Value
+                )
+            )
+            {
+                throw new BusinessUnitNotFoundException(request.BusinessUnitId.Value);
+            }
             changesLogs.Add(
                 new()
                 {
                     Property = nameof(team.BusinessUnit),
-                    OldValue = team.BusinessUnit,
-                    NewValue = request.BusinessUnit,
+                    OldValue = team.BusinessUnit!.BusinessUnitName,
+                    NewValue = await _businessUnitRepository.RetrieveNameForIdAsync(
+                        request.BusinessUnitId.Value
+                    ),
                 }
             );
-            team.BusinessUnit = request.BusinessUnit;
+            team.BusinessUnitId = request.BusinessUnitId.Value;
         }
         if (request.PTL != null && request.PTL != team.PTL)
         {

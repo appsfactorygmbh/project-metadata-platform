@@ -1,8 +1,9 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Teams;
@@ -15,6 +16,8 @@ namespace ProjectMetadataPlatform.Application.Teams;
 public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, int>
 {
     private readonly ITeamRepository _teamRepository;
+
+    private readonly IBusinessUnitRepository _businessUnitRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
 
@@ -22,15 +25,18 @@ public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, int>
     /// Creates a new instance of<see cref="CreateTeamCommandHandler" />.
     /// </summary>
     /// <param name="teamRepository">The repository for managing teams.</param>
+    /// <param name="businessUnitRepository">The repository for managing bus.</param>
     /// <param name="logRepository">The repository for managing logs.</param>
     /// <param name="unitOfWork">The unit of work for managing transactions.</param>
     public CreateTeamCommandHandler(
         ITeamRepository teamRepository,
+        IBusinessUnitRepository businessUnitRepository,
         ILogRepository logRepository,
         IUnitOfWork unitOfWork
     )
     {
         _teamRepository = teamRepository;
+        _businessUnitRepository = businessUnitRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
     }
@@ -49,10 +55,15 @@ public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, int>
             throw new TeamNameAlreadyExistsException(request.TeamName);
         }
 
+        if (!await _businessUnitRepository.CheckIfBusinessUnitExistsAsync(request.BusinessUnitId))
+        {
+            throw new BusinessUnitNotFoundException(request.BusinessUnitId);
+        }
+
         var team = new Team
         {
             TeamName = request.TeamName,
-            BusinessUnit = request.BusinessUnit,
+            BusinessUnitId = request.BusinessUnitId,
             PTL = request.PTL,
         };
 
@@ -77,7 +88,9 @@ public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, int>
             {
                 Property = nameof(Team.BusinessUnit),
                 OldValue = "",
-                NewValue = request.BusinessUnit,
+                NewValue = await _businessUnitRepository.RetrieveNameForIdAsync(
+                    request.BusinessUnitId
+                ),
             },
         };
 
