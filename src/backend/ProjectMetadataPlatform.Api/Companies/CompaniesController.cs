@@ -11,7 +11,7 @@ using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Teams.Models;
 using ProjectMetadataPlatform.Application.Companies;
 using ProjectMetadataPlatform.Domain.Auth;
-using GetLinkedProjectsResponse = ProjectMetadataPlatform.Api.Companies.Models.GetLinkedProjectsResponse;
+using GetLinkedProjectsForCompanyResponse = ProjectMetadataPlatform.Api.Companies.Models.GetLinkedProjectsForCompanyResponse;
 
 namespace ProjectMetadataPlatform.Api.Companies;
 
@@ -52,10 +52,7 @@ public class CompaniesController : ControllerBase
     {
         var query = new GetCompanyQuery(id);
         var company = await _mediator.Send(query);
-        var response = new GetCompanyResponse(
-            Id: company.Id,
-            CompanyName: company.CompanyName
-        );
+        var response = new GetCompanyResponse(Id: company.Id, CompanyName: company.CompanyName);
 
         return Ok(response);
     }
@@ -90,16 +87,10 @@ public class CompaniesController : ControllerBase
         [FromBody] UpdateCompanyRequest request
     )
     {
-        var command = new UpdateCompanyCommand(
-            Id: id,
-            CompanyName: request.CompanyName
-        );
+        var command = new UpdateCompanyCommand(Id: id, CompanyName: request.CompanyName);
         var company = await _mediator.Send(command);
 
-        var response = new GetCompanyResponse(
-            Id: company.Id,
-            CompanyName: company.CompanyName
-        );
+        var response = new GetCompanyResponse(Id: company.Id, CompanyName: company.CompanyName);
 
         return Ok(response);
     }
@@ -118,14 +109,14 @@ public class CompaniesController : ControllerBase
     }
 
     [HttpGet("{id:int}/linkedProjects")]
-    [ProducesResponseType(typeof(GetLinkedProjectsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetLinkedProjectsForCompanyResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GetLinkedProjectsResponse>> GetLinkedProjects(int id)
+    public async Task<ActionResult<GetLinkedProjectsForCompanyResponse>> GetLinkedProjects(int id)
     {
         var command = new GetLinkedProjectsQuery(id);
 
         var slugList = await _mediator.Send(command);
 
-        return Ok(new GetLinkedProjectsResponse(slugList));
+        return Ok(new GetLinkedProjectsForCompanyResponse(slugList));
     }
 }
