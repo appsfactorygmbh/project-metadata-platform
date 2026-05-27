@@ -60,7 +60,7 @@ public class CreateBusinessUnitCommandHandler : IRequestHandler<CreateBusinessUn
 
         await _logRepository.AddBusinessUnitLogForCurrentActor(
             department,
-            Action.ADDED_DEPARTMENT,
+            Action.ADDED_BUSINESS_UNIT,
             logChanges
         );
     }

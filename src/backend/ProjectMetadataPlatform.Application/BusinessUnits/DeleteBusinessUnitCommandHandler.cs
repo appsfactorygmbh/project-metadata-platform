@@ -41,7 +41,7 @@ public class DeleteBusinessUnitCommandHandler : IRequestHandler<DeleteBusinessUn
         _ = await _businessUnitRepository.DeleteBusinessUnitAsync(businessUnit);
         await _logRepository.AddBusinessUnitLogForCurrentActor(
             businessUnit,
-            Action.REMOVED_DEPARTMENT,
+            Action.REMOVED_BUSINESS_UNIT,
             []
         );
         await _unitOfWork.CompleteAsync();

@@ -69,7 +69,7 @@ public class UpdateBusinessUnitCommandHandler
             );
             await _logRepository.AddBusinessUnitLogForCurrentActor(
                 bu: businessUnit,
-                action: Action.UPDATED_DEPARTMENT,
+                action: Action.UPDATED_BUSINESS_UNIT,
                 logChanges
             );
             await _unitOfWork.CompleteAsync();
