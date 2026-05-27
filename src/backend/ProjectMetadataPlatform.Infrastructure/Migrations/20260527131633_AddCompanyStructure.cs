@@ -316,6 +316,24 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
             migrationBuilder.Sql(
                 @"
+    INSERT INTO ""Companies"" (""CompanyName"")
+    SELECT DISTINCT ""Company"" FROM ""AspNetUsers""
+    WHERE ""Company"" IS NOT NULL
+      AND ""Company"" <> ''
+      AND ""Company"" NOT IN (SELECT ""CompanyName"" FROM ""Companies"");
+
+
+    UPDATE ""AspNetUsers""
+    SET ""CompanyId"" = (
+        SELECT ""Id""
+        FROM ""Companies""
+        WHERE ""Companies"".""CompanyName"" = ""AspNetUsers"".""Company""
+    );
+"
+            );
+
+            migrationBuilder.Sql(
+                @"
         INSERT INTO ""BusinessUnits"" (""BusinessUnitName"")
         SELECT DISTINCT ""BusinessUnit"" FROM ""Teams"" WHERE ""BusinessUnit"" IS NOT NULL AND ""BusinessUnit"" <> '';
 
@@ -327,17 +345,30 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
             {
                 migrationBuilder.Sql(
                     @"
-        -- Extract distinct departments from the text[] array
+
         INSERT INTO ""Departments"" (""DepartmentName"")
         SELECT DISTINCT unnest(""Departments"") FROM ""AspNetUsers"" WHERE ""Departments"" IS NOT NULL;
 
-        -- Map users to departments in the junction table
+
         INSERT INTO ""ApplicationUserDepartment"" (""UsersId"", ""DepartmentsId"")
         SELECT u.""Id"", d.""Id""
         FROM ""AspNetUsers"" u
         CROSS JOIN unnest(u.""Departments"") AS dept_name
         JOIN ""Departments"" d ON d.""DepartmentName"" = dept_name;
-    "
+
+
+        INSERT INTO ""BusinessUnits"" (""BusinessUnitName"")
+        SELECT DISTINCT bu_name
+        FROM ""AspNetUsers"" u
+        CROSS JOIN unnest(u.""BusinessUnits"") AS bu_name
+        WHERE bu_name NOT IN (SELECT ""BusinessUnitName"" FROM ""BusinessUnits"");
+
+        INSERT INTO ""ApplicationUserBusinessUnit"" (""UsersId"", ""BusinessUnitsId"")
+        SELECT u.""Id"", bu.""Id""
+        FROM ""AspNetUsers"" u
+        CROSS JOIN unnest(u.""BusinessUnits"") AS bu_name
+        JOIN ""BusinessUnits"" bu ON bu.""BusinessUnitName"" = bu_name;
+        "
                 );
             }
 
@@ -588,6 +619,16 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
             WHERE ""BusinessUnits"".""Id"" = ""Teams"".""BusinessUnitId""
         );
     "
+            );
+            migrationBuilder.Sql(
+                @"
+    UPDATE ""AspNetUsers""
+    SET ""Company"" = (
+        SELECT ""CompanyName""
+        FROM ""Companies""
+        WHERE ""Companies"".""Id"" = ""AspNetUsers"".""CompanyId""
+    );
+"
             );
             if (migrationBuilder.ActiveProvider == "Npgsql.EntityFrameworkCore.PostgreSQL")
             {
