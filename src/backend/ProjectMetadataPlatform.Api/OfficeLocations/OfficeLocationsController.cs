@@ -80,7 +80,7 @@ public class OfficeLocationsController : ControllerBase
         var locationId = await _mediator.Send(command);
 
         var response = new CreateTeamResponse(locationId);
-        var uri = "OfficeLocation/" + locationId;
+        var uri = "OfficeLocations/" + locationId;
         return Created(uri, response);
     }
 
