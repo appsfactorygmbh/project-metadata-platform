@@ -117,14 +117,14 @@ public class BusinessUnitsController : ControllerBase
     }
 
     [HttpGet("{id:int}/linkedTeams")]
-    [ProducesResponseType(typeof(GetLinkedTeamsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetLinkedTeamsForBusinessUnitResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GetLinkedTeamsResponse>> GetLinkedTeams(int id)
+    public async Task<ActionResult<GetLinkedTeamsForBusinessUnitResponse>> GetLinkedTeams(int id)
     {
         var command = new GetLinkedTeamsQuery(id);
 
         var idList = await _mediator.Send(command);
 
-        return Ok(new GetLinkedTeamsResponse(idList));
+        return Ok(new GetLinkedTeamsForBusinessUnitResponse(idList));
     }
 }

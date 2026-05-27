@@ -96,8 +96,8 @@ public sealed class ProjectMetadataPlatformDbContext
     /// <param name="modelBuilder">The model builder used to configure the database.</param>
     private static void SeedData(ModelBuilder modelBuilder)
     {
-        var company1 = new Company { Id = 0, CompanyName = "AppsFactory" };
-        var company2 = new Company { Id = 1, CompanyName = "AppsCompany" };
+        var company1 = new Company { Id = 1, CompanyName = "AppsFactory" };
+        var company2 = new Company { Id = 2, CompanyName = "AppsCompany" };
         var project1 = new Project
         {
             Id = 100,
@@ -105,7 +105,6 @@ public sealed class ProjectMetadataPlatformDbContext
             Slug = "db_app",
             ClientName = "Deutsche Bahn",
             OfferId = "Offer1",
-            Company = company1,
             CompanyId = company1.Id,
             CompanyState = CompanyState.INTERNAL,
             IsmsLevel = SecurityLevel.NORMAL,
@@ -118,7 +117,6 @@ public sealed class ProjectMetadataPlatformDbContext
             Slug = "tagesschau_app",
             ClientName = "ARD",
             OfferId = "Offer2",
-            Company = company2,
             CompanyId = company2.Id,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.HIGH,
@@ -131,7 +129,6 @@ public sealed class ProjectMetadataPlatformDbContext
             Slug = "aok_bonus_app",
             ClientName = "AOK",
             OfferId = "Offer3",
-            Company = company1,
             CompanyId = company1.Id,
             CompanyState = CompanyState.INTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
