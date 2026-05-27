@@ -76,7 +76,7 @@ public class DepartmentsController : ControllerBase
         var departmentId = await _mediator.Send(command);
 
         var response = new CreateTeamResponse(departmentId);
-        var uri = "Department/" + departmentId;
+        var uri = "Departments/" + departmentId;
         return Created(uri, response);
     }
 

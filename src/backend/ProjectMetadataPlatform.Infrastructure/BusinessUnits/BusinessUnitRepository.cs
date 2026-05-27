@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
@@ -19,6 +20,20 @@ public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUni
         : base(dbContext)
     {
         _context = dbContext;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IList<BusinessUnit>> GetBusinessUnitsAsync()
+    {
+        return await _context.BusinessUnits.AsNoTracking().ToListAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task<BusinessUnit> GetBusinessUnitAsync(int id)
+    {
+        return await _context.BusinessUnits.FirstOrDefaultAsync(businessUnit =>
+                businessUnit.Id == id
+            ) ?? throw new BusinessUnitNotFoundException(id);
     }
 
     public async Task<bool> CheckIfBusinessUnitExistsAsync(int id)
@@ -53,5 +68,32 @@ public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUni
         {
             _context.BusinessUnits.Add(bu);
         }
+    }
+
+    /// <inheritdoc/>
+    public async Task<BusinessUnit> UpdateBusinessUnitAsync(BusinessUnit businessUnit)
+    {
+        if (!await CheckIfBusinessUnitExistsAsync(businessUnit.Id))
+        {
+            throw new BusinessUnitNotFoundException(businessUnit.Id);
+        }
+        _context.BusinessUnits.Update(businessUnit);
+        return businessUnit;
+    }
+
+    /// <inheritdoc/>
+    public async Task<BusinessUnit> DeleteBusinessUnitAsync(BusinessUnit businessUnit)
+    {
+        _context.BusinessUnits.Remove(businessUnit);
+        return await Task.FromResult(businessUnit);
+    }
+
+    /// <inheritdoc/>
+    public async Task<BusinessUnit> GetBusinessUnitWithTeamsAsync(int id)
+    {
+        return await _context
+                .BusinessUnits.Include(bu => bu.Teams)
+                .FirstOrDefaultAsync(bu => bu.Id == id)
+            ?? throw new BusinessUnitNotFoundException(id);
     }
 }
