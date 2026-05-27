@@ -43,6 +43,9 @@ public record PmpScimUser
     /// </summary>
     public string? Password { get; set; }
 
+    [JsonPropertyName("addresses")]
+    public List<AddressRecord> Addresses { get; set; } = new List<AddressRecord>();
+
     /// <summary>
     /// Contains properties of the enterprise extension.
     /// </summary>
@@ -59,6 +62,12 @@ public record PmpScimUser
     /// Contains Metadata.
     /// </summary>
     public MetaResourceData Meta { get; set; } = new MetaResourceData();
+
+    public record AddressRecord
+    {
+        [JsonPropertyName("locality")]
+        public string? Locality { get; set; }
+    }
 
     /// <summary>
     /// Record representing properties of a Enterprise User.

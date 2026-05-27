@@ -12,7 +12,6 @@ public class BusinessUnitModelConfig : IEntityTypeConfiguration<BusinessUnit>
     /// <param name="builder"></param>
     public void Configure(EntityTypeBuilder<BusinessUnit> builder)
     {
-
         _ = builder.HasKey(b => b.Id);
 
         _ = builder.HasIndex(b => b.BusinessUnitName).IsUnique();

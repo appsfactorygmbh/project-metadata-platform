@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMetadataPlatform.Api.BusinessUnits.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Teams.Models;
 using ProjectMetadataPlatform.Application.Projects;
@@ -54,7 +55,7 @@ public class TeamsController : ControllerBase
 
         var command = new CreateTeamCommand(
             TeamName: request.TeamName,
-            BusinessUnit: request.BusinessUnit,
+            BusinessUnitId: request.BusinessUnitId,
             PTL: request.PTL
         );
 
@@ -85,7 +86,10 @@ public class TeamsController : ControllerBase
         {
             Id = team.Id,
             TeamName = team.TeamName,
-            BusinessUnit = team.BusinessUnit,
+            BusinessUnit = new GetBusinessUnitResponse(
+                team.BusinessUnit!.Id,
+                team.BusinessUnit!.BusinessUnitName
+            ),
             PTL = team.PTL,
         };
 
@@ -113,7 +117,10 @@ public class TeamsController : ControllerBase
         {
             Id = t.Id,
             TeamName = t.TeamName,
-            BusinessUnit = t.BusinessUnit,
+            BusinessUnit = new GetBusinessUnitResponse(
+                t.BusinessUnit!.Id,
+                t.BusinessUnit!.BusinessUnitName
+            ),
             PTL = t.PTL,
         });
         return Ok(response);
@@ -142,7 +149,7 @@ public class TeamsController : ControllerBase
             Id: teamId,
             TeamName: request.TeamName,
             PTL: request.PTL,
-            BusinessUnit: request.BusinessUnit
+            BusinessUnitId: request.BusinessUnitId
         );
 
         var team = await _mediator.Send(command);
@@ -151,7 +158,10 @@ public class TeamsController : ControllerBase
         {
             Id = team.Id,
             TeamName = team.TeamName,
-            BusinessUnit = team.BusinessUnit,
+            BusinessUnit = new GetBusinessUnitResponse(
+                team.BusinessUnit!.Id,
+                team.BusinessUnit!.BusinessUnitName
+            ),
             PTL = team.PTL,
         };
         return Ok(response);

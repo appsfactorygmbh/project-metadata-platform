@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Departments;
@@ -21,6 +22,20 @@ public class OfficeLocationRepository : RepositoryBase<OfficeLocation>, IOfficeL
     {
         _context = dbContext;
     }
+
+    /// <inheritdoc/>
+    public async Task<IList<OfficeLocation>> GetOfficeLocationsAsync()
+    {
+        return await _context.OfficeLocations.AsNoTracking().ToListAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task<OfficeLocation> GetOfficeLocationAsync(int id)
+    {
+        return await _context.OfficeLocations.FirstOrDefaultAsync(location => location.Id == id)
+            ?? throw new OfficeLocationNotFoundException(id);
+    }
+
     /// <inheritdoc/>
     public async Task<bool> CheckIfOfficeLocationNameExistsAsync(string officeLocationName)
     {
@@ -28,6 +43,13 @@ public class OfficeLocationRepository : RepositoryBase<OfficeLocation>, IOfficeL
             officeLocation.OfficeLocationName == officeLocationName
         );
     }
+
+    /// <inheritdoc/>
+    public async Task<bool> CheckIfOfficeLocationExistsAsync(int id)
+    {
+        return await _context.OfficeLocations.AnyAsync(officeLocation => officeLocation.Id == id);
+    }
+
     /// <inheritdoc/>
     public async Task<OfficeLocation> GetOfficeLocationByNameAsync(string officeLocationName)
     {
@@ -43,5 +65,23 @@ public class OfficeLocationRepository : RepositoryBase<OfficeLocation>, IOfficeL
         {
             _context.OfficeLocations.Add(officeLocation);
         }
+    }
+
+    /// <inheritdoc/>
+    public async Task<OfficeLocation> UpdateOfficeLocationAsync(OfficeLocation location)
+    {
+        if (!await CheckIfOfficeLocationExistsAsync(location.Id))
+        {
+            throw new OfficeLocationNotFoundException(location.Id);
+        }
+        _context.OfficeLocations.Update(location);
+        return location;
+    }
+
+    /// <inheritdoc/>
+    public async Task<OfficeLocation> DeleteOfficeLocationAsync(OfficeLocation location)
+    {
+        _context.OfficeLocations.Remove(location);
+        return await Task.FromResult(location);
     }
 }

@@ -84,6 +84,26 @@ public class LogConverter : ILogConverter
                 Action.REGENERATED_API_TOKEN => BuildRegeneratedApiTokenMessage(
                     log.AffectedTokenName ?? "<Unknown Token>"
                 ),
+                Action.ADDED_OFFICE_LOCATION => BuildAddedOfficeLocationMessage(log.Changes),
+                Action.UPDATED_OFFICE_LOCATION => BuildUpdatedOfficeLocationMessage(log),
+                Action.REMOVED_OFFICE_LOCATION => BuildRemovedOfficeLocationMessage(
+                    log.OfficeLocationName ?? "<Unknown Office Location>"
+                ),
+                Action.ADDED_BUSINESS_UNIT => BuildAddedBusinessUnitMessage(log.Changes),
+                Action.UPDATED_BUSINESS_UNIT => BuildUpdatedBusinessUnitMessage(log),
+                Action.REMOVED_BUSINESS_UNIT => BuildRemovedBusinessUnitMessage(
+                    log.BusinessUnitName ?? "<Unknown Business Unit>"
+                ),
+                Action.ADDED_COMPANY => BuildAddedCompanyMessage(log.Changes),
+                Action.UPDATED_COMPANY => BuildUpdatedCompanyMessage(log),
+                Action.REMOVED_COMPANY => BuildRemovedCompanyMessage(
+                    log.CompanyName ?? "<Unknown Company>"
+                ),
+                Action.ADDED_DEPARTMENT => BuildAddedDepartmentMessage(log.Changes),
+                Action.UPDATED_DEPARTMENT => BuildUpdatedDepartmentMessage(log),
+                Action.REMOVED_DEPARTMENT => BuildRemovedDepartmentMessage(
+                    log.DepartmentName ?? "<Unknown Department>"
+                ),
                 _ => "",
             };
 
@@ -467,6 +487,194 @@ public class LogConverter : ILogConverter
     private static string BuildRegeneratedApiTokenMessage(string tokenName)
     {
         return "regenerated the API token " + tokenName;
+    }
+
+    /// <summary>
+    /// Builds a message for an added office location.
+    /// </summary>
+    /// <param name="changes">The list of changes.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildAddedOfficeLocationMessage(List<LogChange>? changes)
+    {
+        var message = "added a new office location";
+        if (changes == null)
+        {
+            return message;
+        }
+        message += " with properties: ";
+        message += string.Join(
+            ", ",
+            changes.Select(change => $"{change.Property} = {change.NewValue}")
+        );
+        return message;
+    }
+
+    /// <summary>
+    /// Builds a message for an updated office location.
+    /// </summary>
+    /// <param name="log">The log entry.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildUpdatedOfficeLocationMessage(Log log)
+    {
+        var message = $"updated office location {log.OfficeLocationName}: ";
+        message += string.Join(
+            ", ",
+            log.Changes!.Select(change =>
+                $"set {change.Property} from {change.OldValue} to {change.NewValue}"
+            )
+        );
+        return message;
+    }
+
+    /// <summary>
+    /// Builds a message for a removed office location.
+    /// </summary>
+    /// <param name="officeLocationName">The office location name of the removed office location.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildRemovedOfficeLocationMessage(string officeLocationName)
+    {
+        return "removed office location " + officeLocationName;
+    }
+
+    /// <summary>
+    /// Builds a message for an added company.
+    /// </summary>
+    /// <param name="changes">The list of changes.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildAddedCompanyMessage(List<LogChange>? changes)
+    {
+        var message = "added a new company";
+        if (changes == null)
+        {
+            return message;
+        }
+        message += " with properties: ";
+        message += string.Join(
+            ", ",
+            changes.Select(change => $"{change.Property} = {change.NewValue}")
+        );
+        return message;
+    }
+
+    /// <summary>
+    /// Builds a message for an updated company.
+    /// </summary>
+    /// <param name="log">The log entry.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildUpdatedCompanyMessage(Log log)
+    {
+        var message = $"updated company {log.CompanyName}: ";
+        message += string.Join(
+            ", ",
+            log.Changes!.Select(change =>
+                $"set {change.Property} from {change.OldValue} to {change.NewValue}"
+            )
+        );
+        return message;
+    }
+
+    /// <summary>
+    /// Builds a message for a removed company.
+    /// </summary>
+    /// <param name="companyName">The company name of the removed company.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildRemovedCompanyMessage(string companyName)
+    {
+        return "removed company " + companyName;
+    }
+
+    /// <summary>
+    /// Builds a message for an added department.
+    /// </summary>
+    /// <param name="changes">The list of changes.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildAddedDepartmentMessage(List<LogChange>? changes)
+    {
+        var message = "added a new department";
+        if (changes == null)
+        {
+            return message;
+        }
+        message += " with properties: ";
+        message += string.Join(
+            ", ",
+            changes.Select(change => $"{change.Property} = {change.NewValue}")
+        );
+        return message;
+    }
+
+    /// <summary>
+    /// Builds a message for an updated department.
+    /// </summary>
+    /// <param name="log">The log entry.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildUpdatedDepartmentMessage(Log log)
+    {
+        var message = $"updated department {log.DepartmentName}: ";
+        message += string.Join(
+            ", ",
+            log.Changes!.Select(change =>
+                $"set {change.Property} from {change.OldValue} to {change.NewValue}"
+            )
+        );
+        return message;
+    }
+
+    /// <summary>
+    /// Builds a message for a removed department.
+    /// </summary>
+    /// <param name="departmentName">The department name of the removed department.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildRemovedDepartmentMessage(string departmentName)
+    {
+        return "removed department " + departmentName;
+    }
+
+    /// <summary>
+    /// Builds a message for an added businessUnit.
+    /// </summary>
+    /// <param name="changes">The list of changes.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildAddedBusinessUnitMessage(List<LogChange>? changes)
+    {
+        var message = "added a new businessUnit";
+        if (changes == null)
+        {
+            return message;
+        }
+        message += " with properties: ";
+        message += string.Join(
+            ", ",
+            changes.Select(change => $"{change.Property} = {change.NewValue}")
+        );
+        return message;
+    }
+
+    /// <summary>
+    /// Builds a message for an updated businessUnit.
+    /// </summary>
+    /// <param name="log">The log entry.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildUpdatedBusinessUnitMessage(Log log)
+    {
+        var message = $"updated businessUnit {log.BusinessUnitName}: ";
+        message += string.Join(
+            ", ",
+            log.Changes!.Select(change =>
+                $"set {change.Property} from {change.OldValue} to {change.NewValue}"
+            )
+        );
+        return message;
+    }
+
+    /// <summary>
+    /// Builds a message for a removed businessUnit.
+    /// </summary>
+    /// <param name="businessUnitName">The businessUnit name of the removed businessUnit.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildRemovedBusinessUnitMessage(string businessUnitName)
+    {
+        return "removed businessUnit " + businessUnitName;
     }
 
     /// <summary>

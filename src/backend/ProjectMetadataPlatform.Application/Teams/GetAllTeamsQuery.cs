@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MediatR;
 using ProjectMetadataPlatform.Domain.Teams;
 
-namespace ProjectMetadataPlatform.Application.Projects;
+namespace ProjectMetadataPlatform.Application.Teams;
 
 /// <summary>
 /// Query to get all projects or all projects with specific search pattern

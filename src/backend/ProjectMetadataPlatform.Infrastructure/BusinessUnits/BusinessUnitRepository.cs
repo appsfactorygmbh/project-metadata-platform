@@ -38,12 +38,14 @@ public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUni
             ?? throw new BusinessUnitNotFoundException(id)
         ).BusinessUnitName;
     }
+
     /// <inheritdoc/>
     public async Task<BusinessUnit> GetBusinessUnitByNameAsync(string buName)
     {
         return await _context.BusinessUnits.FirstOrDefaultAsync(bu => bu.BusinessUnitName == buName)
             ?? throw new BusinessUnitNotFoundException(buName);
     }
+
     /// <inheritdoc/>
     public async Task AddBusinessUnitAsync(BusinessUnit bu)
     {

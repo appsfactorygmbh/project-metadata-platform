@@ -5,7 +5,7 @@ using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 namespace ProjectMetadataPlatform.Api.Errors.ExceptionHandlers;
 
 /// <summary>
-/// Handles exceptions related to projects in the Project Metadata Platform API.
+/// Handles exceptions related to teams in the Project Metadata Platform API.
 /// </summary>
 public class TeamExceptionHandler : ControllerBase, IExceptionHandler<TeamException>
 {

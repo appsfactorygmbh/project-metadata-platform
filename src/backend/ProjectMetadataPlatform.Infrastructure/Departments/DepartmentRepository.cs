@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Departments;
@@ -20,6 +21,20 @@ public class DepartmentRepository : RepositoryBase<Department>, IDepartmentRepos
     {
         _context = dbContext;
     }
+
+    /// <inheritdoc/>
+    public async Task<IList<Department>> GetDepartmentsAsync()
+    {
+        return await _context.Departments.AsNoTracking().ToListAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task<Department> GetDepartmentAsync(int id)
+    {
+        return await _context.Departments.FirstOrDefaultAsync(department => department.Id == id)
+            ?? throw new DepartmentNotFoundException(id);
+    }
+
     /// <inheritdoc/>
     public async Task<bool> CheckIfDepartmentNameExistsAsync(string departmentName)
     {
@@ -27,6 +42,13 @@ public class DepartmentRepository : RepositoryBase<Department>, IDepartmentRepos
             department.DepartmentName == departmentName
         );
     }
+
+    /// <inheritdoc/>
+    public async Task<bool> CheckIfDepartmentExistsAsync(int id)
+    {
+        return await _context.Departments.AnyAsync(department => department.Id == id);
+    }
+
     /// <inheritdoc/>
     public async Task<Department> GetDepartmentByNameAsync(string departmentName)
     {
@@ -42,5 +64,23 @@ public class DepartmentRepository : RepositoryBase<Department>, IDepartmentRepos
         {
             _context.Departments.Add(department);
         }
+    }
+
+    /// <inheritdoc/>
+    public async Task<Department> UpdateDepartmentAsync(Department department)
+    {
+        if (!await CheckIfDepartmentExistsAsync(department.Id))
+        {
+            throw new DepartmentNotFoundException(department.Id);
+        }
+        _context.Departments.Update(department);
+        return department;
+    }
+
+    /// <inheritdoc/>
+    public async Task<Department> DeleteDepartmentAsync(Department department)
+    {
+        _context.Departments.Remove(department);
+        return await Task.FromResult(department);
     }
 }
