@@ -447,6 +447,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         object? oldValue
     )
     {
+        //TODO: this wont work for address object. Fix later.
         user.OfficeLocation =
             operation.Operation == PatchOperations.Remove
                 ? null
@@ -703,6 +704,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
             "urn:ietf:params:scim:schemas:extension:pmp:User:businessUnits" => nameof(
                 ApplicationUser.BusinessUnits
             ),
+            "addresses[type eq \"work\"].locality" => nameof(ApplicationUser.OfficeLocation),
             _ => throw new NotSupportedException("Unsupported Attribute Name"),
         };
     }

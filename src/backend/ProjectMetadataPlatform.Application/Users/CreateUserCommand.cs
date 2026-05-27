@@ -30,6 +30,6 @@ public record CreateUserCommand(
     List<string>? BusinessUnits,
     List<string>? JobTitles,
     List<string>? Departments,
-    string OfficeLocation,
+    string? OfficeLocation,
     string? Company
 ) : IRequest<ApplicationUser>;

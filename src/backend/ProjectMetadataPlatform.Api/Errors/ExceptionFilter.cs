@@ -3,9 +3,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using ProjectMetadataPlatform.Api.Interfaces;
+using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
+using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
+using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
+using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
 using ProjectMetadataPlatform.Domain.Errors.LogExceptions;
+using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
@@ -27,6 +32,10 @@ public class ExceptionFilter : IExceptionFilter
     private readonly IExceptionHandler<TeamException> _teamExceptionHandler;
     private readonly IExceptionHandler<UserException> _userExceptionHandler;
     private readonly IExceptionHandler<PluginException> _pluginExceptionHandler;
+    private readonly IExceptionHandler<OfficeLocationException> _officeLocationExceptionHandler;
+    private readonly IExceptionHandler<DepartmentException> _departmentExceptionHandler;
+    private readonly IExceptionHandler<BusinessUnitException> _businessUnitExceptionHandler;
+    private readonly IExceptionHandler<CompanyException> _companyExceptionHandler;
     private readonly IExceptionHandler<AuthException> _authExceptionHandler;
 
     /// <summary>
@@ -46,7 +55,11 @@ public class ExceptionFilter : IExceptionFilter
         IExceptionHandler<TeamException> teamExceptionHandler,
         IExceptionHandler<PluginException> pluginExceptionHandler,
         IExceptionHandler<AuthException> authExceptionHandler,
-        IExceptionHandler<UserException> userExceptionHandler
+        IExceptionHandler<UserException> userExceptionHandler,
+        IExceptionHandler<OfficeLocationException> officeLocationExceptionHandler,
+        IExceptionHandler<DepartmentException> departmentExceptionHandler,
+        IExceptionHandler<BusinessUnitException> businessUnitExceptionHandler,
+        IExceptionHandler<CompanyException> companyExceptionHandler
     )
     {
         _basicExceptionHandler = basicExceptionHandler;
@@ -56,6 +69,10 @@ public class ExceptionFilter : IExceptionFilter
         _logExceptionHandler = logExceptionHandler;
         _authExceptionHandler = authExceptionHandler;
         _userExceptionHandler = userExceptionHandler;
+        _officeLocationExceptionHandler = officeLocationExceptionHandler;
+        _departmentExceptionHandler = departmentExceptionHandler;
+        _businessUnitExceptionHandler = businessUnitExceptionHandler;
+        _companyExceptionHandler = companyExceptionHandler;
     }
 
     /// <summary>
@@ -75,6 +92,14 @@ public class ExceptionFilter : IExceptionFilter
             TeamException teamEx => _teamExceptionHandler.Handle(teamEx),
             AuthException authEx => _authExceptionHandler.Handle(authEx),
             UserException userEx => _userExceptionHandler.Handle(userEx),
+            OfficeLocationException officeLocationEx => _officeLocationExceptionHandler.Handle(
+                officeLocationEx
+            ),
+            DepartmentException departmentEx => _departmentExceptionHandler.Handle(departmentEx),
+            BusinessUnitException businessUnitEx => _businessUnitExceptionHandler.Handle(
+                businessUnitEx
+            ),
+            CompanyException companyEx => _companyExceptionHandler.Handle(companyEx),
             PmpException basicEx => _basicExceptionHandler.Handle(basicEx),
             _ => HandleUnknownError(exception),
         };

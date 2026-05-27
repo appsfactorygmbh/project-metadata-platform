@@ -1,7 +1,7 @@
-namespace ProjectMetadataPlatform.Api.Teams.Models;
+﻿namespace ProjectMetadataPlatform.Api.Teams.Models;
 
 /// <summary>
-/// Response for creating a new Plugin.
+/// Response for creating a new Team.
 /// </summary>
-/// <param name="Id">The id of the new Plugin.</param>
+/// <param name="Id">The id of the new Team.</param>
 public record CreateTeamResponse(int Id);
