@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Companies;
@@ -19,6 +20,19 @@ public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
         : base(dbContext)
     {
         _context = dbContext;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IList<Company>> GetCompaniesAsync()
+    {
+        return await _context.Companies.AsNoTracking().ToListAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task<Company> GetCompanyAsync(int id)
+    {
+        return await _context.Companies.FirstOrDefaultAsync(company => company.Id == id)
+            ?? throw new CompanyNotFoundException(id);
     }
 
     /// <inheritdoc/>
@@ -56,5 +70,32 @@ public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
         {
             _context.Companies.Add(company);
         }
+    }
+
+    /// <inheritdoc/>
+    public async Task<Company> UpdateCompanyAsync(Company company)
+    {
+        if (!await CheckIfCompanyExistsAsync(company.Id))
+        {
+            throw new CompanyNotFoundException(company.Id);
+        }
+        _context.Companies.Update(company);
+        return company;
+    }
+
+    /// <inheritdoc/>
+    public async Task<Company> DeleteCompanyAsync(Company company)
+    {
+        _context.Companies.Remove(company);
+        return await Task.FromResult(company);
+    }
+
+    /// <inheritdoc/>
+    public async Task<Company> GetCompanyWithProjectsAsync(int id)
+    {
+        return await _context
+                .Companies.Include(company => company.Projects)
+                .FirstOrDefaultAsync(company => company.Id == id)
+            ?? throw new CompanyNotFoundException(id);
     }
 }
