@@ -1,20 +1,23 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
-using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Application.OfficeLocations;
 
+/// <summary>
+/// Handler for the <see cref="DeleteOfficeLocationCommand" />.
+/// </summary>
 public class DeleteOfficeLocationCommandHandler : IRequestHandler<DeleteOfficeLocationCommand>
 {
     private readonly IOfficeLocationRepository _officeLocationRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
 
+    /// <summary>
+    /// Creates a new instance of <see cref="DeleteOfficeLocationCommandHandler" />.
+    /// </summary>
     public DeleteOfficeLocationCommandHandler(
         IOfficeLocationRepository officeLocationRepository,
         ILogRepository logRepository,
@@ -26,6 +29,12 @@ public class DeleteOfficeLocationCommandHandler : IRequestHandler<DeleteOfficeLo
         _unitOfWork = unitOfWork;
     }
 
+    /// <summary>
+    /// Handles Command to delete an Office Location.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task Handle(
         DeleteOfficeLocationCommand request,
         CancellationToken cancellationToken

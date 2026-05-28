@@ -9,44 +9,57 @@ using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Companies;
 
+/// <summary>
+/// Handler for the <see cref="CreateCompanyCommand" />.
+/// </summary>
 public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand, int>
 {
-    private readonly ICompanyRepository _departmentRepository;
+    private readonly ICompanyRepository _companyRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
 
+    /// <summary>
+    /// Creates a new instance of <see cref="CreateCompanyCommandHandler" />.
+    /// </summary>
     public CreateCompanyCommandHandler(
-        ICompanyRepository departmentRepository,
+        ICompanyRepository companyRepository,
         ILogRepository logRepository,
         IUnitOfWork unitOfWork
     )
     {
-        _departmentRepository = departmentRepository;
+        _companyRepository = companyRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<int> Handle(
-        CreateCompanyCommand request,
-        CancellationToken cancellationToken
-    )
+    /// <summary>
+    /// Handles Command to Create a new Company.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Id of the new company.</returns>
+    /// <exception cref="CompanyNameAlreadyExistsException">Thrown if company with same name already exists.</exception>
+    public async Task<int> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
     {
-        if (
-            await _departmentRepository.CheckIfCompanyNameExistsAsync(request.CompanyName)
-        )
+        if (await _companyRepository.CheckIfCompanyNameExistsAsync(request.CompanyName))
         {
             throw new CompanyNameAlreadyExistsException(request.CompanyName);
         }
 
-        var department = new Company { CompanyName = request.CompanyName };
-        await AddCompanyLog(department);
-        await _departmentRepository.AddCompanyAsync(department);
+        var company = new Company { CompanyName = request.CompanyName };
+        await AddCompanyLog(company);
+        await _companyRepository.AddCompanyAsync(company);
         await _unitOfWork.CompleteAsync();
 
-        return department.Id;
+        return company.Id;
     }
 
-    private async Task AddCompanyLog(Company department)
+    /// <summary>
+    /// Adds a new Log Entry for the Created Company.
+    /// </summary>
+    /// <param name="company">Newly Created Company.</param>
+    /// <returns></returns>
+    private async Task AddCompanyLog(Company company)
     {
         var logChanges = new List<LogChange>
         {
@@ -54,12 +67,12 @@ public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand,
             {
                 Property = nameof(Company.CompanyName),
                 OldValue = "",
-                NewValue = department.CompanyName,
+                NewValue = company.CompanyName,
             },
         };
 
         await _logRepository.AddCompanyLogForCurrentActor(
-            department,
+            company,
             Action.ADDED_COMPANY,
             logChanges
         );

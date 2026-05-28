@@ -246,14 +246,15 @@ public class UsersController : ControllerBase
         var command = new PatchUserCommand
         {
             Id = userId,
-            Operations = request
-                .Operations.Select(op => new PatchUserCommand.OperationRecord
+            Operations =
+            [
+                .. request.Operations.Select(op => new PatchUserCommand.OperationRecord
                 {
                     Operation = op.Op,
                     Path = op.Path,
                     Value = op.Value,
-                })
-                .ToList(),
+                }),
+            ],
         };
 
         var isScimProvisioned = _httpContextAccessor.HttpContext?.User.FindFirstValue(

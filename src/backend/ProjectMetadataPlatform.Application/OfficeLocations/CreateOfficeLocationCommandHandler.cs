@@ -9,12 +9,18 @@ using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Application.OfficeLocations;
 
+/// <summary>
+/// Handler for the <see cref="CreateOfficeLocationCommand" />.
+/// </summary>
 public class CreateOfficeLocationCommandHandler : IRequestHandler<CreateOfficeLocationCommand, int>
 {
     private readonly IOfficeLocationRepository _officeLocationRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
 
+    /// <summary>
+    /// Creates a new instance of <see cref="CreateOfficeLocationCommandHandler" />.
+    /// </summary>
     public CreateOfficeLocationCommandHandler(
         IOfficeLocationRepository officeLocationRepository,
         ILogRepository logRepository,
@@ -26,6 +32,13 @@ public class CreateOfficeLocationCommandHandler : IRequestHandler<CreateOfficeLo
         _unitOfWork = unitOfWork;
     }
 
+    /// <summary>
+    /// Handles a Command to create a new office location.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Id of the new office location.</returns>
+    /// <exception cref="OfficeLocationNameAlreadyExistsException">Thrown if a office location with the name in the command already exists.</exception>
     public async Task<int> Handle(
         CreateOfficeLocationCommand request,
         CancellationToken cancellationToken
@@ -48,6 +61,11 @@ public class CreateOfficeLocationCommandHandler : IRequestHandler<CreateOfficeLo
         return officeLocation.Id;
     }
 
+    /// <summary>
+    /// Adds a log entry for the new location.
+    /// </summary>
+    /// <param name="location"></param>
+    /// <returns></returns>
     private async Task AddOfficeLocationLog(OfficeLocation location)
     {
         var logChanges = new List<LogChange>

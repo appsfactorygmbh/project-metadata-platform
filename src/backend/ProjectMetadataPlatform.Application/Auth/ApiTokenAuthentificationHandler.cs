@@ -39,10 +39,14 @@ public class ApiTokenAuthenticationHandler : AuthenticationHandler<Authenticatio
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         if (!Request.Headers.TryGetValue("Authorization", out var authHeader))
+        {
             return AuthenticateResult.Fail("Missing Authorization Header");
+        }
 
-        if (!authHeader.ToString().StartsWith("Bearer "))
+        if (!authHeader.ToString().StartsWith("Bearer ", StringComparison.InvariantCulture))
+        {
             return AuthenticateResult.Fail("Invalid Scheme");
+        }
 
         var tokenString = authHeader.ToString().Replace("Bearer ", "");
 

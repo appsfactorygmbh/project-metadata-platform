@@ -41,6 +41,10 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
     /// <param name="usersRepository">The repository for accessing user data.</param>
     /// <param name="passwordHasher">The service for hashing user passwords.</param>
     /// <param name="teamRepository">The repository for accessing team data.</param>
+    /// <param name="departmentRepository">Repository for accessing department data.</param>
+    /// <param name="businessUnitRepository">Repository for accessing bu data.</param>
+    /// <param name="officeLocationRepository">Repository for accessing office location data.</param>
+    /// <param name="companyRepository">Repository for accessing company data.</param>
     /// <param name="unitOfWork">The unit of work for managing transactions.</param>
     /// <param name="logRepository">The repository for logging user actions.</param>
     public PatchUserCommandHandler(
@@ -77,16 +81,9 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         CancellationToken cancellationToken
     )
     {
-        ApplicationUser user;
-        if (await _usersRepository.CheckUserExists(request.Id))
-        {
-            user = await _usersRepository.GetUserByIdAsync(request.Id);
-        }
-        else
-        {
-            user = await _usersRepository.GetUserByEmailAsync(request.Id);
-        }
-
+        var user = await _usersRepository.CheckUserExists(request.Id)
+            ? await _usersRepository.GetUserByIdAsync(request.Id)
+            : await _usersRepository.GetUserByEmailAsync(request.Id);
         var changes = new List<LogChange>();
         await UpdateUser(request, user, changes);
 
@@ -135,7 +132,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
             {
                 await UpdatePassword(user, changes, operation, oldValue);
             }
-            else if (attribute == "Teams" || attribute == "TeamSupport")
+            else if (attribute is "Teams" or "TeamSupport")
             {
                 await UpdateTeamProperty(user, changes, operation, attribute, oldValue);
             }

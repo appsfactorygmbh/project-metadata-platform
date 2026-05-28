@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using ProjectMetadataPlatform.Api.Interfaces;
-using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
@@ -47,7 +46,11 @@ public class ExceptionFilter : IExceptionFilter
     /// <param name="projectExceptionHandler">The handler for project exceptions.</param>
     /// <param name="pluginExceptionHandler">The handler for global plugin exceptions.</param>
     /// <param name="authExceptionHandler">The handler for authentication exceptions.</param>
-    /// <param name="userExceptionHandler">The handler</param>
+    /// <param name="userExceptionHandler">The handler for user exceptions.</param>
+    /// <param name="officeLocationExceptionHandler">The handler for office location exceptions. </param>
+    /// <param name="departmentExceptionHandler">The handler for department exceptions. </param>
+    /// <param name="businessUnitExceptionHandler">The handler for business unit exceptions. </param>
+    /// <param name="companyExceptionHandler">The handler for company exceptions. </param>
     public ExceptionFilter(
         IExceptionHandler<PmpException> basicExceptionHandler,
         IExceptionHandler<ProjectException> projectExceptionHandler,

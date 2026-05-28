@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -14,6 +13,9 @@ using ProjectMetadataPlatform.Domain.Auth;
 
 namespace ProjectMetadataPlatform.Api.Departments;
 
+/// <summary>
+/// Endpoints for managing Departments.
+/// </summary>
 [ApiController]
 [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
 [Route("[controller]")]
@@ -30,6 +32,12 @@ public class DepartmentsController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Gets all Departments.
+    /// </summary>
+    /// <returns>List of Departments. </returns>
+    /// <response code="200">The Departments are returned successfully.</response>
+    /// <response code="500">An internal error occurred.</response>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<GetDepartmentResponse>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GetDepartmentResponse>>> Get()
@@ -44,6 +52,14 @@ public class DepartmentsController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Returns a department specified by id.
+    /// </summary>
+    /// <param name="id">Id of the department.</param>
+    /// <returns>The specified department.</returns>
+    /// <response code="200"> department returned succesfully.</response>
+    /// <response code="404"> department not found. </response>
+    /// <response code="500"> internal error. </response>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(GetDepartmentResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -59,6 +75,15 @@ public class DepartmentsController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Creates a new department.
+    /// </summary>
+    /// <param name="request">Request to create a department.</param>
+    /// <returns>Id of the newly created department.</returns>
+    /// <response code="201"> department was created succesfuly.</response>
+    /// <response code="400"> department couldn't be created. </response>
+    /// <response code="409"> department with same Name already exists. </response>
+    /// <response code="500"> Internal error. </response>
     [HttpPut]
     [ProducesResponseType(typeof(CreateDepartmentResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -80,6 +105,16 @@ public class DepartmentsController : ControllerBase
         return Created(uri, response);
     }
 
+    /// <summary>
+    /// Updates a specified department.
+    /// </summary>
+    /// <param name="id">If of the department.</param>
+    /// <param name="request">Update Request.</param>
+    /// <returns>The updated department.</returns>
+    /// <response code="200"> department was updated successfully. </response>
+    /// <response code="404"> department couldn't be found. </response>
+    /// <response code="409"> New department name already exists. </response>
+    /// <response code="500"> Internal error. </response>
     [HttpPatch("{id:int}")]
     [ProducesResponseType(typeof(GetDepartmentResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -100,16 +135,23 @@ public class DepartmentsController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Deletes a department specified by Id.
+    /// </summary>
+    /// <param name="id">Id of the department to be deleted.</param>
+    /// <returns>No Content</returns>
+    /// <response code="204">The department was deleted successfully.</response>
+    /// <response code="404"> The department couldn't be found.</response>
+    /// <response code="500">An internal error occurred.</response>
     [HttpDelete("{id:int}")]
-    [ProducesResponseType(typeof(DeleteDepartmentResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<DeleteDepartmentResponse>> Delete(int id)
+    public async Task<ActionResult> Delete(int id)
     {
         var command = new DeleteDepartmentCommand(id);
 
         await _mediator.Send(command);
 
-        return Ok(new DeleteTeamResponse(id));
+        return NoContent();
     }
 }

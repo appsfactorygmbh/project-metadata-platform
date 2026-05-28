@@ -2,13 +2,15 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 
 namespace ProjectMetadataPlatform.Infrastructure.OfficeLocations;
 
+/// <summary>
+/// The repository for office locations that handles the data access.
+/// </summary>
 public class OfficeLocationRepository : RepositoryBase<OfficeLocation>, IOfficeLocationRepository
 {
     private readonly ProjectMetadataPlatformDbContext _context;
@@ -59,11 +61,11 @@ public class OfficeLocationRepository : RepositoryBase<OfficeLocation>, IOfficeL
     }
 
     /// <inheritdoc/>
-    public async Task AddOfficeLocationAsync(OfficeLocation officeLocation)
+    public async Task AddOfficeLocationAsync(OfficeLocation location)
     {
-        if (!await GetIf(o => o.Id == officeLocation.Id).AnyAsync())
+        if (!await GetIf(o => o.Id == location.Id).AnyAsync())
         {
-            _context.OfficeLocations.Add(officeLocation);
+            _ = _context.OfficeLocations.Add(location);
         }
     }
 
@@ -74,14 +76,14 @@ public class OfficeLocationRepository : RepositoryBase<OfficeLocation>, IOfficeL
         {
             throw new OfficeLocationNotFoundException(location.Id);
         }
-        _context.OfficeLocations.Update(location);
+        _ = _context.OfficeLocations.Update(location);
         return location;
     }
 
     /// <inheritdoc/>
     public async Task<OfficeLocation> DeleteOfficeLocationAsync(OfficeLocation location)
     {
-        _context.OfficeLocations.Remove(location);
+        _ = _context.OfficeLocations.Remove(location);
         return await Task.FromResult(location);
     }
 }

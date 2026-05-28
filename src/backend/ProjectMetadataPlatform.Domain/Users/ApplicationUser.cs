@@ -54,12 +54,22 @@ public class ApplicationUser : IdentityUser
     public ICollection<Department>? Departments { get; set; }
 
     /// <summary>
-    /// Name of the company the user belongs to.
+    ///  company the user belongs to.
     /// </summary>
     public Company? Company { get; set; }
 
+    /// <summary>
+    /// Id of the company the user belongs to.
+    /// </summary>
     public int? CompanyId { get; set; }
 
+    /// <summary>
+    /// Office Location of the User.
+    /// </summary>
     public OfficeLocation? OfficeLocation { get; set; }
+
+    /// <summary>
+    /// Id of the Office Location of the User.
+    /// </summary>
     public int? OfficeLocationId { get; set; }
 }

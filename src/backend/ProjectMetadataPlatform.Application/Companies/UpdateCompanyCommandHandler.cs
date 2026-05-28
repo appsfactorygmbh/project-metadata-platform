@@ -9,13 +9,18 @@ using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Companies;
 
-public class UpdateCompanyCommandHandler
-    : IRequestHandler<UpdateCompanyCommand, Company>
+/// <summary>
+/// Handler for the <see cref="UpdateCompanyCommand" />.
+/// </summary>
+public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand, Company>
 {
     private readonly ICompanyRepository _companyRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
 
+    /// <summary>
+    /// Creates a new instance of <see cref="UpdateCompanyCommandHandler" />.
+    /// </summary>
     public UpdateCompanyCommandHandler(
         ICompanyRepository companyRepository,
         ILogRepository logRepository,
@@ -27,6 +32,13 @@ public class UpdateCompanyCommandHandler
         _unitOfWork = unitOfWork;
     }
 
+    /// <summary>
+    /// Handles Command to update a Company
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Updated Company</returns>
+    /// <exception cref="CompanyNameAlreadyExistsException">New Name of the Company already exists.</exception>
     public async Task<Company> Handle(
         UpdateCompanyCommand request,
         CancellationToken cancellationToken
@@ -34,20 +46,14 @@ public class UpdateCompanyCommandHandler
     {
         var company = await _companyRepository.GetCompanyAsync(request.Id);
         var logChanges = new List<LogChange> { };
-        if (
-            request.CompanyName != null
-            && request.CompanyName != company.CompanyName
-        )
+        if (request.CompanyName != null && request.CompanyName != company.CompanyName)
         {
             if (
                 !string.Equals(
                     request.CompanyName,
                     company.CompanyName,
                     System.StringComparison.OrdinalIgnoreCase
-                )
-                && await _companyRepository.CheckIfCompanyNameExistsAsync(
-                    request.CompanyName
-                )
+                ) && await _companyRepository.CheckIfCompanyNameExistsAsync(request.CompanyName)
             )
             {
                 throw new CompanyNameAlreadyExistsException(request.CompanyName);
@@ -64,9 +70,7 @@ public class UpdateCompanyCommandHandler
         }
         if (logChanges.Count > 0)
         {
-            var updatedCompany = await _companyRepository.UpdateCompanyAsync(
-                company
-            );
+            var updatedCompany = await _companyRepository.UpdateCompanyAsync(company);
             await _logRepository.AddCompanyLogForCurrentActor(
                 company: company,
                 action: Action.UPDATED_COMPANY,

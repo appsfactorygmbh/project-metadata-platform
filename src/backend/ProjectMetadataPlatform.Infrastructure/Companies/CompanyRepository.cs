@@ -8,6 +8,9 @@ using ProjectMetadataPlatform.Infrastructure.DataAccess;
 
 namespace ProjectMetadataPlatform.Infrastructure.Companies;
 
+/// <summary>
+/// The repository for companies that handles the data access.
+/// </summary>
 public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
 {
     private readonly ProjectMetadataPlatformDbContext _context;

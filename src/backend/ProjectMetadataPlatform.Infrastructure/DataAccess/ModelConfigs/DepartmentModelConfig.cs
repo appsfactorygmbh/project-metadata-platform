@@ -4,6 +4,9 @@ using ProjectMetadataPlatform.Domain.Departments;
 
 namespace ProjectMetadataPlatform.Infrastructure.DataAccess.ModelConfigs;
 
+/// <summary>
+/// Data Base Configuration for the Departments.
+/// </summary>
 public class DepartmentModelConfig : IEntityTypeConfiguration<Department>
 {
     /// <summary>

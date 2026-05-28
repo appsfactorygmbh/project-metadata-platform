@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.BusinessUnits.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Teams.Models;
-using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Application.Teams;
 using ProjectMetadataPlatform.Domain.Auth;
 

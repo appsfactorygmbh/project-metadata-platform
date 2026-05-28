@@ -4,6 +4,9 @@ using ProjectMetadataPlatform.Domain.Companies;
 
 namespace ProjectMetadataPlatform.Infrastructure.DataAccess.ModelConfigs;
 
+/// <summary>
+/// Data Base Configuration for the Companies.
+/// </summary>
 public class CompanyModelConfig : IEntityTypeConfiguration<Company>
 {
     /// <summary>
