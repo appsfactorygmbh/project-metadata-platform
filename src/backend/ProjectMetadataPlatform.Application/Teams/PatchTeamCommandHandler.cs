@@ -28,6 +28,7 @@ public class PatchTeamCommandHandler : IRequestHandler<PatchTeamCommand, Team>
     /// Initializes a new instance of the <see cref="PatchGlobalPluginCommandHandler"/> class.
     /// </summary>
     /// <param name="teamRepository">The team repository to use for team operations.</param>
+    /// <param name="businessUnitRepository">The business unit repository.</param>
     /// <param name="logRepository">The log repository to use for logging operations.</param>
     /// <param name="unitOfWork">The unit of work to use for transactional operations.</param>
     public PatchTeamCommandHandler(

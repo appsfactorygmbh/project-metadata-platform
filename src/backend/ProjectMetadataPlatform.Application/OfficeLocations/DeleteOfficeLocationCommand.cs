@@ -1,8 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using MediatR;
-using ProjectMetadataPlatform.Domain.OfficeLocations;
+﻿using MediatR;
 
 namespace ProjectMetadataPlatform.Application.OfficeLocations;
 
+/// <summary>
+/// Command to delete an Office Location.
+/// </summary>
+/// <param name="Id">Id of the office Location.</param>
 public record DeleteOfficeLocationCommand(int Id) : IRequest;

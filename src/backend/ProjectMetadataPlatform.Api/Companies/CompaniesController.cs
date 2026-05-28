@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +14,9 @@ using GetLinkedProjectsForCompanyResponse = ProjectMetadataPlatform.Api.Companie
 
 namespace ProjectMetadataPlatform.Api.Companies;
 
+/// <summary>
+/// Endpoints for managing Companies.
+/// </summary>
 [ApiController]
 [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
 [Route("[controller]")]
@@ -31,6 +33,12 @@ public class CompaniesController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Returns all Companies
+    /// </summary>
+    /// <returns>List of Companies</returns>
+    /// <response code="200"> Companies are returned succesfully. </response>
+    /// <response code="500"> Internal Error. </response>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<GetCompanyResponse>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GetCompanyResponse>>> Get()
@@ -45,6 +53,14 @@ public class CompaniesController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Returns the specified Company.
+    /// </summary>
+    /// <param name="id">Id of the speciefied Company.</param>
+    /// <returns>A Company.</returns>1
+    /// <response code="200"> Company was returned succesfully.</response>
+    /// <response code="404">Company could not be found. </response>
+    /// <response code="500"> Internal error. </response>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(GetCompanyResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -57,6 +73,15 @@ public class CompaniesController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Creates a new Company.
+    /// </summary>
+    /// <param name="request"> Request to create a Company.</param>
+    /// <returns> Id of the newly created company. </returns>
+    /// <response code="201"> Company was created succesfully. </response>
+    /// <response code="400"> Company could not be created. </response>
+    /// <response code="409"> Company name already exists. </response>
+    /// <response code="500"> Internal error. </response>
     [HttpPut]
     [ProducesResponseType(typeof(CreateCompanyResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -78,6 +103,16 @@ public class CompaniesController : ControllerBase
         return Created(uri, response);
     }
 
+    /// <summary>
+    /// Updates a Company.
+    /// </summary>
+    /// <param name="id"> Id of the Company. </param>
+    /// <param name="request">Update request. </param>
+    /// <returns>The Updated Company. </returns>
+    /// <response code="200"> Company was updated succesfully. </response>
+    /// <response code="404"> Company could not be found. </response>
+    /// <response code="409"> Updated Company Name already exists. </response>
+    /// <response code="500"> Internal Error. </response>
     [HttpPatch("{id:int}")]
     [ProducesResponseType(typeof(GetCompanyResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -95,19 +130,36 @@ public class CompaniesController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Deletes a Company.
+    /// </summary>
+    /// <param name="id"> ID of the company. </param>
+    /// <returns>No Content.</returns>
+    /// <response code="204"> Company was deleted. </response>
+    /// <response code="400"> Company could not be deleted. </response>
+    /// <response code="404"> Company could not be found. </response>
+    /// <response code="500"> Internal Error. </response>
     [HttpDelete("{id:int}")]
-    [ProducesResponseType(typeof(DeleteCompanyResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<DeleteCompanyResponse>> Delete(int id)
+    public async Task<ActionResult> Delete(int id)
     {
         var command = new DeleteCompanyCommand(id);
 
         await _mediator.Send(command);
 
-        return Ok(new DeleteTeamResponse(id));
+        return NoContent();
     }
 
+    /// <summary>
+    /// Returns slugs for all projects linked to the specified Company-
+    /// </summary>
+    /// <param name="id">Id of the Company. </param>
+    /// <returns> List of Project Slugs. </returns>
+    /// <response code="200"> Slugs are returned succesfully. </response>
+    /// <response code="404"> Company could not be found. </response>
+    /// <response code="500"> Internal Error. </response>
     [HttpGet("{id:int}/linkedProjects")]
     [ProducesResponseType(typeof(GetLinkedProjectsForCompanyResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]

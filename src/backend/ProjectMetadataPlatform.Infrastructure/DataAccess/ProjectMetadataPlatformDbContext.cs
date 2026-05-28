@@ -44,12 +44,24 @@ public sealed class ProjectMetadataPlatformDbContext
     /// </summary>
     public DbSet<Team> Teams { get; set; }
 
+    /// <summary>
+    /// Represents the table for company entities.
+    /// </summary>
     public DbSet<Company> Companies { get; set; }
 
+    /// <summary>
+    /// Represents the table for business unit entities.
+    /// </summary>
     public DbSet<BusinessUnit> BusinessUnits { get; set; }
 
+    /// <summary>
+    /// Represents the table for department entities.
+    /// </summary>
     public DbSet<Department> Departments { get; set; }
 
+    /// <summary>
+    /// Represents the table for office location entities.
+    /// </summary>
     public DbSet<OfficeLocation> OfficeLocations { get; set; }
 
     /// <summary>

@@ -34,6 +34,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
     /// <param name="projectsRepository">Repository for Projects</param>
     /// <param name="pluginRepository">Repository for Plugins</param>
     /// <param name="teamRepository">Repository for Team</param>
+    /// <param name="companyRepository">Repository for Company.</param>
     /// <param name="logRepository">Repository for Logs</param>
     /// <param name="unitOfWork"> Used to save changes to the DbContext</param>
     /// <param name="slugHelper"> Used to generate slugs</param>

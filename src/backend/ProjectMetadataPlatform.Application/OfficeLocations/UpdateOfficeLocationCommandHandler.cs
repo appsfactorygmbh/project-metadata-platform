@@ -9,6 +9,9 @@ using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Application.OfficeLocations;
 
+/// <summary>
+/// Handler for the <see cref=" UpdateOfficeLocationCommand" />.
+/// </summary>
 public class UpdateOfficeLocationCommandHandler
     : IRequestHandler<UpdateOfficeLocationCommand, OfficeLocation>
 {
@@ -16,6 +19,9 @@ public class UpdateOfficeLocationCommandHandler
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
 
+    /// <summary>
+    /// Creates a new instance of <see cref=" UpdateOfficeLocationCommandHandler" />.
+    /// </summary>
     public UpdateOfficeLocationCommandHandler(
         IOfficeLocationRepository officeLocationRepository,
         ILogRepository logRepository,
@@ -27,6 +33,13 @@ public class UpdateOfficeLocationCommandHandler
         _unitOfWork = unitOfWork;
     }
 
+    /// <summary>
+    /// Handles Command to update an office location.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Updated Office Location.</returns>
+    /// <exception cref="OfficeLocationNameAlreadyExistsException">When a office location with the new name already exists.</exception>
     public async Task<OfficeLocation> Handle(
         UpdateOfficeLocationCommand request,
         CancellationToken cancellationToken

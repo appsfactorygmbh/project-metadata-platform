@@ -9,12 +9,18 @@ using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Departments;
 
+/// <summary>
+/// Handler for the <see cref="UpdateDepartmentCommand" />.
+/// </summary>
 public class UpdateDepartmentCommandHandler : IRequestHandler<UpdateDepartmentCommand, Department>
 {
     private readonly IDepartmentRepository _departmentRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
 
+    /// <summary>
+    /// Creates a new instance of <see cref="UpdateDepartmentCommandHandler" />.
+    /// </summary>
     public UpdateDepartmentCommandHandler(
         IDepartmentRepository departmentRepository,
         ILogRepository logRepository,
@@ -26,6 +32,13 @@ public class UpdateDepartmentCommandHandler : IRequestHandler<UpdateDepartmentCo
         _unitOfWork = unitOfWork;
     }
 
+    /// <summary>
+    /// Handles a command for updating a department.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Updated Department.</returns>
+    /// <exception cref="DepartmentNameAlreadyExistsException">When the new department name already exists.</exception>
     public async Task<Department> Handle(
         UpdateDepartmentCommand request,
         CancellationToken cancellationToken

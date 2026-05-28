@@ -4,6 +4,9 @@ using ProjectMetadataPlatform.Domain.BusinessUnits;
 
 namespace ProjectMetadataPlatform.Infrastructure.DataAccess.ModelConfigs;
 
+/// <summary>
+/// Data Base Configuration for the Business Units.
+/// </summary>
 public class BusinessUnitModelConfig : IEntityTypeConfiguration<BusinessUnit>
 {
     /// <summary>

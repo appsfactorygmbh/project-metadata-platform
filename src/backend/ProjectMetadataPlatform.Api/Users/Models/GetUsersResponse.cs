@@ -22,5 +22,5 @@ public record GetUsersResponse
     /// List of returned users.
     /// </summary>
     [JsonPropertyName("Resources")]
-    public IEnumerable<PmpScimUser> Resources { get; init; } = new List<PmpScimUser>();
+    public IEnumerable<PmpScimUser> Resources { get; init; } = [];
 }

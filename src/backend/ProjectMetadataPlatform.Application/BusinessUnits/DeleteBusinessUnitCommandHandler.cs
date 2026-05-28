@@ -1,22 +1,25 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.BusinessUnits;
 
+/// <summary>
+/// Handler for the <see cref="DeleteBusinessUnitCommand" />.
+/// </summary>
 public class DeleteBusinessUnitCommandHandler : IRequestHandler<DeleteBusinessUnitCommand>
 {
     private readonly IBusinessUnitRepository _businessUnitRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
 
+    /// <summary>
+    /// Creates a new instance of <see cref="DeleteBusinessUnitCommandHandler" />.
+    /// </summary>
     public DeleteBusinessUnitCommandHandler(
         IBusinessUnitRepository businessUnitRepository,
         ILogRepository logRepository,
@@ -28,6 +31,13 @@ public class DeleteBusinessUnitCommandHandler : IRequestHandler<DeleteBusinessUn
         _unitOfWork = unitOfWork;
     }
 
+    /// <summary>
+    /// Handles a Deletion request for a BU.
+    /// </summary>
+    /// <param name="request">Request to be handled.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="BusinessUnitStillLinkedToTeamsException">Thrown if the bu is still linked to a team.</exception>
     public async Task Handle(DeleteBusinessUnitCommand request, CancellationToken cancellationToken)
     {
         var businessUnit = await _businessUnitRepository.GetBusinessUnitWithTeamsAsync(request.Id);

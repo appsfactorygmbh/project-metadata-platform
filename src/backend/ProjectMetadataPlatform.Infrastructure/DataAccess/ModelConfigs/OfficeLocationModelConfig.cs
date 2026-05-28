@@ -4,6 +4,9 @@ using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Infrastructure.DataAccess.ModelConfigs;
 
+/// <summary>
+/// Data Base Configuration for the Office Locations.
+/// </summary>
 public class OfficeLocationModelConfig : IEntityTypeConfiguration<OfficeLocation>
 {
     /// <summary>

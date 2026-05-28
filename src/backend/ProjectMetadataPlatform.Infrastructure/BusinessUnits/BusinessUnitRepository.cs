@@ -8,6 +8,9 @@ using ProjectMetadataPlatform.Infrastructure.DataAccess;
 
 namespace ProjectMetadataPlatform.Infrastructure.BusinessUnits;
 
+/// <summary>
+/// The repository for business Units that handles the data access.
+/// </summary>
 public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUnitRepository
 {
     private readonly ProjectMetadataPlatformDbContext _context;
@@ -36,16 +39,19 @@ public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUni
             ) ?? throw new BusinessUnitNotFoundException(id);
     }
 
+    /// <inheritdoc/>
     public async Task<bool> CheckIfBusinessUnitExistsAsync(int id)
     {
         return await _context.BusinessUnits.AnyAsync(bu => bu.Id == id);
     }
 
+    /// <inheritdoc/>
     public async Task<bool> CheckIfBusinessUnitNameExistsAsync(string buName)
     {
         return await _context.BusinessUnits.AnyAsync(bu => bu.BusinessUnitName == buName);
     }
 
+    /// <inheritdoc/>
     public async Task<string> RetrieveNameForIdAsync(int id)
     {
         return (

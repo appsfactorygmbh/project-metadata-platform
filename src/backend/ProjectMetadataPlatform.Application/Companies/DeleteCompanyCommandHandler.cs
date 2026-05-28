@@ -1,22 +1,25 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Companies;
 
+/// <summary>
+/// Handler for the <see cref="DeleteCompanyCommand" />.
+/// </summary>
 public class DeleteCompanyCommandHandler : IRequestHandler<DeleteCompanyCommand>
 {
     private readonly ICompanyRepository _companyRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
 
+    /// <summary>
+    /// Creates a new instance of <see cref="DeleteCompanyCommandHandler" />.
+    /// </summary>
     public DeleteCompanyCommandHandler(
         ICompanyRepository companyRepository,
         ILogRepository logRepository,
@@ -28,6 +31,13 @@ public class DeleteCompanyCommandHandler : IRequestHandler<DeleteCompanyCommand>
         _unitOfWork = unitOfWork;
     }
 
+    /// <summary>
+    /// Handles the Command to delete a Company.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="CompanyStillLinkedToProjectsException">Thrown if the company is still linked to a project.</exception>
     public async Task Handle(DeleteCompanyCommand request, CancellationToken cancellationToken)
     {
         var company = await _companyRepository.GetCompanyWithProjectsAsync(request.Id);

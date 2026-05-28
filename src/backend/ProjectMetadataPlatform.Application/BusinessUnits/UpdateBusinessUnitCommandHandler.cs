@@ -9,6 +9,9 @@ using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.BusinessUnits;
 
+/// <summary>
+/// Handler for the <see cref="UpdateBusinessUnitCommand" />.
+/// </summary>
 public class UpdateBusinessUnitCommandHandler
     : IRequestHandler<UpdateBusinessUnitCommand, BusinessUnit>
 {
@@ -16,6 +19,9 @@ public class UpdateBusinessUnitCommandHandler
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
 
+    /// <summary>
+    /// Creates a new instance of <see cref="UpdateBusinessUnitCommandHandler" />.
+    /// </summary>
     public UpdateBusinessUnitCommandHandler(
         IBusinessUnitRepository businessUnitRepository,
         ILogRepository logRepository,
@@ -27,6 +33,13 @@ public class UpdateBusinessUnitCommandHandler
         _unitOfWork = unitOfWork;
     }
 
+    /// <summary>
+    /// Handles Command to update a BU.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Updated BU.</returns>
+    /// <exception cref="BusinessUnitNameAlreadyExistsException">Thrown if updated Name already exists.</exception>
     public async Task<BusinessUnit> Handle(
         UpdateBusinessUnitCommand request,
         CancellationToken cancellationToken

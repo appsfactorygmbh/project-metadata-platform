@@ -9,12 +9,18 @@ using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Departments;
 
+/// <summary>
+/// Handler for the <see cref="CreateDepartmentCommand" />.
+/// </summary>
 public class CreateDepartmentCommandHandler : IRequestHandler<CreateDepartmentCommand, int>
 {
     private readonly IDepartmentRepository _departmentRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
 
+    /// <summary>
+    /// Creates a new instance of <see cref="CreateDepartmentCommandHandler" />.
+    /// </summary>
     public CreateDepartmentCommandHandler(
         IDepartmentRepository departmentRepository,
         ILogRepository logRepository,
@@ -26,6 +32,13 @@ public class CreateDepartmentCommandHandler : IRequestHandler<CreateDepartmentCo
         _unitOfWork = unitOfWork;
     }
 
+    /// <summary>
+    /// Handles Command to create a new department.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Id of the new department.</returns>
+    /// <exception cref="DepartmentNameAlreadyExistsException">Thrown if the name of the department already exists</exception>
     public async Task<int> Handle(
         CreateDepartmentCommand request,
         CancellationToken cancellationToken
@@ -44,6 +57,11 @@ public class CreateDepartmentCommandHandler : IRequestHandler<CreateDepartmentCo
         return department.Id;
     }
 
+    /// <summary>
+    /// Adds Log entry for created Department
+    /// </summary>
+    /// <param name="department">newly created department</param>
+    /// <returns></returns>
     private async Task AddDepartmentLog(Department department)
     {
         var logChanges = new List<LogChange>

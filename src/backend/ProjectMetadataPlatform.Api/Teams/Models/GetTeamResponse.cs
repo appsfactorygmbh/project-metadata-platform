@@ -1,5 +1,4 @@
 ﻿using ProjectMetadataPlatform.Api.BusinessUnits.Models;
-using ProjectMetadataPlatform.Domain.BusinessUnits;
 
 namespace ProjectMetadataPlatform.Api.Teams.Models;
 

@@ -8,6 +8,9 @@ using ProjectMetadataPlatform.Infrastructure.DataAccess;
 
 namespace ProjectMetadataPlatform.Infrastructure.Departments;
 
+/// <summary>
+/// The repository for departments that handles the data access.
+/// </summary>
 public class DepartmentRepository : RepositoryBase<Department>, IDepartmentRepository
 {
     private readonly ProjectMetadataPlatformDbContext _context;
@@ -62,7 +65,7 @@ public class DepartmentRepository : RepositoryBase<Department>, IDepartmentRepos
     {
         if (!await GetIf(d => d.Id == department.Id).AnyAsync())
         {
-            _context.Departments.Add(department);
+            _ = _context.Departments.Add(department);
         }
     }
 
@@ -73,14 +76,14 @@ public class DepartmentRepository : RepositoryBase<Department>, IDepartmentRepos
         {
             throw new DepartmentNotFoundException(department.Id);
         }
-        _context.Departments.Update(department);
+        _ = _context.Departments.Update(department);
         return department;
     }
 
     /// <inheritdoc/>
     public async Task<Department> DeleteDepartmentAsync(Department department)
     {
-        _context.Departments.Remove(department);
+        _ = _context.Departments.Remove(department);
         return await Task.FromResult(department);
     }
 }
