@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -42,7 +42,7 @@ public class TeamsControllerTest
 
         var request = new CreateTeamRequest(
             TeamName: "Test TeamName",
-            BusinessUnit: "Test BU",
+            BusinessUnitId: 1,
             PTL: "Test PTL"
         );
 
@@ -70,7 +70,7 @@ public class TeamsControllerTest
                 m.Send(
                     It.Is<CreateTeamCommand>(cmd =>
                         cmd.TeamName == request.TeamName
-                        && cmd.BusinessUnit == request.BusinessUnit
+                        && cmd.BusinessUnitId == request.BusinessUnitId
                         && cmd.PTL == request.PTL
                     ),
                     It.IsAny<CancellationToken>()
@@ -89,7 +89,7 @@ public class TeamsControllerTest
 
         var request = new CreateTeamRequest(
             TeamName: "Test TeamName",
-            BusinessUnit: "Test BU",
+            BusinessUnitId: 5,
             PTL: "Test PTL"
         );
 
@@ -108,7 +108,7 @@ public class TeamsControllerTest
 
         var request = new CreateTeamRequest(
             TeamName: existingTeamName,
-            BusinessUnit: "Test BU",
+            BusinessUnitId: 2,
             PTL: "Test PTL"
         );
 
@@ -120,7 +120,7 @@ public class TeamsControllerTest
     public async Task CreateTeam_EmptyTeamName_ReturnsBadRequest()
     {
         // Arrange
-        var request = new CreateTeamRequest(TeamName: "", BusinessUnit: "Test BU", PTL: "Test PTL");
+        var request = new CreateTeamRequest(TeamName: "", BusinessUnitId: 1, PTL: "Test PTL");
 
         // Act
         var actionResult = await _controller.Put(request);
@@ -149,7 +149,8 @@ public class TeamsControllerTest
         {
             Id = teamId,
             TeamName = "Test Team",
-            BusinessUnit = "BU1",
+            BusinessUnit = new() { BusinessUnitName = "BU1" },
+            BusinessUnitId = 1,
             PTL = "PTL1",
         };
         _mediatorMock
@@ -173,7 +174,10 @@ public class TeamsControllerTest
         {
             Assert.That(response.Id, Is.EqualTo(team.Id));
             Assert.That(response.TeamName, Is.EqualTo(team.TeamName));
-            Assert.That(response.BusinessUnit, Is.EqualTo(team.BusinessUnit));
+            Assert.That(
+                response.BusinessUnit.BusinessUnitName,
+                Is.EqualTo(team.BusinessUnit.BusinessUnitName)
+            );
             Assert.That(response.PTL, Is.EqualTo(team.PTL));
         });
     }
@@ -203,14 +207,16 @@ public class TeamsControllerTest
             {
                 Id = 1,
                 TeamName = "Team Alpha",
-                BusinessUnit = "AlphaBU",
+                BusinessUnit = new() { BusinessUnitName = "AlphaBU" },
+                BusinessUnitId = 1,
                 PTL = "AlphaPTL",
             },
             new()
             {
                 Id = 2,
                 TeamName = "Team Beta",
-                BusinessUnit = "BetaBU",
+                BusinessUnit = new() { BusinessUnitName = "BetaBU" },
+                BusinessUnitId = 2,
                 PTL = "BetaPTL",
             },
         };
@@ -291,14 +297,15 @@ public class TeamsControllerTest
         var request = new PatchTeamRequest
         {
             TeamName = "Updated Name",
-            BusinessUnit = "Updated BU",
+            BusinessUnitId = 1,
             PTL = "Updated PTL",
         };
         var updatedTeam = new Team
         {
             Id = teamId,
             TeamName = request.TeamName,
-            BusinessUnit = request.BusinessUnit,
+            BusinessUnit = new() { BusinessUnitName = "Abc", Id = 1 },
+            BusinessUnitId = 1,
             PTL = request.PTL,
         };
 
@@ -325,7 +332,10 @@ public class TeamsControllerTest
         {
             Assert.That(response.Id, Is.EqualTo(updatedTeam.Id));
             Assert.That(response.TeamName, Is.EqualTo(updatedTeam.TeamName));
-            Assert.That(response.BusinessUnit, Is.EqualTo(updatedTeam.BusinessUnit));
+            Assert.That(
+                response.BusinessUnit.BusinessUnitName,
+                Is.EqualTo(updatedTeam.BusinessUnit!.BusinessUnitName)
+            );
             Assert.That(response.PTL, Is.EqualTo(updatedTeam.PTL));
         });
 
@@ -335,7 +345,7 @@ public class TeamsControllerTest
                     It.Is<PatchTeamCommand>(cmd =>
                         cmd.Id == teamId
                         && cmd.TeamName == request.TeamName
-                        && cmd.BusinessUnit == request.BusinessUnit
+                        && cmd.BusinessUnitId == request.BusinessUnitId
                         && cmd.PTL == request.PTL
                     ),
                     It.IsAny<CancellationToken>()
@@ -479,7 +489,8 @@ public class TeamsControllerTest
         {
             Id = teamId,
             TeamName = "Test TeamName",
-            BusinessUnit = "Test BU",
+            BusinessUnit = new() { BusinessUnitName = "Test BU" },
+            BusinessUnitId = 2,
         };
         _mediatorMock
             .Setup(mediator =>

@@ -98,7 +98,7 @@ public class CompaniesController : ControllerBase
 
         var companyId = await _mediator.Send(command);
 
-        var response = new CreateTeamResponse(companyId);
+        var response = new CreateCompanyResponse(companyId);
         var uri = "Companies/" + companyId;
         return Created(uri, response);
     }
@@ -110,18 +110,24 @@ public class CompaniesController : ControllerBase
     /// <param name="request">Update request. </param>
     /// <returns>The Updated Company. </returns>
     /// <response code="200"> Company was updated succesfully. </response>
+    /// <response code="400"> Company could not be updated. </response>
     /// <response code="404"> Company could not be found. </response>
     /// <response code="409"> Updated Company Name already exists. </response>
     /// <response code="500"> Internal Error. </response>
     [HttpPatch("{id:int}")]
     [ProducesResponseType(typeof(GetCompanyResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<GetCompanyResponse>> Patch(
         int id,
         [FromBody] UpdateCompanyRequest request
     )
     {
+        if (request.CompanyName != null && string.IsNullOrWhiteSpace(request.CompanyName))
+        {
+            return BadRequest(new ErrorResponse("Company Name can't be whitespaces"));
+        }
         var command = new UpdateCompanyCommand(Id: id, CompanyName: request.CompanyName);
         var company = await _mediator.Send(command);
 

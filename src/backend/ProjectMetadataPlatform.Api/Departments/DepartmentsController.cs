@@ -100,7 +100,7 @@ public class DepartmentsController : ControllerBase
 
         var departmentId = await _mediator.Send(command);
 
-        var response = new CreateTeamResponse(departmentId);
+        var response = new CreateDepartmentResponse(departmentId);
         var uri = "Departments/" + departmentId;
         return Created(uri, response);
     }
@@ -112,11 +112,13 @@ public class DepartmentsController : ControllerBase
     /// <param name="request">Update Request.</param>
     /// <returns>The updated department.</returns>
     /// <response code="200"> department was updated successfully. </response>
+    /// <response code="400"> department could not be updated. </response>
     /// <response code="404"> department couldn't be found. </response>
     /// <response code="409"> New department name already exists. </response>
     /// <response code="500"> Internal error. </response>
     [HttpPatch("{id:int}")]
     [ProducesResponseType(typeof(GetDepartmentResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<GetDepartmentResponse>> Patch(
@@ -124,6 +126,10 @@ public class DepartmentsController : ControllerBase
         [FromBody] UpdateDepartmentRequest request
     )
     {
+        if (request.DepartmentName != null && string.IsNullOrWhiteSpace(request.DepartmentName))
+        {
+            return BadRequest(new ErrorResponse("Department Name can't be whitespaces"));
+        }
         var command = new UpdateDepartmentCommand(Id: id, DepartmentName: request.DepartmentName);
         var department = await _mediator.Send(command);
 

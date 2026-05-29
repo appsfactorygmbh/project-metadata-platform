@@ -72,7 +72,9 @@ public class ProjectsControllerTest
                 ProjectName = "Regen",
                 Slug = "regen",
                 ClientName = "Nasa",
-                Company = "Geostorm",
+
+                Company = new() { CompanyName = "Geostorm" },
+                CompanyId = 1,
                 IsmsLevel = SecurityLevel.VERY_HIGH,
             },
         };
@@ -104,7 +106,7 @@ public class ProjectsControllerTest
             Assert.That(project.Slug, Is.EqualTo("regen"));
             Assert.That(project.ProjectName, Is.EqualTo("Regen"));
             Assert.That(project.ClientName, Is.EqualTo("Nasa"));
-            Assert.That(project.Company, Is.EqualTo("Geostorm"));
+            Assert.That(project.Company.CompanyName, Is.EqualTo("Geostorm"));
             Assert.That(project.IsmsLevel, Is.EqualTo(SecurityLevel.VERY_HIGH));
         });
     }
@@ -121,7 +123,8 @@ public class ProjectsControllerTest
                 ProjectName = "Regen",
                 Slug = "regen",
                 ClientName = "Nasa",
-                Company = "NothingButTheBest GmbH",
+                Company = new() { CompanyName = "NothingButTheBest GmbH" },
+                CompanyId = 2,
                 IsmsLevel = SecurityLevel.HIGH,
             },
         };
@@ -158,7 +161,7 @@ public class ProjectsControllerTest
             Assert.That(project.ProjectName, Is.EqualTo("Regen"));
             Assert.That(project.Slug, Is.EqualTo("regen"));
             Assert.That(project.ClientName, Is.EqualTo("Nasa"));
-            Assert.That(project.Company, Is.EqualTo("NothingButTheBest GmbH"));
+            Assert.That(project.Company.CompanyName, Is.EqualTo("NothingButTheBest GmbH"));
             Assert.That(project.IsmsLevel, Is.EqualTo(SecurityLevel.HIGH));
         });
     }
@@ -221,6 +224,7 @@ public class ProjectsControllerTest
             ProjectName = "project 1",
             Slug = "project_1",
             TeamId = 1,
+            CompanyId = 1,
         };
         var responseContent = new List<ProjectPlugins>
         {
@@ -394,6 +398,7 @@ public class ProjectsControllerTest
             ClientName = "client name 1",
             ProjectName = "project 1",
             Slug = "project_1",
+            CompanyId = 1,
         };
         var responseContent = new List<ProjectPlugins>
         {
@@ -475,6 +480,7 @@ public class ProjectsControllerTest
             ClientName = "client name 1",
             ProjectName = "project 1",
             Slug = "project_1",
+            CompanyId = 1,
         };
         var responseContent = new List<ProjectPlugins>
         {
@@ -543,6 +549,7 @@ public class ProjectsControllerTest
             ClientName = "client name 1",
             ProjectName = "project 1",
             Slug = "project_1",
+            CompanyId = 1,
         };
         var responseContent = new List<ProjectPlugins>
         {
@@ -600,7 +607,8 @@ public class ProjectsControllerTest
                         Slug = "heather",
                         ClientName = "Metatron",
                         IsArchived = true,
-                        Company = "Optimus Prime",
+                        CompanyId = 1,
+                        Company = new() { CompanyName = "Optimus Prime" },
                         IsmsLevel = SecurityLevel.HIGH,
                     },
                 }
@@ -626,7 +634,7 @@ public class ProjectsControllerTest
             Assert.That(response.ToArray()[0].Slug, Is.EqualTo("heather"));
             Assert.That(response.ToArray()[0].ClientName, Is.EqualTo("Metatron"));
             Assert.That(response.ToArray()[0].IsArchived, Is.EqualTo(true));
-            Assert.That(response.ToArray()[0].Company, Is.EqualTo("Optimus Prime"));
+            Assert.That(response.ToArray()[0].Company.CompanyName, Is.EqualTo("Optimus Prime"));
             Assert.That(response.ToArray()[0].IsmsLevel, Is.EqualTo(SecurityLevel.HIGH));
         });
     }
@@ -1050,6 +1058,7 @@ public class ProjectsControllerTest
             Slug = "heather",
             ClientName = "Metatron",
             IsArchived = true,
+            CompanyId = 1,
         };
 
         _mediator
@@ -1073,6 +1082,7 @@ public class ProjectsControllerTest
             Slug = "heather",
             ClientName = "Metatron",
             IsArchived = false,
+            CompanyId = 1,
         };
 
         _mediator
@@ -1116,6 +1126,7 @@ public class ProjectsControllerTest
             Slug = "heather",
             ClientName = "Metatron",
             IsArchived = true,
+            CompanyId = 1,
         };
 
         _mediator
