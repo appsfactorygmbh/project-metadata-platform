@@ -132,11 +132,13 @@ public class TeamsController : ControllerBase
     /// <param name="request">The request body containing the details of the team to be updated.</param>
     /// <returns>The updated version of the team.</returns>
     /// <response code="200">The team was updated successfully.</response>
+    /// <response code="400">The team could not be updated.</response>
     /// <response code="404">No team with the requested id was found.</response>
     /// <response code="409">The team name already exists.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpPatch("{teamId:int}")]
     [ProducesResponseType(typeof(GetTeamResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<GetTeamResponse>> Patch(
@@ -144,6 +146,10 @@ public class TeamsController : ControllerBase
         [FromBody] PatchTeamRequest request
     )
     {
+        if (request.TeamName != null && string.IsNullOrWhiteSpace(request.TeamName))
+        {
+            return BadRequest(new ErrorResponse("Team Name can't whitespaces"));
+        }
         var command = new PatchTeamCommand(
             Id: teamId,
             TeamName: request.TeamName,

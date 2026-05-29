@@ -104,7 +104,7 @@ public class OfficeLocationsController : ControllerBase
 
         var locationId = await _mediator.Send(command);
 
-        var response = new CreateTeamResponse(locationId);
+        var response = new CreateOfficeLocationResponse(locationId);
         var uri = "OfficeLocations/" + locationId;
         return Created(uri, response);
     }
@@ -116,11 +116,13 @@ public class OfficeLocationsController : ControllerBase
     /// <param name="request">Update Request.</param>
     /// <returns>The updated Office Location.</returns>
     /// <response code="200"> Office Location was updated successfully. </response>
+    /// <response code="400"> Office Location could not be updated. </response>
     /// <response code="404"> Office Location couldn't be found. </response>
     /// <response code="409"> New Office Location name already exists. </response>
     /// <response code="500"> Internal error. </response>
     [HttpPatch("{id:int}")]
     [ProducesResponseType(typeof(GetOfficeLocationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<GetOfficeLocationResponse>> Patch(
@@ -128,6 +130,13 @@ public class OfficeLocationsController : ControllerBase
         [FromBody] UpdateOfficeLocationRequest request
     )
     {
+        if (
+            request.OfficeLocationName != null
+            && string.IsNullOrWhiteSpace(request.OfficeLocationName)
+        )
+        {
+            return BadRequest(new ErrorResponse("Office Location Name can't be whitespaces"));
+        }
         var command = new UpdateOfficeLocationCommand(
             Id: id,
             OfficeLocationName: request.OfficeLocationName

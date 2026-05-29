@@ -100,7 +100,7 @@ public class BusinessUnitsController : ControllerBase
 
         var businessUnitId = await _mediator.Send(command);
 
-        var response = new CreateTeamResponse(businessUnitId);
+        var response = new CreateBusinessUnitResponse(businessUnitId);
         var uri = "BusinessUnits/" + businessUnitId;
         return Created(uri, response);
     }
@@ -112,11 +112,13 @@ public class BusinessUnitsController : ControllerBase
     /// <param name="request">Update Request.</param>
     /// <returns>The updated Business Unit.</returns>
     /// <response code="200"> Business Unit was updated successfully. </response>
+    /// <response code="400"> Business Unit could not be updated. </response>
     /// <response code="404"> Bu couldn't be found. </response>
     /// <response code="409"> New Bu name already exists. </response>
     /// <response code="500"> Internal error. </response>
     [HttpPatch("{id:int}")]
     [ProducesResponseType(typeof(GetBusinessUnitResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<GetBusinessUnitResponse>> Patch(
@@ -124,6 +126,10 @@ public class BusinessUnitsController : ControllerBase
         [FromBody] UpdateBusinessUnitRequest request
     )
     {
+        if (request.BusinessUnitName != null && string.IsNullOrWhiteSpace(request.BusinessUnitName))
+        {
+            return BadRequest(new ErrorResponse("Business Unit Name can't be whitespaces"));
+        }
         var command = new UpdateBusinessUnitCommand(
             Id: id,
             BusinessUnitName: request.BusinessUnitName

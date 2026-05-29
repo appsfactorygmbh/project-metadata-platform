@@ -41,7 +41,7 @@ public class PutProjectControllerTest
             ProjectName: "Example Project",
             ClientName: "Example Client",
             OfferId: "Example OfferId",
-            Company: "Example Company",
+            CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
@@ -69,7 +69,7 @@ public class PutProjectControllerTest
                     command.Plugins.Count == 1
                     && command.ProjectName == "Example Project"
                     && command.OfferId == "Example OfferId"
-                    && command.Company == "Example Company"
+                    && command.CompanyId == 1
                     && command.ClientName == "Example Client"
                     && command.CompanyState == CompanyState.EXTERNAL
                     && command.IsmsLevel == SecurityLevel.NORMAL
@@ -94,7 +94,7 @@ public class PutProjectControllerTest
             ProjectName: "Example Project",
             ClientName: "Example Client",
             OfferId: "Example OfferId",
-            Company: "Example Company",
+            CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
@@ -109,7 +109,7 @@ public class PutProjectControllerTest
                     && command.ProjectName == "Example Project"
                     && command.ClientName == "Example Client"
                     && command.OfferId == "Example OfferId"
-                    && command.Company == "Example Company"
+                    && command.CompanyId == 1
                     && command.CompanyState == CompanyState.EXTERNAL
                     && command.IsmsLevel == SecurityLevel.NORMAL
                     && command.Notes == "Example Notes"
@@ -130,7 +130,7 @@ public class PutProjectControllerTest
             ProjectName: "Example Project",
             ClientName: "Example Client",
             OfferId: "Example OfferId",
-            Company: "Example Company",
+            CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
@@ -144,7 +144,7 @@ public class PutProjectControllerTest
                     && command.ProjectName == "Example Project"
                     && command.ClientName == "Example Client"
                     && command.OfferId == "Example OfferId"
-                    && command.Company == "Example Company"
+                    && command.CompanyId == 1
                     && command.CompanyState == CompanyState.EXTERNAL
                     && command.IsmsLevel == SecurityLevel.NORMAL
                     && command.Notes == "Example Notes"
@@ -161,7 +161,7 @@ public class PutProjectControllerTest
             ProjectName: "",
             ClientName: " ",
             OfferId: "1",
-            Company: "",
+            CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
@@ -185,7 +185,7 @@ public class PutProjectControllerTest
             ProjectName: "Tour Eiffel",
             ClientName: "BusinessUnit 9001",
             OfferId: "42",
-            Company: "Côte-d'Or",
+            CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
@@ -207,7 +207,7 @@ public class PutProjectControllerTest
             ProjectName: "p",
             ClientName: "b",
             OfferId: "1",
-            Company: "d",
+            CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
@@ -230,7 +230,7 @@ public class PutProjectControllerTest
             ProjectName: "p",
             ClientName: "b",
             OfferId: "1",
-            Company: "d",
+            CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
@@ -250,7 +250,7 @@ public class PutProjectControllerTest
             ProjectName: "Example Project",
             ClientName: "Example Client",
             OfferId: "Example OfferId",
-            Company: "Example Company",
+            CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
@@ -281,7 +281,7 @@ public class PutProjectControllerTest
                     && command.ProjectName == "Example Project"
                     && command.ClientName == "Example Client"
                     && command.OfferId == "Example OfferId"
-                    && command.Company == "Example Company"
+                    && command.CompanyId == 1
                     && command.CompanyState == CompanyState.EXTERNAL
                     && command.IsmsLevel == SecurityLevel.NORMAL
                     && command.Plugins.Single().PluginId == 3
@@ -305,7 +305,7 @@ public class PutProjectControllerTest
             ProjectName: "Example Project",
             ClientName: "Example Client",
             OfferId: "Example OfferId",
-            Company: "Example Company",
+            CompanyId: 2,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
@@ -336,7 +336,7 @@ public class PutProjectControllerTest
                     && command.ProjectName == "Example Project"
                     && command.ClientName == "Example Client"
                     && command.OfferId == "Example OfferId"
-                    && command.Company == "Example Company"
+                    && command.CompanyId == 2
                     && command.CompanyState == CompanyState.EXTERNAL
                     && command.IsmsLevel == SecurityLevel.NORMAL
                     && command.Plugins.Single().PluginId == 3
@@ -365,7 +365,7 @@ public class PutProjectControllerTest
             ProjectName: "UpdatedProject",
             ClientName: "Updated Client",
             OfferId: "Updated OfferId",
-            Company: "Updated Company",
+            CompanyId: 1,
             TeamId: 2,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.HIGH,
@@ -394,7 +394,7 @@ public class PutProjectControllerTest
                     && command.ProjectName == "UpdatedProject"
                     && command.ClientName == "Updated Client"
                     && command.OfferId == "Updated OfferId"
-                    && command.Company == "Updated Company"
+                    && command.CompanyId == 1
                     && command.CompanyState == CompanyState.INTERNAL
                     && command.IsmsLevel == SecurityLevel.HIGH
                     && command.Plugins.Single().PluginId == 4
@@ -417,7 +417,7 @@ public class PutProjectControllerTest
             ProjectName: "UpdatedProject",
             ClientName: "Updated Business Unit",
             OfferId: "2",
-            Company: "Updated Department",
+            CompanyId: 5,
             TeamId: 2,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.HIGH,
@@ -446,7 +446,7 @@ public class PutProjectControllerTest
             ProjectName: "UpdatedProject",
             ClientName: "Updated Client",
             OfferId: "Updated OfferId",
-            Company: "Updated Company",
+            CompanyId: 2,
             TeamId: 2,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.HIGH,
@@ -476,7 +476,7 @@ public class PutProjectControllerTest
                     && command.ProjectName == "UpdatedProject"
                     && command.ClientName == "Updated Client"
                     && command.OfferId == "Updated OfferId"
-                    && command.Company == "Updated Company"
+                    && command.CompanyId == 2
                     && command.CompanyState == CompanyState.INTERNAL
                     && command.IsmsLevel == SecurityLevel.HIGH
                     && command.Plugins.Single().PluginId == 4

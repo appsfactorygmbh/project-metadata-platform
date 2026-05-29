@@ -8,12 +8,18 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Interfaces;
+using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BasicExceptions;
+using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
+using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
+using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
 using ProjectMetadataPlatform.Domain.Errors.LogExceptions;
+using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
+using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 using RouteData = Microsoft.AspNetCore.Routing.RouteData;
 
@@ -29,6 +35,10 @@ public class ExceptionFilterTest
     private Mock<IExceptionHandler<TeamException>> _teamExceptionHandler;
     private Mock<IExceptionHandler<PluginException>> _pluginsExceptionHandler;
     private Mock<IExceptionHandler<AuthException>> _authExceptionHandler;
+    private Mock<IExceptionHandler<OfficeLocationException>> _officeLocationExceptionHandler;
+    private Mock<IExceptionHandler<DepartmentException>> _departmentExceptionHandler;
+    private Mock<IExceptionHandler<BusinessUnitException>> _businessUnitExceptionHandler;
+    private Mock<IExceptionHandler<CompanyException>> _companyExceptionHandler;
     private Mock<ExceptionContext> _context;
 
     [SetUp]
@@ -41,6 +51,10 @@ public class ExceptionFilterTest
         _authExceptionHandler = new Mock<IExceptionHandler<AuthException>>();
         _userExceptionHandler = new Mock<IExceptionHandler<UserException>>();
         _teamExceptionHandler = new();
+        _officeLocationExceptionHandler = new Mock<IExceptionHandler<OfficeLocationException>>();
+        _departmentExceptionHandler = new Mock<IExceptionHandler<DepartmentException>>();
+        _businessUnitExceptionHandler = new Mock<IExceptionHandler<BusinessUnitException>>();
+        _companyExceptionHandler = new Mock<IExceptionHandler<CompanyException>>();
         _context = SetupExceptionContext();
         _filter = new ExceptionFilter(
             basicExceptionHandler: _basicExceptionHandler.Object,
@@ -49,7 +63,11 @@ public class ExceptionFilterTest
             pluginExceptionHandler: _pluginsExceptionHandler.Object,
             authExceptionHandler: _authExceptionHandler.Object,
             userExceptionHandler: _userExceptionHandler.Object,
-            teamExceptionHandler: _teamExceptionHandler.Object
+            teamExceptionHandler: _teamExceptionHandler.Object,
+            companyExceptionHandler: _companyExceptionHandler.Object,
+            businessUnitExceptionHandler: _businessUnitExceptionHandler.Object,
+            officeLocationExceptionHandler: _officeLocationExceptionHandler.Object,
+            departmentExceptionHandler: _departmentExceptionHandler.Object
         );
     }
 
@@ -216,6 +234,117 @@ public class ExceptionFilterTest
         _filter.OnException(_context.Object);
 
         _logExceptionHandler.Verify(h => h.Handle(It.IsAny<LogException>()), Times.Once);
+        _context.VerifySet(c => c.Result = It.IsAny<IActionResult>(), Times.Once);
+    }
+
+    [Test]
+    public void CallCompanyExceptionHandlerForCompanyException_Test()
+    {
+        var mockException = new Mock<CompanyException>("some error message");
+        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+
+        var result = new StatusCodeResult(500);
+        _companyExceptionHandler.Setup(h => h.Handle(It.IsAny<CompanyException>())).Returns(result);
+
+        _context
+            .SetupSet(c => c.Result = It.IsAny<IActionResult>())
+            .Callback(
+                (IActionResult r) =>
+                {
+                    Assert.That(r, Is.EqualTo(result));
+                }
+            );
+
+        _filter.OnException(_context.Object);
+
+        _companyExceptionHandler.Verify(h => h.Handle(It.IsAny<CompanyException>()), Times.Once);
+        _context.VerifySet(c => c.Result = It.IsAny<IActionResult>(), Times.Once);
+    }
+
+    [Test]
+    public void CallBusinessUnitExceptionHandlerForBusinessUnitException_Test()
+    {
+        var mockException = new Mock<BusinessUnitException>("some error message");
+        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+
+        var result = new StatusCodeResult(500);
+        _businessUnitExceptionHandler
+            .Setup(h => h.Handle(It.IsAny<BusinessUnitException>()))
+            .Returns(result);
+
+        _context
+            .SetupSet(c => c.Result = It.IsAny<IActionResult>())
+            .Callback(
+                (IActionResult r) =>
+                {
+                    Assert.That(r, Is.EqualTo(result));
+                }
+            );
+
+        _filter.OnException(_context.Object);
+
+        _businessUnitExceptionHandler.Verify(
+            h => h.Handle(It.IsAny<BusinessUnitException>()),
+            Times.Once
+        );
+        _context.VerifySet(c => c.Result = It.IsAny<IActionResult>(), Times.Once);
+    }
+
+    [Test]
+    public void CallOfficeLocationExceptionHandlerForOfficeLocationException_Test()
+    {
+        var mockException = new Mock<OfficeLocationException>("some error message");
+        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+
+        var result = new StatusCodeResult(500);
+        _officeLocationExceptionHandler
+            .Setup(h => h.Handle(It.IsAny<OfficeLocationException>()))
+            .Returns(result);
+
+        _context
+            .SetupSet(c => c.Result = It.IsAny<IActionResult>())
+            .Callback(
+                (IActionResult r) =>
+                {
+                    Assert.That(r, Is.EqualTo(result));
+                }
+            );
+
+        _filter.OnException(_context.Object);
+
+        _officeLocationExceptionHandler.Verify(
+            h => h.Handle(It.IsAny<OfficeLocationException>()),
+            Times.Once
+        );
+        _context.VerifySet(c => c.Result = It.IsAny<IActionResult>(), Times.Once);
+    }
+
+    [Test]
+    public void CallDepartmentExceptionHandlerForDepartmentException_Test()
+    {
+        var mockException = new Mock<DepartmentException>("some error message");
+        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+
+        var result = new StatusCodeResult(500);
+        _departmentExceptionHandler
+            .Setup(h => h.Handle(It.IsAny<DepartmentException>()))
+            .Returns(result);
+
+        _context
+            .SetupSet(c => c.Result = It.IsAny<IActionResult>())
+            .Callback(
+                (IActionResult r) =>
+                {
+                    Assert.That(r, Is.EqualTo(result));
+                }
+            );
+
+        _filter.OnException(_context.Object);
+
+        _departmentExceptionHandler.Verify(
+            h => h.Handle(It.IsAny<DepartmentException>()),
+            Times.Once
+        );
         _context.VerifySet(c => c.Result = It.IsAny<IActionResult>(), Times.Once);
     }
 
