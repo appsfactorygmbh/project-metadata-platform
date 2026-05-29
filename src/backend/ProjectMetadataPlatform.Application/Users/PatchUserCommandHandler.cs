@@ -444,7 +444,6 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         object? oldValue
     )
     {
-        //TODO: this wont work for address object. Fix later.
         user.OfficeLocation =
             operation.Operation == PatchOperations.Remove
                 ? null
