@@ -35,6 +35,7 @@ public class CreateProjectRepositoryTest : TestsWithDatabase
             ProjectName = "Example Project",
             Slug = "example_project",
             ClientName = "Example Client",
+            CompanyId = 1,
         };
         await _repository.AddProjectAsync(exampleProject);
         await _context.SaveChangesAsync();
@@ -56,6 +57,7 @@ public class CreateProjectRepositoryTest : TestsWithDatabase
             ProjectName = "Example Project",
             Slug = "example_project",
             ClientName = "Example Client",
+            CompanyId = 1,
         };
         await _repository.AddProjectAsync(exampleProject);
         await _context.SaveChangesAsync();
@@ -91,6 +93,7 @@ public class CreateProjectRepositoryTest : TestsWithDatabase
             Slug = "example_project",
             ClientName = "Example Client",
             ProjectPlugins = projectPlugins,
+            CompanyId = 1,
         };
         var examplePlugin = new Plugin { PluginName = "DummyPlug" };
         var storedPlugin = await _pluginRepository.StorePlugin(examplePlugin);

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Projects;
+using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -35,6 +36,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
             ProjectName = "Regen",
             Slug = "regen",
             ClientName = "Nasa",
+            CompanyId = 1,
         };
 
         _context.Projects.RemoveRange(_context.Projects);
@@ -61,7 +63,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
         var filters = new ProjectFilterRequest(
             "Heather",
             "Metatron",
-            ["666", "777"],
+            ["Test", "Test2"],
             ["42", "43"],
             true,
             ["AppsFact"],
@@ -76,9 +78,15 @@ public class ProjectsRepositoryTests : TestsWithDatabase
                 Slug = "heather",
                 ClientName = "Metatron",
                 IsArchived = true,
-                Company = "AppsFact",
+                Company = new() { CompanyName = "AppsFact" },
+                CompanyId = 1,
                 IsmsLevel = SecurityLevel.VERY_HIGH,
-                Team = new() { TeamName = "42", BusinessUnit = "666" },
+                Team = new()
+                {
+                    TeamName = "42",
+                    BusinessUnitId = 666,
+                    BusinessUnit = new BusinessUnit { BusinessUnitName = "Test" },
+                },
             },
             new()
             {
@@ -87,9 +95,14 @@ public class ProjectsRepositoryTests : TestsWithDatabase
                 Slug = "james",
                 ClientName = "Lucifer",
                 IsArchived = true,
-                Company = "AppsFact",
                 IsmsLevel = SecurityLevel.VERY_HIGH,
-                Team = new() { TeamName = "43", BusinessUnit = "777" },
+                Team = new()
+                {
+                    TeamName = "43",
+                    BusinessUnitId = 777,
+                    BusinessUnit = new BusinessUnit { BusinessUnitName = "Test2" },
+                },
+                CompanyId = 1,
             },
             new()
             {
@@ -98,9 +111,14 @@ public class ProjectsRepositoryTests : TestsWithDatabase
                 Slug = "marika",
                 ClientName = "Satan",
                 IsArchived = false,
-                Company = "AppsFact",
                 IsmsLevel = SecurityLevel.VERY_HIGH,
-                Team = new() { TeamName = "44", BusinessUnit = "999" },
+                Team = new()
+                {
+                    TeamName = "44",
+                    BusinessUnitId = 999,
+                    BusinessUnit = new BusinessUnit { BusinessUnitName = "Test3" },
+                },
+                CompanyId = 1,
             },
         };
 
@@ -118,7 +136,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
             Assert.That(result.Any(p => p.ProjectName == "Heather"), Is.True);
             Assert.That(result.Any(p => p.ClientName == "Metatron"), Is.True);
             Assert.That(result.Any(p => p.IsArchived), Is.True);
-            Assert.That(result.Any(p => p.Company == "AppsFact"), Is.True);
+            Assert.That(result.Any(p => p.Company!.CompanyName == "AppsFact"), Is.True);
             Assert.That(result.Any(p => p.IsmsLevel == SecurityLevel.VERY_HIGH), Is.True);
         });
     }
@@ -143,7 +161,8 @@ public class ProjectsRepositoryTests : TestsWithDatabase
                 ProjectName = "Heather",
                 Slug = "heather",
                 ClientName = "Metatron",
-                Company = "AddOn",
+                Company = new() { CompanyName = "AddOn" },
+                CompanyId = 1,
                 IsmsLevel = SecurityLevel.HIGH,
             },
             new()
@@ -152,7 +171,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
                 ProjectName = "James",
                 Slug = "james",
                 ClientName = "Lucifer",
-                Company = "AddOn",
+                CompanyId = 1,
                 IsmsLevel = SecurityLevel.HIGH,
             },
         };
@@ -179,6 +198,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
                 ProjectName = "Heather",
                 Slug = "heather",
                 ClientName = "Metatron",
+                CompanyId = 1,
             },
             new()
             {
@@ -186,6 +206,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
                 ProjectName = "James",
                 Slug = "james",
                 ClientName = "Lucifer",
+                CompanyId = 1,
             },
             new()
             {
@@ -193,6 +214,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
                 ProjectName = "Marika",
                 Slug = "marika",
                 ClientName = "Satan",
+                CompanyId = 1,
             },
         };
 
@@ -216,6 +238,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
             ProjectName = "Regen",
             Slug = "regen",
             ClientName = "Nasa",
+            CompanyId = 1,
         };
 
         _context.Projects.RemoveRange(_context.Projects);
@@ -242,6 +265,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
             ProjectName = "Regen",
             Slug = "regen",
             ClientName = "Nasa",
+            CompanyId = 1,
         };
 
         var project2 = new Project
@@ -250,6 +274,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
             ProjectName = "Nieselegen",
             Slug = "nieselregen",
             ClientName = "Nasa",
+            CompanyId = 1,
         };
 
         _context.Projects.RemoveRange(_context.Projects);
@@ -271,6 +296,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
             ProjectName = "Nieselegen",
             Slug = "nieselregen",
             ClientName = "Nasa",
+            CompanyId = 1,
         };
 
         _context.Projects.RemoveRange(_context.Projects);

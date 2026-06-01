@@ -41,6 +41,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ProjectName = "Regen",
             Slug = "regen",
             ClientName = "Nasa",
+            CompanyId = 1,
         };
 
         _context.Projects.Add(project);
@@ -195,6 +196,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ProjectName = "Test Project",
             Slug = "test_project",
             ClientName = "Test Client", // Ensure ClientName is set
+            CompanyId = 1,
         };
 
         var unarchivedPlugin = new Plugin
@@ -245,6 +247,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ProjectName = "Test Project",
             Slug = "test_project",
             ClientName = "Test Client", // Make sure this is set
+            CompanyId = 1,
         };
         var archivedPlugin = new Plugin
         {
@@ -279,6 +282,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ProjectName = "Test Project",
             Slug = "test_project",
             ClientName = "Test Client", // Make sure this is set
+            CompanyId = 1,
         };
         _context.Projects.Add(project);
         await _context.SaveChangesAsync();
@@ -297,6 +301,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ProjectName = "Test Project",
             Slug = "test_project",
             ClientName = "Test Client", // Make sure this is set
+            CompanyId = 1,
         };
         var archivedPlugin = new Plugin
         {
@@ -333,6 +338,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ProjectName = "Test Project",
             Slug = "test_project",
             ClientName = "Test Client", // Make sure this is set
+            CompanyId = 1,
         };
         var unarchivedPlugin = new Plugin
         {
@@ -382,6 +388,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ProjectName = "Test Project",
             Slug = "test_project",
             ClientName = "Test Client", // Make sure this is set
+            CompanyId = 1,
         };
         var project2 = new Project
         {
@@ -389,6 +396,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ProjectName = "Test Project2",
             Slug = "test_project2",
             ClientName = "Test Client2", // Make sure this is set
+            CompanyId = 1,
         };
         var unarchivedPlugin = new Plugin
         {
@@ -448,6 +456,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ProjectName = "Test Project",
             ClientName = "Test Client",
             Slug = "testProject",
+            CompanyId = 1,
         };
         var project2 = new Project
         {
@@ -455,6 +464,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ProjectName = "Test Project2",
             ClientName = "Test Client2",
             Slug = "testProject2",
+            CompanyId = 1,
         };
         var archivedPlugin = new Plugin
         {

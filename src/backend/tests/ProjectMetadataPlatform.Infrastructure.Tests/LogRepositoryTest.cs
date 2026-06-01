@@ -71,6 +71,7 @@ public class LogRepositoryTest : TestsWithDatabase
             ProjectName = "Example Project",
             Slug = "example_project",
             ClientName = "Example Client",
+            CompanyId = 1,
         };
         await _context.Projects.AddAsync(exampleProject);
 
@@ -410,6 +411,7 @@ public class LogRepositoryTest : TestsWithDatabase
             ProjectName = "Example Project",
             Slug = "example_project",
             ClientName = "Example Client",
+            CompanyId = 1,
         };
         await _context.Projects.AddAsync(exampleProject);
 
@@ -607,6 +609,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "example_project",
             ClientName = "Example Client",
             Logs = [exampleLog],
+            CompanyId = 1,
         };
         exampleLog.Project = exampleProject;
 
@@ -639,6 +642,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "example_project",
             ClientName = "Example Client",
             Logs = null,
+            CompanyId = 1,
         };
         await _context.Projects.AddAsync(exampleProject);
         await _context.SaveChangesAsync();
@@ -677,6 +681,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "example_project",
             ClientName = "Example Client",
             Logs = [exampleLog1],
+            CompanyId = 1,
         };
 
         var exampleLog2 = new Log
@@ -705,6 +710,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "another_project",
             ClientName = "Example Client",
             Logs = [exampleLog2],
+            CompanyId = 1,
         };
         await _context.Projects.AddAsync(exampleProject1);
         await _context.Projects.AddAsync(exampleProject2);
@@ -744,6 +750,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "example_project",
             ClientName = "Example Client",
             Logs = [exampleLog1],
+            CompanyId = 1,
         };
 
         var exampleLog2 = new Log
@@ -772,6 +779,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "another_project",
             ClientName = "Example Client",
             Logs = [exampleLog2],
+            CompanyId = 1,
         };
         await _context.Projects.AddAsync(exampleProject1);
         await _context.Projects.AddAsync(exampleProject2);
@@ -822,6 +830,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "example_project",
             ClientName = "Example Client",
             Logs = [exampleLog1],
+            CompanyId = 1,
         };
 
         var exampleLog2 = new Log
@@ -850,6 +859,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "another_project",
             ClientName = "Example Client",
             Logs = [exampleLog2],
+            CompanyId = 1,
         };
         await _context.Projects.AddAsync(exampleProject1);
         await _context.Projects.AddAsync(exampleProject2);

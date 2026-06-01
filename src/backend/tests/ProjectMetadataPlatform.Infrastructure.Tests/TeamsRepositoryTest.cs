@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -32,7 +33,8 @@ public class TeamsRepositoryTests : TestsWithDatabase
         {
             Id = 1,
             TeamName = "Test_1",
-            BusinessUnit = "BU Test",
+            BusinessUnit = new() { BusinessUnitName = "BU Test" },
+            BusinessUnitId = 1,
             PTL = "Max Mustermann",
         };
 
@@ -40,7 +42,8 @@ public class TeamsRepositoryTests : TestsWithDatabase
         {
             Id = 2,
             TeamName = "Test_2",
-            BusinessUnit = "BU Foo",
+            BusinessUnit = new() { BusinessUnitName = "BU Foo" },
+            BusinessUnitId = 2,
         };
 
         _context.Teams.RemoveRange(_context.Teams);
@@ -60,11 +63,11 @@ public class TeamsRepositoryTests : TestsWithDatabase
             Assert.That(teamRes.Id, Is.EqualTo(1));
             Assert.That(teamRes.TeamName, Is.EqualTo("Test_1"));
             Assert.That(teamRes.PTL, Is.EqualTo("Max Mustermann"));
-            Assert.That(teamRes.BusinessUnit, Is.EqualTo("BU Test"));
+            Assert.That(teamRes.BusinessUnit!.BusinessUnitName, Is.EqualTo("BU Test"));
             Assert.That(teamRes2.Id, Is.EqualTo(2));
             Assert.That(teamRes2.TeamName, Is.EqualTo("Test_2"));
             Assert.That(teamRes2.PTL, Is.EqualTo(null));
-            Assert.That(teamRes2.BusinessUnit, Is.EqualTo("BU Foo"));
+            Assert.That(teamRes2.BusinessUnit!.BusinessUnitName, Is.EqualTo("BU Foo"));
         });
     }
 
@@ -85,21 +88,26 @@ public class TeamsRepositoryTests : TestsWithDatabase
             {
                 Id = 1,
                 TeamName = "Test_1",
-                BusinessUnit = "BU Test",
+
+                BusinessUnit = new() { BusinessUnitName = "BU Test" },
+                BusinessUnitId = 1,
                 PTL = "Max Mustermann",
             },
             new()
             {
                 Id = 2,
                 TeamName = "Test_2",
-                BusinessUnit = "BU Foo",
+                BusinessUnit = new() { BusinessUnitName = "BU Foo" },
+                BusinessUnitId = 2,
                 PTL = "Anna Mustermann",
             },
             new()
             {
                 Id = 3,
                 TeamName = "Foo Bar",
-                BusinessUnit = "BU Bar",
+
+                BusinessUnit = new() { BusinessUnitName = "BU Bar" },
+                BusinessUnitId = 3,
                 PTL = "Test",
             },
         };
@@ -141,21 +149,25 @@ public class TeamsRepositoryTests : TestsWithDatabase
             {
                 Id = 1,
                 TeamName = "Test_1",
-                BusinessUnit = "BU Test",
+                BusinessUnit = new() { BusinessUnitName = "BU Test" },
+                BusinessUnitId = 20,
                 PTL = "Max Mustermann",
             },
             new()
             {
                 Id = 2,
                 TeamName = "Test_2",
-                BusinessUnit = "Foo",
+                BusinessUnit = new() { BusinessUnitName = "Foo" },
+                BusinessUnitId = 5,
                 PTL = "Anna Mustermann",
             },
             new()
             {
                 Id = 3,
                 TeamName = "Foo Bar",
-                BusinessUnit = "BU Bar",
+
+                BusinessUnit = new() { BusinessUnitName = "BU Bar" },
+                BusinessUnitId = 2,
                 PTL = "Test",
             },
         };
@@ -197,21 +209,25 @@ public class TeamsRepositoryTests : TestsWithDatabase
             {
                 Id = 1,
                 TeamName = "Test_1",
-                BusinessUnit = "BU Test",
+                BusinessUnit = new() { BusinessUnitName = "BU Test" },
+                BusinessUnitId = 2,
                 PTL = "Max Mustermann",
             },
             new()
             {
                 Id = 2,
                 TeamName = "Test_2",
-                BusinessUnit = "Foo",
+                BusinessUnit = new() { BusinessUnitName = "Foo" },
+                BusinessUnitId = 1,
                 PTL = "Anna Mustermann",
             },
             new()
             {
                 Id = 3,
                 TeamName = "Foo Bar",
-                BusinessUnit = "BU Bar",
+
+                BusinessUnit = new() { BusinessUnitName = "BU Bar" },
+                BusinessUnitId = 3,
                 PTL = "Test",
             },
         };
@@ -242,7 +258,8 @@ public class TeamsRepositoryTests : TestsWithDatabase
         {
             Id = 1,
             TeamName = "Test_1",
-            BusinessUnit = "BU Test",
+            BusinessUnit = new() { BusinessUnitName = "BU Test" },
+            BusinessUnitId = 2,
             PTL = "Max Mustermann",
         };
 
@@ -272,7 +289,9 @@ public class TeamsRepositoryTests : TestsWithDatabase
         {
             Id = 1,
             TeamName = "Test_1",
-            BusinessUnit = "BU Test",
+            BusinessUnit = new() { BusinessUnitName = "BU Test" },
+            BusinessUnitId = 2,
+
             PTL = "Max Mustermann",
         };
 
@@ -283,6 +302,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
             Slug = "nieselregen",
             ClientName = "Nasa",
             TeamId = 1,
+            CompanyId = 1,
         };
 
         _context.Teams.RemoveRange(_context.Teams);
@@ -300,7 +320,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
         Assert.Multiple(() =>
         {
             Assert.That(teamWithProjects.TeamName, Is.EqualTo("Test_1"));
-            Assert.That(teamWithProjects.BusinessUnit, Is.EqualTo("BU Test"));
+            Assert.That(teamWithProjects.BusinessUnit!.BusinessUnitName, Is.EqualTo("BU Test"));
             Assert.That(teamWithProjects.PTL, Is.EqualTo("Max Mustermann"));
             Assert.That(teamWithProjects.Id, Is.EqualTo(1));
 
@@ -337,7 +357,8 @@ public class TeamsRepositoryTests : TestsWithDatabase
         {
             Id = 1,
             TeamName = "Test_1",
-            BusinessUnit = "BU Test",
+            BusinessUnit = new() { BusinessUnitName = "BU Test" },
+            BusinessUnitId = 2,
             PTL = "Max Mustermann",
         };
         _context.Teams.RemoveRange(_context.Teams);
@@ -359,7 +380,9 @@ public class TeamsRepositoryTests : TestsWithDatabase
         {
             Id = 100,
             TeamName = "New Team Alpha",
-            BusinessUnit = "Innovation",
+
+            BusinessUnit = new() { BusinessUnitName = "Innovation" },
+            BusinessUnitId = 2,
             PTL = "Dr. New",
         };
 
@@ -387,7 +410,8 @@ public class TeamsRepositoryTests : TestsWithDatabase
         {
             Id = 101,
             TeamName = "Original Gamma",
-            BusinessUnit = "Legacy",
+            BusinessUnit = new() { BusinessUnitName = "Legacy" },
+            BusinessUnitId = 22,
             PTL = "Old Guard",
         };
         _context.Teams.Add(initialTeam);
@@ -397,7 +421,8 @@ public class TeamsRepositoryTests : TestsWithDatabase
         {
             Id = 101,
             TeamName = "Updated Gamma Attempt",
-            BusinessUnit = "New Wave",
+            BusinessUnit = new() { BusinessUnitName = "New Wave" },
+            BusinessUnitId = 2,
             PTL = "New Blood",
         };
 
@@ -427,7 +452,8 @@ public class TeamsRepositoryTests : TestsWithDatabase
             {
                 Id = 200,
                 TeamName = existingTeamName,
-                BusinessUnit = "BU",
+                BusinessUnit = new() { BusinessUnitName = "BU" },
+                BusinessUnitId = 2,
                 PTL = "PTL",
             }
         );
@@ -450,7 +476,8 @@ public class TeamsRepositoryTests : TestsWithDatabase
             {
                 Id = 201,
                 TeamName = "Some Other Team",
-                BusinessUnit = "BU",
+                BusinessUnit = new() { BusinessUnitName = "BU" },
+                BusinessUnitId = 2,
                 PTL = "PTL",
             }
         );
@@ -483,7 +510,9 @@ public class TeamsRepositoryTests : TestsWithDatabase
         {
             Id = 300,
             TeamName = "Team Epsilon",
-            BusinessUnit = "Old BU",
+
+            BusinessUnit = new() { BusinessUnitName = "Old BU" },
+            BusinessUnitId = 1,
             PTL = "Old PTL",
         };
         _context.Teams.Add(initialTeam);
@@ -494,7 +523,9 @@ public class TeamsRepositoryTests : TestsWithDatabase
         {
             Id = 300,
             TeamName = "Team Epsilon Updated",
-            BusinessUnit = "New BU",
+
+            BusinessUnit = new() { BusinessUnitName = "New BU" },
+            BusinessUnitId = 2,
             PTL = "New PTL",
         };
 
@@ -524,7 +555,9 @@ public class TeamsRepositoryTests : TestsWithDatabase
         {
             Id = 999,
             TeamName = "Ghost Team",
-            BusinessUnit = "Nowhere",
+
+            BusinessUnit = new() { BusinessUnitName = "Nowhere" },
+            BusinessUnitId = 2,
             PTL = "Nobody",
         };
 
@@ -543,7 +576,9 @@ public class TeamsRepositoryTests : TestsWithDatabase
         {
             Id = 400,
             TeamName = "Team Zeta",
-            BusinessUnit = "Core Services",
+
+            BusinessUnit = new() { BusinessUnitName = "Core Services" },
+            BusinessUnitId = 2,
             PTL = "Lead Zeta",
         };
         _context.Teams.Add(expectedTeam);
