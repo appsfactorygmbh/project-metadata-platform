@@ -114,10 +114,40 @@ public class CompaniesControllerTest
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.Value, Is.InstanceOf<GetCompanyResponse>());
 
-        var getTokenResponse = okResult.Value as GetCompanyResponse;
-        Assert.That(getTokenResponse, Is.Not.Null);
+        var getCompanyResponse = okResult.Value as GetCompanyResponse;
+        Assert.That(getCompanyResponse, Is.Not.Null);
 
-        Assert.That(getTokenResponse.CompanyName, Is.EqualTo("Company"));
+        Assert.That(getCompanyResponse.CompanyName, Is.EqualTo("Company"));
+    }
+
+    [Test]
+    public async Task GetLinkedProjects_MediatorThrowsExceptionTest()
+    {
+        _mediator
+            .Setup(mediator =>
+                mediator.Send(It.IsAny<GetLinkedProjectsQuery>(), It.IsAny<CancellationToken>())
+            )
+            .ThrowsAsync(new InvalidDataException("An error message"));
+        Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetLinkedProjects(1));
+    }
+
+    [Test]
+    public async Task GetLinkedProjects_ResponseTest()
+    {
+        _mediator
+            .Setup(m => m.Send(It.IsAny<GetLinkedProjectsQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(["1", "2", "3"]);
+        var result = await _controller.GetLinkedProjects(1);
+        Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+
+        var okResult = result.Result as OkObjectResult;
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(okResult.Value, Is.InstanceOf<GetLinkedProjectsForCompanyResponse>());
+
+        var getBuResponse = okResult.Value as GetLinkedProjectsForCompanyResponse;
+        Assert.That(getBuResponse, Is.Not.Null);
+
+        Assert.That(getBuResponse.ProjectSlugs, Is.EqualTo(new List<string> {"1", "2", "3" }));
     }
 
     [Test]

@@ -12,80 +12,104 @@ namespace ProjectMetadataPlatform.IntegrationTests;
 
 public class ProjectManagement : IntegrationTestsBase
 {
-    private static readonly StringContent CreateRequest = StringContent(
-        """
-        {
-          "projectName": "testProject",
-          "clientName": "testClient",
-          "offerId": "testId",
-          "company": "testCompany",
-          "companyState": "EXTERNAL",
-          "ismsLevel": "NORMAL",
-          "notes": "Example Notes"
-        }
-        """
-    );
+    private static StringContent CreateRequest(int companyId) =>
+        StringContent(
+            """
+                {
+                  "projectName": "testProject",
+                  "clientName": "testClient",
+                  "offerId": "testId",
+                  "companyId":
+            """
+                + companyId
+                + """
+                      ,
+                      "companyState": "EXTERNAL",
+                      "ismsLevel": "NORMAL",
+                      "notes": "Example Notes"
+                    }
+                """
+        );
 
-    private static readonly StringContent CreateRequest2 = StringContent(
-        """
-        {
-          "projectName": "otherTestProject2",
-          "clientName": "testClient2",
-          "offerId": "testId2",
-          "company": "testCompany2",
-          "companyState": "EXTERNAL",
-          "ismsLevel": "VERY_HIGH",
-          "notes": "Example Notes 2"
-        }
-        """
-    );
+    private static StringContent CreateRequest2(int companyId) =>
+        StringContent(
+            """
+            {
+              "projectName": "otherTestProject2",
+              "clientName": "testClient2",
+              "offerId": "testId2",
+                  "companyId":
+            """
+                + companyId
+                + """
+                      ,
+                  "companyState": "EXTERNAL",
+                  "ismsLevel": "VERY_HIGH",
+                  "notes": "Example Notes 2"
+                }
+                """
+        );
 
-    private static readonly StringContent UpdateisArchivedRequest = StringContent(
-        """
-        {
-          "projectName": "testProject",
-          "clientName": "testClient",
-          "isArchived": true,
-          "offerId": "testId",
-          "company": "testCompany",
-          "companyState": "EXTERNAL",
-          "ismsLevel": "NORMAL",
-          "notes": "Example Notes"
-        }
-        """
-    );
+    private static StringContent UpdateisArchivedRequest(int companyId) =>
+        StringContent(
+            """
+            {
+              "projectName": "testProject",
+              "clientName": "testClient",
+              "isArchived": true,
+              "offerId": "testId",
+                  "companyId":
+            """
+                + companyId
+                + """
+                      ,
+                  "companyState": "EXTERNAL",
+                  "ismsLevel": "NORMAL",
+                  "notes": "Example Notes"
+                }
+                """
+        );
 
-    private static readonly StringContent UpdateRequest = StringContent(
-        """
-        {
-          "projectName": "testProject",
-          "clientName": "testClient2",
-          "offerId": "testId2",
-          "company": "testCompany2",
-          "companyState": "INTERNAL",
-          "ismsLevel": "HIGH",
-          "notes": "testNotes2"
-        }
-        """
-    );
+    private static StringContent UpdateRequest(int companyId) =>
+        StringContent(
+            """
+            {
+              "projectName": "testProject",
+              "clientName": "testClient2",
+              "offerId": "testId2",
+                  "companyId":
+            """
+                + companyId
+                + """
+                      ,
+                  "companyState": "INTERNAL",
+                  "ismsLevel": "HIGH",
+                  "notes": "testNotes2"
+                }
+                """
+        );
 
-    private static StringContent RequestWithPlugins(int pluginId1, int pluginId2) =>
+    private static StringContent RequestWithPlugins(int companyId, int pluginId1, int pluginId2) =>
         StringContent(
             """
                    {
                      "projectName": "testProject",
                      "clientName": "testClient",
                      "offerId": "testId",
-                     "company": "testCompany",
-                     "companyState": "EXTERNAL",
-                     "ismsLevel": "NORMAL",
-                     "notes": "testNotes",
-                     "pluginList": [
-                       {
-                         "url": "www.appsfactory.gitlab.com",
-                         "displayName": "GitLab",
-                         "id":
+                  "companyId":
             """
+                + companyId
+                + """
+                      ,
+                         "companyState": "EXTERNAL",
+                         "ismsLevel": "NORMAL",
+                         "notes": "testNotes",
+                         "pluginList": [
+                           {
+                             "url": "www.appsfactory.gitlab.com",
+                             "displayName": "GitLab",
+                             "id":
+                """
                 + pluginId1
                 + """
             },
@@ -102,23 +126,27 @@ public class ProjectManagement : IntegrationTestsBase
                 """
         );
 
-    private static StringContent RequestWithPlugins2(int pluginId1, int pluginId2) =>
+    private static StringContent RequestWithPlugins2(int companyId, int pluginId1, int pluginId2) =>
         StringContent(
             """
                    {
                      "projectName": "testProject",
                      "clientName": "testClient",
                      "offerId": "testId",
-                     "company": "testCompany",
-                     "companyState": "EXTERNAL",
-                     "ismsLevel": "NORMAL",
-                     "notes": "testNotes",
-                     "pluginList": [
-                       {
-                         "url": "www.appsfactory.gitlab.com",
-                         "displayName": "Appsfactory GitLab",
-                         "id":
+                  "companyId":
             """
+                + companyId
+                + """
+                      ,
+                         "companyState": "EXTERNAL",
+                         "ismsLevel": "NORMAL",
+                         "notes": "testNotes",
+                         "pluginList": [
+                           {
+                             "url": "www.appsfactory.gitlab.com",
+                             "displayName": "Appsfactory GitLab",
+                             "id":
+                """
                 + pluginId1
                 + """
             },
@@ -144,7 +172,9 @@ public class ProjectManagement : IntegrationTestsBase
 
         // Act
         // Assert
-        var putResponse = await client.PutAsync("/Projects", CreateRequest);
+        var companyId = await CreateCompany(client, "testCompany");
+
+        var putResponse = await client.PutAsync("/Projects", CreateRequest(companyId));
 
         putResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         putResponse.Headers.Location.Should().NotBeNull();
@@ -158,7 +188,12 @@ public class ProjectManagement : IntegrationTestsBase
         rootElement.GetProperty("projectName").GetString().Should().Be("testProject");
         rootElement.GetProperty("clientName").GetString().Should().Be("testClient");
         rootElement.GetProperty("offerId").GetString().Should().Be("testId");
-        rootElement.GetProperty("company").GetString().Should().Be("testCompany");
+        rootElement
+            .GetProperty("company")
+            .GetProperty("companyName")
+            .GetString()
+            .Should()
+            .Be("testCompany");
         rootElement.GetProperty("companyState").GetString().Should().Be("EXTERNAL");
         rootElement.GetProperty("ismsLevel").GetString().Should().Be("NORMAL");
         rootElement.GetProperty("id").GetInt32().Should().BeGreaterThan(0);
@@ -174,10 +209,11 @@ public class ProjectManagement : IntegrationTestsBase
 
         // Act
         // Assert
-        var putResponse = await client.PutAsync("/Projects", CreateRequest);
+        var companyId = await CreateCompany(client, "testCompany");
+        var putResponse = await client.PutAsync("/Projects", CreateRequest(companyId));
         putResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-
-        putResponse = await client.PutAsync("/Projects", CreateRequest2);
+        var companyId2 = await CreateCompany(client, "testCompany2");
+        putResponse = await client.PutAsync("/Projects", CreateRequest2(companyId2));
         putResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
         var getResponse = await client.GetAsync("/Projects");
@@ -191,7 +227,12 @@ public class ProjectManagement : IntegrationTestsBase
         var firstProject = rootElement[0];
         firstProject.GetProperty("projectName").GetString().Should().Be("testProject");
         firstProject.GetProperty("clientName").GetString().Should().Be("testClient");
-        firstProject.GetProperty("company").GetString().Should().Be("testCompany");
+        firstProject
+            .GetProperty("company")
+            .GetProperty("companyName")
+            .GetString()
+            .Should()
+            .Be("testCompany");
         firstProject.GetProperty("ismsLevel").GetString().Should().Be("NORMAL");
         firstProject.GetProperty("notes").GetString().Should().Be("Example Notes");
         firstProject.GetProperty("id").GetInt32().Should().BeGreaterThan(0);
@@ -199,7 +240,12 @@ public class ProjectManagement : IntegrationTestsBase
         var secondProject = rootElement[1];
         secondProject.GetProperty("projectName").GetString().Should().Be("otherTestProject2");
         secondProject.GetProperty("clientName").GetString().Should().Be("testClient2");
-        secondProject.GetProperty("company").GetString().Should().Be("testCompany2");
+        secondProject
+            .GetProperty("company")
+            .GetProperty("companyName")
+            .GetString()
+            .Should()
+            .Be("testCompany2");
         secondProject.GetProperty("ismsLevel").GetString().Should().Be("VERY_HIGH");
         secondProject.GetProperty("notes").GetString().Should().Be("Example Notes 2");
         secondProject.GetProperty("id").GetInt32().Should().BeGreaterThan(0);
@@ -212,17 +258,21 @@ public class ProjectManagement : IntegrationTestsBase
         var client = CreateClient();
         await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
 
+        var companyId = await CreateCompany(client, "testCompany");
         // Act
         // Assert
         var projectId = (
-            await ToJsonElement(client.PutAsync("/Projects", CreateRequest), HttpStatusCode.Created)
+            await ToJsonElement(
+                client.PutAsync("/Projects", CreateRequest(companyId)),
+                HttpStatusCode.Created
+            )
         )
             .GetProperty("id")
             .GetInt32();
-
+        var companyId2 = await CreateCompany(client, "testCompany2");
         var updateResponse = await client.PutAsync(
             $"/Projects?projectId=" + projectId,
-            UpdateRequest
+            UpdateRequest(companyId2)
         );
         updateResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         updateResponse.Headers.Location.Should().NotBeNull();
@@ -236,16 +286,21 @@ public class ProjectManagement : IntegrationTestsBase
         rootElement.GetProperty("projectName").GetString().Should().Be("testProject");
         rootElement.GetProperty("clientName").GetString().Should().Be("testClient2");
         rootElement.GetProperty("offerId").GetString().Should().Be("testId2");
-        rootElement.GetProperty("company").GetString().Should().Be("testCompany2");
+        rootElement
+            .GetProperty("company")
+            .GetProperty("companyName")
+            .GetString()
+            .Should()
+            .Be("testCompany2");
         rootElement.GetProperty("companyState").GetString().Should().Be("INTERNAL");
         rootElement.GetProperty("ismsLevel").GetString().Should().Be("HIGH");
         rootElement.GetProperty("notes").GetString().Should().Be("testNotes2");
         rootElement.GetProperty("id").GetInt32().Should().BeGreaterThan(0);
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
-        logs.GetArrayLength().Should().Be(2);
+        logs.GetArrayLength().Should().Be(4);
 
-        logs[1]
+        logs[2]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -272,12 +327,12 @@ public class ProjectManagement : IntegrationTestsBase
         var pluginId1 = await CreatePlugin(client, "GitLab");
         var pluginId2 = await CreatePlugin(client, "Jira");
         var pluginId3 = await CreatePlugin(client, "Confluence");
-
+        var companyId = await CreateCompany(client, "testCompany");
         // Act
         // Assert
         var projectId = (
             await ToJsonElement(
-                client.PutAsync("/Projects", RequestWithPlugins(pluginId1, pluginId2)),
+                client.PutAsync("/Projects", RequestWithPlugins(companyId, pluginId1, pluginId2)),
                 HttpStatusCode.Created
             )
         )
@@ -296,7 +351,7 @@ public class ProjectManagement : IntegrationTestsBase
 
         var updateResponse = await client.PutAsync(
             "/Projects?projectId=" + projectId,
-            RequestWithPlugins2(pluginId1, pluginId3)
+            RequestWithPlugins2(companyId, pluginId1, pluginId3)
         );
         updateResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         updateResponse.Headers.Location.Should().NotBeNull();
@@ -306,7 +361,12 @@ public class ProjectManagement : IntegrationTestsBase
         project.GetProperty("projectName").GetString().Should().Be("testProject");
         project.GetProperty("clientName").GetString().Should().Be("testClient");
         project.GetProperty("offerId").GetString().Should().Be("testId");
-        project.GetProperty("company").GetString().Should().Be("testCompany");
+        project
+            .GetProperty("company")
+            .GetProperty("companyName")
+            .GetString()
+            .Should()
+            .Be("testCompany");
         project.GetProperty("companyState").GetString().Should().Be("EXTERNAL");
         project.GetProperty("ismsLevel").GetString().Should().Be("NORMAL");
         project.GetProperty("notes").GetString().Should().Be("testNotes");
@@ -327,7 +387,7 @@ public class ProjectManagement : IntegrationTestsBase
         projectPlugins[1].GetProperty("pluginName").GetString().Should().Be("Confluence");
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
-        logs.GetArrayLength().Should().Be(9);
+        logs.GetArrayLength().Should().Be(10);
 
         logs[5]
             .GetProperty("logMessage")
@@ -378,6 +438,18 @@ public class ProjectManagement : IntegrationTestsBase
             );
     }
 
+    private static async Task<int> CreateCompany(HttpClient client, string name)
+    {
+        return (
+            await ToJsonElement(
+                client.PutAsync("/Companies", StringContent($"{{ \"companyName\": \"{name}\"}}")),
+                HttpStatusCode.Created
+            )
+        )
+            .GetProperty("id")
+            .GetInt32();
+    }
+
     private static async Task<int> CreatePlugin(HttpClient client, string name)
     {
         return (
@@ -401,17 +473,23 @@ public class ProjectManagement : IntegrationTestsBase
         // Arrange
         var client = CreateClient();
         await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
-
+        var companyId = await CreateCompany(client, "testCompany");
         // Act
         // Assert
         var projectId = (
-            await ToJsonElement(client.PutAsync("/Projects", CreateRequest), HttpStatusCode.Created)
+            await ToJsonElement(
+                client.PutAsync("/Projects", CreateRequest(companyId)),
+                HttpStatusCode.Created
+            )
         )
             .GetProperty("id")
             .GetInt32();
         var projects = await ToJsonElement(client.GetAsync($"/Projects/"));
         var count = projects.GetArrayLength();
-        await client.PutAsync($"/Projects?projectId=" + projectId, UpdateisArchivedRequest);
+        await client.PutAsync(
+            $"/Projects?projectId=" + projectId,
+            UpdateisArchivedRequest(companyId)
+        );
 
         (await client.DeleteAsync($"/Projects/{projectId}"))
             .StatusCode.Should()
@@ -422,7 +500,7 @@ public class ProjectManagement : IntegrationTestsBase
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
 
-        logs.GetArrayLength().Should().Be(3);
+        logs.GetArrayLength().Should().Be(4);
 
         logs[2]
             .GetProperty("logMessage")
@@ -449,16 +527,22 @@ public class ProjectManagement : IntegrationTestsBase
         // Arrange
         var client = CreateClient();
         await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
-
+        var companyId = await CreateCompany(client, "Test Company");
         // Act
         var projectId = (
-            await ToJsonElement(client.PutAsync("/Projects", CreateRequest), HttpStatusCode.Created)
+            await ToJsonElement(
+                client.PutAsync("/Projects", CreateRequest(companyId)),
+                HttpStatusCode.Created
+            )
         )
             .GetProperty("id")
             .GetInt32();
 
         var errorResponse = await ToErrorResponse(
-            client.PutAsync($"/Projects?projectId=" + projectId, RequestWithPlugins(1, 2)),
+            client.PutAsync(
+                $"/Projects?projectId=" + projectId,
+                RequestWithPlugins(companyId, 1, 2)
+            ),
             HttpStatusCode.NotFound
         );
 
@@ -467,18 +551,34 @@ public class ProjectManagement : IntegrationTestsBase
     }
 
     [Test]
-    public async Task ProjectSlugMustBeUnique()
+    public async Task CompanyMustExist()
     {
         // Arrange
         var client = CreateClient();
         await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
 
+        var errorResponse = await ToErrorResponse(
+            client.PutAsync($"/Projects", CreateRequest(1)),
+            HttpStatusCode.NotFound
+        );
+
+        // Assert
+        errorResponse.Message.Should().Be("The Company with id 1 was not found.");
+    }
+
+    [Test]
+    public async Task ProjectSlugMustBeUnique()
+    {
+        // Arrange
+        var client = CreateClient();
+        await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
+        var companyId = await CreateCompany(client, "Test Company");
         // Act
-        (await client.PutAsync("/Projects", CreateRequest))
+        (await client.PutAsync("/Projects", CreateRequest(companyId)))
             .StatusCode.Should()
             .Be(HttpStatusCode.Created);
         var errorResponse = await ToErrorResponse(
-            client.PutAsync("/Projects", CreateRequest),
+            client.PutAsync("/Projects", CreateRequest(companyId)),
             HttpStatusCode.Conflict
         );
 
@@ -494,11 +594,11 @@ public class ProjectManagement : IntegrationTestsBase
         // Arrange
         var client = CreateClient();
         await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
-
+        var companyId = await CreateCompany(client, "Test Company");
         var responseTask = endpoint switch
         {
             "GET" => client.GetAsync("/Projects/1"),
-            "PUT" => client.PutAsync("/Projects?projectId=1", CreateRequest),
+            "PUT" => client.PutAsync("/Projects?projectId=1", CreateRequest(companyId)),
             "DELETE" => client.DeleteAsync("/Projects/1"),
             "PLUGINS" => client.GetAsync("/Projects/1/Plugins"),
             "UNARCHIVED_PLUGINS" => client.GetAsync("/Projects/1/UnarchivedPlugins"),
@@ -520,11 +620,11 @@ public class ProjectManagement : IntegrationTestsBase
         // Arrange
         var client = CreateClient();
         await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
-
+        var companyId = await CreateCompany(client, "Test Company");
         var responseTask = endpoint switch
         {
             "GET" => client.GetAsync("/Projects/testproject"),
-            "PUT" => client.PutAsync("/Projects/testproject", CreateRequest),
+            "PUT" => client.PutAsync("/Projects/testproject", CreateRequest(companyId)),
             "DELETE" => client.DeleteAsync("/Projects/testproject"),
             "PLUGINS" => client.GetAsync("/Projects/testproject/Plugins"),
             "UNARCHIVED_PLUGINS" => client.GetAsync("/Projects/testproject/UnarchivedPlugins"),
@@ -544,10 +644,13 @@ public class ProjectManagement : IntegrationTestsBase
         // Arrange
         var client = CreateClient();
         await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
-
+        var companyId = await CreateCompany(client, "Test Company");
         // Act
         var projectId = (
-            await ToJsonElement(client.PutAsync("/Projects", CreateRequest), HttpStatusCode.Created)
+            await ToJsonElement(
+                client.PutAsync("/Projects", CreateRequest(companyId)),
+                HttpStatusCode.Created
+            )
         )
             .GetProperty("id")
             .GetInt32();

@@ -124,10 +124,10 @@ public class OfficeLocationsControllerTest
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.Value, Is.InstanceOf<GetOfficeLocationResponse>());
 
-        var getTokenResponse = okResult.Value as GetOfficeLocationResponse;
-        Assert.That(getTokenResponse, Is.Not.Null);
+        var getDepartmentResponse = okResult.Value as GetOfficeLocationResponse;
+        Assert.That(getDepartmentResponse, Is.Not.Null);
 
-        Assert.That(getTokenResponse.OfficeLocationName, Is.EqualTo("OfficeLocation"));
+        Assert.That(getDepartmentResponse.OfficeLocationName, Is.EqualTo("OfficeLocation"));
     }
 
     [Test]

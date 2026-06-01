@@ -114,10 +114,10 @@ public class BusinessUnitsControllerTest
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.Value, Is.InstanceOf<GetBusinessUnitResponse>());
 
-        var getTokenResponse = okResult.Value as GetBusinessUnitResponse;
-        Assert.That(getTokenResponse, Is.Not.Null);
+        var getBuResponse = okResult.Value as GetBusinessUnitResponse;
+        Assert.That(getBuResponse, Is.Not.Null);
 
-        Assert.That(getTokenResponse.BusinessUnitName, Is.EqualTo("BusinessUnit"));
+        Assert.That(getBuResponse.BusinessUnitName, Is.EqualTo("BusinessUnit"));
     }
 
     [Test]
@@ -165,6 +165,36 @@ public class BusinessUnitsControllerTest
             Assert.That(createBusinessUnitResponse, Is.Not.Null);
             Assert.That(createBusinessUnitResponse!.Id, Is.EqualTo(1));
         });
+    }
+
+    [Test]
+    public async Task GetLinkedTeams_MediatorThrowsExceptionTest()
+    {
+        _mediator
+            .Setup(mediator =>
+                mediator.Send(It.IsAny<GetLinkedTeamsQuery>(), It.IsAny<CancellationToken>())
+            )
+            .ThrowsAsync(new InvalidDataException("An error message"));
+        Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetLinkedTeams(1));
+    }
+
+    [Test]
+    public async Task GetLinkedTeams_ResponseTest()
+    {
+        _mediator
+            .Setup(m => m.Send(It.IsAny<GetLinkedTeamsQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync([1, 2, 3]);
+        var result = await _controller.GetLinkedTeams(1);
+        Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+
+        var okResult = result.Result as OkObjectResult;
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(okResult.Value, Is.InstanceOf<GetLinkedTeamsForBusinessUnitResponse>());
+
+        var getBuResponse = okResult.Value as GetLinkedTeamsForBusinessUnitResponse;
+        Assert.That(getBuResponse, Is.Not.Null);
+
+        Assert.That(getBuResponse.TeamIds, Is.EqualTo(new List<int> { 1, 2, 3 }));
     }
 
     [Test]

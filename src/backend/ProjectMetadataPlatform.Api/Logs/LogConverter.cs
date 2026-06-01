@@ -637,7 +637,7 @@ public class LogConverter : ILogConverter
     /// <returns>The constructed message.</returns>
     private static string BuildAddedBusinessUnitMessage(List<LogChange>? changes)
     {
-        var message = "added a new businessUnit";
+        var message = "added a new business unit";
         if (changes == null)
         {
             return message;
@@ -657,7 +657,7 @@ public class LogConverter : ILogConverter
     /// <returns>The constructed message.</returns>
     private static string BuildUpdatedBusinessUnitMessage(Log log)
     {
-        var message = $"updated businessUnit {log.BusinessUnitName}: ";
+        var message = $"updated business unit {log.BusinessUnitName}: ";
         message += string.Join(
             ", ",
             log.Changes!.Select(change =>
@@ -674,7 +674,7 @@ public class LogConverter : ILogConverter
     /// <returns>The constructed message.</returns>
     private static string BuildRemovedBusinessUnitMessage(string businessUnitName)
     {
-        return "removed businessUnit " + businessUnitName;
+        return "removed business unit " + businessUnitName;
     }
 
     /// <summary>

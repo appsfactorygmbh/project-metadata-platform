@@ -1177,7 +1177,7 @@ public class LogConverterTest
             Assert.That(
                 logResponse.LogMessage,
                 Is.EqualTo(
-                    "Recursively added a new businessUnit with properties: BusinessUnitName = root"
+                    "Recursively added a new business unit with properties: BusinessUnitName = root"
                 )
             );
             Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
@@ -1222,7 +1222,7 @@ public class LogConverterTest
             Assert.That(
                 logResponse.LogMessage,
                 Is.EqualTo(
-                    "Recursively updated businessUnit root: set BusinessUnitName from root to New_BusinessUnit_Name"
+                    "Recursively updated business unit root: set BusinessUnitName from root to New_BusinessUnit_Name"
                 )
             );
             Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
@@ -1257,7 +1257,7 @@ public class LogConverterTest
         {
             Assert.That(
                 logResponse.LogMessage,
-                Is.EqualTo("Recursively removed businessUnit New_BusinessUnit_Name")
+                Is.EqualTo("Recursively removed business unit New_BusinessUnit_Name")
             );
             Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
         });

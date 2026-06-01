@@ -114,10 +114,10 @@ public class DepartmentsControllerTest
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.Value, Is.InstanceOf<GetDepartmentResponse>());
 
-        var getTokenResponse = okResult.Value as GetDepartmentResponse;
-        Assert.That(getTokenResponse, Is.Not.Null);
+        var getDepartmentResponse = okResult.Value as GetDepartmentResponse;
+        Assert.That(getDepartmentResponse, Is.Not.Null);
 
-        Assert.That(getTokenResponse.DepartmentName, Is.EqualTo("Department"));
+        Assert.That(getDepartmentResponse.DepartmentName, Is.EqualTo("Department"));
     }
 
     [Test]
