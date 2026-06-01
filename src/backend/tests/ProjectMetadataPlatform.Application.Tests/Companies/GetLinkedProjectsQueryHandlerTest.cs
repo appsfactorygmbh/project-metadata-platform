@@ -3,36 +3,35 @@ using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Application.Companies;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Application.Teams;
-using ProjectMetadataPlatform.Domain.Teams;
+using ProjectMetadataPlatform.Domain.Companies;
 
-namespace ProjectMetadataPlatform.Application.Tests.Teams;
+namespace ProjectMetadataPlatform.Application.Tests.Companies;
 
 [TestFixture]
 public class GetLinkedProjectsQueryHandlerTest
 {
     private GetLinkedProjectsQueryHandler _handler;
-    private Mock<ITeamRepository> _mockTeamRepository;
+    private Mock<ICompanyRepository> _mockCompanyRepository;
 
     [SetUp]
     public void Setup()
     {
-        _mockTeamRepository = new Mock<ITeamRepository>();
-        _handler = new GetLinkedProjectsQueryHandler(teamRepository: _mockTeamRepository.Object);
+        _mockCompanyRepository = new Mock<ICompanyRepository>();
+        _handler = new GetLinkedProjectsQueryHandler(
+            companyRepository: _mockCompanyRepository.Object
+        );
     }
 
     [Test]
     public async Task GetLinkedProjects_CallsRepositoryCorrectly()
     {
         // Arrange
-        var returnTeam = new Team()
+        var returnCompany = new Company()
         {
             Id = 1,
-            TeamName = "Test_1",
-            BusinessUnit = new() { BusinessUnitName = "BU Test" },
-            BusinessUnitId = 1,
-            PTL = "Max Mustermann",
+            CompanyName = "Test_1",
             Projects =
             [
                 new()
@@ -54,9 +53,9 @@ public class GetLinkedProjectsQueryHandlerTest
             ],
         };
 
-        _mockTeamRepository
-            .Setup(repo => repo.GetTeamWithProjectsAsync(It.IsAny<int>()))
-            .ReturnsAsync(returnTeam);
+        _mockCompanyRepository
+            .Setup(repo => repo.GetCompanyWithProjectsAsync(It.IsAny<int>()))
+            .ReturnsAsync(returnCompany);
 
         // Act
         var result = await _handler.Handle(
@@ -71,8 +70,8 @@ public class GetLinkedProjectsQueryHandlerTest
             Assert.That(result, Does.Contain("project_1"));
             Assert.That(result, Does.Contain("project_2"));
         });
-        _mockTeamRepository.Verify(
-            m => m.GetTeamWithProjectsAsync(It.Is<int>(id => id == 1)),
+        _mockCompanyRepository.Verify(
+            m => m.GetCompanyWithProjectsAsync(It.Is<int>(id => id == 1)),
             Times.Once
         );
     }

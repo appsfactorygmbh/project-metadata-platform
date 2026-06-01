@@ -46,6 +46,7 @@ public class GetProjectsBySearchingHandlerTest
                 ProjectName = "Regen",
                 Slug = "regen",
                 ClientName = "Nasa",
+                CompanyId = 250,
             },
         };
 
@@ -71,6 +72,7 @@ public class GetProjectsBySearchingHandlerTest
                 ProjectName = "Regen",
                 Slug = "regen",
                 ClientName = "Nasa",
+                CompanyId = 0,
             },
             new()
             {
@@ -78,6 +80,7 @@ public class GetProjectsBySearchingHandlerTest
                 ProjectName = "Sonne",
                 Slug = "sonne",
                 ClientName = "Nasa",
+                CompanyId = -12,
             },
         };
         _mockProjectRepo

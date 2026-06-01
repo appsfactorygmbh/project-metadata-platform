@@ -61,7 +61,7 @@ public class UpdateDepartmentCommandHandler : IRequestHandler<UpdateDepartmentCo
             {
                 throw new DepartmentNameAlreadyExistsException(request.DepartmentName);
             }
-            department.DepartmentName = request.DepartmentName;
+
             logChanges.Add(
                 new LogChange
                 {
@@ -70,6 +70,7 @@ public class UpdateDepartmentCommandHandler : IRequestHandler<UpdateDepartmentCo
                     NewValue = request.DepartmentName,
                 }
             );
+            department.DepartmentName = request.DepartmentName;
         }
         if (logChanges.Count > 0)
         {

@@ -65,7 +65,7 @@ public class UpdateOfficeLocationCommandHandler
             {
                 throw new OfficeLocationNameAlreadyExistsException(request.OfficeLocationName);
             }
-            location.OfficeLocationName = request.OfficeLocationName;
+
             logChanges.Add(
                 new LogChange
                 {
@@ -74,6 +74,7 @@ public class UpdateOfficeLocationCommandHandler
                     NewValue = request.OfficeLocationName,
                 }
             );
+            location.OfficeLocationName = request.OfficeLocationName;
         }
         if (logChanges.Count > 0)
         {

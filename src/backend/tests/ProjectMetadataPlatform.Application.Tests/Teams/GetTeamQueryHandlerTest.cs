@@ -1,9 +1,10 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Teams;
+using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Teams;
 
 namespace ProjectMetadataPlatform.Application.Tests.Teams;
@@ -29,7 +30,8 @@ public class GetTeamQueryHandlerTest
         {
             Id = 1,
             TeamName = "Test_1",
-            BusinessUnit = "BU Test",
+            BusinessUnit = new() { BusinessUnitName = "BU Test" },
+            BusinessUnitId = 1,
             PTL = "Max Mustermann",
         };
 

@@ -58,7 +58,7 @@ public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand,
             {
                 throw new CompanyNameAlreadyExistsException(request.CompanyName);
             }
-            company.CompanyName = request.CompanyName;
+
             logChanges.Add(
                 new LogChange
                 {
@@ -67,6 +67,7 @@ public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand,
                     NewValue = request.CompanyName,
                 }
             );
+            company.CompanyName = request.CompanyName;
         }
         if (logChanges.Count > 0)
         {

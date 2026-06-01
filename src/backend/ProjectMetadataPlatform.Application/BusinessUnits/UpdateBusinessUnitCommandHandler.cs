@@ -65,7 +65,7 @@ public class UpdateBusinessUnitCommandHandler
             {
                 throw new BusinessUnitNameAlreadyExistsException(request.BusinessUnitName);
             }
-            businessUnit.BusinessUnitName = request.BusinessUnitName;
+
             logChanges.Add(
                 new LogChange
                 {
@@ -74,6 +74,7 @@ public class UpdateBusinessUnitCommandHandler
                     NewValue = request.BusinessUnitName,
                 }
             );
+            businessUnit.BusinessUnitName = request.BusinessUnitName;
         }
         if (logChanges.Count > 0)
         {

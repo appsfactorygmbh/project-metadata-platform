@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -41,7 +41,8 @@ public class DeleteTeamCommandHandlerTest
         {
             Id = 1,
             TeamName = "Test_1",
-            BusinessUnit = "BU Test",
+            BusinessUnit = new() { BusinessUnitName = "BU Test" },
+            BusinessUnitId = 1,
             PTL = "Max Mustermann",
             Projects = [],
         };
@@ -68,7 +69,8 @@ public class DeleteTeamCommandHandlerTest
                 m.DeleteTeamAsync(
                     It.Is<Team>(team =>
                         team.Id == 1
-                        && team.BusinessUnit == "BU Test"
+                        && team.BusinessUnit!.BusinessUnitName == "BU Test"
+                        && team.BusinessUnitId == 1
                         && team.TeamName == "Test_1"
                         && team.PTL == "Max Mustermann"
                     )
@@ -89,7 +91,8 @@ public class DeleteTeamCommandHandlerTest
         {
             Id = 1,
             TeamName = "Test_1",
-            BusinessUnit = "BU Test",
+            BusinessUnit = new() { BusinessUnitName = "BU Test" },
+            BusinessUnitId = 1,
             PTL = "Max Mustermann",
             Projects =
             [
@@ -99,6 +102,7 @@ public class DeleteTeamCommandHandlerTest
                     ProjectName = "Projects",
                     Slug = "project",
                     ClientName = "Project Client",
+                    CompanyId = 1,
                 },
             ],
         };

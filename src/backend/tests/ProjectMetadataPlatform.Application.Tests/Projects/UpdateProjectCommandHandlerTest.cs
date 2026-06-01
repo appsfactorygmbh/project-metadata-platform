@@ -8,6 +8,7 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Helper;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Projects;
+using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
@@ -23,6 +24,7 @@ public class UpdateProjectCommandHandlerTest
     private Mock<IProjectsRepository> _mockProjectRepo;
     private Mock<IPluginRepository> _mockPluginRepo;
     private Mock<ITeamRepository> _mockTeamRepository;
+    private Mock<ICompanyRepository> _mockCompanyRepository;
     private Mock<IUnitOfWork> _mockUnitOfWork;
     private Mock<ILogRepository> _mockLogRepository;
     private Mock<ISlugHelper> _mockSlugHelper;
@@ -34,12 +36,14 @@ public class UpdateProjectCommandHandlerTest
         _mockPluginRepo = new Mock<IPluginRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockTeamRepository = new Mock<ITeamRepository>();
+        _mockCompanyRepository = new Mock<ICompanyRepository>();
         _mockLogRepository = new Mock<ILogRepository>();
         _mockSlugHelper = new Mock<ISlugHelper>();
         _handler = new UpdateProjectCommandHandler(
             _mockProjectRepo.Object,
             _mockPluginRepo.Object,
             _mockTeamRepository.Object,
+            _mockCompanyRepository.Object,
             _mockLogRepository.Object,
             _mockUnitOfWork.Object
         );
@@ -55,7 +59,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "example project",
             ClientName = "Example Client",
             OfferId = "Example OfferId",
-            Company = "Example Company",
+            Company = new() { CompanyName = "Example Company" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.HIGH,
             ProjectPlugins = [],
@@ -90,7 +95,7 @@ public class UpdateProjectCommandHandlerTest
                 ProjectName: exampleProject.ProjectName,
                 ClientName: exampleProject.ClientName,
                 OfferId: exampleProject.OfferId,
-                Company: exampleProject.Company,
+                CompanyId: exampleProject.CompanyId,
                 CompanyState: exampleProject.CompanyState,
                 IsmsLevel: exampleProject.IsmsLevel,
                 Id: exampleProject.Id,
@@ -114,7 +119,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "example project",
             ClientName = "Example Client",
             OfferId = "Example OfferId",
-            Company = "Example Company",
+            Company = new() { CompanyName = "Example Company" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.HIGH,
             ProjectPlugins = [],
@@ -147,7 +153,7 @@ public class UpdateProjectCommandHandlerTest
                     ProjectName: exampleProject.ProjectName,
                     ClientName: exampleProject.ClientName,
                     OfferId: exampleProject.OfferId,
-                    Company: exampleProject.Company,
+                    CompanyId: exampleProject.CompanyId,
                     CompanyState: exampleProject.CompanyState,
                     IsmsLevel: exampleProject.IsmsLevel,
                     Id: exampleProject.Id,
@@ -172,7 +178,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "example project",
             ClientName = "Example Client",
             OfferId = "Example OfferId",
-            Company = "Example Company",
+            Company = new() { CompanyName = "Example Company" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.HIGH,
             ProjectPlugins = [],
@@ -205,7 +212,7 @@ public class UpdateProjectCommandHandlerTest
                     ProjectName: exampleProject.ProjectName,
                     ClientName: exampleProject.ClientName,
                     OfferId: exampleProject.OfferId,
-                    Company: exampleProject.Company,
+                    CompanyId: exampleProject.CompanyId,
                     CompanyState: exampleProject.CompanyState,
                     IsmsLevel: exampleProject.IsmsLevel,
                     Id: exampleProject.Id,
@@ -231,7 +238,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "db app",
             ClientName = "DB",
             OfferId = "Offer 1",
-            Company = "DeutscheBahn",
+            Company = new() { CompanyName = "DB" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.HIGH,
             ProjectPlugins = [],
@@ -242,7 +250,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: "DB App",
             ClientName: "Deutsche Bahn",
             OfferId: "Offer 2",
-            Company: "DB",
+            CompanyId: 1,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
             Id: 1,
@@ -255,7 +263,9 @@ public class UpdateProjectCommandHandlerTest
         _mockProjectRepo
             .Setup(repository => repository.GetProjectWithPluginsAsync(1))
             .ReturnsAsync(project);
-
+        _mockCompanyRepository
+            .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
+            .ReturnsAsync(true);
         //Act
         await _handler.Handle(updateCommand, CancellationToken.None);
 
@@ -266,11 +276,59 @@ public class UpdateProjectCommandHandlerTest
             Assert.That(project.ClientName, Is.EqualTo("Deutsche Bahn"));
             Assert.That(project.ProjectName, Is.EqualTo("DB App"));
             Assert.That(project.OfferId, Is.EqualTo("Offer 2"));
-            Assert.That(project.Company, Is.EqualTo("DB"));
+            Assert.That(project.Company.CompanyName, Is.EqualTo("DB"));
             Assert.That(project.CompanyState, Is.EqualTo(CompanyState.INTERNAL));
             Assert.That(project.IsmsLevel, Is.EqualTo(SecurityLevel.NORMAL));
             Assert.That(project.Notes, Is.EqualTo("Updated Notes"));
         });
+    }
+
+    [Test]
+    public async Task ThrowsExceptionIfCompanyDoesntExist()
+    {
+        //Arrange
+        var project = new Project
+        {
+            Id = 1,
+            ProjectName = "Db App",
+            Slug = "db app",
+            ClientName = "DB",
+            OfferId = "Offer 1",
+            Company = new() { CompanyName = "DeutscheBahn" },
+            CompanyId = 1,
+            CompanyState = CompanyState.EXTERNAL,
+            IsmsLevel = SecurityLevel.HIGH,
+            ProjectPlugins = [],
+            Notes = "Example Notes",
+        };
+
+        var updateCommand = new UpdateProjectCommand(
+            ProjectName: "DB App",
+            ClientName: "Deutsche Bahn",
+            OfferId: "Offer 2",
+            CompanyId: 2,
+            CompanyState: CompanyState.INTERNAL,
+            IsmsLevel: SecurityLevel.NORMAL,
+            Id: 1,
+            Plugins: [],
+            IsArchived: false,
+            TeamId: null,
+            Notes: "Updated Notes"
+        );
+
+        _mockProjectRepo
+            .Setup(repository => repository.GetProjectWithPluginsAsync(1))
+            .ReturnsAsync(project);
+        _mockCompanyRepository
+            .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
+            .ReturnsAsync(false);
+
+        var ex = Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
+        {
+            await _handler.Handle(updateCommand, CancellationToken.None);
+        });
+
+        Assert.That(ex.Message, Is.EqualTo("The Company with id 2 was not found."));
     }
 
     [Test]
@@ -284,7 +342,9 @@ public class UpdateProjectCommandHandlerTest
             Slug = "db app",
             ClientName = "DB",
             OfferId = "Offer 1",
-            Company = "DeutscheBahn",
+            Company = new() { CompanyName = "DeutscheBahn" },
+            CompanyId = 1,
+
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.HIGH,
             ProjectPlugins =
@@ -315,7 +375,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: "DB App",
             ClientName: "Unit 2",
             OfferId: "Offer id 2",
-            Company: "DB",
+            CompanyId: 2,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
             Id: 1,
@@ -355,6 +415,9 @@ public class UpdateProjectCommandHandlerTest
                 new Plugin { Id = 2, PluginName = "Plugin2" },
                 new Plugin { Id = 3, PluginName = "Plugin3" },
             ]);
+        _mockCompanyRepository
+            .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
+            .ReturnsAsync(true);
 
         //Act
         await _handler.Handle(updateCommand, CancellationToken.None);
@@ -410,7 +473,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "db app",
             ClientName = "DB",
             OfferId = "Offer 1",
-            Company = "DeutscheBahn",
+            Company = new() { CompanyName = "DeutscheBahn" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.HIGH,
             ProjectPlugins = [],
@@ -422,7 +486,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: "DB App",
             ClientName: "Unit 2",
             OfferId: "Offer 2",
-            Company: "DB",
+            CompanyId: 2,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
             Id: 1,
@@ -435,7 +499,9 @@ public class UpdateProjectCommandHandlerTest
         _mockProjectRepo
             .Setup(repository => repository.GetProjectWithPluginsAsync(1))
             .ReturnsAsync(project);
-
+        _mockCompanyRepository
+            .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
+            .ReturnsAsync(true);
         await _handler.Handle(updateCommand, CancellationToken.None);
 
         _mockUnitOfWork.Verify(unitOfWork => unitOfWork.CompleteAsync());
@@ -452,7 +518,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "old project name",
             ClientName = "Old Client",
             OfferId = "Old Offer",
-            Company = "Old Company",
+            Company = new() { CompanyName = "Old Company" },
+            CompanyId = 5,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.HIGH,
             IsArchived = false,
@@ -464,7 +531,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: "New Project Name",
             ClientName: "New Client",
             OfferId: "New Offer",
-            Company: "New Company",
+            CompanyId: 1,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
             Id: 1,
@@ -480,7 +547,12 @@ public class UpdateProjectCommandHandlerTest
         _mockProjectRepo.Setup(repo => repo.GetProjectWithPluginsAsync(1)).ReturnsAsync(project);
         _mockSlugHelper.Setup(s => s.GenerateSlug("New Project Name")).Returns(slug);
         _mockSlugHelper.Setup(s => s.CheckProjectSlugExists(slug)).ReturnsAsync(false);
-
+        _mockCompanyRepository
+            .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
+            .ReturnsAsync(true);
+        _mockCompanyRepository
+            .Setup(m => m.RetrieveNameForIdAsync(It.IsAny<int>()))
+            .ReturnsAsync("New Company");
         await _handler.Handle(updateCommand, CancellationToken.None);
 
         _mockLogRepository.Verify(
@@ -542,7 +614,8 @@ public class UpdateProjectCommandHandlerTest
             ClientName = "Client A",
 
             OfferId = "Offer A",
-            Company = "Company A",
+            Company = new() { CompanyName = "Company A" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
             ProjectPlugins = [],
@@ -554,7 +627,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: exampleProject.ProjectName,
             ClientName: exampleProject.ClientName,
             OfferId: exampleProject.OfferId,
-            Company: exampleProject.Company,
+            CompanyId: exampleProject.CompanyId,
             CompanyState: exampleProject.CompanyState,
             IsmsLevel: exampleProject.IsmsLevel,
             Id: exampleProject.Id,
@@ -590,7 +663,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "partial update",
             ClientName = "Client A",
             OfferId = "Offer A",
-            Company = "Company A",
+            Company = new() { CompanyName = "Company A" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
             ProjectPlugins = [],
@@ -603,7 +677,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: "Partial Update",
             ClientName: "Updated Client",
             OfferId: "Updated Offer",
-            Company: "Company A",
+            CompanyId: 1,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.VERY_HIGH,
             Id: 1,
@@ -652,7 +726,9 @@ public class UpdateProjectCommandHandlerTest
             Slug = "project with exception",
             ClientName = "Client C",
             OfferId = "Offer A",
-            Company = "Company A",
+
+            Company = new() { CompanyName = "Company A" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
             IsArchived = false,
@@ -663,7 +739,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: "New Project Name",
             ClientName: "New Client",
             OfferId: "Updated Offer",
-            Company: "Company A",
+            CompanyId: 1,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.VERY_HIGH,
             Id: project.Id,
@@ -713,7 +789,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "test project",
             ClientName = "Test Client",
             OfferId = "Offer A",
-            Company = "Company A",
+            Company = new() { CompanyName = "Company A" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
             ProjectPlugins = [],
@@ -725,7 +802,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
             OfferId: project.OfferId,
-            Company: project.Company,
+            CompanyId: 1,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
             Id: project.Id,
@@ -772,7 +849,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "archived project",
             ClientName = "Test Client",
             OfferId = "Offer A",
-            Company = "Company A",
+            Company = new() { CompanyName = "Company A" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
             ProjectPlugins = [],
@@ -784,7 +862,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
             OfferId: project.OfferId,
-            Company: project.Company,
+            CompanyId: 1,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
             Id: project.Id,
@@ -831,7 +909,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "test project",
             ClientName = "Test Client",
             OfferId = "Offer A",
-            Company = "Company A",
+            Company = new() { CompanyName = "Company A" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
             ProjectPlugins = [],
@@ -843,7 +922,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
             OfferId: project.OfferId,
-            Company: project.Company,
+            CompanyId: 1,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
             Id: project.Id,
@@ -882,7 +961,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "test project",
             ClientName = "Test Client",
             OfferId = "Offer A",
-            Company = "Company A",
+            Company = new() { CompanyName = "Company A" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
             ProjectPlugins =
@@ -902,7 +982,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
             OfferId: project.OfferId,
-            Company: project.Company,
+            CompanyId: 1,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
             Id: project.Id,
@@ -958,7 +1038,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "test project",
             ClientName = "Test Client",
             OfferId = "Offer A",
-            Company = "Company A",
+            Company = new() { CompanyName = "Company A" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
             Notes = "Example Notes",
@@ -970,7 +1051,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
             OfferId: project.OfferId,
-            Company: project.Company,
+            CompanyId: 1,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
             Id: project.Id,
@@ -1034,7 +1115,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "test project",
             ClientName = "Test Client",
             OfferId = "Offer A",
-            Company = "Company A",
+            Company = new() { CompanyName = "Company A" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
             ProjectPlugins =
@@ -1054,7 +1136,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
             OfferId: project.OfferId,
-            Company: project.Company,
+            CompanyId: 1,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
             Id: project.Id,
@@ -1108,7 +1190,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "test project",
             ClientName = "Test Client",
             OfferId = "Offer A",
-            Company = "Company A",
+            Company = new() { CompanyName = "Company A" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
             ProjectPlugins =
@@ -1127,7 +1210,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
             OfferId: project.OfferId,
-            Company: project.Company,
+            CompanyId: 1,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
             Id: project.Id,
@@ -1175,7 +1258,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "example project",
             ClientName = "Example Client",
             OfferId = "Offer A",
-            Company = "Company A",
+            Company = new() { CompanyName = "Company A" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
             ProjectPlugins = [],
@@ -1186,7 +1270,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: "New Project",
             ClientName: project.ClientName,
             OfferId: project.OfferId,
-            Company: project.Company,
+            CompanyId: project.CompanyId,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
             Id: project.Id,
@@ -1212,7 +1296,8 @@ public class UpdateProjectCommandHandlerTest
             Slug = "example project",
             ClientName = "Example Client",
             OfferId = "Offer A",
-            Company = "Company A",
+            Company = new() { CompanyName = "Company A" },
+            CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
             ProjectPlugins = [],
@@ -1223,7 +1308,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName: "New Project",
             ClientName: project.ClientName,
             OfferId: project.OfferId,
-            Company: project.Company,
+            CompanyId: project.CompanyId,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
             Id: project.Id,
