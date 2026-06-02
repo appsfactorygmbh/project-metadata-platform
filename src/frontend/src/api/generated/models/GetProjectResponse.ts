@@ -17,6 +17,11 @@ import {
   GetTeamResponseFromJSON,
   GetTeamResponseToJSON,
 } from './GetTeamResponse';
+import type { GetCompanyResponse } from './GetCompanyResponse';
+import {
+  GetCompanyResponseFromJSON,
+  GetCompanyResponseToJSON,
+} from './GetCompanyResponse';
 import type { SecurityLevel } from './SecurityLevel';
 import { SecurityLevelFromJSON, SecurityLevelToJSON } from './SecurityLevel';
 import type { CompanyState } from './CompanyState';
@@ -59,11 +64,11 @@ export interface GetProjectResponse {
    */
   offerId?: string | null;
   /**
-   * The company that is responsible for the project.
-   * @type {string}
+   *
+   * @type {GetCompanyResponse}
    * @memberof GetProjectResponse
    */
-  company: string;
+  company: GetCompanyResponse;
   /**
    * If the project is archived or not.
    * @type {boolean}
@@ -135,7 +140,7 @@ export function GetProjectResponseFromJSONTyped(
     projectName: json['projectName'],
     clientName: json['clientName'],
     offerId: json['offerId'] == null ? undefined : json['offerId'],
-    company: json['company'],
+    company: GetCompanyResponseFromJSON(json['company']),
     isArchived: json['isArchived'],
     team:
       json['team'] == null ? undefined : GetTeamResponseFromJSON(json['team']),
@@ -163,7 +168,7 @@ export function GetProjectResponseToJSONTyped(
     projectName: value['projectName'],
     clientName: value['clientName'],
     offerId: value['offerId'],
-    company: value['company'],
+    company: GetCompanyResponseToJSON(value['company']),
     isArchived: value['isArchived'],
     team: GetTeamResponseToJSON(value['team']),
     companyState: CompanyStateToJSON(value['companyState']),

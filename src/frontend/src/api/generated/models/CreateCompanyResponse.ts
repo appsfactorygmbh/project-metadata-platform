@@ -13,37 +13,39 @@
  */
 
 /**
- * Response for creating a new Team.
+ * Represents a Response to creating a Company.
  * @export
- * @interface CreateTeamResponse
+ * @interface CreateCompanyResponse
  */
-export interface CreateTeamResponse {
+export interface CreateCompanyResponse {
   /**
-   * The id of the new Team.
+   * Id of the new Company
    * @type {number}
-   * @memberof CreateTeamResponse
+   * @memberof CreateCompanyResponse
    */
   id: number;
 }
 
 /**
- * Check if a given object implements the CreateTeamResponse interface.
+ * Check if a given object implements the CreateCompanyResponse interface.
  */
-export function instanceOfCreateTeamResponse(
+export function instanceOfCreateCompanyResponse(
   value: object,
-): value is CreateTeamResponse {
+): value is CreateCompanyResponse {
   if (!('id' in value) || value['id'] === undefined) return false;
   return true;
 }
 
-export function CreateTeamResponseFromJSON(json: any): CreateTeamResponse {
-  return CreateTeamResponseFromJSONTyped(json, false);
+export function CreateCompanyResponseFromJSON(
+  json: any,
+): CreateCompanyResponse {
+  return CreateCompanyResponseFromJSONTyped(json, false);
 }
 
-export function CreateTeamResponseFromJSONTyped(
+export function CreateCompanyResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): CreateTeamResponse {
+): CreateCompanyResponse {
   if (json == null) {
     return json;
   }
@@ -52,12 +54,12 @@ export function CreateTeamResponseFromJSONTyped(
   };
 }
 
-export function CreateTeamResponseToJSON(json: any): CreateTeamResponse {
-  return CreateTeamResponseToJSONTyped(json, false);
+export function CreateCompanyResponseToJSON(json: any): CreateCompanyResponse {
+  return CreateCompanyResponseToJSONTyped(json, false);
 }
 
-export function CreateTeamResponseToJSONTyped(
-  value?: CreateTeamResponse | null,
+export function CreateCompanyResponseToJSONTyped(
+  value?: CreateCompanyResponse | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {

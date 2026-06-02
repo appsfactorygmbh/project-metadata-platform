@@ -12,6 +12,12 @@
  * Do not edit the class manually.
  */
 
+import type { GetBusinessUnitResponse } from './GetBusinessUnitResponse';
+import {
+  GetBusinessUnitResponseFromJSON,
+  GetBusinessUnitResponseToJSON,
+} from './GetBusinessUnitResponse';
+
 /**
  * The representation of a team in responses.
  * @export
@@ -31,11 +37,11 @@ export interface GetTeamResponse {
    */
   teamName: string;
   /**
-   * Gets or sets the business unit associated with the team. This property is required.
-   * @type {string}
+   *
+   * @type {GetBusinessUnitResponse}
    * @memberof GetTeamResponse
    */
-  businessUnit: string;
+  businessUnit: GetBusinessUnitResponse;
   /**
    * Gets or sets the PTL associated with the team. This property is optional.
    * @type {string}
@@ -71,7 +77,7 @@ export function GetTeamResponseFromJSONTyped(
   return {
     id: json['id'],
     teamName: json['teamName'],
-    businessUnit: json['businessUnit'],
+    businessUnit: GetBusinessUnitResponseFromJSON(json['businessUnit']),
     ptl: json['ptl'] == null ? undefined : json['ptl'],
   };
 }
@@ -91,7 +97,7 @@ export function GetTeamResponseToJSONTyped(
   return {
     id: value['id'],
     teamName: value['teamName'],
-    businessUnit: value['businessUnit'],
+    businessUnit: GetBusinessUnitResponseToJSON(value['businessUnit']),
     ptl: value['ptl'],
   };
 }
