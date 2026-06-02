@@ -5,7 +5,7 @@ export interface ProjectSearchModel {
   slug: string;
   projectName: string;
   clientName: string;
-  company: string;
+  companyName: string;
   isArchived: boolean;
   ismsLevel: SecurityLevel;
   teamName: string;
