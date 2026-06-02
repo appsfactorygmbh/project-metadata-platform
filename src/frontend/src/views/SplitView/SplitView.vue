@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { Pane, Splitpanes } from 'splitpanes'; //external framework for splitpanes
+  import { Pane, Splitpanes, type SplitpanesResizedPayload } from 'splitpanes'; //external framework for splitpanes
   import 'splitpanes/dist/splitpanes.css'; //default css for splitpanes
   import { onBeforeMount, reactive, ref } from 'vue';
   import { useElementSize } from '@vueuse/core';
@@ -27,7 +27,7 @@
     }
   });
 
-  const onResize = (newSizes: number[]) => {
+  const onResize = (newSizes: SplitpanesResizedPayload) => {
     localStorage.setItem('paneSizes', JSON.stringify(newSizes));
   };
 </script>
@@ -88,7 +88,9 @@
 
   .rightPane {
     position: relative;
-    max-height: 100vh; /* Set a maximum height */
-    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 100vh;
+    /* Set a maximum height */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
   }
 </style>

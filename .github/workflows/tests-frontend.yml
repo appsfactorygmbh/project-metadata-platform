@@ -15,7 +15,6 @@ on:
     branches:
       - main
   pull_request:
-
     branches:
       - main
 
@@ -179,9 +178,19 @@ jobs:
           cache: "yarn"
           cache-dependency-path: "src/frontend/yarn.lock"
 
+      - name: Cache Cypress Binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('src/frontend/yarn.lock') }}
+          restore-keys: |
+            cypress-${{ runner.os }}-
+
       - name: Install Dependencies
         run: yarn install --immutable
 
+      - name: Install Cypress Binary
+        run: npx cypress install
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
