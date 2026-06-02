@@ -12,6 +12,10 @@
     useProjectStore,
     useTeamStore,
     useApiTokenStore,
+    useCompanyStore,
+    useDepartmentStore,
+    useBusinessUnitStore,
+    useOfficeLocationStore,
   } from '@/store';
   import { msalInstance, msalService } from '@/services/msalService';
 
@@ -25,6 +29,10 @@
   const logsStore = useLogsStore();
   const userStore = useUserStore();
   const teamStore = useTeamStore();
+  const companyStore = useCompanyStore();
+  const departmentStore = useDepartmentStore();
+  const businessUnitStore = useBusinessUnitStore();
+  const officeLocationStore = useOfficeLocationStore();
   const apiTokenStore = useApiTokenStore();
 
   provide<typeof authStore>(authStoreSymbol, authStore);
@@ -43,6 +51,10 @@
   logsStore.refreshAuth();
   userStore.refreshAuth();
   teamStore.refreshAuth();
+  companyStore.refreshAuth();
+  departmentStore.refreshAuth();
+  businessUnitStore.refreshAuth();
+  officeLocationStore.refreshAuth();
   apiTokenStore.refreshAuth();
 
   const authInitialized = ref(false);
@@ -140,6 +152,10 @@
         logsStore.refreshAuth();
         userStore.refreshAuth();
         teamStore.refreshAuth();
+        companyStore.refreshAuth();
+        departmentStore.refreshAuth();
+        businessUnitStore.refreshAuth();
+        officeLocationStore.refreshAuth();
       }
     },
   );
@@ -156,6 +172,10 @@
         logsStore.refreshAuth();
         userStore.refreshAuth();
         teamStore.refreshAuth();
+        companyStore.refreshAuth();
+        departmentStore.refreshAuth();
+        businessUnitStore.refreshAuth();
+        officeLocationStore.refreshAuth();
       }
     },
   );

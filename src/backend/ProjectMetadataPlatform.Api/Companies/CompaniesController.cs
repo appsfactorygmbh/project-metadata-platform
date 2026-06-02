@@ -56,7 +56,7 @@ public class CompaniesController : ControllerBase
     /// <summary>
     /// Returns the specified Company.
     /// </summary>
-    /// <param name="id">Id of the speciefied Company.</param>
+    /// <param name="id">Id of the specified Company.</param>
     /// <returns>A Company.</returns>1
     /// <response code="200"> Company was returned succesfully.</response>
     /// <response code="404">Company could not be found. </response>

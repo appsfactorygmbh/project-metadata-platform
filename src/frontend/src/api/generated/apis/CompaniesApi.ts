@@ -98,7 +98,7 @@ export interface CompaniesApiInterface {
   /**
    *
    * @summary Returns the specified Company.
-   * @param {number} id Id of the speciefied Company.
+   * @param {number} id Id of the specified Company.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof CompaniesApiInterface
