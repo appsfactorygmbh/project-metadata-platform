@@ -1,8 +1,16 @@
 import {
   AuthApi,
   type AuthApi as AuthApiType,
+  BusinessUnitsApi,
+  type BusinessUnitsApi as BusinessUnitsApiType,
+  CompaniesApi,
+  type CompaniesApi as CompaniesApiType,
+  DepartmentsApi,
+  type DepartmentsApi as DepartmentsApiType,
   LogsApi,
   type LogsApi as LogsApiType,
+  OfficeLocationsApi,
+  type OfficeLocationsApi as OfficeLocationsApiType,
   PluginsApi,
   type PluginsApi as PluginsApiType,
   ProjectsApi,
@@ -19,7 +27,11 @@ export type ApiTypes =
   | PluginsApiType
   | UsersApiType
   | LogsApiType
-  | TeamsApiType;
+  | TeamsApiType
+  | CompaniesApiType
+  | DepartmentsApiType
+  | OfficeLocationsApiType
+  | BusinessUnitsApiType;
 
 export type ApiInstance<T extends ApiTypes> = T extends AuthApiType
   ? typeof AuthApi
@@ -33,4 +45,12 @@ export type ApiInstance<T extends ApiTypes> = T extends AuthApiType
           ? typeof LogsApi
           : T extends TeamsApiType
             ? typeof TeamsApi
-            : never;
+            : T extends BusinessUnitsApiType
+              ? typeof BusinessUnitsApi
+              : T extends CompaniesApiType
+                ? typeof CompaniesApi
+                : T extends DepartmentsApiType
+                  ? typeof DepartmentsApi
+                  : T extends OfficeLocationsApiType
+                    ? typeof OfficeLocationsApi
+                    : never;

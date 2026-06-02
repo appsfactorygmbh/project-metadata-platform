@@ -113,6 +113,7 @@ export const msalService = {
       const response = await msalInstance.acquireTokenSilent(request);
       return response.accessToken;
     } catch (error) {
+      console.warn('Silent token acquisition failed.');
       return null;
     }
   },
