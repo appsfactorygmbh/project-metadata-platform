@@ -112,7 +112,6 @@ export const CreateIsUniqueTeamName = (teamStore: TeamStore) => {
   };
 };
 
-
 export const CreateisUniqueTokenName = (apiTokenStore: ApiTokenStore) => {
   return (_rule: Rule, value: string) => {
     const tokens: ApiTokenModel[] = apiTokenStore.getApiTokens;

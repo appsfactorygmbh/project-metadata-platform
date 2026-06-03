@@ -47,10 +47,6 @@
 
   const searchValue = ref('');
 
-  const onSearch = (val: string) => {
-    searchValue.value = val;
-  };
-
   const onSubmit: FormSubmitType = async (fields) => {
     const value = fields[props.attributeName];
     console.log(`value read from the store (${props.attributeName}): ${value}`);
@@ -108,25 +104,29 @@
         );
       });
   };
+  const formattedOptions = computed<{ value: string }[]>(() => {
+    const baseOptions = props.options.map((opt) => ({ value: String(opt) }));
 
-  const handlePaste = (e: ClipboardEvent) => {
-    e.preventDefault();
+    const rawValue = dynamicValidateForm[props.attributeName];
 
-    const pastedData = e.clipboardData?.getData('text');
-    if (!pastedData) return;
+    const currentValue =
+      rawValue !== null && rawValue !== undefined ? String(rawValue) : '';
 
-    const newTags = pastedData
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter((tag) => tag.length > 0);
+    if (
+      currentValue &&
+      !props.options.some(
+        (opt) => String(opt).toLowerCase() === currentValue.toLowerCase(),
+      )
+    ) {
+      return [{ value: currentValue }, ...baseOptions];
+    }
 
-    const currentValues = dynamicValidateForm[props.attributeName] as string[];
+    return baseOptions;
+  });
 
-    dynamicValidateForm[props.attributeName] = Array.from(
-      new Set([...currentValues, ...newTags]),
-    );
+  const filterOption = (inputValue: string, option: { value: string }) => {
+    return option.value.toUpperCase().includes(inputValue.toUpperCase());
   };
-
   props.formStore.setModel(dynamicValidateForm);
   props.formStore.setOnSubmit(onSubmit);
 </script>
@@ -134,23 +134,13 @@
 <template>
   <a-form ref="formRef" :model="dynamicValidateForm">
     <a-form-item :name="props.attributeName" class="formItem">
-      <a-select
+      <a-auto-complete
         v-model:value="dynamicValidateForm[props.attributeName]"
-        mode="tags"
+        :options="formattedOptions"
+        :filter-option="filterOption"
         :placeholder="props.placeholder"
-        :token-separators="[',']"
-        :not-found-content="null"
-        @paste="handlePaste"
-        @search="onSearch"
-      >
-        <a-select-option
-          v-for="option in options ?? []"
-          :key="option"
-          :value="option"
-        >
-          {{ option }}
-        </a-select-option>
-      </a-select>
+        style="width: 100%"
+      />
     </a-form-item>
   </a-form>
 </template>

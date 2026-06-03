@@ -25,6 +25,7 @@
     departments: [],
     businessUnits: [],
     company: undefined,
+    officeLocation: undefined,
     inputsDisabled: false,
   };
 </script>

@@ -13,6 +13,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AAlert: typeof import('ant-design-vue/es')['Alert']
+    AAutoComplete: typeof import('ant-design-vue/es')['AutoComplete']
     AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABadge: typeof import('ant-design-vue/es')['Badge']
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
@@ -92,6 +93,7 @@ declare module 'vue' {
     Tooltip: typeof import('ant-design-vue/es')['Tooltip']
     UnserInformationTeamsInputField: typeof import('./../src/components/EditableTextField/InputFields/UnserInformationTeamsInputField.vue')['default']
     UserDetailsInputField: typeof import('./../src/components/EditableTextField/InputFields/UserDetailsInputField.vue')['default']
+    UserInformationAutoCompleteInputField: typeof import('./../src/components/EditableTextField/InputFields/UserInformationAutoCompleteInputField.vue')['default']
     UserInformationInputField: typeof import('./../src/components/EditableTextField/InputFields/UserInformationInputField.vue')['default']
     UserInformationListInputField: typeof import('./../src/components/EditableTextField/InputFields/UserInformationListInputField.vue')['default']
     UserInformationTeamsInputField: typeof import('./../src/components/EditableTextField/InputFields/UserInformationTeamsInputField.vue')['default']
@@ -102,6 +104,7 @@ declare module 'vue' {
 // For TSX support
 declare global {
   const AAlert: typeof import('ant-design-vue/es')['Alert']
+  const AAutoComplete: typeof import('ant-design-vue/es')['AutoComplete']
   const AAvatar: typeof import('ant-design-vue/es')['Avatar']
   const ABadge: typeof import('ant-design-vue/es')['Badge']
   const ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
@@ -181,6 +184,7 @@ declare global {
   const Tooltip: typeof import('ant-design-vue/es')['Tooltip']
   const UnserInformationTeamsInputField: typeof import('./../src/components/EditableTextField/InputFields/UnserInformationTeamsInputField.vue')['default']
   const UserDetailsInputField: typeof import('./../src/components/EditableTextField/InputFields/UserDetailsInputField.vue')['default']
+  const UserInformationAutoCompleteInputField: typeof import('./../src/components/EditableTextField/InputFields/UserInformationAutoCompleteInputField.vue')['default']
   const UserInformationInputField: typeof import('./../src/components/EditableTextField/InputFields/UserInformationInputField.vue')['default']
   const UserInformationListInputField: typeof import('./../src/components/EditableTextField/InputFields/UserInformationListInputField.vue')['default']
   const UserInformationTeamsInputField: typeof import('./../src/components/EditableTextField/InputFields/UserInformationTeamsInputField.vue')['default']

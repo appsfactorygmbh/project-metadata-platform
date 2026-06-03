@@ -19,6 +19,10 @@
   } from '@/utils/form/userValidation.ts';
   import { useTeamStore } from '@/store/TeamStore.ts';
   import { storeToRefs } from 'pinia';
+  import { useCompanyStore } from '@/store/CompanyStore.ts';
+  import { useOfficeLocationStore } from '@/store/OfficeLocationStore.ts';
+  import { useBusinessUnitStore } from '@/store/BusinessUnitStore.ts';
+  import { useDepartmentStore } from '@/store/DepartmentStore.ts';
 
   const { formStore, initialValues, userStore } = defineProps<{
     formStore: FormStore;
@@ -26,8 +30,16 @@
     userStore: UserStore;
   }>();
   const teamStore = useTeamStore();
-
+  const departmentStore = useDepartmentStore();
+  const buStore = useBusinessUnitStore();
+  const companyStore = useCompanyStore();
+  const officeLocationStore = useOfficeLocationStore();
   const { getTeams } = storeToRefs(teamStore);
+  const { getCompanyNames } = storeToRefs(companyStore);
+  const { getBusinessUnitNames } = storeToRefs(buStore);
+  const { getDepartmentNames } = storeToRefs(departmentStore);
+  const { getOfficeLocationNames } = storeToRefs(officeLocationStore);
+
   const [notificationApi, contextHolder] = notification.useNotification();
 
   const onSubmit: FormSubmitType = (fields) => {
@@ -37,6 +49,10 @@
         userName: toRaw(fields).email,
         password: toRaw(fields).password === '' ? null : toRaw(fields).password,
         active: toRaw(fields).active,
+        addresses:
+          toRaw(fields).officeLocation === ''
+            ? []
+            : [{ locality: toRaw(fields).officeLocation }],
         urnIetfParamsScimSchemasExtensionEnterprise20User: {
           organization: toRaw(fields).company,
         },
@@ -169,6 +185,31 @@
       },
     ],
   });
+
+  const getCustomOptions = (
+    currentValue: string | undefined,
+    sourceArray: string[],
+  ) => {
+    const currentInput = currentValue?.trim() || '';
+    const sourceList = sourceArray || [];
+
+    const filteredItems = sourceList.filter((name) =>
+      name.toLowerCase().includes(currentInput.toLowerCase()),
+    );
+
+    const formattedOptions = filteredItems.map((name) => ({ value: name }));
+
+    if (
+      currentInput &&
+      !filteredItems.some(
+        (name) => name.toLowerCase() === currentInput.toLowerCase(),
+      )
+    ) {
+      return [{ value: currentInput }, ...formattedOptions];
+    }
+
+    return formattedOptions;
+  };
 
   formStore.setOnSubmit(onSubmit);
   formStore.setModel(dynamicValidateForm);
@@ -342,9 +383,13 @@
           mode="tags"
           placeholder="Departments"
           :not-found-content="null"
-          :open="false"
           :disabled="dynamicValidateForm.inputsDisabled"
         >
+          <a-select-option
+            v-for="department in getDepartmentNames"
+            :key="department"
+            :value="department"
+          ></a-select-option>
         </a-select>
       </a-form-item>
     </a-tooltip>
@@ -362,9 +407,13 @@
           mode="tags"
           placeholder="Business Units"
           :not-found-content="null"
-          :open="false"
           :disabled="dynamicValidateForm.inputsDisabled"
         >
+          <a-select-option
+            v-for="businessUnit in getBusinessUnitNames"
+            :key="businessUnit"
+            :value="businessUnit"
+          ></a-select-option>
         </a-select>
       </a-form-item>
     </a-tooltip>
@@ -375,12 +424,38 @@
       :whitespace="false"
       :rules="[{ required: false }]"
     >
-      <a-input
+      <a-auto-complete
         id="inputCreateUserCompany"
         v-model:value="dynamicValidateForm.company"
         class="inputField"
         placeholder="Company"
         :disabled="dynamicValidateForm.inputsDisabled"
+        :options="
+          getCustomOptions(dynamicValidateForm.company, getCompanyNames)
+        "
+        :filter-option="false"
+      />
+    </a-form-item>
+    <a-form-item
+      has-feedback
+      name="officeLocation"
+      class="column"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-auto-complete
+        id="inputCreateUserOfficeLocation"
+        v-model:value="dynamicValidateForm.officeLocation"
+        class="inputField"
+        placeholder="Office Location"
+        :disabled="dynamicValidateForm.inputsDisabled"
+        :options="
+          getCustomOptions(
+            dynamicValidateForm.officeLocation,
+            getOfficeLocationNames,
+          )
+        "
+        :filter-option="false"
       />
     </a-form-item>
   </a-form>
