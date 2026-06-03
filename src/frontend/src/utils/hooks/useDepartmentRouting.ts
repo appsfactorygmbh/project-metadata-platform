@@ -10,7 +10,9 @@ export const useDepartmentRouting = (): DepartmentRoutingReturnType => {
   const router = useRouter();
   const route = useRoute();
 
-  const routerDepartmentId = ref<string>(String(route.query.departmentId ?? ''));
+  const routerDepartmentId = ref<string>(
+    String(route.query.departmentId ?? ''),
+  );
 
   watch(
     () => route.query.departmentId,

@@ -13,7 +13,7 @@
   import type { UnwrapRef } from 'vue';
   import type { CreateProjectModel } from '@/models/Project';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
-  import { useProjectStore, useTeamStore } from '@/store';
+  import { useProjectStore, useTeamStore, useCompanyStore } from '@/store';
   import { projectRoutingSymbol } from '@/store/injectionSymbols';
   import { useThemeToken } from '@/utils/hooks';
   import { message } from 'ant-design-vue';
@@ -36,7 +36,11 @@
 
   const teamStore = useTeamStore();
 
+  const companyStore = useCompanyStore();
+
   const { getTeams } = storeToRefs(teamStore);
+
+  const { getCompanies } = storeToRefs(companyStore);
 
   const { setProjectId } = inject(projectRoutingSymbol)!;
 
@@ -48,11 +52,11 @@
     department: '',
     clientName: '',
     offerId: '',
-    company: '',
     companyState: 'EXTERNAL',
     ismsLevel: 'NORMAL',
     isArchived: false,
     teamId: undefined,
+    companyId: 0,
     notes: '',
   });
 
@@ -118,7 +122,7 @@
       clientName: formState.clientName,
       isArchived: false,
       offerId: formState.offerId,
-      company: formState.company,
+      companyId: formState.companyId,
       companyState: formState.companyState,
       ismsLevel: formState.ismsLevel,
       notes: formState.notes ?? '',
@@ -167,16 +171,33 @@
     },
   });
 
-  const getDropdownContainer = () => {
-    const globalContainer = document.querySelector(
-      '.team-local-popup-container',
-    );
-    if (globalContainer instanceof HTMLElement) {
-      return globalContainer;
-    } else {
-      return document.body;
-    }
-  };
+  const selectedCompanyForSelect = computed<SelectValue>({
+    get() {
+      if (
+        formState.companyId === undefined ||
+        formState.companyId === null ||
+        formState.companyId === 0
+      ) {
+        return undefined;
+      }
+      const name = companyStore.getNameToId(formState.companyId);
+      return name;
+    },
+    set(newValue: SelectValue) {
+      if (newValue === undefined || newValue === null) {
+        formState.companyId = 0;
+      } else if (typeof newValue === 'string') {
+        const id = companyStore.getIdToName(newValue);
+        formState.companyId = id ?? 0;
+      } else {
+        console.warn(
+          'Unexpected newValue type for selectedCompanyForSelect:',
+          newValue,
+        );
+        formState.companyId = 0;
+      }
+    },
+  });
 </script>
 
 <template>
@@ -235,14 +256,36 @@
           </a-input>
         </a-form-item>
         <a-form-item
-          name="company"
-          :rules="[{ required: true, whitespace: true }]"
+          name="companyId"
+          :rules="[
+            {
+              required: true,
+              type: 'number',
+              min: 1,
+              message: 'Please select a company',
+            },
+          ]"
         >
-          <a-input v-model:value="formState.company" placeholder="Company">
-            <template #suffix>
+          <a-select
+            v-model:value="selectedCompanyForSelect"
+            placeholder="Company"
+            class="company-select"
+            show-search
+            allow-clear
+            data-test="company-id-select"
+            :get-popup-container="(triggerNode) => triggerNode.parentNode"
+          >
+            <template #suffixIcon>
               <TrademarkOutlined class="icon" />
             </template>
-          </a-input>
+            <a-select-option
+              v-for="(company, index) in getCompanies"
+              :key="company.companyName"
+              :value="company.companyName"
+              :data-testid="'company-select-' + index"
+              >{{ company.companyName }}</a-select-option
+            >
+          </a-select>
         </a-form-item>
         <a-form-item name="companyState" :rules="[{ required: true }]">
           <a-select
@@ -270,10 +313,6 @@
           </a-select>
         </a-form-item>
         <a-form-item name="teamId" :rules="[{ required: false }]">
-          <div
-            ref="localPopupContainer"
-            class="team-local-popup-container"
-          ></div>
           <a-select
             v-model:value="selectedTeamForSelect"
             placeholder="Team"
@@ -281,7 +320,7 @@
             show-search
             allow-clear
             data-test="team-id-select"
-            :get-popup-container="getDropdownContainer"
+            :get-popup-container="(triggerNode) => triggerNode.parentNode"
           >
             <template #suffixIcon>
               <TeamOutlined class="icon" />
@@ -316,17 +355,21 @@
   .formItem {
     max-width: none !important;
   }
+
   .formContainer > * {
     margin-bottom: 20px;
   }
+
   .icon {
     width: 12px;
     height: 12px;
     color: v-bind('token.colorText');
   }
+
   :deep(.ant-select .ant-select-arrow) {
     color: unset;
   }
+
   :deep(.ant-col-14) {
     max-width: 100%;
   }

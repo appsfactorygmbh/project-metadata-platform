@@ -10,7 +10,9 @@ export const useOfficeLocationRouting = (): OfficeLocationRoutingReturnType => {
   const router = useRouter();
   const route = useRoute();
 
-  const routerOfficeLocationId = ref<string>(String(route.query.officeLocationId ?? ''));
+  const routerOfficeLocationId = ref<string>(
+    String(route.query.officeLocationId ?? ''),
+  );
 
   watch(
     () => route.query.officeLocationId,

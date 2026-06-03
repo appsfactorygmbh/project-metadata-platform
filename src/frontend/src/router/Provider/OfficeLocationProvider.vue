@@ -3,7 +3,10 @@
   import { officeLocationStoreSymbol } from '@/store/injectionSymbols';
   import { provide } from 'vue';
 
-  provide<OfficeLocationStore>(officeLocationStoreSymbol, useOfficeLocationStore());
+  provide<OfficeLocationStore>(
+    officeLocationStoreSymbol,
+    useOfficeLocationStore(),
+  );
 </script>
 <template>
   <slot />

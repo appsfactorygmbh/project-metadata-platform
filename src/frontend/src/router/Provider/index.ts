@@ -41,5 +41,5 @@ export {
   CompanyRoutingProvider,
   DepartmentRoutingProvider,
   BusinessUnitRoutingProvider,
-  OfficeLocationRoutingProvider
+  OfficeLocationRoutingProvider,
 };

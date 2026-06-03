@@ -93,6 +93,7 @@ declare module 'vue' {
     UserDetailsInputField: typeof import('./../src/components/EditableTextField/InputFields/UserDetailsInputField.vue')['default']
     UserInformationInputField: typeof import('./../src/components/EditableTextField/InputFields/UserInformationInputField.vue')['default']
     UserInformationListInputField: typeof import('./../src/components/EditableTextField/InputFields/UserInformationListInputField.vue')['default']
+    UserInformationTeamsInputField: typeof import('./../src/components/EditableTextField/InputFields/UserInformationTeamsInputField.vue')['default']
     UserListInputField: typeof import('./../src/components/EditableTextField/InputFields/UserListInputField.vue')['default']
   }
 }
@@ -180,5 +181,6 @@ declare global {
   const UserDetailsInputField: typeof import('./../src/components/EditableTextField/InputFields/UserDetailsInputField.vue')['default']
   const UserInformationInputField: typeof import('./../src/components/EditableTextField/InputFields/UserInformationInputField.vue')['default']
   const UserInformationListInputField: typeof import('./../src/components/EditableTextField/InputFields/UserInformationListInputField.vue')['default']
+  const UserInformationTeamsInputField: typeof import('./../src/components/EditableTextField/InputFields/UserInformationTeamsInputField.vue')['default']
   const UserListInputField: typeof import('./../src/components/EditableTextField/InputFields/UserListInputField.vue')['default']
 }

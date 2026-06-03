@@ -22,5 +22,5 @@ export {
   useCompanyRouting,
   useBusinessUnitRouting,
   useDepartmentRouting,
-  useOfficeLocationRouting
+  useOfficeLocationRouting,
 };

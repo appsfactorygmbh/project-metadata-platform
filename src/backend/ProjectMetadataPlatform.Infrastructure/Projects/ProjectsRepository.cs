@@ -54,7 +54,7 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
                     project.Team != null
                     && EF.Functions.Like(project.Team.TeamName.ToLower(), $"%{lowerTextSearch}%")
                 )
-                || EF.Functions.Like(project.Company.CompanyName.ToLower(), $"%{lowerTextSearch}%")
+                || EF.Functions.Like(project.Company!.CompanyName.ToLower(), $"%{lowerTextSearch}%")
                 || EF.Functions.Like(project.Notes.ToLower(), $"%{lowerTextSearch}%")
             );
         }
@@ -85,7 +85,7 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
                 filteredQuery = filteredQuery.Where(project =>
                     project.Team != null
                     && lowerBusinessUnits.Contains(
-                        project.Team.BusinessUnit.BusinessUnitName.ToLower()
+                        project.Team.BusinessUnit!.BusinessUnitName.ToLower()
                     )
                 );
             }
@@ -109,7 +109,7 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
             {
                 var lowerCompanies = query.Request.Company.Select(c => c.ToLower()).ToList();
                 filteredQuery = filteredQuery.Where(project =>
-                    lowerCompanies.Contains(project.Company.CompanyName.ToLower())
+                    lowerCompanies.Contains(project.Company!.CompanyName.ToLower())
                 );
             }
 
@@ -121,7 +121,11 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
             }
         }
 
-        return await filteredQuery.Include(p => p.Team).Include(p => p.Company).ToListAsync();
+        return await filteredQuery
+            .Include(p => p.Team)
+                .ThenInclude(t => t!.BusinessUnit)
+            .Include(p => p.Company)
+            .ToListAsync();
     }
 
     /// <summary>
@@ -133,6 +137,7 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
         return await _context
             .Projects.AsNoTracking()
             .Include(p => p.Team)
+                .ThenInclude(t => t!.BusinessUnit)
             .Include(p => p.Company)
             .ToListAsync();
     }
@@ -146,6 +151,7 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
     {
         return await GetIf(p => p.Id == id)
                 .Include(proj => proj.Team)
+                    .ThenInclude(t => t!.BusinessUnit)
                 .Include(p => p.Company)
                 .FirstOrDefaultAsync()
             ?? throw new ProjectNotFoundException(id);
@@ -157,6 +163,7 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
         return await GetIf(p => p.Id == id)
                 .Include(p => p.ProjectPlugins)
                 .Include(p => p.Team)
+                    .ThenInclude(t => t!.BusinessUnit)
                 .Include(p => p.Company)
                 .FirstOrDefaultAsync()
             ?? throw new ProjectNotFoundException(id);

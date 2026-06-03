@@ -10,7 +10,9 @@ export const useBusinessUnitRouting = (): BusinessUnitRoutingReturnType => {
   const router = useRouter();
   const route = useRoute();
 
-  const routerBusinessUnitId = ref<string>(String(route.query.businessUnitId ?? ''));
+  const routerBusinessUnitId = ref<string>(
+    String(route.query.businessUnitId ?? ''),
+  );
 
   watch(
     () => route.query.businessUnitId,

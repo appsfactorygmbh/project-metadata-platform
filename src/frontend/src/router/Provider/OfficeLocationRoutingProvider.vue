@@ -4,7 +4,10 @@
   import { useOfficeLocationRouting } from '@/utils/hooks/useOfficeLocationRouting';
 
   const officeLocationRouting = useOfficeLocationRouting();
-  provide<typeof officeLocationRouting>(officeLocationRoutingSymbol, officeLocationRouting);
+  provide<typeof officeLocationRouting>(
+    officeLocationRoutingSymbol,
+    officeLocationRouting,
+  );
 </script>
 
 <template>

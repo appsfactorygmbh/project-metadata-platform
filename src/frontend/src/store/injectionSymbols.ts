@@ -108,5 +108,5 @@ export {
   departmentStoreSymbol,
   departmentRoutingSymbol,
   officeLocationStoreSymbol,
-  officeLocationRoutingSymbol
+  officeLocationRoutingSymbol,
 };

@@ -1,28 +1,26 @@
 <script setup lang="ts">
-import {
-  AuthProvider,
-  GlobalPluginProvider,
-  LocalLogProvider,
-  ProjectEditProvider,
-  UserProvider,
-  TeamProvider,
-  BusinessUnitRoutingProvider,
-  DepartmentRoutingProvider,
-  OfficeLocationRoutingProvider,
-  CompanyRoutingProvider,
-  DepartmentProvider,
-  BusinessUnitProvider,
-  OfficeLocationProvider,
-  CompanyProvider
-
-} from '@/router/Provider';
-import ProjectRoutingProvider from './ProjectRoutingProvider.vue';
-import LogsProvider from './LogsProvider.vue';
-import UserRoutingProvider from './UserRoutingProvider.vue';
-import TeamRoutingProvider from './TeamRoutingProvider.vue';
-import ApiTokenRoutingProvider from './ApiTokenRoutingProvider.vue';
-import ApiTokenProvider from './ApiTokenProvider.vue';
-
+  import {
+    AuthProvider,
+    GlobalPluginProvider,
+    LocalLogProvider,
+    ProjectEditProvider,
+    UserProvider,
+    TeamProvider,
+    BusinessUnitRoutingProvider,
+    DepartmentRoutingProvider,
+    OfficeLocationRoutingProvider,
+    CompanyRoutingProvider,
+    DepartmentProvider,
+    BusinessUnitProvider,
+    OfficeLocationProvider,
+    CompanyProvider,
+  } from '@/router/Provider';
+  import ProjectRoutingProvider from './ProjectRoutingProvider.vue';
+  import LogsProvider from './LogsProvider.vue';
+  import UserRoutingProvider from './UserRoutingProvider.vue';
+  import TeamRoutingProvider from './TeamRoutingProvider.vue';
+  import ApiTokenRoutingProvider from './ApiTokenRoutingProvider.vue';
+  import ApiTokenProvider from './ApiTokenProvider.vue';
 </script>
 
 <template>
