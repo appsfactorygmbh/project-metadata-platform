@@ -30,7 +30,7 @@
   const initialFormValues: CreateTeamFormData = {
     teamName: '',
     ptl: '',
-    businessUnit: '',
+    businessUnit: undefined,
     inputsDisabled: false,
   };
 </script>
