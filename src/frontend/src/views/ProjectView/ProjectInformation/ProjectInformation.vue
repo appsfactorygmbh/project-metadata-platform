@@ -558,7 +558,18 @@
         </EditableTextField>
 
         <!-- team specific inputs -->
-        <a-divider orientation="left" class="SectionSeperator">Team</a-divider>
+
+        <a-divider
+          v-if="
+            isEditing ||
+            projectData.teamName.value ||
+            projectData.businessUnit.value ||
+            projectData.ptl.value
+          "
+          orientation="left"
+          class="SectionSeperator"
+          >Team</a-divider
+        >
         <EditableTextField
           v-if="isEditing"
           :key="'Team'"
@@ -588,7 +599,7 @@
         </EditableTextField>
 
         <EditableTextField
-          v-if="!isEditing"
+          v-if="!isEditing && projectData.teamName.value"
           class="infoCard non-editing-mode teamNameField"
           :value="projectData.teamName.value"
           :is-loading="isLoading"
@@ -597,7 +608,7 @@
         />
 
         <EditableTextField
-          v-if="!isEditing"
+          v-if="!isEditing && projectData.businessUnit.value"
           class="infoCard non-editing-mode buField"
           :value="projectData.businessUnit.value"
           :is-loading="isLoading"
@@ -606,7 +617,7 @@
         />
 
         <EditableTextField
-          v-if="!isEditing"
+          v-if="!isEditing && projectData.ptl.value"
           class="infoCard non-editing-mode ptlField"
           :value="projectData.ptl.value"
           :is-loading="isLoading"
