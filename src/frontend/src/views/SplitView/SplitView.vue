@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { Pane, Splitpanes } from 'splitpanes'; //external framework for splitpanes
+  import { Pane, Splitpanes, type SplitpanesResizedPayload } from 'splitpanes'; //external framework for splitpanes
   import 'splitpanes/dist/splitpanes.css'; //default css for splitpanes
   import { onBeforeMount, reactive, ref } from 'vue';
   import { useElementSize } from '@vueuse/core';
@@ -27,8 +27,8 @@
     }
   });
 
-  const onResize = (newSizes: number[]) => {
-    localStorage.setItem('paneSizes', JSON.stringify(newSizes));
+  const onResize = (newSizes: SplitpanesResizedPayload) => {
+    localStorage.setItem('paneSizes', JSON.stringify(newSizes.panes));
   };
 </script>
 

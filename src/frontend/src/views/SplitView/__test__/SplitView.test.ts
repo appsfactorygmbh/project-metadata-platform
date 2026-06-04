@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
 import SplitView from '../SplitView.vue';
 import router from '@/router';
-import { Splitpanes } from 'splitpanes';
+import { Splitpanes, type SplitpanesResizedPayload } from 'splitpanes';
 
 const generateWrapper = () => {
   return mount(SplitView, {
@@ -37,25 +37,29 @@ describe('SplitView.vue', () => {
   it('should save pane sizes to localStorage on resize', async () => {
     const wrapper = generateWrapper();
 
-    const newSizes = [
-      { min: 20, max: 100, size: 20 },
-      { min: 32, max: 100, size: 80 },
-    ];
+    const newSizes: SplitpanesResizedPayload = {
+      panes: [
+        { min: 20, max: 100, size: 20 },
+        { min: 32, max: 100, size: 80 },
+      ],
+    };
     const pane = wrapper.findComponent(Splitpanes);
     pane.vm.$emit('resized', newSizes);
 
     const storedSizes = localStorage.getItem('paneSizes');
-    expect(storedSizes).toBe(JSON.stringify(newSizes));
+    expect(storedSizes).toBe(JSON.stringify(newSizes.panes));
   });
 
   it('should load pane sizes from localStorage on mount', () => {
-    const mockPaneSizes = [
-      { min: 20, max: 100, size: 20 },
-      { min: 32, max: 100, size: 80 },
-    ];
+    const mockPaneSizes: SplitpanesResizedPayload = {
+      panes: [
+        { min: 20, max: 100, size: 20 },
+        { min: 32, max: 100, size: 80 },
+      ],
+    };
     const getItemSpy = vi
       .spyOn(Storage.prototype, 'getItem')
-      .mockReturnValue(JSON.stringify(mockPaneSizes));
+      .mockReturnValue(JSON.stringify(mockPaneSizes.panes));
 
     const wrapper = generateWrapper();
 
@@ -65,7 +69,7 @@ describe('SplitView.vue', () => {
       .rightPaneWidth;
 
     expect(getItemSpy).toHaveBeenCalledWith('paneSizes');
-    expect(leftPaneWidth).toBe(mockPaneSizes[0].size);
-    expect(rightPaneWidth).toBe(mockPaneSizes[1].size);
+    expect(leftPaneWidth).toBe(mockPaneSizes.panes[0].size);
+    expect(rightPaneWidth).toBe(mockPaneSizes.panes[1].size);
   });
 });
