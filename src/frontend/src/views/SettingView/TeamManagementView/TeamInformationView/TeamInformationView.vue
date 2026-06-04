@@ -51,7 +51,7 @@
     isConfirmModalOpen.value = false;
   };
 
-  //Button for adding new User and deleting User
+  //Button for adding new Team and deleting Teams
   const buttons = computed((): FloatButtonModel[] => {
     const tempButtons: FloatButtonModel[] = [
       {

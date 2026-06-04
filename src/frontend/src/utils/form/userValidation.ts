@@ -2,6 +2,10 @@ import type { ApiTokenModel } from '@/models/ApiToken';
 import type { UserListModel } from '@/models/User';
 import {
   type ApiTokenStore,
+  type BusinessUnitStore,
+  type CompanyStore,
+  type DepartmentStore,
+  type OfficeLocationStore,
   type TeamStore,
   usePluginStore,
   useUserStore,
@@ -107,6 +111,58 @@ export const CreateIsUniqueTeamName = (teamStore: TeamStore) => {
     const teams = teamStore.getIdToName(value);
     if (teams != undefined) {
       return Promise.reject(new Error('This Team Name is already in use.'));
+    }
+    return Promise.resolve();
+  };
+};
+
+export const CreateIsUniqueCompanyName = (companyStore: CompanyStore) => {
+  return (_rule: Rule, value: string) => {
+    const companies = companyStore.getIdToName(value);
+    if (companies != undefined) {
+      return Promise.reject(new Error('This Company Name is already in use.'));
+    }
+    return Promise.resolve();
+  };
+};
+
+export const CreateIsUniqueBusinessUnitName = (
+  businessUnitStore: BusinessUnitStore,
+) => {
+  return (_rule: Rule, value: string) => {
+    const businessUnits = businessUnitStore.getIdToName(value);
+    if (businessUnits != undefined) {
+      return Promise.reject(
+        new Error('This Business Unit Name is already in use.'),
+      );
+    }
+    return Promise.resolve();
+  };
+};
+
+export const CreateIsUniqueOfficeLocationName = (
+  officeLocationStore: OfficeLocationStore,
+) => {
+  return (_rule: Rule, value: string) => {
+    const officeLocations = officeLocationStore.getIdToName(value);
+    if (officeLocations != undefined) {
+      return Promise.reject(
+        new Error('This Office Location Name is already in use.'),
+      );
+    }
+    return Promise.resolve();
+  };
+};
+
+export const CreateIsUniqueDepartmentName = (
+  departmentStore: DepartmentStore,
+) => {
+  return (_rule: Rule, value: string) => {
+    const departments = departmentStore.getIdToName(value);
+    if (departments != undefined) {
+      return Promise.reject(
+        new Error('This Department Name is already in use.'),
+      );
     }
     return Promise.resolve();
   };

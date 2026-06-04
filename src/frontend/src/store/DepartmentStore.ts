@@ -156,7 +156,7 @@ export const useDepartmentStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingDepartment(true);
             await this.callApi('departmentsIdPatch', {
               id: departmentId,
-              patchDepartmentRequest: payload,
+              updateDepartmentRequest: payload,
             });
             this.fetchAll();
             this.fetch(departmentId);

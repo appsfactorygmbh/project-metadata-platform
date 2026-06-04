@@ -164,7 +164,7 @@ export const useOfficeLocationStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingOfficeLocation(true);
             await this.callApi('officeLocationsIdPatch', {
               id: officeLocationId,
-              patchOfficeLocationRequest: payload,
+              updateOfficeLocationRequest: payload,
             });
             this.fetchAll();
             this.fetch(officeLocationId);

@@ -1,6 +1,9 @@
 <script lang="ts" setup>
   import { inject, computed, onMounted, ref, watch } from 'vue';
-  import { teamRoutingSymbol, teamStoreSymbol } from '@/store/injectionSymbols';
+  import {
+    officeLocationRoutingSymbol,
+    officeLocationStoreSymbol,
+  } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
@@ -9,28 +12,31 @@
 
   const collapsed = ref<boolean>(false);
   const selectedKeys = ref<string[]>([]);
-  const teamStore = inject(teamStoreSymbol)!;
+  const officeLocationStore = inject(officeLocationStoreSymbol)!;
 
-  const { routerTeamId, setTeamId } = inject(teamRoutingSymbol)!;
-  const { getTeams, getIsLoadingTeams } = storeToRefs(teamStore);
+  const { routerOfficeLocationId, setOfficeLocationId } = inject(
+    officeLocationRoutingSymbol,
+  )!;
+  const { getOfficeLocations, getIsLoadingOfficeLocations } =
+    storeToRefs(officeLocationStore);
 
   const router = useRouter();
 
-  const isLoading = computed(() => getIsLoadingTeams.value);
-  const teamData = computed(() => getTeams.value);
+  const isLoading = computed(() => getIsLoadingOfficeLocations.value);
+  const officeLocationData = computed(() => getOfficeLocations.value);
 
-  const selectedTeamId = ref<string>('');
+  const selectedOfficeLocationId = ref<string>('');
   watch(
-    () => routerTeamId.value,
+    () => routerOfficeLocationId.value,
     async () => {
-      if (routerTeamId.value == '') {
-        if (selectedTeamId.value != '') {
+      if (routerOfficeLocationId.value == '') {
+        if (selectedOfficeLocationId.value != '') {
           console.log('write ');
-          setTeamId(selectedTeamId.value);
+          setOfficeLocationId(selectedOfficeLocationId.value);
         }
       }
-      await teamStore?.fetch(Number(routerTeamId.value));
-      selectedKeys.value = [routerTeamId.value];
+      await officeLocationStore?.fetch(Number(routerOfficeLocationId.value));
+      selectedKeys.value = [routerOfficeLocationId.value];
     },
   );
 
@@ -38,7 +44,7 @@
     $el: HTMLElement;
   }
 
-  // used for scrolling to the selected team on mount
+  // used for scrolling to the selected officeLocation on mount
   const siderRef = ref<VueComponentWithEl | null>(null);
 
   const scrollToSelectedMenuItem = async () => {
@@ -59,19 +65,19 @@
     }
   };
 
-  const clickTab = async (teamId: string) => {
-    selectedTeamId.value = teamId;
-    setTeamId(teamId);
+  const clickTab = async (officeLocationId: string) => {
+    selectedOfficeLocationId.value = officeLocationId;
+    setOfficeLocationId(officeLocationId);
   };
 
   onMounted(async () => {
-    if (teamStore.getTeam?.id != undefined) {
-      setTeamId(String(teamStore.getTeam?.id));
+    if (officeLocationStore.getOfficeLocation?.id != undefined) {
+      setOfficeLocationId(String(officeLocationStore.getOfficeLocation?.id));
     }
-    await teamStore?.fetchAll();
-    if (routerTeamId.value) {
-      await teamStore?.fetch(Number(routerTeamId.value));
-      selectedKeys.value = [routerTeamId.value];
+    await officeLocationStore?.fetchAll();
+    if (routerOfficeLocationId.value) {
+      await officeLocationStore?.fetch(Number(routerOfficeLocationId.value));
+      selectedKeys.value = [routerOfficeLocationId.value];
       scrollToSelectedMenuItem();
     }
   });
@@ -93,21 +99,21 @@
         class="menuItem"
       >
         <a-menu-item
-          key="create-team"
+          key="create-officeLocation"
           class="create-menu-item"
-          @click="router.push('/settings/team-management/create')"
+          @click="router.push('/settings/office-location-management/create')"
         >
           <template #icon>
             <PlusOutlined />
           </template>
-          <span>Create Team</span>
+          <span>Create Office Location</span>
         </a-menu-item>
         <a-menu-item
-          v-for="team in teamData"
-          :key="String(team.id)"
-          @click="clickTab(String(team.id))"
+          v-for="officeLocation in officeLocationData"
+          :key="String(officeLocation.id)"
+          @click="clickTab(String(officeLocation.id))"
         >
-          <span>{{ team.teamName }}</span>
+          <span>{{ officeLocation.officeLocationName }}</span>
         </a-menu-item>
       </a-menu>
       <a-skeleton
@@ -118,9 +124,12 @@
       />
     </a-layout-sider>
     <a-layout-content>
-      <!-- renders the TeamInformationView -->
+      <!-- renders the OfficeLocationInformationView -->
       <RouterView v-slot="{ Component }">
-        <component :is="Component" @team-deleted="selectedTeamId = ''" />
+        <component
+          :is="Component"
+          @office-location-deleted="selectedOfficeLocationId = ''"
+        />
       </RouterView>
     </a-layout-content>
   </a-layout>

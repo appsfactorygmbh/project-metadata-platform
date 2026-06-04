@@ -159,7 +159,7 @@ export const useCompanyStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingCompany(true);
             await this.callApi('companiesIdPatch', {
               id: companyId,
-              patchCompanyRequest: payload,
+              updateCompanyRequest: payload,
             });
             this.fetchAll();
             this.fetch(companyId);

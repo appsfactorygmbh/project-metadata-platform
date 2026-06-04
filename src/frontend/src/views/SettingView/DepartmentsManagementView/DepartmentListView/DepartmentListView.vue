@@ -1,6 +1,9 @@
 <script lang="ts" setup>
   import { inject, computed, onMounted, ref, watch } from 'vue';
-  import { teamRoutingSymbol, teamStoreSymbol } from '@/store/injectionSymbols';
+  import {
+    departmentRoutingSymbol,
+    departmentStoreSymbol,
+  } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
@@ -9,28 +12,31 @@
 
   const collapsed = ref<boolean>(false);
   const selectedKeys = ref<string[]>([]);
-  const teamStore = inject(teamStoreSymbol)!;
+  const departmentStore = inject(departmentStoreSymbol)!;
 
-  const { routerTeamId, setTeamId } = inject(teamRoutingSymbol)!;
-  const { getTeams, getIsLoadingTeams } = storeToRefs(teamStore);
+  const { routerDepartmentId, setDepartmentId } = inject(
+    departmentRoutingSymbol,
+  )!;
+  const { getDepartments, getIsLoadingDepartments } =
+    storeToRefs(departmentStore);
 
   const router = useRouter();
 
-  const isLoading = computed(() => getIsLoadingTeams.value);
-  const teamData = computed(() => getTeams.value);
+  const isLoading = computed(() => getIsLoadingDepartments.value);
+  const departmentData = computed(() => getDepartments.value);
 
-  const selectedTeamId = ref<string>('');
+  const selectedDepartmentId = ref<string>('');
   watch(
-    () => routerTeamId.value,
+    () => routerDepartmentId.value,
     async () => {
-      if (routerTeamId.value == '') {
-        if (selectedTeamId.value != '') {
+      if (routerDepartmentId.value == '') {
+        if (selectedDepartmentId.value != '') {
           console.log('write ');
-          setTeamId(selectedTeamId.value);
+          setDepartmentId(selectedDepartmentId.value);
         }
       }
-      await teamStore?.fetch(Number(routerTeamId.value));
-      selectedKeys.value = [routerTeamId.value];
+      await departmentStore?.fetch(Number(routerDepartmentId.value));
+      selectedKeys.value = [routerDepartmentId.value];
     },
   );
 
@@ -38,7 +44,7 @@
     $el: HTMLElement;
   }
 
-  // used for scrolling to the selected team on mount
+  // used for scrolling to the selected department on mount
   const siderRef = ref<VueComponentWithEl | null>(null);
 
   const scrollToSelectedMenuItem = async () => {
@@ -59,19 +65,19 @@
     }
   };
 
-  const clickTab = async (teamId: string) => {
-    selectedTeamId.value = teamId;
-    setTeamId(teamId);
+  const clickTab = async (departmentId: string) => {
+    selectedDepartmentId.value = departmentId;
+    setDepartmentId(departmentId);
   };
 
   onMounted(async () => {
-    if (teamStore.getTeam?.id != undefined) {
-      setTeamId(String(teamStore.getTeam?.id));
+    if (departmentStore.getDepartment?.id != undefined) {
+      setDepartmentId(String(departmentStore.getDepartment?.id));
     }
-    await teamStore?.fetchAll();
-    if (routerTeamId.value) {
-      await teamStore?.fetch(Number(routerTeamId.value));
-      selectedKeys.value = [routerTeamId.value];
+    await departmentStore?.fetchAll();
+    if (routerDepartmentId.value) {
+      await departmentStore?.fetch(Number(routerDepartmentId.value));
+      selectedKeys.value = [routerDepartmentId.value];
       scrollToSelectedMenuItem();
     }
   });
@@ -93,21 +99,21 @@
         class="menuItem"
       >
         <a-menu-item
-          key="create-team"
+          key="create-department"
           class="create-menu-item"
-          @click="router.push('/settings/team-management/create')"
+          @click="router.push('/settings/department-management/create')"
         >
           <template #icon>
             <PlusOutlined />
           </template>
-          <span>Create Team</span>
+          <span>Create Department</span>
         </a-menu-item>
         <a-menu-item
-          v-for="team in teamData"
-          :key="String(team.id)"
-          @click="clickTab(String(team.id))"
+          v-for="department in departmentData"
+          :key="String(department.id)"
+          @click="clickTab(String(department.id))"
         >
-          <span>{{ team.teamName }}</span>
+          <span>{{ department.departmentName }}</span>
         </a-menu-item>
       </a-menu>
       <a-skeleton
@@ -118,9 +124,12 @@
       />
     </a-layout-sider>
     <a-layout-content>
-      <!-- renders the TeamInformationView -->
+      <!-- renders the DepartmentInformationView -->
       <RouterView v-slot="{ Component }">
-        <component :is="Component" @team-deleted="selectedTeamId = ''" />
+        <component
+          :is="Component"
+          @department-deleted="selectedDepartmentId = ''"
+        />
       </RouterView>
     </a-layout-content>
   </a-layout>

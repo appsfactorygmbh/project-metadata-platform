@@ -1,6 +1,9 @@
 <script lang="ts" setup>
   import { inject, computed, onMounted, ref, watch } from 'vue';
-  import { teamRoutingSymbol, teamStoreSymbol } from '@/store/injectionSymbols';
+  import {
+    companyRoutingSymbol,
+    companyStoreSymbol,
+  } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
@@ -9,28 +12,28 @@
 
   const collapsed = ref<boolean>(false);
   const selectedKeys = ref<string[]>([]);
-  const teamStore = inject(teamStoreSymbol)!;
+  const companyStore = inject(companyStoreSymbol)!;
 
-  const { routerTeamId, setTeamId } = inject(teamRoutingSymbol)!;
-  const { getTeams, getIsLoadingTeams } = storeToRefs(teamStore);
+  const { routerCompanyId, setCompanyId } = inject(companyRoutingSymbol)!;
+  const { getCompanies, getIsLoadingCompanies } = storeToRefs(companyStore);
 
   const router = useRouter();
 
-  const isLoading = computed(() => getIsLoadingTeams.value);
-  const teamData = computed(() => getTeams.value);
+  const isLoading = computed(() => getIsLoadingCompanies.value);
+  const companyData = computed(() => getCompanies.value);
 
-  const selectedTeamId = ref<string>('');
+  const selectedCompanyId = ref<string>('');
   watch(
-    () => routerTeamId.value,
+    () => routerCompanyId.value,
     async () => {
-      if (routerTeamId.value == '') {
-        if (selectedTeamId.value != '') {
+      if (routerCompanyId.value == '') {
+        if (selectedCompanyId.value != '') {
           console.log('write ');
-          setTeamId(selectedTeamId.value);
+          setCompanyId(selectedCompanyId.value);
         }
       }
-      await teamStore?.fetch(Number(routerTeamId.value));
-      selectedKeys.value = [routerTeamId.value];
+      await companyStore?.fetch(Number(routerCompanyId.value));
+      selectedKeys.value = [routerCompanyId.value];
     },
   );
 
@@ -38,7 +41,7 @@
     $el: HTMLElement;
   }
 
-  // used for scrolling to the selected team on mount
+  // used for scrolling to the selected company on mount
   const siderRef = ref<VueComponentWithEl | null>(null);
 
   const scrollToSelectedMenuItem = async () => {
@@ -59,19 +62,19 @@
     }
   };
 
-  const clickTab = async (teamId: string) => {
-    selectedTeamId.value = teamId;
-    setTeamId(teamId);
+  const clickTab = async (companyId: string) => {
+    selectedCompanyId.value = companyId;
+    setCompanyId(companyId);
   };
 
   onMounted(async () => {
-    if (teamStore.getTeam?.id != undefined) {
-      setTeamId(String(teamStore.getTeam?.id));
+    if (companyStore.getCompany?.id != undefined) {
+      setCompanyId(String(companyStore.getCompany?.id));
     }
-    await teamStore?.fetchAll();
-    if (routerTeamId.value) {
-      await teamStore?.fetch(Number(routerTeamId.value));
-      selectedKeys.value = [routerTeamId.value];
+    await companyStore?.fetchAll();
+    if (routerCompanyId.value) {
+      await companyStore?.fetch(Number(routerCompanyId.value));
+      selectedKeys.value = [routerCompanyId.value];
       scrollToSelectedMenuItem();
     }
   });
@@ -93,21 +96,21 @@
         class="menuItem"
       >
         <a-menu-item
-          key="create-team"
+          key="create-company"
           class="create-menu-item"
-          @click="router.push('/settings/team-management/create')"
+          @click="router.push('/settings/company-management/create')"
         >
           <template #icon>
             <PlusOutlined />
           </template>
-          <span>Create Team</span>
+          <span>Create Company</span>
         </a-menu-item>
         <a-menu-item
-          v-for="team in teamData"
-          :key="String(team.id)"
-          @click="clickTab(String(team.id))"
+          v-for="company in companyData"
+          :key="String(company.id)"
+          @click="clickTab(String(company.id))"
         >
-          <span>{{ team.teamName }}</span>
+          <span>{{ company.companyName }}</span>
         </a-menu-item>
       </a-menu>
       <a-skeleton
@@ -118,9 +121,9 @@
       />
     </a-layout-sider>
     <a-layout-content>
-      <!-- renders the TeamInformationView -->
+      <!-- renders the CompanyInformationView -->
       <RouterView v-slot="{ Component }">
-        <component :is="Component" @team-deleted="selectedTeamId = ''" />
+        <component :is="Component" @company-deleted="selectedCompanyId = ''" />
       </RouterView>
     </a-layout-content>
   </a-layout>

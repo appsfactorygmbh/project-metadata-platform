@@ -165,7 +165,7 @@ export const useBusinessUnitStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingBusinessUnit(true);
             await this.callApi('businessUnitsIdPatch', {
               id: businessUnitId,
-              patchBusinessUnitRequest: payload,
+              updateBusinessUnitRequest: payload,
             });
             this.fetchAll();
             this.fetch(businessUnitId);

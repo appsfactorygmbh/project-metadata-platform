@@ -227,6 +227,7 @@
               ', ',
             ) ?? ''
           "
+          :options="[]"
         />
       </EditableTextField>
 
@@ -244,7 +245,7 @@
           async () => user && (await userStore.fetchUser(user.externalId))
         "
       >
-        <UnserInformationTeamsInputField
+        <UserInformationTeamsInputField
           :user-id="user?.id ?? ''"
           :attribute-name="'Teams'"
           :form-store="teamsFormStore"
@@ -276,7 +277,7 @@
           async () => user && (await userStore.fetchUser(user.externalId))
         "
       >
-        <UnserInformationTeamsInputField
+        <UserInformationTeamsInputField
           :user-id="user?.id ?? ''"
           :attribute-name="'TeamSupport'"
           :form-store="teamSupportFormStore"
@@ -365,7 +366,7 @@
         class="textField officeLocation"
         :value="user?.addresses[0]?.locality ?? ''"
         :is-loading="isLoading"
-        :label="'OfficeLocation'"
+        :label="'Office Location'"
         :is-editing-key="'isEditingOfficeLocation'"
         :form-store="officeLocationFormStore"
         :has-edit-keys="true"

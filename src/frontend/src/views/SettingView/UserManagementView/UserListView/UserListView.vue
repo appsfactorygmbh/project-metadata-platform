@@ -76,7 +76,7 @@
           <template #icon>
             <PlusOutlined />
           </template>
-          <span>Create New User</span>
+          <span>Create User</span>
         </a-menu-item>
         <a-menu-item
           v-for="user in usersData"

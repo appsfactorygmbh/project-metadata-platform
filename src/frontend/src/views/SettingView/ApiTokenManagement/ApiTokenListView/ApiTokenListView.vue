@@ -75,7 +75,7 @@
           <template #icon>
             <PlusOutlined />
           </template>
-          <span>Create New API-Token</span>
+          <span>Create API-Token</span>
         </a-menu-item>
         <a-menu-item
           v-for="ApiToken in tokensData"
