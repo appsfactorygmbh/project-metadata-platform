@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { VueWrapper, flushPromises, mount } from '@vue/test-utils';
 import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
-import { companyRoutingSymbol, companyStoreSymbol } from '@/store/injectionSymbols';
+import {
+  companyRoutingSymbol,
+  companyStoreSymbol,
+} from '@/store/injectionSymbols';
 import { FormItem } from 'ant-design-vue';
 import CreateCompanyView from '../CreateCompanyView.vue';
 import type { CompanyModel } from '@/models/Company';
@@ -36,9 +39,9 @@ describe('CreateCompanyView.vue', () => {
     const formItems = wrapper.findAllComponents(FormItem);
     expect(formItems).toHaveLength(1);
 
-
-    expect(formItems[0].find('input').attributes('placeholder')).toBe('Company Name');
-
+    expect(formItems[0].find('input').attributes('placeholder')).toBe(
+      'Company Name',
+    );
   });
 
   it('verifies a valid company name correctly', async () => {
@@ -146,7 +149,6 @@ describe('CreateCompanyView.vue', () => {
     expect(createSpy).toHaveBeenCalled();
     expect(createSpy).toHaveBeenCalledWith({
       companyName: 'Test Company',
-
     });
   });
 });

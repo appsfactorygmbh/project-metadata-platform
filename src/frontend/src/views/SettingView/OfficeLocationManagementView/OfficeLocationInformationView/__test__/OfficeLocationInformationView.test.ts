@@ -16,7 +16,6 @@ import { useOfficeLocationRouting } from '@/utils/hooks/useOfficeLocationRouting
 const officeLocationData1: OfficeLocationModel = {
   id: 100,
   officeLocationName: 'OfficeLocation1',
-
 };
 
 const mockRoute = {
@@ -71,5 +70,4 @@ describe('OfficeLocationInformationView.vue', () => {
     const text = wrapper.findAll('.text');
     expect(text[0].text()).toBe(officeLocationData1.officeLocationName);
   });
-
 });

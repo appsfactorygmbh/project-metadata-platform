@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { VueWrapper, flushPromises, mount } from '@vue/test-utils';
 import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
-import { departmentRoutingSymbol, departmentStoreSymbol } from '@/store/injectionSymbols';
+import {
+  departmentRoutingSymbol,
+  departmentStoreSymbol,
+} from '@/store/injectionSymbols';
 import { FormItem } from 'ant-design-vue';
 import CreateDepartmentView from '../CreateDepartmentView.vue';
 import type { DepartmentModel } from '@/models/Department';
@@ -36,9 +39,9 @@ describe('CreateDepartmentView.vue', () => {
     const formItems = wrapper.findAllComponents(FormItem);
     expect(formItems).toHaveLength(1);
 
-
-    expect(formItems[0].find('input').attributes('placeholder')).toBe('Department Name');
-
+    expect(formItems[0].find('input').attributes('placeholder')).toBe(
+      'Department Name',
+    );
   });
 
   it('verifies a valid department name correctly', async () => {
@@ -146,7 +149,6 @@ describe('CreateDepartmentView.vue', () => {
     expect(createSpy).toHaveBeenCalled();
     expect(createSpy).toHaveBeenCalledWith({
       departmentName: 'Test Department',
-
     });
   });
 });

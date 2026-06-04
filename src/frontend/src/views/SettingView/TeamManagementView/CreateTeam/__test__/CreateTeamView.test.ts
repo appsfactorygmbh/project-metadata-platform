@@ -36,11 +36,13 @@ describe('CreateTeamView.vue', () => {
     const formItems = wrapper.findAllComponents(FormItem);
     expect(formItems).toHaveLength(3);
 
+    expect(formItems[0].find('input').attributes('placeholder')).toBe(
+      'Team Name',
+    );
 
-    expect(formItems[0].find('input').attributes('placeholder')).toBe('Team Name');
-
-
-    expect(formItems[1].find('.ant-select-selection-placeholder').text()).toBe('Business Unit');
+    expect(formItems[1].find('.ant-select-selection-placeholder').text()).toBe(
+      'Business Unit',
+    );
 
     expect(formItems[2].find('input').attributes('placeholder')).toBe('PTL');
   });
@@ -121,7 +123,7 @@ describe('CreateTeamView.vue', () => {
     ).toBe(true);
   });
 
-it('submits the form correctly', async () => {
+  it('submits the form correctly', async () => {
     const teamStore = useTeamStore();
     const formStore = useFormStore('CreateTeamForm');
     const createSpy = vi
@@ -142,13 +144,11 @@ it('submits the form correctly', async () => {
 
     const formInputs = wrapper.findAllComponents(FormItem);
 
-await formInputs[0].find('.ant-input').setValue('Test Team');
-
+    await formInputs[0].find('.ant-input').setValue('Test Team');
 
     const selectComponent = wrapper.findComponent({ name: 'ASelect' });
 
     await selectComponent.vm.$emit('update:value', 1);
-
 
     await formInputs[2].find('.ant-input').setValue('Test PTL');
 

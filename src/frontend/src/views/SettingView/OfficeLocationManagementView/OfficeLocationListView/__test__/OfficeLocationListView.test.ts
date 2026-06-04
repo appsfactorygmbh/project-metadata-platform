@@ -1,7 +1,10 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
-import { officeLocationRoutingSymbol, officeLocationStoreSymbol } from '@/store/injectionSymbols';
+import {
+  officeLocationRoutingSymbol,
+  officeLocationStoreSymbol,
+} from '@/store/injectionSymbols';
 import { useOfficeLocationStore } from '@/store';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { OfficeLocationListView } from '..';
@@ -15,12 +18,10 @@ vi.mock('vue-router', () => ({
 const officeLocationData1 = {
   id: '100',
   officeLocationName: 'OfficeLocation1',
-
 };
 const officeLocationData2 = {
   id: '200',
   officeLocationName: 'OfficeLocation2',
-
 };
 
 describe('OfficeLocationListView.vue', () => {
@@ -28,7 +29,10 @@ describe('OfficeLocationListView.vue', () => {
     createTestingPinia({
       stubActions: true,
       initialState: {
-        officeLocation: { officeLocations: [officeLocationData1, officeLocationData2], isLoading: false },
+        officeLocation: {
+          officeLocations: [officeLocationData1, officeLocationData2],
+          isLoading: false,
+        },
       },
     });
 

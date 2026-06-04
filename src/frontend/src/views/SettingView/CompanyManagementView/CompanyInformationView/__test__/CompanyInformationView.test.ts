@@ -16,7 +16,6 @@ import { useCompanyRouting } from '@/utils/hooks/useCompanyRouting';
 const companyData1: CompanyModel = {
   id: 100,
   companyName: 'Company1',
-
 };
 
 const mockRoute = {
@@ -71,5 +70,4 @@ describe('CompanyInformationView.vue', () => {
     const text = wrapper.findAll('.text');
     expect(text[0].text()).toBe(companyData1.companyName);
   });
-
 });

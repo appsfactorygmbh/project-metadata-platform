@@ -120,7 +120,6 @@ describe('CreateProjectView.vue', () => {
     (teamSelectTrigger as HTMLElement).dispatchEvent(mousedownEvent);
     await flushPromises();
 
-
     const antSelectDropdown = modalContentWrapper!.querySelector(
       '.ant-select-dropdown',
     );
@@ -173,9 +172,8 @@ describe('CreateProjectView.vue', () => {
     (companySelectTrigger as HTMLElement).dispatchEvent(mousedownEvent);
     await flushPromises();
 
-
     const options = modalContentWrapper!.querySelectorAll(
-      '[data-testid^="company-select-"]'
+      '[data-testid^="company-select-"]',
     );
 
     expect(options.length).toBe(companyStore.getCompanies.length);
@@ -186,12 +184,10 @@ describe('CreateProjectView.vue', () => {
     expect(options[1]!.textContent).toBe('Mock Company B');
     expect(options[1]!.getAttribute('data-testid')).toBe('company-select-1');
 
-
     expect(wrapper.vm.formState.companyId).toBe(0);
 
-
     const companySelect = wrapper.findComponent(
-      '[data-test="company-id-select"]'
+      '[data-test="company-id-select"]',
     ) as VueWrapper<any>;
 
     companySelect.vm.$emit('update:value', 'Mock Company A');

@@ -149,7 +149,7 @@ describe('ProjectEditStore', () => {
       slug: '',
       isArchived: false,
       offerId: 'Offer1',
-      company: { id: 1, companyName: "Test Company" },
+      company: { id: 1, companyName: 'Test Company' },
       ismsLevel: 'VERY_HIGH',
       companyState: 'EXTERNAL',
       team: undefined,
@@ -176,7 +176,7 @@ describe('ProjectEditStore', () => {
       team: undefined,
       isArchived: false,
       offerId: 'Offer1',
-      company: { id: 1, companyName: "Test Company" },
+      company: { id: 1, companyName: 'Test Company' },
       ismsLevel: 'VERY_HIGH',
       companyState: 'EXTERNAL',
       notes: '',
@@ -233,13 +233,17 @@ describe('ProjectEditStore', () => {
       team: undefined,
       isArchived: false,
       offerId: 'Offer1',
-      company: { id: 1, companyName: "Test Company" },
+      company: { id: 1, companyName: 'Test Company' },
       ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
       companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
       notes: 'Initial notes',
     };
     store.setProjectInformation(projectInfo);
-    expect(store.projectInformationChanges).toEqual({ ...projectInfo, companyId: 1, teamId: undefined });
+    expect(store.projectInformationChanges).toEqual({
+      ...projectInfo,
+      companyId: 1,
+      teamId: undefined,
+    });
     expect(store.emptyProjectInformationFields.size).toBe(0);
   });
 

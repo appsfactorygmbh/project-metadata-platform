@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { VueWrapper, flushPromises, mount } from '@vue/test-utils';
 import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
-import { officeLocationRoutingSymbol, officeLocationStoreSymbol } from '@/store/injectionSymbols';
+import {
+  officeLocationRoutingSymbol,
+  officeLocationStoreSymbol,
+} from '@/store/injectionSymbols';
 import { FormItem } from 'ant-design-vue';
 import CreateOfficeLocationView from '../CreateOfficeLocationView.vue';
 import type { OfficeLocationModel } from '@/models/OfficeLocation';
@@ -28,7 +31,8 @@ describe('CreateOfficeLocationView.vue', () => {
       global: {
         provide: {
           [officeLocationStoreSymbol as symbol]: useOfficeLocationStore(),
-          [officeLocationRoutingSymbol as symbol]: mockOfficeLocationRoutingService,
+          [officeLocationRoutingSymbol as symbol]:
+            mockOfficeLocationRoutingService,
         },
       },
     });
@@ -36,9 +40,9 @@ describe('CreateOfficeLocationView.vue', () => {
     const formItems = wrapper.findAllComponents(FormItem);
     expect(formItems).toHaveLength(1);
 
-
-    expect(formItems[0].find('input').attributes('placeholder')).toBe('Office Location Name');
-
+    expect(formItems[0].find('input').attributes('placeholder')).toBe(
+      'Office Location Name',
+    );
   });
 
   it('verifies a valid office location name correctly', async () => {
@@ -63,7 +67,8 @@ describe('CreateOfficeLocationView.vue', () => {
       global: {
         provide: {
           [officeLocationStoreSymbol as symbol]: useOfficeLocationStore(),
-          [officeLocationRoutingSymbol as symbol]: mockOfficeLocationRoutingService,
+          [officeLocationRoutingSymbol as symbol]:
+            mockOfficeLocationRoutingService,
         },
       },
     });
@@ -100,7 +105,8 @@ describe('CreateOfficeLocationView.vue', () => {
       global: {
         provide: {
           [officeLocationStoreSymbol as symbol]: useOfficeLocationStore(),
-          [officeLocationRoutingSymbol as symbol]: mockOfficeLocationRoutingService,
+          [officeLocationRoutingSymbol as symbol]:
+            mockOfficeLocationRoutingService,
         },
       },
     });
@@ -111,7 +117,9 @@ describe('CreateOfficeLocationView.vue', () => {
     await flushPromises();
 
     expect(
-      officeLocationNameField.find('.ant-form-item-feedback-icon-error').exists(),
+      officeLocationNameField
+        .find('.ant-form-item-feedback-icon-error')
+        .exists(),
     ).toBe(true);
   });
 
@@ -129,7 +137,8 @@ describe('CreateOfficeLocationView.vue', () => {
         },
         provide: {
           [officeLocationStoreSymbol as symbol]: officeLocationStore,
-          [officeLocationRoutingSymbol as symbol]: mockOfficeLocationRoutingService,
+          [officeLocationRoutingSymbol as symbol]:
+            mockOfficeLocationRoutingService,
         },
       },
     });
@@ -146,7 +155,6 @@ describe('CreateOfficeLocationView.vue', () => {
     expect(createSpy).toHaveBeenCalled();
     expect(createSpy).toHaveBeenCalledWith({
       officeLocationName: 'Test OfficeLocation',
-
     });
   });
 });

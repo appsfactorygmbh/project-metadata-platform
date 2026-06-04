@@ -16,7 +16,6 @@ import { useDepartmentRouting } from '@/utils/hooks/useDepartmentRouting';
 const departmentData1: DepartmentModel = {
   id: 100,
   departmentName: 'Department1',
-
 };
 
 const mockRoute = {
@@ -71,5 +70,4 @@ describe('DepartmentInformationView.vue', () => {
     const text = wrapper.findAll('.text');
     expect(text[0].text()).toBe(departmentData1.departmentName);
   });
-
 });

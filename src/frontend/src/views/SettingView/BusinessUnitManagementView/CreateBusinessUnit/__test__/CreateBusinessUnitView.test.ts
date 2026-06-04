@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { VueWrapper, flushPromises, mount } from '@vue/test-utils';
 import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
-import { businessUnitRoutingSymbol, businessUnitStoreSymbol } from '@/store/injectionSymbols';
+import {
+  businessUnitRoutingSymbol,
+  businessUnitStoreSymbol,
+} from '@/store/injectionSymbols';
 import { FormItem } from 'ant-design-vue';
 import CreateBusinessUnitView from '../CreateBusinessUnitView.vue';
 import type { BusinessUnitModel } from '@/models/BusinessUnit';
@@ -36,9 +39,9 @@ describe('CreateBusinessUnitView.vue', () => {
     const formItems = wrapper.findAllComponents(FormItem);
     expect(formItems).toHaveLength(1);
 
-
-    expect(formItems[0].find('input').attributes('placeholder')).toBe('Business Unit Name');
-
+    expect(formItems[0].find('input').attributes('placeholder')).toBe(
+      'Business Unit Name',
+    );
   });
 
   it('verifies a valid business unit name correctly', async () => {
@@ -146,7 +149,6 @@ describe('CreateBusinessUnitView.vue', () => {
     expect(createSpy).toHaveBeenCalled();
     expect(createSpy).toHaveBeenCalledWith({
       businessUnitName: 'Test BusinessUnit',
-
     });
   });
 });

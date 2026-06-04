@@ -2,10 +2,7 @@ import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
-import {
-  teamRoutingSymbol,
-  teamStoreSymbol,
-} from '@/store/injectionSymbols';
+import { teamRoutingSymbol, teamStoreSymbol } from '@/store/injectionSymbols';
 import { useTeamStore } from '@/store';
 import router from '@/router';
 import type { TeamModel } from '@/models/Team';
@@ -16,8 +13,7 @@ import { useTeamRouting } from '@/utils/hooks/useTeamRouting';
 const teamData1: TeamModel = {
   id: 100,
   teamName: 'Team1',
-  businessUnit: { id: 1, businessUnitName: 'BU' }
-
+  businessUnit: { id: 1, businessUnitName: 'BU' },
 };
 
 const mockRoute = {
@@ -73,5 +69,4 @@ describe('TeamInformationView.vue', () => {
     expect(text[0].text()).toBe(teamData1.teamName);
     expect(text[1].text()).toBe(teamData1.businessUnit.businessUnitName);
   });
-
 });

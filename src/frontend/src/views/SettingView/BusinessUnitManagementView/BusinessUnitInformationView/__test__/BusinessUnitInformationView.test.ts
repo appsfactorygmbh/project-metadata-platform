@@ -13,11 +13,9 @@ import type { BusinessUnitModel } from '@/models/BusinessUnit';
 import { BusinessUnitInformationView } from '..';
 import { useBusinessUnitRouting } from '@/utils/hooks';
 
-
 const businessUnitData1: BusinessUnitModel = {
   id: 100,
   businessUnitName: 'BusinessUnit1',
-
 };
 
 const mockRoute = {
@@ -72,5 +70,4 @@ describe('BusinessUnitInformationView.vue', () => {
     const text = wrapper.findAll('.text');
     expect(text[0].text()).toBe(businessUnitData1.businessUnitName);
   });
-
 });

@@ -1,7 +1,10 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
-import { companyRoutingSymbol, companyStoreSymbol } from '@/store/injectionSymbols';
+import {
+  companyRoutingSymbol,
+  companyStoreSymbol,
+} from '@/store/injectionSymbols';
 import { useCompanyStore } from '@/store';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { CompanyListView } from '..';
@@ -15,12 +18,10 @@ vi.mock('vue-router', () => ({
 const companyData1 = {
   id: '100',
   companyName: 'Company1',
-
 };
 const companyData2 = {
   id: '200',
   companyName: 'Company2',
-
 };
 
 describe('CompanyListView.vue', () => {

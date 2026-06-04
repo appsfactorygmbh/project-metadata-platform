@@ -1,7 +1,10 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
-import { departmentRoutingSymbol, departmentStoreSymbol } from '@/store/injectionSymbols';
+import {
+  departmentRoutingSymbol,
+  departmentStoreSymbol,
+} from '@/store/injectionSymbols';
 import { useDepartmentStore } from '@/store';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { DepartmentListView } from '..';
@@ -15,12 +18,10 @@ vi.mock('vue-router', () => ({
 const departmentData1 = {
   id: '100',
   departmentName: 'Department1',
-
 };
 const departmentData2 = {
   id: '200',
   departmentName: 'Department2',
-
 };
 
 describe('DepartmentListView.vue', () => {
@@ -28,7 +29,10 @@ describe('DepartmentListView.vue', () => {
     createTestingPinia({
       stubActions: true,
       initialState: {
-        department: { departments: [departmentData1, departmentData2], isLoading: false },
+        department: {
+          departments: [departmentData1, departmentData2],
+          isLoading: false,
+        },
       },
     });
 

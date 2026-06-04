@@ -1,7 +1,10 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
-import { businessUnitRoutingSymbol, businessUnitStoreSymbol } from '@/store/injectionSymbols';
+import {
+  businessUnitRoutingSymbol,
+  businessUnitStoreSymbol,
+} from '@/store/injectionSymbols';
 import { useBusinessUnitStore } from '@/store';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { BusinessUnitListView } from '..';
@@ -15,12 +18,10 @@ vi.mock('vue-router', () => ({
 const businessUnitData1 = {
   id: '100',
   businessUnitName: 'BusinessUnit1',
-
 };
 const businessUnitData2 = {
   id: '200',
   businessUnitName: 'BusinessUnit2',
-
 };
 
 describe('BusinessUnitListView.vue', () => {
@@ -28,7 +29,10 @@ describe('BusinessUnitListView.vue', () => {
     createTestingPinia({
       stubActions: true,
       initialState: {
-        businessUnit: { businessUnits: [businessUnitData1, businessUnitData2], isLoading: false },
+        businessUnit: {
+          businessUnits: [businessUnitData1, businessUnitData2],
+          isLoading: false,
+        },
       },
     });
 

@@ -39,7 +39,6 @@ describe('CreateUserView.vue', () => {
       { name: 'employeeNumber', placeholder: 'Employee Number' },
       { name: 'email', placeholder: 'E-Mail' },
       { name: 'password', placeholder: 'Password' },
-
     ];
 
     expectedInputs.forEach(({ name, placeholder }) => {
@@ -57,7 +56,6 @@ describe('CreateUserView.vue', () => {
       { name: 'businessUnits', placeholder: 'Business Units' },
       { name: 'officeLocation', placeholder: 'Office Location' },
       { name: 'company', placeholder: 'Company' },
-
     ];
     expectedSelects.forEach(({ name, placeholder }) => {
       const itemWrapper = getFormItem(name);
