@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using ProjectMetadataPlatform.Application.OfficeLocations;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.OfficeLocations;
+using ProjectMetadataPlatform.Application.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Application.Tests.OfficeLocations;
 
@@ -19,7 +19,9 @@ public class GetOfficeLocationQueryHandlerTest
     public void Setup()
     {
         _mockOfficeLocationRepository = new Mock<IOfficeLocationRepository>();
-        _handler = new GetOfficeLocationQueryHandler(officeLocationRepository: _mockOfficeLocationRepository.Object);
+        _handler = new GetOfficeLocationQueryHandler(
+            officeLocationRepository: _mockOfficeLocationRepository.Object
+        );
     }
 
     [Test]

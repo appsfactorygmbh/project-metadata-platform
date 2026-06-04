@@ -198,11 +198,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
                 ProjectName = "Regen",
                 Slug = "regen",
                 ClientName = "ESA",
-                Team = new()
-                {
-                    TeamName = "42",
-                    BusinessUnitId = 1,
-                },
+                Team = new() { TeamName = "42", BusinessUnitId = 1 },
                 CompanyId = 1,
             },
             new()

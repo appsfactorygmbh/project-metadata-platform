@@ -3,11 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using ProjectMetadataPlatform.Application.OfficeLocations;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.OfficeLocations;
+using ProjectMetadataPlatform.Application.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
 namespace ProjectMetadataPlatform.Application.Tests.OfficeLocations;
@@ -44,7 +44,10 @@ public class DeleteOfficeLocationCommandHandlerTest
             .ReturnsAsync(returnOfficeLocation);
 
         // Act
-        await _handler.Handle(new DeleteOfficeLocationCommand(Id: 1), It.IsAny<CancellationToken>());
+        await _handler.Handle(
+            new DeleteOfficeLocationCommand(Id: 1),
+            It.IsAny<CancellationToken>()
+        );
 
         // Assert
         _mockLogRepo.Verify(

@@ -3,11 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Projects;
-using ProjectMetadataPlatform.Infrastructure.OfficeLocations;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
+using ProjectMetadataPlatform.Infrastructure.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Infrastructure.Tests;
 
@@ -78,6 +78,7 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
             Assert.That(deletedOfficeLocation, Is.EqualTo(officeLocation));
         });
     }
+
     [Test]
     public async Task GetOfficeLocationAsync_ShouldThrowOfficeLocationNotFoundExceptionIfNotPresent()
     {
@@ -92,12 +93,15 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
         Assert.That(ex.Message, Does.Contain("1"));
     }
 
-
     [Test]
     public async Task AddOfficeLocationAsync_NewOfficeLocation_ShouldAddOfficeLocationToDatabase()
     {
         // Arrange
-        var newOfficeLocation = new OfficeLocation { Id = 100, OfficeLocationName = "New OfficeLocation Alpha" };
+        var newOfficeLocation = new OfficeLocation
+        {
+            Id = 100,
+            OfficeLocationName = "New OfficeLocation Alpha",
+        };
 
         // Act
         _context.OfficeLocations.RemoveRange(_context.OfficeLocations);
@@ -109,7 +113,10 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
         Assert.That(addedOfficeLocation, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(addedOfficeLocation.OfficeLocationName, Is.EqualTo(newOfficeLocation.OfficeLocationName));
+            Assert.That(
+                addedOfficeLocation.OfficeLocationName,
+                Is.EqualTo(newOfficeLocation.OfficeLocationName)
+            );
         });
         Assert.That(await _context.OfficeLocations.CountAsync(), Is.EqualTo(1));
     }
@@ -118,12 +125,20 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
     public async Task AddOfficeLocationAsync_OfficeLocationWithExistingId_ShouldNotAddOrUpdateOfficeLocation()
     {
         // Arrange
-        var initialOfficeLocation = new OfficeLocation { Id = 101, OfficeLocationName = "Original Gamma" };
+        var initialOfficeLocation = new OfficeLocation
+        {
+            Id = 101,
+            OfficeLocationName = "Original Gamma",
+        };
         _context.OfficeLocations.RemoveRange(_context.OfficeLocations);
         _context.OfficeLocations.Add(initialOfficeLocation);
         await _context.SaveChangesAsync();
 
-        var officeLocationWithSameId = new OfficeLocation { Id = 101, OfficeLocationName = "Updated Gamma Attempt" };
+        var officeLocationWithSameId = new OfficeLocation
+        {
+            Id = 101,
+            OfficeLocationName = "Updated Gamma Attempt",
+        };
 
         // Act
         await _repository.AddOfficeLocationAsync(officeLocationWithSameId);
@@ -134,7 +149,10 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
         Assert.That(officeLocationInDb, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(officeLocationInDb.OfficeLocationName, Is.EqualTo(initialOfficeLocation.OfficeLocationName));
+            Assert.That(
+                officeLocationInDb.OfficeLocationName,
+                Is.EqualTo(initialOfficeLocation.OfficeLocationName)
+            );
         });
         Assert.That(await _context.OfficeLocations.CountAsync(), Is.EqualTo(1));
     }
@@ -144,11 +162,15 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var existingOfficeLocationName = "Unique Existent OfficeLocation";
-        _context.OfficeLocations.Add(new OfficeLocation { Id = 200, OfficeLocationName = existingOfficeLocationName });
+        _context.OfficeLocations.Add(
+            new OfficeLocation { Id = 200, OfficeLocationName = existingOfficeLocationName }
+        );
         await _context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.CheckIfOfficeLocationNameExistsAsync(existingOfficeLocationName);
+        var result = await _repository.CheckIfOfficeLocationNameExistsAsync(
+            existingOfficeLocationName
+        );
 
         // Assert
         Assert.That(result, Is.True);
@@ -159,11 +181,15 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var nonExistentOfficeLocationName = "Definitely Not Here OfficeLocation";
-        _context.OfficeLocations.Add(new OfficeLocation { Id = 201, OfficeLocationName = "Some Other OfficeLocation" });
+        _context.OfficeLocations.Add(
+            new OfficeLocation { Id = 201, OfficeLocationName = "Some Other OfficeLocation" }
+        );
         await _context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.CheckIfOfficeLocationNameExistsAsync(nonExistentOfficeLocationName);
+        var result = await _repository.CheckIfOfficeLocationNameExistsAsync(
+            nonExistentOfficeLocationName
+        );
 
         // Assert
         Assert.That(result, Is.False);
@@ -185,24 +211,40 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
     public async Task UpdateOfficeLocationAsync_ExistingOfficeLocation_ShouldUpdateOfficeLocationProperties()
     {
         // Arrange
-        var initialOfficeLocation = new OfficeLocation { Id = 300, OfficeLocationName = "OfficeLocation Epsilon" };
+        var initialOfficeLocation = new OfficeLocation
+        {
+            Id = 300,
+            OfficeLocationName = "OfficeLocation Epsilon",
+        };
         _context.OfficeLocations.Add(initialOfficeLocation);
         await _context.SaveChangesAsync();
         _context.Entry(initialOfficeLocation).State = EntityState.Detached;
 
-        var updatedOfficeLocationData = new OfficeLocation { Id = 300, OfficeLocationName = "OfficeLocation Epsilon Updated" };
+        var updatedOfficeLocationData = new OfficeLocation
+        {
+            Id = 300,
+            OfficeLocationName = "OfficeLocation Epsilon Updated",
+        };
 
         // Act
         var result = await _repository.UpdateOfficeLocationAsync(updatedOfficeLocationData);
         await _context.SaveChangesAsync();
 
         // Assert
-        var officeLocationFromDb = await _context.OfficeLocations.FindAsync(initialOfficeLocation.Id);
+        var officeLocationFromDb = await _context.OfficeLocations.FindAsync(
+            initialOfficeLocation.Id
+        );
         Assert.That(officeLocationFromDb, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(officeLocationFromDb.OfficeLocationName, Is.EqualTo(updatedOfficeLocationData.OfficeLocationName));
-            Assert.That(result.OfficeLocationName, Is.EqualTo(updatedOfficeLocationData.OfficeLocationName));
+            Assert.That(
+                officeLocationFromDb.OfficeLocationName,
+                Is.EqualTo(updatedOfficeLocationData.OfficeLocationName)
+            );
+            Assert.That(
+                result.OfficeLocationName,
+                Is.EqualTo(updatedOfficeLocationData.OfficeLocationName)
+            );
         });
     }
 
@@ -210,7 +252,11 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
     public void UpdateOfficeLocationAsync_NonExistingOfficeLocation_ShouldThrowOfficeLocationNotFoundException()
     {
         // Arrange
-        var nonExistentOfficeLocation = new OfficeLocation { Id = 999, OfficeLocationName = "Ghost OfficeLocation" };
+        var nonExistentOfficeLocation = new OfficeLocation
+        {
+            Id = 999,
+            OfficeLocationName = "Ghost OfficeLocation",
+        };
 
         // Act & Assert
         var ex = Assert.ThrowsAsync<OfficeLocationNotFoundException>(async () =>
@@ -223,7 +269,11 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
     public async Task GetOfficeLocationAsync_ExistingOfficeLocation_ShouldReturnCorrectOfficeLocation()
     {
         // Arrange
-        var expectedOfficeLocation = new OfficeLocation { Id = 400, OfficeLocationName = "OfficeLocation Zeta" };
+        var expectedOfficeLocation = new OfficeLocation
+        {
+            Id = 400,
+            OfficeLocationName = "OfficeLocation Zeta",
+        };
         _context.OfficeLocations.Add(expectedOfficeLocation);
         await _context.SaveChangesAsync();
 
@@ -235,7 +285,10 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
         Assert.Multiple(() =>
         {
             Assert.That(result.Id, Is.EqualTo(expectedOfficeLocation.Id));
-            Assert.That(result.OfficeLocationName, Is.EqualTo(expectedOfficeLocation.OfficeLocationName));
+            Assert.That(
+                result.OfficeLocationName,
+                Is.EqualTo(expectedOfficeLocation.OfficeLocationName)
+            );
         });
     }
 }

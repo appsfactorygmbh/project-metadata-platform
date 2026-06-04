@@ -3,12 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using ProjectMetadataPlatform.Application.OfficeLocations;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.OfficeLocations;
+using ProjectMetadataPlatform.Application.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
 namespace ProjectMetadataPlatform.Application.Tests.OfficeLocations;
@@ -73,7 +73,9 @@ public class CreateOfficeLocationCommandHandlerTest
         _mockOfficeLocationRepository.Verify(
             m =>
                 m.AddOfficeLocationAsync(
-                    It.Is<OfficeLocation>(officeLocation => officeLocation.OfficeLocationName == "Test Name")
+                    It.Is<OfficeLocation>(officeLocation =>
+                        officeLocation.OfficeLocationName == "Test Name"
+                    )
                 ),
             Times.Once
         );

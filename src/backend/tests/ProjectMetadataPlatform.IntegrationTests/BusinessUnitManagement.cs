@@ -57,12 +57,16 @@ public class BusinessUnitManagement : IntegrationTestsBase
             .GetProperty("logMessage")
             .GetString()
             .Should()
-            .Be("admin added a new business unit with properties: BusinessUnitName = BusinessUnit1");
+            .Be(
+                "admin added a new business unit with properties: BusinessUnitName = BusinessUnit1"
+            );
         logs[0]
             .GetProperty("logMessage")
             .GetString()
             .Should()
-            .Be("admin added a new business unit with properties: BusinessUnitName = BusinessUnit2");
+            .Be(
+                "admin added a new business unit with properties: BusinessUnitName = BusinessUnit2"
+            );
     }
 
     [Test]

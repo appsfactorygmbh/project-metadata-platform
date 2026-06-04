@@ -60,7 +60,9 @@ public class GetAllBusinessUnitsQueryHandlerTest
             new() { Id = 4, BusinessUnitName = "Foo_2" },
         ];
 
-        _mockBusinessUnitRepository.Setup(repo => repo.GetBusinessUnitsAsync()).ReturnsAsync(returnBusinessUnit);
+        _mockBusinessUnitRepository
+            .Setup(repo => repo.GetBusinessUnitsAsync())
+            .ReturnsAsync(returnBusinessUnit);
 
         // Act
         var result = await _handler.Handle(

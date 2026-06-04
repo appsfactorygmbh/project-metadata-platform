@@ -81,7 +81,6 @@ public class UpdateCompanyCommandHandlerTest
                         changes[0].Property == "CompanyName"
                         && changes[0].NewValue == "Test_2"
                         && changes[0].OldValue == "Test_1"
-    
                     )
                 ),
             Times.Once

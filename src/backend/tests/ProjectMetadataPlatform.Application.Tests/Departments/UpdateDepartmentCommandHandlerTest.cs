@@ -68,7 +68,9 @@ public class UpdateDepartmentCommandHandlerTest
         _mockDepartmentRepository.Verify(
             m =>
                 m.UpdateDepartmentAsync(
-                    It.Is<Department>(department => department.Id == 1 && department.DepartmentName == "Test_2")
+                    It.Is<Department>(department =>
+                        department.Id == 1 && department.DepartmentName == "Test_2"
+                    )
                 ),
             Times.Once
         );
@@ -81,7 +83,6 @@ public class UpdateDepartmentCommandHandlerTest
                         changes[0].Property == "DepartmentName"
                         && changes[0].NewValue == "Test_2"
                         && changes[0].OldValue == "Test_1"
-
                     )
                 ),
             Times.Once

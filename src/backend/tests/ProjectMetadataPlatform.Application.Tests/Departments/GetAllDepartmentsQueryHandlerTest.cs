@@ -60,7 +60,9 @@ public class GetAllDepartmentsQueryHandlerTest
             new() { Id = 4, DepartmentName = "Foo_2" },
         ];
 
-        _mockDepartmentRepository.Setup(repo => repo.GetDepartmentsAsync()).ReturnsAsync(returnDepartment);
+        _mockDepartmentRepository
+            .Setup(repo => repo.GetDepartmentsAsync())
+            .ReturnsAsync(returnDepartment);
 
         // Act
         var result = await _handler.Handle(

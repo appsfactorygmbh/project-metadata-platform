@@ -147,7 +147,7 @@ public class CompaniesControllerTest
         var getBuResponse = okResult.Value as GetLinkedProjectsForCompanyResponse;
         Assert.That(getBuResponse, Is.Not.Null);
 
-        Assert.That(getBuResponse.ProjectSlugs, Is.EqualTo(new List<string> {"1", "2", "3" }));
+        Assert.That(getBuResponse.ProjectSlugs, Is.EqualTo(new List<string> { "1", "2", "3" }));
     }
 
     [Test]

@@ -96,7 +96,9 @@ public class OfficeLocationManagement : IntegrationTestsBase
             )
         );
 
-        error.Message.Should().Be("A Office Location with the name OfficeLocation1 already exists.");
+        error
+            .Message.Should()
+            .Be("A Office Location with the name OfficeLocation1 already exists.");
     }
 
     [Test]

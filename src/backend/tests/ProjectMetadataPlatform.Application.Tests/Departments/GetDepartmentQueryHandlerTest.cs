@@ -19,7 +19,9 @@ public class GetDepartmentQueryHandlerTest
     public void Setup()
     {
         _mockDepartmentRepository = new Mock<IDepartmentRepository>();
-        _handler = new GetDepartmentQueryHandler(departmentRepository: _mockDepartmentRepository.Object);
+        _handler = new GetDepartmentQueryHandler(
+            departmentRepository: _mockDepartmentRepository.Object
+        );
     }
 
     [Test]
