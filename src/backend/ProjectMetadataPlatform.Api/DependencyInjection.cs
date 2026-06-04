@@ -10,9 +10,14 @@ using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Api.Logs;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
+using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
+using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
+using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
 using ProjectMetadataPlatform.Domain.Errors.LogExceptions;
+using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
+using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 
 namespace ProjectMetadataPlatform.Api;
@@ -43,6 +48,22 @@ public static class DependencyInjection
         _ = serviceCollection.AddScoped<IExceptionHandler<TeamException>, TeamExceptionHandler>();
         _ = serviceCollection.AddScoped<IExceptionHandler<AuthException>, AuthExceptionHandler>();
         _ = serviceCollection.AddScoped<IExceptionHandler<UserException>, UserExceptionHandler>();
+        _ = serviceCollection.AddScoped<
+            IExceptionHandler<OfficeLocationException>,
+            OfficeLocationsExceptionHandler
+        >();
+        _ = serviceCollection.AddScoped<
+            IExceptionHandler<BusinessUnitException>,
+            BusinessUnitsExceptionHandler
+        >();
+        _ = serviceCollection.AddScoped<
+            IExceptionHandler<DepartmentException>,
+            DepartmentsExceptionHandler
+        >();
+        _ = serviceCollection.AddScoped<
+            IExceptionHandler<CompanyException>,
+            CompaniesExceptionHandler
+        >();
         _ = serviceCollection
             .AddControllers(options =>
             {

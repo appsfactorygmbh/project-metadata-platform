@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -30,7 +30,8 @@ public class GetLinkedProjectsQueryHandlerTest
         {
             Id = 1,
             TeamName = "Test_1",
-            BusinessUnit = "BU Test",
+            BusinessUnit = new() { BusinessUnitName = "BU Test" },
+            BusinessUnitId = 1,
             PTL = "Max Mustermann",
             Projects =
             [
@@ -40,6 +41,7 @@ public class GetLinkedProjectsQueryHandlerTest
                     ProjectName = "Projects",
                     Slug = "project_1",
                     ClientName = "Project Client",
+                    CompanyId = 1,
                 },
                 new()
                 {
@@ -47,6 +49,7 @@ public class GetLinkedProjectsQueryHandlerTest
                     ProjectName = "Projects",
                     Slug = "project_2",
                     ClientName = "Project Client",
+                    CompanyId = 1,
                 },
             ],
         };
@@ -63,7 +66,6 @@ public class GetLinkedProjectsQueryHandlerTest
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(2));
-        var resultList = result.ToList();
         Assert.Multiple(() =>
         {
             Assert.That(result, Does.Contain("project_1"));

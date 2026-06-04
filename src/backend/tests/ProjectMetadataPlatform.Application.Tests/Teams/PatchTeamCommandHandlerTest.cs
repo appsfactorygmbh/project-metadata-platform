@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -17,7 +17,7 @@ public class PatchTeamCommandHandlerTest
     private PatchTeamCommandHandler _handler;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
-
+    private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
     private Mock<ITeamRepository> _mockTeamRepository;
 
     [SetUp]
@@ -26,8 +26,10 @@ public class PatchTeamCommandHandlerTest
         _mockTeamRepository = new Mock<ITeamRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
+        _mockBusinessUnitRepository = new Mock<IBusinessUnitRepository>();
         _handler = new PatchTeamCommandHandler(
             teamRepository: _mockTeamRepository.Object,
+            businessUnitRepository: _mockBusinessUnitRepository.Object,
             logRepository: _mockLogRepo.Object,
             unitOfWork: _mockUnitOfWork.Object
         );
@@ -41,7 +43,8 @@ public class PatchTeamCommandHandlerTest
         {
             Id = 1,
             TeamName = "Test_1",
-            BusinessUnit = "BU Test",
+            BusinessUnit = new() { BusinessUnitName = "BU Test" },
+            BusinessUnitId = 1,
             PTL = "Max Mustermann",
         };
 
@@ -72,7 +75,8 @@ public class PatchTeamCommandHandlerTest
                 m.UpdateTeamAsync(
                     It.Is<Team>(team =>
                         team.Id == 1
-                        && team.BusinessUnit == "BU Test"
+                        && team.BusinessUnit!.BusinessUnitName == "BU Test"
+                        && team.BusinessUnitId == 1
                         && team.PTL == "Test"
                         && team.TeamName == "Test_2"
                     )
@@ -105,7 +109,8 @@ public class PatchTeamCommandHandlerTest
         {
             Id = 1,
             TeamName = "Test_1",
-            BusinessUnit = "BU Test",
+            BusinessUnit = new() { BusinessUnitName = "BU Test" },
+            BusinessUnitId = 1,
             PTL = "Max Mustermann",
         };
 
@@ -147,7 +152,8 @@ public class PatchTeamCommandHandlerTest
         {
             Id = 1,
             TeamName = "Test_1",
-            BusinessUnit = "BU Test",
+            BusinessUnit = new() { BusinessUnitName = "BU Test" },
+            BusinessUnitId = 1,
             PTL = "Max Mustermann",
         };
 

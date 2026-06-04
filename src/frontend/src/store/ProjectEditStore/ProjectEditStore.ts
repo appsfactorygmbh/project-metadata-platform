@@ -30,7 +30,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
         clientName: '',
         teamId: null,
         offerId: '',
-        company: '',
+        companyId: 0,
         ismsLevel: 'NORMAL',
         companyState: 'EXTERNAL',
         notes: '',
@@ -95,8 +95,11 @@ export const useProjectEditStore = defineStore('projectEdit', {
     // Sets the Projectinformation changes
     setProjectInformation(project: DetailedProjectModel): void {
       this.emptyProjectInformationFields.clear();
-      const projectChanges: EditProjectModel = { ...project };
-      projectChanges.teamId = project.team?.id;
+      const projectChanges: EditProjectModel = {
+        ...project,
+        companyId: project.company.id,
+        teamId: project.team?.id,
+      };
       this.projectInformationChanges = projectChanges;
     },
 

@@ -47,11 +47,11 @@ export interface PutProjectRequest {
    */
   offerId?: string | null;
   /**
-   * Company responsible for project.
-   * @type {string}
+   * Id of the Company responsible for project.
+   * @type {number}
    * @memberof PutProjectRequest
    */
-  company: string;
+  companyId: number;
   /**
    * The id of the team that should be assigned to the project.
    * @type {number}
@@ -100,7 +100,7 @@ export function instanceOfPutProjectRequest(
     return false;
   if (!('clientName' in value) || value['clientName'] === undefined)
     return false;
-  if (!('company' in value) || value['company'] === undefined) return false;
+  if (!('companyId' in value) || value['companyId'] === undefined) return false;
   if (!('companyState' in value) || value['companyState'] === undefined)
     return false;
   if (!('ismsLevel' in value) || value['ismsLevel'] === undefined) return false;
@@ -125,7 +125,7 @@ export function PutProjectRequestFromJSONTyped(
     projectName: json['projectName'],
     clientName: json['clientName'],
     offerId: json['offerId'] == null ? undefined : json['offerId'],
-    company: json['company'],
+    companyId: json['companyId'],
     teamId: json['teamId'] == null ? undefined : json['teamId'],
     companyState: CompanyStateFromJSON(json['companyState']),
     ismsLevel: SecurityLevelFromJSON(json['ismsLevel']),
@@ -156,7 +156,7 @@ export function PutProjectRequestToJSONTyped(
     projectName: value['projectName'],
     clientName: value['clientName'],
     offerId: value['offerId'],
-    company: value['company'],
+    companyId: value['companyId'],
     teamId: value['teamId'],
     companyState: CompanyStateToJSON(value['companyState']),
     ismsLevel: SecurityLevelToJSON(value['ismsLevel']),

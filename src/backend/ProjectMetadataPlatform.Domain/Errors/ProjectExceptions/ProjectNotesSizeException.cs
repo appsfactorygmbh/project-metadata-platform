@@ -1,5 +1,3 @@
-using ProjectMetadataPlatform.Domain.Projects;
-
 namespace ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 
 /// <summary>

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
+using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 
@@ -34,7 +34,10 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
         {
             var lowerTextSearch = fullTextQuery.ToLowerInvariant();
             filteredQuery = filteredQuery.Where(team =>
-                EF.Functions.Like(team.BusinessUnit.ToLower(), $"%{lowerTextSearch}%")
+                EF.Functions.Like(
+                    team.BusinessUnit.BusinessUnitName.ToLower(),
+                    $"%{lowerTextSearch}%"
+                )
                 || (
                     team.PTL != null
                     && EF.Functions.Like(team.PTL.ToLower(), $"%{lowerTextSearch}%")
@@ -48,20 +51,24 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
                 EF.Functions.Like(team.TeamName.ToLower(), $"%{teamName.ToLower()}%")
             );
         }
-        return await filteredQuery.ToListAsync();
+        return await filteredQuery.Include(t => t.BusinessUnit).ToListAsync();
     }
 
     /// <inheritdoc/>
     public async Task<Team> GetTeamAsync(int id)
     {
-        return await _context.Teams.FirstOrDefaultAsync(team => team.Id == id)
+        return await _context
+                .Teams.Include(t => t.BusinessUnit)
+                .FirstOrDefaultAsync(team => team.Id == id)
             ?? throw new TeamNotFoundException(id);
     }
 
     /// <inheritdoc/>
     public async Task<Team> GetTeamByNameAsync(string teamName)
     {
-        return await _context.Teams.FirstOrDefaultAsync(team => team.TeamName == teamName)
+        return await _context
+                .Teams.Include(t => t.BusinessUnit)
+                .FirstOrDefaultAsync(team => team.TeamName == teamName)
             ?? throw new TeamNotFoundException(teamName: teamName);
     }
 
@@ -117,7 +124,8 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
     public async Task<Team> GetTeamWithProjectsAsync(int id)
     {
         return await _context
-                .Teams.Include(team => team.Projects)
+                .Teams.Include(t => t.BusinessUnit)
+                .Include(team => team.Projects)
                 .FirstOrDefaultAsync(team => team.Id == id)
             ?? throw new TeamNotFoundException(id);
     }

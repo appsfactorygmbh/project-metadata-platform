@@ -18,7 +18,12 @@
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import { usePluginStore, useProjectStore, useTeamStore } from '@/store';
+  import {
+    useCompanyStore,
+    usePluginStore,
+    useProjectStore,
+    useTeamStore,
+  } from '@/store';
   import type { EditProjectModel } from '@/models/Project/EditProjectModel';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
   import IconButton from '@/components/Button/IconButton.vue';
@@ -36,6 +41,7 @@
   const projectEditStore = inject(projectEditStoreSymbol)!;
   const pluginStore = usePluginStore();
   const teamStore = useTeamStore();
+  const companyStore = useCompanyStore();
   const projectRouting = inject(projectRoutingSymbol)!;
   const token = useThemeToken();
 
@@ -60,6 +66,7 @@
   onMounted(async () => {
     const project = projectStore.getProject;
     teamStore.fetchAll();
+    companyStore.fetchAll();
     if (project) addData(project);
 
     const data: ComputedRef<DetailedProjectModel | null> = computed(
@@ -88,7 +95,7 @@
         PtlInputStatus.value = '';
         clientNameInputStatus.value = '';
         offerIdInputStatus.value = '';
-        companyInputStatus.value = '';
+        companyNameInputStatus.value = '';
         companyStateInputState.value = '';
         ismsLevelInputState.value = '';
         teamNameInputStatus.value = '';
@@ -118,7 +125,7 @@
     ptl: ref<string>(''),
     clientName: ref<string>(''),
     offerId: ref<string>(''),
-    company: ref<DetailedProjectModel['company']>(''),
+    companyName: ref<DetailedProjectModel['company']['companyName']>(''),
     companyState: ref<DetailedProjectModel['companyState']>('EXTERNAL'), //check if implementation matches with backend
     ismsLevel: ref<DetailedProjectModel['ismsLevel']>('NORMAL'),
     isArchived: ref<boolean>(false),
@@ -133,7 +140,7 @@
   const PtlInputStatus = ref<Status>('');
   const clientNameInputStatus = ref<Status>('');
   const offerIdInputStatus = ref<Status>('');
-  const companyInputStatus = ref<Status>('');
+  const companyNameInputStatus = ref<Status>('');
   const companyStateInputState = ref<Status>('');
   const ismsLevelInputState = ref<Status>('');
   const projectNotesInputStatus = ref<Status>('');
@@ -142,7 +149,7 @@
   const clientNameInput = ref(projectData.clientName);
   const teamNameInput = ref(projectData.teamName);
   const offerIdInput = ref(projectData.offerId);
-  const companyInput = ref(projectData.company);
+  const companyNameInput = ref(projectData.companyName);
   const companyStateInput = ref(projectData.companyState);
   const ismsLevelInput = ref(projectData.ismsLevel);
   const notesInput = ref(projectData.notes);
@@ -160,7 +167,7 @@
   type InputField<T = string | number> = BaseInputField<T> &
     (
       | {
-          options?: string[] | (keyof T)[];
+          options?: string[] | (keyof T)[] | (() => string[]);
           getValue?: (value: string) => T;
           inputType: 'select';
         }
@@ -169,7 +176,7 @@
         }
     );
 
-  const requieredTextFields = ref<InputField[]>([
+  const requiredTextFields = ref<InputField[]>([
     {
       label: 'Client\xa0Name',
       name: 'clientName',
@@ -187,8 +194,12 @@
     {
       label: 'Company',
       name: 'company',
-      value: companyInput,
-      status: companyInputStatus,
+      value: companyNameInput,
+      status: companyNameInputStatus,
+      options: () => companyStore.getCompanyNames,
+      displayValue: (value) => value,
+      getValue: (value) => value,
+      inputType: 'select',
       requiredValue: true,
     },
     {
@@ -224,11 +235,12 @@
   // Function to update the project information
   function updateProjectInformation(): void {
     const mappedTeamId = teamStore.getIdToName(teamNameInput.value);
+    const mappedCompanyId = companyStore.getIdToName(companyNameInput.value);
     const updatedProject: EditProjectModel = {
       projectName: projectNameInput.value,
       clientName: clientNameInput.value,
       offerId: offerIdInput.value,
-      company: companyInput.value,
+      companyId: mappedCompanyId ?? 0,
       companyState: companyStateInput.value,
       ismsLevel: ismsLevelInput.value,
       teamId: mappedTeamId,
@@ -244,7 +256,9 @@
     projectData.id.value = loadedData.id;
     projectData.slug.value = loadedData.slug;
     projectData.businessUnit.value =
-      loadedData.team == undefined ? '' : loadedData.team.businessUnit;
+      loadedData.team == undefined
+        ? ''
+        : loadedData.team.businessUnit.businessUnitName;
     projectData.teamName.value =
       loadedData.team == undefined ? '' : loadedData.team.teamName;
     projectData.ptl.value =
@@ -252,7 +266,7 @@
     projectData.projectName.value = loadedData.projectName;
     projectData.clientName.value = loadedData.clientName;
     projectData.offerId.value = loadedData.offerId ?? '';
-    projectData.company.value = loadedData.company;
+    projectData.companyName.value = loadedData.company.companyName;
     projectData.companyState.value = loadedData.companyState;
     projectData.ismsLevel.value = loadedData.ismsLevel;
     projectData.notes.value = loadedData.notes;
@@ -307,7 +321,27 @@
 
   const confirmArchive = async () => {
     const projectID = projectStore?.getProject?.id;
-    const projectData = projectStore?.getProject as UpdateProjectModel;
+    const detailedProject = projectStore?.getProject;
+
+    if (!detailedProject) {
+      throw new Error('No project found to update');
+    }
+
+    const projectData: UpdateProjectModel = {
+      projectName: detailedProject.projectName,
+      clientName: detailedProject.clientName,
+      offerId: detailedProject.offerId,
+
+      companyId: detailedProject.company.id,
+      teamId: detailedProject.team ? detailedProject.team.id : null,
+
+      companyState: detailedProject.companyState,
+      ismsLevel: detailedProject.ismsLevel,
+      notes: detailedProject.notes,
+      isArchived: detailedProject.isArchived,
+
+      pluginList: null,
+    };
     projectData.pluginList = pluginStore?.getPlugins;
 
     if (projectID) {
@@ -325,12 +359,32 @@
   };
 
   const reactivateProject = async () => {
-    const currentProject = projectStore.getProject! as UpdateProjectModel;
+    const detailedProject = projectStore?.getProject;
+
+    if (!detailedProject) {
+      throw new Error('No project found to update');
+    }
+
+    const currentProject: UpdateProjectModel = {
+      projectName: detailedProject.projectName,
+      clientName: detailedProject.clientName,
+      offerId: detailedProject.offerId,
+
+      companyId: detailedProject.company.id,
+      teamId: detailedProject.team ? detailedProject.team.id : null,
+
+      companyState: detailedProject.companyState,
+      ismsLevel: detailedProject.ismsLevel,
+      notes: detailedProject.notes,
+      isArchived: detailedProject.isArchived,
+
+      pluginList: null,
+    };
     const projectId = projectStore.getProject?.id;
     currentProject.pluginList = pluginStore.getPlugins;
 
-    await projectStore.unarchive(projectId!);
-    await localLogStore?.fetch(projectId!);
+    await projectStore.unarchive(projectId);
+    await localLogStore?.fetch(projectId);
     const newProjectId = getNextArchivedProjectId();
     projectRouting.setProjectId(newProjectId);
   };
@@ -450,7 +504,7 @@
         />
 
         <EditableTextField
-          v-for="field in requieredTextFields"
+          v-for="field in requiredTextFields"
           :key="field.name"
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
@@ -467,7 +521,11 @@
             :input-value="field.value"
             :input-status="field.status"
             :edit-store="projectEditStore"
-            :options="field.options!"
+            :options="
+              typeof field.options === 'function'
+                ? field.options()
+                : field.options!
+            "
             :get-value="field.getValue!"
             :display-value="field.displayValue!"
             :is-editing="true"
@@ -500,7 +558,18 @@
         </EditableTextField>
 
         <!-- team specific inputs -->
-        <a-divider orientation="left" class="SectionSeperator">Team</a-divider>
+
+        <a-divider
+          v-if="
+            isEditing ||
+            projectData.teamName.value ||
+            projectData.businessUnit.value ||
+            projectData.ptl.value
+          "
+          orientation="left"
+          class="SectionSeperator"
+          >Team</a-divider
+        >
         <EditableTextField
           v-if="isEditing"
           :key="'Team'"
@@ -511,7 +580,8 @@
           :label="'Team\xa0Select'"
           :has-edit-keys="false"
           :display-value="() => 'Team\xa0Select'"
-          ><ProjectInformationSearchSelectField
+        >
+          <ProjectInformationSearchSelectField
             class="editField"
             :column-name="'TeamName'"
             :input-value="teamNameInput"
@@ -525,10 +595,11 @@
                 updateProjectInformation();
               }
             "
-        /></EditableTextField>
+          />
+        </EditableTextField>
 
         <EditableTextField
-          v-if="!isEditing"
+          v-if="!isEditing && projectData.teamName.value"
           class="infoCard non-editing-mode teamNameField"
           :value="projectData.teamName.value"
           :is-loading="isLoading"
@@ -537,7 +608,7 @@
         />
 
         <EditableTextField
-          v-if="!isEditing"
+          v-if="!isEditing && projectData.businessUnit.value"
           class="infoCard non-editing-mode buField"
           :value="projectData.businessUnit.value"
           :is-loading="isLoading"
@@ -546,7 +617,7 @@
         />
 
         <EditableTextField
-          v-if="!isEditing"
+          v-if="!isEditing && projectData.ptl.value"
           class="infoCard non-editing-mode ptlField"
           :value="projectData.ptl.value"
           :is-loading="isLoading"
@@ -643,6 +714,7 @@
     justify-content: center;
     margin-top: 15px;
   }
+
   /* Style for the Project title box */
   .projectNameContainer {
     width: 100%;
@@ -707,7 +779,7 @@
     white-space: nowrap;
     overflow: hidden;
     max-width: 100%;
-    background-color: v-bind('token.colorBgElevated ');
+    background-color: v-bind('token.colorBgElevated');
   }
 
   .notesCard {
@@ -719,13 +791,14 @@
     white-space: pre-line;
     max-width: 100%;
     max-height: 200px;
-    background-color: v-bind('token.colorBgElevated ');
+    background-color: v-bind('token.colorBgElevated');
     font-size: 1em;
   }
 
   .editField {
     margin: 0 2em 0 1em;
   }
+
   .editArea {
     border: none;
     width: 100%;
@@ -734,8 +807,9 @@
     word-break: break-all;
     white-space: pre-wrap;
     max-width: 100%;
-    background-color: v-bind('token.colorBgElevated ');
+    background-color: v-bind('token.colorBgElevated');
   }
+
   .button {
     margin-bottom: 10px;
     height: 40px;

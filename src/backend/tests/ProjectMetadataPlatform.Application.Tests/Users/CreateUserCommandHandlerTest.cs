@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
+using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Domain.Users;
@@ -22,6 +22,13 @@ public class CreateUserCommandHandlerTest
     private Mock<IUsersRepository> _mockUsersRepo;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<ITeamRepository> _mockTeamRepo;
+
+    private Mock<IOfficeLocationRepository> _mockOfficeLocationRepository;
+
+    private Mock<ICompanyRepository> _mockCompanyRepository;
+
+    private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
+    private Mock<IDepartmentRepository> _mockDepartmentRepository;
     private Mock<IUnitOfWork> _mockUnitOfWork;
 
     [SetUp]
@@ -31,10 +38,18 @@ public class CreateUserCommandHandlerTest
         _mockLogRepo = new Mock<ILogRepository>();
         _mockTeamRepo = new Mock<ITeamRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
+        _mockBusinessUnitRepository = new Mock<IBusinessUnitRepository>();
+        _mockCompanyRepository = new Mock<ICompanyRepository>();
+        _mockOfficeLocationRepository = new Mock<IOfficeLocationRepository>();
+        _mockDepartmentRepository = new Mock<IDepartmentRepository>();
         _handler = new CreateUserCommandHandler(
             _mockUsersRepo.Object,
             _mockLogRepo.Object,
             _mockTeamRepo.Object,
+            _mockDepartmentRepository.Object,
+            _mockBusinessUnitRepository.Object,
+            _mockOfficeLocationRepository.Object,
+            _mockCompanyRepository.Object,
             _mockUnitOfWork.Object
         );
     }
@@ -44,8 +59,22 @@ public class CreateUserCommandHandlerTest
     {
         _mockTeamRepo
             .SetupSequence(m => m.GetTeamByNameAsync(It.IsAny<string>()))
-            .ReturnsAsync(new Team { TeamName = "Team1", BusinessUnit = "BU" })
-            .ReturnsAsync(new Team { TeamName = "Team2", BusinessUnit = "BU" });
+            .ReturnsAsync(
+                new Team
+                {
+                    TeamName = "Team1",
+                    BusinessUnit = new() { BusinessUnitName = "BU Test" },
+                    BusinessUnitId = 1,
+                }
+            )
+            .ReturnsAsync(
+                new Team
+                {
+                    TeamName = "Team2",
+                    BusinessUnit = new() { BusinessUnitName = "BU Test" },
+                    BusinessUnitId = 1,
+                }
+            );
         _mockUnitOfWork.Setup(m => m.CompleteAsync()).Returns(Task.CompletedTask);
         _mockLogRepo
             .Setup(m =>
@@ -69,6 +98,7 @@ public class CreateUserCommandHandlerTest
                 null,
                 [],
                 ["Design"],
+                "Leipzig",
                 "Appsfactory"
             ),
             It.IsAny<CancellationToken>()
@@ -84,8 +114,9 @@ public class CreateUserCommandHandlerTest
             Assert.That(result.TeamSupport?.FirstOrDefault()?.TeamName, Is.EqualTo("Team2"));
             Assert.That(result.BusinessUnits, Is.EqualTo(null));
             Assert.That(result.JobTitles, Is.EqualTo(null));
-            Assert.That(result.Departments, Is.EqualTo(new List<string> { "Design" }));
-            Assert.That(result.Company, Is.EqualTo("Appsfactory"));
+            Assert.That(result.Departments?.FirstOrDefault()?.DepartmentName, Is.EqualTo("Design"));
+            Assert.That(result.OfficeLocation!.OfficeLocationName, Is.EqualTo("Leipzig"));
+            Assert.That(result.Company!.CompanyName, Is.EqualTo("Appsfactory"));
         });
     }
 
@@ -119,6 +150,7 @@ public class CreateUserCommandHandlerTest
                     null,
                     null,
                     null,
+                    null,
                     null
                 ),
                 It.IsAny<CancellationToken>()
@@ -140,6 +172,7 @@ public class CreateUserCommandHandlerTest
                 null,
                 true,
                 true,
+                null,
                 null,
                 null,
                 null,

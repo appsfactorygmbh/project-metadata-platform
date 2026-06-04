@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ProjectMetadataPlatform.Domain.Users;
@@ -20,7 +19,7 @@ public record PatchUserRequest
     /// List of requested Update operations.
     /// </summary>
     [JsonPropertyName("Operations")]
-    public List<OperationRecord> Operations { get; init; } = new List<OperationRecord>();
+    public List<OperationRecord> Operations { get; init; } = [];
 
     /// <summary>
     /// Record representing one Update Operation.

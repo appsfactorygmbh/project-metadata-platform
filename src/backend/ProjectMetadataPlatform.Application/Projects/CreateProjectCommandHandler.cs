@@ -1,11 +1,13 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
+using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
@@ -20,6 +22,8 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
     private readonly IProjectsRepository _projectsRepository;
     private readonly IPluginRepository _pluginRepository;
     private readonly ITeamRepository _teamRepository;
+
+    private readonly ICompanyRepository _companyRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ISlugHelper _slugHelper;
@@ -30,6 +34,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
     /// <param name="projectsRepository">Repository for Projects</param>
     /// <param name="pluginRepository">Repository for Plugins</param>
     /// <param name="teamRepository">Repository for Team</param>
+    /// <param name="companyRepository">Repository for Company.</param>
     /// <param name="logRepository">Repository for Logs</param>
     /// <param name="unitOfWork"> Used to save changes to the DbContext</param>
     /// <param name="slugHelper"> Used to generate slugs</param>
@@ -37,6 +42,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
         IProjectsRepository projectsRepository,
         IPluginRepository pluginRepository,
         ITeamRepository teamRepository,
+        ICompanyRepository companyRepository,
         ILogRepository logRepository,
         IUnitOfWork unitOfWork,
         ISlugHelper slugHelper
@@ -45,6 +51,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
         _projectsRepository = projectsRepository;
         _pluginRepository = pluginRepository;
         _teamRepository = teamRepository;
+        _companyRepository = companyRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
         _slugHelper = slugHelper;
@@ -76,6 +83,11 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
             throw new TeamNotFoundException(request.TeamId.Value);
         }
 
+        if (!await _companyRepository.CheckIfCompanyExistsAsync(request.CompanyId))
+        {
+            throw new CompanyNotFoundException(request.CompanyId);
+        }
+
         var projectSlug = _slugHelper.GenerateSlug(request.ProjectName);
 
         if (await _slugHelper.CheckProjectSlugExists(projectSlug))
@@ -93,7 +105,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
             Slug = projectSlug,
             ClientName = request.ClientName,
             OfferId = request.OfferId,
-            Company = request.Company,
+            CompanyId = request.CompanyId,
             CompanyState = request.CompanyState,
             IsmsLevel = request.IsmsLevel,
             ProjectPlugins = request.Plugins,
@@ -134,7 +146,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
             new()
             {
                 OldValue = "",
-                NewValue = project.Company,
+                NewValue = await _companyRepository.RetrieveNameForIdAsync(project.CompanyId),
                 Property = nameof(Project.Company),
             },
             new()
@@ -157,7 +169,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
                 {
                     OldValue = "",
                     NewValue = await _teamRepository.RetrieveNameForIdAsync(project.TeamId.Value),
-                    Property = "Team",
+                    Property = nameof(Project.Company),
                 }
             );
         }

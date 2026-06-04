@@ -1,6 +1,6 @@
+﻿using ProjectMetadataPlatform.Api.Companies.Models;
 using ProjectMetadataPlatform.Api.Teams.Models;
 using ProjectMetadataPlatform.Domain.Projects;
-using ProjectMetadataPlatform.Domain.Teams;
 
 namespace ProjectMetadataPlatform.Api.Projects.Models;
 
@@ -21,7 +21,7 @@ public record GetProjectsResponse(
     string Slug,
     string ProjectName,
     string ClientName,
-    string Company,
+    GetCompanyResponse Company,
     bool IsArchived,
     GetTeamResponse? Team,
     SecurityLevel IsmsLevel,

@@ -24,6 +24,12 @@ public class PatchUserCommandHandlerTest
     private Mock<IUnitOfWork> _mockUnitOfWork;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<ITeamRepository> _mockTeamRepo;
+    private Mock<IOfficeLocationRepository> _mockOfficeLocationRepository;
+
+    private Mock<ICompanyRepository> _mockCompanyRepository;
+
+    private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
+    private Mock<IDepartmentRepository> _mockDepartmentRepository;
 
     [SetUp]
     public void Setup()
@@ -33,10 +39,18 @@ public class PatchUserCommandHandlerTest
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockTeamRepo = new Mock<ITeamRepository>();
+        _mockBusinessUnitRepository = new Mock<IBusinessUnitRepository>();
+        _mockCompanyRepository = new Mock<ICompanyRepository>();
+        _mockOfficeLocationRepository = new Mock<IOfficeLocationRepository>();
+        _mockDepartmentRepository = new Mock<IDepartmentRepository>();
         _handler = new PatchUserCommandHandler(
             _mockUsersRepo.Object,
             _mockPasswordHasher.Object,
             _mockTeamRepo.Object,
+            _mockDepartmentRepository.Object,
+            _mockBusinessUnitRepository.Object,
+            _mockOfficeLocationRepository.Object,
+            _mockCompanyRepository.Object,
             _mockUnitOfWork.Object,
             _mockLogRepo.Object
         );
@@ -54,7 +68,12 @@ public class PatchUserCommandHandlerTest
             IsScimProvisioned = false,
             Teams = new HashSet<Team>
             {
-                new Team { TeamName = "Team1", BusinessUnit = "BU" },
+                new Team
+                {
+                    TeamName = "Team1",
+                    BusinessUnit = new() { BusinessUnitName = "BU" },
+                    BusinessUnitId = 1,
+                },
             },
         };
         _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(false);
@@ -74,7 +93,14 @@ public class PatchUserCommandHandlerTest
             .Returns(Task.CompletedTask);
         _mockTeamRepo
             .Setup(m => m.GetTeamByNameAsync(It.IsAny<string>()))
-            .ReturnsAsync(new Team { TeamName = "Team1", BusinessUnit = "BU" });
+            .ReturnsAsync(
+                new Team
+                {
+                    TeamName = "Team1",
+                    BusinessUnit = new() { BusinessUnitName = "BU" },
+                    BusinessUnitId = 1,
+                }
+            );
 
         var operations = new List<PatchUserCommand.OperationRecord>
         {
@@ -137,6 +163,12 @@ public class PatchUserCommandHandlerTest
                 Operation = PatchOperations.Replace,
                 Value = JsonDocument.Parse("false").RootElement,
             },
+            new()
+            {
+                Path = "addresses[type eq \"work\"].locality",
+                Operation = PatchOperations.Add,
+                Value = JsonDocument.Parse("\"Leipzig\"").RootElement,
+            },
         };
         var result = await _handler.Handle(
             new PatchUserCommand { Id = "123", Operations = operations },
@@ -151,10 +183,15 @@ public class PatchUserCommandHandlerTest
             Assert.That(result.IsActive, Is.EqualTo(false));
             Assert.That(result.Teams, Is.EqualTo(new List<Team> { }));
             Assert.That(result.TeamSupport?.FirstOrDefault()?.TeamName, Is.EqualTo("Team1"));
-            Assert.That(result.BusinessUnits, Is.EqualTo(new List<string> { "Health" }));
+            Assert.That(
+                result.BusinessUnits?.FirstOrDefault()?.BusinessUnitName,
+                Is.EqualTo("Health")
+            );
             Assert.That(result.JobTitles, Is.EqualTo(new List<string> { }));
-            Assert.That(result.Departments, Is.EqualTo(new List<string> { "Design", "QA" }));
-            Assert.That(result.Company, Is.EqualTo("AiFactory"));
+            Assert.That(result.Departments?.FirstOrDefault()?.DepartmentName, Is.EqualTo("Design"));
+            Assert.That(result.Departments?.LastOrDefault()?.DepartmentName, Is.EqualTo("QA"));
+            Assert.That(result.Company!.CompanyName, Is.EqualTo("AiFactory"));
+            Assert.That(result.OfficeLocation!.OfficeLocationName, Is.EqualTo("Leipzig"));
         });
     }
 

@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Interfaces;
-using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
+using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 
 namespace ProjectMetadataPlatform.Api.Errors.ExceptionHandlers;
 
 /// <summary>
-/// Handles exceptions related to projects in the Project Metadata Platform API.
+/// Handles exceptions related to teams in the Project Metadata Platform API.
 /// </summary>
 public class TeamExceptionHandler : ControllerBase, IExceptionHandler<TeamException>
 {

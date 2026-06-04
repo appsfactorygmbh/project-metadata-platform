@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
-using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
-using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Auth;
 
@@ -60,7 +56,7 @@ public class RegenerateApiTokenCommandHandler : IRequestHandler<RegenerateApiTok
         await _logRepository.AddApiTokenLogForCurrentActor(
             apiToken,
             Domain.Logs.Action.REGENERATED_API_TOKEN,
-            new List<LogChange> { }
+            []
         );
         await _unitOfWork.CompleteAsync();
         apiToken.Token = token;

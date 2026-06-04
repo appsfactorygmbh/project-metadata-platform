@@ -25,11 +25,11 @@ export interface CreateTeamRequest {
    */
   teamName: string;
   /**
-   * The BU of the new team.
-   * @type {string}
+   * The Id of the BU of the new team.
+   * @type {number}
    * @memberof CreateTeamRequest
    */
-  businessUnit: string;
+  businessUnitId: number;
   /**
    * The PTL responsible for the new team.
    * @type {string}
@@ -45,7 +45,7 @@ export function instanceOfCreateTeamRequest(
   value: object,
 ): value is CreateTeamRequest {
   if (!('teamName' in value) || value['teamName'] === undefined) return false;
-  if (!('businessUnit' in value) || value['businessUnit'] === undefined)
+  if (!('businessUnitId' in value) || value['businessUnitId'] === undefined)
     return false;
   return true;
 }
@@ -63,7 +63,7 @@ export function CreateTeamRequestFromJSONTyped(
   }
   return {
     teamName: json['teamName'],
-    businessUnit: json['businessUnit'],
+    businessUnitId: json['businessUnitId'],
     ptl: json['ptl'] == null ? undefined : json['ptl'],
   };
 }
@@ -82,7 +82,7 @@ export function CreateTeamRequestToJSONTyped(
 
   return {
     teamName: value['teamName'],
-    businessUnit: value['businessUnit'],
+    businessUnitId: value['businessUnitId'],
     ptl: value['ptl'],
   };
 }

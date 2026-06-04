@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
@@ -58,6 +61,50 @@ public interface ILogRepository
     /// <param name="changes">A list of the changed properties.</param>
     /// <returns></returns>
     Task AddTeamLogForCurrentActor(Team team, Action action, List<LogChange> changes);
+
+    /// <summary>
+    /// Adds Logs for changes made to a bu. Sets the current User or Token as the Author.
+    /// </summary>
+    /// <param name="bu">The bu changes were made to.</param>
+    /// <param name="action">The type of change that was made.</param>
+    /// <param name="changes">A list of the changed properties.</param>
+    /// <returns></returns>
+    Task AddBusinessUnitLogForCurrentActor(BusinessUnit bu, Action action, List<LogChange> changes);
+
+    /// <summary>
+    /// Adds Logs for changes made to a department. Sets the current User or Token as the Author.
+    /// </summary>
+    /// <param name="department">The department changes were made to.</param>
+    /// <param name="action">The type of change that was made.</param>
+    /// <param name="changes">A list of the changed properties.</param>
+    /// <returns></returns>
+    Task AddDepartmentLogForCurrentActor(
+        Department department,
+        Action action,
+        List<LogChange> changes
+    );
+
+    /// <summary>
+    /// Adds Logs for changes made to a company. Sets the current User or Token as the Author.
+    /// </summary>
+    /// <param name="company">The company changes were made to.</param>
+    /// <param name="action">The type of change that was made.</param>
+    /// <param name="changes">A list of the changed properties.</param>
+    /// <returns></returns>
+    Task AddCompanyLogForCurrentActor(Company company, Action action, List<LogChange> changes);
+
+    /// <summary>
+    /// Adds Logs for changes made to a officeLocation. Sets the current User or Token as the Author.
+    /// </summary>
+    /// <param name="officeLocation">The officeLocation changes were made to.</param>
+    /// <param name="action">The type of change that was made.</param>
+    /// <param name="changes">A list of the changed properties.</param>
+    /// <returns></returns>
+    Task AddOfficeLocationLogForCurrentActor(
+        OfficeLocation officeLocation,
+        Action action,
+        List<LogChange> changes
+    );
 
     /// <summary>
     /// Adds Logs for changes made to a api token. Sets the current User or Token as the Author.

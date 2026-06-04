@@ -15,6 +15,7 @@ const userData1: UserModel = {
   userName: 'maxmuster1@gmail.com',
   externalId: '100',
   active: false,
+  addresses: [{ locality: 'Leipzig' }],
   urnIetfParamsScimSchemasExtensionEnterprise20User: {
     organization: 'MusterCorp',
   },
@@ -31,6 +32,7 @@ const userData2: UserModel = {
   userName: 'maxmuster2@gmail.com',
   externalId: '200',
   active: false,
+  addresses: [],
   urnIetfParamsScimSchemasExtensionEnterprise20User: {},
   urnIetfParamsScimSchemasExtensionPmpUser: {},
   meta: {},
@@ -113,7 +115,8 @@ describe('UserInformationView.vue', () => {
     expect(text[5].text()).toBe('Team 9001');
     expect(text[6].text()).toBe('IT, TI');
     expect(text[7].text()).toBe('Internal');
-    expect(text[8].text()).toBe('MusterCorp');
+    expect(text[8].text()).toBe('Leipzig');
+    expect(text[9].text()).toBe('MusterCorp');
 
     const button = wrapper.findAllComponents(EditOutlined);
     expect(button[0].exists()).toBe(true);

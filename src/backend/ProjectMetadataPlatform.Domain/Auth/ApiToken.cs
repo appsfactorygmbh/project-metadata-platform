@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity;
-using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Domain.Auth;
 

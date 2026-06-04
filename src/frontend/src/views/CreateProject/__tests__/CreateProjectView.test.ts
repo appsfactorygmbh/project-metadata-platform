@@ -6,7 +6,7 @@ import { useProjectRouting } from '@/utils/hooks';
 import router from '@/router';
 import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
-import { useTeamStore } from '@/store';
+import { useTeamStore, useCompanyStore } from '@/store';
 
 describe('CreateProjectView.vue', () => {
   type CreateProjectViewInstance = {
@@ -20,16 +20,24 @@ describe('CreateProjectView.vue', () => {
     };
     formState: {
       teamId: number | undefined;
+      companyId: number;
     };
   };
 
   let wrapper: VueWrapper<CreateProjectViewInstance>;
   let teamStore: ReturnType<typeof useTeamStore>;
+  let companyStore: ReturnType<typeof useCompanyStore>;
 
   const mockTeams = [
     { id: 101, teamName: 'Mock Team A' },
     { id: 102, teamName: 'Mock Team B' },
     { id: 103, teamName: 'Mock Team C' },
+  ];
+
+  const mockCompanies = [
+    { id: 101, companyName: 'Mock Company A' },
+    { id: 102, companyName: 'Mock Company B' },
+    { id: 103, companyName: 'Mock Company C' },
   ];
 
   beforeEach(() => {
@@ -39,16 +47,27 @@ describe('CreateProjectView.vue', () => {
         team: {
           teams: mockTeams,
         },
+        company: {
+          companies: mockCompanies,
+        },
       },
     });
 
     teamStore = useTeamStore(testingPinia);
+    companyStore = useCompanyStore(testingPinia);
 
     teamStore.getNameToId = vi.fn(
       (id: number) => mockTeams.find((t) => t.id === id)?.teamName,
     );
     teamStore.getIdToName = vi.fn(
       (name: string) => mockTeams.find((t) => t.teamName === name)?.id,
+    );
+
+    companyStore.getNameToId = vi.fn(
+      (id: number) => mockCompanies.find((c) => c.id === id)?.companyName,
+    );
+    companyStore.getIdToName = vi.fn(
+      (name: string) => mockCompanies.find((c) => c.companyName === name)?.id,
     );
 
     setActivePinia(testingPinia);
@@ -77,7 +96,7 @@ describe('CreateProjectView.vue', () => {
     expect(wrapper.vm.formRef.resetFields).toHaveBeenCalled();
   });
 
-  it('set sample data correctly', async () => {
+  it('set team sample data correctly', async () => {
     const button = wrapper.findComponent({ name: 'a-float-button' });
     await button.trigger('click');
 
@@ -101,12 +120,7 @@ describe('CreateProjectView.vue', () => {
     (teamSelectTrigger as HTMLElement).dispatchEvent(mousedownEvent);
     await flushPromises();
 
-    const teamLocalPopupContainer = modalContentWrapper!.querySelector(
-      '.team-local-popup-container',
-    );
-    expect(teamLocalPopupContainer).not.toBeNull();
-
-    const antSelectDropdown = teamLocalPopupContainer!.querySelector(
+    const antSelectDropdown = modalContentWrapper!.querySelector(
       '.ant-select-dropdown',
     );
     expect(antSelectDropdown).not.toBeNull();
@@ -133,6 +147,54 @@ describe('CreateProjectView.vue', () => {
 
     (options[0] as HTMLElement).click();
     expect(wrapper.vm.formState.teamId == undefined);
+  });
+
+  it('sets company sample data correctly', async () => {
+    const button = wrapper.findComponent({ name: 'a-float-button' });
+    await button.trigger('click');
+
+    await flushPromises();
+
+    let modalContentWrapper = document.body.querySelector('.ant-modal-wrap');
+    expect(modalContentWrapper).not.toBeNull();
+
+    const companySelectTrigger = modalContentWrapper!.querySelector(
+      '[data-test="company-id-select"] .ant-select-selector',
+    );
+    expect(companySelectTrigger).not.toBeNull();
+
+    const mousedownEvent = new MouseEvent('mousedown', {
+      bubbles: true,
+      cancelable: true,
+      button: 0,
+    });
+
+    (companySelectTrigger as HTMLElement).dispatchEvent(mousedownEvent);
+    await flushPromises();
+
+    const options = modalContentWrapper!.querySelectorAll(
+      '[data-testid^="company-select-"]',
+    );
+
+    expect(options.length).toBe(companyStore.getCompanies.length);
+
+    expect(options[0]!.textContent).toBe('Mock Company A');
+    expect(options[0]!.getAttribute('data-testid')).toBe('company-select-0');
+
+    expect(options[1]!.textContent).toBe('Mock Company B');
+    expect(options[1]!.getAttribute('data-testid')).toBe('company-select-1');
+
+    expect(wrapper.vm.formState.companyId).toBe(0);
+
+    const companySelect = wrapper.findComponent(
+      '[data-test="company-id-select"]',
+    ) as VueWrapper<any>;
+
+    companySelect.vm.$emit('update:value', 'Mock Company A');
+
+    await flushPromises();
+
+    expect(wrapper.vm.formState.companyId).toBe(101);
   });
 
   it('handles form validation errors on handleOk', async () => {

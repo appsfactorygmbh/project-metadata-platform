@@ -13,7 +13,13 @@
     PasswordInputField,
   } from '@/components/EditableTextField';
   import { useThemeToken } from '@/utils/hooks';
-  import { useTeamStore } from '@/store';
+  import {
+    useBusinessUnitStore,
+    useCompanyStore,
+    useDepartmentStore,
+    useOfficeLocationStore,
+    useTeamStore,
+  } from '@/store';
 
   const token = useThemeToken();
 
@@ -28,12 +34,16 @@
     () => getIsLoadingUser.value || getIsLoading.value,
   );
   const teamStore = useTeamStore();
-
+  const departmentStore = useDepartmentStore();
+  const buStore = useBusinessUnitStore();
+  const companyStore = useCompanyStore();
+  const officeLocationStore = useOfficeLocationStore();
   const employeeNrFormStore = useFormStore('editemployeeNrForm');
   const emailFormStore = useFormStore('editEmailForm');
   const passwordFormStore = useFormStore('patchPasswordForm');
   const isActiveFormStore = useFormStore('editIsActiveForm');
   const companyFormStore = useFormStore('editCompanyForm');
+  const officeLocationFormStore = useFormStore('editofficeLocationForm');
   const departmentsFormStore = useFormStore('editDepartmentsForm');
   const jobTitlesFormStore = useFormStore('editJobTitlesForm');
   const teamsFormStore = useFormStore('editTeamsForm');
@@ -42,6 +52,10 @@
 
   onMounted(async () => {
     teamStore.fetchAll();
+    departmentStore.fetchAll();
+    buStore.fetchAll();
+    companyStore.fetchAll();
+    officeLocationStore.fetchAll();
   });
 
   const isConfirmModalOpen = ref<boolean>(false);
@@ -213,6 +227,7 @@
               ', ',
             ) ?? ''
           "
+          :options="[]"
         />
       </EditableTextField>
 
@@ -230,7 +245,7 @@
           async () => user && (await userStore.fetchUser(user.externalId))
         "
       >
-        <UnserInformationTeamsInputField
+        <UserInformationTeamsInputField
           :user-id="user?.id ?? ''"
           :attribute-name="'Teams'"
           :form-store="teamsFormStore"
@@ -262,7 +277,7 @@
           async () => user && (await userStore.fetchUser(user.externalId))
         "
       >
-        <UnserInformationTeamsInputField
+        <UserInformationTeamsInputField
           :user-id="user?.id ?? ''"
           :attribute-name="'TeamSupport'"
           :form-store="teamSupportFormStore"
@@ -310,6 +325,7 @@
               ', ',
             ) ?? ''
           "
+          :options="departmentStore.getDepartmentNames"
         />
       </EditableTextField>
 
@@ -343,6 +359,28 @@
               ', ',
             ) ?? ''
           "
+          :options="buStore.getBusinessUnitNames"
+        />
+      </EditableTextField>
+      <EditableTextField
+        class="textField officeLocation"
+        :value="user?.addresses[0]?.locality ?? ''"
+        :is-loading="isLoading"
+        :label="'Office Location'"
+        :is-editing-key="'isEditingOfficeLocation'"
+        :form-store="officeLocationFormStore"
+        :has-edit-keys="true"
+        @saved-changes="
+          async () => user && (await userStore.fetchUser(user.externalId))
+        "
+      >
+        <UserInformationAutoCompleteInputField
+          :user-id="user?.id ?? ''"
+          :attribute-name="'OfficeLocation'"
+          :form-store="officeLocationFormStore"
+          :placeholder="user?.addresses[0]?.locality ?? ''"
+          :default="user?.addresses[0]?.locality ?? ''"
+          :options="officeLocationStore.getOfficeLocationNames"
         />
       </EditableTextField>
       <EditableTextField
@@ -360,7 +398,7 @@
           async () => user && (await userStore.fetchUser(user.externalId))
         "
       >
-        <UserInformationInputField
+        <UserInformationAutoCompleteInputField
           :user-id="user?.id ?? ''"
           :attribute-name="'Company'"
           :form-store="companyFormStore"
@@ -372,6 +410,7 @@
             user?.urnIetfParamsScimSchemasExtensionEnterprise20User
               .organization ?? ''
           "
+          :options="companyStore.getCompanyNames"
         />
       </EditableTextField>
     </a-flex>

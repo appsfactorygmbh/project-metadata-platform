@@ -6,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Projects;
+using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Plugins;
@@ -21,6 +22,7 @@ public class CreateProjectCommandHandlerTest
     private Mock<IProjectsRepository> _mockProjectRepo;
     private Mock<IPluginRepository> _mockPluginRepo;
     private Mock<ITeamRepository> _teamRepository;
+    private Mock<ICompanyRepository> _companyRepository;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
     private Mock<ISlugHelper> _mockSlugHelper;
@@ -31,6 +33,7 @@ public class CreateProjectCommandHandlerTest
         _mockProjectRepo = new Mock<IProjectsRepository>();
         _mockPluginRepo = new Mock<IPluginRepository>();
         _teamRepository = new Mock<ITeamRepository>();
+        _companyRepository = new Mock<ICompanyRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockSlugHelper = new Mock<ISlugHelper>();
@@ -38,6 +41,7 @@ public class CreateProjectCommandHandlerTest
             _mockProjectRepo.Object,
             _mockPluginRepo.Object,
             _teamRepository.Object,
+            _companyRepository.Object,
             _mockLogRepo.Object,
             _mockUnitOfWork.Object,
             _mockSlugHelper.Object
@@ -53,6 +57,9 @@ public class CreateProjectCommandHandlerTest
         _mockProjectRepo
             .Setup(m => m.AddProjectAsync(It.IsAny<Project>()))
             .Callback<Project>(p => p.Id = 1);
+        _companyRepository
+            .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
+            .ReturnsAsync(true);
         _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
         _mockSlugHelper.Setup(m => m.GenerateSlug(It.IsAny<string>())).Returns("example_project");
         _mockSlugHelper
@@ -69,7 +76,7 @@ public class CreateProjectCommandHandlerTest
                 ProjectName: "Example Project",
                 ClientName: "Example Business Unit",
                 OfferId: "1",
-                Company: "Example Company",
+                CompanyId: 1, //"Example Company",
                 CompanyState: CompanyState.EXTERNAL,
                 TeamId: null,
                 IsmsLevel: SecurityLevel.HIGH,
@@ -109,7 +116,9 @@ public class CreateProjectCommandHandlerTest
         _mockSlugHelper.Setup(m => m.GenerateSlug(It.IsAny<string>())).Returns("example_project");
         _mockSlugHelper.Setup(m => m.GetProjectIdBySlug("example_project")).ReturnsAsync(1);
         _mockSlugHelper.Setup(m => m.CheckProjectSlugExists("example_project")).ReturnsAsync(true);
-
+        _companyRepository
+            .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
+            .ReturnsAsync(true);
         var ex = Assert.ThrowsAsync<ProjectSlugAlreadyExistsException>(async () =>
         {
             await _handler.Handle(
@@ -117,7 +126,7 @@ public class CreateProjectCommandHandlerTest
                     ProjectName: "Example Project",
                     ClientName: "Example Business Unit",
                     OfferId: "1",
-                    Company: "Example Department",
+                    CompanyId: 1,
                     CompanyState: CompanyState.EXTERNAL,
                     TeamId: null,
                     IsmsLevel: SecurityLevel.HIGH,
@@ -155,12 +164,65 @@ public class CreateProjectCommandHandlerTest
     }
 
     [Test]
+    public void CreateProject_Test_ThrowsExceptionWhenCompanyDoesntExistExists()
+    {
+        var plugins = new List<ProjectPlugins>();
+        plugins.Add(new ProjectPlugins { Url = "https://example.com", PluginId = 200 });
+        _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
+        _companyRepository
+            .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
+            .ReturnsAsync(false);
+        var ex = Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
+        {
+            await _handler.Handle(
+                new CreateProjectCommand(
+                    ProjectName: "Example Project",
+                    ClientName: "Example Business Unit",
+                    OfferId: "1",
+                    CompanyId: 1,
+                    CompanyState: CompanyState.EXTERNAL,
+                    TeamId: null,
+                    IsmsLevel: SecurityLevel.HIGH,
+                    Plugins: plugins,
+                    Notes: "Example Notes"
+                ),
+                It.IsAny<CancellationToken>()
+            );
+        });
+
+        Assert.That(ex.Message, Is.EqualTo("The Company with id 1 was not found."));
+
+        _mockLogRepo.Verify(
+            m =>
+                m.AddProjectLogForCurrentActor(
+                    It.IsAny<Project>(),
+                    Action.ADDED_PROJECT,
+                    It.IsAny<List<LogChange>>()
+                ),
+            Times.Never
+        );
+        _mockLogRepo.Verify(
+            m =>
+                m.AddProjectLogForCurrentActor(
+                    It.IsAny<Project>(),
+                    Action.ADDED_PROJECT_PLUGIN,
+                    It.IsAny<List<LogChange>>()
+                ),
+            Times.Never
+        );
+        _mockProjectRepo.Verify(m => m.AddProjectAsync(It.IsAny<Project>()), Times.Never);
+    }
+
+    [Test]
     public void CreateProject_Test_ThrowsExceptionWhenNotesTooLong()
     {
         var plugins = new List<ProjectPlugins>();
         plugins.Add(new ProjectPlugins { Url = "https://example.com", PluginId = 200 });
         _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
         _mockSlugHelper.Setup(m => m.GenerateSlug(It.IsAny<string>())).Returns("example_project");
+        _companyRepository
+            .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
+            .ReturnsAsync(true);
         _mockSlugHelper
             .Setup(m => m.GetProjectIdBySlug("example_project"))
             .ThrowsAsync(
@@ -177,7 +239,7 @@ public class CreateProjectCommandHandlerTest
                     ProjectName: "Example Project",
                     ClientName: "Example Business Unit",
                     OfferId: "1",
-                    Company: "Example Department",
+                    CompanyId: 1,
                     CompanyState: CompanyState.EXTERNAL,
                     TeamId: null,
                     IsmsLevel: SecurityLevel.HIGH,

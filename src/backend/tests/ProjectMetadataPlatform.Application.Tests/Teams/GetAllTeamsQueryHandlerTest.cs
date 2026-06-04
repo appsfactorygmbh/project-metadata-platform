@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +32,8 @@ public class GetAllTeamsQueryHandlerTest
         {
             Id = 1,
             TeamName = "Test_1",
-            BusinessUnit = "BU Test",
+            BusinessUnit = new() { BusinessUnitName = "BU Test" },
+            BusinessUnitId = 1,
             PTL = "Max Mustermann",
         };
 
@@ -69,28 +70,32 @@ public class GetAllTeamsQueryHandlerTest
             {
                 Id = 1,
                 TeamName = "Test_1",
-                BusinessUnit = "BU Test",
+                BusinessUnit = new() { BusinessUnitName = "BU Test" },
+                BusinessUnitId = 1,
                 PTL = "Max Mustermann",
             },
             new()
             {
                 Id = 3,
                 TeamName = "test_3",
-                BusinessUnit = "BU Test",
+                BusinessUnit = new() { BusinessUnitName = "BU Test" },
+                BusinessUnitId = 1,
                 PTL = "Max Mustermann",
             },
             new()
             {
                 Id = 2,
                 TeamName = "TesT_2",
-                BusinessUnit = "BU Test",
+                BusinessUnit = new() { BusinessUnitName = "BU Test" },
+                BusinessUnitId = 1,
                 PTL = "Max Mustermann",
             },
             new()
             {
                 Id = 4,
                 TeamName = "Foo_2",
-                BusinessUnit = "BU Test",
+                BusinessUnit = new() { BusinessUnitName = "BU Test" },
+                BusinessUnitId = 1,
                 PTL = "Max Mustermann",
             },
         ];

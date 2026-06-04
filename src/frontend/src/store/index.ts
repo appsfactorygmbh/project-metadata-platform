@@ -15,6 +15,16 @@ import { type LocalLogStore, useLocalLogStore } from './LocalLogStore';
 import { type LogsStore, useLogsStore } from './LogsStore';
 import { type TeamStore, useTeamStore } from './TeamStore.ts';
 import { type ApiTokenStore, useApiTokenStore } from './ApiTokenStore.ts';
+import { type CompanyStore, useCompanyStore } from './CompanyStore.ts';
+import { type DepartmentStore, useDepartmentStore } from './DepartmentStore.ts';
+import {
+  type BusinessUnitStore,
+  useBusinessUnitStore,
+} from './BusinessUnitStore.ts';
+import {
+  type OfficeLocationStore,
+  useOfficeLocationStore,
+} from './OfficeLocationStore.ts';
 export {
   useAuthStore,
   useProjectStore,
@@ -27,6 +37,10 @@ export {
   useLogsStore,
   useTeamStore,
   useApiTokenStore,
+  useCompanyStore,
+  useDepartmentStore,
+  useBusinessUnitStore,
+  useOfficeLocationStore,
 };
 export type {
   PluginStore,
@@ -40,4 +54,8 @@ export type {
   LogsStore,
   TeamStore,
   ApiTokenStore,
+  CompanyStore,
+  DepartmentStore,
+  BusinessUnitStore,
+  OfficeLocationStore,
 };

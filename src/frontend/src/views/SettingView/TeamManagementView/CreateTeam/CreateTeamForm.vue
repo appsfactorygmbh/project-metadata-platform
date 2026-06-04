@@ -7,6 +7,8 @@
   import { CreateIsUniqueTeamName } from '@/utils/form/userValidation.ts';
   import type { CreateTeamModel } from '@/models/Team/CreateTeamModel.ts';
   import type { TeamStore } from '@/store/TeamStore.ts';
+  import { useBusinessUnitStore } from '@/store/BusinessUnitStore.ts';
+  import { storeToRefs } from 'pinia';
 
   const { formStore, initialValues, teamStore } = defineProps<{
     formStore: FormStore;
@@ -14,12 +16,27 @@
     teamStore: TeamStore;
   }>();
 
+  const buStore = useBusinessUnitStore();
+
+  const { getBusinessUnits } = storeToRefs(buStore);
+
+  interface SelectOption {
+    value?: string | number | null;
+    name?: string;
+    [key: string]: unknown;
+  }
+
+  const filterOption = (input: string, option?: SelectOption): boolean => {
+    if (!option?.name) return false;
+    return option.name.toLowerCase().includes(input.toLowerCase());
+  };
+
   const emit = defineEmits<(e: 'newId', id: number) => void>();
   const onSubmit: FormSubmitType = async (fields) => {
     try {
       const teamDef: CreateTeamModel = {
         ptl: toRaw(fields).ptl,
-        businessUnit: toRaw(fields).businessUnit,
+        businessUnitId: toRaw(fields).businessUnit,
         teamName: toRaw(fields).teamName,
       };
       const id = await teamStore.create(teamDef);
@@ -60,7 +77,7 @@
     businessUnit: [
       {
         required: true,
-        type: 'string',
+        type: 'number',
       },
     ],
     inputsDisabled: [
@@ -105,14 +122,23 @@
       :whitespace="false"
       :rules="rulesRef.businessUnit"
     >
-      <a-input
+      <a-select
         id="inputCreateTeamBusinessUnit"
         v-model:value="dynamicValidateForm.businessUnit"
-        class="inputField"
         placeholder="Business Unit"
         :disabled="dynamicValidateForm.inputsDisabled"
-        :rules="rulesRef.businessUnit"
-      />
+        show-search
+        :filter-option="filterOption"
+      >
+        <a-select-option
+          v-for="bu in getBusinessUnits"
+          :key="bu.id"
+          :value="bu.id"
+          :name="bu.businessUnitName"
+        >
+          {{ bu.businessUnitName }}
+        </a-select-option>
+      </a-select>
     </a-form-item>
     <a-form-item
       has-feedback

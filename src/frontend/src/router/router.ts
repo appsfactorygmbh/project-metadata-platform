@@ -21,6 +21,18 @@ import { msalService } from '@/services/msalService';
 import ApiTokenListView from '@/views/SettingView/ApiTokenManagement/ApiTokenListView/ApiTokenListView.vue';
 import { ApiTokenInformationView } from '@/views/SettingView/ApiTokenManagement/ApiTokenInformationView';
 import { CreateApiTokenView } from '@/views/SettingView/ApiTokenManagement/CreateApiToken';
+import { CompanyListView } from '@/views/SettingView/CompanyManagementView/CompanyListView/index.ts';
+import { CompanyInformationView } from '@/views/SettingView/CompanyManagementView/CompanyInformationView/index.ts';
+import { CreateCompanyView } from '@/views/SettingView/CompanyManagementView/CreateCompany/index.ts';
+import { BusinessUnitInformationView } from '@/views/SettingView/BusinessUnitManagementView/BusinessUnitInformationView/index.ts';
+import { BusinessUnitListView } from '@/views/SettingView/BusinessUnitManagementView/BusinessUnitListView/index.ts';
+import { CreateBusinessUnitView } from '@/views/SettingView/BusinessUnitManagementView/CreateBusinessUnit/index.ts';
+import { OfficeLocationInformationView } from '@/views/SettingView/OfficeLocationManagementView/OfficeLocationInformationView/index.ts';
+import { OfficeLocationListView } from '@/views/SettingView/OfficeLocationManagementView/OfficeLocationListView/index.ts';
+import { CreateOfficeLocationView } from '@/views/SettingView/OfficeLocationManagementView/CreateOfficeLocation/index.ts';
+import { DepartmentListView } from '@/views/SettingView/DepartmentsManagementView/DepartmentListView/index.ts';
+import { CreateDepartmentView } from '@/views/SettingView/DepartmentsManagementView/CreateDepartment/index.ts';
+import { DepartmentInformationView } from '@/views/SettingView/DepartmentsManagementView/DepartmentInformationView/index.ts';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -110,6 +122,121 @@ const router = createRouter({
                       component: CreateTeamView,
                       meta: {
                         title: 'Project Metadata Platform - Team Creation',
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: '/settings/department-management',
+              name: 'departmentList',
+              component: DepartmentListView,
+              meta: {
+                title: 'Project Metadata Platform - Department Management',
+              },
+              children: [
+                {
+                  path: '/settings/department-management',
+                  name: 'departmentsInformation',
+                  component: DepartmentInformationView,
+                  meta: {
+                    title: 'Project Metadata Platform - Department Information',
+                  },
+                  children: [
+                    {
+                      path: '/settings/department-management/create',
+                      name: 'createDepartments',
+                      component: CreateDepartmentView,
+                      meta: {
+                        title:
+                          'Project Metadata Platform - Department Creation',
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: '/settings/business-unit-management',
+              name: 'businessUnitList',
+              component: BusinessUnitListView,
+              meta: {
+                title: 'Project Metadata Platform - Business Unit Management',
+              },
+              children: [
+                {
+                  path: '/settings/business-unit-management',
+                  name: 'businessUnitsInformation',
+                  component: BusinessUnitInformationView,
+                  meta: {
+                    title:
+                      'Project Metadata Platform - Business Unit Information',
+                  },
+                  children: [
+                    {
+                      path: '/settings/business-unit-management/create',
+                      name: 'createBusinessUnits',
+                      component: CreateBusinessUnitView,
+                      meta: {
+                        title:
+                          'Project Metadata Platform - Business Unit Creation',
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: '/settings/office-location-management',
+              name: 'officeLocationList',
+              component: OfficeLocationListView,
+              meta: {
+                title: 'Project Metadata Platform - Office Location Management',
+              },
+              children: [
+                {
+                  path: '/settings/office-location-management',
+                  name: 'officeLocationsInformation',
+                  component: OfficeLocationInformationView,
+                  meta: {
+                    title:
+                      'Project Metadata Platform - Office Location Information',
+                  },
+                  children: [
+                    {
+                      path: '/settings/office-location-management/create',
+                      name: 'createOfficeLocations',
+                      component: CreateOfficeLocationView,
+                      meta: {
+                        title:
+                          'Project Metadata Platform - Office Location Creation',
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: '/settings/company-management',
+              name: 'companyList',
+              component: CompanyListView,
+              meta: { title: 'Project Metadata Platform - Company Management' },
+              children: [
+                {
+                  path: '/settings/company-management',
+                  name: 'companiesInformation',
+                  component: CompanyInformationView,
+                  meta: {
+                    title: 'Project Metadata Platform - Company Information',
+                  },
+                  children: [
+                    {
+                      path: '/settings/company-management/create',
+                      name: 'createCompanies',
+                      component: CreateCompanyView,
+                      meta: {
+                        title: 'Project Metadata Platform - Company Creation',
                       },
                     },
                   ],

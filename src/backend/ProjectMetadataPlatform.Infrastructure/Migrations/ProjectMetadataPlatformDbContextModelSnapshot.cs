@@ -18,10 +18,40 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.25")
+                .HasAnnotation("ProductVersion", "8.0.27")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("ApplicationUserBusinessUnit", b =>
+                {
+                    b.Property<int>("BusinessUnitsId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("text");
+
+                    b.HasKey("BusinessUnitsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("ApplicationUserBusinessUnit");
+                });
+
+            modelBuilder.Entity("ApplicationUserDepartment", b =>
+                {
+                    b.Property<int>("DepartmentsId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("text");
+
+                    b.HasKey("DepartmentsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("ApplicationUserDepartment");
+                });
 
             modelBuilder.Entity("ApplicationUserTeam", b =>
                 {
@@ -239,6 +269,78 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.ToTable("RefreshToken");
                 });
 
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.BusinessUnits.BusinessUnit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BusinessUnitName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessUnitName")
+                        .IsUnique();
+
+                    b.ToTable("BusinessUnits");
+                });
+
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Companies.Company", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyName")
+                        .IsUnique();
+
+                    b.ToTable("Companies");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CompanyName = "AppsFactory"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CompanyName = "AppsCompany"
+                        });
+                });
+
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Departments.Department", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DepartmentName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentName")
+                        .IsUnique();
+
+                    b.ToTable("Departments");
+                });
+
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Logs.Log", b =>
                 {
                     b.Property<int>("Id")
@@ -271,10 +373,34 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Property<int?>("AuthorTokenId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("BusinessUnitId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("BusinessUnitName")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DepartmentName")
+                        .HasColumnType("text");
+
                     b.Property<int?>("GlobalPluginId")
                         .HasColumnType("integer");
 
                     b.Property<string>("GlobalPluginName")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("OfficeLocationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("OfficeLocationName")
                         .HasColumnType("text");
 
                     b.Property<int?>("ProjectId")
@@ -302,7 +428,15 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("AuthorTokenId");
 
+                    b.HasIndex("BusinessUnitId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("DepartmentId");
+
                     b.HasIndex("GlobalPluginId");
+
+                    b.HasIndex("OfficeLocationId");
 
                     b.HasIndex("ProjectId");
 
@@ -339,6 +473,26 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("LogId");
 
                     b.ToTable("LogChange");
+                });
+
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.OfficeLocations.OfficeLocation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("OfficeLocationName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OfficeLocationName")
+                        .IsUnique();
+
+                    b.ToTable("OfficeLocations");
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Plugins.Plugin", b =>
@@ -485,9 +639,8 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Company")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("CompanyState")
                         .HasColumnType("integer");
@@ -518,6 +671,8 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("Slug")
                         .IsUnique();
 
@@ -530,7 +685,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         {
                             Id = 100,
                             ClientName = "Deutsche Bahn",
-                            Company = "AppsFactory",
+                            CompanyId = 1,
                             CompanyState = 1,
                             IsArchived = false,
                             IsmsLevel = 0,
@@ -543,7 +698,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         {
                             Id = 200,
                             ClientName = "ARD",
-                            Company = "AppsCompany",
+                            CompanyId = 2,
                             CompanyState = 0,
                             IsArchived = false,
                             IsmsLevel = 1,
@@ -556,7 +711,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         {
                             Id = 300,
                             ClientName = "AOK",
-                            Company = "AppsFactory",
+                            CompanyId = 1,
                             CompanyState = 1,
                             IsArchived = false,
                             IsmsLevel = 2,
@@ -575,9 +730,8 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("BusinessUnit")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("BusinessUnitId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("PTL")
                         .HasColumnType("text");
@@ -587,6 +741,8 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BusinessUnitId");
 
                     b.HasIndex("TeamName")
                         .IsUnique();
@@ -602,18 +758,12 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<List<string>>("BusinessUnits")
-                        .HasColumnType("text[]");
-
-                    b.Property<string>("Company")
-                        .HasColumnType("text");
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
-
-                    b.Property<List<string>>("Departments")
-                        .HasColumnType("text[]");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -626,10 +776,10 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
-                    b.Property<bool?>("IsScimProvisioned")
+                    b.Property<bool>("IsScimProvisioned")
                         .HasColumnType("boolean");
 
                     b.Property<List<string>>("JobTitles")
@@ -648,6 +798,9 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
+
+                    b.Property<int?>("OfficeLocationId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
@@ -670,6 +823,8 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("EmployeeId")
                         .IsUnique();
 
@@ -680,7 +835,39 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
+                    b.HasIndex("OfficeLocationId");
+
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("ApplicationUserBusinessUnit", b =>
+                {
+                    b.HasOne("ProjectMetadataPlatform.Domain.BusinessUnits.BusinessUnit", null)
+                        .WithMany()
+                        .HasForeignKey("BusinessUnitsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectMetadataPlatform.Domain.Users.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ApplicationUserDepartment", b =>
+                {
+                    b.HasOne("ProjectMetadataPlatform.Domain.Departments.Department", null)
+                        .WithMany()
+                        .HasForeignKey("DepartmentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectMetadataPlatform.Domain.Users.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ApplicationUserTeam", b =>
@@ -795,9 +982,29 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         .HasForeignKey("AuthorTokenId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("ProjectMetadataPlatform.Domain.BusinessUnits.BusinessUnit", "BusinessUnit")
+                        .WithMany()
+                        .HasForeignKey("BusinessUnitId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ProjectMetadataPlatform.Domain.Companies.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ProjectMetadataPlatform.Domain.Departments.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("ProjectMetadataPlatform.Domain.Plugins.Plugin", "GlobalPlugin")
                         .WithMany()
                         .HasForeignKey("GlobalPluginId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ProjectMetadataPlatform.Domain.OfficeLocations.OfficeLocation", "OfficeLocation")
+                        .WithMany()
+                        .HasForeignKey("OfficeLocationId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ProjectMetadataPlatform.Domain.Projects.Project", "Project")
@@ -818,7 +1025,15 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.Navigation("AuthorToken");
 
+                    b.Navigation("BusinessUnit");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Department");
+
                     b.Navigation("GlobalPlugin");
+
+                    b.Navigation("OfficeLocation");
 
                     b.Navigation("Project");
 
@@ -857,17 +1072,68 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Projects.Project", b =>
                 {
+                    b.HasOne("ProjectMetadataPlatform.Domain.Companies.Company", "Company")
+                        .WithMany("Projects")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("ProjectMetadataPlatform.Domain.Teams.Team", "Team")
                         .WithMany("Projects")
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.Navigation("Company");
+
                     b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Teams.Team", b =>
+                {
+                    b.HasOne("ProjectMetadataPlatform.Domain.BusinessUnits.BusinessUnit", "BusinessUnit")
+                        .WithMany("Teams")
+                        .HasForeignKey("BusinessUnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BusinessUnit");
+                });
+
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Users.ApplicationUser", b =>
+                {
+                    b.HasOne("ProjectMetadataPlatform.Domain.Companies.Company", "Company")
+                        .WithMany("Users")
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("ProjectMetadataPlatform.Domain.OfficeLocations.OfficeLocation", "OfficeLocation")
+                        .WithMany("Users")
+                        .HasForeignKey("OfficeLocationId");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("OfficeLocation");
+                });
+
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.BusinessUnits.BusinessUnit", b =>
+                {
+                    b.Navigation("Teams");
+                });
+
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Companies.Company", b =>
+                {
+                    b.Navigation("Projects");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Logs.Log", b =>
                 {
                     b.Navigation("Changes");
+                });
+
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.OfficeLocations.OfficeLocation", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Plugins.Plugin", b =>

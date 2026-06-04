@@ -45,7 +45,8 @@ public class GetAllProjectsQueryHandlerTest
         {
             TeamName = "AF_1",
             Id = 1,
-            BusinessUnit = "Health",
+            BusinessUnit = new() { BusinessUnitName = "Health" },
+            BusinessUnitId = 1,
         };
         var projects = new List<Project>
         {
@@ -57,7 +58,8 @@ public class GetAllProjectsQueryHandlerTest
                 ClientName = "Metatron",
                 Team = team,
                 TeamId = 1,
-                Company = "Ag der Ags",
+                Company = new() { CompanyName = "Ag der Ags" },
+                CompanyId = 1,
                 IsmsLevel = SecurityLevel.HIGH,
             },
             new()
@@ -66,7 +68,8 @@ public class GetAllProjectsQueryHandlerTest
                 ProjectName = "James",
                 Slug = "james",
                 ClientName = "Lucifer",
-                Company = "Ag der Ags",
+                Company = new() { CompanyName = "Ag der Ags" },
+                CompanyId = 1,
                 IsmsLevel = SecurityLevel.HIGH,
             },
             new()
@@ -75,7 +78,9 @@ public class GetAllProjectsQueryHandlerTest
                 ProjectName = "Marika",
                 Slug = "marika",
                 ClientName = "Satan",
-                Company = "Ark",
+
+                Company = new() { CompanyName = "Ark" },
+                CompanyId = 2,
                 IsmsLevel = SecurityLevel.HIGH,
             },
         };
@@ -100,7 +105,8 @@ public class GetAllProjectsQueryHandlerTest
                 Slug = "marika",
                 ClientName = "Zatan",
                 TeamId = 1,
-                Company = "Ark",
+                Company = new() { CompanyName = "Ark" },
+                CompanyId = 2,
                 IsmsLevel = SecurityLevel.HIGH,
             },
             new()
@@ -110,7 +116,8 @@ public class GetAllProjectsQueryHandlerTest
                 Slug = "heather",
                 ClientName = "Metatron",
                 TeamId = 1,
-                Company = "Ag der Ags",
+                Company = new() { CompanyName = "Ag der Ags" },
+                CompanyId = 1,
                 IsmsLevel = SecurityLevel.HIGH,
             },
             new()
@@ -120,7 +127,8 @@ public class GetAllProjectsQueryHandlerTest
                 Slug = "james",
                 ClientName = "Metatron",
                 TeamId = 1,
-                Company = "Ag der Ags",
+                Company = new() { CompanyName = "Ag der Ags" },
+                CompanyId = 1,
                 IsmsLevel = SecurityLevel.HIGH,
             },
             new()
@@ -130,7 +138,8 @@ public class GetAllProjectsQueryHandlerTest
                 Slug = "marika",
                 ClientName = "Satan",
                 TeamId = 1,
-                Company = "Ark",
+                Company = new() { CompanyName = "Ark" },
+                CompanyId = 2,
                 IsmsLevel = SecurityLevel.HIGH,
             },
             new()
@@ -140,7 +149,8 @@ public class GetAllProjectsQueryHandlerTest
                 Slug = "marika",
                 ClientName = "Satan",
                 TeamId = 1,
-                Company = "Ark",
+                Company = new() { CompanyName = "Ark" },
+                CompanyId = 2,
                 IsmsLevel = SecurityLevel.HIGH,
             },
         };

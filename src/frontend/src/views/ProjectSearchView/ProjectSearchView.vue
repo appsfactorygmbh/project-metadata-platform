@@ -51,11 +51,14 @@
       slug: model.slug,
       projectName: model.projectName,
       clientName: model.clientName,
-      company: model.company,
+      company: model.company.companyName,
       isArchived: model.isArchived,
       ismsLevel: model.ismsLevel,
       teamName: model.team === undefined ? '' : model.team.teamName,
-      businessUnit: model.team === undefined ? '' : model.team.businessUnit,
+      businessUnit:
+        model.team === undefined
+          ? ''
+          : model.team.businessUnit.businessUnitName,
     };
   };
 

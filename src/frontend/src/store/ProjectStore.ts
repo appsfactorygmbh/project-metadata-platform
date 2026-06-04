@@ -268,6 +268,7 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
             ...project,
             isArchived: true,
             teamId: project.team?.id,
+            companyId: project.company.id,
           });
           await this.fetchAll();
         },
@@ -281,6 +282,7 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
             ...project,
             isArchived: false,
             teamId: project.team?.id,
+            companyId: project.company.id,
           });
           await this.fetchAll();
         },

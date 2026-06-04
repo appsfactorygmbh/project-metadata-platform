@@ -36,6 +36,7 @@ public class ProjectByIdRepositoryTest : TestsWithDatabase
             ProjectName = "Regen",
             Slug = "regen",
             ClientName = "Nasa",
+            CompanyId = 1,
         };
 
         _context.Projects.Add(project);

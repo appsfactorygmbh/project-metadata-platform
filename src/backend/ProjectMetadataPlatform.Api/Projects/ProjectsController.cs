@@ -5,10 +5,11 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMetadataPlatform.Api.BusinessUnits.Models;
+using ProjectMetadataPlatform.Api.Companies.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Plugins.Models;
 using ProjectMetadataPlatform.Api.Projects.Models;
-using ProjectMetadataPlatform.Api.Teams.Models;
 using ProjectMetadataPlatform.Application.Plugins;
 using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Domain.Auth;
@@ -57,14 +58,17 @@ public class ProjectsController : ControllerBase
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
             IsArchived: project.IsArchived,
-            Company: project.Company,
+            Company: new GetCompanyResponse(project.Company!.Id, project.Company!.CompanyName),
             Team: project.Team == null
                 ? null
                 : new()
                 {
                     Id = project.Team.Id,
                     TeamName = project.Team.TeamName,
-                    BusinessUnit = project.Team.BusinessUnit,
+                    BusinessUnit = new GetBusinessUnitResponse(
+                        project.Team.BusinessUnit!.Id,
+                        project.Team.BusinessUnit!.BusinessUnitName
+                    ),
                     PTL = project.Team.PTL,
                 },
             IsmsLevel: project.IsmsLevel,
@@ -114,14 +118,17 @@ public class ProjectsController : ControllerBase
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
             IsArchived: project.IsArchived,
-            Company: project.Company,
+            Company: new GetCompanyResponse(project.Company!.Id, project.Company!.CompanyName),
             Team: project.Team == null
                 ? null
                 : new()
                 {
                     Id = project.Team.Id,
                     TeamName = project.Team.TeamName,
-                    BusinessUnit = project.Team.BusinessUnit,
+                    BusinessUnit = new GetBusinessUnitResponse(
+                        project.Team.BusinessUnit!.Id,
+                        project.Team.BusinessUnit!.BusinessUnitName
+                    ),
                     PTL = project.Team.PTL,
                 },
             IsmsLevel: project.IsmsLevel,
@@ -277,7 +284,7 @@ public class ProjectsController : ControllerBase
                     ProjectName: projectRequest.ProjectName,
                     ClientName: projectRequest.ClientName,
                     OfferId: projectRequest.OfferId,
-                    Company: projectRequest.Company,
+                    CompanyId: projectRequest.CompanyId,
                     CompanyState: projectRequest.CompanyState,
                     TeamId: projectRequest.TeamId,
                     IsmsLevel: projectRequest.IsmsLevel,
@@ -296,7 +303,7 @@ public class ProjectsController : ControllerBase
                     ProjectName: projectRequest.ProjectName,
                     ClientName: projectRequest.ClientName,
                     OfferId: projectRequest.OfferId,
-                    Company: projectRequest.Company,
+                    CompanyId: projectRequest.CompanyId,
                     CompanyState: projectRequest.CompanyState,
                     TeamId: projectRequest.TeamId,
                     IsmsLevel: projectRequest.IsmsLevel,

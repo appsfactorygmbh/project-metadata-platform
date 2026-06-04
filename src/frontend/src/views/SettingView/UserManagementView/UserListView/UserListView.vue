@@ -49,7 +49,9 @@
       setUserId(userStore.getUser?.externalId);
     }
     await userStore?.fetchAll();
-    await userStore?.fetchUser(routerUserId.value);
+    if (routerUserId.value) {
+      await userStore?.fetchUser(routerUserId.value);
+    }
     selectedKeys.value = [routerUserId.value];
   });
 </script>
@@ -76,7 +78,7 @@
           <template #icon>
             <PlusOutlined />
           </template>
-          <span>Create New User</span>
+          <span>Create User</span>
         </a-menu-item>
         <a-menu-item
           v-for="user in usersData"

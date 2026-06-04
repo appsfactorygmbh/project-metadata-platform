@@ -5,9 +5,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMetadataPlatform.Api.BusinessUnits.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Teams.Models;
-using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Application.Teams;
 using ProjectMetadataPlatform.Domain.Auth;
 
@@ -54,7 +54,7 @@ public class TeamsController : ControllerBase
 
         var command = new CreateTeamCommand(
             TeamName: request.TeamName,
-            BusinessUnit: request.BusinessUnit,
+            BusinessUnitId: request.BusinessUnitId,
             PTL: request.PTL
         );
 
@@ -85,7 +85,10 @@ public class TeamsController : ControllerBase
         {
             Id = team.Id,
             TeamName = team.TeamName,
-            BusinessUnit = team.BusinessUnit,
+            BusinessUnit = new GetBusinessUnitResponse(
+                team.BusinessUnit!.Id,
+                team.BusinessUnit!.BusinessUnitName
+            ),
             PTL = team.PTL,
         };
 
@@ -113,7 +116,10 @@ public class TeamsController : ControllerBase
         {
             Id = t.Id,
             TeamName = t.TeamName,
-            BusinessUnit = t.BusinessUnit,
+            BusinessUnit = new GetBusinessUnitResponse(
+                t.BusinessUnit!.Id,
+                t.BusinessUnit!.BusinessUnitName
+            ),
             PTL = t.PTL,
         });
         return Ok(response);
@@ -126,11 +132,13 @@ public class TeamsController : ControllerBase
     /// <param name="request">The request body containing the details of the team to be updated.</param>
     /// <returns>The updated version of the team.</returns>
     /// <response code="200">The team was updated successfully.</response>
+    /// <response code="400">The team could not be updated.</response>
     /// <response code="404">No team with the requested id was found.</response>
     /// <response code="409">The team name already exists.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpPatch("{teamId:int}")]
     [ProducesResponseType(typeof(GetTeamResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<GetTeamResponse>> Patch(
@@ -138,11 +146,15 @@ public class TeamsController : ControllerBase
         [FromBody] PatchTeamRequest request
     )
     {
+        if (request.TeamName != null && string.IsNullOrWhiteSpace(request.TeamName))
+        {
+            return BadRequest(new ErrorResponse("Team Name can't whitespaces"));
+        }
         var command = new PatchTeamCommand(
             Id: teamId,
             TeamName: request.TeamName,
             PTL: request.PTL,
-            BusinessUnit: request.BusinessUnit
+            BusinessUnitId: request.BusinessUnitId
         );
 
         var team = await _mediator.Send(command);
@@ -151,7 +163,10 @@ public class TeamsController : ControllerBase
         {
             Id = team.Id,
             TeamName = team.TeamName,
-            BusinessUnit = team.BusinessUnit,
+            BusinessUnit = new GetBusinessUnitResponse(
+                team.BusinessUnit!.Id,
+                team.BusinessUnit!.BusinessUnitName
+            ),
             PTL = team.PTL,
         };
         return Ok(response);

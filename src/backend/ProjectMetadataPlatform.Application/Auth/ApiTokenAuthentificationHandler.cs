@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -40,10 +39,14 @@ public class ApiTokenAuthenticationHandler : AuthenticationHandler<Authenticatio
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         if (!Request.Headers.TryGetValue("Authorization", out var authHeader))
+        {
             return AuthenticateResult.Fail("Missing Authorization Header");
+        }
 
-        if (!authHeader.ToString().StartsWith("Bearer "))
+        if (!authHeader.ToString().StartsWith("Bearer ", StringComparison.InvariantCulture))
+        {
             return AuthenticateResult.Fail("Invalid Scheme");
+        }
 
         var tokenString = authHeader.ToString().Replace("Bearer ", "");
 

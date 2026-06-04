@@ -33,6 +33,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
             ProjectName = "Regen",
             Slug = "regen",
             ClientName = "Nasa",
+            CompanyId = 1,
         };
 
         var query = new GetAllProjectsQuery(null, "Reg");
@@ -63,6 +64,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
             ProjectName = "Regen",
             Slug = "regen",
             ClientName = "Nasa",
+            CompanyId = 1,
         };
 
         var query = new GetAllProjectsQuery(null, "x");
@@ -86,6 +88,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
                 ProjectName = "Wasserfall",
                 Slug = "wasserfall",
                 ClientName = "whatever_taucht_nicht_auf",
+                CompanyId = 1,
             },
             new()
             {
@@ -93,6 +96,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
                 ProjectName = "Regen",
                 Slug = "regen",
                 ClientName = "ESA",
+                CompanyId = 1,
             },
             new()
             {
@@ -100,6 +104,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
                 ProjectName = "Turbo",
                 Slug = "turbo",
                 ClientName = "Regen",
+                CompanyId = 1,
             },
         };
 
@@ -128,6 +133,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
                 ProjectName = "Wasserfall",
                 Slug = "wasserfall",
                 ClientName = "whatever_taucht_nicht_auf",
+                CompanyId = 1,
             },
             new()
             {
@@ -135,6 +141,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
                 ProjectName = "Regen",
                 Slug = "regen",
                 ClientName = "ESA",
+                CompanyId = 1,
             },
             new()
             {
@@ -142,6 +149,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
                 ProjectName = "Turbo",
                 Slug = "turbo",
                 ClientName = "Regen",
+                CompanyId = 1,
             },
         };
 
@@ -176,7 +184,13 @@ public class ProjectsBySearchTest : TestsWithDatabase
                 ProjectName = "Wasserfall",
                 Slug = "wasserfall",
                 ClientName = "whatever_taucht_nicht_auf",
-                Team = new() { TeamName = "41", BusinessUnit = "BU Test" },
+                Team = new()
+                {
+                    TeamName = "41",
+                    BusinessUnit = new() { BusinessUnitName = "BU Test" },
+                    BusinessUnitId = 1,
+                },
+                CompanyId = 1,
             },
             new()
             {
@@ -184,7 +198,8 @@ public class ProjectsBySearchTest : TestsWithDatabase
                 ProjectName = "Regen",
                 Slug = "regen",
                 ClientName = "ESA",
-                Team = new() { TeamName = "42", BusinessUnit = "BU Test" },
+                Team = new() { TeamName = "42", BusinessUnitId = 1 },
+                CompanyId = 1,
             },
             new()
             {
@@ -192,7 +207,13 @@ public class ProjectsBySearchTest : TestsWithDatabase
                 ProjectName = "Turbo",
                 Slug = "turbo",
                 ClientName = "Regen",
-                Team = new() { TeamName = "422", BusinessUnit = "BU Test" },
+                Team = new()
+                {
+                    TeamName = "422",
+
+                    BusinessUnitId = 1,
+                },
+                CompanyId = 1,
             },
         };
 

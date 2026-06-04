@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -76,6 +75,7 @@ public class UsersController : ControllerBase
             BusinessUnits: request.PmpUser?.BusinessUnits,
             JobTitles: request.PmpUser?.JobTitles,
             Departments: request.PmpUser?.Departments,
+            OfficeLocation: request.Addresses.FirstOrDefault()?.Locality,
             Company: request.EnterpriseUser?.Organization
         );
         var user = await _mediator.Send(command);
@@ -86,17 +86,29 @@ public class UsersController : ControllerBase
             ExternalId = user.EmployeeId,
             UserName = user.Email!,
             Active = user.IsActive,
+            Addresses =
+                user.OfficeLocation == null
+                    ? []
+                    :
+                    [
+                        new PmpScimUser.AddressRecord
+                        {
+                            Locality = user.OfficeLocation.OfficeLocationName,
+                        },
+                    ],
             EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
             {
-                Organization = user.Company,
+                Organization = user.Company?.CompanyName,
             },
             PmpUser = new PmpScimUser.PmpUserExtension
             {
-                Departments = user.Departments,
+                Departments = user
+                    .Departments?.Select(department => department.DepartmentName)
+                    .ToList(),
                 TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
                 JobTitles = user.JobTitles,
                 Team = user.Teams?.Select(team => team.TeamName).ToList(),
-                BusinessUnits = user.BusinessUnits,
+                BusinessUnits = user.BusinessUnits?.Select(bu => bu.BusinessUnitName).ToList(),
                 IsScimProvisioned = user.IsScimProvisioned,
             },
         };
@@ -127,20 +139,33 @@ public class UsersController : ControllerBase
                     ExternalId = user.EmployeeId,
                     UserName = user.Email!,
                     Active = user.IsActive,
+                    Addresses =
+                        user.OfficeLocation == null
+                            ? []
+                            :
+                            [
+                                new PmpScimUser.AddressRecord
+                                {
+                                    Locality = user.OfficeLocation.OfficeLocationName,
+                                },
+                            ],
                     EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
                     {
-                        Organization = user.Company,
+                        Organization = user.Company?.CompanyName,
                     },
                     PmpUser = new PmpScimUser.PmpUserExtension
                     {
-                        Departments = user.Departments,
+                        Departments = user
+                            .Departments?.Select(department => department.DepartmentName)
+                            .ToList(),
                         TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
                         JobTitles = user.JobTitles,
                         Team = user.Teams?.Select(team => team.TeamName).ToList(),
-                        BusinessUnits = user.BusinessUnits,
+                        BusinessUnits = user
+                            .BusinessUnits?.Select(bu => bu.BusinessUnitName)
+                            .ToList(),
                         IsScimProvisioned = user.IsScimProvisioned,
                     },
-                    Meta = new PmpScimUser.MetaResourceData { ResourceType = "User" },
                 })
                 .OrderBy(u => u.UserName),
             TotalResults = users.Count(),
@@ -170,17 +195,29 @@ public class UsersController : ControllerBase
             ExternalId = user.EmployeeId,
             UserName = user.Email!,
             Active = user.IsActive,
+            Addresses =
+                user.OfficeLocation == null
+                    ? []
+                    :
+                    [
+                        new PmpScimUser.AddressRecord
+                        {
+                            Locality = user.OfficeLocation.OfficeLocationName,
+                        },
+                    ],
             EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
             {
-                Organization = user.Company,
+                Organization = user.Company?.CompanyName,
             },
             PmpUser = new PmpScimUser.PmpUserExtension
             {
-                Departments = user.Departments,
+                Departments = user
+                    .Departments?.Select(department => department.DepartmentName)
+                    .ToList(),
                 TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
                 JobTitles = user.JobTitles,
                 Team = user.Teams?.Select(team => team.TeamName).ToList(),
-                BusinessUnits = user.BusinessUnits,
+                BusinessUnits = user.BusinessUnits?.Select(bu => bu.BusinessUnitName).ToList(),
                 IsScimProvisioned = user.IsScimProvisioned,
             },
         };
@@ -209,14 +246,15 @@ public class UsersController : ControllerBase
         var command = new PatchUserCommand
         {
             Id = userId,
-            Operations = request
-                .Operations.Select(op => new PatchUserCommand.OperationRecord
+            Operations =
+            [
+                .. request.Operations.Select(op => new PatchUserCommand.OperationRecord
                 {
                     Operation = op.Op,
                     Path = op.Path,
                     Value = op.Value,
-                })
-                .ToList(),
+                }),
+            ],
         };
 
         var isScimProvisioned = _httpContextAccessor.HttpContext?.User.FindFirstValue(
@@ -244,17 +282,29 @@ public class UsersController : ControllerBase
             ExternalId = user.EmployeeId,
             UserName = user.Email!,
             Active = user.IsActive,
+            Addresses =
+                user.OfficeLocation == null
+                    ? []
+                    :
+                    [
+                        new PmpScimUser.AddressRecord
+                        {
+                            Locality = user.OfficeLocation.OfficeLocationName,
+                        },
+                    ],
             EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
             {
-                Organization = user.Company,
+                Organization = user.Company?.CompanyName,
             },
             PmpUser = new PmpScimUser.PmpUserExtension
             {
-                Departments = user.Departments,
+                Departments = user
+                    .Departments?.Select(department => department.DepartmentName)
+                    .ToList(),
                 TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
                 JobTitles = user.JobTitles,
                 Team = user.Teams?.Select(team => team.TeamName).ToList(),
-                BusinessUnits = user.BusinessUnits,
+                BusinessUnits = user.BusinessUnits?.Select(bu => bu.BusinessUnitName).ToList(),
                 IsScimProvisioned = user.IsScimProvisioned,
             },
         };
@@ -289,17 +339,29 @@ public class UsersController : ControllerBase
             ExternalId = user.EmployeeId,
             UserName = user.Email!,
             Active = user.IsActive,
+            Addresses =
+                user.OfficeLocation == null
+                    ? []
+                    :
+                    [
+                        new PmpScimUser.AddressRecord
+                        {
+                            Locality = user.OfficeLocation.OfficeLocationName,
+                        },
+                    ],
             EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
             {
-                Organization = user.Company,
+                Organization = user.Company?.CompanyName,
             },
             PmpUser = new PmpScimUser.PmpUserExtension
             {
-                Departments = user.Departments,
+                Departments = user
+                    .Departments?.Select(department => department.DepartmentName)
+                    .ToList(),
                 TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
                 JobTitles = user.JobTitles,
                 Team = user.Teams?.Select(team => team.TeamName).ToList(),
-                BusinessUnits = user.BusinessUnits,
+                BusinessUnits = user.BusinessUnits?.Select(bu => bu.BusinessUnitName).ToList(),
                 IsScimProvisioned = user.IsScimProvisioned,
             },
         };

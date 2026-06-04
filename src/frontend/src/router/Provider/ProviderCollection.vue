@@ -6,6 +6,14 @@
     ProjectEditProvider,
     UserProvider,
     TeamProvider,
+    BusinessUnitRoutingProvider,
+    DepartmentRoutingProvider,
+    OfficeLocationRoutingProvider,
+    CompanyRoutingProvider,
+    DepartmentProvider,
+    BusinessUnitProvider,
+    OfficeLocationProvider,
+    CompanyProvider,
   } from '@/router/Provider';
   import ProjectRoutingProvider from './ProjectRoutingProvider.vue';
   import LogsProvider from './LogsProvider.vue';
@@ -20,25 +28,41 @@
     <AuthProvider>
       <TeamProvider>
         <ApiTokenProvider>
-          <ProjectRoutingProvider>
-            <UserProvider>
-              <LogsProvider>
-                <LocalLogProvider>
-                  <ProjectEditProvider>
-                    <GlobalPluginProvider>
-                      <TeamRoutingProvider>
-                        <ApiTokenRoutingProvider>
-                          <slot>
-                            <RouterView />
-                          </slot>
-                        </ApiTokenRoutingProvider>
-                      </TeamRoutingProvider>
-                    </GlobalPluginProvider>
-                  </ProjectEditProvider>
-                </LocalLogProvider>
-              </LogsProvider>
-            </UserProvider>
-          </ProjectRoutingProvider>
+          <CompanyProvider>
+            <OfficeLocationProvider>
+              <BusinessUnitProvider>
+                <DepartmentProvider>
+                  <ProjectRoutingProvider>
+                    <UserProvider>
+                      <LogsProvider>
+                        <LocalLogProvider>
+                          <ProjectEditProvider>
+                            <GlobalPluginProvider>
+                              <TeamRoutingProvider>
+                                <ApiTokenRoutingProvider>
+                                  <CompanyRoutingProvider>
+                                    <OfficeLocationRoutingProvider>
+                                      <BusinessUnitRoutingProvider>
+                                        <DepartmentRoutingProvider>
+                                          <slot>
+                                            <RouterView />
+                                          </slot>
+                                        </DepartmentRoutingProvider>
+                                      </BusinessUnitRoutingProvider>
+                                    </OfficeLocationRoutingProvider>
+                                  </CompanyRoutingProvider>
+                                </ApiTokenRoutingProvider>
+                              </TeamRoutingProvider>
+                            </GlobalPluginProvider>
+                          </ProjectEditProvider>
+                        </LocalLogProvider>
+                      </LogsProvider>
+                    </UserProvider>
+                  </ProjectRoutingProvider>
+                </DepartmentProvider>
+              </BusinessUnitProvider>
+            </OfficeLocationProvider>
+          </CompanyProvider>
         </ApiTokenProvider>
       </TeamProvider>
     </AuthProvider>

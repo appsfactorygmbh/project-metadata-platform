@@ -1,10 +1,13 @@
 ﻿using System;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Logs;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Departments;
+using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Domain.Users;
@@ -90,6 +93,7 @@ public class LogConverterTest
                 ProjectName = "Ultimate Question of Life, the Universe and Everything",
                 Slug = "ultimate question of life, the universe and everything",
                 ClientName = "Mice",
+                CompanyId = 1,
             },
             ProjectName = "Ultimate Question of Life, the Universe and Everything",
             Action = Action.ARCHIVED_PROJECT,
@@ -131,6 +135,7 @@ public class LogConverterTest
                 ProjectName = "Atmosphere",
                 Slug = "atmosphere",
                 ClientName = "",
+                CompanyId = 1,
             },
             ProjectName = "Atmosphere",
             Action = Action.ADDED_PROJECT_PLUGIN,
@@ -183,6 +188,7 @@ public class LogConverterTest
                 ProjectName = "Wale",
                 Slug = "wale",
                 ClientName = "",
+                CompanyId = 1,
             },
             ProjectName = "Wale",
             Action = Action.UPDATED_PROJECT_PLUGIN,
@@ -233,6 +239,7 @@ public class LogConverterTest
                 ProjectName = "Solarsystem",
                 Slug = "solarsystem",
                 ClientName = "Mice",
+                CompanyId = 1,
             },
             ProjectName = "Solarsystem",
             Action = Action.REMOVED_PROJECT_PLUGIN,
@@ -285,6 +292,7 @@ public class LogConverterTest
                 ProjectName = "Ultimate Question of Life, the Universe and Everything",
                 Slug = "ultimate question of life, the universe and everything",
                 ClientName = "Mice",
+                CompanyId = 1,
             },
             ProjectName = "Ultimate Question of Life, the Universe and Everything",
             Action = Action.UNARCHIVED_PROJECT,
@@ -694,7 +702,12 @@ public class LogConverterTest
     [Test]
     public void ConvertToLogAddedTeam_Test()
     {
-        var createdTeam = new Team() { TeamName = "root", BusinessUnit = "Test BU" };
+        var createdTeam = new Team()
+        {
+            TeamName = "root",
+            BusinessUnit = new() { BusinessUnitName = "Test BU" },
+            BusinessUnitId = 1,
+        };
 
         var log = new Log
         {
@@ -993,6 +1006,508 @@ public class LogConverterTest
             Assert.That(
                 logResponse.LogMessage,
                 Is.EqualTo("Recursively regenerated the API token Token")
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogAddedDepartment_Test()
+    {
+        var createdDepartment = new Department() { DepartmentName = "root" };
+
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "helloworld",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.ADDED_DEPARTMENT,
+            DepartmentName = "root",
+            Changes =
+            [
+                new()
+                {
+                    Property = "DepartmentName",
+                    OldValue = "",
+                    NewValue = "root",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Recursively added a new department with properties: DepartmentName = root"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogUpdatedDepartment_Test()
+    {
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "id",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.UPDATED_DEPARTMENT,
+            DepartmentName = "root",
+            Changes =
+            [
+                new()
+                {
+                    Property = "DepartmentName",
+                    OldValue = "root",
+                    NewValue = "New_Department_Name",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Recursively updated department root: set DepartmentName from root to New_Department_Name"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogDeletedDepartment_Test()
+    {
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.REMOVED_DEPARTMENT,
+            DepartmentName = "New_Department_Name",
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo("Recursively removed department New_Department_Name")
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogAddedBusinessUnit_Test()
+    {
+        var createdBusinessUnit = new BusinessUnit() { BusinessUnitName = "root" };
+
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "helloworld",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.ADDED_BUSINESS_UNIT,
+            BusinessUnitName = "root",
+            Changes =
+            [
+                new()
+                {
+                    Property = "BusinessUnitName",
+                    OldValue = "",
+                    NewValue = "root",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Recursively added a new business unit with properties: BusinessUnitName = root"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogUpdatedBusinessUnit_Test()
+    {
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "id",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.UPDATED_BUSINESS_UNIT,
+            BusinessUnitName = "root",
+            Changes =
+            [
+                new()
+                {
+                    Property = "BusinessUnitName",
+                    OldValue = "root",
+                    NewValue = "New_BusinessUnit_Name",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Recursively updated business unit root: set BusinessUnitName from root to New_BusinessUnit_Name"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogDeletedBusinessUnit_Test()
+    {
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.REMOVED_BUSINESS_UNIT,
+            BusinessUnitName = "New_BusinessUnit_Name",
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo("Recursively removed business unit New_BusinessUnit_Name")
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogAddedOfficeLocation_Test()
+    {
+        var createdOfficeLocation = new OfficeLocation() { OfficeLocationName = "root" };
+
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "helloworld",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.ADDED_OFFICE_LOCATION,
+            OfficeLocationName = "root",
+            Changes =
+            [
+                new()
+                {
+                    Property = "OfficeLocationName",
+                    OldValue = "",
+                    NewValue = "root",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Recursively added a new office location with properties: OfficeLocationName = root"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogUpdatedOfficeLocation_Test()
+    {
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "id",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.UPDATED_OFFICE_LOCATION,
+            OfficeLocationName = "root",
+            Changes =
+            [
+                new()
+                {
+                    Property = "OfficeLocationName",
+                    OldValue = "root",
+                    NewValue = "New_OfficeLocation_Name",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Recursively updated office location root: set OfficeLocationName from root to New_OfficeLocation_Name"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogDeletedOfficeLocation_Test()
+    {
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.REMOVED_OFFICE_LOCATION,
+            OfficeLocationName = "New_OfficeLocation_Name",
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo("Recursively removed office location New_OfficeLocation_Name")
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogAddedCompany_Test()
+    {
+        var createdCompany = new Company() { CompanyName = "root" };
+
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "helloworld",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.ADDED_COMPANY,
+            CompanyName = "root",
+            Changes =
+            [
+                new()
+                {
+                    Property = "CompanyName",
+                    OldValue = "",
+                    NewValue = "root",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo("Recursively added a new company with properties: CompanyName = root")
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogUpdatedCompany_Test()
+    {
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "id",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.UPDATED_COMPANY,
+            CompanyName = "root",
+            Changes =
+            [
+                new()
+                {
+                    Property = "CompanyName",
+                    OldValue = "root",
+                    NewValue = "New_Company_Name",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Recursively updated company root: set CompanyName from root to New_Company_Name"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogDeletedCompany_Test()
+    {
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.REMOVED_COMPANY,
+            CompanyName = "New_Company_Name",
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo("Recursively removed company New_Company_Name")
             );
             Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
         });

@@ -28,7 +28,7 @@
   });
 
   const onResize = (newSizes: SplitpanesResizedPayload) => {
-    localStorage.setItem('paneSizes', JSON.stringify(newSizes));
+    localStorage.setItem('paneSizes', JSON.stringify(newSizes.panes));
   };
 </script>
 

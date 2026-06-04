@@ -11,13 +11,16 @@
   import { TeamNameInputField } from '@/components/EditableTextField';
   import { useThemeToken } from '@/utils/hooks';
   import { message } from 'ant-design-vue';
+  import { useBusinessUnitStore } from '@/store';
 
   const token = useThemeToken();
 
   const route = useRoute();
+
   const teamStore = inject(teamStoreSymbol)!;
   const { getTeam, getIsLoadingTeam, getLinkedProjects } =
     storeToRefs(teamStore);
+  const buStore = useBusinessUnitStore();
   const team = computed(() => getTeam.value);
   const linkedProjects = computed(() => getLinkedProjects.value);
   const isLoading = computed(() => getIsLoadingTeam.value);
@@ -28,6 +31,10 @@
   const teamNameFormStore = useFormStore('editTeamNameForm');
   const businessUnitFormStore = useFormStore('editBuForm');
   const ptlFormStore = useFormStore('editPtlForm');
+
+  onMounted(async () => {
+    buStore.fetchAll();
+  });
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
@@ -44,7 +51,7 @@
     isConfirmModalOpen.value = false;
   };
 
-  //Button for adding new User and deleting User
+  //Button for adding new Team and deleting Teams
   const buttons = computed((): FloatButtonModel[] => {
     const tempButtons: FloatButtonModel[] = [
       {
@@ -107,21 +114,28 @@
       </EditableTextField>
 
       <EditableTextField
-        :value="team == undefined ? '' : (team.businessUnit ?? '')"
+        :value="
+          team == undefined ? '' : (team.businessUnit.businessUnitName ?? '')
+        "
         :label="'Business\xa0Unit'"
         :is-editing-key="'isEditingBU'"
         :is-loading="isLoading"
         :form-store="businessUnitFormStore"
         :has-edit-keys="true"
       >
-        <TeamInformationInputField
-          :team-id="team?.id ?? -1"
-          :attributeName="'businessUnit'"
+        <TeamInformationSearchSelectField
+          :team-id="team?.id ?? 0"
+          :attributeName="'businessUnitId'"
           :form-store="businessUnitFormStore"
-          :default="team == undefined ? '' : (team.businessUnit ?? '')"
-          :placeholder="'BU'"
-        >
-        </TeamInformationInputField>
+          :default="team?.businessUnit?.businessUnitName ?? ''"
+          :placeholder="team?.businessUnit?.businessUnitName ?? ''"
+          :options="
+            buStore.getBusinessUnits.map((bu) => ({
+              id: bu.id,
+              name: bu.businessUnitName,
+            }))
+          "
+        />
       </EditableTextField>
       <EditableTextField
         :value="team == undefined ? '' : (team.ptl ?? '')"
@@ -157,11 +171,13 @@
 
 <style scoped>
   .panel {
-    position: relative; /* Make sure the panel is a positioning context */
+    position: relative;
+    /* Make sure the panel is a positioning context */
     min-width: 150px;
     max-height: 100vh;
     overflow-y: auto;
   }
+
   .ant-float-btn-group {
     height: max-content !important;
     width: max-content !important;
@@ -169,6 +185,7 @@
     right: 20px;
     bottom: 40px;
   }
+
   .userInfoBox {
     padding: 1em 3em;
     margin: 2em 1em;

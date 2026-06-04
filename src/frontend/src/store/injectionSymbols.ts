@@ -13,6 +13,14 @@ import type { TeamStore } from './TeamStore.ts';
 import type { useTeamRouting } from '@/utils/hooks/useTeamRouting.ts';
 import type { ApiTokenStore } from './ApiTokenStore.ts';
 import type { useApiTokenRouting } from '@/utils/hooks/useApiTokenRouting.ts';
+import type { CompanyStore } from './CompanyStore.ts';
+import type { BusinessUnitStore } from './BusinessUnitStore.ts';
+import type { OfficeLocationStore } from './OfficeLocationStore.ts';
+import type { DepartmentStore } from './DepartmentStore.ts';
+import type { useCompanyRouting } from '@/utils/hooks/useCompanyRouting.ts';
+import type { useDepartmentRouting } from '@/utils/hooks/useDepartmentRouting.ts';
+import type { useBusinessUnitRouting } from '@/utils/hooks/useBusinessUnitRouting .ts';
+import type { useOfficeLocationRouting } from '@/utils/hooks/useOfficeLocationRouting.ts';
 
 const projectStoreSymbol = Symbol() as InjectionKey<ProjectStore>;
 
@@ -29,6 +37,14 @@ const teamStoreSymbol = Symbol() as InjectionKey<TeamStore>;
 const authStoreSymbol = Symbol() as InjectionKey<AuthStore>;
 
 const apiTokenStoreSymbol = Symbol() as InjectionKey<ApiTokenStore>;
+
+const companyStoreSymbol = Symbol() as InjectionKey<CompanyStore>;
+
+const departmentStoreSymbol = Symbol() as InjectionKey<DepartmentStore>;
+
+const businessUnitStoreSymbol = Symbol() as InjectionKey<BusinessUnitStore>;
+
+const officeLocationStoreSymbol = Symbol() as InjectionKey<OfficeLocationStore>;
 
 const logsStoreSymbol = Symbol() as InjectionKey<
   ReturnType<typeof useLogsStore>
@@ -54,6 +70,22 @@ const apiTokenRoutingSymbol = Symbol() as InjectionKey<
   ReturnType<typeof useApiTokenRouting>
 >;
 
+const companyRoutingSymbol = Symbol() as InjectionKey<
+  ReturnType<typeof useCompanyRouting>
+>;
+
+const departmentRoutingSymbol = Symbol() as InjectionKey<
+  ReturnType<typeof useDepartmentRouting>
+>;
+
+const businessUnitRoutingSymbol = Symbol() as InjectionKey<
+  ReturnType<typeof useBusinessUnitRouting>
+>;
+
+const officeLocationRoutingSymbol = Symbol() as InjectionKey<
+  ReturnType<typeof useOfficeLocationRouting>
+>;
+
 export {
   projectStoreSymbol,
   pluginStoreSymbol,
@@ -69,4 +101,12 @@ export {
   teamRoutingSymbol,
   apiTokenStoreSymbol,
   apiTokenRoutingSymbol,
+  companyStoreSymbol,
+  companyRoutingSymbol,
+  businessUnitStoreSymbol,
+  businessUnitRoutingSymbol,
+  departmentStoreSymbol,
+  departmentRoutingSymbol,
+  officeLocationStoreSymbol,
+  officeLocationRoutingSymbol,
 };

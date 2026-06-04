@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,6 +44,7 @@ public class DeleteProjectCommandHandlerTest
             Slug = "heather",
             ClientName = "Metatron",
             IsArchived = true,
+            CompanyId = 1,
         };
         _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
         _mockProjectRepo
@@ -68,6 +69,7 @@ public class DeleteProjectCommandHandlerTest
             Slug = "heather",
             ClientName = "Metatron",
             IsArchived = false,
+            CompanyId = 1,
         };
         _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
 
@@ -103,6 +105,7 @@ public class DeleteProjectCommandHandlerTest
             Slug = "heather",
             ClientName = "Metatron",
             IsArchived = true,
+            CompanyId = 1,
         };
         _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
         _mockProjectRepo

@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -21,8 +20,12 @@ using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.Auth;
+using ProjectMetadataPlatform.Infrastructure.BusinessUnits;
+using ProjectMetadataPlatform.Infrastructure.Companies;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
+using ProjectMetadataPlatform.Infrastructure.Departments;
 using ProjectMetadataPlatform.Infrastructure.Logs;
+using ProjectMetadataPlatform.Infrastructure.OfficeLocations;
 using ProjectMetadataPlatform.Infrastructure.Plugins;
 using ProjectMetadataPlatform.Infrastructure.Projects;
 using ProjectMetadataPlatform.Infrastructure.Teams;
@@ -57,6 +60,10 @@ public static class DependencyInjection
         _ = serviceCollection.AddScoped<IApiTokenRepository, ApiTokenRepository>();
         _ = serviceCollection.AddScoped<IUsersRepository, UsersRepository>();
         _ = serviceCollection.AddScoped<ITeamRepository, TeamRepository>();
+        _ = serviceCollection.AddScoped<IBusinessUnitRepository, BusinessUnitRepository>();
+        _ = serviceCollection.AddScoped<IDepartmentRepository, DepartmentRepository>();
+        _ = serviceCollection.AddScoped<ICompanyRepository, CompanyRepository>();
+        _ = serviceCollection.AddScoped<IOfficeLocationRepository, OfficeLocationRepository>();
         _ = serviceCollection.AddScoped<
             IPasswordHasher<ApplicationUser>,
             PasswordHasher<ApplicationUser>

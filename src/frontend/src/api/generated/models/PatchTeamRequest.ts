@@ -31,11 +31,11 @@ export interface PatchTeamRequest {
    */
   ptl?: string | null;
   /**
-   * The BU of the team. Null if not being updated.
-   * @type {string}
+   * The Id of the BU of the team. Null if not being updated.
+   * @type {number}
    * @memberof PatchTeamRequest
    */
-  businessUnit?: string | null;
+  businessUnitId?: number | null;
 }
 
 /**
@@ -61,8 +61,8 @@ export function PatchTeamRequestFromJSONTyped(
   return {
     teamName: json['teamName'] == null ? undefined : json['teamName'],
     ptl: json['ptl'] == null ? undefined : json['ptl'],
-    businessUnit:
-      json['businessUnit'] == null ? undefined : json['businessUnit'],
+    businessUnitId:
+      json['businessUnitId'] == null ? undefined : json['businessUnitId'],
   };
 }
 
@@ -81,6 +81,6 @@ export function PatchTeamRequestToJSONTyped(
   return {
     teamName: value['teamName'],
     ptl: value['ptl'],
-    businessUnit: value['businessUnit'],
+    businessUnitId: value['businessUnitId'],
   };
 }

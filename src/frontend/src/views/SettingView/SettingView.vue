@@ -8,6 +8,10 @@
     TeamOutlined,
     UserOutlined,
     RobotOutlined,
+    HomeOutlined,
+    GoldOutlined,
+    EnvironmentOutlined,
+    PicRightOutlined,
   } from '@ant-design/icons-vue';
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
@@ -54,6 +58,22 @@
         router.push(`/settings/team-management`);
         break;
       }
+      case 'Department': {
+        router.push(`/settings/department-management`);
+        break;
+      }
+      case 'BusinessUnit': {
+        router.push(`/settings/business-unit-management`);
+        break;
+      }
+      case 'OfficeLocation': {
+        router.push(`/settings/office-location-management`);
+        break;
+      }
+      case 'Company': {
+        router.push(`/settings/company-management`);
+        break;
+      }
       case 'Global Logs': {
         router.push(`/settings/global-logs`);
         break;
@@ -81,21 +101,37 @@
           selectedKeys.value = ['2'];
           break;
         }
-        case '/settings/api-token-management': {
+        case '/settings/department-management': {
           selectedKeys.value = ['3'];
           break;
         }
-        case '/settings/global-plugins': {
+        case '/settings/business-unit-management': {
           selectedKeys.value = ['4'];
           break;
         }
-        case '/settings/global-logs': {
+        case '/settings/office-location-management': {
           selectedKeys.value = ['5'];
+          break;
+        }
+        case '/settings/company-management': {
+          selectedKeys.value = ['6'];
+          break;
+        }
+        case '/settings/api-token-management': {
+          selectedKeys.value = ['7'];
+          break;
+        }
+        case '/settings/global-plugins': {
+          selectedKeys.value = ['8'];
+          break;
+        }
+        case '/settings/global-logs': {
+          selectedKeys.value = ['9'];
           break;
         }
 
         default: {
-          selectedKeys.value = ['5'];
+          selectedKeys.value = ['1'];
           break;
         }
       }
@@ -110,7 +146,7 @@
       v-model:collapsed="collapsed"
       class="sideSlider"
       collapsible
-      :width="300"
+      :width="318"
     >
       <!-- return to homepage button-->
       <a-layout-header class="listHeader" />
@@ -135,6 +171,38 @@
         </a-menu-item>
         <a-menu-item
           key="3"
+          class="departmentManagement"
+          @click="clickTab('Department')"
+        >
+          <PicRightOutlined class="icons" />
+          <span>Department Management</span>
+        </a-menu-item>
+        <a-menu-item
+          key="4"
+          class="businessUnitManagement"
+          @click="clickTab('BusinessUnit')"
+        >
+          <GoldOutlined class="icons" />
+          <span>BU Management</span>
+        </a-menu-item>
+        <a-menu-item
+          key="5"
+          class="officeLocationManagement"
+          @click="clickTab('OfficeLocation')"
+        >
+          <EnvironmentOutlined class="icons" />
+          <span>Location Management</span>
+        </a-menu-item>
+        <a-menu-item
+          key="6"
+          class="companyManagement"
+          @click="clickTab('Company')"
+        >
+          <HomeOutlined class="icons" />
+          <span>Company Management</span>
+        </a-menu-item>
+        <a-menu-item
+          key="7"
           class="apiTokenManagement"
           @click="clickTab('API-Token')"
         >
@@ -142,7 +210,7 @@
           <span>API-Token Management</span>
         </a-menu-item>
         <a-menu-item
-          key="4"
+          key="8"
           class="globalPlugins"
           @click="clickTab('Global Plugins')"
         >
@@ -151,7 +219,7 @@
         </a-menu-item>
 
         <a-menu-item
-          key="5"
+          key="9"
           class="globalLogs"
           @click="clickTab('Global Logs')"
         >

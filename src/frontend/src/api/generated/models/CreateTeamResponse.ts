@@ -13,13 +13,13 @@
  */
 
 /**
- * Response for creating a new Plugin.
+ * Response for creating a new Team.
  * @export
  * @interface CreateTeamResponse
  */
 export interface CreateTeamResponse {
   /**
-   * The id of the new Plugin.
+   * The id of the new Team.
    * @type {number}
    * @memberof CreateTeamResponse
    */

@@ -66,7 +66,7 @@ describe('UserListView.vue', () => {
     const icon = wrapper.findComponent(PlusOutlined);
     expect(icon.exists()).toBe(true);
 
-    expect(wrapper.text()).toContain('Create New User');
+    expect(wrapper.text()).toContain('Create User');
 
     expect(wrapper.text()).toContain('maxmuster1');
     expect(wrapper.text()).toContain('maxmuster2');

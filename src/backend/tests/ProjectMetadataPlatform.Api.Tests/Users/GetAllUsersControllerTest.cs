@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -49,10 +48,22 @@ public class GetAllUsersControllerTest
                 Email = "Kunz",
                 IsActive = true,
                 IsScimProvisioned = false,
-                Company = "Appsfactory",
-                Departments = ["Design", "QA"],
-                BusinessUnits = ["Health"],
-                Teams = [new Team { TeamName = "Team", BusinessUnit = "Health" }],
+                Company = new() { CompanyName = "Appsfactory" },
+                Departments =
+                [
+                    new() { DepartmentName = "Design" },
+                    new() { DepartmentName = "QA" },
+                ],
+                BusinessUnits = [new() { BusinessUnitName = "Health" }],
+                Teams =
+                [
+                    new Team
+                    {
+                        TeamName = "Team",
+                        BusinessUnit = new() { BusinessUnitName = "Health" },
+                        BusinessUnitId = 1,
+                    },
+                ],
                 TeamSupport = [],
             },
         };
@@ -65,7 +76,7 @@ public class GetAllUsersControllerTest
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var response = (okResult.Value as GetUsersResponse);
+        var response = okResult.Value as GetUsersResponse;
 
         Assert.That(response, Is.Not.Null);
         Assert.Multiple(() =>

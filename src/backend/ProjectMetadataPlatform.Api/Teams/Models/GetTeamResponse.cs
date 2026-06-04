@@ -1,3 +1,5 @@
+﻿using ProjectMetadataPlatform.Api.BusinessUnits.Models;
+
 namespace ProjectMetadataPlatform.Api.Teams.Models;
 
 /// <summary>
@@ -18,7 +20,7 @@ public class GetTeamResponse
     /// <summary>
     /// Gets or sets the business unit associated with the team. This property is required.
     /// </summary>
-    public required string BusinessUnit { get; set; }
+    public required GetBusinessUnitResponse BusinessUnit { get; set; }
 
     /// <summary>
     /// Gets or sets the PTL associated with the team. This property is optional.

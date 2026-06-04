@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Users;
 
@@ -20,9 +21,14 @@ public class Team
     public required string TeamName { get; set; }
 
     /// <summary>
-    /// Gets or sets the business unit associated with the team. This property is required.
+    /// Gets or sets the business unit associated with the team.
     /// </summary>
-    public required string BusinessUnit { get; set; }
+    public BusinessUnit? BusinessUnit { get; set; }
+
+    /// <summary>
+    /// Gets or Sets the Id of the Business Unit associated with the team.
+    /// </summary>
+    public required int BusinessUnitId { get; set; }
 
     /// <summary>
     /// Gets or sets the PTL associated with the team.

@@ -100,7 +100,7 @@
           <template #icon>
             <PlusOutlined />
           </template>
-          <span>Create New Team</span>
+          <span>Create Team</span>
         </a-menu-item>
         <a-menu-item
           v-for="team in teamData"

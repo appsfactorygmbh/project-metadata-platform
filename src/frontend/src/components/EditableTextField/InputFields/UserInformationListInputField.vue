@@ -29,6 +29,10 @@
       type: String,
       required: true,
     },
+    options: {
+      type: Array as PropType<string[]>,
+      required: true,
+    },
   });
 
   const userStore = useUserStore();
@@ -139,6 +143,13 @@
         @paste="handlePaste"
         @search="onSearch"
       >
+        <a-select-option
+          v-for="option in options ?? []"
+          :key="option"
+          :value="option"
+        >
+          {{ option }}
+        </a-select-option>
       </a-select>
     </a-form-item>
   </a-form>

@@ -14,7 +14,6 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Auth.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Domain.Auth;
-using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 
 namespace ProjectMetadataPlatform.IntegrationTests.Utilities;
@@ -67,6 +66,11 @@ public class IntegrationTestsBase : IDisposable
         var allEntitiesUsers = platformDbContext
             .Users.Where(user => user.Email != "admin@admin.admin")
             .ToList();
+        var allEntitiesCompanies = platformDbContext.Companies.ToList();
+        var allEntitiesDepartments = platformDbContext.Departments.ToList();
+        var allEntitiesBusinessUnits = platformDbContext.BusinessUnits.ToList();
+        var allEntitiesOfficeLocations = platformDbContext.OfficeLocations.ToList();
+
         platformDbContext.Plugins.RemoveRange(allEntitiesPlugins);
         platformDbContext.Projects.RemoveRange(allEntitiesProjects);
         platformDbContext.ProjectPluginsRelation.RemoveRange(allEntitiesProjectsPlugins);
@@ -75,6 +79,10 @@ public class IntegrationTestsBase : IDisposable
         platformDbContext.ApiTokens.RemoveRange(allEntitiesApiTokens);
         platformDbContext.Teams.RemoveRange(allEntitiesTeams);
         platformDbContext.Users.RemoveRange(allEntitiesUsers);
+        platformDbContext.Companies.RemoveRange(allEntitiesCompanies);
+        platformDbContext.Departments.RemoveRange(allEntitiesDepartments);
+        platformDbContext.BusinessUnits.RemoveRange(allEntitiesBusinessUnits);
+        platformDbContext.OfficeLocations.RemoveRange(allEntitiesOfficeLocations);
 
         await platformDbContext.SaveChangesAsync();
     }

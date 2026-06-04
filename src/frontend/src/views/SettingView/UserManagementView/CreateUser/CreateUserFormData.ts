@@ -10,5 +10,6 @@ export type CreateUserFormData = {
   departments: string[];
   businessUnits: string[];
   company: string | undefined;
+  officeLocation: string | undefined;
   inputsDisabled: boolean;
 };

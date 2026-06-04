@@ -144,7 +144,7 @@
       pluginList: updatedPluginList.value,
       isArchived: projectStore.getProject.isArchived,
       offerId: updateProjectInformation?.offerId,
-      company: updateProjectInformation?.company,
+      companyId: updateProjectInformation?.companyId,
       companyState: updateProjectInformation?.companyState,
       ismsLevel: updateProjectInformation?.ismsLevel,
       notes: updateProjectInformation?.notes,
@@ -247,9 +247,11 @@
     justify-content: center;
     padding-top: 10vh;
   }
+
   .LocalLog {
     margin: 2em 3.5em 2em 3em;
   }
+
   .addPlugin {
     margin-bottom: 60px;
   }

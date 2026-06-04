@@ -136,9 +136,9 @@ public class UserManagement : IntegrationTestsBase
         );
 
         errorResponse.Message.Should().Be("The team with name Team was not found.");
-
+        var buId = await CreateBusinessUnit(client, "Health");
         await ToJsonElement(
-            client.PutAsJsonAsync("/Teams", new { TeamName = "Team", BusinessUnit = "Health" }),
+            client.PutAsJsonAsync("/Teams", new { TeamName = "Team", BusinessUnitId = buId }),
             HttpStatusCode.Created
         );
 
@@ -512,5 +512,20 @@ public class UserManagement : IntegrationTestsBase
 
         // Assert
         errorResponse.Message.Should().Be("The user 10 was not found.");
+    }
+
+    private static async Task<int> CreateBusinessUnit(HttpClient client, string name)
+    {
+        return (
+            await ToJsonElement(
+                client.PutAsync(
+                    "/BusinessUnits",
+                    StringContent($"{{ \"businessUnitName\": \"{name}\"}}")
+                ),
+                HttpStatusCode.Created
+            )
+        )
+            .GetProperty("id")
+            .GetInt32();
     }
 }

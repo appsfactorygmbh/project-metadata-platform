@@ -17,6 +17,11 @@ import {
   GetTeamResponseFromJSON,
   GetTeamResponseToJSON,
 } from './GetTeamResponse';
+import type { GetCompanyResponse } from './GetCompanyResponse';
+import {
+  GetCompanyResponseFromJSON,
+  GetCompanyResponseToJSON,
+} from './GetCompanyResponse';
 import type { SecurityLevel } from './SecurityLevel';
 import { SecurityLevelFromJSON, SecurityLevelToJSON } from './SecurityLevel';
 
@@ -51,11 +56,11 @@ export interface GetProjectsResponse {
    */
   clientName: string;
   /**
-   * The company associated with the project.
-   * @type {string}
+   *
+   * @type {GetCompanyResponse}
    * @memberof GetProjectsResponse
    */
-  company: string;
+  company: GetCompanyResponse;
   /**
    * If the project is archived or not.
    * @type {boolean}
@@ -118,7 +123,7 @@ export function GetProjectsResponseFromJSONTyped(
     slug: json['slug'],
     projectName: json['projectName'],
     clientName: json['clientName'],
-    company: json['company'],
+    company: GetCompanyResponseFromJSON(json['company']),
     isArchived: json['isArchived'],
     team:
       json['team'] == null ? undefined : GetTeamResponseFromJSON(json['team']),
@@ -144,7 +149,7 @@ export function GetProjectsResponseToJSONTyped(
     slug: value['slug'],
     projectName: value['projectName'],
     clientName: value['clientName'],
-    company: value['company'],
+    company: GetCompanyResponseToJSON(value['company']),
     isArchived: value['isArchived'],
     team: GetTeamResponseToJSON(value['team']),
     ismsLevel: SecurityLevelToJSON(value['ismsLevel']),

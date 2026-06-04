@@ -48,7 +48,9 @@
       setApiTokenId(String(apiTokenStore.getApiToken?.id));
     }
     await apiTokenStore?.fetchAll();
-    await apiTokenStore?.fetchApiToken(Number(routerApiTokenId.value));
+    if (routerApiTokenId.value) {
+      await apiTokenStore?.fetchApiToken(Number(routerApiTokenId.value));
+    }
     selectedKeys.value = [routerApiTokenId.value];
   });
 </script>
@@ -75,7 +77,7 @@
           <template #icon>
             <PlusOutlined />
           </template>
-          <span>Create New API-Token</span>
+          <span>Create API-Token</span>
         </a-menu-item>
         <a-menu-item
           v-for="ApiToken in tokensData"

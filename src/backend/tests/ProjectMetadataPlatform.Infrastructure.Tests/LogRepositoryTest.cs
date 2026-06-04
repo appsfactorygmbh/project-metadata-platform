@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Errors.LogExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Users;
@@ -72,6 +75,7 @@ public class LogRepositoryTest : TestsWithDatabase
             ProjectName = "Example Project",
             Slug = "example_project",
             ClientName = "Example Client",
+            CompanyId = 1,
         };
         await _context.Projects.AddAsync(exampleProject);
 
@@ -411,6 +415,7 @@ public class LogRepositoryTest : TestsWithDatabase
             ProjectName = "Example Project",
             Slug = "example_project",
             ClientName = "Example Client",
+            CompanyId = 1,
         };
         await _context.Projects.AddAsync(exampleProject);
 
@@ -579,6 +584,182 @@ public class LogRepositoryTest : TestsWithDatabase
         );
     }
 
+    [TestCase(Action.ADDED_USER)]
+    [TestCase(Action.UPDATED_USER)]
+    [TestCase(Action.REMOVED_USER)]
+    [TestCase(Action.ADDED_PROJECT)]
+    [TestCase(Action.ADDED_PROJECT_PLUGIN)]
+    [TestCase(Action.UPDATED_PROJECT)]
+    [TestCase(Action.UPDATED_PROJECT_PLUGIN)]
+    [TestCase(Action.REMOVED_PROJECT_PLUGIN)]
+    [TestCase(Action.ARCHIVED_PROJECT)]
+    [TestCase(Action.UNARCHIVED_PROJECT)]
+    [TestCase(Action.REMOVED_PROJECT)]
+    public async Task CompanyLogTest_RejectsActionNotInWhitelist(Action action)
+    {
+        var author = new ApplicationUser
+        {
+            EmployeeId = "123",
+            Id = "42",
+            Email = "camo",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
+        await _context.Users.AddAsync(author);
+
+        var company = new Company { CompanyName = "Test" };
+        await _context.Companies.AddAsync(company);
+
+        await _context.SaveChangesAsync();
+
+        var logChanges = new List<LogChange>
+        {
+            new()
+            {
+                OldValue = "in storage",
+                NewValue = "installed",
+                Property = "status",
+            },
+        };
+
+        Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+            _loggingRepository.AddCompanyLogForCurrentActor(company, action, logChanges)
+        );
+    }
+
+    [TestCase(Action.ADDED_USER)]
+    [TestCase(Action.UPDATED_USER)]
+    [TestCase(Action.REMOVED_USER)]
+    [TestCase(Action.ADDED_PROJECT)]
+    [TestCase(Action.ADDED_PROJECT_PLUGIN)]
+    [TestCase(Action.UPDATED_PROJECT)]
+    [TestCase(Action.UPDATED_PROJECT_PLUGIN)]
+    [TestCase(Action.REMOVED_PROJECT_PLUGIN)]
+    [TestCase(Action.ARCHIVED_PROJECT)]
+    [TestCase(Action.UNARCHIVED_PROJECT)]
+    [TestCase(Action.REMOVED_PROJECT)]
+    public async Task DepartmentLogTest_RejectsActionNotInWhitelist(Action action)
+    {
+        var author = new ApplicationUser
+        {
+            EmployeeId = "123",
+            Id = "42",
+            Email = "camo",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
+        await _context.Users.AddAsync(author);
+
+        var department = new Department { DepartmentName = "Test" };
+        await _context.Departments.AddAsync(department);
+
+        await _context.SaveChangesAsync();
+
+        var logChanges = new List<LogChange>
+        {
+            new()
+            {
+                OldValue = "in storage",
+                NewValue = "installed",
+                Property = "status",
+            },
+        };
+
+        Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+            _loggingRepository.AddDepartmentLogForCurrentActor(department, action, logChanges)
+        );
+    }
+
+    [TestCase(Action.ADDED_USER)]
+    [TestCase(Action.UPDATED_USER)]
+    [TestCase(Action.REMOVED_USER)]
+    [TestCase(Action.ADDED_PROJECT)]
+    [TestCase(Action.ADDED_PROJECT_PLUGIN)]
+    [TestCase(Action.UPDATED_PROJECT)]
+    [TestCase(Action.UPDATED_PROJECT_PLUGIN)]
+    [TestCase(Action.REMOVED_PROJECT_PLUGIN)]
+    [TestCase(Action.ARCHIVED_PROJECT)]
+    [TestCase(Action.UNARCHIVED_PROJECT)]
+    [TestCase(Action.REMOVED_PROJECT)]
+    public async Task OfficeLocationLogTest_RejectsActionNotInWhitelist(Action action)
+    {
+        var author = new ApplicationUser
+        {
+            EmployeeId = "123",
+            Id = "42",
+            Email = "camo",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
+        await _context.Users.AddAsync(author);
+
+        var officeLocation = new OfficeLocation { OfficeLocationName = "Test" };
+        await _context.OfficeLocations.AddAsync(officeLocation);
+
+        await _context.SaveChangesAsync();
+
+        var logChanges = new List<LogChange>
+        {
+            new()
+            {
+                OldValue = "in storage",
+                NewValue = "installed",
+                Property = "status",
+            },
+        };
+
+        Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+            _loggingRepository.AddOfficeLocationLogForCurrentActor(
+                officeLocation,
+                action,
+                logChanges
+            )
+        );
+    }
+
+    [TestCase(Action.ADDED_USER)]
+    [TestCase(Action.UPDATED_USER)]
+    [TestCase(Action.REMOVED_USER)]
+    [TestCase(Action.ADDED_PROJECT)]
+    [TestCase(Action.ADDED_PROJECT_PLUGIN)]
+    [TestCase(Action.UPDATED_PROJECT)]
+    [TestCase(Action.UPDATED_PROJECT_PLUGIN)]
+    [TestCase(Action.REMOVED_PROJECT_PLUGIN)]
+    [TestCase(Action.ARCHIVED_PROJECT)]
+    [TestCase(Action.UNARCHIVED_PROJECT)]
+    [TestCase(Action.REMOVED_PROJECT)]
+    public async Task BusinessUnitLogTest_RejectsActionNotInWhitelist(Action action)
+    {
+        var author = new ApplicationUser
+        {
+            EmployeeId = "123",
+            Id = "42",
+            Email = "camo",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
+        await _context.Users.AddAsync(author);
+
+        var businessUnit = new BusinessUnit { BusinessUnitName = "Test" };
+        await _context.BusinessUnits.AddAsync(businessUnit);
+
+        await _context.SaveChangesAsync();
+
+        var logChanges = new List<LogChange>
+        {
+            new()
+            {
+                OldValue = "in storage",
+                NewValue = "installed",
+                Property = "status",
+            },
+        };
+
+        Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+            _loggingRepository.AddBusinessUnitLogForCurrentActor(businessUnit, action, logChanges)
+        );
+    }
+
     [Test]
     public async Task GetLogsForProject_Test()
     {
@@ -608,6 +789,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "example_project",
             ClientName = "Example Client",
             Logs = [exampleLog],
+            CompanyId = 1,
         };
         exampleLog.Project = exampleProject;
 
@@ -640,6 +822,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "example_project",
             ClientName = "Example Client",
             Logs = null,
+            CompanyId = 1,
         };
         await _context.Projects.AddAsync(exampleProject);
         await _context.SaveChangesAsync();
@@ -678,6 +861,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "example_project",
             ClientName = "Example Client",
             Logs = [exampleLog1],
+            CompanyId = 1,
         };
 
         var exampleLog2 = new Log
@@ -706,6 +890,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "another_project",
             ClientName = "Example Client",
             Logs = [exampleLog2],
+            CompanyId = 1,
         };
         await _context.Projects.AddAsync(exampleProject1);
         await _context.Projects.AddAsync(exampleProject2);
@@ -745,6 +930,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "example_project",
             ClientName = "Example Client",
             Logs = [exampleLog1],
+            CompanyId = 1,
         };
 
         var exampleLog2 = new Log
@@ -773,6 +959,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "another_project",
             ClientName = "Example Client",
             Logs = [exampleLog2],
+            CompanyId = 1,
         };
         await _context.Projects.AddAsync(exampleProject1);
         await _context.Projects.AddAsync(exampleProject2);
@@ -823,6 +1010,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "example_project",
             ClientName = "Example Client",
             Logs = [exampleLog1],
+            CompanyId = 1,
         };
 
         var exampleLog2 = new Log
@@ -851,6 +1039,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Slug = "another_project",
             ClientName = "Example Client",
             Logs = [exampleLog2],
+            CompanyId = 1,
         };
         await _context.Projects.AddAsync(exampleProject1);
         await _context.Projects.AddAsync(exampleProject2);
