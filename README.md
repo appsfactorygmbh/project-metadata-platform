@@ -66,12 +66,13 @@ This project supports User Provisioning via SCIM. The following user scheme with
 | externalId                                                              | Employee Number/Id | Matching precedence: 1; required |
 | userName                                                                | Email              | Matching precedence: 2; required |
 | active                                                                  | IsActive           | required                         |
-| urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:organization | Company            |                                  |
+| addresses[type eq "work"].locality          | OfficeLocation       |  Creates new Office Location if it doesn't exist already                                | 
+| urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:organization | Company            | creates new Company if it doesn't exist already                                 |
 | urn:ietf:params:scim:schemas:extension:pmp:User:teamSupport             | TeamSupport        | checks for existing team         |
 | urn:ietf:params:scim:schemas:extension:pmp:User:team                    | Teams              | checks for existing team         |
 | urn:ietf:params:scim:schemas:extension:pmp:User:jobTitles               | JobTitles          |                                  |
-| urn:ietf:params:scim:schemas:extension:pmp:User:businessUnits           | BusinessUnits      |                                  |
-| urn:ietf:params:scim:schemas:extension:pmp:User:departments             | Departments        |                                  |
+| urn:ietf:params:scim:schemas:extension:pmp:User:businessUnits           | BusinessUnits      |     creates new Business Units if they don't exist already                             |
+| urn:ietf:params:scim:schemas:extension:pmp:User:departments             | Departments        |    creates new Departments if they don't exist already                              |
 
 ## Appsfactory “Metadata Platform” Backend
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=alert_status&token=0c6013f6d8cd878e6d2e9736839f77872d3b5d8e)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
