@@ -299,19 +299,18 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
             migrationBuilder.Sql(
                 @"
+
     INSERT INTO ""Companies"" (""CompanyName"")
-    SELECT DISTINCT ""Company"" FROM ""Projects""
-    WHERE ""Company"" IS NOT NULL
-      AND ""Company"" <> ''
-      AND ""Company"" NOT IN (SELECT ""CompanyName"" FROM ""Companies"");
+    SELECT DISTINCT COALESCE(NULLIF(""Company"", ''), 'Unknown Company')
+    FROM ""Projects""
+    WHERE COALESCE(NULLIF(""Company"", ''), 'Unknown Company') NOT IN (SELECT ""CompanyName"" FROM ""Companies"");
+
 
     UPDATE ""Projects""
-    SET ""CompanyId"" = (
-        SELECT ""Id""
-        FROM ""Companies""
-        WHERE ""Companies"".""CompanyName"" = ""Projects"".""Company""
-    );
-"
+    SET ""CompanyId"" = c.""Id""
+    FROM ""Companies"" c
+    WHERE c.""CompanyName"" = COALESCE(NULLIF(""Projects"".""Company"", ''), 'Unknown Company');
+    "
             );
 
             migrationBuilder.Sql(
@@ -334,11 +333,17 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
             migrationBuilder.Sql(
                 @"
-        INSERT INTO ""BusinessUnits"" (""BusinessUnitName"")
-        SELECT DISTINCT ""BusinessUnit"" FROM ""Teams"" WHERE ""BusinessUnit"" IS NOT NULL AND ""BusinessUnit"" <> '';
 
-        UPDATE ""Teams""
-        SET ""BusinessUnitId"" = (SELECT ""Id"" FROM ""BusinessUnits"" WHERE ""BusinessUnits"".""BusinessUnitName"" = ""Teams"".""BusinessUnit"");
+    INSERT INTO ""BusinessUnits"" (""BusinessUnitName"")
+    SELECT DISTINCT COALESCE(NULLIF(""BusinessUnit"", ''), 'Unknown Business Unit')
+    FROM ""Teams""
+    WHERE COALESCE(NULLIF(""BusinessUnit"", ''), 'Unknown Business Unit') NOT IN (SELECT ""BusinessUnitName"" FROM ""BusinessUnits"");
+
+
+    UPDATE ""Teams""
+    SET ""BusinessUnitId"" = bu.""Id""
+    FROM ""BusinessUnits"" bu
+    WHERE bu.""BusinessUnitName"" = COALESCE(NULLIF(""Teams"".""BusinessUnit"", ''), 'Unknown Business Unit');
     "
             );
             if (migrationBuilder.ActiveProvider == "Npgsql.EntityFrameworkCore.PostgreSQL")
