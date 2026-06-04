@@ -71,7 +71,7 @@ describe('ApiTokenListView.vue', () => {
     const icon = wrapper.findComponent(PlusOutlined);
     expect(icon.exists()).toBe(true);
 
-    expect(wrapper.text()).toContain('Create New API-Token');
+    expect(wrapper.text()).toContain('Create API-Token');
 
     expect(wrapper.text()).toContain('Token1');
     expect(wrapper.text()).toContain('Token2');

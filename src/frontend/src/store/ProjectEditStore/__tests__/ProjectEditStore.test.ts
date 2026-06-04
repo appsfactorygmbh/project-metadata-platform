@@ -3,6 +3,7 @@ import { useProjectEditStore } from '../ProjectEditStore';
 import { createPinia, setActivePinia } from 'pinia';
 import type { PluginEditModel, PluginModel } from '../../../models/Plugin';
 import type { DetailedProjectModel } from '@/models/Project';
+import type { EditProjectModel } from '@/models/Project/EditProjectModel';
 
 describe('ProjectEditStore', () => {
   let store: ReturnType<typeof useProjectEditStore>;
@@ -19,7 +20,7 @@ describe('ProjectEditStore', () => {
       clientName: '',
       teamId: null,
       offerId: '',
-      company: '',
+      companyId: 0,
       ismsLevel: 'NORMAL',
       companyState: 'EXTERNAL',
       notes: '',
@@ -120,7 +121,7 @@ describe('ProjectEditStore', () => {
       clientName: '',
       teamId: null,
       offerId: '',
-      company: '',
+      companyId: 0,
       ismsLevel: 'NORMAL',
       companyState: 'EXTERNAL',
       notes: '',
@@ -148,7 +149,7 @@ describe('ProjectEditStore', () => {
       slug: '',
       isArchived: false,
       offerId: 'Offer1',
-      company: 'Test Firma',
+      company: { id: 1, companyName: "Test Company" },
       ismsLevel: 'VERY_HIGH',
       companyState: 'EXTERNAL',
       team: undefined,
@@ -161,7 +162,7 @@ describe('ProjectEditStore', () => {
       projectName: 'Test Project',
       clientName: 'Test Client',
       offerId: 'Offer1',
-      company: 'Test Firma',
+      companyId: 2,
       ismsLevel: 'VERY_HIGH',
       companyState: 'EXTERNAL',
       notes: '',
@@ -175,7 +176,7 @@ describe('ProjectEditStore', () => {
       team: undefined,
       isArchived: false,
       offerId: 'Offer1',
-      company: 'Test Firma',
+      company: { id: 1, companyName: "Test Company" },
       ismsLevel: 'VERY_HIGH',
       companyState: 'EXTERNAL',
       notes: '',
@@ -209,17 +210,14 @@ describe('ProjectEditStore', () => {
   });
   // Add test to check for updating project information
   it('updates project information correctly', () => {
-    const project: DetailedProjectModel = {
-      id: 1,
+    const project: EditProjectModel = {
       projectName: 'Test Project',
       clientName: 'Test Client',
-      team: undefined,
-      isArchived: false,
+      teamId: undefined,
       offerId: 'Offer1',
-      company: 'Test Firma',
-      ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
-      companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
-      slug: 'test_project',
+      companyId: 3,
+      ismsLevel: 'VERY_HIGH',
+      companyState: 'EXTERNAL',
       notes: 'TestNotes',
     };
     store.updateProjectInformationChanges(project);
@@ -235,29 +233,26 @@ describe('ProjectEditStore', () => {
       team: undefined,
       isArchived: false,
       offerId: 'Offer1',
-      company: 'New Firma',
+      company: { id: 1, companyName: "Test Company" },
       ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
       companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
       notes: 'Initial notes',
     };
     store.setProjectInformation(projectInfo);
-    expect(store.projectInformationChanges).toEqual(projectInfo);
+    expect(store.projectInformationChanges).toEqual({ ...projectInfo, companyId: 1, teamId: undefined });
     expect(store.emptyProjectInformationFields.size).toBe(0);
   });
 
   it('updates project information changes correctly', () => {
     const store = useProjectEditStore();
-    const updatedProjectInfo: DetailedProjectModel = {
-      id: 1,
+    const updatedProjectInfo: EditProjectModel = {
       projectName: 'Updated Project',
       clientName: 'Updated Client',
-      team: undefined,
-      isArchived: false,
+      teamId: undefined,
       offerId: 'Offer1',
-      company: 'Test Firma',
+      companyId: 1,
       ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
       companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
-      slug: 'updated_project',
       notes: 'Updated notes',
     };
     store.updateProjectInformationChanges(updatedProjectInfo);

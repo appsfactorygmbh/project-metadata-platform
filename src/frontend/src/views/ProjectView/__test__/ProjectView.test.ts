@@ -62,14 +62,15 @@ const testProject: DetailedProjectModel = {
   projectName: 'Test Project',
   clientName: 'Test Client',
   team: {
-    businessUnit: 'Test Business Unit',
+    businessUnit: { id: 2, businessUnitName: 'Test Business Unit' },
     id: 1,
     teamName: '1',
+    ptl: 'Max Mustermann'
   },
   isArchived: false,
   slug: 'test_project',
   offerId: '1',
-  company: 'AppsFactory',
+  company:  { id: 2, companyName: 'Appsfactory' },
   companyState: 'EXTERNAL',
   ismsLevel: 'HIGH',
   notes: 'Test Notes',

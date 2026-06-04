@@ -24,8 +24,6 @@ describe('CreateTeamView.vue', () => {
   };
 
   it('renders correctly', () => {
-    const inputFields = ['Team Name', 'Business Unit', 'PTL'];
-
     wrapper = mount(CreateTeamView, {
       global: {
         provide: {
@@ -38,11 +36,13 @@ describe('CreateTeamView.vue', () => {
     const formItems = wrapper.findAllComponents(FormItem);
     expect(formItems).toHaveLength(3);
 
-    for (let i = 0; i < formItems.length; i++) {
-      expect(formItems[i].find('input').attributes('placeholder')).toBe(
-        inputFields[i],
-      );
-    }
+
+    expect(formItems[0].find('input').attributes('placeholder')).toBe('Team Name');
+
+
+    expect(formItems[1].find('.ant-select-selection-placeholder').text()).toBe('Business Unit');
+
+    expect(formItems[2].find('input').attributes('placeholder')).toBe('PTL');
   });
 
   it('verifies a valid team name correctly', async () => {
@@ -50,7 +50,7 @@ describe('CreateTeamView.vue', () => {
       {
         id: 1,
         teamName: 'Test Name',
-        businessUnit: 'Bu Test',
+        businessUnit: { id: 1, businessUnitName: 'Bu Test' },
       },
     ];
 
@@ -88,7 +88,7 @@ describe('CreateTeamView.vue', () => {
       {
         id: 1,
         teamName: 'Test Name',
-        businessUnit: 'Bu Test',
+        businessUnit: { id: 1, businessUnitName: 'Bu Test' },
       },
     ];
 
@@ -121,9 +121,7 @@ describe('CreateTeamView.vue', () => {
     ).toBe(true);
   });
 
-  it('submits the form correctly', async () => {
-    const testData = ['Test Team', 'Test BU', 'Test PTL'];
-
+it('submits the form correctly', async () => {
     const teamStore = useTeamStore();
     const formStore = useFormStore('CreateTeamForm');
     const createSpy = vi
@@ -132,6 +130,9 @@ describe('CreateTeamView.vue', () => {
 
     wrapper = mount(CreateTeamView, {
       global: {
+        stubs: {
+          contextHolder: true,
+        },
         provide: {
           [teamStoreSymbol as symbol]: teamStore,
           [teamRoutingSymbol as symbol]: mockTeamRoutingService,
@@ -141,19 +142,25 @@ describe('CreateTeamView.vue', () => {
 
     const formInputs = wrapper.findAllComponents(FormItem);
 
-    for (let i = 0; i < formInputs.length; i++) {
-      await formInputs[i].find('.ant-input').setValue(testData[i]);
-    }
+await formInputs[0].find('.ant-input').setValue('Test Team');
+
+
+    const selectComponent = wrapper.findComponent({ name: 'ASelect' });
+
+    await selectComponent.vm.$emit('update:value', 1);
+
+
+    await formInputs[2].find('.ant-input').setValue('Test PTL');
+
     await flushPromises();
 
     await formStore.submit();
     await flushPromises();
 
     expect(createSpy).toHaveBeenCalled();
-
     expect(createSpy).toHaveBeenCalledWith({
       teamName: 'Test Team',
-      businessUnit: 'Test BU',
+      businessUnitId: 1,
       ptl: 'Test PTL',
     });
   });

@@ -65,7 +65,7 @@ describe('TeamListView.vue', () => {
     const icon = wrapper.findComponent(PlusOutlined);
     expect(icon.exists()).toBe(true);
 
-    expect(wrapper.text()).toContain('Create New Team');
+    expect(wrapper.text()).toContain('Create Team');
 
     expect(wrapper.text()).toContain('Team1');
     expect(wrapper.text()).toContain('Team2');
