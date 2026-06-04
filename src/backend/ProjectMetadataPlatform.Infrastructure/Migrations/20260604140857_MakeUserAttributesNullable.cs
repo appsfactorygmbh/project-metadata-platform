@@ -12,11 +12,13 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_AspNetUsers_Companies_CompanyId",
-                table: "AspNetUsers");
+                table: "AspNetUsers"
+            );
 
             migrationBuilder.DropForeignKey(
                 name: "FK_AspNetUsers_OfficeLocations_OfficeLocationId",
-                table: "AspNetUsers");
+                table: "AspNetUsers"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AspNetUsers_Companies_CompanyId",
@@ -24,7 +26,8 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                 column: "CompanyId",
                 principalTable: "Companies",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.SetNull);
+                onDelete: ReferentialAction.SetNull
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AspNetUsers_OfficeLocations_OfficeLocationId",
@@ -32,7 +35,8 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                 column: "OfficeLocationId",
                 principalTable: "OfficeLocations",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.SetNull);
+                onDelete: ReferentialAction.SetNull
+            );
         }
 
         /// <inheritdoc />
@@ -40,25 +44,29 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_AspNetUsers_Companies_CompanyId",
-                table: "AspNetUsers");
+                table: "AspNetUsers"
+            );
 
             migrationBuilder.DropForeignKey(
                 name: "FK_AspNetUsers_OfficeLocations_OfficeLocationId",
-                table: "AspNetUsers");
+                table: "AspNetUsers"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AspNetUsers_Companies_CompanyId",
                 table: "AspNetUsers",
                 column: "CompanyId",
                 principalTable: "Companies",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AspNetUsers_OfficeLocations_OfficeLocationId",
                 table: "AspNetUsers",
                 column: "OfficeLocationId",
                 principalTable: "OfficeLocations",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
         }
     }
 }
