@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-alpine AS frontend_build
+FROM node:26-alpine AS frontend_build
 
 ARG BUILD_ENV=production
 
