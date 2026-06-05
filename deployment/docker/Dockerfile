@@ -22,7 +22,7 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backend_build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS backend_build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY --chown=app ["src/backend/ProjectMetadataPlatform.Api/ProjectMetadataPlatform.Api.csproj", "ProjectMetadataPlatform.Api/"]
