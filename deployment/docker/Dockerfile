@@ -16,7 +16,7 @@ RUN rm -rf node_modules && yarn install --immutable
 COPY src/frontend .
 RUN yarn build --mode $BUILD_ENV
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
