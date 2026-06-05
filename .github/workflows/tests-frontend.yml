@@ -192,7 +192,7 @@ jobs:
       - name: Install Cypress Binary
         run: npx cypress install
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           start: yarn preview --host 127.0.0.1 --port 8080
           wait-on: "http://127.0.0.1:8080"
