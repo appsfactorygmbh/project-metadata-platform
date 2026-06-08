@@ -13,6 +13,9 @@ updates:
       - "dependencies"
       - "github-actions"
     open-pull-requests-limit: 10
+    groups:
+      actions-minor-patch:
+        update-types: ["minor", "patch"]
   - package-ecosystem: "nuget"
     directory: "/src/backend"
     schedule:
@@ -22,6 +25,9 @@ updates:
       - "backend"
       - "dotnet"
     open-pull-requests-limit: 50
+    groups:
+      actions-minor-patch:
+        update-types: ["minor", "patch"]
   - package-ecosystem: "npm"
     directory: "/src/frontend"
     schedule:
@@ -31,6 +37,9 @@ updates:
       - "frontend"
       - "vue"
     open-pull-requests-limit: 100
+    groups:
+      actions-minor-patch:
+        update-types: ["minor", "patch"]
   - package-ecosystem: "docker"
     directory: "/deployment/docker"
     schedule:
@@ -39,3 +48,6 @@ updates:
       - "dependencies"
       - "docker"
     open-pull-requests-limit: 10
+    groups:
+      actions-minor-patch:
+        update-types: ["minor", "patch"]
