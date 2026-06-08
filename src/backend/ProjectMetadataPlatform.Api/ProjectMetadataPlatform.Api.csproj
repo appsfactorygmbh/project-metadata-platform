@@ -21,7 +21,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Resilience" Version="9.9.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.*" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.7" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.8" />
         <PackageReference
             Include="OpenTelemetry.Instrumentation.EntityFrameworkCore"
             Version="1.15.1-beta.1"
