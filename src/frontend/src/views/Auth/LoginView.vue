@@ -33,7 +33,8 @@
       .catch((error) => {
         console.error(error);
         if (axios.isAxiosError(error))
-          feedbackMessage.value = error.response?.data.message || 'An error occurred';
+          feedbackMessage.value =
+            error.response?.data.message || 'An error occurred';
         formStore.updateField('password', '');
       });
   };
