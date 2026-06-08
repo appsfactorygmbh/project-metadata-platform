@@ -17,6 +17,6 @@
             Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"
             Version="8.0.*"
         />
-        <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.*" />
+        <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="10.0.*" />
     </ItemGroup>
 </Project>
