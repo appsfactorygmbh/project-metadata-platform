@@ -7,7 +7,8 @@
   import { useAuth } from 'vue-auth3';
   import axios from 'axios';
   import { useRoute } from 'vue-router';
-  import { msalInstance } from '@/services/msalService';
+  import { msalInstance, msalService } from '@/services/msalService';
+  import { BrowserAuthError } from '@azure/msal-browser';
 
   const auth = useAuth();
   const router = useRouter();
@@ -32,7 +33,8 @@
       .catch((error) => {
         console.error(error);
         if (axios.isAxiosError(error))
-          feedbackMessage.value = error.response?.data || 'An error occurred';
+          feedbackMessage.value =
+            error.response?.data.message || 'An error occurred';
         formStore.updateField('password', '');
       });
   };
@@ -50,18 +52,38 @@
   };
 
   onMounted(() => {
-    msalInstance.handleRedirectPromise().then((response) => {
-      if (response && response.account) {
-        msalInstance.setActiveAccount(response.account);
-        return callback();
-      }
-    });
+    msalInstance
+      .handleRedirectPromise()
+      .then((response) => {
+        if (response && response.account) {
+          msalInstance.setActiveAccount(response.account);
+          return callback();
+        }
+      })
+      .catch((error) => {
+        console.warn('MSAL Redirect Error:', error.message);
+        if (error instanceof BrowserAuthError) {
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname,
+          );
+          msalService.getAccessTokenSilent().then((token) => {
+            if (token) return callback();
+          });
+        }
+      });
     auth?.load().then(() => {
       const authCheck = auth.check();
       if (authCheck) return callback();
-      auth.refresh({ data: { refreshToken: refreshToken.value } }).then(() => {
-        return callback();
-      });
+      auth
+        .refresh({ data: { refreshToken: refreshToken.value } })
+        .then(() => {
+          return callback();
+        })
+        .catch((error) => {
+          console.debug('Silent refresh failed, user needs to login', error);
+        });
     });
   });
 
