@@ -11,11 +11,9 @@ export const msalConfig = {
     authority: import.meta.env.VITE_AZURE_AUTHORITY ?? 'AZURE_AUTHORITY', // Replace the placeholder with your tenant info
     redirectUri: window.location.origin + '/login', // Points to window.location.origin. You must register this URI on Microsoft Entra admin center/App Registration.
     postLogoutRedirectUri: '/login', // Indicates the page to navigate after logout.
-    navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
   },
   cache: {
     cacheLocation: 'localStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
-    storeAuthStateInCookie: false,
   },
   system: {
     loggerOptions: {

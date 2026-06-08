@@ -10,12 +10,36 @@ import { appEventBus } from './utils/errors/eventBus';
 import { InvalidRefreshTokenError } from './utils/errors/invalidRefreshTokenError';
 import { authStore } from './store/AuthStore';
 
+// intercepts refresh request when using oidc
+axios.interceptors.request.use((config) => {
+  if (config.url?.endsWith('/Auth/refresh')) {
+    const authHeader = config.headers?.['Authorization']?.toString();
+
+    if (
+      authStore._authMethod === 'oidc' ||
+      authHeader === 'Refresh null' ||
+      authHeader === 'Refresh '
+    ) {
+      const controller = new AbortController();
+      config.signal = controller.signal;
+      controller.abort(
+        'Skipped basic auth refresh because OIDC is active or token is missing.',
+      );
+    }
+  }
+  return config;
+});
+
 // configure the axios client used for the auth handling
 // to emit an event on the global event bus that the auth failed
 // causes redirect to login page (configured in main.ts)
 axios.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
+    if (axios.isCancel(error)) {
+      return Promise.reject(error);
+    }
+
     const config = error.config;
     const response = error.response;
 
@@ -25,9 +49,9 @@ axios.interceptors.response.use(
       authStore._authMethod != 'oidc'
     ) {
       appEventBus.emit('criticalAuthFailure');
-      return new InvalidRefreshTokenError();
+      return Promise.reject(new InvalidRefreshTokenError());
     } else {
-      return error;
+      return Promise.reject(error);
     }
   },
 );
