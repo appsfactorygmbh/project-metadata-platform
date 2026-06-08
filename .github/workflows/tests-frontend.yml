@@ -179,7 +179,7 @@ jobs:
           cache-dependency-path: "src/frontend/yarn.lock"
 
       - name: Cache Cypress Binary
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/Cypress
           key: cypress-${{ runner.os }}-${{ hashFiles('src/frontend/yarn.lock') }}
