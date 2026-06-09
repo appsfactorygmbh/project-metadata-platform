@@ -33,7 +33,7 @@ export interface LogsGetRequest {
 export interface LogsApiInterface {
   /**
    *
-   * @summary Retrieves log entries based on the specified project ID and search criteria.  Filters are optional and can *not* be used in combination.  if multiple filters are used, the first one will be used.  projectId > search > userId > globalPluginId
+   * @summary Retrieves log entries based on the specified project ID and search criteria. Filters are optional and can *not* be used in combination. if multiple filters are used, the first one will be used. projectId > search > userId > globalPluginId
    * @param {number} [projectId] The ID of the project to filter logs by.
    * @param {string} [search] The search term to filter logs by.
    * @param {string} [userId] The ID of the affected user to filter logs by.
@@ -49,7 +49,7 @@ export interface LogsApiInterface {
   ): Promise<runtime.ApiResponse<Array<LogResponse>>>;
 
   /**
-   * Retrieves log entries based on the specified project ID and search criteria.  Filters are optional and can *not* be used in combination.  if multiple filters are used, the first one will be used.  projectId > search > userId > globalPluginId
+   * Retrieves log entries based on the specified project ID and search criteria. Filters are optional and can *not* be used in combination. if multiple filters are used, the first one will be used. projectId > search > userId > globalPluginId
    */
   logsGet(
     requestParameters: LogsGetRequest,
@@ -62,7 +62,7 @@ export interface LogsApiInterface {
  */
 export class LogsApi extends runtime.BaseAPI implements LogsApiInterface {
   /**
-   * Retrieves log entries based on the specified project ID and search criteria.  Filters are optional and can *not* be used in combination.  if multiple filters are used, the first one will be used.  projectId > search > userId > globalPluginId
+   * Retrieves log entries based on the specified project ID and search criteria. Filters are optional and can *not* be used in combination. if multiple filters are used, the first one will be used. projectId > search > userId > globalPluginId
    */
   async logsGetRaw(
     requestParameters: LogsGetRequest,
@@ -113,7 +113,7 @@ export class LogsApi extends runtime.BaseAPI implements LogsApiInterface {
   }
 
   /**
-   * Retrieves log entries based on the specified project ID and search criteria.  Filters are optional and can *not* be used in combination.  if multiple filters are used, the first one will be used.  projectId > search > userId > globalPluginId
+   * Retrieves log entries based on the specified project ID and search criteria. Filters are optional and can *not* be used in combination. if multiple filters are used, the first one will be used. projectId > search > userId > globalPluginId
    */
   async logsGet(
     requestParameters: LogsGetRequest = {},

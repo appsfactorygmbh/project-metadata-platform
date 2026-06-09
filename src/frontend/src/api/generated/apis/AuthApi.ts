@@ -46,10 +46,6 @@ export interface AuthBasicPostRequest {
   loginRequest?: LoginRequest;
 }
 
-export interface AuthRefreshGetRequest {
-  authorization?: string;
-}
-
 /**
  * AuthApi - interface
  *
@@ -183,13 +179,11 @@ export interface AuthApiInterface {
   /**
    *
    * @summary Returns a new access token using the given refresh token.
-   * @param {string} [authorization] Refresh Token header in the format \&#39;Refresh refreshToken\&#39;
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof AuthApiInterface
    */
   authRefreshGetRaw(
-    requestParameters: AuthRefreshGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<LoginResponse>>;
 
@@ -197,7 +191,6 @@ export interface AuthApiInterface {
    * Returns a new access token using the given refresh token.
    */
   authRefreshGet(
-    requestParameters: AuthRefreshGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<LoginResponse>;
 }
@@ -507,18 +500,11 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
    * Returns a new access token using the given refresh token.
    */
   async authRefreshGetRaw(
-    requestParameters: AuthRefreshGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<LoginResponse>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
-
-    if (requestParameters['authorization'] != null) {
-      headerParameters['Authorization'] = String(
-        requestParameters['authorization'],
-      );
-    }
 
     if (this.configuration && this.configuration.apiKey) {
       headerParameters['Authorization'] =
@@ -544,13 +530,9 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
    * Returns a new access token using the given refresh token.
    */
   async authRefreshGet(
-    requestParameters: AuthRefreshGetRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<LoginResponse> {
-    const response = await this.authRefreshGetRaw(
-      requestParameters,
-      initOverrides,
-    );
+    const response = await this.authRefreshGetRaw(initOverrides);
     return await response.value();
   }
 }

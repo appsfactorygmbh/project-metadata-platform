@@ -35,6 +35,7 @@ export interface ProjectsGetRequest {
   businessUnit?: Array<string>;
   teamName?: Array<string>;
   isArchived?: boolean;
+  isEoC?: boolean;
   company?: Array<string>;
   ismsLevel?: SecurityLevel;
   search?: string;
@@ -97,6 +98,7 @@ export interface ProjectsApiInterface {
    * @param {Array<string>} [businessUnit] Optional. A list of business units to filter the projects by.
    * @param {Array<string>} [teamName] Optional. A list of team names to filter the projects by.
    * @param {boolean} [isArchived] Optional. The archival status of the projects to filter by.
+   * @param {boolean} [isEoC] Optional. If the project is an Engineer on Call project.
    * @param {Array<string>} [company] Optional. A list of companies to filter the projects by.
    * @param {SecurityLevel} [ismsLevel] Optional. The ISMS level to filter the projects by.
    * @param {string} [search] Search string to filter the projects by.
@@ -364,6 +366,10 @@ export class ProjectsApi
 
     if (requestParameters['isArchived'] != null) {
       queryParameters['IsArchived'] = requestParameters['isArchived'];
+    }
+
+    if (requestParameters['isEoC'] != null) {
+      queryParameters['IsEoC'] = requestParameters['isEoC'];
     }
 
     if (requestParameters['company'] != null) {
