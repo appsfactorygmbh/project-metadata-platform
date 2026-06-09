@@ -149,12 +149,12 @@
       :width="318"
     >
       <!-- return to homepage button-->
-      <a-layout-header class="listHeader" />
-      <FloatingButtonGroup
-        class="backButton"
-        :buttons="[backButton]"
-      ></FloatingButtonGroup>
-
+      <div class="listHeader">
+        <FloatingButtonGroup
+          class="backButton"
+          :buttons="[backButton]"
+        ></FloatingButtonGroup>
+      </div>
       <!-- navigation elements -->
       <a-menu
         v-model:selected-keys="selectedKeys"
