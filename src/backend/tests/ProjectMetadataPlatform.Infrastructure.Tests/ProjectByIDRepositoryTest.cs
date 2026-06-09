@@ -20,6 +20,12 @@ public class ProjectByIdRepositoryTest : TestsWithDatabase
         ClearData(_context);
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        _context?.Dispose();
+    }
+
     [Test]
     public void GetProjectByIDAsync_NonexistentProject()
     {

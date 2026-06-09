@@ -22,6 +22,12 @@ public class CompaniesRepositoryTests : TestsWithDatabase
         ClearData(_context);
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        _context?.Dispose();
+    }
+
     private ProjectMetadataPlatformDbContext _context;
     private CompanyRepository _repository;
 

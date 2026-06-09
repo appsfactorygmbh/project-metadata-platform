@@ -28,6 +28,12 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
         ClearData(_context);
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        _context?.Dispose();
+    }
+
     [Test]
     public async Task GetApiTokens_EmptyResponseTest()
     {
