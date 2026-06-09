@@ -22,6 +22,12 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
         ClearData(_context);
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        _context?.Dispose();
+    }
+
     private ProjectMetadataPlatformDbContext _context;
     private DepartmentRepository _repository;
 

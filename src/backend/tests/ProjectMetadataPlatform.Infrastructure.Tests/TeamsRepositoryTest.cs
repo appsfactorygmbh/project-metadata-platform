@@ -22,6 +22,12 @@ public class TeamsRepositoryTests : TestsWithDatabase
         ClearData(_context);
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        _context?.Dispose();
+    }
+
     private ProjectMetadataPlatformDbContext _context;
     private TeamRepository _repository;
 

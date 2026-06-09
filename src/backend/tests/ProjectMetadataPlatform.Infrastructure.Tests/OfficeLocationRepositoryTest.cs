@@ -22,6 +22,12 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
         ClearData(_context);
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        _context?.Dispose();
+    }
+
     private ProjectMetadataPlatformDbContext _context;
     private OfficeLocationRepository _repository;
 

@@ -41,6 +41,7 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
         using var context = DbContext();
 
         context.Database.EnsureDeleted();
+        _context?.Dispose();
     }
 
     [Test]

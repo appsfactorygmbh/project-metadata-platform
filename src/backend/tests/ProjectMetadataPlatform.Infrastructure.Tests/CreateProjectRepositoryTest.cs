@@ -27,6 +27,12 @@ public class CreateProjectRepositoryTest : TestsWithDatabase
         ClearData(_context);
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        _context?.Dispose();
+    }
+
     [Test]
     public async Task CreateProject_Test()
     {

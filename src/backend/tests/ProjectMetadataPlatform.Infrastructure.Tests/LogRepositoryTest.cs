@@ -65,6 +65,7 @@ public class LogRepositoryTest : TestsWithDatabase
     public void TearDown()
     {
         ClearData(_context);
+        _context?.Dispose();
     }
 
     [Test]
