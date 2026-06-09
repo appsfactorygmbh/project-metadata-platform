@@ -45,6 +45,8 @@
   const projectRouting = inject(projectRoutingSymbol)!;
   const token = useThemeToken();
 
+  const teamOptions = computed(() => ['No Team', ...teamStore.getTeamNames]);
+
   const editingClass = computed(() => ({
     'editing-mode': isEditing.value,
   }));
@@ -234,7 +236,10 @@
 
   // Function to update the project information
   function updateProjectInformation(): void {
-    const mappedTeamId = teamStore.getIdToName(teamNameInput.value);
+    const mappedTeamId =
+      teamNameInput.value === 'No Team'
+        ? undefined
+        : teamStore.getIdToName(teamNameInput.value);
     const mappedCompanyId = companyStore.getIdToName(companyNameInput.value);
     const updatedProject: EditProjectModel = {
       projectName: projectNameInput.value,
@@ -586,7 +591,7 @@
             :column-name="'TeamName'"
             :input-value="teamNameInput"
             :input-status="'error'"
-            :options="teamStore.getTeamNames"
+            :options="teamOptions"
             :edit-store="projectEditStore"
             :is-editing="isEditing"
             @updated="

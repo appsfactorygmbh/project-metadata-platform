@@ -261,7 +261,7 @@
 
   /**
    * Links the deleting status witch the comparison betwenn the plugin that
-   * is deleted and the corresponding plugin to the button
+   * is deleted and the corresponding plugin to the button++
    * @param itemId Id of the plugin, that belongs to the button
    * @returns True, if the store is deleting and the item id is one of the deleting plugins
    */
@@ -287,6 +287,8 @@
     background-color: v-bind('token.colorBgElevated');
     border: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: 95%;
   }
 
   .list-items {
@@ -305,6 +307,7 @@
     width: max-content;
     margin: 0 auto;
   }
+
   .text {
     color: v-bind('token.colorText');
   }
