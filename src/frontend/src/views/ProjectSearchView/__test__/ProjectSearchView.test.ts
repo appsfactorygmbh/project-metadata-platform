@@ -95,6 +95,7 @@ describe('ProjectSearchView.vue', () => {
       slug: 'test-project',
       company: { id: 1, companyName: 'test' },
       ismsLevel: 'NORMAL',
+      isEoC: false,
       notes: 'Test Notes',
     };
 

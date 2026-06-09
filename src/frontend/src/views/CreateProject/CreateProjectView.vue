@@ -57,6 +57,7 @@
     isArchived: false,
     teamId: undefined,
     companyId: 0,
+    isEoC: false,
     notes: '',
   });
 
@@ -125,6 +126,7 @@
       companyId: formState.companyId,
       companyState: formState.companyState,
       ismsLevel: formState.ismsLevel,
+      isEoC: formState.isEoC,
       notes: formState.notes ?? '',
     };
 
@@ -336,6 +338,13 @@
               >{{ team.teamName }}</a-select-option
             >
           </a-select>
+        </a-form-item>
+        <a-form-item name="ismsLevel" :rules="[{ required: true }]">
+          <a-checkbox
+            v-model:checked="formState.isEoC"
+            class="custom-color-switch"
+            >Is Engineer on Call project?</a-checkbox
+          >
         </a-form-item>
         <a-form-item name="notes" :rules="[{ required: false }]">
           <a-textarea

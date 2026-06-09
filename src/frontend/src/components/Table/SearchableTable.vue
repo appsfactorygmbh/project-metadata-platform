@@ -320,15 +320,25 @@
     <template #bodyCell="{ text, record, column }">
       <a-flex style="justify-content: center; flex-wrap: wrap; gap: 0.5em">
         {{ text }}
+
         <a-tag
           v-if="(column as SearchableColumn).hasTags"
-          style="margin-right: auto"
           :color="
             (column as SearchableColumn).getTagColor?.(record) || 'default'
           "
         >
           {{ record.ismsLevel.replace('_', ' ') }}
         </a-tag>
+        <a-tag
+          v-if="(column as SearchableColumn).hasTags && record.isEoC"
+          color="blue"
+        >
+          EoC
+        </a-tag>
+        <div
+          v-if="(column as SearchableColumn).hasTags"
+          style="margin-right: auto"
+        />
       </a-flex>
     </template>
   </a-table>

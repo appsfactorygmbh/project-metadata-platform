@@ -81,6 +81,7 @@ describe('ProjectPlugins', () => {
       company: { id: 1, companyName: 'AppsFactory' },
       companyState: 'EXTERNAL',
       ismsLevel: 'HIGH',
+      isEoC: false,
       notes: 'Test Notes',
     };
 
@@ -99,6 +100,7 @@ describe('ProjectPlugins', () => {
       company: { id: 1, companyName: 'AppsFactory' },
       companyState: 'EXTERNAL',
       ismsLevel: 'HIGH',
+      isEoC: false,
       notes: 'Test Notes',
     };
 

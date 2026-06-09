@@ -6,6 +6,7 @@ import { EditOutlined } from '@ant-design/icons-vue';
 import {
   localLogStoreSymbol,
   projectEditStoreSymbol,
+  projectRoutingSymbol,
   projectStoreSymbol,
   teamStoreSymbol,
 } from '@/store/injectionSymbols';
@@ -73,6 +74,7 @@ const testProject: DetailedProjectModel = {
   company: { id: 2, companyName: 'Appsfactory' },
   companyState: 'EXTERNAL',
   ismsLevel: 'HIGH',
+  isEoC: false,
   notes: 'Test Notes',
 };
 
@@ -98,6 +100,10 @@ const pinia = createTestingPinia({
 
 describe('ProjectView.vue', () => {
   const generateWrapper = () => {
+    const mockRouterProjectId = computed(() => {
+      const id = router.currentRoute.value.query.projectId;
+      return id ? Number(id) : undefined;
+    });
     return mount(ProjectView, {
       global: {
         provide: {
@@ -105,6 +111,13 @@ describe('ProjectView.vue', () => {
           [projectEditStoreSymbol as symbol]: useProjectEditStore(),
           [teamStoreSymbol as symbol]: useTeamStore(),
           [projectStoreSymbol as symbol]: useProjectStore(),
+          [projectRoutingSymbol as symbol]: {
+            routerProjectId: mockRouterProjectId,
+            routerProjectSlug: computed(
+              () => router.currentRoute.value.params.projectSlug || undefined,
+            ),
+            setProjectId: vi.fn(),
+          },
         },
         plugins: [router, pinia],
       },
