@@ -43,7 +43,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     {
         using var context = DbContext();
 
-        context.Database.EnsureDeleted();
+        _ = context.Database.EnsureDeleted();
 
         _context?.Dispose();
     }
@@ -54,7 +54,7 @@ public class UsersRepositoryTest : TestsWithDatabase
         const string email = "test";
         const string password = "test";
 
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
             .ReturnsAsync(
                 new ApplicationUser
@@ -65,7 +65,7 @@ public class UsersRepositoryTest : TestsWithDatabase
                     IsScimProvisioned = false,
                 }
             );
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(true);
 
@@ -79,7 +79,7 @@ public class UsersRepositoryTest : TestsWithDatabase
         const string email = "test";
         const string password = "test";
 
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
             .ReturnsAsync(
                 new ApplicationUser
@@ -90,7 +90,7 @@ public class UsersRepositoryTest : TestsWithDatabase
                     IsScimProvisioned = false,
                 }
             );
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(false);
 
@@ -110,7 +110,7 @@ public class UsersRepositoryTest : TestsWithDatabase
             IsScimProvisioned = false,
         };
         const string password = "test";
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
         var id = await _repository.CreateUserAsync(user, password);
@@ -120,7 +120,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void CreateUserAsync_InvalidPassword_Test()
     {
-        _context.Users.Add(
+        _ = _context.Users.Add(
             new ApplicationUser
             {
                 EmployeeId = "Id",
@@ -138,11 +138,11 @@ public class UsersRepositoryTest : TestsWithDatabase
             IsScimProvisioned = false,
         };
         const string password = "test";
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed());
 
-        Assert.ThrowsAsync<UserCouldNotBeCreatedException>(() =>
+        _ = Assert.ThrowsAsync<UserCouldNotBeCreatedException>(() =>
             _repository.CreateUserAsync(user, password)
         );
     }
@@ -150,7 +150,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void CreateUserAsync_DuplicateEmail_Test()
     {
-        _context.Users.Add(
+        _ = _context.Users.Add(
             new ApplicationUser
             {
                 EmployeeId = "Id1",
@@ -168,7 +168,7 @@ public class UsersRepositoryTest : TestsWithDatabase
             IsScimProvisioned = false,
         };
         const string password = "test";
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateUserName" }));
 
@@ -202,7 +202,7 @@ public class UsersRepositoryTest : TestsWithDatabase
         };
 
         _context.Users.AddRange(usersResponseContent);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var result = (await _repository.GetUsersAsync("")).ToList();
 
@@ -238,7 +238,7 @@ public class UsersRepositoryTest : TestsWithDatabase
         };
 
         _context.Users.AddRange(usersResponseContent);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var result = (await _repository.GetUsersAsync("externalId eq \"Id\"")).ToList();
 
@@ -274,7 +274,7 @@ public class UsersRepositoryTest : TestsWithDatabase
         };
 
         _context.Users.AddRange(usersResponseContent);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var result = (await _repository.GetUsersAsync("userName eq \"Hanz\"")).ToList();
 
@@ -298,7 +298,7 @@ public class UsersRepositoryTest : TestsWithDatabase
             IsScimProvisioned = false,
         };
         _context.Users.AddRange(user);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var result = await _repository.GetUserByIdAsync("Id");
 
@@ -314,10 +314,10 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void GetUserByIdAsync_NonexistentUser_Test()
     {
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.FindByIdAsync("1"))
             .ThrowsAsync(new UserNotFoundException("1"));
-        Assert.ThrowsAsync<UserNotFoundException>(() => _repository.GetUserByIdAsync("1"));
+        _ = Assert.ThrowsAsync<UserNotFoundException>(() => _repository.GetUserByIdAsync("1"));
     }
 
     [Test]
@@ -331,8 +331,8 @@ public class UsersRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        _ = _context.Users.Add(user);
+        _ = await _context.SaveChangesAsync();
         var result = await _repository.GetUserByEmailAsync("bigboss@bankofevil.com");
         Assert.That(result, Is.EqualTo(user));
     }
@@ -340,11 +340,11 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void GetUserByEmailAsync_NotFound_Test()
     {
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
             .ThrowsAsync(new UserNotFoundException("1"));
 
-        Assert.ThrowsAsync<UserNotFoundException>(() => _repository.GetUserByEmailAsync("1"));
+        _ = Assert.ThrowsAsync<UserNotFoundException>(() => _repository.GetUserByEmailAsync("1"));
     }
 
     [Test]
@@ -358,7 +358,7 @@ public class UsersRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Success);
         var result = await _repository.StoreUser(user);
@@ -379,7 +379,7 @@ public class UsersRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.UpdateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Success);
         var result = await _repository.StoreUser(user);
@@ -392,7 +392,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public void StoreUserAsync_Create_DuplicateEmail_Test()
     {
-        _context.Users.Add(
+        _ = _context.Users.Add(
             new ApplicationUser
             {
                 EmployeeId = "Id",
@@ -410,17 +410,17 @@ public class UsersRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateUserName" }));
 
-        Assert.ThrowsAsync<UserAlreadyExistsException>(() => _repository.StoreUser(user));
+        _ = Assert.ThrowsAsync<UserAlreadyExistsException>(() => _repository.StoreUser(user));
     }
 
     [Test]
     public void StoreUserAsync_Update_DuplicateEmail_Test()
     {
-        _context.Users.Add(
+        _ = _context.Users.Add(
             new ApplicationUser
             {
                 EmployeeId = "Id",
@@ -438,11 +438,11 @@ public class UsersRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.UpdateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateUserName" }));
 
-        Assert.ThrowsAsync<UserAlreadyExistsException>(() => _repository.StoreUser(user));
+        _ = Assert.ThrowsAsync<UserAlreadyExistsException>(() => _repository.StoreUser(user));
     }
 
     [Test]
@@ -455,8 +455,8 @@ public class UsersRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        _mockUserManager.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
-        _mockUserManager.Setup(m => m.DeleteAsync(user)).ReturnsAsync(IdentityResult.Success);
+        _ = _mockUserManager.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
+        _ = _mockUserManager.Setup(m => m.DeleteAsync(user)).ReturnsAsync(IdentityResult.Success);
 
         var result = await _repository.DeleteUserAsync(user);
 
@@ -475,10 +475,12 @@ public class UsersRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        _mockUserManager.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
-        _mockUserManager.Setup(m => m.DeleteAsync(user)).ReturnsAsync(IdentityResult.Failed());
+        _ = _mockUserManager.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
+        _ = _mockUserManager.Setup(m => m.DeleteAsync(user)).ReturnsAsync(IdentityResult.Failed());
 
-        Assert.ThrowsAsync<UserCouldNotBeDeletedException>(() => _repository.DeleteUserAsync(user));
+        _ = Assert.ThrowsAsync<UserCouldNotBeDeletedException>(() =>
+            _repository.DeleteUserAsync(user)
+        );
     }
 
     [Test]
@@ -493,7 +495,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     public void CheckPasswordFormat_Incorrect_Test()
     {
         const string password = "test";
-        Assert.ThrowsAsync<UserInvalidPasswordFormatException>(() =>
+        _ = Assert.ThrowsAsync<UserInvalidPasswordFormatException>(() =>
             _repository.CheckPasswordFormat(password)
         );
     }
@@ -516,8 +518,8 @@ public class UsersRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        _ = _context.Users.Add(user);
+        _ = await _context.SaveChangesAsync();
         const string employeeId = "test11A!!!";
         var result = await _repository.CheckUserExists(employeeId);
         Assert.That(result, Is.True);

@@ -120,7 +120,7 @@ public class PluginRepository : RepositoryBase<Plugin>, IPluginRepository
     /// <returns></returns>
     public Task<bool> DeleteGlobalPlugin(Plugin plugin)
     {
-        _context.Plugins.Remove(plugin);
+        _ = _context.Plugins.Remove(plugin);
 
         return Task.FromResult(true);
     }

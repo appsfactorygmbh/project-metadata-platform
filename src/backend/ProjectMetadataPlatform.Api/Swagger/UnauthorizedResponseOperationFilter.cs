@@ -20,7 +20,7 @@ public class UnauthorizedResponseOperationFilter : IOperationFilter
             is true
         )
         {
-            operation.Responses.Remove("401");
+            _ = operation.Responses.Remove("401");
             return;
         }
 

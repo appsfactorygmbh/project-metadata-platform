@@ -72,7 +72,7 @@ public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUni
     {
         if (!await GetIf(b => b.Id == bu.Id).AnyAsync())
         {
-            _context.BusinessUnits.Add(bu);
+            _ = _context.BusinessUnits.Add(bu);
         }
     }
 
@@ -83,14 +83,14 @@ public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUni
         {
             throw new BusinessUnitNotFoundException(businessUnit.Id);
         }
-        _context.BusinessUnits.Update(businessUnit);
+        _ = _context.BusinessUnits.Update(businessUnit);
         return businessUnit;
     }
 
     /// <inheritdoc/>
     public async Task<BusinessUnit> DeleteBusinessUnitAsync(BusinessUnit businessUnit)
     {
-        _context.BusinessUnits.Remove(businessUnit);
+        _ = _context.BusinessUnits.Remove(businessUnit);
         return await Task.FromResult(businessUnit);
     }
 

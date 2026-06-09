@@ -72,6 +72,7 @@ public class ProjectsController : ControllerBase
                     PTL = project.Team.PTL,
                 },
             IsmsLevel: project.IsmsLevel,
+            IsEoC: project.IsEoC,
             Notes: project.Notes
         ));
         return Ok(response);
@@ -131,6 +132,7 @@ public class ProjectsController : ControllerBase
                     ),
                     PTL = project.Team.PTL,
                 },
+            IsEoC: project.IsEoC,
             IsmsLevel: project.IsmsLevel,
             Notes: project.Notes
         );
@@ -296,6 +298,7 @@ public class ProjectsController : ControllerBase
                             Url = p.Url,
                         })
                         .ToList(),
+                    IsEoC: projectRequest.IsEoC,
                     Notes: projectRequest.Notes
                 )
                 : new UpdateProjectCommand(
@@ -317,6 +320,7 @@ public class ProjectsController : ControllerBase
                         })
                         .ToList(),
                     IsArchived: projectRequest.IsArchived,
+                    IsEoC: projectRequest.IsEoC,
                     Notes: projectRequest.Notes
                 );
 

@@ -37,7 +37,7 @@ public class LoginQueryHandlerTest
         );
         Environment.SetEnvironmentVariable("ACCESS_TOKEN_EXPIRATION_MINUTES", "1");
 
-        _mockUserRepo
+        _ = _mockUserRepo
             .Setup(m => m.CheckLogin(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(true);
         var request = new LoginQuery("username", "password");
@@ -58,14 +58,14 @@ public class LoginQueryHandlerTest
         );
         Environment.SetEnvironmentVariable("ACCESS_TOKEN_EXPIRATION_MINUTES", "1");
 
-        _mockUserRepo
+        _ = _mockUserRepo
             .Setup(m => m.CheckLogin(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(true);
-        _mockRefreshTokenRepo
+        _ = _mockRefreshTokenRepo
             .Setup(m => m.CheckRefreshTokenExists(It.IsAny<string>()))
             .ReturnsAsync(true);
         var request = new LoginQuery("username", "password");
-        await _handler.Handle(request, It.IsAny<CancellationToken>());
+        _ = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
         _mockRefreshTokenRepo.Verify(
             m => m.UpdateRefreshToken(It.IsAny<string>(), It.IsAny<string>()),
@@ -76,12 +76,12 @@ public class LoginQueryHandlerTest
     [Test]
     public void HandleLoginQueryHandler_InvalidLogin_Test()
     {
-        _mockUserRepo
+        _ = _mockUserRepo
             .Setup(m => m.CheckLogin(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(false);
         var request = new LoginQuery("wrong_username", "password");
 
-        Assert.ThrowsAsync<AuthInvalidLoginCredentialsException>(() =>
+        _ = Assert.ThrowsAsync<AuthInvalidLoginCredentialsException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

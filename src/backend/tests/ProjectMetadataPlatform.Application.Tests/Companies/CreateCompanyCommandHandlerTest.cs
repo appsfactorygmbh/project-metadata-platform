@@ -6,7 +6,6 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Companies;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Companies;
-using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
@@ -39,11 +38,11 @@ public class CreateCompanyCommandHandlerTest
     public async Task CreateCompany_NameDoesNotAlreadyExists_WorksFine()
     {
         // Arrange
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.CheckIfCompanyNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.AddCompanyAsync(It.IsAny<Company>()))
             .Callback(
                 (Company companyBeingAdded) =>
@@ -80,7 +79,7 @@ public class CreateCompanyCommandHandlerTest
     public void CreateCompany_NameAlreadyExists_ThrowsCompanyNameAlreadyExistsException()
     {
         // Arrange
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.CheckIfCompanyNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
         // Act + Assert

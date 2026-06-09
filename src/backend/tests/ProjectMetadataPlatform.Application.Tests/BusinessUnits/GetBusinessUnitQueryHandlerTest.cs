@@ -30,7 +30,7 @@ public class GetBusinessUnitQueryHandlerTest
         // Arrange
         var returnBusinessUnit = new BusinessUnit() { Id = 1, BusinessUnitName = "Test_1" };
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
 
@@ -53,7 +53,7 @@ public class GetBusinessUnitQueryHandlerTest
     public void GetBusinessUnit_ThrowBusinessUnitNotFoundException_IfBusinessUnitNotFound()
     {
         // Arrange
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitAsync(It.IsAny<int>()))
             .ThrowsAsync(new BusinessUnitNotFoundException(1));
 

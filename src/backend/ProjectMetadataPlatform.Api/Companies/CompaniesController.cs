@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Companies.Models;
 using ProjectMetadataPlatform.Api.Errors;
-using ProjectMetadataPlatform.Api.Teams.Models;
 using ProjectMetadataPlatform.Application.Companies;
 using ProjectMetadataPlatform.Domain.Auth;
 using GetLinkedProjectsForCompanyResponse = ProjectMetadataPlatform.Api.Companies.Models.GetLinkedProjectsForCompanyResponse;

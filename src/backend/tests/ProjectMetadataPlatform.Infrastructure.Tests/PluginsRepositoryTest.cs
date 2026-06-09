@@ -28,7 +28,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     public void TearDown()
     {
         // Clean up the database after each test
-        _context.Database.EnsureDeleted();
+        _ = _context.Database.EnsureDeleted();
         _context.Dispose();
     }
 
@@ -44,10 +44,10 @@ public class PluginsRepositoryTest : TestsWithDatabase
             CompanyId = 1,
         };
 
-        _context.Projects.Add(project);
+        _ = _context.Projects.Add(project);
 
         var plugin = new Plugin { Id = 1, PluginName = "Gitlab" };
-        _context.Plugins.Add(plugin);
+        _ = _context.Plugins.Add(plugin);
 
         var projectPluginRelation = new ProjectPlugins
         {
@@ -58,8 +58,8 @@ public class PluginsRepositoryTest : TestsWithDatabase
             Url = "gitlab.com",
             DisplayName = "gitlab",
         };
-        _context.Add(projectPluginRelation);
-        await _context.SaveChangesAsync();
+        _ = _context.Add(projectPluginRelation);
+        _ = await _context.SaveChangesAsync();
 
         var rep = await _repository.GetAllPluginsForProjectIdAsync(1);
 
@@ -92,7 +92,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
 
         var pluginOne = await _repository.StorePlugin(pluginMethane);
         var pluginTwo = await _repository.StorePlugin(pluginOxygen);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         Assert.Multiple(() =>
         {
@@ -112,8 +112,8 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ProjectPlugins = [],
             Id = 42,
         };
-        _context.Add(examplePlugin);
-        await _context.SaveChangesAsync();
+        _ = _context.Add(examplePlugin);
+        _ = await _context.SaveChangesAsync();
 
         examplePlugin.PluginName = "Hall Effect Thruster";
 
@@ -136,8 +136,8 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ProjectPlugins = [],
             Id = 42,
         };
-        _context.Add(examplePlugin);
-        await _context.SaveChangesAsync();
+        _ = _context.Add(examplePlugin);
+        _ = await _context.SaveChangesAsync();
 
         var plugin = await _repository.GetPluginByIdAsync(42);
 
@@ -153,7 +153,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public void GetGlobalPluginById_NotFound_Test()
     {
-        Assert.ThrowsAsync<PluginNotFoundException>(() => _repository.GetPluginByIdAsync(42));
+        _ = Assert.ThrowsAsync<PluginNotFoundException>(() => _repository.GetPluginByIdAsync(42));
     }
 
     [Test]
@@ -165,8 +165,8 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ProjectPlugins = [],
             Id = 42,
         };
-        _context.Add(examplePlugin);
-        await _context.SaveChangesAsync();
+        _ = _context.Add(examplePlugin);
+        _ = await _context.SaveChangesAsync();
 
         var plugin = (await _repository.GetGlobalPluginsAsync()).ToList();
 
@@ -227,10 +227,10 @@ public class PluginsRepositoryTest : TestsWithDatabase
             Project = project,
             Url = "archived.com",
         };
-        _context.Projects.Add(project);
+        _ = _context.Projects.Add(project);
         _context.Plugins.AddRange(unarchivedPlugin, archivedPlugin);
         _context.ProjectPluginsRelation.AddRange(projectPluginRelation1, projectPluginRelation2);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var result = await _repository.GetAllUnarchivedPluginsForProjectIdAsync(1);
 
@@ -263,10 +263,10 @@ public class PluginsRepositoryTest : TestsWithDatabase
             Project = project,
             Url = "archived.com",
         };
-        _context.Projects.Add(project);
-        _context.Plugins.Add(archivedPlugin);
-        _context.ProjectPluginsRelation.Add(projectPluginRelation);
-        await _context.SaveChangesAsync();
+        _ = _context.Projects.Add(project);
+        _ = _context.Plugins.Add(archivedPlugin);
+        _ = _context.ProjectPluginsRelation.Add(projectPluginRelation);
+        _ = await _context.SaveChangesAsync();
 
         var result = await _repository.GetAllUnarchivedPluginsForProjectIdAsync(1);
 
@@ -284,8 +284,8 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ClientName = "Test Client", // Make sure this is set
             CompanyId = 1,
         };
-        _context.Projects.Add(project);
-        await _context.SaveChangesAsync();
+        _ = _context.Projects.Add(project);
+        _ = await _context.SaveChangesAsync();
 
         var result = await _repository.GetAllUnarchivedPluginsForProjectIdAsync(1);
 
@@ -317,10 +317,10 @@ public class PluginsRepositoryTest : TestsWithDatabase
             Project = project,
             Url = "archived.com",
         };
-        _context.Projects.Add(project);
-        _context.Plugins.Add(archivedPlugin);
-        _context.ProjectPluginsRelation.Add(projectPluginRelation);
-        await _context.SaveChangesAsync();
+        _ = _context.Projects.Add(project);
+        _ = _context.Plugins.Add(archivedPlugin);
+        _ = _context.ProjectPluginsRelation.Add(projectPluginRelation);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.GetAllUnarchivedPluginsForProjectIdAsync(1);
@@ -368,10 +368,10 @@ public class PluginsRepositoryTest : TestsWithDatabase
             Project = project,
             Url = "archived.com",
         };
-        _context.Projects.Add(project);
+        _ = _context.Projects.Add(project);
         _context.Plugins.AddRange(unarchivedPlugin, archivedPlugin);
         _context.ProjectPluginsRelation.AddRange(projectPluginRelation1, projectPluginRelation2);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var result = await _repository.GetAllUnarchivedPluginsForProjectIdAsync(1);
 
@@ -423,9 +423,9 @@ public class PluginsRepositoryTest : TestsWithDatabase
         };
 
         _context.Projects.AddRange(project1, project2);
-        _context.Plugins.Add(unarchivedPlugin);
+        _ = _context.Plugins.Add(unarchivedPlugin);
         _context.ProjectPluginsRelation.AddRange(projectPluginRelation1, projectPluginRelation2);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var result = await _repository.GetAllUnarchivedPluginsForProjectIdAsync(1);
 
@@ -440,7 +440,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
 
         var ex = Assert.ThrowsAsync<ProjectNotFoundException>(async () =>
         {
-            await _repository.GetAllUnarchivedPluginsForProjectIdAsync(nonExistentProjectId);
+            _ = await _repository.GetAllUnarchivedPluginsForProjectIdAsync(nonExistentProjectId);
         });
 
         Assert.That(ex.Message, Is.EqualTo("The project with id 999 was not found."));
@@ -491,10 +491,10 @@ public class PluginsRepositoryTest : TestsWithDatabase
         };
 
         _context.Projects.AddRange(project1, project2);
-        _context.Plugins.Add(archivedPlugin);
+        _ = _context.Plugins.Add(archivedPlugin);
         _context.ProjectPluginsRelation.AddRange(projectPluginRelation1, projectPluginRelation2);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var returnValDeleteGlobalPlugin = await _repository.DeleteGlobalPlugin(archivedPlugin);
@@ -524,9 +524,9 @@ public class PluginsRepositoryTest : TestsWithDatabase
     public async Task CheckPluginNameExists_Test()
     {
         var plugin = new Plugin { Id = 1, PluginName = "Gitlab" };
-        _context.Plugins.Add(plugin);
+        _ = _context.Plugins.Add(plugin);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var result = await _repository.CheckGlobalPluginNameExists("Gitlab");
 
@@ -545,9 +545,9 @@ public class PluginsRepositoryTest : TestsWithDatabase
     public async Task CheckPluginNameExistsChecksCaseInsentive_Test()
     {
         var plugin = new Plugin { Id = 1, PluginName = "Gitlab" };
-        _context.Plugins.Add(plugin);
+        _ = _context.Plugins.Add(plugin);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var result = await _repository.CheckGlobalPluginNameExists("gitLaB");
 

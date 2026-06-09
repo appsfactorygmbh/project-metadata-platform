@@ -30,7 +30,7 @@ public class GetOfficeLocationQueryHandlerTest
         // Arrange
         var returnOfficeLocation = new OfficeLocation() { Id = 1, OfficeLocationName = "Test_1" };
 
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.GetOfficeLocationAsync(It.IsAny<int>()))
             .ReturnsAsync(returnOfficeLocation);
 
@@ -53,7 +53,7 @@ public class GetOfficeLocationQueryHandlerTest
     public void GetOfficeLocation_ThrowOfficeLocationNotFoundException_IfOfficeLocationNotFound()
     {
         // Arrange
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.GetOfficeLocationAsync(It.IsAny<int>()))
             .ThrowsAsync(new OfficeLocationNotFoundException(1));
 

@@ -13,6 +13,7 @@ namespace ProjectMetadataPlatform.Api.Projects.Models;
 /// <param name="TeamId">The id of the team that should be assigned to the project.</param>
 /// <param name="CompanyState">State of company.</param>
 /// <param name="IsmsLevel">Security Level of project.</param>
+/// <param name="IsEoC">If the project is an Engineer on Call project.</param>
 /// <param name="Notes">Additonal Notes on the project</param>
 /// <param name="PluginList">An optional list of plugins associated to the project.</param>
 /// <param name="IsArchived">Indicates if the project is archived.</param>
@@ -24,6 +25,7 @@ public record PutProjectRequest(
     int? TeamId,
     CompanyState CompanyState,
     SecurityLevel IsmsLevel,
+    bool IsEoC,
     string Notes,
     List<UpdateProjectPluginRequest>? PluginList = null,
     bool IsArchived = false

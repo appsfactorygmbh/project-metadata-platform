@@ -53,7 +53,7 @@ public class DeleteTeamCommandHandler : IRequestHandler<DeleteTeamCommand>
             );
         }
 
-        await _teamRepository.DeleteTeamAsync(teamToDelete);
+        _ = await _teamRepository.DeleteTeamAsync(teamToDelete);
 
         var changes = new List<LogChange>();
 

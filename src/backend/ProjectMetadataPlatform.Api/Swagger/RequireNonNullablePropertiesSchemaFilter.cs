@@ -29,7 +29,7 @@ public class RequireNonNullablePropertiesSchemaFilter : ISchemaFilter
             .ToList();
         foreach (var propKey in additionalRequiredProps)
         {
-            schema.Required.Add(propKey);
+            _ = schema.Required.Add(propKey);
         }
     }
 

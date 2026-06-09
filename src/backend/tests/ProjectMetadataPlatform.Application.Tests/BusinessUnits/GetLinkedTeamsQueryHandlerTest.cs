@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
@@ -51,7 +50,7 @@ public class GetLinkedTeamsQueryHandlerTest
             ],
         };
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitWithTeamsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
 

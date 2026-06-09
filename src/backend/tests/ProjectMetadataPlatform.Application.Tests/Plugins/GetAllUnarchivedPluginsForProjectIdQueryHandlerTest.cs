@@ -58,7 +58,7 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
             },
         };
 
-        _pluginRepositoryMock
+        _ = _pluginRepositoryMock
             .Setup(r => r.GetAllUnarchivedPluginsForProjectIdAsync(1))
             .ReturnsAsync(plugins);
 
@@ -80,7 +80,7 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
     public async Task Handle_WhenNoUnarchivedPluginsExist_ReturnsEmptyList()
     {
         var plugins = new List<ProjectPlugins>(); // No plugins found
-        _pluginRepositoryMock
+        _ = _pluginRepositoryMock
             .Setup(r => r.GetAllUnarchivedPluginsForProjectIdAsync(1))
             .ReturnsAsync(plugins);
 
@@ -99,13 +99,13 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
 
         var query = new GetAllUnarchivedPluginsForProjectIdQuery(1);
 
-        _pluginRepositoryMock
+        _ = _pluginRepositoryMock
             .Setup(r => r.GetAllUnarchivedPluginsForProjectIdAsync(1))
             .ReturnsAsync(new List<ProjectPlugins>());
 
         var ex = Assert.ThrowsAsync<OperationCanceledException>(async () =>
         {
-            await _handler.Handle(query, cancellationTokenSource.Token);
+            _ = await _handler.Handle(query, cancellationTokenSource.Token);
         });
 
         Assert.That(ex, Is.InstanceOf<OperationCanceledException>());
@@ -144,7 +144,7 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
             },
         };
 
-        _pluginRepositoryMock
+        _ = _pluginRepositoryMock
             .Setup(r => r.GetAllUnarchivedPluginsForProjectIdAsync(1))
             .ReturnsAsync(plugins.Where(p => !p.Plugin!.IsArchived).ToList());
 
@@ -158,7 +158,7 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
     [Test]
     public void Handle_WhenProjectDoesNotExist_ThrowsArgumentException()
     {
-        _pluginRepositoryMock
+        _ = _pluginRepositoryMock
             .Setup(r => r.GetAllUnarchivedPluginsForProjectIdAsync(It.IsAny<int>()))
             .ThrowsAsync(new ArgumentException("Project with Id 999 does not exist."));
 
@@ -166,7 +166,7 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
 
         var ex = Assert.ThrowsAsync<ArgumentException>(async () =>
         {
-            await _handler.Handle(query, It.IsAny<CancellationToken>());
+            _ = await _handler.Handle(query, It.IsAny<CancellationToken>());
         });
 
         Assert.That(ex.Message, Is.EqualTo("Project with Id 999 does not exist."));

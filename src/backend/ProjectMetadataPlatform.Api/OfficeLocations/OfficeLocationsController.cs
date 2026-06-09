@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.OfficeLocations.Models;
-using ProjectMetadataPlatform.Api.Teams.Models;
 using ProjectMetadataPlatform.Application.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Auth;
 

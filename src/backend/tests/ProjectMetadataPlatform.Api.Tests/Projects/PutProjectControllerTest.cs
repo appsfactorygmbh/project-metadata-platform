@@ -33,7 +33,7 @@ public class PutProjectControllerTest
     public async Task CreateProject_Test()
     {
         //prepare
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<CreateProjectCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
@@ -45,6 +45,7 @@ public class PutProjectControllerTest
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
+            IsEoC: false,
             PluginList: [new UpdateProjectPluginRequest("Url", "PluginName", 3)],
             Notes: "Example Notes"
         );
@@ -73,6 +74,7 @@ public class PutProjectControllerTest
                     && command.ClientName == "Example Client"
                     && command.CompanyState == CompanyState.EXTERNAL
                     && command.IsmsLevel == SecurityLevel.NORMAL
+                    && !command.IsEoC
                     && command.Plugins.Single().PluginId == 3
                     && command.Plugins.Single().Url == "Url"
                     && command.Plugins.Single().DisplayName == "PluginName"
@@ -87,7 +89,7 @@ public class PutProjectControllerTest
     public async Task CreateProjectWithNullProjectPluginList()
     {
         //prepare
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<CreateProjectCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         var request = new PutProjectRequest(
@@ -98,10 +100,11 @@ public class PutProjectControllerTest
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
+            IsEoC: true,
             Notes: "Example Notes"
         );
 
-        await _controller.Put(request);
+        _ = await _controller.Put(request);
         _mediator.Verify(mediator =>
             mediator.Send(
                 It.Is<CreateProjectCommand>(command =>
@@ -112,6 +115,7 @@ public class PutProjectControllerTest
                     && command.CompanyId == 1
                     && command.CompanyState == CompanyState.EXTERNAL
                     && command.IsmsLevel == SecurityLevel.NORMAL
+                    && command.IsEoC
                     && command.Notes == "Example Notes"
                 ),
                 It.IsAny<CancellationToken>()
@@ -123,7 +127,7 @@ public class PutProjectControllerTest
     public async Task UpdateProjectWithNullProjectPluginList()
     {
         //prepare
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<UpdateProjectCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         var request = new PutProjectRequest(
@@ -134,9 +138,10 @@ public class PutProjectControllerTest
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
+            IsEoC: false,
             Notes: "Example Notes"
         );
-        await _controller.Put(request, 1);
+        _ = await _controller.Put(request, 1);
         _mediator.Verify(mediator =>
             mediator.Send(
                 It.Is<UpdateProjectCommand>(command =>
@@ -147,6 +152,7 @@ public class PutProjectControllerTest
                     && command.CompanyId == 1
                     && command.CompanyState == CompanyState.EXTERNAL
                     && command.IsmsLevel == SecurityLevel.NORMAL
+                    && !command.IsEoC
                     && command.Notes == "Example Notes"
                 ),
                 It.IsAny<CancellationToken>()
@@ -165,6 +171,7 @@ public class PutProjectControllerTest
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
+            IsEoC: false,
             Notes: ""
         );
 
@@ -175,7 +182,7 @@ public class PutProjectControllerTest
     [Test]
     public void CreateProject_BadRequestTest_SlugAlreadyExists()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<CreateProjectCommand>(), It.IsAny<CancellationToken>())
             )
@@ -189,16 +196,17 @@ public class PutProjectControllerTest
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
+            IsEoC: false,
             Notes: "Example Notes"
         );
 
-        Assert.ThrowsAsync<ProjectSlugAlreadyExistsException>(() => _controller.Put(request));
+        _ = Assert.ThrowsAsync<ProjectSlugAlreadyExistsException>(() => _controller.Put(request));
     }
 
     [Test]
     public void CreateProject_MediatorThrowsInvalidOperationExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<CreateProjectCommand>(), It.IsAny<CancellationToken>())
             )
@@ -211,16 +219,17 @@ public class PutProjectControllerTest
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
+            IsEoC: false,
             Notes: "Example Notes"
         );
 
-        Assert.ThrowsAsync<InvalidOperationException>(() => _controller.Put(request));
+        _ = Assert.ThrowsAsync<InvalidOperationException>(() => _controller.Put(request));
     }
 
     [Test]
     public void CreateProject_MediatorThrowsOtherExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<CreateProjectCommand>(), It.IsAny<CancellationToken>())
             )
@@ -234,16 +243,17 @@ public class PutProjectControllerTest
             TeamId: null,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
+            IsEoC: false,
             Notes: "Example Notes"
         );
 
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.Put(request));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Put(request));
     }
 
     [Test]
     public async Task ChangeProjectDataControllerTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<UpdateProjectCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         var request = new PutProjectRequest(
@@ -255,6 +265,7 @@ public class PutProjectControllerTest
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
             PluginList: [new UpdateProjectPluginRequest("Url", "PluginName", 3)],
+            IsEoC: false,
             Notes: "Example Notes"
         );
         var result = await _controller.Put(request, 1);
@@ -298,7 +309,7 @@ public class PutProjectControllerTest
     [Test]
     public async Task UpdateProject_IsArchivedFlag_Test()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<UpdateProjectCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         var request = new PutProjectRequest(
@@ -309,6 +320,7 @@ public class PutProjectControllerTest
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
+            IsEoC: false,
             PluginList: [new UpdateProjectPluginRequest("Url", "PluginName", 3)],
             Notes: "Example Notes",
             IsArchived: true
@@ -339,6 +351,7 @@ public class PutProjectControllerTest
                     && command.CompanyId == 2
                     && command.CompanyState == CompanyState.EXTERNAL
                     && command.IsmsLevel == SecurityLevel.NORMAL
+                    && !command.IsEoC
                     && command.Plugins.Single().PluginId == 3
                     && command.Plugins.Single().Url == "Url"
                     && command.Plugins.Single().DisplayName == "PluginName"
@@ -354,11 +367,11 @@ public class PutProjectControllerTest
     [Test]
     public async Task UpdateProjectWithSlug_Test()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetProjectIdBySlugQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(4);
 
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<UpdateProjectCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         var updateRequest = new PutProjectRequest(
@@ -369,6 +382,7 @@ public class PutProjectControllerTest
             TeamId: 2,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.HIGH,
+            IsEoC: false,
             PluginList: [new UpdateProjectPluginRequest("UpdatedUrl", "UpdatedPluginName", 4)],
             Notes: "Updated Notes"
         );
@@ -396,6 +410,7 @@ public class PutProjectControllerTest
                     && command.OfferId == "Updated OfferId"
                     && command.CompanyId == 1
                     && command.CompanyState == CompanyState.INTERNAL
+                    && !command.IsEoC
                     && command.IsmsLevel == SecurityLevel.HIGH
                     && command.Plugins.Single().PluginId == 4
                     && command.Plugins.Single().Url == "UpdatedUrl"
@@ -410,7 +425,7 @@ public class PutProjectControllerTest
     [Test]
     public void UpdateProjectWithSlug_NotFound_Test()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetProjectIdBySlugQuery>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new ProjectNotFoundException("updatedproject"));
         var updateRequest = new PutProjectRequest(
@@ -421,13 +436,14 @@ public class PutProjectControllerTest
             TeamId: 2,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.HIGH,
+            IsEoC: false,
             PluginList: new List<UpdateProjectPluginRequest>
             {
                 new UpdateProjectPluginRequest("UpdatedUrl", "UpdatedPluginName", 4),
             },
             Notes: "Updated Notes"
         );
-        Assert.ThrowsAsync<ProjectNotFoundException>(() =>
+        _ = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
             _controller.Put(updateRequest, "updatedproject")
         );
     }
@@ -435,11 +451,11 @@ public class PutProjectControllerTest
     [Test]
     public async Task UpdateProjectWithSlug_IsArchivedFlag_Test()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetProjectIdBySlugQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(4);
 
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<UpdateProjectCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         var updateRequest = new PutProjectRequest(
@@ -450,6 +466,7 @@ public class PutProjectControllerTest
             TeamId: 2,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.HIGH,
+            IsEoC: false,
             PluginList: [new UpdateProjectPluginRequest("UpdatedUrl", "UpdatedPluginName", 4)],
             Notes: "Updated Notes",
             IsArchived: true

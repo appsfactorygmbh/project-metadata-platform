@@ -34,10 +34,10 @@ public class RefreshTokenQueryHandlerTest
         );
         Environment.SetEnvironmentVariable("ACCESS_TOKEN_EXPIRATION_MINUTES", "1");
 
-        _mockRefreshTokenRepo
+        _ = _mockRefreshTokenRepo
             .Setup(m => m.CheckRefreshTokenRequest(It.IsAny<string>()))
             .ReturnsAsync(true);
-        _mockRefreshTokenRepo
+        _ = _mockRefreshTokenRepo
             .Setup(m => m.GetEmailByRefreshToken(It.IsAny<string>()))
             .ReturnsAsync("admin");
         var request = new RefreshTokenQuery("refreshToken");
@@ -50,12 +50,12 @@ public class RefreshTokenQueryHandlerTest
     [Test]
     public void HandleRefreshTokenQueryHandler_InvalidToken_Test()
     {
-        _mockRefreshTokenRepo
+        _ = _mockRefreshTokenRepo
             .Setup(m => m.CheckRefreshTokenRequest(It.IsAny<string>()))
             .ReturnsAsync(false);
         var request = new RefreshTokenQuery("invalidRefreshToken");
 
-        Assert.ThrowsAsync<AuthInvalidRefreshTokenException>(() =>
+        _ = Assert.ThrowsAsync<AuthInvalidRefreshTokenException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

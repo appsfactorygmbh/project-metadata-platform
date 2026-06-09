@@ -32,7 +32,7 @@ public class GetAllApiTokensQueryHandlerTest
             new ApiToken { Name = "Token1", Token = "TokenHash1" },
             new ApiToken { Name = "Token2", Token = "TokenHash2" },
         ];
-        _apiTokenRepositoryMock.Setup(m => m.GetApiTokens()).ReturnsAsync(tokens);
+        _ = _apiTokenRepositoryMock.Setup(m => m.GetApiTokens()).ReturnsAsync(tokens);
         var request = new GetAllApiTokensQuery();
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 

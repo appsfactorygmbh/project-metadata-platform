@@ -26,6 +26,7 @@ public class ProjectManagement : IntegrationTestsBase
                       ,
                       "companyState": "EXTERNAL",
                       "ismsLevel": "NORMAL",
+                      "isEoC": false,
                       "notes": "Example Notes"
                     }
                 """
@@ -176,28 +177,28 @@ public class ProjectManagement : IntegrationTestsBase
 
         var putResponse = await client.PutAsync("/Projects", CreateRequest(companyId));
 
-        putResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-        putResponse.Headers.Location.Should().NotBeNull();
+        _ = putResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        _ = putResponse.Headers.Location.Should().NotBeNull();
 
         var getResponse = await client.GetAsync(putResponse.Headers.Location);
 
-        getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        _ = getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var getResponseContent = await getResponse.Content.ReadFromJsonAsync<JsonDocument>();
 
         var rootElement = getResponseContent!.RootElement;
-        rootElement.GetProperty("projectName").GetString().Should().Be("testProject");
-        rootElement.GetProperty("clientName").GetString().Should().Be("testClient");
-        rootElement.GetProperty("offerId").GetString().Should().Be("testId");
-        rootElement
+        _ = rootElement.GetProperty("projectName").GetString().Should().Be("testProject");
+        _ = rootElement.GetProperty("clientName").GetString().Should().Be("testClient");
+        _ = rootElement.GetProperty("offerId").GetString().Should().Be("testId");
+        _ = rootElement
             .GetProperty("company")
             .GetProperty("companyName")
             .GetString()
             .Should()
             .Be("testCompany");
-        rootElement.GetProperty("companyState").GetString().Should().Be("EXTERNAL");
-        rootElement.GetProperty("ismsLevel").GetString().Should().Be("NORMAL");
-        rootElement.GetProperty("id").GetInt32().Should().BeGreaterThan(0);
-        rootElement.GetProperty("notes").GetString().Should().Be("Example Notes");
+        _ = rootElement.GetProperty("companyState").GetString().Should().Be("EXTERNAL");
+        _ = rootElement.GetProperty("ismsLevel").GetString().Should().Be("NORMAL");
+        _ = rootElement.GetProperty("id").GetInt32().Should().BeGreaterThan(0);
+        _ = rootElement.GetProperty("notes").GetString().Should().Be("Example Notes");
     }
 
     [Test]
@@ -211,44 +212,44 @@ public class ProjectManagement : IntegrationTestsBase
         // Assert
         var companyId = await CreateCompany(client, "testCompany");
         var putResponse = await client.PutAsync("/Projects", CreateRequest(companyId));
-        putResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        _ = putResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         var companyId2 = await CreateCompany(client, "testCompany2");
         putResponse = await client.PutAsync("/Projects", CreateRequest2(companyId2));
-        putResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        _ = putResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
         var getResponse = await client.GetAsync("/Projects");
 
-        getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        _ = getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var getResponseContent = await getResponse.Content.ReadFromJsonAsync<JsonDocument>();
 
         var rootElement = getResponseContent!.RootElement;
-        rootElement.GetArrayLength().Should().Be(2);
+        _ = rootElement.GetArrayLength().Should().Be(2);
 
         var firstProject = rootElement[0];
-        firstProject.GetProperty("projectName").GetString().Should().Be("testProject");
-        firstProject.GetProperty("clientName").GetString().Should().Be("testClient");
-        firstProject
+        _ = firstProject.GetProperty("projectName").GetString().Should().Be("testProject");
+        _ = firstProject.GetProperty("clientName").GetString().Should().Be("testClient");
+        _ = firstProject
             .GetProperty("company")
             .GetProperty("companyName")
             .GetString()
             .Should()
             .Be("testCompany");
-        firstProject.GetProperty("ismsLevel").GetString().Should().Be("NORMAL");
-        firstProject.GetProperty("notes").GetString().Should().Be("Example Notes");
-        firstProject.GetProperty("id").GetInt32().Should().BeGreaterThan(0);
+        _ = firstProject.GetProperty("ismsLevel").GetString().Should().Be("NORMAL");
+        _ = firstProject.GetProperty("notes").GetString().Should().Be("Example Notes");
+        _ = firstProject.GetProperty("id").GetInt32().Should().BeGreaterThan(0);
 
         var secondProject = rootElement[1];
-        secondProject.GetProperty("projectName").GetString().Should().Be("otherTestProject2");
-        secondProject.GetProperty("clientName").GetString().Should().Be("testClient2");
-        secondProject
+        _ = secondProject.GetProperty("projectName").GetString().Should().Be("otherTestProject2");
+        _ = secondProject.GetProperty("clientName").GetString().Should().Be("testClient2");
+        _ = secondProject
             .GetProperty("company")
             .GetProperty("companyName")
             .GetString()
             .Should()
             .Be("testCompany2");
-        secondProject.GetProperty("ismsLevel").GetString().Should().Be("VERY_HIGH");
-        secondProject.GetProperty("notes").GetString().Should().Be("Example Notes 2");
-        secondProject.GetProperty("id").GetInt32().Should().BeGreaterThan(0);
+        _ = secondProject.GetProperty("ismsLevel").GetString().Should().Be("VERY_HIGH");
+        _ = secondProject.GetProperty("notes").GetString().Should().Be("Example Notes 2");
+        _ = secondProject.GetProperty("id").GetInt32().Should().BeGreaterThan(0);
     }
 
     [Test]
@@ -274,41 +275,41 @@ public class ProjectManagement : IntegrationTestsBase
             $"/Projects?projectId=" + projectId,
             UpdateRequest(companyId2)
         );
-        updateResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-        updateResponse.Headers.Location.Should().NotBeNull();
+        _ = updateResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        _ = updateResponse.Headers.Location.Should().NotBeNull();
 
         var getResponse = await client.GetAsync(updateResponse.Headers.Location);
 
-        getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        _ = getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var getResponseContent = await getResponse.Content.ReadFromJsonAsync<JsonDocument>();
 
         var rootElement = getResponseContent!.RootElement;
-        rootElement.GetProperty("projectName").GetString().Should().Be("testProject");
-        rootElement.GetProperty("clientName").GetString().Should().Be("testClient2");
-        rootElement.GetProperty("offerId").GetString().Should().Be("testId2");
-        rootElement
+        _ = rootElement.GetProperty("projectName").GetString().Should().Be("testProject");
+        _ = rootElement.GetProperty("clientName").GetString().Should().Be("testClient2");
+        _ = rootElement.GetProperty("offerId").GetString().Should().Be("testId2");
+        _ = rootElement
             .GetProperty("company")
             .GetProperty("companyName")
             .GetString()
             .Should()
             .Be("testCompany2");
-        rootElement.GetProperty("companyState").GetString().Should().Be("INTERNAL");
-        rootElement.GetProperty("ismsLevel").GetString().Should().Be("HIGH");
-        rootElement.GetProperty("notes").GetString().Should().Be("testNotes2");
-        rootElement.GetProperty("id").GetInt32().Should().BeGreaterThan(0);
+        _ = rootElement.GetProperty("companyState").GetString().Should().Be("INTERNAL");
+        _ = rootElement.GetProperty("ismsLevel").GetString().Should().Be("HIGH");
+        _ = rootElement.GetProperty("notes").GetString().Should().Be("testNotes2");
+        _ = rootElement.GetProperty("id").GetInt32().Should().BeGreaterThan(0);
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
-        logs.GetArrayLength().Should().Be(4);
+        _ = logs.GetArrayLength().Should().Be(4);
 
-        logs[2]
+        _ = logs[2]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be(
-                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, OfferId = testId, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, Notes = Example Notes"
+                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, OfferId = testId, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = Example Notes"
             );
 
-        logs[0]
+        _ = logs[0]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -341,63 +342,75 @@ public class ProjectManagement : IntegrationTestsBase
 
         var projectPlugins = await ToJsonElement(client.GetAsync($"/Projects/{projectId}/Plugins"));
 
-        projectPlugins.GetArrayLength().Should().Be(2);
-        projectPlugins[0].GetProperty("url").GetString().Should().Be("www.appsfactory.gitlab.com");
-        projectPlugins[0].GetProperty("displayName").GetString().Should().Be("GitLab");
-        projectPlugins[0].GetProperty("pluginName").GetString().Should().Be("GitLab");
-        projectPlugins[1].GetProperty("url").GetString().Should().Be("www.jira.com");
-        projectPlugins[1].GetProperty("displayName").GetString().Should().Be("Jira");
-        projectPlugins[1].GetProperty("pluginName").GetString().Should().Be("Jira");
+        _ = projectPlugins.GetArrayLength().Should().Be(2);
+        _ = projectPlugins[0]
+            .GetProperty("url")
+            .GetString()
+            .Should()
+            .Be("www.appsfactory.gitlab.com");
+        _ = projectPlugins[0].GetProperty("displayName").GetString().Should().Be("GitLab");
+        _ = projectPlugins[0].GetProperty("pluginName").GetString().Should().Be("GitLab");
+        _ = projectPlugins[1].GetProperty("url").GetString().Should().Be("www.jira.com");
+        _ = projectPlugins[1].GetProperty("displayName").GetString().Should().Be("Jira");
+        _ = projectPlugins[1].GetProperty("pluginName").GetString().Should().Be("Jira");
 
         var updateResponse = await client.PutAsync(
             "/Projects?projectId=" + projectId,
             RequestWithPlugins2(companyId, pluginId1, pluginId3)
         );
-        updateResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-        updateResponse.Headers.Location.Should().NotBeNull();
+        _ = updateResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        _ = updateResponse.Headers.Location.Should().NotBeNull();
 
         var project = await ToJsonElement(client.GetAsync(updateResponse.Headers.Location));
 
-        project.GetProperty("projectName").GetString().Should().Be("testProject");
-        project.GetProperty("clientName").GetString().Should().Be("testClient");
-        project.GetProperty("offerId").GetString().Should().Be("testId");
-        project
+        _ = project.GetProperty("projectName").GetString().Should().Be("testProject");
+        _ = project.GetProperty("clientName").GetString().Should().Be("testClient");
+        _ = project.GetProperty("offerId").GetString().Should().Be("testId");
+        _ = project
             .GetProperty("company")
             .GetProperty("companyName")
             .GetString()
             .Should()
             .Be("testCompany");
-        project.GetProperty("companyState").GetString().Should().Be("EXTERNAL");
-        project.GetProperty("ismsLevel").GetString().Should().Be("NORMAL");
-        project.GetProperty("notes").GetString().Should().Be("testNotes");
-        project.GetProperty("id").GetInt32().Should().BeGreaterThan(0);
+        _ = project.GetProperty("companyState").GetString().Should().Be("EXTERNAL");
+        _ = project.GetProperty("ismsLevel").GetString().Should().Be("NORMAL");
+        _ = project.GetProperty("notes").GetString().Should().Be("testNotes");
+        _ = project.GetProperty("id").GetInt32().Should().BeGreaterThan(0);
 
         projectPlugins = await ToJsonElement(client.GetAsync($"/Projects/{projectId}/Plugins"));
 
-        projectPlugins.GetArrayLength().Should().Be(2);
-        projectPlugins[0].GetProperty("url").GetString().Should().Be("www.appsfactory.gitlab.com");
-        projectPlugins[0].GetProperty("displayName").GetString().Should().Be("Appsfactory GitLab");
-        projectPlugins[0].GetProperty("pluginName").GetString().Should().Be("GitLab");
-        projectPlugins[1]
+        _ = projectPlugins.GetArrayLength().Should().Be(2);
+        _ = projectPlugins[0]
+            .GetProperty("url")
+            .GetString()
+            .Should()
+            .Be("www.appsfactory.gitlab.com");
+        _ = projectPlugins[0]
+            .GetProperty("displayName")
+            .GetString()
+            .Should()
+            .Be("Appsfactory GitLab");
+        _ = projectPlugins[0].GetProperty("pluginName").GetString().Should().Be("GitLab");
+        _ = projectPlugins[1]
             .GetProperty("url")
             .GetString()
             .Should()
             .Be("www.appsfactory.confluence.com");
-        projectPlugins[1].GetProperty("displayName").GetString().Should().Be("Confluence");
-        projectPlugins[1].GetProperty("pluginName").GetString().Should().Be("Confluence");
+        _ = projectPlugins[1].GetProperty("displayName").GetString().Should().Be("Confluence");
+        _ = projectPlugins[1].GetProperty("pluginName").GetString().Should().Be("Confluence");
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
-        logs.GetArrayLength().Should().Be(10);
+        _ = logs.GetArrayLength().Should().Be(10);
 
-        logs[5]
+        _ = logs[5]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be(
-                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, OfferId = testId, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, Notes = testNotes"
+                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, OfferId = testId, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = testNotes"
             );
 
-        logs[4]
+        _ = logs[4]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -405,7 +418,7 @@ public class ProjectManagement : IntegrationTestsBase
                 "admin added a new plugin to project testProject with properties: Url = www.appsfactory.gitlab.com, DisplayName = GitLab"
             );
 
-        logs[3]
+        _ = logs[3]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -413,7 +426,7 @@ public class ProjectManagement : IntegrationTestsBase
                 "admin added a new plugin to project testProject with properties: Url = www.jira.com, DisplayName = Jira"
             );
 
-        logs[2]
+        _ = logs[2]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -421,7 +434,7 @@ public class ProjectManagement : IntegrationTestsBase
                 "admin added a new plugin to project testProject with properties: Plugin = Confluence, DisplayName = Confluence, Url = www.appsfactory.confluence.com"
             );
 
-        logs[1]
+        _ = logs[1]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -429,7 +442,7 @@ public class ProjectManagement : IntegrationTestsBase
                 "admin removed a plugin from project testProject with properties: Plugin = Jira, DisplayName = Jira, Url = www.jira.com"
             );
 
-        logs[0]
+        _ = logs[0]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -486,35 +499,35 @@ public class ProjectManagement : IntegrationTestsBase
             .GetInt32();
         var projects = await ToJsonElement(client.GetAsync($"/Projects/"));
         var count = projects.GetArrayLength();
-        await client.PutAsync(
+        _ = await client.PutAsync(
             $"/Projects?projectId=" + projectId,
             UpdateisArchivedRequest(companyId)
         );
 
-        (await client.DeleteAsync($"/Projects/{projectId}"))
+        _ = (await client.DeleteAsync($"/Projects/{projectId}"))
             .StatusCode.Should()
             .Be(HttpStatusCode.NoContent);
 
         var projects2 = await ToJsonElement(client.GetAsync($"/Projects/"));
-        projects2.GetArrayLength().Should().Be(count - 1);
+        _ = projects2.GetArrayLength().Should().Be(count - 1);
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
 
-        logs.GetArrayLength().Should().Be(4);
+        _ = logs.GetArrayLength().Should().Be(4);
 
-        logs[2]
+        _ = logs[2]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be(
-                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, OfferId = testId, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, Notes = Example Notes"
+                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, OfferId = testId, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = Example Notes"
             );
-        logs[1]
+        _ = logs[1]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be("admin archived project testProject");
-        logs[0]
+        _ = logs[0]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -547,7 +560,7 @@ public class ProjectManagement : IntegrationTestsBase
         );
 
         // Assert
-        errorResponse.Message.Should().Be("The Plugins with these ids do not exist: 1, 2");
+        _ = errorResponse.Message.Should().Be("The Plugins with these ids do not exist: 1, 2");
     }
 
     [Test]
@@ -563,7 +576,7 @@ public class ProjectManagement : IntegrationTestsBase
         );
 
         // Assert
-        errorResponse.Message.Should().Be("The Company with id 1 was not found.");
+        _ = errorResponse.Message.Should().Be("The Company with id 1 was not found.");
     }
 
     [Test]
@@ -574,7 +587,7 @@ public class ProjectManagement : IntegrationTestsBase
         await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
         var companyId = await CreateCompany(client, "Test Company");
         // Act
-        (await client.PutAsync("/Projects", CreateRequest(companyId)))
+        _ = (await client.PutAsync("/Projects", CreateRequest(companyId)))
             .StatusCode.Should()
             .Be(HttpStatusCode.Created);
         var errorResponse = await ToErrorResponse(
@@ -583,7 +596,9 @@ public class ProjectManagement : IntegrationTestsBase
         );
 
         // Assert
-        errorResponse.Message.Should().Be("A Project with this slug already exists: testproject");
+        _ = errorResponse
+            .Message.Should()
+            .Be("A Project with this slug already exists: testproject");
     }
 
     [Test]
@@ -609,7 +624,7 @@ public class ProjectManagement : IntegrationTestsBase
         var errorResponse = await ToErrorResponse(responseTask, HttpStatusCode.NotFound);
 
         // Assert
-        errorResponse.Message.Should().Be("The project with id 1 was not found.");
+        _ = errorResponse.Message.Should().Be("The project with id 1 was not found.");
     }
 
     [Test]
@@ -635,7 +650,7 @@ public class ProjectManagement : IntegrationTestsBase
         var errorResponse = await ToErrorResponse(responseTask, HttpStatusCode.NotFound);
 
         // Assert
-        errorResponse.Message.Should().Be("The project with slug testproject was not found.");
+        _ = errorResponse.Message.Should().Be("The project with slug testproject was not found.");
     }
 
     [Test]
@@ -660,6 +675,6 @@ public class ProjectManagement : IntegrationTestsBase
         );
 
         // Assert
-        errorResponse.Message.Should().Be($"The project {projectId} is not archived.");
+        _ = errorResponse.Message.Should().Be($"The project {projectId} is not archived.");
     }
 }

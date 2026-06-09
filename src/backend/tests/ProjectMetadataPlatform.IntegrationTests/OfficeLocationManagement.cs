@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components.RenderTree;
 using NUnit.Framework;
 using ProjectMetadataPlatform.IntegrationTests.Utilities;
 
@@ -43,15 +42,15 @@ public class OfficeLocationManagement : IntegrationTestsBase
 
         var officeLocations = await ToJsonElement(client.GetAsync("/OfficeLocations"));
 
-        officeLocations.GetArrayLength().Should().Be(2);
-        officeLocations[0].GetProperty("id").GetInt32().Should().Be(officeLocationId1);
-        officeLocations[0]
+        _ = officeLocations.GetArrayLength().Should().Be(2);
+        _ = officeLocations[0].GetProperty("id").GetInt32().Should().Be(officeLocationId1);
+        _ = officeLocations[0]
             .GetProperty("officeLocationName")
             .GetString()
             .Should()
             .Be("OfficeLocation1");
-        officeLocations[1].GetProperty("id").GetInt32().Should().Be(officeLocationId2);
-        officeLocations[1]
+        _ = officeLocations[1].GetProperty("id").GetInt32().Should().Be(officeLocationId2);
+        _ = officeLocations[1]
             .GetProperty("officeLocationName")
             .GetString()
             .Should()
@@ -59,16 +58,16 @@ public class OfficeLocationManagement : IntegrationTestsBase
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
 
-        logs.GetArrayLength().Should().Be(2);
+        _ = logs.GetArrayLength().Should().Be(2);
 
-        logs[1]
+        _ = logs[1]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be(
                 "admin added a new office location with properties: OfficeLocationName = OfficeLocation1"
             );
-        logs[0]
+        _ = logs[0]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -96,7 +95,7 @@ public class OfficeLocationManagement : IntegrationTestsBase
             )
         );
 
-        error
+        _ = error
             .Message.Should()
             .Be("A Office Location with the name OfficeLocation1 already exists.");
     }
@@ -116,20 +115,20 @@ public class OfficeLocationManagement : IntegrationTestsBase
             .GetInt32();
         var officeLocations = await ToJsonElement(client.GetAsync("/OfficeLocations"));
 
-        officeLocations.GetArrayLength().Should().Be(1);
-        officeLocations[0].GetProperty("id").GetInt32().Should().Be(officeLocationId1);
-        officeLocations[0]
+        _ = officeLocations.GetArrayLength().Should().Be(1);
+        _ = officeLocations[0].GetProperty("id").GetInt32().Should().Be(officeLocationId1);
+        _ = officeLocations[0]
             .GetProperty("officeLocationName")
             .GetString()
             .Should()
             .Be("OfficeLocation1");
 
-        (await client.DeleteAsync($"/OfficeLocations/{officeLocationId1}"))
+        _ = (await client.DeleteAsync($"/OfficeLocations/{officeLocationId1}"))
             .StatusCode.Should()
             .Be(HttpStatusCode.NoContent);
 
         var officeLocationsAfterDelete = await ToJsonElement(client.GetAsync("/OfficeLocations"));
 
-        officeLocationsAfterDelete.GetArrayLength().Should().Be(0);
+        _ = officeLocationsAfterDelete.GetArrayLength().Should().Be(0);
     }
 }

@@ -33,7 +33,7 @@ public class GetUserByEmailQueryHandlerTest
             IsScimProvisioned = false,
         };
 
-        _mockUserRepo
+        _ = _mockUserRepo
             .Setup(m => m.GetUserByEmailAsync("squidlauncher@bankofevil.com"))
             .ReturnsAsync(user);
 
@@ -56,7 +56,7 @@ public class GetUserByEmailQueryHandlerTest
     [Test]
     public async Task HandleGetUserByEmail_NotFound_Test()
     {
-        _mockUserRepo
+        _ = _mockUserRepo
             .Setup(m => m.GetUserByEmailAsync("Vector"))
             .ReturnsAsync((ApplicationUser)null!);
 

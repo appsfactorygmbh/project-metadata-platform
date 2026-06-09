@@ -7,7 +7,6 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
-using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Domain.Users;
@@ -57,7 +56,7 @@ public class CreateUserCommandHandlerTest
     [Test]
     public async Task CreateUser_Test()
     {
-        _mockTeamRepo
+        _ = _mockTeamRepo
             .SetupSequence(m => m.GetTeamByNameAsync(It.IsAny<string>()))
             .ReturnsAsync(
                 new Team
@@ -75,8 +74,8 @@ public class CreateUserCommandHandlerTest
                     BusinessUnitId = 1,
                 }
             );
-        _mockUnitOfWork.Setup(m => m.CompleteAsync()).Returns(Task.CompletedTask);
-        _mockLogRepo
+        _ = _mockUnitOfWork.Setup(m => m.CompleteAsync()).Returns(Task.CompletedTask);
+        _ = _mockLogRepo
             .Setup(m =>
                 m.AddUserLogForCurrentActor(
                     It.IsAny<ApplicationUser>(),
@@ -123,11 +122,11 @@ public class CreateUserCommandHandlerTest
     [Test]
     public void CreateUser_ThrowsException_Test()
     {
-        _mockUsersRepo
+        _ = _mockUsersRepo
             .Setup(m => m.CreateUserAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ThrowsAsync(new Exception("Error"));
-        _mockUnitOfWork.Setup(m => m.CompleteAsync()).Returns(Task.CompletedTask);
-        _mockLogRepo
+        _ = _mockUnitOfWork.Setup(m => m.CompleteAsync()).Returns(Task.CompletedTask);
+        _ = _mockLogRepo
             .Setup(m =>
                 m.AddUserLogForCurrentActor(
                     It.IsAny<ApplicationUser>(),
@@ -137,7 +136,7 @@ public class CreateUserCommandHandlerTest
             )
             .Returns(Task.CompletedTask);
 
-        Assert.ThrowsAsync<Exception>(() =>
+        _ = Assert.ThrowsAsync<Exception>(() =>
             _handler.Handle(
                 new CreateUserCommand(
                     "Example Email",
@@ -161,11 +160,11 @@ public class CreateUserCommandHandlerTest
     [Test]
     public async Task CreateUserLog_Test()
     {
-        _mockUsersRepo
+        _ = _mockUsersRepo
             .Setup(m => m.CreateUserAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync("1");
-        _mockUnitOfWork.Setup(m => m.CompleteAsync()).Returns(Task.CompletedTask);
-        await _handler.Handle(
+        _ = _mockUnitOfWork.Setup(m => m.CompleteAsync()).Returns(Task.CompletedTask);
+        _ = await _handler.Handle(
             new CreateUserCommand(
                 "",
                 "thetruestrepairmanwillrepairmen@greendale.edu",

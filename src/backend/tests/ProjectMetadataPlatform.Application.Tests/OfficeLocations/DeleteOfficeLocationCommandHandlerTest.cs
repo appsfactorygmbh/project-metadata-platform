@@ -5,7 +5,6 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.OfficeLocations;
-using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
@@ -39,7 +38,7 @@ public class DeleteOfficeLocationCommandHandlerTest
         // Arrange
         var returnOfficeLocation = new OfficeLocation() { Id = 1, OfficeLocationName = "Test_1" };
 
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.GetOfficeLocationAsync(It.IsAny<int>()))
             .ReturnsAsync(returnOfficeLocation);
 

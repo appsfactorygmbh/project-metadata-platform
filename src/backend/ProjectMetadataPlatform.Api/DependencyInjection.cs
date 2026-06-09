@@ -79,8 +79,8 @@ public static class DependencyInjection
                         StatusCodes.Status500InternalServerError
                     )
                 );
-                options.Filters.Add<ExceptionFilter>();
-                options.Filters.Add<ErrorResponseFilter>();
+                _ = options.Filters.Add<ExceptionFilter>();
+                _ = options.Filters.Add<ErrorResponseFilter>();
             })
             .AddJsonOptions(options =>
             {

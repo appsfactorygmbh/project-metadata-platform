@@ -29,7 +29,7 @@ public class ProjectByIdRepositoryTest : TestsWithDatabase
     [Test]
     public void GetProjectByIDAsync_NonexistentProject()
     {
-        Assert.ThrowsAsync<ProjectNotFoundException>(() => _repository.GetProjectAsync(1));
+        _ = Assert.ThrowsAsync<ProjectNotFoundException>(() => _repository.GetProjectAsync(1));
     }
 
     [Test]
@@ -45,8 +45,8 @@ public class ProjectByIdRepositoryTest : TestsWithDatabase
             CompanyId = 1,
         };
 
-        _context.Projects.Add(project);
-        await _context.SaveChangesAsync();
+        _ = _context.Projects.Add(project);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.GetProjectAsync(1);

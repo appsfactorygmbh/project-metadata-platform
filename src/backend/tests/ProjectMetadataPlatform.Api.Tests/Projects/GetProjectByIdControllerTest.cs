@@ -28,12 +28,12 @@ public class GetProjectByIdControllerTest
     [Test]
     public void MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<GetProjectQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(1));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(1));
     }
 
     [Test]
@@ -52,7 +52,7 @@ public class GetProjectByIdControllerTest
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
         };
-        _mediator
+        _ = _mediator
             .Setup(m =>
                 m.Send(It.Is<GetProjectQuery>(q => q.Id == 50), It.IsAny<CancellationToken>())
             )

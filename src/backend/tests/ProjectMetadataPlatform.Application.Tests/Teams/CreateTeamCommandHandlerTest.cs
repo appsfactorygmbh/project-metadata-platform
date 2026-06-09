@@ -42,11 +42,11 @@ public class CreateTeamCommandHandlerTest
     public async Task CreateTeam_NameDoesNotAlreadyExists_WorksFine()
     {
         // Arrange
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.CheckIfTeamNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.AddTeamAsync(It.IsAny<Team>()))
             .Callback(
                 (Team teamBeingAdded) =>
@@ -55,7 +55,7 @@ public class CreateTeamCommandHandlerTest
                 }
             )
             .Returns(Task.CompletedTask);
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.CheckIfBusinessUnitExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(true);
 
@@ -93,10 +93,10 @@ public class CreateTeamCommandHandlerTest
     public void CreateTeam_NameAlreadyExists_ThrowsTeamNameAlreadyExistsException()
     {
         // Arrange
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.CheckIfTeamNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.CheckIfBusinessUnitExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(true);
         // Act + Assert
@@ -118,10 +118,10 @@ public class CreateTeamCommandHandlerTest
     public void CreateTeam_BUDoesntExists_ThrowsException()
     {
         // Arrange
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.CheckIfTeamNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.CheckIfBusinessUnitExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(false);
         // Act + Assert

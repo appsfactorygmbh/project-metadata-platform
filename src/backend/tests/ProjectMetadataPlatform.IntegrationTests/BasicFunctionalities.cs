@@ -20,7 +20,7 @@ public class BasicFunctionalities : IntegrationTestsBase
         var response = await client.GetAsync("/swagger");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        _ = response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [TestCase("/Projects", "GET")]
@@ -46,7 +46,7 @@ public class BasicFunctionalities : IntegrationTestsBase
         );
 
         // Assert
-        response
+        _ = response
             .Message.Should()
             .Be(
                 "You are either not logged in or do not have the necessary permissions to perform this action."

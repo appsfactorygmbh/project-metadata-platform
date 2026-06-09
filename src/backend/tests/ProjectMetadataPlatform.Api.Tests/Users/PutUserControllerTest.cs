@@ -34,7 +34,7 @@ public class PutUserControllerTest
     public async Task CreateUser_Test()
     {
         //prepare
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<CreateUserCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(
                 new Domain.Users.ApplicationUser
@@ -53,7 +53,7 @@ public class PutUserControllerTest
         );
         var contextUser = new ClaimsPrincipal(identity); //add claims as needed
         var httpContext = new DefaultHttpContext { User = contextUser };
-        _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        _ = _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
         var request = new PmpScimUser
         {
             Id = "Id",
@@ -97,7 +97,7 @@ public class PutUserControllerTest
     [Test]
     public void CreateUser_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<CreateUserCommand>(), It.IsAny<CancellationToken>())
             )
@@ -108,7 +108,7 @@ public class PutUserControllerTest
         );
         var contextUser = new ClaimsPrincipal(identity); //add claims as needed
         var httpContext = new DefaultHttpContext { User = contextUser };
-        _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        _ = _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
 
         var request = new PmpScimUser
         {
@@ -119,7 +119,7 @@ public class PutUserControllerTest
             Active = true,
         };
 
-        Assert.ThrowsAsync<InvalidOperationException>(() => _controller.Post(request));
+        _ = Assert.ThrowsAsync<InvalidOperationException>(() => _controller.Post(request));
     }
 
     [Test]
@@ -131,7 +131,7 @@ public class PutUserControllerTest
         );
         var contextUser = new ClaimsPrincipal(identity); //add claims as needed
         var httpContext = new DefaultHttpContext { User = contextUser };
-        _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        _ = _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
 
         var request = new PmpScimUser
         {
@@ -142,6 +142,8 @@ public class PutUserControllerTest
             Active = true,
         };
 
-        Assert.ThrowsAsync<UnknownAuthentificationMethodException>(() => _controller.Post(request));
+        _ = Assert.ThrowsAsync<UnknownAuthentificationMethodException>(() =>
+            _controller.Post(request)
+        );
     }
 }

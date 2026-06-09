@@ -44,8 +44,8 @@ public class ProjectsBySearchTest : TestsWithDatabase
 
         var query = new GetAllProjectsQuery(null, "Reg");
 
-        _context.Projects.Add(exampleProject);
-        await _context.SaveChangesAsync();
+        _ = _context.Projects.Add(exampleProject);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = (await _repository.GetProjectsAsync(query)).ToList();
@@ -75,8 +75,8 @@ public class ProjectsBySearchTest : TestsWithDatabase
 
         var query = new GetAllProjectsQuery(null, "x");
 
-        _context.Projects.Add(project);
-        await _context.SaveChangesAsync();
+        _ = _context.Projects.Add(project);
+        _ = await _context.SaveChangesAsync();
 
         var result = await _repository.GetProjectsAsync(query);
         Assert.That(result, Is.Empty);
@@ -118,7 +118,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
 
         _context.Projects.AddRange(projects);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.GetProjectsAsync(query);
@@ -164,7 +164,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
 
         _context.Projects.AddRange(projects);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.GetProjectsAsync(query1);
@@ -230,7 +230,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
 
         _context.Projects.AddRange(projects);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var resultExactDouble = await _repository.GetProjectsAsync(query1);

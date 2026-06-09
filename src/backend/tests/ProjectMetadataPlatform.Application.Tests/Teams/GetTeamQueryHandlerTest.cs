@@ -35,7 +35,7 @@ public class GetTeamQueryHandlerTest
             PTL = "Max Mustermann",
         };
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
 
@@ -52,7 +52,7 @@ public class GetTeamQueryHandlerTest
     public void GetTeam_ThrowTeamNotFoundException_IfTeamNotFound()
     {
         // Arrange
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamAsync(It.IsAny<int>()))
             .ThrowsAsync(new TeamNotFoundException(1));
 

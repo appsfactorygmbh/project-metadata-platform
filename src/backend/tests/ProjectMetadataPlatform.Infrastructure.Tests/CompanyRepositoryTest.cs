@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -40,9 +39,9 @@ public class CompaniesRepositoryTests : TestsWithDatabase
         var company2 = new Company { Id = 2, CompanyName = "Test_2" };
 
         _context.Companies.RemoveRange(_context.Companies);
-        _context.Companies.Add(company);
-        _context.Companies.Add(company2);
-        await _context.SaveChangesAsync();
+        _ = _context.Companies.Add(company);
+        _ = _context.Companies.Add(company2);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = (await _repository.GetCompaniesAsync()).ToList();
@@ -68,12 +67,12 @@ public class CompaniesRepositoryTests : TestsWithDatabase
         var company = new Company { Id = 1, CompanyName = "Test_1" };
 
         _context.Companies.RemoveRange(_context.Companies);
-        _context.Companies.Add(company);
-        await _context.SaveChangesAsync();
+        _ = _context.Companies.Add(company);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var deletedCompany = await _repository.DeleteCompanyAsync(company);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var remainingCompanies = _context.Companies.ToList();
@@ -101,12 +100,12 @@ public class CompaniesRepositoryTests : TestsWithDatabase
         };
 
         _context.Companies.RemoveRange(_context.Companies);
-        _context.Companies.Add(company);
+        _ = _context.Companies.Add(company);
 
         _context.Projects.RemoveRange(_context.Projects);
-        _context.Projects.Add(project);
+        _ = _context.Projects.Add(project);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var companyWithProjects = await _repository.GetCompanyWithProjectsAsync(1);
@@ -132,7 +131,7 @@ public class CompaniesRepositoryTests : TestsWithDatabase
     {
         // Arrange
         _context.Companies.RemoveRange(_context.Companies);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act + Assert
         var ex = Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
@@ -147,8 +146,8 @@ public class CompaniesRepositoryTests : TestsWithDatabase
         // Arrange
         var company = new Company { Id = 1, CompanyName = "Test_1" };
         _context.Companies.RemoveRange(_context.Companies);
-        _context.Companies.Add(company);
-        await _context.SaveChangesAsync();
+        _ = _context.Companies.Add(company);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var companyName = await _repository.RetrieveNameForIdAsync(1);
@@ -166,7 +165,7 @@ public class CompaniesRepositoryTests : TestsWithDatabase
         // Act
         _context.Companies.RemoveRange(_context.Companies);
         await _repository.AddCompanyAsync(newCompany);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var addedCompany = await _context.Companies.FindAsync(newCompany.Id);
@@ -184,14 +183,14 @@ public class CompaniesRepositoryTests : TestsWithDatabase
         // Arrange
         var initialCompany = new Company { Id = 101, CompanyName = "Original Gamma" };
         _context.Companies.RemoveRange(_context.Companies);
-        _context.Companies.Add(initialCompany);
-        await _context.SaveChangesAsync();
+        _ = _context.Companies.Add(initialCompany);
+        _ = await _context.SaveChangesAsync();
 
         var companyWithSameId = new Company { Id = 101, CompanyName = "Updated Gamma Attempt" };
 
         // Act
         await _repository.AddCompanyAsync(companyWithSameId);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var companyInDb = await _context.Companies.FindAsync(initialCompany.Id);
@@ -208,8 +207,8 @@ public class CompaniesRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var existingCompanyName = "Unique Existent Company";
-        _context.Companies.Add(new Company { Id = 200, CompanyName = existingCompanyName });
-        await _context.SaveChangesAsync();
+        _ = _context.Companies.Add(new Company { Id = 200, CompanyName = existingCompanyName });
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.CheckIfCompanyNameExistsAsync(existingCompanyName);
@@ -223,8 +222,8 @@ public class CompaniesRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var nonExistentCompanyName = "Definitely Not Here Company";
-        _context.Companies.Add(new Company { Id = 201, CompanyName = "Some Other Company" });
-        await _context.SaveChangesAsync();
+        _ = _context.Companies.Add(new Company { Id = 201, CompanyName = "Some Other Company" });
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.CheckIfCompanyNameExistsAsync(nonExistentCompanyName);
@@ -250,15 +249,15 @@ public class CompaniesRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var initialCompany = new Company { Id = 300, CompanyName = "Company Epsilon" };
-        _context.Companies.Add(initialCompany);
-        await _context.SaveChangesAsync();
+        _ = _context.Companies.Add(initialCompany);
+        _ = await _context.SaveChangesAsync();
         _context.Entry(initialCompany).State = EntityState.Detached;
 
         var updatedCompanyData = new Company { Id = 300, CompanyName = "Company Epsilon Updated" };
 
         // Act
         var result = await _repository.UpdateCompanyAsync(updatedCompanyData);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var companyFromDb = await _context.Companies.FindAsync(initialCompany.Id);
@@ -288,8 +287,8 @@ public class CompaniesRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var expectedCompany = new Company { Id = 400, CompanyName = "Company Zeta" };
-        _context.Companies.Add(expectedCompany);
-        await _context.SaveChangesAsync();
+        _ = _context.Companies.Add(expectedCompany);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.GetCompanyAsync(expectedCompany.Id);

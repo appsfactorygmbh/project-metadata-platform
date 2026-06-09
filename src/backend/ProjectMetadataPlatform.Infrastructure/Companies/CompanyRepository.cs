@@ -71,7 +71,7 @@ public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
     {
         if (!await GetIf(c => c.Id == company.Id).AnyAsync())
         {
-            _context.Companies.Add(company);
+            _ = _context.Companies.Add(company);
         }
     }
 
@@ -82,14 +82,14 @@ public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
         {
             throw new CompanyNotFoundException(company.Id);
         }
-        _context.Companies.Update(company);
+        _ = _context.Companies.Update(company);
         return company;
     }
 
     /// <inheritdoc/>
     public async Task<Company> DeleteCompanyAsync(Company company)
     {
-        _context.Companies.Remove(company);
+        _ = _context.Companies.Remove(company);
         return await Task.FromResult(company);
     }
 

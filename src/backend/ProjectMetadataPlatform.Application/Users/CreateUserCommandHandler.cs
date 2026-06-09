@@ -80,7 +80,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
         }
         if (request.Password != null)
         {
-            await _usersRepository.CheckPasswordFormat(request.Password);
+            _ = await _usersRepository.CheckPasswordFormat(request.Password);
         }
 
         Collection<Team> teams = [];

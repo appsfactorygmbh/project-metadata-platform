@@ -23,7 +23,7 @@ public class GetProjectIdBySlugQueryHandlerTest
     [Test]
     public async Task HandleGetProjectRequest_Test()
     {
-        _mockProjectRepo.Setup(m => m.GetProjectIdBySlugAsync("test")).ReturnsAsync(2);
+        _ = _mockProjectRepo.Setup(m => m.GetProjectIdBySlugAsync("test")).ReturnsAsync(2);
 
         var query = new GetProjectIdBySlugQuery("test");
         var result = await _handler.Handle(query, It.IsAny<CancellationToken>());

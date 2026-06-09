@@ -66,7 +66,7 @@ public class GetLogsQueryHandlerTest
             ],
         };
 
-        _mockLogsRepo.Setup(r => r.GetAllLogs()).ReturnsAsync([log, log2]);
+        _ = _mockLogsRepo.Setup(r => r.GetAllLogs()).ReturnsAsync([log, log2]);
 
         var result = await _handler.Handle(new GetLogsQuery(), CancellationToken.None);
         var logList = result.ToList();
@@ -104,7 +104,7 @@ public class GetLogsQueryHandlerTest
             ],
         };
 
-        _mockLogsRepo.Setup(r => r.GetLogsForProject(1)).ReturnsAsync([log]);
+        _ = _mockLogsRepo.Setup(r => r.GetLogsForProject(1)).ReturnsAsync([log]);
 
         var result = await _handler.Handle(new GetLogsQuery(1), CancellationToken.None);
         var logList = result.ToList();
@@ -138,7 +138,7 @@ public class GetLogsQueryHandlerTest
             ],
         };
 
-        _mockLogsRepo.Setup(r => r.GetLogsWithSearch("exp(x)")).ReturnsAsync([log]);
+        _ = _mockLogsRepo.Setup(r => r.GetLogsWithSearch("exp(x)")).ReturnsAsync([log]);
 
         var result = await _handler.Handle(
             new GetLogsQuery(null, "exp(x)"),
@@ -175,7 +175,7 @@ public class GetLogsQueryHandlerTest
             ],
         };
 
-        _mockLogsRepo.Setup(r => r.GetLogsForUser("Newton")).ReturnsAsync([log]);
+        _ = _mockLogsRepo.Setup(r => r.GetLogsForUser("Newton")).ReturnsAsync([log]);
 
         var result = await _handler.Handle(
             new GetLogsQuery(null, null, "Newton"),
@@ -213,7 +213,7 @@ public class GetLogsQueryHandlerTest
             ],
         };
 
-        _mockLogsRepo.Setup(r => r.GetLogsForGlobalPlugin(42)).ReturnsAsync([log]);
+        _ = _mockLogsRepo.Setup(r => r.GetLogsForGlobalPlugin(42)).ReturnsAsync([log]);
 
         var result = await _handler.Handle(
             new GetLogsQuery(null, null, null, 42),
@@ -230,12 +230,12 @@ public class GetLogsQueryHandlerTest
     [Test]
     public void GetLogs_ThrowsExceptionWhenProjectNotFound_Test()
     {
-        _mockLogsRepo
+        _ = _mockLogsRepo
             .Setup(m => m.GetLogsForProject(It.IsAny<int>()))
             .ThrowsAsync(new InvalidOperationException());
 
         var request = new GetLogsQuery(404);
-        Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        _ = Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await _handler.Handle(request, It.IsAny<CancellationToken>())
         );
 

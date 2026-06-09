@@ -13,5 +13,5 @@ public interface ILogConverter
     /// </summary>
     /// <param name="log">The log entry.</param>
     /// <returns>A log response containing the message and timestamp.</returns>
-    public LogResponse BuildLogMessage(Log log);
+    LogResponse BuildLogMessage(Log log);
 }

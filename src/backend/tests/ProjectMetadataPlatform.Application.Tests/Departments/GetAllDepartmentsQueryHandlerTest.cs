@@ -6,7 +6,6 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Departments;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Domain.Departments;
 
 namespace ProjectMetadataPlatform.Application.Tests.Departments;
@@ -32,7 +31,7 @@ public class GetAllDepartmentsQueryHandlerTest
         // Arrange
         var returnDepartment = new Department() { Id = 1, DepartmentName = "Test_1" };
 
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentsAsync())
             .ReturnsAsync([returnDepartment]);
 
@@ -60,7 +59,7 @@ public class GetAllDepartmentsQueryHandlerTest
             new() { Id = 4, DepartmentName = "Foo_2" },
         ];
 
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentsAsync())
             .ReturnsAsync(returnDepartment);
 

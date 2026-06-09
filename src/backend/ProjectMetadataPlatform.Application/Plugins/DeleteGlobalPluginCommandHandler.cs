@@ -50,7 +50,7 @@ public class DeleteGlobalPluginCommandHandler : IRequestHandler<DeleteGlobalPlug
             ?? throw new PluginNotFoundException(request.Id);
         if (plugin.IsArchived)
         {
-            await _pluginRepository.DeleteGlobalPlugin(plugin);
+            _ = await _pluginRepository.DeleteGlobalPlugin(plugin);
 
             var changes = new List<LogChange>();
 

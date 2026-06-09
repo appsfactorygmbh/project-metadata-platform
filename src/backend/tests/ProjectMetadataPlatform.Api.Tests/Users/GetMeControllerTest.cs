@@ -36,7 +36,7 @@ public class GetMeControllerTest
             IsScimProvisioned = false,
         };
 
-        _mediator
+        _ = _mediator
             .Setup(m =>
                 m.Send(
                     It.IsAny<GetUserByEmailQuery>(),
@@ -68,7 +68,7 @@ public class GetMeControllerTest
     [Test]
     public void getMe_Test_NotFound()
     {
-        _mediator
+        _ = _mediator
             .Setup(m =>
                 m.Send(
                     It.IsAny<GetUserByEmailQuery>(),
@@ -77,13 +77,13 @@ public class GetMeControllerTest
             )
             .ThrowsAsync(new UserNotFoundException("Dr. Dre"));
         var controller = new UsersController(_mediator.Object, MockHttpContextAccessor("Dr. Dre"));
-        Assert.ThrowsAsync<UserNotFoundException>(() => controller.GetMe());
+        _ = Assert.ThrowsAsync<UserNotFoundException>(() => controller.GetMe());
     }
 
     [Test]
     public void getMe_Test_InternalError()
     {
-        _mediator
+        _ = _mediator
             .Setup(m =>
                 m.Send(
                     It.IsAny<GetUserByEmailQuery>(),
@@ -96,13 +96,13 @@ public class GetMeControllerTest
             MockHttpContextAccessor("Dr. Nefario")
         );
 
-        Assert.ThrowsAsync<InvalidOperationException>(() => controller.GetMe());
+        _ = Assert.ThrowsAsync<InvalidOperationException>(() => controller.GetMe());
     }
 
     [Test]
     public void getMe_Test_Unauthorized()
     {
-        _mediator
+        _ = _mediator
             .Setup(m =>
                 m.Send(
                     It.IsAny<GetUserByEmailQuery>(),
@@ -112,7 +112,7 @@ public class GetMeControllerTest
             .ThrowsAsync(new UserUnauthorizedException());
         var controller = new UsersController(_mediator.Object, MockHttpContextAccessor(null));
 
-        Assert.ThrowsAsync<UserUnauthorizedException>(() => controller.GetMe());
+        _ = Assert.ThrowsAsync<UserUnauthorizedException>(() => controller.GetMe());
     }
 
     private static HttpContextAccessor MockHttpContextAccessor(string? email)

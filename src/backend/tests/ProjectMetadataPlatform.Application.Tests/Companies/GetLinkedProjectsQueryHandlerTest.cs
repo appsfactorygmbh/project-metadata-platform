@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
@@ -53,7 +52,7 @@ public class GetLinkedProjectsQueryHandlerTest
             ],
         };
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyWithProjectsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnCompany);
 

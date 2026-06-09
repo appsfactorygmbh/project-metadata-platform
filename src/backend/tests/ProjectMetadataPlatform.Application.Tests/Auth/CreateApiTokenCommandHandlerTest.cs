@@ -37,11 +37,11 @@ public class CreateApiTokenCommandHandlerTest
     [Test]
     public async Task CreateApiTokenCommand_SCIMTokenExistsThrowsTest()
     {
-        _apiTokenRepositoryMock.Setup(m => m.CheckScimTokenExists()).ReturnsAsync(true);
+        _ = _apiTokenRepositoryMock.Setup(m => m.CheckScimTokenExists()).ReturnsAsync(true);
 
         var request = new CreateApiTokenCommand("Token", [TokenScopes.SCIM]);
 
-        Assert.ThrowsAsync<ScimTokenAlreadyExistsException>(() =>
+        _ = Assert.ThrowsAsync<ScimTokenAlreadyExistsException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
@@ -49,7 +49,7 @@ public class CreateApiTokenCommandHandlerTest
     [Test]
     public async Task CreateApiTokenCommand_SuccessfulCreationTest()
     {
-        _apiTokenRepositoryMock.Setup(m => m.CheckScimTokenExists()).ReturnsAsync(false);
+        _ = _apiTokenRepositoryMock.Setup(m => m.CheckScimTokenExists()).ReturnsAsync(false);
 
         var request = new CreateApiTokenCommand("Token", [TokenScopes.SCIM]);
 

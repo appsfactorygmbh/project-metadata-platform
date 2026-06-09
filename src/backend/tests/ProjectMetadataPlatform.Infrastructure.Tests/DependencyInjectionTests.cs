@@ -31,8 +31,8 @@ public class DependencyInjectionTests : TestsWithDatabase
         Environment.SetEnvironmentVariable("ACCESS_TOKEN_EXPIRATION_MINUTES", "1");
         var services = new ServiceCollection();
 
-        services.AddLogging();
-        services.AddInfrastructureDependencies(new JwtBearerEvents());
+        _ = services.AddLogging();
+        _ = services.AddInfrastructureDependencies(new JwtBearerEvents());
 
         // Cant check this with the service provider because the context will try to connect to the database
         Assert.That(
@@ -58,7 +58,7 @@ public class DependencyInjectionTests : TestsWithDatabase
         const string hash = "hash";
         Environment.SetEnvironmentVariable("PMP_ADMIN_PASSWORD", envPassword);
         var mockPasswordHasher = new Mock<IPasswordHasher<ApplicationUser>>();
-        mockPasswordHasher
+        _ = mockPasswordHasher
             .Setup(m => m.HashPassword(It.IsAny<ApplicationUser>(), expectedPassword))
             .Returns(hash);
 
@@ -74,12 +74,12 @@ public class DependencyInjectionTests : TestsWithDatabase
             null!
         );
         var services = new ServiceCollection();
-        services.AddScoped<UserManager<ApplicationUser>>(_ => mockUserManager.Object);
+        _ = services.AddScoped<UserManager<ApplicationUser>>(_ => mockUserManager.Object);
 
         var mockUnitOfWork = new Mock<IUnitOfWork>();
-        services.AddScoped(_ => mockUnitOfWork.Object);
+        _ = services.AddScoped(_ => mockUnitOfWork.Object);
 
-        mockUserManager
+        _ = mockUserManager
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Success);
 

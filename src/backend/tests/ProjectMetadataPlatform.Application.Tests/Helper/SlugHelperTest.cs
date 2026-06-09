@@ -78,7 +78,7 @@ public class SlugHelperTest
     public async Task GetProjectIdBySlug_Test()
     {
         const string slug = "example_project";
-        _mockProjectsRepository
+        _ = _mockProjectsRepository
             .Setup(m => m.GetProjectIdBySlugAsync(It.IsAny<string>()))
             .ReturnsAsync(1);
 
@@ -92,18 +92,20 @@ public class SlugHelperTest
     {
         const string slug = "example_project";
 
-        _mockProjectsRepository
+        _ = _mockProjectsRepository
             .Setup(m => m.GetProjectIdBySlugAsync(It.IsAny<string>()))
             .ThrowsAsync(new ProjectNotFoundException("Project not found"));
 
-        Assert.ThrowsAsync<ProjectNotFoundException>(() => _slugHelper.GetProjectIdBySlug(slug));
+        _ = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
+            _slugHelper.GetProjectIdBySlug(slug)
+        );
     }
 
     [Test]
     public async Task ProjectSlugExists_Test()
     {
         const string slug = "example_project";
-        _mockProjectsRepository
+        _ = _mockProjectsRepository
             .Setup(m => m.GetProjectIdBySlugAsync(It.IsAny<string>()))
             .ReturnsAsync(1);
 
@@ -116,7 +118,7 @@ public class SlugHelperTest
     public async Task ProjectSlugExists_Test_ReturnsFalse()
     {
         const string slug = "example_project";
-        _mockProjectsRepository
+        _ = _mockProjectsRepository
             .Setup(m => m.GetProjectIdBySlugAsync(It.IsAny<string>()))
             .ThrowsAsync(new ProjectNotFoundException("Project not found"));
 

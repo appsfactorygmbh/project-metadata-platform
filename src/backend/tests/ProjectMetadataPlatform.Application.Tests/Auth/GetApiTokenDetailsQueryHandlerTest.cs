@@ -28,7 +28,9 @@ public class GetApiTokenDetailsQueryHandlerTest
     {
         ApiToken token = new ApiToken { Name = "Token1", Token = "TokenHash1" };
 
-        _apiTokenRepositoryMock.Setup(m => m.GetApiTokenById(It.IsAny<int>())).ReturnsAsync(token);
+        _ = _apiTokenRepositoryMock
+            .Setup(m => m.GetApiTokenById(It.IsAny<int>()))
+            .ReturnsAsync(token);
         var request = new GetApiTokenDetailsQuery(1);
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 

@@ -34,11 +34,11 @@ public class AuthManagement : IntegrationTestsBase
         //Assert
         var newAuthToken = response.GetProperty("accessToken").GetString();
 
-        newAuthToken.Should().NotBeSameAs(firstAuthToken);
+        _ = newAuthToken.Should().NotBeSameAs(firstAuthToken);
 
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {newAuthToken}");
-        (await client.GetAsync("/Projects"))
+        _ = (await client.GetAsync("/Projects"))
             .IsSuccessStatusCode.Should()
             .BeTrue(" the new access token should be valid");
     }
@@ -67,7 +67,7 @@ public class AuthManagement : IntegrationTestsBase
         var response = await client.GetAsync("/Projects");
 
         //Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        _ = response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Test]
@@ -92,7 +92,7 @@ public class AuthManagement : IntegrationTestsBase
         var response = await client.GetAsync("/auth/refresh");
 
         //Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        _ = response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     [Test]
@@ -111,7 +111,7 @@ public class AuthManagement : IntegrationTestsBase
         );
 
         //Assert
-        response.Message.Should().Be("Invalid login credentials.");
+        _ = response.Message.Should().Be("Invalid login credentials.");
     }
 
     [Test]
@@ -129,7 +129,7 @@ public class AuthManagement : IntegrationTestsBase
         );
 
         //Assert
-        response.Message.Should().Be("Invalid refresh token.");
+        _ = response.Message.Should().Be("Invalid refresh token.");
     }
 
     [Test]
@@ -140,16 +140,16 @@ public class AuthManagement : IntegrationTestsBase
         await CreateApiTokenAndAddItToDefaultRequestHeadersOfClient(client);
 
         var tokens = await ToJsonElement(client.GetAsync("auth/ApiTokens"), HttpStatusCode.OK);
-        tokens.GetArrayLength().Should().Be(1);
+        _ = tokens.GetArrayLength().Should().Be(1);
 
         var tokenId = tokens[0].GetProperty("id").GetInt32();
 
         var deleteResponse = await client.DeleteAsync($"auth/ApiTokens/{tokenId}");
-        deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        _ = deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         var error = await client.GetAsync("auth/ApiTokens");
 
-        error.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        _ = error.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Test]
@@ -160,7 +160,7 @@ public class AuthManagement : IntegrationTestsBase
         await CreateApiTokenAndAddItToDefaultRequestHeadersOfClient(client);
 
         var tokens = await ToJsonElement(client.GetAsync("auth/ApiTokens"), HttpStatusCode.OK);
-        tokens.GetArrayLength().Should().Be(1);
+        _ = tokens.GetArrayLength().Should().Be(1);
 
         var tokenId = tokens[0].GetProperty("id").GetInt32();
 
@@ -168,7 +168,7 @@ public class AuthManagement : IntegrationTestsBase
 
         var error = await client.GetAsync("auth/ApiTokens");
 
-        error.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        _ = error.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
 
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token.GetProperty("token")}");
@@ -176,6 +176,6 @@ public class AuthManagement : IntegrationTestsBase
             client.GetAsync("auth/ApiTokens"),
             HttpStatusCode.OK
         );
-        tokensAfterRegen.GetArrayLength().Should().Be(1);
+        _ = tokensAfterRegen.GetArrayLength().Should().Be(1);
     }
 }

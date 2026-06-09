@@ -46,8 +46,8 @@ public class DeleteProjectCommandHandlerTest
             IsArchived = true,
             CompanyId = 1,
         };
-        _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
-        _mockProjectRepo
+        _ = _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
+        _ = _mockProjectRepo
             .Setup(m => m.DeleteProjectAsync(It.IsAny<Project>()))
             .ReturnsAsync(project);
 
@@ -71,7 +71,7 @@ public class DeleteProjectCommandHandlerTest
             IsArchived = false,
             CompanyId = 1,
         };
-        _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
+        _ = _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
 
         var ex = Assert.ThrowsAsync<ProjectNotArchivedException>(() =>
             _handler.Handle(new DeleteProjectCommand(1), It.IsAny<CancellationToken>())
@@ -82,7 +82,7 @@ public class DeleteProjectCommandHandlerTest
     [Test]
     public void DeleteProject_NotFound_Test()
     {
-        _mockProjectRepo
+        _ = _mockProjectRepo
             .Setup(m => m.GetProjectAsync(It.IsAny<int>()))
             .ThrowsAsync(new ProjectNotFoundException("Project not found."));
 
@@ -107,8 +107,8 @@ public class DeleteProjectCommandHandlerTest
             IsArchived = true,
             CompanyId = 1,
         };
-        _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
-        _mockProjectRepo
+        _ = _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
+        _ = _mockProjectRepo
             .Setup(m => m.DeleteProjectAsync(It.IsAny<Project>()))
             .ReturnsAsync(project);
 

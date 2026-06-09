@@ -5,7 +5,6 @@ using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Departments;
-using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Projects;

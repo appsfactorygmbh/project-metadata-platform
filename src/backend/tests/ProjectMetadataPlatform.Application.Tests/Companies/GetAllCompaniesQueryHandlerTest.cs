@@ -6,7 +6,6 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Companies;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Domain.Companies;
 
 namespace ProjectMetadataPlatform.Application.Tests.Companies;
@@ -32,7 +31,7 @@ public class GetAllCompaniesQueryHandlerTest
         // Arrange
         var returnCompany = new Company() { Id = 1, CompanyName = "Test_1" };
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompaniesAsync())
             .ReturnsAsync([returnCompany]);
 
@@ -60,7 +59,9 @@ public class GetAllCompaniesQueryHandlerTest
             new() { Id = 4, CompanyName = "Foo_2" },
         ];
 
-        _mockCompanyRepository.Setup(repo => repo.GetCompaniesAsync()).ReturnsAsync(returnCompany);
+        _ = _mockCompanyRepository
+            .Setup(repo => repo.GetCompaniesAsync())
+            .ReturnsAsync(returnCompany);
 
         // Act
         var result = await _handler.Handle(
