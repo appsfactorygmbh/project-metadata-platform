@@ -81,6 +81,8 @@ public class Project
     /// </summary>
     public SecurityLevel IsmsLevel { get; set; }
 
+    public bool IsEoC { get; set; }
+
     /// <summary>
     /// Notes or additional information about the project.
     /// </summary>

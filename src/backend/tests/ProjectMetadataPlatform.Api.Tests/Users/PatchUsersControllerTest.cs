@@ -45,7 +45,7 @@ public class PatchUsersControllerTest
             IsScimProvisioned = false,
         };
 
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<PatchUserCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
@@ -55,7 +55,7 @@ public class PatchUsersControllerTest
         );
         var contextUser = new ClaimsPrincipal(identity); //add claims as needed
         var httpContext = new DefaultHttpContext { User = contextUser };
-        _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        _ = _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
 
         var request = new PatchUserRequest { };
 
@@ -74,7 +74,7 @@ public class PatchUsersControllerTest
     [Test]
     public void PatchUser_NotFound_Test()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<PatchUserCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new UserNotFoundException("Dr. Dre"));
 
@@ -84,10 +84,10 @@ public class PatchUsersControllerTest
         );
         var contextUser = new ClaimsPrincipal(identity); //add claims as needed
         var httpContext = new DefaultHttpContext { User = contextUser };
-        _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        _ = _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
 
         var request = new PatchUserRequest();
-        Assert.ThrowsAsync<UserNotFoundException>(() => _controller.Patch("Dr. Dre", request));
+        _ = Assert.ThrowsAsync<UserNotFoundException>(() => _controller.Patch("Dr. Dre", request));
     }
 
     [Test]
@@ -105,7 +105,7 @@ public class PatchUsersControllerTest
                 },
             },
         };
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<PatchUserCommand>(), It.IsAny<CancellationToken>())
             )
@@ -117,9 +117,9 @@ public class PatchUsersControllerTest
         );
         var contextUser = new ClaimsPrincipal(identity); //add claims as needed
         var httpContext = new DefaultHttpContext { User = contextUser };
-        _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        _ = _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
 
-        Assert.ThrowsAsync<UserInvalidPasswordFormatException>(() =>
+        _ = Assert.ThrowsAsync<UserInvalidPasswordFormatException>(() =>
             _controller.Patch("13", request)
         );
     }
@@ -146,9 +146,9 @@ public class PatchUsersControllerTest
         );
         var contextUser = new ClaimsPrincipal(identity); //add claims as needed
         var httpContext = new DefaultHttpContext { User = contextUser };
-        _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        _ = _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
 
-        Assert.ThrowsAsync<UnknownAuthentificationMethodException>(() =>
+        _ = Assert.ThrowsAsync<UnknownAuthentificationMethodException>(() =>
             _controller.Patch("13", request)
         );
     }

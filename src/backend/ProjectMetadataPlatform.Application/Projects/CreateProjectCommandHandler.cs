@@ -110,6 +110,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
             IsmsLevel = request.IsmsLevel,
             ProjectPlugins = request.Plugins,
             TeamId = request.TeamId,
+            IsEoC = request.IsEoC,
             Notes = request.Notes,
         };
 
@@ -160,6 +161,12 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
                 OldValue = "",
                 NewValue = project.IsmsLevel.ToString(),
                 Property = nameof(Project.IsmsLevel),
+            },
+            new()
+            {
+                OldValue = "",
+                NewValue = project.IsEoC.ToString(),
+                Property = nameof(Project.IsEoC),
             },
         };
         if (project.TeamId != null)

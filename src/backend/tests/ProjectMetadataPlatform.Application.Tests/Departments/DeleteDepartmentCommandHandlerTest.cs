@@ -6,7 +6,6 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Departments;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Departments;
-using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
@@ -39,7 +38,7 @@ public class DeleteDepartmentCommandHandlerTest
         // Arrange
         var returnDepartment = new Department() { Id = 1, DepartmentName = "Test_1" };
 
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
             .ReturnsAsync(returnDepartment);
 

@@ -27,11 +27,11 @@ public class GetAllProjectsQueryHandlerTest
     [Test]
     public async Task CallsRepositoryWithRequest()
     {
-        _mockProjectRepo
+        _ = _mockProjectRepo
             .Setup(m => m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>()))
             .ReturnsAsync([]);
         var request = new GetAllProjectsQuery(null, "");
-        await _handler.Handle(request, CancellationToken.None);
+        _ = await _handler.Handle(request, CancellationToken.None);
 
         _mockProjectRepo.Verify(repository => repository.GetProjectsAsync(request), Times.Once);
         _mockProjectRepo.VerifyNoOtherCalls();
@@ -85,7 +85,7 @@ public class GetAllProjectsQueryHandlerTest
             },
         };
 
-        _mockProjectRepo
+        _ = _mockProjectRepo
             .Setup(m => m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>()))
             .ReturnsAsync(projects);
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
@@ -155,7 +155,7 @@ public class GetAllProjectsQueryHandlerTest
             },
         };
 
-        _mockProjectRepo
+        _ = _mockProjectRepo
             .Setup(m => m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>()))
             .ReturnsAsync(projects);
         var request = new GetAllProjectsQuery(null, null);

@@ -247,7 +247,7 @@ public sealed class ProjectMetadataPlatformDbContext
     {
         try
         {
-            await SaveChangesAsync();
+            _ = await SaveChangesAsync();
         }
         catch (Exception e)
         {

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Application.Teams;
 using ProjectMetadataPlatform.Domain.Teams;
 
@@ -37,7 +36,7 @@ public class GetAllTeamsQueryHandlerTest
             PTL = "Max Mustermann",
         };
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamsAsync(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync([returnTeam]);
 
@@ -100,7 +99,7 @@ public class GetAllTeamsQueryHandlerTest
             },
         ];
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamsAsync(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(returnTeam);
 

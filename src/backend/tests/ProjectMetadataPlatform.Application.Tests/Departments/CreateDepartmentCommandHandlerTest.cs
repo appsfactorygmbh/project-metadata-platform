@@ -6,7 +6,6 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Departments;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Departments;
-using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
@@ -39,11 +38,11 @@ public class CreateDepartmentCommandHandlerTest
     public async Task CreateDepartment_NameDoesNotAlreadyExists_WorksFine()
     {
         // Arrange
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.CheckIfDepartmentNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.AddDepartmentAsync(It.IsAny<Department>()))
             .Callback(
                 (Department departmentBeingAdded) =>
@@ -83,7 +82,7 @@ public class CreateDepartmentCommandHandlerTest
     public void CreateDepartment_NameAlreadyExists_ThrowsDepartmentNameAlreadyExistsException()
     {
         // Arrange
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.CheckIfDepartmentNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
         // Act + Assert

@@ -46,8 +46,8 @@ public class UserManagement : IntegrationTestsBase
             .GetString()!;
 
         var deleteResponse = await client.DeleteAsync($"/Users/{adminId}");
-        deleteResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        (await deleteResponse.Content.ReadFromJsonAsync<ErrorResponse>())!
+        _ = deleteResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        _ = (await deleteResponse.Content.ReadFromJsonAsync<ErrorResponse>())!
             .Message.Should()
             .Be("A User can't delete themself.");
 
@@ -64,8 +64,8 @@ public class UserManagement : IntegrationTestsBase
         );
         deleteResponse = await client.DeleteAsync($"/Users/{newUserId}");
 
-        deleteResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        (await deleteResponse.Content.ReadFromJsonAsync<ErrorResponse>())!
+        _ = deleteResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        _ = (await deleteResponse.Content.ReadFromJsonAsync<ErrorResponse>())!
             .Message.Should()
             .Be("A User can't delete themself.");
     }
@@ -97,25 +97,25 @@ public class UserManagement : IntegrationTestsBase
 
         var users = (await ToJsonElement(client.GetAsync("/Users"))).GetProperty("Resources");
 
-        users.GetArrayLength().Should().Be(3);
-        users[0].GetProperty("userName").GetString().Should().Be("admin@admin.admin");
-        users[2].GetProperty("externalId").GetString().Should().Be(userId1);
-        users[2].GetProperty("userName").GetString().Should().Be("test@mail.de");
-        users[1].GetProperty("externalId").GetString().Should().Be(userId2);
-        users[1].GetProperty("userName").GetString().Should().Be("foo@bar.de");
+        _ = users.GetArrayLength().Should().Be(3);
+        _ = users[0].GetProperty("userName").GetString().Should().Be("admin@admin.admin");
+        _ = users[2].GetProperty("externalId").GetString().Should().Be(userId1);
+        _ = users[2].GetProperty("userName").GetString().Should().Be("test@mail.de");
+        _ = users[1].GetProperty("externalId").GetString().Should().Be(userId2);
+        _ = users[1].GetProperty("userName").GetString().Should().Be("foo@bar.de");
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
 
-        logs.GetArrayLength().Should().Be(2);
+        _ = logs.GetArrayLength().Should().Be(2);
 
-        logs[1]
+        _ = logs[1]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be(
                 "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
             );
-        logs[0]
+        _ = logs[0]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -135,9 +135,9 @@ public class UserManagement : IntegrationTestsBase
             HttpStatusCode.NotFound
         );
 
-        errorResponse.Message.Should().Be("The team with name Team was not found.");
+        _ = errorResponse.Message.Should().Be("The team with name Team was not found.");
         var buId = await CreateBusinessUnit(client, "Health");
-        await ToJsonElement(
+        _ = await ToJsonElement(
             client.PutAsJsonAsync("/Teams", new { TeamName = "Team", BusinessUnitId = buId }),
             HttpStatusCode.Created
         );
@@ -147,12 +147,12 @@ public class UserManagement : IntegrationTestsBase
             HttpStatusCode.Created
         );
 
-        user.GetProperty("urn:ietf:params:scim:schemas:extension:pmp:User")
+        _ = user.GetProperty("urn:ietf:params:scim:schemas:extension:pmp:User")
             .GetProperty("team")
             .GetArrayLength()
             .Should()
             .Be(1);
-        user.GetProperty("urn:ietf:params:scim:schemas:extension:pmp:User")
+        _ = user.GetProperty("urn:ietf:params:scim:schemas:extension:pmp:User")
             .GetProperty("team")[0]
             .GetString()
             .Should()
@@ -182,19 +182,19 @@ public class UserManagement : IntegrationTestsBase
 
         var users = (await ToJsonElement(client.GetAsync("/Users"))).GetProperty("Resources");
 
-        users.GetArrayLength().Should().Be(3);
-        users[0].GetProperty("userName").GetString().Should().Be("admin@admin.admin");
-        users[2].GetProperty("externalId").GetString().Should().Be(userId1);
-        users[2].GetProperty("userName").GetString().Should().Be("test@mail.de");
-        users[2]
+        _ = users.GetArrayLength().Should().Be(3);
+        _ = users[0].GetProperty("userName").GetString().Should().Be("admin@admin.admin");
+        _ = users[2].GetProperty("externalId").GetString().Should().Be(userId1);
+        _ = users[2].GetProperty("userName").GetString().Should().Be("test@mail.de");
+        _ = users[2]
             .GetProperty("urn:ietf:params:scim:schemas:extension:pmp:User")
             .GetProperty("isScimProvisioned")
             .GetBoolean()
             .Should()
             .Be(false);
-        users[1].GetProperty("externalId").GetString().Should().Be(userId2);
-        users[1].GetProperty("userName").GetString().Should().Be("foo@bar.de");
-        users[1]
+        _ = users[1].GetProperty("externalId").GetString().Should().Be(userId2);
+        _ = users[1].GetProperty("userName").GetString().Should().Be("foo@bar.de");
+        _ = users[1]
             .GetProperty("urn:ietf:params:scim:schemas:extension:pmp:User")
             .GetProperty("isScimProvisioned")
             .GetBoolean()
@@ -203,22 +203,22 @@ public class UserManagement : IntegrationTestsBase
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
 
-        logs.GetArrayLength().Should().Be(3);
+        _ = logs.GetArrayLength().Should().Be(3);
 
-        logs[2]
+        _ = logs[2]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be(
                 "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
             );
-        logs[1]
+        _ = logs[1]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be("admin created a new API token with properties: Name = ApiToken");
 
-        logs[0]
+        _ = logs[0]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -244,20 +244,20 @@ public class UserManagement : IntegrationTestsBase
 
         var updatedUser = await ToJsonElement(client.PatchAsync($"/Users/{userId}", UpdateRequest));
 
-        updatedUser.GetProperty("externalId").GetString().Should().Be(userId);
-        updatedUser.GetProperty("userName").GetString().Should().Be("foo@bar.de");
+        _ = updatedUser.GetProperty("externalId").GetString().Should().Be(userId);
+        _ = updatedUser.GetProperty("userName").GetString().Should().Be("foo@bar.de");
 
         var users = (await ToJsonElement(client.GetAsync("/Users"))).GetProperty("Resources");
 
-        users.GetArrayLength().Should().Be(2);
-        users[0].GetProperty("userName").GetString().Should().Be("admin@admin.admin");
-        users[1].GetProperty("externalId").GetString().Should().Be(userId);
-        users[1].GetProperty("userName").GetString().Should().Be("foo@bar.de");
+        _ = users.GetArrayLength().Should().Be(2);
+        _ = users[0].GetProperty("userName").GetString().Should().Be("admin@admin.admin");
+        _ = users[1].GetProperty("externalId").GetString().Should().Be(userId);
+        _ = users[1].GetProperty("userName").GetString().Should().Be("foo@bar.de");
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
-        logs.GetArrayLength().Should().Be(2);
+        _ = logs.GetArrayLength().Should().Be(2);
 
-        logs[1]
+        _ = logs[1]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -265,7 +265,7 @@ public class UserManagement : IntegrationTestsBase
                 "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
             );
 
-        logs[0]
+        _ = logs[0]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -309,45 +309,49 @@ public class UserManagement : IntegrationTestsBase
             "foo@bar.de",
             "SecretP@ssw0rd"
         );
-        (await client.DeleteAsync($"Users/{userId1}"))
+        _ = (await client.DeleteAsync($"Users/{userId1}"))
             .StatusCode.Should()
             .Be(HttpStatusCode.NoContent);
 
         await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
-        (await client.DeleteAsync($"Users/{userId2}"))
+        _ = (await client.DeleteAsync($"Users/{userId2}"))
             .StatusCode.Should()
             .Be(HttpStatusCode.NoContent);
 
         var users = (await ToJsonElement(client.GetAsync("/Users"))).GetProperty("Resources");
 
-        users.GetArrayLength().Should().Be(1);
-        users[0].GetProperty("externalId").GetString().Should().Be(adminId);
-        users[0].GetProperty("userName").GetString().Should().Be("admin@admin.admin");
+        _ = users.GetArrayLength().Should().Be(1);
+        _ = users[0].GetProperty("externalId").GetString().Should().Be(adminId);
+        _ = users[0].GetProperty("userName").GetString().Should().Be("admin@admin.admin");
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
 
-        logs.GetArrayLength().Should().Be(4);
+        _ = logs.GetArrayLength().Should().Be(4);
 
-        logs[3]
+        _ = logs[3]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be(
                 "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
             );
-        logs[2]
+        _ = logs[2]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be(
                 "test (deleted actor) added a new user with properties: Email = foo@bar.de, EmployeeId = 1234, IsActive = False, IsScimProvisioned = False"
             );
-        logs[1]
+        _ = logs[1]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be("foo (deleted actor) removed user test@mail.de");
-        logs[0].GetProperty("logMessage").GetString().Should().Be("admin removed user foo@bar.de");
+        _ = logs[0]
+            .GetProperty("logMessage")
+            .GetString()
+            .Should()
+            .Be("admin removed user foo@bar.de");
     }
 
     [Test]
@@ -371,7 +375,7 @@ public class UserManagement : IntegrationTestsBase
             "1K@sekuchen"
         );
 
-        (
+        _ = (
             await client.PostAsync(
                 "/Users",
                 StringContent(
@@ -384,24 +388,24 @@ public class UserManagement : IntegrationTestsBase
 
         await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
 
-        (await client.PatchAsync($"/Users/{userId}", UpdateRequest))
+        _ = (await client.PatchAsync($"/Users/{userId}", UpdateRequest))
             .StatusCode.Should()
             .Be(HttpStatusCode.OK);
 
-        (await client.DeleteAsync($"Users/{userId}"))
+        _ = (await client.DeleteAsync($"Users/{userId}"))
             .StatusCode.Should()
             .Be(HttpStatusCode.NoContent);
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
 
-        logs[3]
+        _ = logs[3]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be(
                 "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
             );
-        logs[2]
+        _ = logs[2]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -418,7 +422,7 @@ public class UserManagement : IntegrationTestsBase
         await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
 
         // Act
-        (await client.PostAsync("/Users", CreateRequest))
+        _ = (await client.PostAsync("/Users", CreateRequest))
             .StatusCode.Should()
             .Be(HttpStatusCode.Created);
         var errorResponse = await ToErrorResponse(
@@ -427,7 +431,7 @@ public class UserManagement : IntegrationTestsBase
         );
 
         // Assert
-        errorResponse.Message.Should().Be("User creation Failed : DuplicateEmail");
+        _ = errorResponse.Message.Should().Be("User creation Failed : DuplicateEmail");
     }
 
     [Test]
@@ -438,7 +442,7 @@ public class UserManagement : IntegrationTestsBase
         await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
 
         // Act
-        (await client.PostAsync("/Users", CreateRequest))
+        _ = (await client.PostAsync("/Users", CreateRequest))
             .StatusCode.Should()
             .Be(HttpStatusCode.Created);
         var errorResponse = await ToErrorResponse(
@@ -447,7 +451,7 @@ public class UserManagement : IntegrationTestsBase
         );
 
         // Assert
-        errorResponse.Message.Should().Be("User creation Failed : DuplicateEmployeeNumber");
+        _ = errorResponse.Message.Should().Be("User creation Failed : DuplicateEmployeeNumber");
     }
 
     [Test]
@@ -469,7 +473,7 @@ public class UserManagement : IntegrationTestsBase
         );
 
         // Assert
-        errorResponse
+        _ = errorResponse
             .Message.Should()
             .Be(
                 "Invalid password format: Passwords must have at least one non alphanumeric character. Passwords must have at least one digit ('0'-'9'). Passwords must have at least one uppercase ('A'-'Z')."
@@ -487,7 +491,7 @@ public class UserManagement : IntegrationTestsBase
             HttpStatusCode.Unauthorized
         );
 
-        errorResponse.Message.Should().Be("User not authenticated.");
+        _ = errorResponse.Message.Should().Be("User not authenticated.");
     }
 
     [Test]
@@ -511,7 +515,7 @@ public class UserManagement : IntegrationTestsBase
         var errorResponse = await ToErrorResponse(responseTask, HttpStatusCode.NotFound);
 
         // Assert
-        errorResponse.Message.Should().Be("The user 10 was not found.");
+        _ = errorResponse.Message.Should().Be("The user 10 was not found.");
     }
 
     private static async Task<int> CreateBusinessUnit(HttpClient client, string name)

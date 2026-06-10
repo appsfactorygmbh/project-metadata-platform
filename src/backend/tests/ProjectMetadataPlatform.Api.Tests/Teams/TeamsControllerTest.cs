@@ -11,7 +11,6 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Teams;
 using ProjectMetadataPlatform.Api.Teams.Models;
-using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Application.Teams;
 using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Teams;
@@ -36,7 +35,7 @@ public class TeamsControllerTest
     {
         // Arrange
         var expectedTeamId = 42;
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m => m.Send(It.IsAny<CreateTeamCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedTeamId);
 
@@ -83,7 +82,7 @@ public class TeamsControllerTest
     public void CreateTeam_MediatorThrowsIOException_ThrowsIOException()
     {
         // Arrange
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m => m.Send(It.IsAny<CreateTeamCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new IOException("Disk full"));
 
@@ -94,7 +93,7 @@ public class TeamsControllerTest
         );
 
         // Act & Assert
-        Assert.ThrowsAsync<IOException>(() => _controller.Put(request));
+        _ = Assert.ThrowsAsync<IOException>(() => _controller.Put(request));
     }
 
     [Test]
@@ -102,7 +101,7 @@ public class TeamsControllerTest
     {
         // Arrange
         var existingTeamName = "Test TeamName";
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m => m.Send(It.IsAny<CreateTeamCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new TeamNameAlreadyExistsException(existingTeamName));
 
@@ -113,7 +112,7 @@ public class TeamsControllerTest
         );
 
         // Act & Assert
-        Assert.ThrowsAsync<TeamNameAlreadyExistsException>(() => _controller.Put(request));
+        _ = Assert.ThrowsAsync<TeamNameAlreadyExistsException>(() => _controller.Put(request));
     }
 
     [Test]
@@ -153,7 +152,7 @@ public class TeamsControllerTest
             BusinessUnitId = 1,
             PTL = "PTL1",
         };
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m =>
                 m.Send(It.Is<GetTeamQuery>(q => q.Id == teamId), It.IsAny<CancellationToken>())
             )
@@ -187,14 +186,14 @@ public class TeamsControllerTest
     {
         // Arrange
         var teamId = 1;
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m =>
                 m.Send(It.Is<GetTeamQuery>(q => q.Id == teamId), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new TeamNotFoundException(teamId));
 
         // Act & Assert
-        Assert.ThrowsAsync<TeamNotFoundException>(() => _controller.Get(teamId));
+        _ = Assert.ThrowsAsync<TeamNotFoundException>(() => _controller.Get(teamId));
     }
 
     [Test]
@@ -220,7 +219,7 @@ public class TeamsControllerTest
                 PTL = "BetaPTL",
             },
         };
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m => m.Send(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(teams);
 
@@ -248,7 +247,7 @@ public class TeamsControllerTest
     public async Task GetAllTeams_NoTeams_ReturnsOkResultWithEmptyList()
     {
         // Arrange
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m => m.Send(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<Team>());
 
@@ -269,12 +268,12 @@ public class TeamsControllerTest
         // Arrange
         var teamNameFilter = "Alpha";
         var searchQuery = "SearchKeyword";
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m => m.Send(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<Team>());
 
         // Act
-        await _controller.Get(teamName: teamNameFilter, search: searchQuery);
+        _ = await _controller.Get(teamName: teamNameFilter, search: searchQuery);
 
         // Assert
         _mediatorMock.Verify(
@@ -309,7 +308,7 @@ public class TeamsControllerTest
             PTL = request.PTL,
         };
 
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m =>
                 m.Send(
                     It.Is<PatchTeamCommand>(cmd => cmd.Id == teamId),
@@ -360,7 +359,7 @@ public class TeamsControllerTest
         // Arrange
         var teamId = 1;
         var request = new PatchTeamRequest { TeamName = "Test" };
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m =>
                 m.Send(
                     It.Is<PatchTeamCommand>(cmd => cmd.Id == teamId),
@@ -370,7 +369,7 @@ public class TeamsControllerTest
             .ThrowsAsync(new TeamNotFoundException(teamId));
 
         // Act & Assert
-        Assert.ThrowsAsync<TeamNotFoundException>(() => _controller.Patch(teamId, request));
+        _ = Assert.ThrowsAsync<TeamNotFoundException>(() => _controller.Patch(teamId, request));
     }
 
     [Test]
@@ -379,7 +378,7 @@ public class TeamsControllerTest
         // Arrange
         var teamId = 1;
         var existingName = "Test TeamName";
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m =>
                 m.Send(
                     It.Is<PatchTeamCommand>(cmd => cmd.Id == teamId),
@@ -391,7 +390,7 @@ public class TeamsControllerTest
         var request = new PatchTeamRequest { TeamName = existingName };
 
         // Act & Assert
-        Assert.ThrowsAsync<TeamNameAlreadyExistsException>(() =>
+        _ = Assert.ThrowsAsync<TeamNameAlreadyExistsException>(() =>
             _controller.Patch(teamId, request)
         );
     }
@@ -400,7 +399,7 @@ public class TeamsControllerTest
     public void PatchTeam_MediatorThrowsGenericException_ThrowsGenericException()
     {
         // Arrange
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(mediator =>
                 mediator.Send(It.IsAny<PatchTeamCommand>(), It.IsAny<CancellationToken>())
             )
@@ -408,7 +407,7 @@ public class TeamsControllerTest
         var request = new PatchTeamRequest { TeamName = "Testing" };
 
         // Act & Assert
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.Patch(1, request));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Patch(1, request));
     }
 
     [Test]
@@ -416,7 +415,7 @@ public class TeamsControllerTest
     {
         // Arrange
         var teamId = 1;
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m =>
                 m.Send(
                     It.Is<DeleteTeamCommand>(cmd => cmd.Id == teamId),
@@ -467,7 +466,7 @@ public class TeamsControllerTest
     {
         // Arrange
         var teamId = 1;
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m =>
                 m.Send(
                     It.Is<DeleteTeamCommand>(cmd => cmd.Id == teamId),
@@ -477,7 +476,7 @@ public class TeamsControllerTest
             .ThrowsAsync(new TeamNotFoundException(teamId));
 
         // Act & Assert
-        Assert.ThrowsAsync<TeamNotFoundException>(() => _controller.Delete(teamId));
+        _ = Assert.ThrowsAsync<TeamNotFoundException>(() => _controller.Delete(teamId));
     }
 
     [Test]
@@ -492,7 +491,7 @@ public class TeamsControllerTest
             BusinessUnit = new() { BusinessUnitName = "Test BU" },
             BusinessUnitId = 2,
         };
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(mediator =>
                 mediator.Send(
                     It.Is<DeleteTeamCommand>(cmd => cmd.Id == teamId),
@@ -502,7 +501,9 @@ public class TeamsControllerTest
             .ThrowsAsync(new TeamStillLinkedToProjectsException(projectIds: [1, 2, 3], team: team));
 
         // Act & Assert
-        Assert.ThrowsAsync<TeamStillLinkedToProjectsException>(() => _controller.Delete(teamId));
+        _ = Assert.ThrowsAsync<TeamStillLinkedToProjectsException>(() =>
+            _controller.Delete(teamId)
+        );
     }
 
     [Test]
@@ -510,7 +511,7 @@ public class TeamsControllerTest
     {
         // Arrange
         var teamId = 1;
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(mediator =>
                 mediator.Send(
                     It.Is<DeleteTeamCommand>(cmd => cmd.Id == teamId),
@@ -520,7 +521,7 @@ public class TeamsControllerTest
             .ThrowsAsync(new InvalidDataException("An error message"));
 
         // Act & Assert
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(teamId));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(teamId));
     }
 
     [Test]
@@ -529,7 +530,7 @@ public class TeamsControllerTest
         // Arrange
         var teamId = 1;
         var projectSlugs = new List<string> { "slug_1", "slug_2" };
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m =>
                 m.Send(
                     It.Is<GetLinkedProjectsQuery>(q => q.Id == teamId),
@@ -555,7 +556,7 @@ public class TeamsControllerTest
     {
         // Arrange
         var teamId = 1;
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m =>
                 m.Send(
                     It.Is<GetLinkedProjectsQuery>(q => q.Id == teamId),
@@ -604,7 +605,7 @@ public class TeamsControllerTest
     {
         // Arrange
         var teamId = 1;
-        _mediatorMock
+        _ = _mediatorMock
             .Setup(m =>
                 m.Send(
                     It.Is<GetLinkedProjectsQuery>(q => q.Id == teamId),
@@ -614,6 +615,6 @@ public class TeamsControllerTest
             .ThrowsAsync(new TeamNotFoundException(teamId));
 
         // Act & Assert
-        Assert.ThrowsAsync<TeamNotFoundException>(() => _controller.GetLinkedProjects(teamId));
+        _ = Assert.ThrowsAsync<TeamNotFoundException>(() => _controller.GetLinkedProjects(teamId));
     }
 }

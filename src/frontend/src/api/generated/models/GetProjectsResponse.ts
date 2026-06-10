@@ -68,6 +68,12 @@ export interface GetProjectsResponse {
    */
   isArchived: boolean;
   /**
+   * If the project is an Engineer on Call project.
+   * @type {boolean}
+   * @memberof GetProjectsResponse
+   */
+  isEoC: boolean;
+  /**
    *
    * @type {GetTeamResponse}
    * @memberof GetProjectsResponse
@@ -102,6 +108,7 @@ export function instanceOfGetProjectsResponse(
   if (!('company' in value) || value['company'] === undefined) return false;
   if (!('isArchived' in value) || value['isArchived'] === undefined)
     return false;
+  if (!('isEoC' in value) || value['isEoC'] === undefined) return false;
   if (!('ismsLevel' in value) || value['ismsLevel'] === undefined) return false;
   if (!('notes' in value) || value['notes'] === undefined) return false;
   return true;
@@ -125,6 +132,7 @@ export function GetProjectsResponseFromJSONTyped(
     clientName: json['clientName'],
     company: GetCompanyResponseFromJSON(json['company']),
     isArchived: json['isArchived'],
+    isEoC: json['isEoC'],
     team:
       json['team'] == null ? undefined : GetTeamResponseFromJSON(json['team']),
     ismsLevel: SecurityLevelFromJSON(json['ismsLevel']),
@@ -151,6 +159,7 @@ export function GetProjectsResponseToJSONTyped(
     clientName: value['clientName'],
     company: GetCompanyResponseToJSON(value['company']),
     isArchived: value['isArchived'],
+    isEoC: value['isEoC'],
     team: GetTeamResponseToJSON(value['team']),
     ismsLevel: SecurityLevelToJSON(value['ismsLevel']),
     notes: value['notes'],

@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
-using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 using ProjectMetadataPlatform.Infrastructure.Departments;
 
@@ -40,9 +38,9 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
         var department2 = new Department { Id = 2, DepartmentName = "Test_2" };
 
         _context.Departments.RemoveRange(_context.Departments);
-        _context.Departments.Add(department);
-        _context.Departments.Add(department2);
-        await _context.SaveChangesAsync();
+        _ = _context.Departments.Add(department);
+        _ = _context.Departments.Add(department2);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = (await _repository.GetDepartmentsAsync()).ToList();
@@ -68,12 +66,12 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
         var department = new Department { Id = 1, DepartmentName = "Test_1" };
 
         _context.Departments.RemoveRange(_context.Departments);
-        _context.Departments.Add(department);
-        await _context.SaveChangesAsync();
+        _ = _context.Departments.Add(department);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var deletedDepartment = await _repository.DeleteDepartmentAsync(department);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var remainingDepartments = _context.Departments.ToList();
@@ -90,7 +88,7 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         _context.Departments.RemoveRange(_context.Departments);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act + Assert
         var ex = Assert.ThrowsAsync<DepartmentNotFoundException>(async () =>
@@ -108,7 +106,7 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
         // Act
         _context.Departments.RemoveRange(_context.Departments);
         await _repository.AddDepartmentAsync(newDepartment);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var addedDepartment = await _context.Departments.FindAsync(newDepartment.Id);
@@ -126,8 +124,8 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
         // Arrange
         var initialDepartment = new Department { Id = 101, DepartmentName = "Original Gamma" };
         _context.Departments.RemoveRange(_context.Departments);
-        _context.Departments.Add(initialDepartment);
-        await _context.SaveChangesAsync();
+        _ = _context.Departments.Add(initialDepartment);
+        _ = await _context.SaveChangesAsync();
 
         var departmentWithSameId = new Department
         {
@@ -137,7 +135,7 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
 
         // Act
         await _repository.AddDepartmentAsync(departmentWithSameId);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var departmentInDb = await _context.Departments.FindAsync(initialDepartment.Id);
@@ -157,10 +155,10 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var existingDepartmentName = "Unique Existent Department";
-        _context.Departments.Add(
+        _ = _context.Departments.Add(
             new Department { Id = 200, DepartmentName = existingDepartmentName }
         );
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.CheckIfDepartmentNameExistsAsync(existingDepartmentName);
@@ -174,10 +172,10 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var nonExistentDepartmentName = "Definitely Not Here Department";
-        _context.Departments.Add(
+        _ = _context.Departments.Add(
             new Department { Id = 201, DepartmentName = "Some Other Department" }
         );
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.CheckIfDepartmentNameExistsAsync(nonExistentDepartmentName);
@@ -203,8 +201,8 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var initialDepartment = new Department { Id = 300, DepartmentName = "Department Epsilon" };
-        _context.Departments.Add(initialDepartment);
-        await _context.SaveChangesAsync();
+        _ = _context.Departments.Add(initialDepartment);
+        _ = await _context.SaveChangesAsync();
         _context.Entry(initialDepartment).State = EntityState.Detached;
 
         var updatedDepartmentData = new Department
@@ -215,7 +213,7 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
 
         // Act
         var result = await _repository.UpdateDepartmentAsync(updatedDepartmentData);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var departmentFromDb = await _context.Departments.FindAsync(initialDepartment.Id);
@@ -252,8 +250,8 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var expectedDepartment = new Department { Id = 400, DepartmentName = "Department Zeta" };
-        _context.Departments.Add(expectedDepartment);
-        await _context.SaveChangesAsync();
+        _ = _context.Departments.Add(expectedDepartment);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.GetDepartmentAsync(expectedDepartment.Id);

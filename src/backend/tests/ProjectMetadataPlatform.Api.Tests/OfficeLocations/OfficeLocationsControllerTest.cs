@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.OfficeLocations;
 using ProjectMetadataPlatform.Api.OfficeLocations.Models;
 using ProjectMetadataPlatform.Application.OfficeLocations;
-using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Api.Tests.OfficeLocations;
@@ -33,7 +29,7 @@ public class OfficeLocationsControllerTest
     [Test]
     public async Task GetOfficeLocations_EmptyResponseTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(m =>
                 m.Send(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
             )
@@ -56,7 +52,7 @@ public class OfficeLocationsControllerTest
     [Test]
     public async Task GetOfficeLocations_ListResponse()
     {
-        _mediator
+        _ = _mediator
             .Setup(m =>
                 m.Send(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
             )
@@ -92,29 +88,29 @@ public class OfficeLocationsControllerTest
     [Test]
     public async Task GetOfficeLocations_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
     }
 
     [Test]
     public async Task GetOfficeLocation_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<GetOfficeLocationQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
     }
 
     [Test]
     public async Task GetOfficeLocation_ResponseTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetOfficeLocationQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new OfficeLocation { OfficeLocationName = "OfficeLocation", Id = 1 });
         var result = await _controller.Get(1);
@@ -133,7 +129,7 @@ public class OfficeLocationsControllerTest
     [Test]
     public async Task PutOfficeLocation_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(
                     It.IsAny<CreateOfficeLocationCommand>(),
@@ -141,7 +137,7 @@ public class OfficeLocationsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Put(new CreateOfficeLocationRequest("a"))
         );
     }
@@ -156,7 +152,7 @@ public class OfficeLocationsControllerTest
     [Test]
     public async Task PutOfficeLocation_ReturnsIdTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(
                     It.IsAny<CreateOfficeLocationCommand>(),
@@ -186,7 +182,7 @@ public class OfficeLocationsControllerTest
     [Test]
     public async Task UpdateOfficeLocation_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(
                     It.IsAny<UpdateOfficeLocationCommand>(),
@@ -194,7 +190,7 @@ public class OfficeLocationsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Patch(1, new UpdateOfficeLocationRequest())
         );
     }
@@ -209,7 +205,7 @@ public class OfficeLocationsControllerTest
     [Test]
     public async Task UpdateOfficeLocation_ReturnsUpdatedOfficeLocationTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(
                     It.IsAny<UpdateOfficeLocationCommand>(),
@@ -240,7 +236,7 @@ public class OfficeLocationsControllerTest
     [Test]
     public async Task DeleteOfficeLocation_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(
                     It.IsAny<DeleteOfficeLocationCommand>(),
@@ -248,7 +244,7 @@ public class OfficeLocationsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
     }
 
     [Test]

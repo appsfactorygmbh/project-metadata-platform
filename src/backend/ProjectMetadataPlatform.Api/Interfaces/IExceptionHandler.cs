@@ -13,5 +13,5 @@ public interface IExceptionHandler<in T>
     /// </summary>
     /// <param name="exception">The exception to handle.</param>
     /// <returns>An <see cref="IActionResult"/> representing the result of handling the exception.</returns>
-    public IActionResult? Handle(T exception);
+    IActionResult? Handle(T exception);
 }

@@ -40,15 +40,15 @@ public class UpdateOfficeLocationCommandHandlerTest
         // Arrange
         var returnOfficeLocation = new OfficeLocation() { Id = 1, OfficeLocationName = "Test_1" };
 
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.GetOfficeLocationAsync(It.IsAny<int>()))
             .ReturnsAsync(returnOfficeLocation);
 
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.UpdateOfficeLocationAsync(It.IsAny<OfficeLocation>()))
             .ReturnsAsync((OfficeLocation officeLocation) => officeLocation);
 
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.CheckIfOfficeLocationNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
@@ -95,15 +95,15 @@ public class UpdateOfficeLocationCommandHandlerTest
         // Arrange
         var returnOfficeLocation = new OfficeLocation() { Id = 1, OfficeLocationName = "Test_1" };
 
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.GetOfficeLocationAsync(It.IsAny<int>()))
             .ReturnsAsync(returnOfficeLocation);
 
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.UpdateOfficeLocationAsync(It.IsAny<OfficeLocation>()))
             .ReturnsAsync((OfficeLocation officeLocation) => officeLocation);
 
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.CheckIfOfficeLocationNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
@@ -131,15 +131,15 @@ public class UpdateOfficeLocationCommandHandlerTest
         // Arrange
         var returnOfficeLocation = new OfficeLocation() { Id = 1, OfficeLocationName = "Test_1" };
 
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.GetOfficeLocationAsync(It.IsAny<int>()))
             .ReturnsAsync(returnOfficeLocation);
 
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.UpdateOfficeLocationAsync(It.IsAny<OfficeLocation>()))
             .ReturnsAsync((OfficeLocation officeLocation) => officeLocation);
 
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.CheckIfOfficeLocationNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
 

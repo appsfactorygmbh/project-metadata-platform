@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Companies;
 using ProjectMetadataPlatform.Api.Companies.Models;
-using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Companies;
 using ProjectMetadataPlatform.Domain.Companies;
-using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 
 namespace ProjectMetadataPlatform.Api.Tests.Companies;
 
@@ -33,7 +29,7 @@ public class CompaniesControllerTest
     [Test]
     public async Task GetCompanies_EmptyResponseTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllCompaniesQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync([]);
         var result = await _controller.Get();
@@ -54,7 +50,7 @@ public class CompaniesControllerTest
     [Test]
     public async Task GetCompanies_ListResponse()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllCompaniesQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync([
                 new Company { Id = 1, CompanyName = "Company1" },
@@ -82,29 +78,29 @@ public class CompaniesControllerTest
     [Test]
     public async Task GetCompanies_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<GetAllCompaniesQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
     }
 
     [Test]
     public async Task GetCompany_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<GetCompanyQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
     }
 
     [Test]
     public async Task GetCompany_ResponseTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetCompanyQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new Company { CompanyName = "Company", Id = 1 });
         var result = await _controller.Get(1);
@@ -123,18 +119,18 @@ public class CompaniesControllerTest
     [Test]
     public async Task GetLinkedProjects_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<GetLinkedProjectsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetLinkedProjects(1));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetLinkedProjects(1));
     }
 
     [Test]
     public async Task GetLinkedProjects_ResponseTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetLinkedProjectsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(["1", "2", "3"]);
         var result = await _controller.GetLinkedProjects(1);
@@ -153,12 +149,12 @@ public class CompaniesControllerTest
     [Test]
     public async Task PutCompany_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<CreateCompanyCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Put(new CreateCompanyRequest("a"))
         );
     }
@@ -173,7 +169,7 @@ public class CompaniesControllerTest
     [Test]
     public async Task PutCompany_ReturnsIdTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<CreateCompanyCommand>(), It.IsAny<CancellationToken>())
             )
@@ -200,12 +196,12 @@ public class CompaniesControllerTest
     [Test]
     public async Task UpdateCompany_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<UpdateCompanyCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Patch(1, new UpdateCompanyRequest())
         );
     }
@@ -220,7 +216,7 @@ public class CompaniesControllerTest
     [Test]
     public async Task UpdateCompany_ReturnsUpdatedCompanyTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<UpdateCompanyCommand>(), It.IsAny<CancellationToken>())
             )
@@ -245,12 +241,12 @@ public class CompaniesControllerTest
     [Test]
     public async Task DeleteCompany_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<DeleteCompanyCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
     }
 
     [Test]

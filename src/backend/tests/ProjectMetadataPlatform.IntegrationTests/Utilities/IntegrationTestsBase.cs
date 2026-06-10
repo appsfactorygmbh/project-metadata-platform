@@ -84,7 +84,7 @@ public class IntegrationTestsBase : IDisposable
         platformDbContext.BusinessUnits.RemoveRange(allEntitiesBusinessUnits);
         platformDbContext.OfficeLocations.RemoveRange(allEntitiesOfficeLocations);
 
-        await platformDbContext.SaveChangesAsync();
+        _ = await platformDbContext.SaveChangesAsync();
     }
 
     public void Dispose()
@@ -103,7 +103,7 @@ public class IntegrationTestsBase : IDisposable
             "/auth/basic",
             new { Email = email, Password = password }
         );
-        response.EnsureSuccessStatusCode();
+        _ = response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadFromJsonAsync<LoginResponse>();
 
@@ -121,7 +121,7 @@ public class IntegrationTestsBase : IDisposable
             "/auth/ApiTokens",
             new { Name = name, Scopes = scopes ?? [] }
         );
-        response.EnsureSuccessStatusCode();
+        _ = response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadFromJsonAsync<GetApiTokenDetailsResponse>();
 
@@ -135,7 +135,7 @@ public class IntegrationTestsBase : IDisposable
     )
     {
         var responseMessage = await response;
-        responseMessage.StatusCode.Should().Be(expectedStatusCode);
+        _ = responseMessage.StatusCode.Should().Be(expectedStatusCode);
         return (await responseMessage.Content.ReadFromJsonAsync<JsonDocument>())!.RootElement;
     }
 
@@ -145,7 +145,7 @@ public class IntegrationTestsBase : IDisposable
     )
     {
         var responseMessage = await response;
-        responseMessage.StatusCode.Should().Be(expectedStatusCode);
+        _ = responseMessage.StatusCode.Should().Be(expectedStatusCode);
         return (await responseMessage.Content.ReadFromJsonAsync<ErrorResponse>())!;
     }
 

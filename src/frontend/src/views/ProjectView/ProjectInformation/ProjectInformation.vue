@@ -100,6 +100,7 @@
         companyNameInputStatus.value = '';
         companyStateInputState.value = '';
         ismsLevelInputState.value = '';
+        isEoCInputState.value = '';
         teamNameInputStatus.value = '';
         teamNameInput.value = '';
         addData(projectStore.getProject!);
@@ -130,6 +131,7 @@
     companyName: ref<DetailedProjectModel['company']['companyName']>(''),
     companyState: ref<DetailedProjectModel['companyState']>('EXTERNAL'), //check if implementation matches with backend
     ismsLevel: ref<DetailedProjectModel['ismsLevel']>('NORMAL'),
+    isEoC: ref<boolean>(false),
     isArchived: ref<boolean>(false),
     notes: ref<string>(''),
   };
@@ -145,6 +147,7 @@
   const companyNameInputStatus = ref<Status>('');
   const companyStateInputState = ref<Status>('');
   const ismsLevelInputState = ref<Status>('');
+  const isEoCInputState = ref<Status>('');
   const projectNotesInputStatus = ref<Status>('');
   const projectNameInputStatus = ref<Status>('');
 
@@ -154,6 +157,7 @@
   const companyNameInput = ref(projectData.companyName);
   const companyStateInput = ref(projectData.companyState);
   const ismsLevelInput = ref(projectData.ismsLevel);
+  const isEoCInput = ref(projectData.isEoC);
   const notesInput = ref(projectData.notes);
   const projectNameInput = ref(projectData.projectName);
 
@@ -248,6 +252,7 @@
       companyId: mappedCompanyId ?? 0,
       companyState: companyStateInput.value,
       ismsLevel: ismsLevelInput.value,
+      isEoC: isEoCInput.value,
       teamId: mappedTeamId,
       notes: notesInput.value,
     };
@@ -342,6 +347,7 @@
 
       companyState: detailedProject.companyState,
       ismsLevel: detailedProject.ismsLevel,
+      isEoC: detailedProject.isEoC,
       notes: detailedProject.notes,
       isArchived: detailedProject.isArchived,
 
@@ -380,6 +386,7 @@
 
       companyState: detailedProject.companyState,
       ismsLevel: detailedProject.ismsLevel,
+      isEoC: detailedProject.isEoC,
       notes: detailedProject.notes,
       isArchived: detailedProject.isArchived,
 
@@ -561,6 +568,52 @@
             @success="field.status = ''"
           />
         </EditableTextField>
+
+        <!-- isEoC specific input -->
+
+        <a-card
+          class="infoCard info"
+          :class="[editingClass, nonEditingClass]"
+          :body-style="{
+            display: 'flex',
+            padding: '5px',
+            alignItems: 'top',
+            height: 'fit-content',
+            overflow: 'auto',
+          }"
+        >
+          <label
+            style="
+              width: 5em;
+              min-width: 5em;
+              margin-right: 3em;
+              margin-bottom: 0;
+            "
+            >EoC:</label
+          >
+
+          <template v-if="!isLoading">
+            <div
+              :style="
+                isEditing ? 'margin: 0 2em 0 1em;' : 'margin: 0 0 0 0.5em;'
+              "
+              style="display: flex; align-items: center; height: 32px"
+            >
+              <a-switch
+                v-model:checked="isEoCInput"
+                class="custom-color-switch"
+                :disabled="!isEditing"
+                @change="updateProjectInformation"
+              />
+            </div>
+          </template>
+          <a-skeleton
+            v-else
+            active
+            :paragraph="false"
+            style="margin-left: 1em; width: 4em"
+          />
+        </a-card>
 
         <!-- team specific inputs -->
 
@@ -837,5 +890,15 @@
     font-size: 1.4em;
     margin: 0 auto 0 0.5em;
     white-space: nowrap;
+  }
+
+  :deep(.custom-color-switch.ant-switch-checked),
+  :deep(.custom-color-switch.ant-switch-checked:hover) {
+    background-color: #27d157;
+  }
+
+  :deep(.custom-color-switch:not(.ant-switch-checked)),
+  :deep(.custom-color-switch:not(.ant-switch-checked):hover) {
+    background-color: #ff002e;
   }
 </style>

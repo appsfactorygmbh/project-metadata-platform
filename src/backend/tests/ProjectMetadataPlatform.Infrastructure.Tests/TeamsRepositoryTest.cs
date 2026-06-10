@@ -53,9 +53,9 @@ public class TeamsRepositoryTests : TestsWithDatabase
         };
 
         _context.Teams.RemoveRange(_context.Teams);
-        _context.Teams.Add(team);
-        _context.Teams.Add(team2);
-        await _context.SaveChangesAsync();
+        _ = _context.Teams.Add(team);
+        _ = _context.Teams.Add(team2);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = (await _repository.GetTeamsAsync(null, null)).ToList();
@@ -117,9 +117,9 @@ public class TeamsRepositoryTests : TestsWithDatabase
                 PTL = "Test",
             },
         };
-        await _context.Database.EnsureCreatedAsync();
+        _ = await _context.Database.EnsureCreatedAsync();
         _context.Teams.AddRange(teams);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = (
@@ -177,9 +177,9 @@ public class TeamsRepositoryTests : TestsWithDatabase
                 PTL = "Test",
             },
         };
-        await _context.Database.EnsureCreatedAsync();
+        _ = await _context.Database.EnsureCreatedAsync();
         _context.Teams.AddRange(teams);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = (
@@ -237,9 +237,9 @@ public class TeamsRepositoryTests : TestsWithDatabase
                 PTL = "Test",
             },
         };
-        await _context.Database.EnsureCreatedAsync();
+        _ = await _context.Database.EnsureCreatedAsync();
         _context.Teams.AddRange(teams);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = (
@@ -270,12 +270,12 @@ public class TeamsRepositoryTests : TestsWithDatabase
         };
 
         _context.Teams.RemoveRange(_context.Teams);
-        _context.Teams.Add(team);
-        await _context.SaveChangesAsync();
+        _ = _context.Teams.Add(team);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var deletedTeam = await _repository.DeleteTeamAsync(team);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var remainingTeams = _context.Teams.ToList();
@@ -312,12 +312,12 @@ public class TeamsRepositoryTests : TestsWithDatabase
         };
 
         _context.Teams.RemoveRange(_context.Teams);
-        _context.Teams.Add(team);
+        _ = _context.Teams.Add(team);
 
         _context.Projects.RemoveRange(_context.Projects);
-        _context.Projects.Add(project);
+        _ = _context.Projects.Add(project);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var teamWithProjects = await _repository.GetTeamWithProjectsAsync(1);
@@ -346,7 +346,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         _context.Teams.RemoveRange(_context.Teams);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act + Assert
         var ex = Assert.ThrowsAsync<TeamNotFoundException>(async () =>
@@ -368,8 +368,8 @@ public class TeamsRepositoryTests : TestsWithDatabase
             PTL = "Max Mustermann",
         };
         _context.Teams.RemoveRange(_context.Teams);
-        _context.Teams.Add(team);
-        await _context.SaveChangesAsync();
+        _ = _context.Teams.Add(team);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var teamName = await _repository.RetrieveNameForIdAsync(1);
@@ -394,7 +394,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
 
         // Act
         await _repository.AddTeamAsync(newTeam);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var addedTeam = await _context.Teams.FindAsync(newTeam.Id);
@@ -420,8 +420,8 @@ public class TeamsRepositoryTests : TestsWithDatabase
             BusinessUnitId = 22,
             PTL = "Old Guard",
         };
-        _context.Teams.Add(initialTeam);
-        await _context.SaveChangesAsync();
+        _ = _context.Teams.Add(initialTeam);
+        _ = await _context.SaveChangesAsync();
 
         var teamWithSameId = new Team
         {
@@ -434,7 +434,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
 
         // Act
         await _repository.AddTeamAsync(teamWithSameId);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var teamInDb = await _context.Teams.FindAsync(initialTeam.Id);
@@ -453,7 +453,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var existingTeamName = "Unique Existent Team";
-        _context.Teams.Add(
+        _ = _context.Teams.Add(
             new Team
             {
                 Id = 200,
@@ -463,7 +463,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
                 PTL = "PTL",
             }
         );
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.CheckIfTeamNameExistsAsync(existingTeamName);
@@ -477,7 +477,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var nonExistentTeamName = "Definitely Not Here Team";
-        _context.Teams.Add(
+        _ = _context.Teams.Add(
             new Team
             {
                 Id = 201,
@@ -487,7 +487,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
                 PTL = "PTL",
             }
         );
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.CheckIfTeamNameExistsAsync(nonExistentTeamName);
@@ -521,8 +521,8 @@ public class TeamsRepositoryTests : TestsWithDatabase
             BusinessUnitId = 1,
             PTL = "Old PTL",
         };
-        _context.Teams.Add(initialTeam);
-        await _context.SaveChangesAsync();
+        _ = _context.Teams.Add(initialTeam);
+        _ = await _context.SaveChangesAsync();
         _context.Entry(initialTeam).State = EntityState.Detached;
 
         var updatedTeamData = new Team
@@ -537,7 +537,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
 
         // Act
         var result = await _repository.UpdateTeamAsync(updatedTeamData);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var teamFromDb = await _context.Teams.FindAsync(initialTeam.Id);
@@ -587,8 +587,8 @@ public class TeamsRepositoryTests : TestsWithDatabase
             BusinessUnitId = 2,
             PTL = "Lead Zeta",
         };
-        _context.Teams.Add(expectedTeam);
-        await _context.SaveChangesAsync();
+        _ = _context.Teams.Add(expectedTeam);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.GetTeamAsync(expectedTeam.Id);

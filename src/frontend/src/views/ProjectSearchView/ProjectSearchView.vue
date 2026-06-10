@@ -54,6 +54,7 @@
       company: model.company.companyName,
       isArchived: model.isArchived,
       ismsLevel: model.ismsLevel,
+      isEoC: model.isEoC ? 'EoC' : '',
       teamName: model.team === undefined ? '' : model.team.teamName,
       businessUnit:
         model.team === undefined
@@ -194,7 +195,7 @@
     await setFilterQuery();
     console.log(routerProjectSlug.value, routerProjectId.value);
 
-    if (routerProjectSlug.value !== undefined) {
+    if (routerProjectSlug.value) {
       const project = await projectStore.findProjectBySlug(
         routerProjectSlug.value,
         { fullObjectNeeded: false },

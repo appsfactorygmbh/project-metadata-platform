@@ -22,6 +22,7 @@ describe('ProjectEditStore', () => {
       offerId: '',
       companyId: 0,
       ismsLevel: 'NORMAL',
+      isEoC: false,
       companyState: 'EXTERNAL',
       notes: '',
     });
@@ -123,6 +124,7 @@ describe('ProjectEditStore', () => {
       offerId: '',
       companyId: 0,
       ismsLevel: 'NORMAL',
+      isEoC: false,
       companyState: 'EXTERNAL',
       notes: '',
     });
@@ -151,6 +153,7 @@ describe('ProjectEditStore', () => {
       offerId: 'Offer1',
       company: { id: 1, companyName: 'Test Company' },
       ismsLevel: 'VERY_HIGH',
+      isEoC: false,
       companyState: 'EXTERNAL',
       team: undefined,
       notes: '',
@@ -164,6 +167,7 @@ describe('ProjectEditStore', () => {
       offerId: 'Offer1',
       companyId: 2,
       ismsLevel: 'VERY_HIGH',
+      isEoC: false,
       companyState: 'EXTERNAL',
       notes: '',
     });
@@ -178,6 +182,7 @@ describe('ProjectEditStore', () => {
       offerId: 'Offer1',
       company: { id: 1, companyName: 'Test Company' },
       ismsLevel: 'VERY_HIGH',
+      isEoC: false,
       companyState: 'EXTERNAL',
       notes: '',
     });
@@ -217,6 +222,7 @@ describe('ProjectEditStore', () => {
       offerId: 'Offer1',
       companyId: 3,
       ismsLevel: 'VERY_HIGH',
+      isEoC: false,
       companyState: 'EXTERNAL',
       notes: 'TestNotes',
     };
@@ -235,6 +241,7 @@ describe('ProjectEditStore', () => {
       offerId: 'Offer1',
       company: { id: 1, companyName: 'Test Company' },
       ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
+      isEoC: false,
       companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
       notes: 'Initial notes',
     };
@@ -256,6 +263,7 @@ describe('ProjectEditStore', () => {
       offerId: 'Offer1',
       companyId: 1,
       ismsLevel: 'VERY_HIGH' as 'VERY_HIGH' | 'NORMAL' | 'HIGH',
+      isEoC: false,
       companyState: 'EXTERNAL' as 'EXTERNAL' | 'INTERNAL',
       notes: 'Updated notes',
     };

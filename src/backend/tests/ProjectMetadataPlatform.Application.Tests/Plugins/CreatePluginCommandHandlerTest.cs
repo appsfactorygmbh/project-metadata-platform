@@ -36,10 +36,12 @@ public class CreatePluginCommandHandlerTest
     [Test]
     public async Task CreatePlugin_Test()
     {
-        _mockPluginRepo
+        _ = _mockPluginRepo
             .Setup(m => m.StorePlugin(It.IsAny<Plugin>()))
             .Callback<Plugin>(p => p.Id = 13);
-        _mockPluginRepo.Setup(m => m.CheckGlobalPluginNameExists("Airlock")).ReturnsAsync(false);
+        _ = _mockPluginRepo
+            .Setup(m => m.CheckGlobalPluginNameExists("Airlock"))
+            .ReturnsAsync(false);
 
         var result = await _handler.Handle(
             new CreatePluginCommand("Airlock", true, [], "https://airlock.com"),
@@ -83,9 +85,9 @@ public class CreatePluginCommandHandlerTest
     [Test]
     public void CreatePlugin_NameConflict_Test()
     {
-        _mockPluginRepo.Setup(m => m.CheckGlobalPluginNameExists("Airlock")).ReturnsAsync(true);
+        _ = _mockPluginRepo.Setup(m => m.CheckGlobalPluginNameExists("Airlock")).ReturnsAsync(true);
 
-        Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() =>
+        _ = Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() =>
             _handler.Handle(
                 new CreatePluginCommand("Airlock", true, [], "https://airlock.com"),
                 It.IsAny<CancellationToken>()

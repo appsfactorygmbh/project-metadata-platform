@@ -12,8 +12,8 @@ public class TestsWithDatabase
     public void BaseSetUp()
     {
         using var context = DbContext();
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
+        _ = context.Database.EnsureDeleted();
+        _ = context.Database.EnsureCreated();
     }
 
     [TearDown]
@@ -21,7 +21,7 @@ public class TestsWithDatabase
     {
         using var context = DbContext();
 
-        context.Database.EnsureDeleted();
+        _ = context.Database.EnsureDeleted();
     }
 
     protected static ProjectMetadataPlatformDbContext DbContext()
@@ -50,7 +50,7 @@ public class TestsWithDatabase
         context.ProjectPluginsRelation.RemoveRange(allEntitiesProjectsPlugins);
         context.Logs.RemoveRange(allEntitiesLogs);
         context.Users.RemoveRange(allEntitiesUsers);
-        context.SaveChanges();
+        _ = context.SaveChanges();
     }
 
     [Test]

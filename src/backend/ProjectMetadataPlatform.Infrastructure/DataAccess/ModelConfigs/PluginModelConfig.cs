@@ -22,6 +22,6 @@ public class PluginModelConfig : IEntityTypeConfiguration<Plugin>
             .WithOne(pp => pp.Plugin)
             .HasForeignKey(pp => pp.PluginId);
 
-        builder.HasIndex(plugin => plugin.PluginName).IsUnique();
+        _ = builder.HasIndex(plugin => plugin.PluginName).IsUnique();
     }
 }

@@ -41,7 +41,7 @@ public class GetGlobalPluginsQueryHandlerTest
                 IsArchived = false,
             },
         };
-        _pluginRepositoryMock.Setup(r => r.GetGlobalPluginsAsync()).ReturnsAsync(plugins);
+        _ = _pluginRepositoryMock.Setup(r => r.GetGlobalPluginsAsync()).ReturnsAsync(plugins);
 
         var query = new GetGlobalPluginsQuery();
         var result = (await _handler.Handle(query, It.IsAny<CancellationToken>())).ToList();

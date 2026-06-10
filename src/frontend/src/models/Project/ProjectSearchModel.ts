@@ -7,6 +7,7 @@ export interface ProjectSearchModel {
   clientName: string;
   company: string;
   isArchived: boolean;
+  isEoC: string;
   ismsLevel: SecurityLevel;
   teamName: string;
   businessUnit: string;

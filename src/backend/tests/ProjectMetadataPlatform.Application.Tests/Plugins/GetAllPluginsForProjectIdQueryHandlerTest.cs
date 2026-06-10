@@ -61,7 +61,9 @@ public class GetAllPluginsForProjectIdQueryHandlerTest
                 Url = "Plugin2.com",
             },
         };
-        _pluginRepositoryMock.Setup(r => r.GetAllPluginsForProjectIdAsync(1)).ReturnsAsync(plugins);
+        _ = _pluginRepositoryMock
+            .Setup(r => r.GetAllPluginsForProjectIdAsync(1))
+            .ReturnsAsync(plugins);
 
         var query = new GetAllPluginsForProjectIdQuery(1);
         var result = (await _handler.Handle(query, It.IsAny<CancellationToken>())).ToList();

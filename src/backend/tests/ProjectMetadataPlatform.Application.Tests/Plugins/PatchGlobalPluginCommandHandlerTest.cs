@@ -46,17 +46,17 @@ public class PatchGlobalPluginCommandHandlerTest
             IsArchived = false,
         };
 
-        _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
-        _mockPluginRepo
+        _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
+        _ = _mockPluginRepo
             .Setup(repo => repo.CheckGlobalPluginNameExists("Mercury Atlas"))
             .ReturnsAsync(false);
-        _mockPluginRepo
+        _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
             .ReturnsAsync((Plugin p) => p);
 
         List<LogChange>? capturedLogChanges = null;
 
-        _mockLogRepo
+        _ = _mockLogRepo
             .Setup(m =>
                 m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
@@ -120,14 +120,14 @@ public class PatchGlobalPluginCommandHandlerTest
             IsArchived = false,
         };
 
-        _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
-        _mockPluginRepo
+        _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
+        _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
             .ReturnsAsync((Plugin p) => p);
 
         List<LogChange>? capturedLogChanges = null;
 
-        _mockLogRepo
+        _ = _mockLogRepo
             .Setup(m =>
                 m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
@@ -183,14 +183,14 @@ public class PatchGlobalPluginCommandHandlerTest
             IsArchived = false,
         };
 
-        _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
-        _mockPluginRepo
+        _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
+        _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
             .ReturnsAsync((Plugin p) => p);
 
         List<LogChange>? capturedLogChanges = null;
 
-        _mockLogRepo
+        _ = _mockLogRepo
             .Setup(m =>
                 m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
@@ -235,14 +235,14 @@ public class PatchGlobalPluginCommandHandlerTest
             IsArchived = true,
         };
 
-        _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
-        _mockPluginRepo
+        _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
+        _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
             .ReturnsAsync((Plugin p) => p);
 
         List<LogChange>? capturedLogChanges = null;
 
-        _mockLogRepo
+        _ = _mockLogRepo
             .Setup(m =>
                 m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
@@ -292,10 +292,10 @@ public class PatchGlobalPluginCommandHandlerTest
     public void PatchGlobalPlugin_NotFound_Test()
     {
         // Arrange
-        _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync((Plugin?)null);
+        _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync((Plugin?)null);
 
         // Assert
-        Assert.ThrowsAsync<PluginNotFoundException>(() =>
+        _ = Assert.ThrowsAsync<PluginNotFoundException>(() =>
             _handler.Handle(new PatchGlobalPluginCommand(42), It.IsAny<CancellationToken>())
         );
     }
@@ -312,14 +312,14 @@ public class PatchGlobalPluginCommandHandlerTest
             BaseUrl = "https://mercuryredstone.com",
         };
 
-        _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
-        _mockPluginRepo
+        _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
+        _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
             .ReturnsAsync((Plugin p) => p);
 
         List<LogChange>? capturedLogChanges = null;
 
-        _mockLogRepo
+        _ = _mockLogRepo
             .Setup(m =>
                 m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
@@ -381,12 +381,12 @@ public class PatchGlobalPluginCommandHandlerTest
             IsArchived = false,
             BaseUrl = "https://mercuryredstone.com",
         };
-        _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
+        _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
 
-        _mockPluginRepo
+        _ = _mockPluginRepo
             .Setup(repo => repo.CheckGlobalPluginNameExists("Atlas Agena"))
             .ReturnsAsync(true);
-        Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() =>
+        _ = Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() =>
             _handler.Handle(
                 new PatchGlobalPluginCommand(42, "Atlas Agena"),
                 It.IsAny<CancellationToken>()
@@ -406,14 +406,14 @@ public class PatchGlobalPluginCommandHandlerTest
             IsArchived = false,
         };
 
-        _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
-        _mockPluginRepo
+        _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
+        _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
             .ReturnsAsync((Plugin p) => p);
 
         List<LogChange>? capturedLogChanges = null;
 
-        _mockLogRepo
+        _ = _mockLogRepo
             .Setup(m =>
                 m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
@@ -470,14 +470,14 @@ public class PatchGlobalPluginCommandHandlerTest
             IsArchived = false,
         };
 
-        _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
-        _mockPluginRepo
+        _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
+        _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
             .ReturnsAsync((Plugin p) => p);
 
         List<LogChange>? capturedLogChanges = null;
 
-        _mockLogRepo
+        _ = _mockLogRepo
             .Setup(m =>
                 m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),
@@ -542,14 +542,14 @@ public class PatchGlobalPluginCommandHandlerTest
             IsArchived = false,
         };
 
-        _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
-        _mockPluginRepo
+        _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
+        _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
             .ReturnsAsync((Plugin p) => p);
 
         List<LogChange>? capturedLogChanges = null;
 
-        _mockLogRepo
+        _ = _mockLogRepo
             .Setup(m =>
                 m.AddGlobalPluginLogForCurrentActor(
                     It.IsAny<Plugin>(),

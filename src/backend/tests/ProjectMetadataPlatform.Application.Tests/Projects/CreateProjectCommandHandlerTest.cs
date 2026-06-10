@@ -54,15 +54,17 @@ public class CreateProjectCommandHandlerTest
         // prepare
         var plugins = new List<ProjectPlugins>();
         plugins.Add(new ProjectPlugins { Url = "https://example.com", PluginId = 200 });
-        _mockProjectRepo
+        _ = _mockProjectRepo
             .Setup(m => m.AddProjectAsync(It.IsAny<Project>()))
             .Callback<Project>(p => p.Id = 1);
-        _companyRepository
+        _ = _companyRepository
             .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(true);
-        _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
-        _mockSlugHelper.Setup(m => m.GenerateSlug(It.IsAny<string>())).Returns("example_project");
-        _mockSlugHelper
+        _ = _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
+        _ = _mockSlugHelper
+            .Setup(m => m.GenerateSlug(It.IsAny<string>()))
+            .Returns("example_project");
+        _ = _mockSlugHelper
             .Setup(m => m.GetProjectIdBySlug("example_project"))
             .ThrowsAsync(
                 new InvalidOperationException(
@@ -80,6 +82,7 @@ public class CreateProjectCommandHandlerTest
                 CompanyState: CompanyState.EXTERNAL,
                 TeamId: null,
                 IsmsLevel: SecurityLevel.HIGH,
+                IsEoC: false,
                 Plugins: plugins,
                 Notes: "Example Notes"
             ),
@@ -112,16 +115,20 @@ public class CreateProjectCommandHandlerTest
     {
         var plugins = new List<ProjectPlugins>();
         plugins.Add(new ProjectPlugins { Url = "https://example.com", PluginId = 200 });
-        _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
-        _mockSlugHelper.Setup(m => m.GenerateSlug(It.IsAny<string>())).Returns("example_project");
-        _mockSlugHelper.Setup(m => m.GetProjectIdBySlug("example_project")).ReturnsAsync(1);
-        _mockSlugHelper.Setup(m => m.CheckProjectSlugExists("example_project")).ReturnsAsync(true);
-        _companyRepository
+        _ = _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
+        _ = _mockSlugHelper
+            .Setup(m => m.GenerateSlug(It.IsAny<string>()))
+            .Returns("example_project");
+        _ = _mockSlugHelper.Setup(m => m.GetProjectIdBySlug("example_project")).ReturnsAsync(1);
+        _ = _mockSlugHelper
+            .Setup(m => m.CheckProjectSlugExists("example_project"))
+            .ReturnsAsync(true);
+        _ = _companyRepository
             .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(true);
         var ex = Assert.ThrowsAsync<ProjectSlugAlreadyExistsException>(async () =>
         {
-            await _handler.Handle(
+            _ = await _handler.Handle(
                 new CreateProjectCommand(
                     ProjectName: "Example Project",
                     ClientName: "Example Business Unit",
@@ -130,6 +137,7 @@ public class CreateProjectCommandHandlerTest
                     CompanyState: CompanyState.EXTERNAL,
                     TeamId: null,
                     IsmsLevel: SecurityLevel.HIGH,
+                    IsEoC: false,
                     Plugins: plugins,
                     Notes: "Example Notes"
                 ),
@@ -168,13 +176,13 @@ public class CreateProjectCommandHandlerTest
     {
         var plugins = new List<ProjectPlugins>();
         plugins.Add(new ProjectPlugins { Url = "https://example.com", PluginId = 200 });
-        _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
-        _companyRepository
+        _ = _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
+        _ = _companyRepository
             .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(false);
         var ex = Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
         {
-            await _handler.Handle(
+            _ = await _handler.Handle(
                 new CreateProjectCommand(
                     ProjectName: "Example Project",
                     ClientName: "Example Business Unit",
@@ -183,6 +191,7 @@ public class CreateProjectCommandHandlerTest
                     CompanyState: CompanyState.EXTERNAL,
                     TeamId: null,
                     IsmsLevel: SecurityLevel.HIGH,
+                    IsEoC: false,
                     Plugins: plugins,
                     Notes: "Example Notes"
                 ),
@@ -218,23 +227,27 @@ public class CreateProjectCommandHandlerTest
     {
         var plugins = new List<ProjectPlugins>();
         plugins.Add(new ProjectPlugins { Url = "https://example.com", PluginId = 200 });
-        _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
-        _mockSlugHelper.Setup(m => m.GenerateSlug(It.IsAny<string>())).Returns("example_project");
-        _companyRepository
+        _ = _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
+        _ = _mockSlugHelper
+            .Setup(m => m.GenerateSlug(It.IsAny<string>()))
+            .Returns("example_project");
+        _ = _companyRepository
             .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(true);
-        _mockSlugHelper
+        _ = _mockSlugHelper
             .Setup(m => m.GetProjectIdBySlug("example_project"))
             .ThrowsAsync(
                 new InvalidOperationException(
                     "Project with this slug does not exist: example_project"
                 )
             );
-        _mockSlugHelper.Setup(m => m.CheckProjectSlugExists("example_project")).ReturnsAsync(false);
+        _ = _mockSlugHelper
+            .Setup(m => m.CheckProjectSlugExists("example_project"))
+            .ReturnsAsync(false);
 
         var ex = Assert.ThrowsAsync<ProjectNotesSizeException>(async () =>
         {
-            await _handler.Handle(
+            _ = await _handler.Handle(
                 new CreateProjectCommand(
                     ProjectName: "Example Project",
                     ClientName: "Example Business Unit",
@@ -243,6 +256,7 @@ public class CreateProjectCommandHandlerTest
                     CompanyState: CompanyState.EXTERNAL,
                     TeamId: null,
                     IsmsLevel: SecurityLevel.HIGH,
+                    IsEoC: false,
                     Plugins: plugins,
                     Notes: new string('a', 501)
                 ),

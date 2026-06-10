@@ -7,7 +7,6 @@ using ProjectMetadataPlatform.Application.BusinessUnits;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
-using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
@@ -39,11 +38,11 @@ public class CreateBusinessUnitCommandHandlerTest
     public async Task CreateBusinessUnit_NameDoesNotAlreadyExists_WorksFine()
     {
         // Arrange
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.CheckIfBusinessUnitNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.AddBusinessUnitAsync(It.IsAny<BusinessUnit>()))
             .Callback(
                 (BusinessUnit businessUnitBeingAdded) =>
@@ -85,7 +84,7 @@ public class CreateBusinessUnitCommandHandlerTest
     public void CreateBusinessUnit_NameAlreadyExists_ThrowsBusinessUnitNameAlreadyExistsException()
     {
         // Arrange
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.CheckIfBusinessUnitNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
         // Act + Assert

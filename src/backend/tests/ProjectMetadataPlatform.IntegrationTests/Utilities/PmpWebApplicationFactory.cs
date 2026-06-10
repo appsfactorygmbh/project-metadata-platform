@@ -12,7 +12,7 @@ public class PmpWebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureServices(services =>
+        _ = builder.ConfigureServices(services =>
         {
             var dbContextDescriptor = services.SingleOrDefault(descriptor =>
                 descriptor.ServiceType == typeof(DbContextOptions<ProjectMetadataPlatformDbContext>)
@@ -20,7 +20,7 @@ public class PmpWebApplicationFactory : WebApplicationFactory<Program>
 
             if (dbContextDescriptor != null)
             {
-                services.Remove(dbContextDescriptor);
+                _ = services.Remove(dbContextDescriptor);
             }
 
             var dbConnectionDescriptor = services.SingleOrDefault(descriptor =>
@@ -29,14 +29,14 @@ public class PmpWebApplicationFactory : WebApplicationFactory<Program>
 
             if (dbConnectionDescriptor != null)
             {
-                services.Remove(dbConnectionDescriptor);
+                _ = services.Remove(dbConnectionDescriptor);
             }
 
-            services.AddDbContext<ProjectMetadataPlatformDbContext>(options =>
+            _ = services.AddDbContext<ProjectMetadataPlatformDbContext>(options =>
                 options.UseSqlite("Datasource=unittest-db.db")
             );
         });
 
-        builder.UseEnvironment("Production");
+        _ = builder.UseEnvironment("Production");
     }
 }

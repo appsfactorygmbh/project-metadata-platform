@@ -6,7 +6,6 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.BusinessUnits;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 
 namespace ProjectMetadataPlatform.Application.Tests.BusinessUnits;
@@ -32,7 +31,7 @@ public class GetAllBusinessUnitsQueryHandlerTest
         // Arrange
         var returnBusinessUnit = new BusinessUnit() { Id = 1, BusinessUnitName = "Test_1" };
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitsAsync())
             .ReturnsAsync([returnBusinessUnit]);
 
@@ -60,7 +59,7 @@ public class GetAllBusinessUnitsQueryHandlerTest
             new() { Id = 4, BusinessUnitName = "Foo_2" },
         ];
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitsAsync())
             .ReturnsAsync(returnBusinessUnit);
 

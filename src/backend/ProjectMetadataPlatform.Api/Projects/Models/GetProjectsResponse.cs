@@ -12,6 +12,7 @@ namespace ProjectMetadataPlatform.Api.Projects.Models;
 /// <param name="ProjectName">The name of the project.</param>
 /// <param name="ClientName">The name of the client associated with the project.</param>
 /// <param name="IsArchived">If the project is archived or not.</param>
+/// <param name="IsEoC">If the project is an Engineer on Call project.</param>
 /// <param name="Company">The company associated with the project.</param>
 /// <param name="Team">The team working on the project. Optional.</param>
 /// <param name="IsmsLevel">The ISMS (Information Security Management System) level of the project.</param>
@@ -23,6 +24,7 @@ public record GetProjectsResponse(
     string ClientName,
     GetCompanyResponse Company,
     bool IsArchived,
+    bool IsEoC,
     GetTeamResponse? Team,
     SecurityLevel IsmsLevel,
     string Notes

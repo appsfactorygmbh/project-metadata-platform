@@ -29,7 +29,7 @@ public class GetProjectsBySearchingHandlerTest
         var emptyProjectList = Array.Empty<Project>();
 
         var query = new GetAllProjectsQuery(null, "M");
-        _mockProjectRepo.Setup(m => m.GetProjectsAsync(query)).ReturnsAsync(emptyProjectList);
+        _ = _mockProjectRepo.Setup(m => m.GetProjectsAsync(query)).ReturnsAsync(emptyProjectList);
 
         var result = await _handler.Handle(query, It.IsAny<CancellationToken>());
         Assert.That(result, Is.Empty);
@@ -52,7 +52,7 @@ public class GetProjectsBySearchingHandlerTest
 
         var query = new GetAllProjectsQuery(null, "R");
 
-        _mockProjectRepo
+        _ = _mockProjectRepo
             .Setup(m => m.GetProjectsAsync(query))
             .ReturnsAsync(projectsResponseContent);
 
@@ -83,7 +83,7 @@ public class GetProjectsBySearchingHandlerTest
                 CompanyId = -12,
             },
         };
-        _mockProjectRepo
+        _ = _mockProjectRepo
             .Setup(m => m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>()))
             .ReturnsAsync(projectsResponseContent);
         var query = new GetAllProjectsQuery(null, "");

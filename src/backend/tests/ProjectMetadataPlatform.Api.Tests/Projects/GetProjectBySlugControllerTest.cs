@@ -28,12 +28,12 @@ public class GetProjectBySlugControllerTest
     [Test]
     public void MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<GetProjectIdBySlugQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get("test"));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get("test"));
     }
 
     [Test]
@@ -52,7 +52,7 @@ public class GetProjectBySlugControllerTest
             CompanyState = CompanyState.EXTERNAL,
             IsmsLevel = SecurityLevel.VERY_HIGH,
         };
-        _mediator
+        _ = _mediator
             .Setup(m =>
                 m.Send(
                     It.Is<GetProjectIdBySlugQuery>(q => q.Slug == "metadataplatform"),
@@ -60,7 +60,7 @@ public class GetProjectBySlugControllerTest
                 )
             )
             .ReturnsAsync(50);
-        _mediator
+        _ = _mediator
             .Setup(m =>
                 m.Send(It.Is<GetProjectQuery>(q => q.Id == 50), It.IsAny<CancellationToken>())
             )

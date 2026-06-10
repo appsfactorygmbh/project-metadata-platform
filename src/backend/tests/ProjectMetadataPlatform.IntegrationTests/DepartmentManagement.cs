@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components.RenderTree;
 using NUnit.Framework;
 using ProjectMetadataPlatform.IntegrationTests.Utilities;
 
@@ -43,22 +42,22 @@ public class DepartmentManagement : IntegrationTestsBase
 
         var departments = await ToJsonElement(client.GetAsync("/Departments"));
 
-        departments.GetArrayLength().Should().Be(2);
-        departments[0].GetProperty("id").GetInt32().Should().Be(departmentId1);
-        departments[0].GetProperty("departmentName").GetString().Should().Be("Department1");
-        departments[1].GetProperty("id").GetInt32().Should().Be(departmentId2);
-        departments[1].GetProperty("departmentName").GetString().Should().Be("Department2");
+        _ = departments.GetArrayLength().Should().Be(2);
+        _ = departments[0].GetProperty("id").GetInt32().Should().Be(departmentId1);
+        _ = departments[0].GetProperty("departmentName").GetString().Should().Be("Department1");
+        _ = departments[1].GetProperty("id").GetInt32().Should().Be(departmentId2);
+        _ = departments[1].GetProperty("departmentName").GetString().Should().Be("Department2");
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
 
-        logs.GetArrayLength().Should().Be(2);
+        _ = logs.GetArrayLength().Should().Be(2);
 
-        logs[1]
+        _ = logs[1]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be("admin added a new department with properties: DepartmentName = Department1");
-        logs[0]
+        _ = logs[0]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -84,7 +83,7 @@ public class DepartmentManagement : IntegrationTestsBase
             )
         );
 
-        error.Message.Should().Be("A Department with the name Department1 already exists.");
+        _ = error.Message.Should().Be("A Department with the name Department1 already exists.");
     }
 
     [Test]
@@ -102,16 +101,16 @@ public class DepartmentManagement : IntegrationTestsBase
             .GetInt32();
         var departments = await ToJsonElement(client.GetAsync("/Departments"));
 
-        departments.GetArrayLength().Should().Be(1);
-        departments[0].GetProperty("id").GetInt32().Should().Be(departmentId1);
-        departments[0].GetProperty("departmentName").GetString().Should().Be("Department1");
+        _ = departments.GetArrayLength().Should().Be(1);
+        _ = departments[0].GetProperty("id").GetInt32().Should().Be(departmentId1);
+        _ = departments[0].GetProperty("departmentName").GetString().Should().Be("Department1");
 
-        (await client.DeleteAsync($"/Departments/{departmentId1}"))
+        _ = (await client.DeleteAsync($"/Departments/{departmentId1}"))
             .StatusCode.Should()
             .Be(HttpStatusCode.NoContent);
 
         var departmentsAfterDelete = await ToJsonElement(client.GetAsync("/Departments"));
 
-        departmentsAfterDelete.GetArrayLength().Should().Be(0);
+        _ = departmentsAfterDelete.GetArrayLength().Should().Be(0);
     }
 }

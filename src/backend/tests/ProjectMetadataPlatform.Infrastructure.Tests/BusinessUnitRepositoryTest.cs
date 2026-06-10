@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
-using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Infrastructure.BusinessUnits;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -41,9 +39,9 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
         var businessUnit2 = new BusinessUnit { Id = 2, BusinessUnitName = "Test_2" };
 
         _context.BusinessUnits.RemoveRange(_context.BusinessUnits);
-        _context.BusinessUnits.Add(businessUnit);
-        _context.BusinessUnits.Add(businessUnit2);
-        await _context.SaveChangesAsync();
+        _ = _context.BusinessUnits.Add(businessUnit);
+        _ = _context.BusinessUnits.Add(businessUnit2);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = (await _repository.GetBusinessUnitsAsync()).ToList();
@@ -69,12 +67,12 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
         var businessUnit = new BusinessUnit { Id = 1, BusinessUnitName = "Test_1" };
 
         _context.BusinessUnits.RemoveRange(_context.BusinessUnits);
-        _context.BusinessUnits.Add(businessUnit);
-        await _context.SaveChangesAsync();
+        _ = _context.BusinessUnits.Add(businessUnit);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var deletedBusinessUnit = await _repository.DeleteBusinessUnitAsync(businessUnit);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var remainingBusinessUnits = _context.BusinessUnits.ToList();
@@ -100,12 +98,12 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
         };
 
         _context.BusinessUnits.RemoveRange(_context.BusinessUnits);
-        _context.BusinessUnits.Add(businessUnit);
+        _ = _context.BusinessUnits.Add(businessUnit);
 
         _context.Teams.RemoveRange(_context.Teams);
-        _context.Teams.Add(team);
+        _ = _context.Teams.Add(team);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var businessUnitWithTeams = await _repository.GetBusinessUnitWithTeamsAsync(1);
@@ -129,7 +127,7 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         _context.BusinessUnits.RemoveRange(_context.BusinessUnits);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act + Assert
         var ex = Assert.ThrowsAsync<BusinessUnitNotFoundException>(async () =>
@@ -144,8 +142,8 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
         // Arrange
         var businessUnit = new BusinessUnit { Id = 1, BusinessUnitName = "Test_1" };
         _context.BusinessUnits.RemoveRange(_context.BusinessUnits);
-        _context.BusinessUnits.Add(businessUnit);
-        await _context.SaveChangesAsync();
+        _ = _context.BusinessUnits.Add(businessUnit);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var businessUnitName = await _repository.RetrieveNameForIdAsync(1);
@@ -167,7 +165,7 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
         // Act
         _context.BusinessUnits.RemoveRange(_context.BusinessUnits);
         await _repository.AddBusinessUnitAsync(newBusinessUnit);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var addedBusinessUnit = await _context.BusinessUnits.FindAsync(newBusinessUnit.Id);
@@ -192,8 +190,8 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
             BusinessUnitName = "Original Gamma",
         };
         _context.BusinessUnits.RemoveRange(_context.BusinessUnits);
-        _context.BusinessUnits.Add(initialBusinessUnit);
-        await _context.SaveChangesAsync();
+        _ = _context.BusinessUnits.Add(initialBusinessUnit);
+        _ = await _context.SaveChangesAsync();
 
         var businessUnitWithSameId = new BusinessUnit
         {
@@ -203,7 +201,7 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
 
         // Act
         await _repository.AddBusinessUnitAsync(businessUnitWithSameId);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var businessUnitInDb = await _context.BusinessUnits.FindAsync(initialBusinessUnit.Id);
@@ -223,10 +221,10 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var existingBusinessUnitName = "Unique Existent BusinessUnit";
-        _context.BusinessUnits.Add(
+        _ = _context.BusinessUnits.Add(
             new BusinessUnit { Id = 200, BusinessUnitName = existingBusinessUnitName }
         );
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.CheckIfBusinessUnitNameExistsAsync(existingBusinessUnitName);
@@ -240,10 +238,10 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var nonExistentBusinessUnitName = "Definitely Not Here BusinessUnit";
-        _context.BusinessUnits.Add(
+        _ = _context.BusinessUnits.Add(
             new BusinessUnit { Id = 201, BusinessUnitName = "Some Other BusinessUnit" }
         );
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.CheckIfBusinessUnitNameExistsAsync(
@@ -275,8 +273,8 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
             Id = 300,
             BusinessUnitName = "BusinessUnit Epsilon",
         };
-        _context.BusinessUnits.Add(initialBusinessUnit);
-        await _context.SaveChangesAsync();
+        _ = _context.BusinessUnits.Add(initialBusinessUnit);
+        _ = await _context.SaveChangesAsync();
         _context.Entry(initialBusinessUnit).State = EntityState.Detached;
 
         var updatedBusinessUnitData = new BusinessUnit
@@ -287,7 +285,7 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
 
         // Act
         var result = await _repository.UpdateBusinessUnitAsync(updatedBusinessUnitData);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var businessUnitFromDb = await _context.BusinessUnits.FindAsync(initialBusinessUnit.Id);
@@ -331,8 +329,8 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
             Id = 400,
             BusinessUnitName = "BusinessUnit Zeta",
         };
-        _context.BusinessUnits.Add(expectedBusinessUnit);
-        await _context.SaveChangesAsync();
+        _ = _context.BusinessUnits.Add(expectedBusinessUnit);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.GetBusinessUnitAsync(expectedBusinessUnit.Id);

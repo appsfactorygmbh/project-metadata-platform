@@ -26,12 +26,12 @@ public class DeleteUserCommandHandlerTest
         var contextUser = new ClaimsPrincipal(identity);
 
         var httpContext = new DefaultHttpContext { User = contextUser };
-        httpContextAccessorMock
+        _ = httpContextAccessorMock
             .Setup(contextAccessor => contextAccessor.HttpContext)
             .Returns(httpContext);
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockLogRepository = new Mock<ILogRepository>();
-        _mockLogRepository
+        _ = _mockLogRepository
             .Setup(repository => repository.GetLogsWithSearch(It.IsAny<string>()))
             .ReturnsAsync([]);
         _handler = new DeleteUserCommandHandler(
@@ -40,7 +40,7 @@ public class DeleteUserCommandHandlerTest
             _mockLogRepository.Object,
             _mockUnitOfWork.Object
         );
-        httpContextAccessorMock
+        _ = httpContextAccessorMock
             .Setup(contextAccessor => contextAccessor.HttpContext.User)
             .Returns(contextUser);
     }
@@ -61,8 +61,8 @@ public class DeleteUserCommandHandlerTest
             IsActive = true,
             IsScimProvisioned = false,
         };
-        _mockUsersRepo.Setup(m => m.GetUserByIdAsync("2")).ReturnsAsync(user);
-        _mockUsersRepo.Setup(m => m.DeleteUserAsync(user)).ReturnsAsync(user);
+        _ = _mockUsersRepo.Setup(m => m.GetUserByIdAsync("2")).ReturnsAsync(user);
+        _ = _mockUsersRepo.Setup(m => m.DeleteUserAsync(user)).ReturnsAsync(user);
         var result = await _handler.Handle(new DeleteUserCommand("2"), CancellationToken.None);
         _mockLogRepository.Verify(
             m =>
@@ -84,11 +84,11 @@ public class DeleteUserCommandHandlerTest
     [Test]
     public void DeleteUser_InvalidUser_Test()
     {
-        _mockUsersRepo
+        _ = _mockUsersRepo
             .Setup(m => m.GetUserByIdAsync("1"))
             .ThrowsAsync(new UserNotFoundException("1"));
 
-        Assert.ThrowsAsync<UserNotFoundException>(() =>
+        _ = Assert.ThrowsAsync<UserNotFoundException>(() =>
             _handler.Handle(new DeleteUserCommand("1"), CancellationToken.None)
         );
     }
@@ -105,10 +105,10 @@ public class DeleteUserCommandHandlerTest
             IsScimProvisioned = false,
         };
 
-        _mockUsersRepo.Setup(m => m.GetUserByIdAsync("200")).ReturnsAsync(user);
-        _mockUsersRepo.Setup(m => m.GetUserByEmailAsync("camo")).ReturnsAsync(user);
+        _ = _mockUsersRepo.Setup(m => m.GetUserByIdAsync("200")).ReturnsAsync(user);
+        _ = _mockUsersRepo.Setup(m => m.GetUserByEmailAsync("camo")).ReturnsAsync(user);
 
-        Assert.ThrowsAsync<UserCantDeleteThemselfException>(() =>
+        _ = Assert.ThrowsAsync<UserCantDeleteThemselfException>(() =>
             _handler.Handle(new DeleteUserCommand("200"), CancellationToken.None)
         );
     }

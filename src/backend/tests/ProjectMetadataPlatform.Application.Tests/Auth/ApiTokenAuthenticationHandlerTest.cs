@@ -27,7 +27,7 @@ public class ApiTokenAuthenticationHandlerTest
     public void Setup()
     {
         _optionsMock = new Mock<IOptionsMonitor<AuthenticationSchemeOptions>>();
-        _optionsMock
+        _ = _optionsMock
             .Setup(x => x.Get(It.IsAny<string>()))
             .Returns(new AuthenticationSchemeOptions());
         _encoderMock = new Mock<UrlEncoder>();
@@ -75,7 +75,7 @@ public class ApiTokenAuthenticationHandlerTest
     [Test]
     public async Task ApiTokenAuthenticationHandler_NoVerifiedTokenTest()
     {
-        _apiTokenRepositoryMock
+        _ = _apiTokenRepositoryMock
             .Setup(m => m.GetVerifiedToken(It.IsAny<string>()))
             .ReturnsAsync((ApiToken?)null);
         var context = new DefaultHttpContext();
@@ -95,7 +95,7 @@ public class ApiTokenAuthenticationHandlerTest
     [Test]
     public async Task ApiTokenAuthenticationHandler_ExpiredTokenTest()
     {
-        _apiTokenRepositoryMock
+        _ = _apiTokenRepositoryMock
             .Setup(m => m.GetVerifiedToken(It.IsAny<string>()))
             .ReturnsAsync(
                 new ApiToken
@@ -122,7 +122,7 @@ public class ApiTokenAuthenticationHandlerTest
     [Test]
     public async Task ApiTokenAuthenticationHandler_SuccessfullAuthenticationTest()
     {
-        _apiTokenRepositoryMock
+        _ = _apiTokenRepositoryMock
             .Setup(m => m.GetVerifiedToken(It.IsAny<string>()))
             .ReturnsAsync(
                 new ApiToken

@@ -92,14 +92,14 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
     {
         if (!await GetIf(p => p.Id == team.Id).AnyAsync())
         {
-            _context.Teams.Add(team);
+            _ = _context.Teams.Add(team);
         }
     }
 
     /// <inheritdoc/>
     public async Task<Team> DeleteTeamAsync(Team team)
     {
-        _context.Teams.Remove(team);
+        _ = _context.Teams.Remove(team);
         return await Task.FromResult(team);
     }
 
@@ -116,7 +116,7 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
         {
             throw new TeamNotFoundException(team.Id);
         }
-        _context.Teams.Update(team);
+        _ = _context.Teams.Update(team);
         return team;
     }
 

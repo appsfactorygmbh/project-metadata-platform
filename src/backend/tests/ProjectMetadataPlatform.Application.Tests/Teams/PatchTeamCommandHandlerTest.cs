@@ -48,15 +48,15 @@ public class PatchTeamCommandHandlerTest
             PTL = "Max Mustermann",
         };
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.UpdateTeamAsync(It.IsAny<Team>()))
             .ReturnsAsync((Team team) => team);
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.CheckIfTeamNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
@@ -114,15 +114,15 @@ public class PatchTeamCommandHandlerTest
             PTL = "Max Mustermann",
         };
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.UpdateTeamAsync(It.IsAny<Team>()))
             .ReturnsAsync((Team team) => team);
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.CheckIfTeamNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
@@ -157,15 +157,15 @@ public class PatchTeamCommandHandlerTest
             PTL = "Max Mustermann",
         };
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.UpdateTeamAsync(It.IsAny<Team>()))
             .ReturnsAsync((Team team) => team);
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.CheckIfTeamNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
 

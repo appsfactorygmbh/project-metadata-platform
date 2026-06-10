@@ -52,7 +52,7 @@ public abstract class RepositoryBase<T>
     /// <param name="entity">The entity to add.</param>
     public void Create(T entity)
     {
-        ProjectMetadataPlatformDbContext.Set<T>().Add(entity);
+        _ = ProjectMetadataPlatformDbContext.Set<T>().Add(entity);
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ public abstract class RepositoryBase<T>
     /// <param name="entity">The entity to update.</param>
     public void Update(T entity)
     {
-        ProjectMetadataPlatformDbContext.Set<T>().Update(entity);
+        _ = ProjectMetadataPlatformDbContext.Set<T>().Update(entity);
     }
 
     /// <summary>
@@ -70,6 +70,6 @@ public abstract class RepositoryBase<T>
     /// <param name="entity">The entity to delete.</param>
     public void Delete(T entity)
     {
-        ProjectMetadataPlatformDbContext.Set<T>().Remove(entity);
+        _ = ProjectMetadataPlatformDbContext.Set<T>().Remove(entity);
     }
 }

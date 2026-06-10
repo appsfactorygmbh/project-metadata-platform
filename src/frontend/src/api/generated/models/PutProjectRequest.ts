@@ -71,6 +71,12 @@ export interface PutProjectRequest {
    */
   ismsLevel: SecurityLevel;
   /**
+   * If the project is an Engineer on Call project.
+   * @type {boolean}
+   * @memberof PutProjectRequest
+   */
+  isEoC: boolean;
+  /**
    * Additonal Notes on the project
    * @type {string}
    * @memberof PutProjectRequest
@@ -104,6 +110,7 @@ export function instanceOfPutProjectRequest(
   if (!('companyState' in value) || value['companyState'] === undefined)
     return false;
   if (!('ismsLevel' in value) || value['ismsLevel'] === undefined) return false;
+  if (!('isEoC' in value) || value['isEoC'] === undefined) return false;
   if (!('notes' in value) || value['notes'] === undefined) return false;
   if (!('isArchived' in value) || value['isArchived'] === undefined)
     return false;
@@ -129,6 +136,7 @@ export function PutProjectRequestFromJSONTyped(
     teamId: json['teamId'] == null ? undefined : json['teamId'],
     companyState: CompanyStateFromJSON(json['companyState']),
     ismsLevel: SecurityLevelFromJSON(json['ismsLevel']),
+    isEoC: json['isEoC'],
     notes: json['notes'],
     pluginList:
       json['pluginList'] == null
@@ -160,6 +168,7 @@ export function PutProjectRequestToJSONTyped(
     teamId: value['teamId'],
     companyState: CompanyStateToJSON(value['companyState']),
     ismsLevel: SecurityLevelToJSON(value['ismsLevel']),
+    isEoC: value['isEoC'],
     notes: value['notes'],
     pluginList:
       value['pluginList'] == null

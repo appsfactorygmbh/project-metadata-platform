@@ -42,7 +42,9 @@ public class DeleteApiTokenCommandHandlerTest
             Token = "TokeHash",
             Scopes = new List<TokenScopes> { TokenScopes.SCIM },
         };
-        _apiTokenRepositoryMock.Setup(m => m.GetApiTokenById(It.IsAny<int>())).ReturnsAsync(token);
+        _ = _apiTokenRepositoryMock
+            .Setup(m => m.GetApiTokenById(It.IsAny<int>()))
+            .ReturnsAsync(token);
 
         var request = new DeleteApiTokenCommand(1);
 

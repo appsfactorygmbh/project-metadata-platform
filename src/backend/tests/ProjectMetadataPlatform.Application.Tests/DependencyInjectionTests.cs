@@ -21,13 +21,13 @@ public class DependencyInjectionTests
     {
         var serviceCollection = new ServiceCollection() as IServiceCollection;
 
-        serviceCollection.AddSingleton(_mockProjectsRepository.Object);
+        _ = serviceCollection.AddSingleton(_mockProjectsRepository.Object);
 
-        serviceCollection.AddApplicationDependencies();
+        _ = serviceCollection.AddApplicationDependencies();
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
         Assert.That(serviceProvider.GetService<ISlugHelper>(), Is.Not.Null);
 
-        serviceCollection.BuildServiceProvider();
+        _ = serviceCollection.BuildServiceProvider();
     }
 }

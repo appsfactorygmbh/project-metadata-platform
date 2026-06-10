@@ -64,10 +64,10 @@ public class LogsControllerTest
                 },
             ],
         };
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
             .ReturnsAsync([log]);
-        _logConverter
+        _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("Project updated", "1970-01-01T00:00:00+01:00"));
 
@@ -113,10 +113,10 @@ public class LogsControllerTest
                 },
             ],
         };
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
             .ReturnsAsync([log]);
-        _logConverter
+        _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("Project updated", "1970-01-01T00:00:00+01:00"));
 
@@ -171,10 +171,10 @@ public class LogsControllerTest
                 },
             ],
         };
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
             .ReturnsAsync([log]);
-        _logConverter
+        _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("Project updated", "1970-01-01T00:00:00+01:00"));
 
@@ -229,10 +229,10 @@ public class LogsControllerTest
                 },
             ],
         };
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
             .ReturnsAsync([log]);
-        _logConverter
+        _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("User updated", "1970-01-01T00:00:00+01:00"));
 
@@ -288,10 +288,10 @@ public class LogsControllerTest
                 },
             ],
         };
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
             .ReturnsAsync([log]);
-        _logConverter
+        _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("Global plugin updated", "1970-01-01T00:00:00+01:00"));
 
@@ -346,13 +346,13 @@ public class LogsControllerTest
                 },
             ],
         };
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
             .ReturnsAsync([log]);
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetProjectIdBySlugQuery>(), CancellationToken.None))
             .ReturnsAsync(42);
-        _logConverter
+        _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("Project updated", "1970-01-01T00:00:00+01:00"));
 
@@ -415,10 +415,10 @@ public class LogsControllerTest
                 },
             ],
         };
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
             .ReturnsAsync([log]);
-        _logConverter
+        _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("Project updated", "1970-01-01T00:00:00+01:00"));
 
@@ -454,11 +454,11 @@ public class LogsControllerTest
     [Test]
     public void GetLogsByProjectSlugNoId_NotFoundThrowsException()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetProjectIdBySlugQuery>(), CancellationToken.None))
             .ThrowsAsync(new ProjectNotFoundException("answerToLifeTheUniverseAndEverything"));
 
-        Assert.ThrowsAsync<ProjectNotFoundException>(() =>
+        _ = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
             _controller.Get(null, null, null, null, "answerToLifeTheUniverseAndEverything")
         );
     }
@@ -466,7 +466,7 @@ public class LogsControllerTest
     [Test]
     public void GetLogs_ThrowsException_Test()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
             .ThrowsAsync(new FormatException("Something went wrong"));
 

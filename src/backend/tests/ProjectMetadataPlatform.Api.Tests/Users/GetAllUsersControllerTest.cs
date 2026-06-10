@@ -67,7 +67,7 @@ public class GetAllUsersControllerTest
                 TeamSupport = [],
             },
         };
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(users);
 
@@ -124,7 +124,7 @@ public class GetAllUsersControllerTest
     [Test]
     public async Task Get_ReturnsEmptyList()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<ApplicationUser>());
 
@@ -140,10 +140,10 @@ public class GetAllUsersControllerTest
     [Test]
     public void Get_ReturnsMediatorException()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new InvalidOperationException("Test exception"));
 
-        Assert.ThrowsAsync<InvalidOperationException>(() => _controller.Get());
+        _ = Assert.ThrowsAsync<InvalidOperationException>(() => _controller.Get());
     }
 }

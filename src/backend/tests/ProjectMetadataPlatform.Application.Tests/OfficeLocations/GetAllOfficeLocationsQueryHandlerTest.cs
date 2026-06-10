@@ -6,7 +6,6 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.OfficeLocations;
-using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Application.Tests.OfficeLocations;
@@ -32,7 +31,7 @@ public class GetAllOfficeLocationsQueryHandlerTest
         // Arrange
         var returnOfficeLocation = new OfficeLocation() { Id = 1, OfficeLocationName = "Test_1" };
 
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.GetOfficeLocationsAsync())
             .ReturnsAsync([returnOfficeLocation]);
 
@@ -60,7 +59,7 @@ public class GetAllOfficeLocationsQueryHandlerTest
             new() { Id = 4, OfficeLocationName = "Foo_2" },
         ];
 
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.GetOfficeLocationsAsync())
             .ReturnsAsync(returnOfficeLocation);
 

@@ -33,7 +33,7 @@ public class GetUserQueryHandlerTest
             IsScimProvisioned = false,
         };
 
-        _mockUserRepo.Setup(m => m.GetUserByIdAsync("1000")).ReturnsAsync(userResponseContent);
+        _ = _mockUserRepo.Setup(m => m.GetUserByIdAsync("1000")).ReturnsAsync(userResponseContent);
         var request = new GetUserQuery("1000");
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 

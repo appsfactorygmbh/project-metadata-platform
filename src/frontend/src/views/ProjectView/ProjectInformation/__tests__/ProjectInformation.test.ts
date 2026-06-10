@@ -33,6 +33,7 @@ const testData: DetailedProjectModel = {
   company: { id: 1, companyName: 'Appsfactory' },
   companyState: 'EXTERNAL',
   ismsLevel: 'NORMAL',
+  isEoC: false,
   notes: 'TestNotes',
 };
 
@@ -80,11 +81,12 @@ describe('ProjectInformation.vue', () => {
       'Company\xa0State:External',
     );
     expect(wrapper.findAll('.infoCard')[5].text()).toBe('ISMS\xa0Level:Normal');
-    expect(wrapper.findAll('.infoCard')[6].text()).toBe('Team\xa0Name:42');
-    expect(wrapper.findAll('.infoCard')[7].text()).toBe(
+    expect(wrapper.findAll('.infoCard')[6].text()).toBe('EoC:');
+    expect(wrapper.findAll('.infoCard')[7].text()).toBe('Team\xa0Name:42');
+    expect(wrapper.findAll('.infoCard')[8].text()).toBe(
       'Business\xa0Unit:BU Health',
     );
-    expect(wrapper.findAll('.infoCard')[8].text()).toBe('PTL:Max Mustermann');
+    expect(wrapper.findAll('.infoCard')[9].text()).toBe('PTL:Max Mustermann');
     expect(wrapper.findAll('.notesCard')[0].text()).toBe('TestNotes');
   });
 

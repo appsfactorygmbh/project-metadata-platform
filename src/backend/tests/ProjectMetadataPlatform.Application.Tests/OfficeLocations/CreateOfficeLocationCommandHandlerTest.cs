@@ -5,7 +5,6 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.OfficeLocations;
-using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
@@ -39,11 +38,11 @@ public class CreateOfficeLocationCommandHandlerTest
     public async Task CreateOfficeLocation_NameDoesNotAlreadyExists_WorksFine()
     {
         // Arrange
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.CheckIfOfficeLocationNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.AddOfficeLocationAsync(It.IsAny<OfficeLocation>()))
             .Callback(
                 (OfficeLocation officeLocationBeingAdded) =>
@@ -85,7 +84,7 @@ public class CreateOfficeLocationCommandHandlerTest
     public void CreateOfficeLocation_NameAlreadyExists_ThrowsOfficeLocationNameAlreadyExistsException()
     {
         // Arrange
-        _mockOfficeLocationRepository
+        _ = _mockOfficeLocationRepository
             .Setup(repo => repo.CheckIfOfficeLocationNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
         // Act + Assert

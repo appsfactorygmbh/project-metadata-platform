@@ -24,7 +24,7 @@ public class GetProjectByIdQueryHandlerTest
     [Test]
     public async Task HandleGetProjectRequest_NonexistentProject_Test()
     {
-        _mockProjectRepo.Setup(m => m.GetProjectAsync(2))!.ReturnsAsync((Project?)null);
+        _ = _mockProjectRepo.Setup(m => m.GetProjectAsync(2))!.ReturnsAsync((Project?)null);
         var query = new GetProjectQuery(2);
         var result = await _handler.Handle(query, It.IsAny<CancellationToken>());
         Assert.That(result, Is.Null);
@@ -41,7 +41,7 @@ public class GetProjectByIdQueryHandlerTest
             ClientName = "Nasa",
             CompanyId = 1000000000,
         };
-        _mockProjectRepo.Setup(m => m.GetProjectAsync(2)).ReturnsAsync(projectsResponseContent);
+        _ = _mockProjectRepo.Setup(m => m.GetProjectAsync(2)).ReturnsAsync(projectsResponseContent);
         var query = new GetProjectQuery(2);
         var result = await _handler.Handle(query, It.IsAny<CancellationToken>());
 

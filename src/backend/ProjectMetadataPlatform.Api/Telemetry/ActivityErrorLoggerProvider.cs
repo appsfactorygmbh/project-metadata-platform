@@ -47,14 +47,14 @@ public sealed class ActivityErrorLoggerProvider : ILoggerProvider
             }
 
             var message = formatter(state, exception);
-            activity.SetStatus(
+            _ = activity.SetStatus(
                 ActivityStatusCode.Error,
                 CreateStatusDescription(message, exception)
             );
-            activity.SetTag("app.log.error", true);
-            activity.SetTag("app.log.error_count", GetErrorCount(activity) + 1);
-            activity.SetTag("app.log.severity", logLevel.ToString());
-            activity.SetTag("app.log.category", _categoryName);
+            _ = activity.SetTag("app.log.error", true);
+            _ = activity.SetTag("app.log.error_count", GetErrorCount(activity) + 1);
+            _ = activity.SetTag("app.log.severity", logLevel.ToString());
+            _ = activity.SetTag("app.log.category", _categoryName);
 
             var tags = new ActivityTagsCollection
             {
@@ -88,7 +88,7 @@ public sealed class ActivityErrorLoggerProvider : ILoggerProvider
                 }
             }
 
-            activity.AddEvent(new ActivityEvent("log.error", tags: tags));
+            _ = activity.AddEvent(new ActivityEvent("log.error", tags: tags));
         }
 
         private static string CreateStatusDescription(string? message, Exception? exception)

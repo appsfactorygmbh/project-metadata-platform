@@ -16,7 +16,7 @@ public class DependencyInjectionTests
     {
         var serviceCollection = new ServiceCollection() as IServiceCollection;
 
-        serviceCollection.AddApiDependencies();
+        _ = serviceCollection.AddApiDependencies();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Assert.Multiple(() =>

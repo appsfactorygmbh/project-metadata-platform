@@ -35,7 +35,7 @@ public class DeleteUserControllerTest
             IsActive = true,
             IsScimProvisioned = false,
         };
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<DeleteUserCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
         var result = await _controller.Delete("1");
@@ -51,28 +51,28 @@ public class DeleteUserControllerTest
     [Test]
     public void DeleteUser_NotFound_Test()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<DeleteUserCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new UserNotFoundException("Mike"));
-        Assert.ThrowsAsync<UserNotFoundException>(() => _controller.Delete("Mike"));
+        _ = Assert.ThrowsAsync<UserNotFoundException>(() => _controller.Delete("Mike"));
     }
 
     [Test]
     public void DeleteUser_InternalError_Test()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<DeleteUserCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new UserNotFoundException("Mike"));
-        Assert.ThrowsAsync<UserNotFoundException>(() => _controller.Delete("Mike"));
+        _ = Assert.ThrowsAsync<UserNotFoundException>(() => _controller.Delete("Mike"));
     }
 
     [Test]
     public void DeleteUser_UserSelfDeletionAttempt_Test()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<DeleteUserCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new UserCantDeleteThemselfException());
 
-        Assert.ThrowsAsync<UserCantDeleteThemselfException>(() => _controller.Delete("1"));
+        _ = Assert.ThrowsAsync<UserCantDeleteThemselfException>(() => _controller.Delete("1"));
     }
 }

@@ -76,13 +76,13 @@ public class PatchUserCommandHandlerTest
                 },
             },
         };
-        _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(false);
-        _mockUsersRepo.Setup(repo => repo.GetUserByEmailAsync("123")).ReturnsAsync(user);
-        _mockUsersRepo
+        _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(false);
+        _ = _mockUsersRepo.Setup(repo => repo.GetUserByEmailAsync("123")).ReturnsAsync(user);
+        _ = _mockUsersRepo
             .Setup(repo => repo.StoreUser(It.IsAny<ApplicationUser>()))
             .ReturnsAsync((ApplicationUser p) => p);
-        _mockUnitOfWork.Setup(m => m.CompleteAsync()).Returns(Task.CompletedTask);
-        _mockLogRepo
+        _ = _mockUnitOfWork.Setup(m => m.CompleteAsync()).Returns(Task.CompletedTask);
+        _ = _mockLogRepo
             .Setup(m =>
                 m.AddUserLogForCurrentActor(
                     It.IsAny<ApplicationUser>(),
@@ -91,7 +91,7 @@ public class PatchUserCommandHandlerTest
                 )
             )
             .Returns(Task.CompletedTask);
-        _mockTeamRepo
+        _ = _mockTeamRepo
             .Setup(m => m.GetTeamByNameAsync(It.IsAny<string>()))
             .ReturnsAsync(
                 new Team
@@ -207,9 +207,9 @@ public class PatchUserCommandHandlerTest
             IsScimProvisioned = false,
         };
 
-        _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
-        _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("123")).ReturnsAsync(user);
-        _mockUsersRepo
+        _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
+        _ = _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("123")).ReturnsAsync(user);
+        _ = _mockUsersRepo
             .Setup(repo => repo.StoreUser(It.IsAny<ApplicationUser>()))
             .ReturnsAsync((ApplicationUser p) => p);
         var result = await _handler.Handle(
@@ -229,12 +229,12 @@ public class PatchUserCommandHandlerTest
     [Test]
     public void PatchUser_NotFound_Test()
     {
-        _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
-        _mockUsersRepo
+        _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
+        _ = _mockUsersRepo
             .Setup(repo => repo.GetUserByIdAsync("42"))
             .ThrowsAsync(new UserNotFoundException("42"));
 
-        Assert.ThrowsAsync<UserNotFoundException>(() =>
+        _ = Assert.ThrowsAsync<UserNotFoundException>(() =>
             _handler.Handle(new PatchUserCommand { Id = "42" }, It.IsAny<CancellationToken>())
         );
     }
@@ -252,13 +252,13 @@ public class PatchUserCommandHandlerTest
         };
         var newEmail = "newAndShiny@htwk.com";
 
-        _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
-        _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("42")).ReturnsAsync(user);
-        _mockUsersRepo
+        _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
+        _ = _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("42")).ReturnsAsync(user);
+        _ = _mockUsersRepo
             .Setup(repo => repo.StoreUser(It.IsAny<ApplicationUser>()))
             .ReturnsAsync((ApplicationUser p) => p);
 
-        await _handler.Handle(
+        _ = await _handler.Handle(
             new PatchUserCommand
             {
                 Id = "42",
@@ -306,17 +306,19 @@ public class PatchUserCommandHandlerTest
         };
         var newPassword = "newPassword";
         var newPasswordHash = "newPasswordHash";
-        _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
-        _mockUsersRepo.Setup(repo => repo.CheckPasswordFormat("newPassword")).ReturnsAsync(true);
-        _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("42")).ReturnsAsync(user);
-        _mockUsersRepo
+        _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
+        _ = _mockUsersRepo
+            .Setup(repo => repo.CheckPasswordFormat("newPassword"))
+            .ReturnsAsync(true);
+        _ = _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("42")).ReturnsAsync(user);
+        _ = _mockUsersRepo
             .Setup(repo => repo.StoreUser(It.IsAny<ApplicationUser>()))
             .ReturnsAsync((ApplicationUser p) => p);
-        _mockPasswordHasher
+        _ = _mockPasswordHasher
             .Setup(ph => ph.HashPassword(user, newPassword))
             .Returns(newPasswordHash);
 
-        await _handler.Handle(
+        _ = await _handler.Handle(
             new PatchUserCommand
             {
                 Id = "42",

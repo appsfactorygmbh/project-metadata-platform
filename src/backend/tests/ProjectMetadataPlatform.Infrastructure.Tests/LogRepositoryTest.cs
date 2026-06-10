@@ -49,7 +49,7 @@ public class LogRepositoryTest : TestsWithDatabase
         );
         var contextUser = new ClaimsPrincipal(identity); //add claims as needed
         var httpContext = new DefaultHttpContext { User = contextUser };
-        _httpContextAccessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        _ = _httpContextAccessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
 
         _mockUserRepository = new Mock<IUsersRepository>();
         _mockApiTokenRepository = new Mock<IApiTokenRepository>();
@@ -78,7 +78,7 @@ public class LogRepositoryTest : TestsWithDatabase
             ClientName = "Example Client",
             CompanyId = 1,
         };
-        await _context.Projects.AddAsync(exampleProject);
+        _ = await _context.Projects.AddAsync(exampleProject);
 
         var user = new ApplicationUser
         {
@@ -88,9 +88,9 @@ public class LogRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        await _context.Users.AddAsync(user);
+        _ = await _context.Users.AddAsync(user);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var logChanges = new List<LogChange>
         {
@@ -108,7 +108,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        _mockUserRepository
+        _ = _mockUserRepository
             .Setup(repository => repository.GetUserByEmailAsync("camo"))
             .ReturnsAsync(user);
 
@@ -117,7 +117,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Action.ADDED_PROJECT,
             logChanges
         );
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
         var dbLog = await _context
             .Logs.Include(log => log.Project)
             .Include(log => log.Changes)
@@ -160,10 +160,10 @@ public class LogRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        await _context.Users.AddAsync(author);
-        await _context.Users.AddAsync(affectedUser);
+        _ = await _context.Users.AddAsync(author);
+        _ = await _context.Users.AddAsync(affectedUser);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var logChanges = new List<LogChange>
         {
@@ -175,7 +175,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        _mockUserRepository
+        _ = _mockUserRepository
             .Setup(repository => repository.GetUserByEmailAsync("camo"))
             .ReturnsAsync(author);
 
@@ -184,7 +184,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Action.UPDATED_USER,
             logChanges
         );
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
         var dbLog = await _context
             .Logs.Include(log => log.Changes)
             .Include(log => log.Author)
@@ -216,12 +216,12 @@ public class LogRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        await _context.Users.AddAsync(author);
+        _ = await _context.Users.AddAsync(author);
 
         var globalPlugin = new Plugin { PluginName = "Canadarm2", Id = 13 };
-        await _context.Plugins.AddAsync(globalPlugin);
+        _ = await _context.Plugins.AddAsync(globalPlugin);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var logChanges = new List<LogChange>
         {
@@ -233,7 +233,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        _mockUserRepository
+        _ = _mockUserRepository
             .Setup(repository => repository.GetUserByEmailAsync("camo"))
             .ReturnsAsync(author);
 
@@ -242,7 +242,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Action.UPDATED_GLOBAL_PLUGIN,
             logChanges
         );
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
         var dbLog = await _context
             .Logs.Include(log => log.GlobalPlugin)
             .Include(log => log.Changes)
@@ -278,14 +278,14 @@ public class LogRepositoryTest : TestsWithDatabase
         );
         var contextUser = new ClaimsPrincipal(identity); //add claims as needed
         var httpContext = new DefaultHttpContext { User = contextUser };
-        _httpContextAccessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        _ = _httpContextAccessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
         var authorToken = new ApiToken
         {
             Id = 1,
             Name = "camo",
             Token = "TokenHash",
         };
-        await _context.ApiTokens.AddAsync(authorToken);
+        _ = await _context.ApiTokens.AddAsync(authorToken);
 
         var token = new ApiToken
         {
@@ -293,9 +293,9 @@ public class LogRepositoryTest : TestsWithDatabase
             Name = "AnotherToken",
             Token = "TokenHash",
         };
-        await _context.ApiTokens.AddAsync(token);
+        _ = await _context.ApiTokens.AddAsync(token);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var logChanges = new List<LogChange>
         {
@@ -307,7 +307,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        _mockApiTokenRepository
+        _ = _mockApiTokenRepository
             .Setup(repository => repository.GetApiTokenByName("camo"))
             .ReturnsAsync(authorToken);
 
@@ -317,7 +317,7 @@ public class LogRepositoryTest : TestsWithDatabase
             logChanges
         );
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var dbLog = await _context
             .Logs.Include(log => log.AffectedToken)
@@ -349,7 +349,7 @@ public class LogRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        await _context.Users.AddAsync(author);
+        _ = await _context.Users.AddAsync(author);
 
         var apiToken = new ApiToken
         {
@@ -357,9 +357,9 @@ public class LogRepositoryTest : TestsWithDatabase
             Name = "Token",
             Token = "TokenHash",
         };
-        await _context.ApiTokens.AddAsync(apiToken);
+        _ = await _context.ApiTokens.AddAsync(apiToken);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var logChanges = new List<LogChange>
         {
@@ -371,7 +371,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        _mockUserRepository
+        _ = _mockUserRepository
             .Setup(repository => repository.GetUserByEmailAsync("camo"))
             .ReturnsAsync(author);
 
@@ -380,7 +380,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Action.REMOVED_API_TOKEN,
             logChanges
         );
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
         var dbLog = await _context
             .Logs.Include(log => log.AffectedToken)
             .Include(log => log.Changes)
@@ -418,7 +418,7 @@ public class LogRepositoryTest : TestsWithDatabase
             ClientName = "Example Client",
             CompanyId = 1,
         };
-        await _context.Projects.AddAsync(exampleProject);
+        _ = await _context.Projects.AddAsync(exampleProject);
 
         var user = new ApplicationUser
         {
@@ -429,8 +429,8 @@ public class LogRepositoryTest : TestsWithDatabase
             IsScimProvisioned = false,
         };
 
-        await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();
+        _ = await _context.Users.AddAsync(user);
+        _ = await _context.SaveChangesAsync();
 
         var logChanges = new List<LogChange>
         {
@@ -442,7 +442,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddProjectLogForCurrentActor(exampleProject, action, logChanges)
         );
     }
@@ -479,10 +479,10 @@ public class LogRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        await _context.Users.AddAsync(author);
-        await _context.Users.AddAsync(affectedUser);
+        _ = await _context.Users.AddAsync(author);
+        _ = await _context.Users.AddAsync(affectedUser);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var logChanges = new List<LogChange>
         {
@@ -494,7 +494,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddUserLogForCurrentActor(affectedUser, action, logChanges)
         );
     }
@@ -520,12 +520,12 @@ public class LogRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        await _context.Users.AddAsync(author);
+        _ = await _context.Users.AddAsync(author);
 
         var globalPlugin = new Plugin { PluginName = "Canadarm2", Id = 13 };
-        await _context.Plugins.AddAsync(globalPlugin);
+        _ = await _context.Plugins.AddAsync(globalPlugin);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var logChanges = new List<LogChange>
         {
@@ -537,7 +537,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddGlobalPluginLogForCurrentActor(globalPlugin, action, logChanges)
         );
     }
@@ -563,12 +563,12 @@ public class LogRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        await _context.Users.AddAsync(author);
+        _ = await _context.Users.AddAsync(author);
 
         var apiToken = new ApiToken { Name = "Token", Token = "Value" };
-        await _context.ApiTokens.AddAsync(apiToken);
+        _ = await _context.ApiTokens.AddAsync(apiToken);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var logChanges = new List<LogChange>
         {
@@ -580,7 +580,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddApiTokenLogForCurrentActor(apiToken, action, logChanges)
         );
     }
@@ -606,12 +606,12 @@ public class LogRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        await _context.Users.AddAsync(author);
+        _ = await _context.Users.AddAsync(author);
 
         var company = new Company { CompanyName = "Test" };
-        await _context.Companies.AddAsync(company);
+        _ = await _context.Companies.AddAsync(company);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var logChanges = new List<LogChange>
         {
@@ -623,7 +623,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddCompanyLogForCurrentActor(company, action, logChanges)
         );
     }
@@ -649,12 +649,12 @@ public class LogRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        await _context.Users.AddAsync(author);
+        _ = await _context.Users.AddAsync(author);
 
         var department = new Department { DepartmentName = "Test" };
-        await _context.Departments.AddAsync(department);
+        _ = await _context.Departments.AddAsync(department);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var logChanges = new List<LogChange>
         {
@@ -666,7 +666,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddDepartmentLogForCurrentActor(department, action, logChanges)
         );
     }
@@ -692,12 +692,12 @@ public class LogRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        await _context.Users.AddAsync(author);
+        _ = await _context.Users.AddAsync(author);
 
         var officeLocation = new OfficeLocation { OfficeLocationName = "Test" };
-        await _context.OfficeLocations.AddAsync(officeLocation);
+        _ = await _context.OfficeLocations.AddAsync(officeLocation);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var logChanges = new List<LogChange>
         {
@@ -709,7 +709,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddOfficeLocationLogForCurrentActor(
                 officeLocation,
                 action,
@@ -739,12 +739,12 @@ public class LogRepositoryTest : TestsWithDatabase
             IsActive = true,
             IsScimProvisioned = false,
         };
-        await _context.Users.AddAsync(author);
+        _ = await _context.Users.AddAsync(author);
 
         var businessUnit = new BusinessUnit { BusinessUnitName = "Test" };
-        await _context.BusinessUnits.AddAsync(businessUnit);
+        _ = await _context.BusinessUnits.AddAsync(businessUnit);
 
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var logChanges = new List<LogChange>
         {
@@ -756,7 +756,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddBusinessUnitLogForCurrentActor(businessUnit, action, logChanges)
         );
     }
@@ -794,8 +794,8 @@ public class LogRepositoryTest : TestsWithDatabase
         };
         exampleLog.Project = exampleProject;
 
-        await _context.Projects.AddAsync(exampleProject);
-        await _context.SaveChangesAsync();
+        _ = await _context.Projects.AddAsync(exampleProject);
+        _ = await _context.SaveChangesAsync();
 
         var logs = await _loggingRepository.GetLogsForProject(301);
 
@@ -825,8 +825,8 @@ public class LogRepositoryTest : TestsWithDatabase
             Logs = null,
             CompanyId = 1,
         };
-        await _context.Projects.AddAsync(exampleProject);
-        await _context.SaveChangesAsync();
+        _ = await _context.Projects.AddAsync(exampleProject);
+        _ = await _context.SaveChangesAsync();
 
         var logs = await _loggingRepository.GetLogsForProject(301);
 
@@ -893,9 +893,9 @@ public class LogRepositoryTest : TestsWithDatabase
             Logs = [exampleLog2],
             CompanyId = 1,
         };
-        await _context.Projects.AddAsync(exampleProject1);
-        await _context.Projects.AddAsync(exampleProject2);
-        await _context.SaveChangesAsync();
+        _ = await _context.Projects.AddAsync(exampleProject1);
+        _ = await _context.Projects.AddAsync(exampleProject2);
+        _ = await _context.SaveChangesAsync();
 
         var logs = await _loggingRepository.GetAllLogs();
 
@@ -962,9 +962,9 @@ public class LogRepositoryTest : TestsWithDatabase
             Logs = [exampleLog2],
             CompanyId = 1,
         };
-        await _context.Projects.AddAsync(exampleProject1);
-        await _context.Projects.AddAsync(exampleProject2);
-        await _context.SaveChangesAsync();
+        _ = await _context.Projects.AddAsync(exampleProject1);
+        _ = await _context.Projects.AddAsync(exampleProject2);
+        _ = await _context.SaveChangesAsync();
 
         var logs = await _loggingRepository.GetLogsWithSearch("Another Project");
 
@@ -1042,9 +1042,9 @@ public class LogRepositoryTest : TestsWithDatabase
             Logs = [exampleLog2],
             CompanyId = 1,
         };
-        await _context.Projects.AddAsync(exampleProject1);
-        await _context.Projects.AddAsync(exampleProject2);
-        await _context.SaveChangesAsync();
+        _ = await _context.Projects.AddAsync(exampleProject1);
+        _ = await _context.Projects.AddAsync(exampleProject2);
+        _ = await _context.SaveChangesAsync();
 
         var logs = await _loggingRepository.GetLogsWithSearch("updated");
 
@@ -1116,10 +1116,10 @@ public class LogRepositoryTest : TestsWithDatabase
             ],
         };
 
-        await _context.Users.AddAsync(exampleUser);
-        await _context.Logs.AddAsync(exampleLog1);
-        await _context.Logs.AddAsync(exampleLog2);
-        await _context.SaveChangesAsync();
+        _ = await _context.Users.AddAsync(exampleUser);
+        _ = await _context.Logs.AddAsync(exampleLog1);
+        _ = await _context.Logs.AddAsync(exampleLog2);
+        _ = await _context.SaveChangesAsync();
 
         var logs = await _loggingRepository.GetLogsForUser("Newton");
 
@@ -1187,10 +1187,10 @@ public class LogRepositoryTest : TestsWithDatabase
             ],
         };
 
-        await _context.Plugins.AddAsync(examplePlugin);
-        await _context.Logs.AddAsync(exampleLog1);
-        await _context.Logs.AddAsync(exampleLog2);
-        await _context.SaveChangesAsync();
+        _ = await _context.Plugins.AddAsync(examplePlugin);
+        _ = await _context.Logs.AddAsync(exampleLog1);
+        _ = await _context.Logs.AddAsync(exampleLog2);
+        _ = await _context.SaveChangesAsync();
 
         var logs = await _loggingRepository.GetLogsForGlobalPlugin(42);
 

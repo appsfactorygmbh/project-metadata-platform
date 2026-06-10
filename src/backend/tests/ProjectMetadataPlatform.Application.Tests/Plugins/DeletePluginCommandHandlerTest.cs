@@ -42,9 +42,9 @@ public class DeletePluginCommandHandlerTest
             PluginName = "Flat-Earth",
             IsArchived = true,
         };
-        _mockPluginRepo.Setup(m => m.StorePlugin(It.IsAny<Plugin>())).ReturnsAsync(plugin);
-        _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
-        _mockPluginRepo.Setup(m => m.DeleteGlobalPlugin(plugin)).ReturnsAsync(true);
+        _ = _mockPluginRepo.Setup(m => m.StorePlugin(It.IsAny<Plugin>())).ReturnsAsync(plugin);
+        _ = _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
+        _ = _mockPluginRepo.Setup(m => m.DeleteGlobalPlugin(plugin)).ReturnsAsync(true);
 
         var result = await _handler.Handle(
             new DeleteGlobalPluginCommand(42),
@@ -62,10 +62,10 @@ public class DeletePluginCommandHandlerTest
             PluginName = "Flat-Earth",
             IsArchived = false,
         };
-        _mockPluginRepo.Setup(m => m.StorePlugin(It.IsAny<Plugin>())).ReturnsAsync(plugin);
-        _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
+        _ = _mockPluginRepo.Setup(m => m.StorePlugin(It.IsAny<Plugin>())).ReturnsAsync(plugin);
+        _ = _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
 
-        Assert.ThrowsAsync<PluginNotArchivedException>(() =>
+        _ = Assert.ThrowsAsync<PluginNotArchivedException>(() =>
             _handler.Handle(new DeleteGlobalPluginCommand(42), It.IsAny<CancellationToken>())
         );
     }
@@ -73,8 +73,8 @@ public class DeletePluginCommandHandlerTest
     [Test]
     public void DeleteGlobalPluginNullPointerException_Test()
     {
-        _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync((Plugin)null!);
-        Assert.ThrowsAsync<PluginNotFoundException>(() =>
+        _ = _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync((Plugin)null!);
+        _ = Assert.ThrowsAsync<PluginNotFoundException>(() =>
             _handler.Handle(new DeleteGlobalPluginCommand(42), It.IsAny<CancellationToken>())
         );
     }
@@ -91,8 +91,8 @@ public class DeletePluginCommandHandlerTest
         };
         var changes = new List<LogChange>();
 
-        _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
-        _mockPluginRepo.Setup(m => m.DeleteGlobalPlugin(plugin)).ReturnsAsync(true);
+        _ = _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
+        _ = _mockPluginRepo.Setup(m => m.DeleteGlobalPlugin(plugin)).ReturnsAsync(true);
 
         // Act
         var result = await _handler.Handle(
@@ -125,10 +125,10 @@ public class DeletePluginCommandHandlerTest
             IsArchived = false,
         };
 
-        _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
+        _ = _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
 
         // Act
-        Assert.ThrowsAsync<PluginNotArchivedException>(() =>
+        _ = Assert.ThrowsAsync<PluginNotArchivedException>(() =>
             _handler.Handle(new DeleteGlobalPluginCommand(42), CancellationToken.None)
         );
         var addLogCall = _mockLogRepo.Invocations.FirstOrDefault(i =>
@@ -141,10 +141,10 @@ public class DeletePluginCommandHandlerTest
     public void DeleteGlobalPlugin_DoesNotLogAction_WhenPluginIsNull()
     {
         // Arrange
-        _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync((Plugin)null!);
+        _ = _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync((Plugin)null!);
 
         // Act
-        Assert.ThrowsAsync<PluginNotFoundException>(() =>
+        _ = Assert.ThrowsAsync<PluginNotFoundException>(() =>
             _handler.Handle(new DeleteGlobalPluginCommand(42), CancellationToken.None)
         );
         var addLogCall = _mockLogRepo.Invocations.FirstOrDefault(i =>

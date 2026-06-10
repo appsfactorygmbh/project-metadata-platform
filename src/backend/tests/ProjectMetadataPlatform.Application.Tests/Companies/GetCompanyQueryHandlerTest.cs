@@ -28,7 +28,7 @@ public class GetCompanyQueryHandlerTest
         // Arrange
         var returnCompany = new Company() { Id = 1, CompanyName = "Test_1" };
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyAsync(It.IsAny<int>()))
             .ReturnsAsync(returnCompany);
 
@@ -51,7 +51,7 @@ public class GetCompanyQueryHandlerTest
     public void GetCompany_ThrowCompanyNotFoundException_IfCompanyNotFound()
     {
         // Arrange
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyAsync(It.IsAny<int>()))
             .ThrowsAsync(new CompanyNotFoundException(1));
 

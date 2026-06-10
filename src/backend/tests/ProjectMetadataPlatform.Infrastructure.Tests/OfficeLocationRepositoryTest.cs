@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
-using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 using ProjectMetadataPlatform.Infrastructure.OfficeLocations;
 
@@ -40,9 +38,9 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
         var officeLocation2 = new OfficeLocation { Id = 2, OfficeLocationName = "Test_2" };
 
         _context.OfficeLocations.RemoveRange(_context.OfficeLocations);
-        _context.OfficeLocations.Add(officeLocation);
-        _context.OfficeLocations.Add(officeLocation2);
-        await _context.SaveChangesAsync();
+        _ = _context.OfficeLocations.Add(officeLocation);
+        _ = _context.OfficeLocations.Add(officeLocation2);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = (await _repository.GetOfficeLocationsAsync()).ToList();
@@ -68,12 +66,12 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
         var officeLocation = new OfficeLocation { Id = 1, OfficeLocationName = "Test_1" };
 
         _context.OfficeLocations.RemoveRange(_context.OfficeLocations);
-        _context.OfficeLocations.Add(officeLocation);
-        await _context.SaveChangesAsync();
+        _ = _context.OfficeLocations.Add(officeLocation);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var deletedOfficeLocation = await _repository.DeleteOfficeLocationAsync(officeLocation);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var remainingOfficeLocations = _context.OfficeLocations.ToList();
@@ -90,7 +88,7 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         _context.OfficeLocations.RemoveRange(_context.OfficeLocations);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act + Assert
         var ex = Assert.ThrowsAsync<OfficeLocationNotFoundException>(async () =>
@@ -112,7 +110,7 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
         // Act
         _context.OfficeLocations.RemoveRange(_context.OfficeLocations);
         await _repository.AddOfficeLocationAsync(newOfficeLocation);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var addedOfficeLocation = await _context.OfficeLocations.FindAsync(newOfficeLocation.Id);
@@ -137,8 +135,8 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
             OfficeLocationName = "Original Gamma",
         };
         _context.OfficeLocations.RemoveRange(_context.OfficeLocations);
-        _context.OfficeLocations.Add(initialOfficeLocation);
-        await _context.SaveChangesAsync();
+        _ = _context.OfficeLocations.Add(initialOfficeLocation);
+        _ = await _context.SaveChangesAsync();
 
         var officeLocationWithSameId = new OfficeLocation
         {
@@ -148,7 +146,7 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
 
         // Act
         await _repository.AddOfficeLocationAsync(officeLocationWithSameId);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var officeLocationInDb = await _context.OfficeLocations.FindAsync(initialOfficeLocation.Id);
@@ -168,10 +166,10 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var existingOfficeLocationName = "Unique Existent OfficeLocation";
-        _context.OfficeLocations.Add(
+        _ = _context.OfficeLocations.Add(
             new OfficeLocation { Id = 200, OfficeLocationName = existingOfficeLocationName }
         );
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.CheckIfOfficeLocationNameExistsAsync(
@@ -187,10 +185,10 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
     {
         // Arrange
         var nonExistentOfficeLocationName = "Definitely Not Here OfficeLocation";
-        _context.OfficeLocations.Add(
+        _ = _context.OfficeLocations.Add(
             new OfficeLocation { Id = 201, OfficeLocationName = "Some Other OfficeLocation" }
         );
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.CheckIfOfficeLocationNameExistsAsync(
@@ -222,8 +220,8 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
             Id = 300,
             OfficeLocationName = "OfficeLocation Epsilon",
         };
-        _context.OfficeLocations.Add(initialOfficeLocation);
-        await _context.SaveChangesAsync();
+        _ = _context.OfficeLocations.Add(initialOfficeLocation);
+        _ = await _context.SaveChangesAsync();
         _context.Entry(initialOfficeLocation).State = EntityState.Detached;
 
         var updatedOfficeLocationData = new OfficeLocation
@@ -234,7 +232,7 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
 
         // Act
         var result = await _repository.UpdateOfficeLocationAsync(updatedOfficeLocationData);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         // Assert
         var officeLocationFromDb = await _context.OfficeLocations.FindAsync(
@@ -280,8 +278,8 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
             Id = 400,
             OfficeLocationName = "OfficeLocation Zeta",
         };
-        _context.OfficeLocations.Add(expectedOfficeLocation);
-        await _context.SaveChangesAsync();
+        _ = _context.OfficeLocations.Add(expectedOfficeLocation);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.GetOfficeLocationAsync(expectedOfficeLocation.Id);

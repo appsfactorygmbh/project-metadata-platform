@@ -104,7 +104,12 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
                     project.IsArchived == query.Request.IsArchived
                 );
             }
-
+            if (query.Request.IsEoC is not null)
+            {
+                filteredQuery = filteredQuery.Where(project =>
+                    project.IsEoC == query.Request.IsEoC
+                );
+            }
             if (query.Request.Company is { Count: > 0 })
             {
                 var lowerCompanies = query.Request.Company.Select(c => c.ToLower()).ToList();

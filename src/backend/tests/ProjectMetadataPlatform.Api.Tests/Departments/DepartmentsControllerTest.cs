@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Departments;
 using ProjectMetadataPlatform.Api.Departments.Models;
-using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Departments;
 using ProjectMetadataPlatform.Domain.Departments;
-using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
 
 namespace ProjectMetadataPlatform.Api.Tests.Departments;
 
@@ -33,7 +29,7 @@ public class DepartmentsControllerTest
     [Test]
     public async Task GetDepartments_EmptyResponseTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllDepartmentsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync([]);
         var result = await _controller.Get();
@@ -54,7 +50,7 @@ public class DepartmentsControllerTest
     [Test]
     public async Task GetDepartments_ListResponse()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllDepartmentsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync([
                 new Department { Id = 1, DepartmentName = "Department1" },
@@ -82,29 +78,29 @@ public class DepartmentsControllerTest
     [Test]
     public async Task GetDepartments_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<GetAllDepartmentsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
     }
 
     [Test]
     public async Task GetDepartment_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<GetDepartmentQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
     }
 
     [Test]
     public async Task GetDepartment_ResponseTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetDepartmentQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new Department { DepartmentName = "Department", Id = 1 });
         var result = await _controller.Get(1);
@@ -123,12 +119,12 @@ public class DepartmentsControllerTest
     [Test]
     public async Task PutDepartment_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<CreateDepartmentCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Put(new CreateDepartmentRequest("a"))
         );
     }
@@ -143,7 +139,7 @@ public class DepartmentsControllerTest
     [Test]
     public async Task PutDepartment_ReturnsIdTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<CreateDepartmentCommand>(), It.IsAny<CancellationToken>())
             )
@@ -170,12 +166,12 @@ public class DepartmentsControllerTest
     [Test]
     public async Task UpdateDepartment_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<UpdateDepartmentCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Patch(1, new UpdateDepartmentRequest())
         );
     }
@@ -190,7 +186,7 @@ public class DepartmentsControllerTest
     [Test]
     public async Task UpdateDepartment_ReturnsUpdatedDepartmentTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<UpdateDepartmentCommand>(), It.IsAny<CancellationToken>())
             )
@@ -215,12 +211,12 @@ public class DepartmentsControllerTest
     [Test]
     public async Task DeleteDepartment_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<DeleteDepartmentCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
     }
 
     [Test]

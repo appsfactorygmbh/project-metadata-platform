@@ -44,7 +44,7 @@ public class DeleteCompanyCommandHandlerTest
             Projects = [],
         };
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyWithProjectsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnCompany);
 
@@ -74,7 +74,7 @@ public class DeleteCompanyCommandHandlerTest
     public void DeleteCompany_StillLinkedProjects_ThrowsCompanyStillLinkedToProjectsException()
     {
         // Arrange
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.CheckIfCompanyNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
@@ -95,7 +95,7 @@ public class DeleteCompanyCommandHandlerTest
             ],
         };
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyWithProjectsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnCompany);
 

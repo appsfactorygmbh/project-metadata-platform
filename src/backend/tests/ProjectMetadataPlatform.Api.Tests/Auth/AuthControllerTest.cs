@@ -33,7 +33,7 @@ public class Tests
     [Test]
     public async Task SuccessfulLoginTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<LoginQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(
                 new JwtTokens { AccessToken = "accessToken", RefreshToken = "refreshToken" }
@@ -53,19 +53,21 @@ public class Tests
     [Test]
     public void WrongCredentialsLoginTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<LoginQuery>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new AuthInvalidLoginCredentialsException());
 
         var request = new LoginRequest("wrong_username", "password");
 
-        Assert.ThrowsAsync<AuthInvalidLoginCredentialsException>(() => _controller.Post(request));
+        _ = Assert.ThrowsAsync<AuthInvalidLoginCredentialsException>(() =>
+            _controller.Post(request)
+        );
     }
 
     [Test]
     public async Task SuccessfulRefreshTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<RefreshTokenQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(
                 new JwtTokens { AccessToken = "accessToken", RefreshToken = "refreshToken" }
@@ -85,13 +87,13 @@ public class Tests
     [Test]
     public void InvalidRefreshTokenTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<RefreshTokenQuery>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new AuthenticationException("Invalid refresh token."));
 
         const string refreshToken = "Refresh invalidRefreshToken";
 
-        Assert.ThrowsAsync<AuthenticationException>(() => _controller.Get(refreshToken));
+        _ = Assert.ThrowsAsync<AuthenticationException>(() => _controller.Get(refreshToken));
     }
 
     [Test]
@@ -110,7 +112,7 @@ public class Tests
     [Test]
     public async Task GetApiTokens_EmptyResponseTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync([]);
         var result = await _controller.GetApiTokens();
@@ -131,7 +133,7 @@ public class Tests
     [Test]
     public async Task GetApiTokens_ListResponse()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync([
                 new ApiToken
@@ -170,29 +172,29 @@ public class Tests
     [Test]
     public async Task GetApiTokens_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetApiTokens());
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetApiTokens());
     }
 
     [Test]
     public async Task GetApiToken_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<GetApiTokenDetailsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetApiToken(0));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetApiToken(0));
     }
 
     [Test]
     public async Task GetApiToken_TokenResponseTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetApiTokenDetailsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(
                 new ApiToken
@@ -227,12 +229,12 @@ public class Tests
     [Test]
     public async Task PostApiToken_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<CreateApiTokenCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.PostApiToken(new CreateApiTokenRequest("", []))
         );
     }
@@ -240,7 +242,7 @@ public class Tests
     [Test]
     public async Task PostApiToken_ReturnsTokenwithValueTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<CreateApiTokenCommand>(), It.IsAny<CancellationToken>())
             )
@@ -280,18 +282,18 @@ public class Tests
     [Test]
     public async Task RegenerateApiToken_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<RegenerateApiTokenCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.RegenerateApiToken(1));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.RegenerateApiToken(1));
     }
 
     [Test]
     public async Task RegenerateApiToken_ReturnsTokenwithValueTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<RegenerateApiTokenCommand>(), It.IsAny<CancellationToken>())
             )
@@ -328,12 +330,12 @@ public class Tests
     [Test]
     public async Task DeleteApiToken_MediatorThrowsExceptionTest()
     {
-        _mediator
+        _ = _mediator
             .Setup(mediator =>
                 mediator.Send(It.IsAny<DeleteApiTokenCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        Assert.ThrowsAsync<InvalidDataException>(() => _controller.DeleteApiToken(1));
+        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.DeleteApiToken(1));
     }
 
     [Test]

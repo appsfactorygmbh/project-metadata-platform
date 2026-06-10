@@ -32,6 +32,7 @@ export const useProjectEditStore = defineStore('projectEdit', {
         offerId: '',
         companyId: 0,
         ismsLevel: 'NORMAL',
+        isEoC: false,
         companyState: 'EXTERNAL',
         notes: '',
       },

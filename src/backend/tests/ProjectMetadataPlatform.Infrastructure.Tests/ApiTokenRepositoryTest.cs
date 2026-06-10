@@ -50,7 +50,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
             new ApiToken { Name = "Token2", Token = "TokenHash2" },
         ];
         await _context.ApiTokens.AddRangeAsync(tokens);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
         var result = await _apiTokenRepository.GetApiTokens();
         var resultList = result.ToList();
         Assert.That(result, Is.Not.Empty);
@@ -67,7 +67,9 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetApiTokenById_NotFoundTest()
     {
-        Assert.ThrowsAsync<ApiTokenNotFoundException>(() => _apiTokenRepository.GetApiTokenById(1));
+        _ = Assert.ThrowsAsync<ApiTokenNotFoundException>(() =>
+            _apiTokenRepository.GetApiTokenById(1)
+        );
     }
 
     [Test]
@@ -80,8 +82,8 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
             Token = "TokenHash1",
         };
 
-        await _context.ApiTokens.AddAsync(token);
-        await _context.SaveChangesAsync();
+        _ = await _context.ApiTokens.AddAsync(token);
+        _ = await _context.SaveChangesAsync();
 
         var result = await _apiTokenRepository.GetApiTokenById(1);
 
@@ -91,7 +93,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetApiTokenByName_NotFoundTest()
     {
-        Assert.ThrowsAsync<ApiTokenNotFoundException>(() =>
+        _ = Assert.ThrowsAsync<ApiTokenNotFoundException>(() =>
             _apiTokenRepository.GetApiTokenByName("Token")
         );
     }
@@ -106,8 +108,8 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
             Token = "TokenHash1",
         };
 
-        await _context.ApiTokens.AddAsync(token);
-        await _context.SaveChangesAsync();
+        _ = await _context.ApiTokens.AddAsync(token);
+        _ = await _context.SaveChangesAsync();
 
         var result = await _apiTokenRepository.GetApiTokenByName("Token1");
 
@@ -124,16 +126,18 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
             Token = "TokenHash1",
         };
 
-        await _context.ApiTokens.AddAsync(token);
-        await _context.SaveChangesAsync();
+        _ = await _context.ApiTokens.AddAsync(token);
+        _ = await _context.SaveChangesAsync();
 
         var result = await _apiTokenRepository.GetApiTokenById(1);
 
         Assert.That(result, Is.EqualTo(token));
 
         await _apiTokenRepository.DeleteApiToken(result);
-        await _context.SaveChangesAsync();
-        Assert.ThrowsAsync<ApiTokenNotFoundException>(() => _apiTokenRepository.GetApiTokenById(1));
+        _ = await _context.SaveChangesAsync();
+        _ = Assert.ThrowsAsync<ApiTokenNotFoundException>(() =>
+            _apiTokenRepository.GetApiTokenById(1)
+        );
     }
 
     [Test]
@@ -155,8 +159,8 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
             Scopes = new List<TokenScopes> { TokenScopes.SCIM },
         };
 
-        await _context.ApiTokens.AddAsync(token);
-        await _context.SaveChangesAsync();
+        _ = await _context.ApiTokens.AddAsync(token);
+        _ = await _context.SaveChangesAsync();
         var result = await _apiTokenRepository.CheckScimTokenExists();
 
         Assert.That(result, Is.True);
@@ -165,7 +169,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
     [Test]
     public async Task StoreApiTokenTest()
     {
-        _passwordHasherMock
+        _ = _passwordHasherMock
             .Setup(m => m.HashPassword(It.IsAny<ApiToken>(), It.IsAny<string>()))
             .Returns("HashedToken");
 
@@ -177,7 +181,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
         };
 
         await _apiTokenRepository.StoreApiToken(token);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var result = await _apiTokenRepository.GetApiTokenById(1);
 
@@ -188,7 +192,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
     [Test]
     public async Task UpdateApiTokenTest()
     {
-        _passwordHasherMock
+        _ = _passwordHasherMock
             .Setup(m => m.HashPassword(It.IsAny<ApiToken>(), It.IsAny<string>()))
             .Returns("NewHashedToken");
 
@@ -207,11 +211,11 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
             Scopes = new List<TokenScopes> { TokenScopes.SCIM },
         };
 
-        await _context.ApiTokens.AddAsync(token);
-        await _context.SaveChangesAsync();
+        _ = await _context.ApiTokens.AddAsync(token);
+        _ = await _context.SaveChangesAsync();
         _context.Entry(token).State = EntityState.Detached;
         await _apiTokenRepository.UpdateApiToken(newtoken);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var result = await _apiTokenRepository.GetApiTokenById(1);
 
@@ -223,7 +227,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetVerifiedToken_EmptyResponseTest()
     {
-        _passwordHasherMock
+        _ = _passwordHasherMock
             .Setup(m =>
                 m.VerifyHashedPassword(It.IsAny<ApiToken>(), It.IsAny<string>(), It.IsAny<string>())
             )
@@ -234,7 +238,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
             new ApiToken { Name = "Token2", Token = "TokenHash2" },
         ];
         await _context.ApiTokens.AddRangeAsync(tokens);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
         var result = await _apiTokenRepository.GetVerifiedToken("token");
         Assert.That(result, Is.Null);
     }
@@ -242,7 +246,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetVerifiedToken_EnumerableResponseTest()
     {
-        _passwordHasherMock
+        _ = _passwordHasherMock
             .Setup(m =>
                 m.VerifyHashedPassword(It.IsAny<ApiToken>(), It.IsAny<string>(), It.IsAny<string>())
             )
@@ -253,7 +257,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
             new ApiToken { Name = "Token2", Token = "TokenHash2" },
         ];
         await _context.ApiTokens.AddRangeAsync(tokens);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
         var result = await _apiTokenRepository.GetVerifiedToken("test");
         Assert.Multiple(() =>
         {

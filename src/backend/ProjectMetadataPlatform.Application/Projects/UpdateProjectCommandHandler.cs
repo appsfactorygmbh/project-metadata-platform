@@ -244,6 +244,17 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
             changes.Add(change);
             project.Notes = request.Notes;
         }
+        if (project.IsEoC != request.IsEoC)
+        {
+            var change = new LogChange
+            {
+                Property = nameof(Project.IsEoC),
+                OldValue = project.IsEoC.ToString(),
+                NewValue = request.IsEoC.ToString(),
+            };
+            changes.Add(change);
+            project.IsEoC = request.IsEoC;
+        }
         if (project.IsArchived != request.IsArchived)
         {
             var archivedChanges = new List<LogChange>();

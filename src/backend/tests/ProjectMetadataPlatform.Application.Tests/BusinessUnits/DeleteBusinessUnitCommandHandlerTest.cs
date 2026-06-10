@@ -44,7 +44,7 @@ public class DeleteBusinessUnitCommandHandlerTest
             Teams = [],
         };
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitWithTeamsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
 
@@ -76,7 +76,7 @@ public class DeleteBusinessUnitCommandHandlerTest
     public void DeleteBusinessUnit_StillLinkedTeams_ThrowsBusinessUnitStillLinkedToTeamsException()
     {
         // Arrange
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.CheckIfBusinessUnitNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
@@ -95,7 +95,7 @@ public class DeleteBusinessUnitCommandHandlerTest
             ],
         };
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitWithTeamsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
 

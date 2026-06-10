@@ -385,7 +385,7 @@ public class UsersController : ControllerBase
     {
         var command = new DeleteUserCommand(userId);
 
-        await _mediator.Send(command);
+        _ = await _mediator.Send(command);
 
         return NoContent();
     }

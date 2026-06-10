@@ -46,8 +46,8 @@ public class ProjectsRepositoryTests : TestsWithDatabase
         };
 
         _context.Projects.RemoveRange(_context.Projects);
-        _context.Projects.Add(project);
-        await _context.SaveChangesAsync();
+        _ = _context.Projects.Add(project);
+        _ = await _context.SaveChangesAsync();
 
         // Act
         var result = (await _repository.GetProjectsAsync()).ToList();
@@ -72,6 +72,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
             ["Test", "Test2"],
             ["42", "43"],
             true,
+            true,
             ["AppsFact"],
             SecurityLevel.VERY_HIGH
         );
@@ -86,6 +87,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
                 IsArchived = true,
                 Company = new() { CompanyName = "AppsFact" },
                 CompanyId = 1,
+                IsEoC = true,
                 IsmsLevel = SecurityLevel.VERY_HIGH,
                 Team = new()
                 {
@@ -130,9 +132,9 @@ public class ProjectsRepositoryTests : TestsWithDatabase
 
         var query = new GetAllProjectsQuery(filters, "Hea");
 
-        await _context.Database.EnsureCreatedAsync();
+        _ = await _context.Database.EnsureCreatedAsync();
         _context.Projects.AddRange(projects);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var result = (await _repository.GetProjectsAsync(query)).ToList();
 
@@ -155,6 +157,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
             "Gilgamesch",
             ["666", "777"],
             ["42", "43"],
+            null,
             null,
             ["Nothing else"],
             null
@@ -184,9 +187,9 @@ public class ProjectsRepositoryTests : TestsWithDatabase
 
         var query = new GetAllProjectsQuery(filters, null);
 
-        await _context.Database.EnsureCreatedAsync();
+        _ = await _context.Database.EnsureCreatedAsync();
         _context.Projects.AddRange(projects);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var result = await _repository.GetProjectsAsync(query);
 
@@ -226,9 +229,9 @@ public class ProjectsRepositoryTests : TestsWithDatabase
 
         var query = new GetAllProjectsQuery(null, null);
 
-        await _context.Database.EnsureCreatedAsync();
+        _ = await _context.Database.EnsureCreatedAsync();
         _context.Projects.AddRange(projects);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
         var result = await _repository.GetProjectsAsync(query);
 
@@ -248,11 +251,11 @@ public class ProjectsRepositoryTests : TestsWithDatabase
         };
 
         _context.Projects.RemoveRange(_context.Projects);
-        _context.Projects.Add(project);
-        await _context.SaveChangesAsync();
+        _ = _context.Projects.Add(project);
+        _ = await _context.SaveChangesAsync();
 
         var deletedProject = await _repository.DeleteProjectAsync(project);
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
         var remainingProjects = await _context.Projects.ToListAsync();
 
         Assert.Multiple(() =>
@@ -284,9 +287,9 @@ public class ProjectsRepositoryTests : TestsWithDatabase
         };
 
         _context.Projects.RemoveRange(_context.Projects);
-        _context.Projects.Add(project1);
-        _context.Projects.Add(project2);
-        await _context.SaveChangesAsync();
+        _ = _context.Projects.Add(project1);
+        _ = _context.Projects.Add(project2);
+        _ = await _context.SaveChangesAsync();
 
         var result = await _repository.GetProjectIdBySlugAsync("regen");
 
@@ -306,10 +309,10 @@ public class ProjectsRepositoryTests : TestsWithDatabase
         };
 
         _context.Projects.RemoveRange(_context.Projects);
-        _context.Projects.Add(project2);
-        await _context.SaveChangesAsync();
+        _ = _context.Projects.Add(project2);
+        _ = await _context.SaveChangesAsync();
 
-        Assert.ThrowsAsync<ProjectNotFoundException>(() =>
+        _ = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
             _repository.GetProjectIdBySlugAsync("regen")
         );
     }

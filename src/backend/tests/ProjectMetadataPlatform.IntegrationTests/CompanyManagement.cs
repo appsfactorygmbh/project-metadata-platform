@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components.RenderTree;
 using NUnit.Framework;
 using ProjectMetadataPlatform.IntegrationTests.Utilities;
 
@@ -43,22 +42,22 @@ public class CompanyManagement : IntegrationTestsBase
 
         var companies = await ToJsonElement(client.GetAsync("/Companies"));
 
-        companies.GetArrayLength().Should().Be(2);
-        companies[0].GetProperty("id").GetInt32().Should().Be(companyId1);
-        companies[0].GetProperty("companyName").GetString().Should().Be("Company1");
-        companies[1].GetProperty("id").GetInt32().Should().Be(companyId2);
-        companies[1].GetProperty("companyName").GetString().Should().Be("Company2");
+        _ = companies.GetArrayLength().Should().Be(2);
+        _ = companies[0].GetProperty("id").GetInt32().Should().Be(companyId1);
+        _ = companies[0].GetProperty("companyName").GetString().Should().Be("Company1");
+        _ = companies[1].GetProperty("id").GetInt32().Should().Be(companyId2);
+        _ = companies[1].GetProperty("companyName").GetString().Should().Be("Company2");
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
 
-        logs.GetArrayLength().Should().Be(2);
+        _ = logs.GetArrayLength().Should().Be(2);
 
-        logs[1]
+        _ = logs[1]
             .GetProperty("logMessage")
             .GetString()
             .Should()
             .Be("admin added a new company with properties: CompanyName = Company1");
-        logs[0]
+        _ = logs[0]
             .GetProperty("logMessage")
             .GetString()
             .Should()
@@ -84,7 +83,7 @@ public class CompanyManagement : IntegrationTestsBase
             )
         );
 
-        error.Message.Should().Be("A Company with the name Company1 already exists.");
+        _ = error.Message.Should().Be("A Company with the name Company1 already exists.");
     }
 
     [Test]
@@ -102,16 +101,16 @@ public class CompanyManagement : IntegrationTestsBase
             .GetInt32();
         var companies = await ToJsonElement(client.GetAsync("/Companies"));
 
-        companies.GetArrayLength().Should().Be(1);
-        companies[0].GetProperty("id").GetInt32().Should().Be(companyId1);
-        companies[0].GetProperty("companyName").GetString().Should().Be("Company1");
+        _ = companies.GetArrayLength().Should().Be(1);
+        _ = companies[0].GetProperty("id").GetInt32().Should().Be(companyId1);
+        _ = companies[0].GetProperty("companyName").GetString().Should().Be("Company1");
 
-        (await client.DeleteAsync($"/Companies/{companyId1}"))
+        _ = (await client.DeleteAsync($"/Companies/{companyId1}"))
             .StatusCode.Should()
             .Be(HttpStatusCode.NoContent);
 
         var companiesAfterDelete = await ToJsonElement(client.GetAsync("/Companies"));
 
-        companiesAfterDelete.GetArrayLength().Should().Be(0);
+        _ = companiesAfterDelete.GetArrayLength().Should().Be(0);
     }
 }

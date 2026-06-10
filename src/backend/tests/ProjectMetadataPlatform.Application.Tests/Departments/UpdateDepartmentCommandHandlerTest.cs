@@ -40,15 +40,15 @@ public class UpdateDepartmentCommandHandlerTest
         // Arrange
         var returnDepartment = new Department() { Id = 1, DepartmentName = "Test_1" };
 
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
             .ReturnsAsync(returnDepartment);
 
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.UpdateDepartmentAsync(It.IsAny<Department>()))
             .ReturnsAsync((Department department) => department);
 
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.CheckIfDepartmentNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
@@ -95,15 +95,15 @@ public class UpdateDepartmentCommandHandlerTest
         // Arrange
         var returnDepartment = new Department() { Id = 1, DepartmentName = "Test_1" };
 
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
             .ReturnsAsync(returnDepartment);
 
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.UpdateDepartmentAsync(It.IsAny<Department>()))
             .ReturnsAsync((Department department) => department);
 
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.CheckIfDepartmentNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
@@ -131,15 +131,15 @@ public class UpdateDepartmentCommandHandlerTest
         // Arrange
         var returnDepartment = new Department() { Id = 1, DepartmentName = "Test_1" };
 
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
             .ReturnsAsync(returnDepartment);
 
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.UpdateDepartmentAsync(It.IsAny<Department>()))
             .ReturnsAsync((Department department) => department);
 
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.CheckIfDepartmentNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
 

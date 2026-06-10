@@ -40,15 +40,15 @@ public class UpdateCompanyCommandHandlerTest
         // Arrange
         var returnCompany = new Company() { Id = 1, CompanyName = "Test_1" };
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyAsync(It.IsAny<int>()))
             .ReturnsAsync(returnCompany);
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.UpdateCompanyAsync(It.IsAny<Company>()))
             .ReturnsAsync((Company company) => company);
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.CheckIfCompanyNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
@@ -93,15 +93,15 @@ public class UpdateCompanyCommandHandlerTest
         // Arrange
         var returnCompany = new Company() { Id = 1, CompanyName = "Test_1" };
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyAsync(It.IsAny<int>()))
             .ReturnsAsync(returnCompany);
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.UpdateCompanyAsync(It.IsAny<Company>()))
             .ReturnsAsync((Company company) => company);
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.CheckIfCompanyNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
@@ -129,15 +129,15 @@ public class UpdateCompanyCommandHandlerTest
         // Arrange
         var returnCompany = new Company() { Id = 1, CompanyName = "Test_1" };
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyAsync(It.IsAny<int>()))
             .ReturnsAsync(returnCompany);
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.UpdateCompanyAsync(It.IsAny<Company>()))
             .ReturnsAsync((Company company) => company);
 
-        _mockCompanyRepository
+        _ = _mockCompanyRepository
             .Setup(repo => repo.CheckIfCompanyNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
 

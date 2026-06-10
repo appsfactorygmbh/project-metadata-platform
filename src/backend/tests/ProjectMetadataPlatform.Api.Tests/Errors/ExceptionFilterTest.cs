@@ -8,7 +8,6 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Interfaces;
-using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BasicExceptions;
@@ -88,12 +87,12 @@ public class ExceptionFilterTest
     public void CallsBasicExceptionHandlerForBasicException_Test()
     {
         var mockException = new Mock<EntityNotFoundException>("some error message");
-        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+        _ = _context.SetupGet(c => c.Exception).Returns(mockException.Object);
 
         var result = new StatusCodeResult(404);
-        _basicExceptionHandler.Setup(h => h.Handle(It.IsAny<PmpException>())).Returns(result);
+        _ = _basicExceptionHandler.Setup(h => h.Handle(It.IsAny<PmpException>())).Returns(result);
 
-        _context
+        _ = _context
             .SetupSet(c => c.Result = It.IsAny<IActionResult>())
             .Callback(
                 (IActionResult r) =>
@@ -112,12 +111,14 @@ public class ExceptionFilterTest
     public void CallsPluginExceptionHandlerForPluginException_Test()
     {
         var mockException = new Mock<PluginException>("some error message");
-        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+        _ = _context.SetupGet(c => c.Exception).Returns(mockException.Object);
 
         var result = new StatusCodeResult(500);
-        _pluginsExceptionHandler.Setup(h => h.Handle(It.IsAny<PluginException>())).Returns(result);
+        _ = _pluginsExceptionHandler
+            .Setup(h => h.Handle(It.IsAny<PluginException>()))
+            .Returns(result);
 
-        _context
+        _ = _context
             .SetupSet(c => c.Result = It.IsAny<IActionResult>())
             .Callback(
                 (IActionResult r) =>
@@ -136,12 +137,14 @@ public class ExceptionFilterTest
     public void CallsProjectsExceptionHandlerForProjectException_Test()
     {
         var mockException = new Mock<ProjectException>("some error message");
-        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+        _ = _context.SetupGet(c => c.Exception).Returns(mockException.Object);
 
         var result = new StatusCodeResult(500);
-        _projectExceptionHandler.Setup(h => h.Handle(It.IsAny<ProjectException>())).Returns(result);
+        _ = _projectExceptionHandler
+            .Setup(h => h.Handle(It.IsAny<ProjectException>()))
+            .Returns(result);
 
-        _context
+        _ = _context
             .SetupSet(c => c.Result = It.IsAny<IActionResult>())
             .Callback(
                 (IActionResult r) =>
@@ -160,12 +163,12 @@ public class ExceptionFilterTest
     public void CallsAuthExceptionHandlerForProjectException_Test()
     {
         var mockException = new Mock<AuthException>("some error message");
-        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+        _ = _context.SetupGet(c => c.Exception).Returns(mockException.Object);
 
         var result = new StatusCodeResult(500);
-        _authExceptionHandler.Setup(h => h.Handle(It.IsAny<AuthException>())).Returns(result);
+        _ = _authExceptionHandler.Setup(h => h.Handle(It.IsAny<AuthException>())).Returns(result);
 
-        _context
+        _ = _context
             .SetupSet(c => c.Result = It.IsAny<IActionResult>())
             .Callback(
                 (IActionResult r) =>
@@ -184,9 +187,9 @@ public class ExceptionFilterTest
     public void HandlesUnknownException_Test()
     {
         var mockException = new Mock<Exception>("some error message");
-        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+        _ = _context.SetupGet(c => c.Exception).Returns(mockException.Object);
 
-        _context
+        _ = _context
             .SetupSet(c => c.Result = It.IsAny<IActionResult>())
             .Callback(
                 (IActionResult r) =>
@@ -217,12 +220,12 @@ public class ExceptionFilterTest
     public void CallLogsExceptionHandlerForLogException_Test()
     {
         var mockException = new Mock<LogException>("some error message");
-        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+        _ = _context.SetupGet(c => c.Exception).Returns(mockException.Object);
 
         var result = new StatusCodeResult(500);
-        _logExceptionHandler.Setup(h => h.Handle(It.IsAny<LogException>())).Returns(result);
+        _ = _logExceptionHandler.Setup(h => h.Handle(It.IsAny<LogException>())).Returns(result);
 
-        _context
+        _ = _context
             .SetupSet(c => c.Result = It.IsAny<IActionResult>())
             .Callback(
                 (IActionResult r) =>
@@ -241,12 +244,14 @@ public class ExceptionFilterTest
     public void CallCompanyExceptionHandlerForCompanyException_Test()
     {
         var mockException = new Mock<CompanyException>("some error message");
-        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+        _ = _context.SetupGet(c => c.Exception).Returns(mockException.Object);
 
         var result = new StatusCodeResult(500);
-        _companyExceptionHandler.Setup(h => h.Handle(It.IsAny<CompanyException>())).Returns(result);
+        _ = _companyExceptionHandler
+            .Setup(h => h.Handle(It.IsAny<CompanyException>()))
+            .Returns(result);
 
-        _context
+        _ = _context
             .SetupSet(c => c.Result = It.IsAny<IActionResult>())
             .Callback(
                 (IActionResult r) =>
@@ -265,14 +270,14 @@ public class ExceptionFilterTest
     public void CallBusinessUnitExceptionHandlerForBusinessUnitException_Test()
     {
         var mockException = new Mock<BusinessUnitException>("some error message");
-        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+        _ = _context.SetupGet(c => c.Exception).Returns(mockException.Object);
 
         var result = new StatusCodeResult(500);
-        _businessUnitExceptionHandler
+        _ = _businessUnitExceptionHandler
             .Setup(h => h.Handle(It.IsAny<BusinessUnitException>()))
             .Returns(result);
 
-        _context
+        _ = _context
             .SetupSet(c => c.Result = It.IsAny<IActionResult>())
             .Callback(
                 (IActionResult r) =>
@@ -294,14 +299,14 @@ public class ExceptionFilterTest
     public void CallOfficeLocationExceptionHandlerForOfficeLocationException_Test()
     {
         var mockException = new Mock<OfficeLocationException>("some error message");
-        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+        _ = _context.SetupGet(c => c.Exception).Returns(mockException.Object);
 
         var result = new StatusCodeResult(500);
-        _officeLocationExceptionHandler
+        _ = _officeLocationExceptionHandler
             .Setup(h => h.Handle(It.IsAny<OfficeLocationException>()))
             .Returns(result);
 
-        _context
+        _ = _context
             .SetupSet(c => c.Result = It.IsAny<IActionResult>())
             .Callback(
                 (IActionResult r) =>
@@ -323,14 +328,14 @@ public class ExceptionFilterTest
     public void CallDepartmentExceptionHandlerForDepartmentException_Test()
     {
         var mockException = new Mock<DepartmentException>("some error message");
-        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+        _ = _context.SetupGet(c => c.Exception).Returns(mockException.Object);
 
         var result = new StatusCodeResult(500);
-        _departmentExceptionHandler
+        _ = _departmentExceptionHandler
             .Setup(h => h.Handle(It.IsAny<DepartmentException>()))
             .Returns(result);
 
-        _context
+        _ = _context
             .SetupSet(c => c.Result = It.IsAny<IActionResult>())
             .Callback(
                 (IActionResult r) =>
@@ -352,9 +357,9 @@ public class ExceptionFilterTest
     public void HandlesNullReturnOfExceptionHandler_Test()
     {
         var mockException = new Mock<ProjectException>("some error message");
-        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+        _ = _context.SetupGet(c => c.Exception).Returns(mockException.Object);
 
-        _context
+        _ = _context
             .SetupSet(c => c.Result = It.IsAny<IActionResult>())
             .Callback(
                 (IActionResult r) =>
@@ -374,7 +379,7 @@ public class ExceptionFilterTest
                     });
                 }
             );
-        _projectExceptionHandler
+        _ = _projectExceptionHandler
             .Setup(h => h.Handle(It.IsAny<ProjectException>()))
             .Returns((IActionResult?)null);
 
@@ -388,12 +393,12 @@ public class ExceptionFilterTest
     public void CallLogsExceptionHandlerForProjectException_Test()
     {
         var mockException = new Mock<LogException>("some error message");
-        _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+        _ = _context.SetupGet(c => c.Exception).Returns(mockException.Object);
 
         var result = new StatusCodeResult(500);
-        _logExceptionHandler.Setup(h => h.Handle(It.IsAny<LogException>())).Returns(result);
+        _ = _logExceptionHandler.Setup(h => h.Handle(It.IsAny<LogException>())).Returns(result);
 
-        _context
+        _ = _context
             .SetupSet(c => c.Result = It.IsAny<IActionResult>())
             .Callback(
                 (IActionResult r) =>

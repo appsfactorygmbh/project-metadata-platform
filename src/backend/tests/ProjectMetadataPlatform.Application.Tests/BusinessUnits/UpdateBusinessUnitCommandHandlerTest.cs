@@ -40,15 +40,15 @@ public class UpdateBusinessUnitCommandHandlerTest
         // Arrange
         var returnBusinessUnit = new BusinessUnit() { Id = 1, BusinessUnitName = "Test_1" };
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.UpdateBusinessUnitAsync(It.IsAny<BusinessUnit>()))
             .ReturnsAsync((BusinessUnit businessUnit) => businessUnit);
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.CheckIfBusinessUnitNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
@@ -95,15 +95,15 @@ public class UpdateBusinessUnitCommandHandlerTest
         // Arrange
         var returnBusinessUnit = new BusinessUnit() { Id = 1, BusinessUnitName = "Test_1" };
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.UpdateBusinessUnitAsync(It.IsAny<BusinessUnit>()))
             .ReturnsAsync((BusinessUnit businessUnit) => businessUnit);
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.CheckIfBusinessUnitNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
@@ -131,15 +131,15 @@ public class UpdateBusinessUnitCommandHandlerTest
         // Arrange
         var returnBusinessUnit = new BusinessUnit() { Id = 1, BusinessUnitName = "Test_1" };
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.UpdateBusinessUnitAsync(It.IsAny<BusinessUnit>()))
             .ReturnsAsync((BusinessUnit businessUnit) => businessUnit);
 
-        _mockBusinessUnitRepository
+        _ = _mockBusinessUnitRepository
             .Setup(repo => repo.CheckIfBusinessUnitNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
 

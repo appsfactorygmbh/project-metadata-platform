@@ -36,7 +36,7 @@ public class RegenerateApiTokenCommandHandlerTest
     [Test]
     public async Task RegenerateApiTokenCommand_SuccessfulRegenerationTest()
     {
-        _apiTokenRepositoryMock
+        _ = _apiTokenRepositoryMock
             .Setup(m => m.GetApiTokenById(It.IsAny<int>()))
             .ReturnsAsync(
                 new ApiToken

@@ -40,7 +40,7 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
     {
         using var context = DbContext();
 
-        context.Database.EnsureDeleted();
+        _ = context.Database.EnsureDeleted();
         _context?.Dispose();
     }
 
@@ -51,7 +51,7 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
         const string token = "test";
         Environment.SetEnvironmentVariable("REFRESH_TOKEN_EXPIRATION_HOURS", "6");
 
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
             .ReturnsAsync(
                 new ApplicationUser
@@ -76,7 +76,7 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
         const string token = "test";
         Environment.SetEnvironmentVariable("REFRESH_TOKEN_EXPIRATION_HOURS", "6");
 
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
             .ReturnsAsync(
                 new ApplicationUser
@@ -108,7 +108,7 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
         const string email = "test";
         const string token = "test";
         Environment.SetEnvironmentVariable("REFRESH_TOKEN_EXPIRATION_HOURS", "6");
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
             .ReturnsAsync(
                 new ApplicationUser
@@ -129,7 +129,7 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
     {
         const string email = "test";
         Environment.SetEnvironmentVariable("REFRESH_TOKEN_EXPIRATION_HOURS", "6");
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
             .ReturnsAsync((ApplicationUser?)null);
 
@@ -143,7 +143,7 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
         const string email = "test";
         const string token = "test";
         Environment.SetEnvironmentVariable("REFRESH_TOKEN_EXPIRATION_HOURS", "6");
-        _context.Users.Add(
+        _ = _context.Users.Add(
             new ApplicationUser
             {
                 EmployeeId = "123",
@@ -152,9 +152,9 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
                 IsScimProvisioned = false,
             }
         );
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
-        _mockUserManager.Setup(m => m.Users).Returns(_context.Users);
+        _ = _mockUserManager.Setup(m => m.Users).Returns(_context.Users);
         await _repository.StoreRefreshToken(email, token);
         var result = await _repository.CheckRefreshTokenRequest(token);
         Assert.That(result, Is.True);
@@ -166,7 +166,7 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
         const string email = "test";
         const string token = "test";
         Environment.SetEnvironmentVariable("REFRESH_TOKEN_EXPIRATION_HOURS", "6");
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
             .ReturnsAsync(
                 new ApplicationUser
@@ -188,7 +188,7 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
         const string email = "test";
         const string token = "test";
         Environment.SetEnvironmentVariable("REFRESH_TOKEN_EXPIRATION_HOURS", "0");
-        _mockUserManager
+        _ = _mockUserManager
             .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
             .ReturnsAsync(
                 new ApplicationUser
@@ -210,7 +210,7 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
         const string email = "test";
         const string token = "test";
         Environment.SetEnvironmentVariable("REFRESH_TOKEN_EXPIRATION_HOURS", "0");
-        _context.Users.Add(
+        _ = _context.Users.Add(
             new ApplicationUser
             {
                 EmployeeId = "123",
@@ -219,10 +219,10 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
                 IsScimProvisioned = false,
             }
         );
-        await _context.SaveChangesAsync();
+        _ = await _context.SaveChangesAsync();
 
-        _mockUserManager.Setup(m => m.Users).Returns(_context.Users);
-        _mockUserManager
+        _ = _mockUserManager.Setup(m => m.Users).Returns(_context.Users);
+        _ = _mockUserManager
             .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
             .ReturnsAsync(
                 new ApplicationUser

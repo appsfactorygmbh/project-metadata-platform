@@ -30,7 +30,7 @@ public class GetDepartmentQueryHandlerTest
         // Arrange
         var returnDepartment = new Department() { Id = 1, DepartmentName = "Test_1" };
 
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
             .ReturnsAsync(returnDepartment);
 
@@ -53,7 +53,7 @@ public class GetDepartmentQueryHandlerTest
     public void GetDepartment_ThrowDepartmentNotFoundException_IfDepartmentNotFound()
     {
         // Arrange
-        _mockDepartmentRepository
+        _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
             .ThrowsAsync(new DepartmentNotFoundException(1));
 

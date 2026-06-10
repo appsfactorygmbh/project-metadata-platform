@@ -47,7 +47,7 @@ public class DeleteTeamCommandHandlerTest
             Projects = [],
         };
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamWithProjectsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
 
@@ -83,7 +83,7 @@ public class DeleteTeamCommandHandlerTest
     public void DeleteTeam_StillLinkedProjects_ThrowsTeamStillLinkedToProjectsException()
     {
         // Arrange
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.CheckIfTeamNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
@@ -107,7 +107,7 @@ public class DeleteTeamCommandHandlerTest
             ],
         };
 
-        _mockTeamRepository
+        _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamWithProjectsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
 

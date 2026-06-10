@@ -8,6 +8,7 @@
   import {
     projectEditStoreSymbol,
     localLogStoreSymbol,
+    projectRoutingSymbol,
   } from '@/store/injectionSymbols';
   import { inject, ref, watch } from 'vue';
   import { message } from 'ant-design-vue';
@@ -20,6 +21,15 @@
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
+
+  const projectRouting = inject(projectRoutingSymbol);
+
+  // 🐛 FIX: Create a computed property that safely checks if a project is active.
+  // This completely satisfies TypeScript's type-checker.
+  const hasActiveProject = computed(() => {
+    return !!projectRouting?.routerProjectId?.value;
+  });
+
   const pluginStore = usePluginStore();
   const projectStore = useProjectStore();
   const rerenderPlugins = ref(1);
@@ -147,6 +157,7 @@
       companyId: updateProjectInformation?.companyId,
       companyState: updateProjectInformation?.companyState,
       ismsLevel: updateProjectInformation?.ismsLevel,
+      isEoC: updateProjectInformation?.isEoC,
       notes: updateProjectInformation?.notes,
     };
     console.log(updatedProject);
@@ -203,7 +214,7 @@
 </script>
 
 <template>
-  <div v-if="!isEmpty">
+  <div v-if="hasActiveProject && !isEmpty">
     <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
     <ProjectInformation />
     <ProjectPlugins
