@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NUnit.Framework;
 using ProjectMetadataPlatform.IntegrationTests.Utilities;
 
@@ -42,28 +41,28 @@ public class TeamManagement : IntegrationTestsBase
 
         var teams = await ToJsonElement(client.GetAsync("/Teams"));
 
-        _ = teams.GetArrayLength().Should().Be(2);
-        _ = teams[0].GetProperty("id").GetInt32().Should().Be(teamId1);
-        _ = teams[0].GetProperty("teamName").GetString().Should().Be("Team1");
-        _ = teams[1].GetProperty("id").GetInt32().Should().Be(teamId2);
-        _ = teams[1].GetProperty("teamName").GetString().Should().Be("Team2");
+        Assert.That(teams.GetArrayLength(), Is.EqualTo(2));
+        Assert.That(teams[0].GetProperty("id").GetInt32(), Is.EqualTo(teamId1));
+        Assert.That(teams[0].GetProperty("teamName").GetString(), Is.EqualTo("Team1"));
+        Assert.That(teams[1].GetProperty("id").GetInt32(), Is.EqualTo(teamId2));
+        Assert.That(teams[1].GetProperty("teamName").GetString(), Is.EqualTo("Team2"));
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
 
-        _ = logs.GetArrayLength().Should().Be(4);
+        Assert.That(logs.GetArrayLength(), Is.EqualTo(4));
 
-        _ = logs[1]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be(
+        Assert.That(
+            logs[1].GetProperty("logMessage").GetString(),
+            Is.EqualTo(
                 "admin created a new team with properties: TeamName = Team1, BusinessUnit = Health"
-            );
-        _ = logs[0]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be("admin created a new team with properties: TeamName = Team2, BusinessUnit = Media");
+            )
+        );
+        Assert.That(
+            logs[0].GetProperty("logMessage").GetString(),
+            Is.EqualTo(
+                "admin created a new team with properties: TeamName = Team2, BusinessUnit = Media"
+            )
+        );
     }
 
     [Test]
@@ -86,7 +85,7 @@ public class TeamManagement : IntegrationTestsBase
             )
         );
 
-        _ = error.Message.Should().Be("A Team with the name Team1 already exists.");
+        Assert.That(error.Message, Is.EqualTo("A Team with the name Team1 already exists."));
     }
 
     [Test]
@@ -102,7 +101,7 @@ public class TeamManagement : IntegrationTestsBase
             )
         );
 
-        _ = error.Message.Should().Be("The Business Unit with id 1 was not found.");
+        Assert.That(error.Message, Is.EqualTo("The Business Unit with id 1 was not found."));
     }
 
     [Test]
@@ -121,14 +120,14 @@ public class TeamManagement : IntegrationTestsBase
             .GetInt32();
         var teams = await ToJsonElement(client.GetAsync("/Teams"));
 
-        _ = teams.GetArrayLength().Should().Be(1);
-        _ = teams[0].GetProperty("id").GetInt32().Should().Be(teamId1);
-        _ = teams[0].GetProperty("teamName").GetString().Should().Be("Team1");
+        Assert.That(teams.GetArrayLength(), Is.EqualTo(1));
+        Assert.That(teams[0].GetProperty("id").GetInt32(), Is.EqualTo(teamId1));
+        Assert.That(teams[0].GetProperty("teamName").GetString(), Is.EqualTo("Team1"));
 
         _ = await ToJsonElement(client.DeleteAsync($"/Teams/{teamId1}"), HttpStatusCode.OK);
         var teamsAfterDelete = await ToJsonElement(client.GetAsync("/Teams"));
 
-        _ = teamsAfterDelete.GetArrayLength().Should().Be(0);
+        Assert.That(teamsAfterDelete.GetArrayLength(), Is.EqualTo(0));
     }
 
     private static async Task<int> CreateBusinessUnit(HttpClient client, string name)

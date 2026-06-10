@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NUnit.Framework;
 using ProjectMetadataPlatform.IntegrationTests.Utilities;
 
@@ -42,38 +41,37 @@ public class BusinessUnitManagement : IntegrationTestsBase
 
         var businessUnits = await ToJsonElement(client.GetAsync("/BusinessUnits"));
 
-        _ = businessUnits.GetArrayLength().Should().Be(2);
-        _ = businessUnits[0].GetProperty("id").GetInt32().Should().Be(businessUnitId1);
-        _ = businessUnits[0]
-            .GetProperty("businessUnitName")
-            .GetString()
-            .Should()
-            .Be("BusinessUnit1");
-        _ = businessUnits[1].GetProperty("id").GetInt32().Should().Be(businessUnitId2);
-        _ = businessUnits[1]
-            .GetProperty("businessUnitName")
-            .GetString()
-            .Should()
-            .Be("BusinessUnit2");
+        Assert.Multiple(() =>
+        {
+            Assert.That(businessUnits.GetArrayLength(), Is.EqualTo(2));
+            Assert.That(businessUnits[0].GetProperty("id").GetInt32(), Is.EqualTo(businessUnitId1));
+            Assert.That(
+                businessUnits[0].GetProperty("businessUnitName").GetString(),
+                Is.EqualTo("BusinessUnit1")
+            );
+            Assert.That(businessUnits[1].GetProperty("id").GetInt32(), Is.EqualTo(businessUnitId2));
+            Assert.That(
+                businessUnits[1].GetProperty("businessUnitName").GetString(),
+                Is.EqualTo("BusinessUnit2")
+            );
+        });
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
-
-        _ = logs.GetArrayLength().Should().Be(2);
-
-        _ = logs[1]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be(
-                "admin added a new business unit with properties: BusinessUnitName = BusinessUnit1"
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logs[1].GetProperty("logMessage").GetString(),
+                Is.EqualTo(
+                    "admin added a new business unit with properties: BusinessUnitName = BusinessUnit1"
+                )
             );
-        _ = logs[0]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be(
-                "admin added a new business unit with properties: BusinessUnitName = BusinessUnit2"
+            Assert.That(
+                logs[0].GetProperty("logMessage").GetString(),
+                Is.EqualTo(
+                    "admin added a new business unit with properties: BusinessUnitName = BusinessUnit2"
+                )
             );
+        });
     }
 
     [Test]
@@ -94,10 +92,10 @@ public class BusinessUnitManagement : IntegrationTestsBase
                 HttpStatusCode.Conflict
             )
         );
-
-        _ = error
-            .Message.Should()
-            .Be("A Business Unit with the name BusinessUnit1 already exists.");
+        Assert.That(
+            error.Message,
+            Is.EqualTo("A Business Unit with the name BusinessUnit1 already exists.")
+        );
     }
 
     [Test]
@@ -115,20 +113,18 @@ public class BusinessUnitManagement : IntegrationTestsBase
             .GetInt32();
         var businessUnits = await ToJsonElement(client.GetAsync("/BusinessUnits"));
 
-        _ = businessUnits.GetArrayLength().Should().Be(1);
-        _ = businessUnits[0].GetProperty("id").GetInt32().Should().Be(businessUnitId1);
-        _ = businessUnits[0]
-            .GetProperty("businessUnitName")
-            .GetString()
-            .Should()
-            .Be("BusinessUnit1");
+        Assert.That(businessUnits.GetArrayLength(), Is.EqualTo(1));
+        Assert.That(businessUnits[0].GetProperty("id").GetInt32(), Is.EqualTo(businessUnitId1));
+        Assert.That(
+            businessUnits[0].GetProperty("businessUnitName").GetString(),
+            Is.EqualTo("BusinessUnit1")
+        );
+        var response = await client.DeleteAsync($"/BusinessUnits/{businessUnitId1}");
 
-        _ = (await client.DeleteAsync($"/BusinessUnits/{businessUnitId1}"))
-            .StatusCode.Should()
-            .Be(HttpStatusCode.NoContent);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
 
         var businessUnitsAfterDelete = await ToJsonElement(client.GetAsync("/BusinessUnits"));
 
-        _ = businessUnitsAfterDelete.GetArrayLength().Should().Be(0);
+        Assert.That(businessUnitsAfterDelete.GetArrayLength(), Is.EqualTo(0));
     }
 }

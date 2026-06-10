@@ -2,7 +2,6 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NUnit.Framework;
 using ProjectMetadataPlatform.IntegrationTests.Utilities;
 
@@ -34,13 +33,14 @@ public class AuthManagement : IntegrationTestsBase
         //Assert
         var newAuthToken = response.GetProperty("accessToken").GetString();
 
-        _ = newAuthToken.Should().NotBeSameAs(firstAuthToken);
+        Assert.That(newAuthToken, Is.Not.SameAs(firstAuthToken));
 
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {newAuthToken}");
-        _ = (await client.GetAsync("/Projects"))
-            .IsSuccessStatusCode.Should()
-            .BeTrue(" the new access token should be valid");
+
+        var getResponse = await client.GetAsync("/Projects");
+
+        Assert.That(getResponse.IsSuccessStatusCode, Is.True);
     }
 
     [Test]
@@ -67,7 +67,7 @@ public class AuthManagement : IntegrationTestsBase
         var response = await client.GetAsync("/Projects");
 
         //Assert
-        _ = response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
     }
 
     [Test]
@@ -92,7 +92,7 @@ public class AuthManagement : IntegrationTestsBase
         var response = await client.GetAsync("/auth/refresh");
 
         //Assert
-        _ = response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
     [Test]
@@ -111,7 +111,7 @@ public class AuthManagement : IntegrationTestsBase
         );
 
         //Assert
-        _ = response.Message.Should().Be("Invalid login credentials.");
+        Assert.That(response.Message, Is.EqualTo("Invalid login credentials."));
     }
 
     [Test]
@@ -129,7 +129,7 @@ public class AuthManagement : IntegrationTestsBase
         );
 
         //Assert
-        _ = response.Message.Should().Be("Invalid refresh token.");
+        Assert.That(response.Message, Is.EqualTo("Invalid refresh token."));
     }
 
     [Test]
@@ -140,16 +140,16 @@ public class AuthManagement : IntegrationTestsBase
         await CreateApiTokenAndAddItToDefaultRequestHeadersOfClient(client);
 
         var tokens = await ToJsonElement(client.GetAsync("auth/ApiTokens"), HttpStatusCode.OK);
-        _ = tokens.GetArrayLength().Should().Be(1);
+        Assert.That(tokens.GetArrayLength(), Is.EqualTo(1));
 
         var tokenId = tokens[0].GetProperty("id").GetInt32();
 
         var deleteResponse = await client.DeleteAsync($"auth/ApiTokens/{tokenId}");
-        _ = deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
+        Assert.That(deleteResponse.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
         var error = await client.GetAsync("auth/ApiTokens");
 
-        _ = error.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        Assert.That(error.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
     }
 
     [Test]
@@ -160,7 +160,7 @@ public class AuthManagement : IntegrationTestsBase
         await CreateApiTokenAndAddItToDefaultRequestHeadersOfClient(client);
 
         var tokens = await ToJsonElement(client.GetAsync("auth/ApiTokens"), HttpStatusCode.OK);
-        _ = tokens.GetArrayLength().Should().Be(1);
+        Assert.That(tokens.GetArrayLength(), Is.EqualTo(1));
 
         var tokenId = tokens[0].GetProperty("id").GetInt32();
 
@@ -168,7 +168,7 @@ public class AuthManagement : IntegrationTestsBase
 
         var error = await client.GetAsync("auth/ApiTokens");
 
-        _ = error.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        Assert.That(error.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token.GetProperty("token")}");
@@ -176,6 +176,6 @@ public class AuthManagement : IntegrationTestsBase
             client.GetAsync("auth/ApiTokens"),
             HttpStatusCode.OK
         );
-        _ = tokensAfterRegen.GetArrayLength().Should().Be(1);
+        Assert.That(tokensAfterRegen.GetArrayLength(), Is.EqualTo(1));
     }
 }

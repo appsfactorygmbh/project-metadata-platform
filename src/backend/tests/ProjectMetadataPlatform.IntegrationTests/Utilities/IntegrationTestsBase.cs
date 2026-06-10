@@ -7,7 +7,6 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -135,7 +134,7 @@ public class IntegrationTestsBase : IDisposable
     )
     {
         var responseMessage = await response;
-        _ = responseMessage.StatusCode.Should().Be(expectedStatusCode);
+        Assert.That(responseMessage.StatusCode, Is.EqualTo(expectedStatusCode));
         return (await responseMessage.Content.ReadFromJsonAsync<JsonDocument>())!.RootElement;
     }
 
@@ -145,7 +144,7 @@ public class IntegrationTestsBase : IDisposable
     )
     {
         var responseMessage = await response;
-        _ = responseMessage.StatusCode.Should().Be(expectedStatusCode);
+        Assert.That(responseMessage.StatusCode, Is.EqualTo(expectedStatusCode));
         return (await responseMessage.Content.ReadFromJsonAsync<ErrorResponse>())!;
     }
 

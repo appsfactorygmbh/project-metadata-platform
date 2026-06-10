@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NUnit.Framework;
 using ProjectMetadataPlatform.IntegrationTests.Utilities;
 
@@ -37,37 +36,45 @@ public class GlobalPluginManagement : IntegrationTestsBase
             .GetInt32();
 
         var plugins = await ToJsonElement(client.GetAsync("/Plugins"));
-
-        _ = plugins.GetArrayLength().Should().Be(2);
-        _ = plugins[0].GetProperty("id").GetInt32().Should().Be(pluginId1);
-        _ = plugins[0].GetProperty("pluginName").GetString().Should().Be("GitLab");
-        _ = plugins[0].GetProperty("isArchived").GetBoolean().Should().BeFalse();
-        _ = plugins[0].GetProperty("keys").EnumerateArray().Should().BeEmpty();
-        _ = plugins[0].GetProperty("baseUrl").GetString().Should().Be("https://gitlab.com");
-        _ = plugins[1].GetProperty("id").GetInt32().Should().Be(pluginId2);
-        _ = plugins[1].GetProperty("pluginName").GetString().Should().Be("Jira");
-        _ = plugins[1].GetProperty("isArchived").GetBoolean().Should().BeFalse();
-        _ = plugins[1].GetProperty("keys").EnumerateArray().Should().BeEmpty();
-        _ = plugins[1].GetProperty("baseUrl").GetString().Should().Be("https://jira.com");
+        Assert.Multiple(() =>
+        {
+            Assert.That(plugins.GetArrayLength(), Is.EqualTo(2));
+            Assert.That(plugins[0].GetProperty("id").GetInt32(), Is.EqualTo(pluginId1));
+            Assert.That(plugins[0].GetProperty("pluginName").GetString(), Is.EqualTo("GitLab"));
+            Assert.That(plugins[0].GetProperty("isArchived").GetBoolean(), Is.False);
+            Assert.That(plugins[0].GetProperty("keys").EnumerateArray(), Is.Empty);
+            Assert.That(
+                plugins[0].GetProperty("baseUrl").GetString(),
+                Is.EqualTo("https://gitlab.com")
+            );
+            Assert.That(plugins[1].GetProperty("id").GetInt32(), Is.EqualTo(pluginId2));
+            Assert.That(plugins[1].GetProperty("pluginName").GetString(), Is.EqualTo("Jira"));
+            Assert.That(plugins[1].GetProperty("isArchived").GetBoolean(), Is.False);
+            Assert.That(plugins[1].GetProperty("keys").EnumerateArray(), Is.Empty);
+            Assert.That(
+                plugins[1].GetProperty("baseUrl").GetString(),
+                Is.EqualTo("https://jira.com")
+            );
+        });
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
 
-        _ = logs.GetArrayLength().Should().Be(2);
-
-        _ = logs[1]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be(
-                "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com, Keys[0] = key1"
+        Assert.Multiple(() =>
+        {
+            Assert.That(logs.GetArrayLength(), Is.EqualTo(2));
+            Assert.That(
+                logs[1].GetProperty("logMessage").GetString(),
+                Is.EqualTo(
+                    "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com, Keys[0] = key1"
+                )
             );
-        _ = logs[0]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be(
-                "admin added a new global plugin with properties: PluginName = Jira, IsArchived = False, BaseUrl = https://jira.com, Keys[0] = key2"
+            Assert.That(
+                logs[0].GetProperty("logMessage").GetString(),
+                Is.EqualTo(
+                    "admin added a new global plugin with properties: PluginName = Jira, IsArchived = False, BaseUrl = https://jira.com, Keys[0] = key2"
+                )
             );
+        });
     }
 
     [Test]
@@ -88,38 +95,41 @@ public class GlobalPluginManagement : IntegrationTestsBase
         var updatedPlugin = await ToJsonElement(
             client.PatchAsync($"/Plugins/{pluginId}", CreateRequest2)
         );
-
-        _ = updatedPlugin.GetProperty("id").GetInt32().Should().Be(pluginId);
-        _ = updatedPlugin.GetProperty("pluginName").GetString().Should().Be("Jira");
-        _ = updatedPlugin.GetProperty("isArchived").GetBoolean().Should().BeFalse();
-        _ = updatedPlugin.GetProperty("keys").EnumerateArray().Should().BeEmpty();
+        Assert.Multiple(() =>
+        {
+            Assert.That(updatedPlugin.GetProperty("id").GetInt32(), Is.EqualTo(pluginId));
+            Assert.That(updatedPlugin.GetProperty("pluginName").GetString(), Is.EqualTo("Jira"));
+            Assert.That(updatedPlugin.GetProperty("isArchived").GetBoolean(), Is.False);
+            Assert.That(updatedPlugin.GetProperty("keys").EnumerateArray(), Is.Empty);
+        });
 
         var plugins = await ToJsonElement(client.GetAsync("/Plugins"));
-
-        _ = plugins.GetArrayLength().Should().Be(1);
-        _ = plugins[0].GetProperty("id").GetInt32().Should().Be(pluginId);
-        _ = plugins[0].GetProperty("pluginName").GetString().Should().Be("Jira");
-        _ = plugins[0].GetProperty("isArchived").GetBoolean().Should().BeFalse();
-        _ = plugins[0].GetProperty("keys").EnumerateArray().Should().BeEmpty();
+        Assert.Multiple(() =>
+        {
+            Assert.That(plugins.GetArrayLength(), Is.EqualTo(1));
+            Assert.That(plugins[0].GetProperty("id").GetInt32(), Is.EqualTo(pluginId));
+            Assert.That(plugins[0].GetProperty("pluginName").GetString(), Is.EqualTo("Jira"));
+            Assert.That(plugins[0].GetProperty("isArchived").GetBoolean(), Is.False);
+            Assert.That(plugins[0].GetProperty("keys").EnumerateArray(), Is.Empty);
+        });
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
-        _ = logs.GetArrayLength().Should().Be(2);
-
-        _ = logs[1]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be(
-                "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com, Keys[0] = key1"
+        Assert.Multiple(() =>
+        {
+            Assert.That(logs.GetArrayLength(), Is.EqualTo(2));
+            Assert.That(
+                logs[1].GetProperty("logMessage").GetString(),
+                Is.EqualTo(
+                    "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com, Keys[0] = key1"
+                )
             );
-
-        _ = logs[0]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be(
-                "admin updated global plugin GitLab: set PluginName from GitLab to Jira, set BaseUrl from https://gitlab.com to https://jira.com"
+            Assert.That(
+                logs[0].GetProperty("logMessage").GetString(),
+                Is.EqualTo(
+                    "admin updated global plugin GitLab: set PluginName from GitLab to Jira, set BaseUrl from https://gitlab.com to https://jira.com"
+                )
             );
+        });
     }
 
     [Test]
@@ -141,58 +151,64 @@ public class GlobalPluginManagement : IntegrationTestsBase
             client.PatchAsync($"/Plugins/{pluginId}", StringContent("""{ "isArchived": true }"""))
         );
 
-        _ = updatedPlugin.GetProperty("id").GetInt32().Should().Be(pluginId);
-        _ = updatedPlugin.GetProperty("pluginName").GetString().Should().Be("GitLab");
-        _ = updatedPlugin.GetProperty("isArchived").GetBoolean().Should().BeTrue();
-        _ = updatedPlugin.GetProperty("keys").EnumerateArray().Should().BeEmpty();
-
+        Assert.Multiple(() =>
+        {
+            Assert.That(updatedPlugin.GetProperty("id").GetInt32(), Is.EqualTo(pluginId));
+            Assert.That(updatedPlugin.GetProperty("pluginName").GetString(), Is.EqualTo("GitLab"));
+            Assert.That(updatedPlugin.GetProperty("isArchived").GetBoolean(), Is.True);
+            Assert.That(updatedPlugin.GetProperty("keys").EnumerateArray(), Is.Empty);
+        });
         var plugins = await ToJsonElement(client.GetAsync("/Plugins"));
-
-        _ = plugins.GetArrayLength().Should().Be(1);
-        _ = plugins[0].GetProperty("id").GetInt32().Should().Be(pluginId);
-        _ = plugins[0].GetProperty("pluginName").GetString().Should().Be("GitLab");
-        _ = plugins[0].GetProperty("isArchived").GetBoolean().Should().BeTrue();
-        _ = plugins[0].GetProperty("keys").EnumerateArray().Should().BeEmpty();
-
+        Assert.Multiple(() =>
+        {
+            Assert.That(plugins.GetArrayLength(), Is.EqualTo(1));
+            Assert.That(plugins[0].GetProperty("id").GetInt32(), Is.EqualTo(pluginId));
+            Assert.That(plugins[0].GetProperty("pluginName").GetString(), Is.EqualTo("GitLab"));
+            Assert.That(plugins[0].GetProperty("isArchived").GetBoolean(), Is.True);
+            Assert.That(plugins[0].GetProperty("keys").EnumerateArray(), Is.Empty);
+        });
         updatedPlugin = await ToJsonElement(
             client.PatchAsync($"/Plugins/{pluginId}", StringContent("""{ "isArchived": false }"""))
         );
 
-        _ = updatedPlugin.GetProperty("id").GetInt32().Should().Be(pluginId);
-        _ = updatedPlugin.GetProperty("pluginName").GetString().Should().Be("GitLab");
-        _ = updatedPlugin.GetProperty("isArchived").GetBoolean().Should().BeFalse();
-        _ = updatedPlugin.GetProperty("keys").EnumerateArray().Should().BeEmpty();
-
+        Assert.Multiple(() =>
+        {
+            Assert.That(updatedPlugin.GetProperty("id").GetInt32(), Is.EqualTo(pluginId));
+            Assert.That(updatedPlugin.GetProperty("pluginName").GetString(), Is.EqualTo("GitLab"));
+            Assert.That(updatedPlugin.GetProperty("isArchived").GetBoolean(), Is.False);
+            Assert.That(updatedPlugin.GetProperty("keys").EnumerateArray(), Is.Empty);
+        });
         plugins = await ToJsonElement(client.GetAsync("/Plugins"));
 
-        _ = plugins.GetArrayLength().Should().Be(1);
-        _ = plugins[0].GetProperty("id").GetInt32().Should().Be(pluginId);
-        _ = plugins[0].GetProperty("pluginName").GetString().Should().Be("GitLab");
-        _ = plugins[0].GetProperty("isArchived").GetBoolean().Should().BeFalse();
-        _ = plugins[0].GetProperty("keys").EnumerateArray().Should().BeEmpty();
+        Assert.Multiple(() =>
+        {
+            Assert.That(plugins.GetArrayLength(), Is.EqualTo(1));
+            Assert.That(plugins[0].GetProperty("id").GetInt32(), Is.EqualTo(pluginId));
+            Assert.That(plugins[0].GetProperty("pluginName").GetString(), Is.EqualTo("GitLab"));
+            Assert.That(plugins[0].GetProperty("isArchived").GetBoolean(), Is.False);
+            Assert.That(plugins[0].GetProperty("keys").EnumerateArray(), Is.Empty);
+        });
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
-        _ = logs.GetArrayLength().Should().Be(3);
 
-        _ = logs[2]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be(
-                "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com, Keys[0] = key1"
+        Assert.Multiple(() =>
+        {
+            Assert.That(logs.GetArrayLength(), Is.EqualTo(3));
+            Assert.That(
+                logs[2].GetProperty("logMessage").GetString(),
+                Is.EqualTo(
+                    "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com, Keys[0] = key1"
+                )
             );
-
-        _ = logs[1]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be("admin archived global plugin GitLab");
-
-        _ = logs[0]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be("admin unarchived global plugin GitLab");
+            Assert.That(
+                logs[1].GetProperty("logMessage").GetString(),
+                Is.EqualTo("admin archived global plugin GitLab")
+            );
+            Assert.That(
+                logs[0].GetProperty("logMessage").GetString(),
+                Is.EqualTo("admin unarchived global plugin GitLab")
+            );
+        });
     }
 
     [Test]
@@ -214,37 +230,32 @@ public class GlobalPluginManagement : IntegrationTestsBase
             client.PatchAsync($"/Plugins/{pluginId}", StringContent("""{ "isArchived": true }"""))
         );
 
-        _ = updatedPlugin.GetProperty("isArchived").GetBoolean().Should().BeTrue();
+        Assert.That(updatedPlugin.GetProperty("isArchived").GetBoolean(), Is.True);
 
         var deleteResponse = await ToJsonElement(client.DeleteAsync($"/Plugins/{pluginId}"));
-        _ = deleteResponse.GetProperty("pluginId").GetInt32().Should().Be(pluginId);
-
+        Assert.That(deleteResponse.GetProperty("pluginId").GetInt32(), Is.EqualTo(pluginId));
         var plugins = await ToJsonElement(client.GetAsync("/Plugins"));
 
-        _ = plugins.GetArrayLength().Should().Be(0);
-
+        Assert.That(plugins.GetArrayLength(), Is.EqualTo(0));
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
-        _ = logs.GetArrayLength().Should().Be(3);
-
-        _ = logs[2]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be(
-                "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com, Keys[0] = key1"
+        Assert.Multiple(() =>
+        {
+            Assert.That(logs.GetArrayLength(), Is.EqualTo(3));
+            Assert.That(
+                logs[2].GetProperty("logMessage").GetString(),
+                Is.EqualTo(
+                    "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com, Keys[0] = key1"
+                )
             );
-
-        _ = logs[1]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be("admin archived global plugin GitLab");
-
-        _ = logs[0]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be("admin removed global plugin GitLab");
+            Assert.That(
+                logs[1].GetProperty("logMessage").GetString(),
+                Is.EqualTo("admin archived global plugin GitLab")
+            );
+            Assert.That(
+                logs[0].GetProperty("logMessage").GetString(),
+                Is.EqualTo("admin removed global plugin GitLab")
+            );
+        });
     }
 
     [Test]
@@ -255,18 +266,19 @@ public class GlobalPluginManagement : IntegrationTestsBase
         await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
 
         // Act
-        _ = (await client.PutAsync("/Plugins", CreateRequest))
-            .StatusCode.Should()
-            .Be(HttpStatusCode.Created);
+        var response = (await client.PutAsync("/Plugins", CreateRequest));
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
+
         var errorResponse = await ToErrorResponse(
             client.PutAsync("/Plugins", CreateRequest),
             HttpStatusCode.Conflict
         );
 
         // Assert
-        _ = errorResponse
-            .Message.Should()
-            .Be("A global Plugin with the name GitLab already exists.");
+        Assert.That(
+            errorResponse.Message,
+            Is.EqualTo("A global Plugin with the name GitLab already exists.")
+        );
     }
 
     [Test]
@@ -284,7 +296,7 @@ public class GlobalPluginManagement : IntegrationTestsBase
         var errorResponse = await ToErrorResponse(responseTask, HttpStatusCode.NotFound);
 
         // Assert
-        _ = errorResponse.Message.Should().Be("The plugin with id 1 was not found.");
+        Assert.That(errorResponse.Message, Is.EqualTo("The plugin with id 1 was not found."));
     }
 
     [Test]
@@ -306,6 +318,6 @@ public class GlobalPluginManagement : IntegrationTestsBase
         );
 
         // Assert
-        _ = errorResponse.Message.Should().Be("The plugin 1 is not archived.");
+        Assert.That(errorResponse.Message, Is.EqualTo("The plugin 1 is not archived."));
     }
 }
