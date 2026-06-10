@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NUnit.Framework;
 using ProjectMetadataPlatform.IntegrationTests.Utilities;
 
@@ -42,26 +41,37 @@ public class DepartmentManagement : IntegrationTestsBase
 
         var departments = await ToJsonElement(client.GetAsync("/Departments"));
 
-        _ = departments.GetArrayLength().Should().Be(2);
-        _ = departments[0].GetProperty("id").GetInt32().Should().Be(departmentId1);
-        _ = departments[0].GetProperty("departmentName").GetString().Should().Be("Department1");
-        _ = departments[1].GetProperty("id").GetInt32().Should().Be(departmentId2);
-        _ = departments[1].GetProperty("departmentName").GetString().Should().Be("Department2");
+        Assert.Multiple(() =>
+        {
+            Assert.That(departments.GetArrayLength(), Is.EqualTo(2));
+            Assert.That(departments[0].GetProperty("id").GetInt32(), Is.EqualTo(departmentId1));
+            Assert.That(
+                departments[0].GetProperty("departmentName").GetString(),
+                Is.EqualTo("Department1")
+            );
+            Assert.That(departments[1].GetProperty("id").GetInt32(), Is.EqualTo(departmentId2));
+            Assert.That(
+                departments[1].GetProperty("departmentName").GetString(),
+                Is.EqualTo("Department2")
+            );
+        });
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
-
-        _ = logs.GetArrayLength().Should().Be(2);
-
-        _ = logs[1]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be("admin added a new department with properties: DepartmentName = Department1");
-        _ = logs[0]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be("admin added a new department with properties: DepartmentName = Department2");
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logs[1].GetProperty("logMessage").GetString(),
+                Is.EqualTo(
+                    "admin added a new department with properties: DepartmentName = Department1"
+                )
+            );
+            Assert.That(
+                logs[0].GetProperty("logMessage").GetString(),
+                Is.EqualTo(
+                    "admin added a new department with properties: DepartmentName = Department2"
+                )
+            );
+        });
     }
 
     [Test]
@@ -82,8 +92,10 @@ public class DepartmentManagement : IntegrationTestsBase
                 HttpStatusCode.Conflict
             )
         );
-
-        _ = error.Message.Should().Be("A Department with the name Department1 already exists.");
+        Assert.That(
+            error.Message,
+            Is.EqualTo("A Department with the name Department1 already exists.")
+        );
     }
 
     [Test]
@@ -101,16 +113,18 @@ public class DepartmentManagement : IntegrationTestsBase
             .GetInt32();
         var departments = await ToJsonElement(client.GetAsync("/Departments"));
 
-        _ = departments.GetArrayLength().Should().Be(1);
-        _ = departments[0].GetProperty("id").GetInt32().Should().Be(departmentId1);
-        _ = departments[0].GetProperty("departmentName").GetString().Should().Be("Department1");
+        Assert.That(departments.GetArrayLength(), Is.EqualTo(1));
+        Assert.That(departments[0].GetProperty("id").GetInt32(), Is.EqualTo(departmentId1));
+        Assert.That(
+            departments[0].GetProperty("departmentName").GetString(),
+            Is.EqualTo("Department1")
+        );
+        var response = await client.DeleteAsync($"/Departments/{departmentId1}");
 
-        _ = (await client.DeleteAsync($"/Departments/{departmentId1}"))
-            .StatusCode.Should()
-            .Be(HttpStatusCode.NoContent);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
 
         var departmentsAfterDelete = await ToJsonElement(client.GetAsync("/Departments"));
 
-        _ = departmentsAfterDelete.GetArrayLength().Should().Be(0);
+        Assert.That(departmentsAfterDelete.GetArrayLength(), Is.EqualTo(0));
     }
 }

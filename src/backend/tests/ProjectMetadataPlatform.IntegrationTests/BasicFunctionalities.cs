@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NUnit.Framework;
 using ProjectMetadataPlatform.IntegrationTests.Utilities;
 
@@ -20,7 +19,7 @@ public class BasicFunctionalities : IntegrationTestsBase
         var response = await client.GetAsync("/swagger");
 
         // Assert
-        _ = response.StatusCode.Should().Be(HttpStatusCode.OK);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
     [TestCase("/Projects", "GET")]
@@ -46,10 +45,11 @@ public class BasicFunctionalities : IntegrationTestsBase
         );
 
         // Assert
-        _ = response
-            .Message.Should()
-            .Be(
+        Assert.That(
+            response.Message,
+            Is.EqualTo(
                 "You are either not logged in or do not have the necessary permissions to perform this action."
-            );
+            )
+        );
     }
 }

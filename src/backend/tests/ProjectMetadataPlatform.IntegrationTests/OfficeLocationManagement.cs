@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NUnit.Framework;
 using ProjectMetadataPlatform.IntegrationTests.Utilities;
 
@@ -42,38 +41,43 @@ public class OfficeLocationManagement : IntegrationTestsBase
 
         var officeLocations = await ToJsonElement(client.GetAsync("/OfficeLocations"));
 
-        _ = officeLocations.GetArrayLength().Should().Be(2);
-        _ = officeLocations[0].GetProperty("id").GetInt32().Should().Be(officeLocationId1);
-        _ = officeLocations[0]
-            .GetProperty("officeLocationName")
-            .GetString()
-            .Should()
-            .Be("OfficeLocation1");
-        _ = officeLocations[1].GetProperty("id").GetInt32().Should().Be(officeLocationId2);
-        _ = officeLocations[1]
-            .GetProperty("officeLocationName")
-            .GetString()
-            .Should()
-            .Be("OfficeLocation2");
+        Assert.Multiple(() =>
+        {
+            Assert.That(officeLocations.GetArrayLength(), Is.EqualTo(2));
+            Assert.That(
+                officeLocations[0].GetProperty("id").GetInt32(),
+                Is.EqualTo(officeLocationId1)
+            );
+            Assert.That(
+                officeLocations[0].GetProperty("officeLocationName").GetString(),
+                Is.EqualTo("OfficeLocation1")
+            );
+            Assert.That(
+                officeLocations[1].GetProperty("id").GetInt32(),
+                Is.EqualTo(officeLocationId2)
+            );
+            Assert.That(
+                officeLocations[1].GetProperty("officeLocationName").GetString(),
+                Is.EqualTo("OfficeLocation2")
+            );
+        });
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
-
-        _ = logs.GetArrayLength().Should().Be(2);
-
-        _ = logs[1]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be(
-                "admin added a new office location with properties: OfficeLocationName = OfficeLocation1"
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logs[1].GetProperty("logMessage").GetString(),
+                Is.EqualTo(
+                    "admin added a new office location with properties: OfficeLocationName = OfficeLocation1"
+                )
             );
-        _ = logs[0]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be(
-                "admin added a new office location with properties: OfficeLocationName = OfficeLocation2"
+            Assert.That(
+                logs[0].GetProperty("logMessage").GetString(),
+                Is.EqualTo(
+                    "admin added a new office location with properties: OfficeLocationName = OfficeLocation2"
+                )
             );
+        });
     }
 
     [Test]
@@ -94,10 +98,10 @@ public class OfficeLocationManagement : IntegrationTestsBase
                 HttpStatusCode.Conflict
             )
         );
-
-        _ = error
-            .Message.Should()
-            .Be("A Office Location with the name OfficeLocation1 already exists.");
+        Assert.That(
+            error.Message,
+            Is.EqualTo("A Office Location with the name OfficeLocation1 already exists.")
+        );
     }
 
     [Test]
@@ -115,20 +119,18 @@ public class OfficeLocationManagement : IntegrationTestsBase
             .GetInt32();
         var officeLocations = await ToJsonElement(client.GetAsync("/OfficeLocations"));
 
-        _ = officeLocations.GetArrayLength().Should().Be(1);
-        _ = officeLocations[0].GetProperty("id").GetInt32().Should().Be(officeLocationId1);
-        _ = officeLocations[0]
-            .GetProperty("officeLocationName")
-            .GetString()
-            .Should()
-            .Be("OfficeLocation1");
+        Assert.That(officeLocations.GetArrayLength(), Is.EqualTo(1));
+        Assert.That(officeLocations[0].GetProperty("id").GetInt32(), Is.EqualTo(officeLocationId1));
+        Assert.That(
+            officeLocations[0].GetProperty("officeLocationName").GetString(),
+            Is.EqualTo("OfficeLocation1")
+        );
+        var response = await client.DeleteAsync($"/OfficeLocations/{officeLocationId1}");
 
-        _ = (await client.DeleteAsync($"/OfficeLocations/{officeLocationId1}"))
-            .StatusCode.Should()
-            .Be(HttpStatusCode.NoContent);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
 
         var officeLocationsAfterDelete = await ToJsonElement(client.GetAsync("/OfficeLocations"));
 
-        _ = officeLocationsAfterDelete.GetArrayLength().Should().Be(0);
+        Assert.That(officeLocationsAfterDelete.GetArrayLength(), Is.EqualTo(0));
     }
 }

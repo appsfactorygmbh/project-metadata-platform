@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NUnit.Framework;
 using ProjectMetadataPlatform.IntegrationTests.Utilities;
 
@@ -42,26 +41,33 @@ public class CompanyManagement : IntegrationTestsBase
 
         var companies = await ToJsonElement(client.GetAsync("/Companies"));
 
-        _ = companies.GetArrayLength().Should().Be(2);
-        _ = companies[0].GetProperty("id").GetInt32().Should().Be(companyId1);
-        _ = companies[0].GetProperty("companyName").GetString().Should().Be("Company1");
-        _ = companies[1].GetProperty("id").GetInt32().Should().Be(companyId2);
-        _ = companies[1].GetProperty("companyName").GetString().Should().Be("Company2");
+        Assert.Multiple(() =>
+        {
+            Assert.That(companies.GetArrayLength(), Is.EqualTo(2));
+            Assert.That(companies[0].GetProperty("id").GetInt32(), Is.EqualTo(companyId1));
+            Assert.That(
+                companies[0].GetProperty("companyName").GetString(),
+                Is.EqualTo("Company1")
+            );
+            Assert.That(companies[1].GetProperty("id").GetInt32(), Is.EqualTo(companyId2));
+            Assert.That(
+                companies[1].GetProperty("companyName").GetString(),
+                Is.EqualTo("Company2")
+            );
+        });
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
-
-        _ = logs.GetArrayLength().Should().Be(2);
-
-        _ = logs[1]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be("admin added a new company with properties: CompanyName = Company1");
-        _ = logs[0]
-            .GetProperty("logMessage")
-            .GetString()
-            .Should()
-            .Be("admin added a new company with properties: CompanyName = Company2");
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logs[1].GetProperty("logMessage").GetString(),
+                Is.EqualTo("admin added a new company with properties: CompanyName = Company1")
+            );
+            Assert.That(
+                logs[0].GetProperty("logMessage").GetString(),
+                Is.EqualTo("admin added a new company with properties: CompanyName = Company2")
+            );
+        });
     }
 
     [Test]
@@ -82,8 +88,7 @@ public class CompanyManagement : IntegrationTestsBase
                 HttpStatusCode.Conflict
             )
         );
-
-        _ = error.Message.Should().Be("A Company with the name Company1 already exists.");
+        Assert.That(error.Message, Is.EqualTo("A Company with the name Company1 already exists."));
     }
 
     [Test]
@@ -101,16 +106,15 @@ public class CompanyManagement : IntegrationTestsBase
             .GetInt32();
         var companies = await ToJsonElement(client.GetAsync("/Companies"));
 
-        _ = companies.GetArrayLength().Should().Be(1);
-        _ = companies[0].GetProperty("id").GetInt32().Should().Be(companyId1);
-        _ = companies[0].GetProperty("companyName").GetString().Should().Be("Company1");
+        Assert.That(companies.GetArrayLength(), Is.EqualTo(1));
+        Assert.That(companies[0].GetProperty("id").GetInt32(), Is.EqualTo(companyId1));
+        Assert.That(companies[0].GetProperty("companyName").GetString(), Is.EqualTo("Company1"));
+        var response = await client.DeleteAsync($"/Companies/{companyId1}");
 
-        _ = (await client.DeleteAsync($"/Companies/{companyId1}"))
-            .StatusCode.Should()
-            .Be(HttpStatusCode.NoContent);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
 
         var companiesAfterDelete = await ToJsonElement(client.GetAsync("/Companies"));
 
-        _ = companiesAfterDelete.GetArrayLength().Should().Be(0);
+        Assert.That(companiesAfterDelete.GetArrayLength(), Is.EqualTo(0));
     }
 }
