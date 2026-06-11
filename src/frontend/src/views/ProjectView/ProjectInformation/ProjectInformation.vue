@@ -279,6 +279,7 @@
     projectData.companyName.value = loadedData.company.companyName;
     projectData.companyState.value = loadedData.companyState;
     projectData.ismsLevel.value = loadedData.ismsLevel;
+    projectData.isEoC.value = loadedData.isEoC;
     projectData.notes.value = loadedData.notes;
   }
 
@@ -571,49 +572,21 @@
 
         <!-- isEoC specific input -->
 
-        <a-card
-          class="infoCard info"
+        <EditableProjectInputSwitch
+          column-name="isEoC"
+          class="infoCard"
           :class="[editingClass, nonEditingClass]"
-          :body-style="{
-            display: 'flex',
-            padding: '5px',
-            alignItems: 'top',
-            height: 'fit-content',
-            overflow: 'auto',
-          }"
-        >
-          <label
-            style="
-              width: 5em;
-              min-width: 5em;
-              margin-right: 3em;
-              margin-bottom: 0;
-            "
-            >EoC:</label
-          >
-
-          <template v-if="!isLoading">
-            <div
-              :style="
-                isEditing ? 'margin: 0 2em 0 1em;' : 'margin: 0 0 0 0.5em;'
-              "
-              style="display: flex; align-items: center; height: 32px"
-            >
-              <a-switch
-                v-model:checked="isEoCInput"
-                class="custom-color-switch"
-                :disabled="!isEditing"
-                @change="updateProjectInformation"
-              />
-            </div>
-          </template>
-          <a-skeleton
-            v-else
-            active
-            :paragraph="false"
-            style="margin-left: 1em; width: 4em"
-          />
-        </a-card>
+          :input-value="isEoCInput"
+          :edit-store="projectEditStore"
+          :is-editing="isEditing"
+          :required-value="true"
+          @updated="
+            (newValue) => {
+              isEoCInput = newValue;
+              updateProjectInformation();
+            }
+          "
+        />
 
         <!-- team specific inputs -->
 

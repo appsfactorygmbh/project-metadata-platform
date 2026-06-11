@@ -18,6 +18,9 @@
   import type { FloatButtonModel } from '@/components/Button';
   import { AppstoreAddOutlined } from '@ant-design/icons-vue';
   import { AddPluginView } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
+  import { useThemeToken } from '@/utils/hooks';
+
+  const token = useThemeToken();
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
@@ -242,13 +245,10 @@
       @update:is-open="(value) => (isModalOpen = value)"
     />
   </div>
-  <a-flex
-    v-else
-    justify="center"
-    align="center"
-    style="height: 80vh; color: black"
-  >
-    <a-empty description="No project found" />
+  <a-flex v-else justify="center" align="center" class="empty-state-container">
+    <a-empty
+      :description="isEmpty ? 'No project found' : 'No project selected'"
+    />
   </a-flex>
 </template>
 
@@ -261,6 +261,11 @@
 
   .LocalLog {
     margin: 2em 3.5em 2em 3em;
+  }
+
+  .empty-state-container {
+    height: 80vh;
+    color: v-bind('token.colorText');
   }
 
   .addPlugin {

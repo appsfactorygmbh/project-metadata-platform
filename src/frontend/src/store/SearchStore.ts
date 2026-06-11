@@ -76,7 +76,8 @@ export const useSearchStore = <T extends AnyObject>(name: string) =>
             keys.some((key) =>
               String(item[key as keyof T])
                 .toLowerCase()
-                .includes(this.searchQuery.toLowerCase()),
+                .replace('_', ' ')
+                .includes(this.searchQuery.toLowerCase().replace('_', ' ')),
             ),
           );
         }
