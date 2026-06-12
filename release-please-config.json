@@ -3,7 +3,7 @@
     ".": {
       "release-type": "node",
       "extra-files": [
-        "/src/frontend/package.json" 
+        "./src/frontend/package.json" 
       ]
     }
   }
