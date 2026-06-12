@@ -290,7 +290,7 @@ public static class DependencyInjection
 
         await pipeline.ExecuteAsync(async token =>
         {
-            if (!await dbContext.Database.CanConnectAsync(token) && dbContext.Database.IsNpgsql())
+            if (dbContext.Database.IsNpgsql() && !await dbContext.Database.CanConnectAsync(token))
                 throw new ArgumentException("Can't Connect to DB");
         });
     }

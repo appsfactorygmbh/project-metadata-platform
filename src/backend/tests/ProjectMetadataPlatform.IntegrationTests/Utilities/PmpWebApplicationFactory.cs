@@ -3,7 +3,9 @@ using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 
 namespace ProjectMetadataPlatform.IntegrationTests.Utilities;
@@ -14,26 +16,31 @@ public class PmpWebApplicationFactory : WebApplicationFactory<Program>
     {
         _ = builder.ConfigureServices(services =>
         {
-            var dbContextDescriptor = services.SingleOrDefault(descriptor =>
-                descriptor.ServiceType == typeof(DbContextOptions<ProjectMetadataPlatformDbContext>)
-            );
+            // 1. THE .NET 10 FIX: Remove the new internal configuration interface
+            services.RemoveAll<IDbContextOptionsConfiguration<ProjectMetadataPlatformDbContext>>();
 
-            if (dbContextDescriptor != null)
-            {
-                _ = services.Remove(dbContextDescriptor);
-            }
+            // 2. Remove standard options and context
+            services.RemoveAll<DbContextOptions<ProjectMetadataPlatformDbContext>>();
+            services.RemoveAll<DbContextOptions>();
+            services.RemoveAll<ProjectMetadataPlatformDbContext>();
 
-            var dbConnectionDescriptor = services.SingleOrDefault(descriptor =>
-                descriptor.ServiceType == typeof(DbConnection)
-            );
+            // 3. Remove connections and data sources (Crucial for modern Npgsql)
+            services.RemoveAll<DbConnection>();
+            services.RemoveAll<DbDataSource>();
 
-            if (dbConnectionDescriptor != null)
-            {
-                _ = services.Remove(dbConnectionDescriptor);
-            }
-
+            // 4. Inject SQLite context
             _ = services.AddDbContext<ProjectMetadataPlatformDbContext>(options =>
-                options.UseSqlite("Datasource=unittest-db.db")
+                options
+                    .UseSqlite("Datasource=unittest-db.db")
+                    .ConfigureWarnings(warnings =>
+                        warnings.Ignore(
+                            Microsoft
+                                .EntityFrameworkCore
+                                .Diagnostics
+                                .RelationalEventId
+                                .PendingModelChangesWarning
+                        )
+                    )
             );
         });
 
