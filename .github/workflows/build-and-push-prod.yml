@@ -6,7 +6,9 @@ on:
       - closed
     branches:
       - main
-
+  release:
+    types:
+      - published
 jobs:
   build-and-push:
     if: github.event.pull_request.merged == true
@@ -28,9 +30,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Read Current Version
+        id: get_version
+        run: |
+          VERSION=$(jq -r '."."' .manifest.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Generate date tag using Ubuntu 'date' command
         id: date
         run: echo "tag=$(date +'%Y.%m.%d-%H.%M')" >> $GITHUB_OUTPUT
+
+      - name: Determine Docker Tags
+        id: tags
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            echo "TAGS=ghcr.io/${{ github.repository }}::${{ github.event.release.tag_name }},ghcr.io/${{ github.repository }}::latest,,ghcr.io/${{ github.repository }}::stable" >> $GITHUB_OUTPUT
+          else
+            echo "TAGS=ghcr.io/${{ github.repository }}::v${{ steps.get_version.outputs.version }}.${{ steps.date.outputs.date }},,ghcr.io/${{ github.repository }}::latest" >> $GITHUB_OUTPUT
+          fi
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
@@ -38,6 +54,4 @@ jobs:
           context: .
           file: deployment/docker/Dockerfile
           push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ steps.date.outputs.tag }}
+          tags: ${{ steps.tags.outputs.TAGS }}
