@@ -146,6 +146,8 @@ jobs:
         run: |
           corepack enable
           yarn coverage
+        env:
+          NODE_OPTIONS: "--no-experimental-webstorage"
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@master
