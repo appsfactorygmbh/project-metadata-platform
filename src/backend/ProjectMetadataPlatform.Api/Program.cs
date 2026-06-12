@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -68,42 +68,25 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = JwtBearerDefaults.AuthenticationScheme,
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Reference = new OpenApiReference
-        {
-            Id = JwtBearerDefaults.AuthenticationScheme,
-            Type = ReferenceType.SecurityScheme,
-        },
+        Type = SecuritySchemeType.Http,
     };
-    options.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
-    options.AddSecurityRequirement(
-        new OpenApiSecurityRequirement { { jwtSecurityScheme, Array.Empty<string>() } }
-    );
+    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, jwtSecurityScheme);
+
     options.AddSecurityDefinition(
         "OIDC",
-        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+        new OpenApiSecurityScheme
         {
-            Type = Microsoft.OpenApi.Models.SecuritySchemeType.OpenIdConnect,
+            Type = Microsoft.OpenApi.SecuritySchemeType.OpenIdConnect,
             OpenIdConnectUrl = new Uri(
                 $"{EnvironmentUtils.GetEnvVarOrLoadFromFile("AZURE_AUTHORITY")}/v2.0/.well-known/openid-configuration"
             ),
         }
     );
-    options.AddSecurityRequirement(
-        new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-        {
-            {
-                new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-                {
-                    Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                    {
-                        Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                        Id = "OIDC",
-                    },
-                },
-                Array.Empty<string>()
-            },
-        }
-    );
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference(JwtBearerDefaults.AuthenticationScheme, document)] = [],
+        [new OpenApiSecuritySchemeReference("OIDC", document)] = [],
+    });
 });
 
 builder

@@ -386,11 +386,14 @@ export class ProjectsApi
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Projects`,
@@ -438,11 +441,14 @@ export class ProjectsApi
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Projects/{id}`.replace(
@@ -487,11 +493,14 @@ export class ProjectsApi
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Projects/{id}`.replace(
@@ -542,11 +551,14 @@ export class ProjectsApi
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Projects/{id}/plugins`.replace(
@@ -597,11 +609,14 @@ export class ProjectsApi
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Projects/{id}/unarchivedPlugins`.replace(
@@ -651,11 +666,14 @@ export class ProjectsApi
 
     headerParameters['Content-Type'] = 'application/json';
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Projects`,
@@ -704,11 +722,14 @@ export class ProjectsApi
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Projects/{slug}`.replace(
@@ -753,11 +774,14 @@ export class ProjectsApi
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Projects/{slug}`.replace(
@@ -808,11 +832,14 @@ export class ProjectsApi
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Projects/{slug}/plugins`.replace(
@@ -865,11 +892,14 @@ export class ProjectsApi
 
     headerParameters['Content-Type'] = 'application/json';
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Projects/{slug}`.replace(
@@ -921,11 +951,14 @@ export class ProjectsApi
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Projects/{slug}/unarchivedPlugins`.replace(

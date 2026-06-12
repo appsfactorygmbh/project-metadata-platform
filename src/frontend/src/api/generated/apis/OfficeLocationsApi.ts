@@ -171,11 +171,14 @@ export class OfficeLocationsApi
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/OfficeLocations`,
@@ -219,11 +222,14 @@ export class OfficeLocationsApi
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/OfficeLocations/{id}`.replace(
@@ -268,11 +274,14 @@ export class OfficeLocationsApi
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/OfficeLocations/{id}`.replace(
@@ -325,11 +334,14 @@ export class OfficeLocationsApi
 
     headerParameters['Content-Type'] = 'application/json';
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/OfficeLocations/{id}`.replace(
@@ -378,11 +390,14 @@ export class OfficeLocationsApi
 
     headerParameters['Content-Type'] = 'application/json';
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/OfficeLocations`,
