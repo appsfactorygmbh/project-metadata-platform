@@ -25,7 +25,10 @@ const generateWrapper = () => {
 
 describe('SplitView.vue', () => {
   beforeEach(() => {
-    localStorage.clear();
+    beforeEach(() => {
+      window.localStorage.clear();
+      vi.restoreAllMocks(); // Ensure prototype spies are cleared between tests
+    });
   });
   it('renders correctly', () => {
     const wrapper = generateWrapper();
@@ -46,7 +49,7 @@ describe('SplitView.vue', () => {
     const pane = wrapper.findComponent(Splitpanes);
     pane.vm.$emit('resized', newSizes);
 
-    const storedSizes = localStorage.getItem('paneSizes');
+    const storedSizes = window.localStorage.getItem('paneSizes');
     expect(storedSizes).toBe(JSON.stringify(newSizes.panes));
   });
 
@@ -58,7 +61,7 @@ describe('SplitView.vue', () => {
       ],
     };
     const getItemSpy = vi
-      .spyOn(Storage.prototype, 'getItem')
+      .spyOn(window.Storage.prototype, 'getItem')
       .mockReturnValue(JSON.stringify(mockPaneSizes.panes));
 
     const wrapper = generateWrapper();
@@ -71,5 +74,7 @@ describe('SplitView.vue', () => {
     expect(getItemSpy).toHaveBeenCalledWith('paneSizes');
     expect(leftPaneWidth).toBe(mockPaneSizes.panes[0].size);
     expect(rightPaneWidth).toBe(mockPaneSizes.panes[1].size);
+
+    getItemSpy.mockRestore();
   });
 });
