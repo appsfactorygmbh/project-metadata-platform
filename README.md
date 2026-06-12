@@ -17,10 +17,11 @@ This project is an application for the storage and management of project metadat
 
 ### Prerequisites
 
--   [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- Node.js (v16+)
+-   [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+- Node.js (v26+)
 - Corepack (manages package managers like Yarn)
 - Yarn
+- Pre-Commit
 
 ### Installation
 
@@ -42,6 +43,11 @@ This project is an application for the storage and management of project metadat
    corepack enable
    yarn install
    ```
+4. Add Pre-Commit Hook for making sure Commits follow Conventional Commits format:
+```sh
+  cd ../..
+  pre-commit install --hook-type commit-msg
+```
 ### Local Deployment
 The folder deployment/docker folder contains a minimal docker compose file for local deployment for testing purposes. To build and start the application run this command in the directory:
    ```sh
@@ -328,20 +334,93 @@ Auth also has to be configured in the backend as described in [Backend-Auth](#au
 
 ### Frontend Screenshots
 Login Screen
-![Login Screen](./screenshots/Screenshot-2025-09-02-at-08-37-44-Project-Metadata-Platform-Login.png)
+![Login Screen](./screenshots/Screenshot-2026-06-11-at-14-01-52-Project-Metadata-Platform-Login.png)
+
+
 Project View
-![Project View](./screenshots/Screenshot-2025-09-02-at-08-39-18-Project-Metadata-Platform-Project-View.png)
+![Project View](./screenshots/Screenshot-2026-06-11-at-14-11-53-Project-Metadata-Platform-Project-View.png)
+
+
 Project View - Light Mode
-![Project View - Light Mode](./screenshots/Screenshot-2025-09-02-at-08-44-47-Project-Metadata-Platform-Project-View-Light-Mode.png)
+![Project View - Light Mode](./screenshots/Screenshot-2026-06-11-at-14-17-41-Project-Metadata-Platform-Project-View-Light-Mode.png)
+
+
 Create Project View
-![Create Project View](./screenshots/Screenshot-2025-09-02-at-08-48-31-Project-Metadata-Platform-Create-Project.png)
-Edit Project View
-![Edit Project View](./screenshots/Screenshot-2025-09-02-at-08-51-37-Project-Metadata-Platform-Edit%20Project.png)
+![Create Project View](./screenshots/Screenshot-2026-06-11-at-14-05-48-Project-Metadata-Platform-Project-Creation.png)
+
+
+Project Information View
+
+![Project Information View](./screenshots/Screenshot-2026-06-11-at-14-24-09-Project-Metadata-Platform-Project-Information-View.png)
+
+
 Settings View - User Management
-![Settings View - User Management](./screenshots/Screenshot-2025-09-02-at-08-48-16-Project-Metadata-Platform-User-Information.png)
+![Settings View - User Management](./screenshots/Screenshot-2026-06-11-at-14-32-05-Project-Metadata-Platform-User-Information.png)
+
+
+Settings View - User Creation
+![Settings View - User Creation](./screenshots/Screenshot-2026-06-11-at-14-29-12-Project-Metadata-Platform-User-Creation.png)
+
+
 Settings View - Team Management
-![Settings View - Team Management](./screenshots/Screenshot-2025-09-02-at-08-46-26-Project-Metadata-Platform-Team-Information.png)
-Settings View - Global Plugins
-![Settings View - Global Plugins](./screenshots/Screenshot-2025-09-02-at-08-45-55-Project-Metadata-Platform-Plugins.png)
-Settings View - Global Logs - Light Mode
-![Settings View - Global Logs - Light Mode](./screenshots/Screenshot-2025-09-02-at-08-45-33-Project-Metadata-Platform-Global-Logs.png)
+![Settings View - Team Management](./screenshots/Screenshot-2026-06-11-at-14-25-26-Project-Metadata-Platform-Team-Information.png)
+
+
+Settings View - Team Creation
+![Settings View - Team Creation](./screenshots/Screenshot-2026-06-11-at-14-27-17-Project-Metadata-Platform-Team-Creation.png)
+
+
+Settings View - Department Management
+![Settings View - Department Management](./screenshots/Screenshot-2026-06-11-at-14-33-55-Project-Metadata-Platform-Department-Information.png)
+
+
+Settings View - Department Creation
+![Settings View - Department Creation](./screenshots/Screenshot-2026-06-11-at-14-37-08-Project-Metadata-Platform-Department-Creation.png)
+
+
+Settings View - BU Management
+![Settings View - BU Management](./screenshots/Screenshot-2026-06-11-at-14-40-55-Project-Metadata-Platform-Business-Unit-Information.png)
+
+
+Settings View - BU Creation
+![Settings View - BU Creation](./screenshots/Screenshot-2026-06-11-at-14-41-40-Project-Metadata-Platform-Business-Unit-Creation.png)
+
+
+Settings View - Location Management
+![Settings View - Location Management](./screenshots/Screenshot-2026-06-11-at-14-47-23-Project-Metadata-Platform-Office-Location-Information.png)
+
+
+Settings View - Location Creation
+![Settings View - Location Creation](./screenshots/Screenshot-2026-06-11-at-14-48-07-Project-Metadata-Platform-Office-Location-Creation.png)
+
+
+Settings View - Company Management
+![Settings View - Company Management](./screenshots/Screenshot-2026-06-11-at-14-50-00-Project-Metadata-Platform-Company-Information.png)
+
+
+Settings View - Company Creation
+![Settings View - Company Creation](./screenshots/Screenshot-2026-06-11-at-14-50-00-Project-Metadata-Platform-Company-Information.png)
+
+
+Settings View - API-Token Management
+![Settings View - API-Token Management](./screenshots/Screenshot-2026-06-11-at-14-54-40-Project-Metadata-Platform-API-Token-Information.png)
+
+
+Settings View - API-Token Creation
+![Settings View - API-Token Creation](./screenshots/Screenshot-2026-06-11-at-14-52-04-Project-Metadata-Platform-API-Token-Creation.png)
+
+
+Settings View - Global Plugins Management
+![Settings View - Global Plugins Management](./screenshots/Screenshot-2026-06-11-at-14-55-53-Project-Metadata-Platform-Plugins.png)
+
+
+Settings View - Global Plugins Creation
+![Settings View - Global Plugins Creation](./screenshots/Screenshot-2026-06-11-at-14-56-06-Project-Metadata-Platform-Create-Plugin.png)
+
+
+Settings View - Global Plugins Edit
+![Settings View - Global Plugins Edit](./screenshots/Screenshot-2026-06-11-at-14-55-58-Project-Metadata-Platform-Edit-Plugin.png)
+
+
+Settings View - Global Logs
+![Settings View - Global Logs](./screenshots/Screenshot-2026-06-11-at-15-01-02-Project-Metadata-Platform-Global-Logs.png)

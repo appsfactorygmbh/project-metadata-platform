@@ -1,0 +1,19 @@
+name: Lint Commit Messages
+
+on:
+  pull_request:
+    types: ["opened", "edited", "reopened", "synchronize"]
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate all commits with commitlint
+        uses: wagoid/commitlint-github-action@v6
+        with:
+          configFile: "../../.commitlintrc.json"

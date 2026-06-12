@@ -197,11 +197,14 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Users`,
@@ -238,11 +241,14 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Users/Me`,
@@ -281,11 +287,14 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
 
     headerParameters['Content-Type'] = 'application/json';
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Users`,
@@ -331,11 +340,14 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Users/{userId}`.replace(
@@ -380,11 +392,14 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Users/{userId}`.replace(
@@ -437,11 +452,14 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
 
     headerParameters['Content-Type'] = 'application/json';
 
-    if (this.configuration && this.configuration.apiKey) {
-      headerParameters['Authorization'] =
-        await this.configuration.apiKey('Authorization'); // Bearer authentication
-    }
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
 
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
     const response = await this.request(
       {
         path: `/Users/{userId}`.replace(

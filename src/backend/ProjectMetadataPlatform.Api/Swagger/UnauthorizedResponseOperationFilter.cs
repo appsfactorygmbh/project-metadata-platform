@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace ProjectMetadataPlatform.Api.Swagger;

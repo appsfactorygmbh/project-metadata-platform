@@ -5,7 +5,7 @@
     "version": "7.11.0",
     "generators": {
       "typescript-fetch": {
-        "inputSpec": "http://localhost:8090/swagger/v1/swagger.json",
+        "inputSpec": "http://localhost:5091/swagger/v1/swagger.json",
         "output": "./src/api/generated",
         "generatorName": "typescript-fetch",
         "additional-properties": {

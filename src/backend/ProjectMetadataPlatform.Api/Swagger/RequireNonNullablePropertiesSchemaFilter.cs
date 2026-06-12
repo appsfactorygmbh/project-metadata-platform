@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace ProjectMetadataPlatform.Api.Swagger;
@@ -18,65 +18,72 @@ public class RequireNonNullablePropertiesSchemaFilter : ISchemaFilter
     /// <summary>
     /// Add to schema.Required all properties where Nullable is false.
     /// </summary>
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
-        FixNullableProperties(schema, context);
-        var additionalRequiredProps = schema
+        if (schema is not OpenApiSchema openApiSchema)
+            return;
+
+        if (openApiSchema.Properties is not { Count: > 0 })
+            return;
+
+        openApiSchema.Required ??= new HashSet<string>();
+
+        var additionalRequiredProps = openApiSchema
             .Properties.Where(x =>
-                !x.Value.Nullable && !schema.Required.Contains(x.Key) && !IsCreatedResponse(x)
+                !IsPropertyNullable(x, context)
+                && !openApiSchema.Required.Contains(x.Key)
+                && !IsCreatedResponse(x)
             )
             .Select(x => x.Key)
             .ToList();
+
         foreach (var propKey in additionalRequiredProps)
         {
-            _ = schema.Required.Add(propKey);
+            openApiSchema.Required.Add(propKey);
         }
     }
 
     /// <summary>
     /// Check if the response is a created response.
     /// </summary>
-    public static bool IsCreatedResponse(KeyValuePair<string, OpenApiSchema> x)
+    public static bool IsCreatedResponse(KeyValuePair<string, IOpenApiSchema> x)
     {
         return x.Key == "201";
     }
 
     /// <summary>
-    /// Copy + Paste from here: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2036
-    /// Option "SupportNonNullableReferenceTypes" not working with complex types ({ "type": "object" }),
-    /// so they always have "Nullable = false",
-    /// see method "SchemaGenerator.GenerateSchemaForMember"
+    /// Determines if a property is nullable by inspecting C# reflection first,
+    /// avoiding the need to mutate OpenApiSchemaReference objects.
     /// </summary>
-    private static void FixNullableProperties(OpenApiSchema schema, SchemaFilterContext context)
+    private static bool IsPropertyNullable(
+        KeyValuePair<string, IOpenApiSchema> property,
+        SchemaFilterContext context
+    )
     {
-        foreach (var property in schema.Properties)
+        var field = context
+            .Type.GetMembers(BindingFlags.Public | BindingFlags.Instance)
+            .FirstOrDefault(x =>
+                string.Equals(x.Name, property.Key, StringComparison.InvariantCultureIgnoreCase)
+            );
+
+        if (field != null)
         {
-            if (property.Value.Reference != null)
+            var fieldType = field switch
             {
-                var field = context
-                    .Type.GetMembers(BindingFlags.Public | BindingFlags.Instance)
-                    .FirstOrDefault(x =>
-                        string.Equals(
-                            x.Name,
-                            property.Key,
-                            StringComparison.InvariantCultureIgnoreCase
-                        )
-                    );
+                FieldInfo fieldInfo => fieldInfo.FieldType,
+                PropertyInfo propertyInfo => propertyInfo.PropertyType,
+                _ => null,
+            };
 
-                if (field != null)
-                {
-                    var fieldType = field switch
-                    {
-                        FieldInfo fieldInfo => fieldInfo.FieldType,
-                        PropertyInfo propertyInfo => propertyInfo.PropertyType,
-                        _ => throw new NotSupportedException(),
-                    };
-
-                    property.Value.Nullable = fieldType.IsValueType
-                        ? Nullable.GetUnderlyingType(fieldType) != null
-                        : !field.IsNonNullableReferenceType();
-                }
+            if (fieldType != null)
+            {
+                return fieldType.IsValueType
+                    ? Nullable.GetUnderlyingType(fieldType) != null
+                    : !field.IsNonNullableReferenceType();
             }
         }
+
+        return property.Value.Type.HasValue
+            && property.Value.Type.Value.HasFlag(JsonSchemaType.Null);
     }
 }
