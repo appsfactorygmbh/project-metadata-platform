@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-alpine AS frontend_build
+FROM node:26-alpine AS frontend_build
 
 ARG BUILD_ENV=production
 
@@ -16,13 +16,13 @@ RUN rm -rf node_modules && yarn install --immutable
 COPY src/frontend .
 RUN yarn build --mode $BUILD_ENV
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backend_build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS backend_build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY --chown=app ["src/backend/ProjectMetadataPlatform.Api/ProjectMetadataPlatform.Api.csproj", "ProjectMetadataPlatform.Api/"]

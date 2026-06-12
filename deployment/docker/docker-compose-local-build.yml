@@ -1,4 +1,4 @@
-# Backend and database service for local frontend development
+# Deployment example for local development
 services:
   pmp:
     build:
@@ -22,11 +22,12 @@ services:
       - JWT_ISSUER_SIGNING_KEY=superSecretKeyThatIsAtLeast257BitLong@345
       - REFRESH_TOKEN_EXPIRATION_HOURS=6
       - ACCESS_TOKEN_EXPIRATION_MINUTES=15
+
     networks:
       - pmp-local
 
   db:
-    image: postgres:15
+    image: postgres:18
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -34,7 +35,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql
     networks:
       - pmp-local
 
