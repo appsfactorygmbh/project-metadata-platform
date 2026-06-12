@@ -15,3 +15,5 @@ jobs:
 
       - name: Validate all commits with commitlint
         uses: wagoid/commitlint-github-action@v6
+        with:
+          configFile: "../../.commitlintrc.json"
