@@ -20,7 +20,6 @@ public class RequireNonNullablePropertiesSchemaFilter : ISchemaFilter
     /// </summary>
     public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
-
         if (schema is not OpenApiSchema openApiSchema)
             return;
 
