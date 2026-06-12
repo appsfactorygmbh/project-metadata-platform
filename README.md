@@ -419,7 +419,7 @@ Settings View - Global Plugins Creation
 
 
 Settings View - Global Plugins Edit
-![Settings View - Global Plugins Edit](./screenshotsScreenshot-2026-06-11-at-14-55-58-Project-Metadata-Platform-Edit-Plugin.png)
+![Settings View - Global Plugins Edit](./screenshots/Screenshot-2026-06-11-at-14-55-58-Project-Metadata-Platform-Edit-Plugin.png)
 
 
 Settings View - Global Logs
