@@ -39,11 +39,12 @@ jobs:
         id: tags
         run: |
           PR_BRANCH="${{ github.event.pull_request.head.ref }}"
+          VERSION="${{ steps.get_version.outputs.version }}"
           if [[ "$PR_BRANCH" == release-please--branches* ]]; then
-            echo "TAGS=ghcr.io/$REPO:$VERSION,ghcr.io/$REPO:latest,ghcr.io/$REPO:stable" >> $GITHUB_OUTPUT
+            echo "TAGS=ghcr.io/${{ github.repository }}:$VERSION,ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:stable" >> $GITHUB_OUTPUT
           else
-            echo "TAGS=ghcr.io/$REPO:$VERSION.${{ steps.date.outputs.tag }},ghcr.io/$REPO:latest" >> $GITHUB_OUTPUT
-          fi  
+            echo "TAGS=ghcr.io/${{ github.repository }}:$VERSION.${{ steps.date.outputs.tag }},ghcr.io/${{ github.repository }}:latest" >> $GITHUB_OUTPUT
+          fi
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
