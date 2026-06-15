@@ -6,12 +6,9 @@ on:
       - closed
     branches:
       - main
-  release:
-    types:
-      - published
 jobs:
   build-and-push:
-    if: github.event_name == 'release' || github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -41,11 +38,12 @@ jobs:
       - name: Determine Docker Tags
         id: tags
         run: |
-          if [ "${{ github.event_name }}" == "release" ]; then
-            echo "TAGS=ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }},ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:stable" >> $GITHUB_OUTPUT
+          PR_BRANCH="${{ github.event.pull_request.head.ref }}"
+          if [[ "$PR_BRANCH" == release-please--branches* ]]; then.
+            echo "TAGS=ghcr.io/$REPO:$VERSION,ghcr.io/$REPO:latest,ghcr.io/$REPO:stable" >> $GITHUB_OUTPUT
           else
-            echo "TAGS=ghcr.io/${{ github.repository }}:${{ steps.get_version.outputs.version }}.${{ steps.date.outputs.tag }},ghcr.io/${{ github.repository }}:latest" >> $GITHUB_OUTPUT
-          fi
+            echo "TAGS=ghcr.io/$REPO:$VERSION.${{ steps.date.outputs.tag }},ghcr.io/$REPO:latest" >> $GITHUB_OUTPUT
+          fi  
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
