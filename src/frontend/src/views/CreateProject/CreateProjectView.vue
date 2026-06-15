@@ -100,6 +100,7 @@
 
   const resetModal = () => {
     formRef.value.resetFields();
+    formState.isEoC = false;
   };
 
   // checks for correct input
@@ -339,7 +340,7 @@
             >
           </a-select>
         </a-form-item>
-        <a-form-item name="ismsLevel" :rules="[{ required: true }]">
+        <a-form-item name="isEoC" :rules="[{ required: true }]">
           <a-checkbox
             v-model:checked="formState.isEoC"
             class="custom-color-switch"
