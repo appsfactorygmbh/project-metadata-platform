@@ -31,12 +31,12 @@ jobs:
       - name: Read Current Version
         id: get_version
         run: |
-          VERSION=$(jq -r '."."[1:]' .manifest.json)
+          VERSION=$(jq -r '."."' .manifest.json)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Generate date tag using Ubuntu 'date' command
         id: date
-        run: echo "tag=$(date +'%Y.%m.%d-%H.%M')" >> $GITHUB_OUTPUT
+        run: echo "tag=$(date +'%Y.%m.%d.%H.%M')" >> $GITHUB_OUTPUT
 
       - name: Determine Docker Tags
         id: tags
@@ -44,7 +44,7 @@ jobs:
           if [ "${{ github.event_name }}" == "release" ]; then
             echo "TAGS=ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }},ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:stable" >> $GITHUB_OUTPUT
           else
-            echo "TAGS=ghcr.io/${{ github.repository }}:v${{ steps.get_version.outputs.version }}.${{ steps.date.outputs.tag }},ghcr.io/${{ github.repository }}:latest" >> $GITHUB_OUTPUT
+            echo "TAGS=ghcr.io/${{ github.repository }}:${{ steps.get_version.outputs.version }}.${{ steps.date.outputs.tag }},ghcr.io/${{ github.repository }}:latest" >> $GITHUB_OUTPUT
           fi
 
       - name: Build and push Docker image
