@@ -67,8 +67,6 @@
 
   onMounted(async () => {
     const project = projectStore.getProject;
-    teamStore.fetchAll();
-    companyStore.fetchAll();
     if (project) addData(project);
 
     const data: ComputedRef<DetailedProjectModel | null> = computed(

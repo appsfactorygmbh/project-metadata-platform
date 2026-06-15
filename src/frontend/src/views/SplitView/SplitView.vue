@@ -9,6 +9,8 @@
   import ProjectView from '../ProjectView/ProjectView.vue';
 
   import { useEditing, useThemeToken } from '@/utils/hooks';
+  import { useCompanyStore } from '@/store/CompanyStore.ts';
+  import { useTeamStore } from '@/store/TeamStore.ts';
 
   const token = useThemeToken();
 
@@ -19,12 +21,20 @@
   const leftPaneWidth = ref<number>(60);
   const rightPaneWidth = ref<number>(40);
 
+  const companyStore = useCompanyStore();
+  const teamStore = useTeamStore();
+
   onBeforeMount(() => {
     const paneSizeFromLocalStorage = localStorage.getItem('paneSizes');
     if (paneSizeFromLocalStorage) {
       leftPaneWidth.value = JSON.parse(paneSizeFromLocalStorage)[0].size;
       rightPaneWidth.value = JSON.parse(paneSizeFromLocalStorage)[1].size;
     }
+  });
+
+  onMounted(() => {
+    teamStore.fetchAll();
+    companyStore.fetchAll();
   });
 
   const onResize = (newSizes: SplitpanesResizedPayload) => {
@@ -79,7 +89,7 @@
   }
 
   .splitpanes {
-    height: 100vh;
+    height: 105vh;
   }
 
   .leftPane {

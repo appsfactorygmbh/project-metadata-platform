@@ -6,6 +6,7 @@ import VueDevTools from 'vite-plugin-vue-devtools';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import AntdvResolver from 'antdv-component-resolver';
+import packageJson from './package.json';
 
 const baseSrc = fileURLToPath(new URL('./src', import.meta.url));
 
@@ -66,6 +67,9 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         dirs: ['src/components'],
       }),
     ],
+    define: {
+      __APP_VERSION__: JSON.stringify(packageJson.version),
+    },
     build: {
       target: 'esnext',
       chunkSizeWarningLimit: 4096,

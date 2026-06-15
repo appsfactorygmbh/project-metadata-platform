@@ -137,6 +137,8 @@
       }
     }
   });
+
+  const version = __APP_VERSION__;
 </script>
 
 <template>
@@ -227,6 +229,7 @@
           <span>Global Logs</span>
         </a-menu-item>
       </a-menu>
+      <footer class="app-version">v{{ version }}</footer>
     </a-layout-sider>
     <a-layout class="addressBar">
       <a-layout-content>
@@ -324,5 +327,16 @@
 
   .menuItem {
     background-color: v-bind('token.colorBgElevated');
+  }
+
+  .app-version {
+    position: absolute;
+    bottom: 90px;
+    width: 100%;
+    left: 1%;
+    text-align: left;
+    color: v-bind('token.colorTextSecondary');
+    font-size: 0.85em;
+    opacity: 0.7;
   }
 </style>

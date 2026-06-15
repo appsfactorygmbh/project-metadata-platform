@@ -7,7 +7,8 @@
     "cypress.config.ts",
     "nightwatch.conf.ts",
     "playwright.config.ts",
-    "eslint.config.ts"
+    "eslint.config.ts",
+    "package.json"
   ],
   "exclude": ["src/api/generated/**/*"],
   "compilerOptions": {
@@ -20,7 +21,6 @@
     "types": ["node", "vitest"],
     "outDir": "./lib/",
     "rootDir": ".",
-
     /* Bundler mode */
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
@@ -30,7 +30,6 @@
     "emitDeclarationOnly": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-
     /* Linting */
     "strict": true,
     "noUnusedLocals": false,
