@@ -17,7 +17,7 @@
     useBusinessUnitStore,
     useOfficeLocationStore,
   } from '@/store';
-  import { msalInstance, msalService } from '@/services/msalService';
+  import { msalService } from '@/services/msalService';
 
   const router = useRouter();
 
@@ -38,96 +38,52 @@
   provide<typeof authStore>(authStoreSymbol, authStore);
 
   const auth = useAuth();
-  const jwttoken = auth?.token();
-  const ssotoken = await msalService.getAccessToken();
-  authStore.setAuth(
-    jwttoken ?? ssotoken,
-    jwttoken != null ? 'basic' : ssotoken != null ? 'oidc' : null,
-  );
-  globalPluginStore.refreshAuth();
-  projectStore.refreshAuth();
-  pluginStore.refreshAuth();
-  localLogStore.refreshAuth();
-  logsStore.refreshAuth();
-  userStore.refreshAuth();
-  teamStore.refreshAuth();
-  companyStore.refreshAuth();
-  departmentStore.refreshAuth();
-  businessUnitStore.refreshAuth();
-  officeLocationStore.refreshAuth();
-  apiTokenStore.refreshAuth();
-
   const authInitialized = ref(false);
   const authenticationFailed = ref(false);
   const authenticated = ref(false);
+  const refreshAllStores = () => {
+    globalPluginStore.refreshAuth();
+    projectStore.refreshAuth();
+    pluginStore.refreshAuth();
+    localLogStore.refreshAuth();
+    logsStore.refreshAuth();
+    userStore.refreshAuth();
+    teamStore.refreshAuth();
+    companyStore.refreshAuth();
+    departmentStore.refreshAuth();
+    businessUnitStore.refreshAuth();
+    officeLocationStore.refreshAuth();
+    apiTokenStore.refreshAuth();
+  };
+  onMounted(async () => {
+    try {
+      const jwttoken = auth?.token();
+      const ssotoken = await msalService.getAccessTokenSilent();
 
-  watch(
-    () => auth?.check(),
-    (check) => {
-      if (authStore._authMethod == 'basic') authenticated.value = check;
-    },
-  );
+      authStore.setAuth(
+        jwttoken ?? ssotoken,
+        jwttoken != null ? 'basic' : ssotoken != null ? 'oidc' : null,
+      );
 
-  watch(
-    () => msalService.getActiveUser(),
-    (user) => {
-      if (authStore._authMethod == 'oidc') authenticated.value = user == null;
-    },
-  );
+      refreshAllStores();
 
-  onMounted(() => {
-    msalInstance.handleRedirectPromise().then((response) => {
-      if (response && response.accessToken) {
-        authStore.setAuth(response.accessToken, 'oidc');
+      if (authStore._authMethod == 'basic') {
+        await auth?.load();
+        authenticated.value = true;
+      } else {
+        if (ssotoken) {
+          authenticated.value = true;
+        } else {
+          authenticationFailed.value = true;
+        }
       }
-    });
-    if (authStore._authMethod == 'basic') {
-      auth
-        ?.load()
-        .then(() => {
-          authenticated.value = true;
-          authInitialized.value = true;
-        })
-        .catch(() => {
-          // Token refresh failed or initial load failed
-          router.push('/login');
-        });
-    } else {
-      msalService
-        .getAccessTokenSilent()
-        .then(() => {
-          authenticated.value = true;
-          authInitialized.value = true;
-        })
-        .catch(() => {
-          // Token refresh failed or initial load failed
-          router.push('/login');
-        });
+    } catch (error) {
+      console.warn('Auth initialization failed', error);
+      authenticationFailed.value = true;
+    } finally {
+      authInitialized.value = true;
     }
   });
-
-  watch(
-    () => authInitialized.value && !authenticated.value,
-    async (initialized) => {
-      if (!initialized) return;
-      if (!auth?.check() && authStore.authMethod == 'basic') {
-        auth
-          ?.refresh()
-          .then(() => {
-            authenticationFailed.value = false;
-          })
-          .catch(() => {
-            authenticationFailed.value = true;
-          });
-      }
-      if (
-        (await msalService.getAccessTokenSilent()) == null &&
-        authStore.authMethod == 'oidc'
-      ) {
-        authenticationFailed.value = true;
-      }
-    },
-  );
 
   watch(
     () => authenticationFailed.value,
@@ -139,48 +95,21 @@
       }
     },
   );
-
   watch(
-    () => auth?.token(),
-    (token) => {
-      if (authStore._authMethod != 'oidc') {
-        authStore.setAuth(token, 'basic');
-        globalPluginStore.refreshAuth();
-        projectStore.refreshAuth();
-        pluginStore.refreshAuth();
-        localLogStore.refreshAuth();
-        logsStore.refreshAuth();
-        userStore.refreshAuth();
-        teamStore.refreshAuth();
-        companyStore.refreshAuth();
-        departmentStore.refreshAuth();
-        businessUnitStore.refreshAuth();
-        officeLocationStore.refreshAuth();
-      }
-    },
-  );
-
-  watch(
-    () => msalService.getAccessToken(),
-    async (token) => {
-      if (authStore._authMethod != 'basic') {
-        authStore.setAuth(await token, 'oidc');
-        globalPluginStore.refreshAuth();
-        projectStore.refreshAuth();
-        pluginStore.refreshAuth();
-        localLogStore.refreshAuth();
-        logsStore.refreshAuth();
-        userStore.refreshAuth();
-        teamStore.refreshAuth();
-        companyStore.refreshAuth();
-        departmentStore.refreshAuth();
-        businessUnitStore.refreshAuth();
-        officeLocationStore.refreshAuth();
-      }
+    () => auth?.check(),
+    (check) => {
+      if (authStore._authMethod == 'basic') authenticated.value = check;
     },
   );
 </script>
 
 <template>
-  <slot />
+  <template v-if="authInitialized">
+    <slot />
+  </template>
+  <template v-else>
+    <div style="display: flex; justify-content: center; padding: 2rem">
+      Loading session...
+    </div>
+  </template>
 </template>

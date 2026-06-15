@@ -7,8 +7,7 @@
   import { useAuth } from 'vue-auth3';
   import axios from 'axios';
   import { useRoute } from 'vue-router';
-  import { msalInstance, msalService } from '@/services/msalService';
-  import { BrowserAuthError } from '@azure/msal-browser';
+  import { msalService } from '@/services/msalService';
 
   const auth = useAuth();
   const router = useRouter();
@@ -52,27 +51,11 @@
   };
 
   onMounted(() => {
-    msalInstance
-      .handleRedirectPromise()
-      .then((response) => {
-        if (response && response.account) {
-          msalInstance.setActiveAccount(response.account);
-          return callback();
-        }
-      })
-      .catch((error) => {
-        console.warn('MSAL Redirect Error:', error.message);
-        if (error instanceof BrowserAuthError) {
-          window.history.replaceState(
-            {},
-            document.title,
-            window.location.pathname,
-          );
-          msalService.getAccessTokenSilent().then((token) => {
-            if (token) return callback();
-          });
-        }
-      });
+    const activeAccount = msalService.getActiveUser();
+
+    if (activeAccount) {
+      return callback();
+    }
     auth?.load().then(() => {
       const authCheck = auth.check();
       if (authCheck) return callback();
