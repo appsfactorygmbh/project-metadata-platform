@@ -89,7 +89,7 @@
   }
 
   .splitpanes {
-    height: 105vh;
+    height: 100vh;
   }
 
   .leftPane {
