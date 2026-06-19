@@ -323,5 +323,151 @@ public static class DependencyInjection
         return CerbosClientBuilder.ForTarget(url).WithPlaintext().BuildAdminClient(user, password);
     }
 
+    public static async Task AddDefaultPolicies(this IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var services = scope.ServiceProvider;
+        var adminClient = services.GetRequiredService<ICerbosAdminClient>();
+        var basePolicy = new PrincipalPolicy()
+        {
+            Principal = AuthorizationConstants.PRINCIPLE_USER,
+            Version = AuthorizationConstants.POLICY_VERSION,
+            Rules =
+            {
+                new PrincipalRule
+                {
+                    Resource = "*",
+                    Actions =
+                    {
+                        new PrincipalRule.Types.Action
+                        {
+                            Action_ = "*",
+                            Effect = Effect.Allow,
+                            Condition = new Condition
+                            {
+                                Match = new Match
+                                {
+                                    Any = new ExprList
+                                    {
+                                        Of =
+                                        {
+                                            new Match
+                                            {
+                                                Expr = "P.attr.Email == 'admin@admin.admin'",
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        };
+        var basePolicyRequest = AddOrUpdatePolicyRequest
+            .NewInstance()
+            .With(
+                new Cerbos.Sdk.Policy.Policy(
+                    new Policy
+                    {
+                        ApiVersion = AuthorizationConstants.API_VERSION,
+                        PrincipalPolicy = basePolicy,
+                    }
+                )
+            );
+        _ = await adminClient.AddOrUpdatePolicyAsync(basePolicyRequest);
 
+        var apiTokenPolicy = new PrincipalPolicy
+        {
+            Principal = AuthorizationConstants.PRINCIPLE_TOKEN,
+            Version = AuthorizationConstants.POLICY_VERSION,
+            Rules =
+            {
+                new PrincipalRule
+                {
+                    Resource = "*",
+                    Actions = { CreateApiTokenActionConditions() },
+                },
+            },
+        };
+        var apiTokenPolicyRequest = AddOrUpdatePolicyRequest
+            .NewInstance()
+            .With(
+                new Cerbos.Sdk.Policy.Policy(
+                    new Policy
+                    {
+                        ApiVersion = AuthorizationConstants.API_VERSION,
+                        PrincipalPolicy = apiTokenPolicy,
+                    }
+                )
+            );
+        _ = await adminClient.AddOrUpdatePolicyAsync(apiTokenPolicyRequest);
+
+        scope.Dispose();
+    }
+
+    private static Google.Protobuf.Collections.RepeatedField<PrincipalRule.Types.Action> CreateApiTokenActionConditions()
+    {
+        var actionsList =
+            new Google.Protobuf.Collections.RepeatedField<PrincipalRule.Types.Action>();
+
+        foreach (var action in Enum.GetValues<AuthorizationConstants.Actions>())
+        {
+            actionsList.Add(
+                new PrincipalRule.Types.Action
+                {
+                    Action_ = action.ToString(),
+                    Effect = Effect.Allow,
+                    Condition = new Condition
+                    {
+                        Match = new Match
+                        {
+                            Any = new ExprList
+                            {
+                                Of =
+                                {
+                                    new Match
+                                    {
+                                        Expr =
+                                            $"'{action}_' + R.kind.upperAscii() in P.attr.Scopes",
+                                    },
+                                    new Match
+                                    {
+                                        Expr =
+                                            $"'SCIM' in P.attr.Scopes && R.kind == '{nameof(ApplicationUser)}'",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                }
+            );
+            actionsList.Add(
+                new PrincipalRule.Types.Action
+                {
+                    Action_ = action.ToString(),
+                    Effect = Effect.Deny,
+                    Condition = new Condition
+                    {
+                        Match = new Match
+                        {
+                            None = new ExprList
+                            {
+                                Of =
+                                {
+                                    new Match { Expr = $"'{action}_' + R.kind in P.attr.Scopes" },
+                                    new Match
+                                    {
+                                        Expr =
+                                            $"'SCIM' in P.attr.Scopes && R.kind == '{nameof(ApplicationUser)}'",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                }
+            );
+        }
+        return actionsList;
+    }
 }
