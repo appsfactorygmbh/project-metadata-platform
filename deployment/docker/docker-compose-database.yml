@@ -21,6 +21,9 @@ services:
       - server
       - --set=storage.driver=postgres
       - --set=storage.postgres.url=postgres://cerbos_user:changeme@db:5432/pmp_db_local?sslmode=disable&search_path=cerbos
+      - --set=server.adminAPI.enabled=true
+      - --set=server.adminAPI.adminCredentials.username=cerbos_user
+      - --set=server.adminAPI.adminCredentials.passwordHash=JDJ5JDEwJHl2ZjJJRERFS3VES2FTcExZU2xacmU5a1lLZHA0Z2FnL2c4VU8yaTguZnpacUo3emozSk4yCgo=
     depends_on:
       - db
 
