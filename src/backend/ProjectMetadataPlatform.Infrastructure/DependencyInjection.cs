@@ -1,9 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Cerbos.Api.V1.Effect;
+using Cerbos.Api.V1.Policy;
+using Cerbos.Sdk;
+using Cerbos.Sdk.Builder;
+using Cerbos.Sdk.Request;
+using Cerbos.Sdk.Response;
+using Cerbos.Sdk.Utility;
+using Google.Protobuf;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +28,7 @@ using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.Auth;
 using ProjectMetadataPlatform.Infrastructure.BusinessUnits;
@@ -30,6 +41,7 @@ using ProjectMetadataPlatform.Infrastructure.Plugins;
 using ProjectMetadataPlatform.Infrastructure.Projects;
 using ProjectMetadataPlatform.Infrastructure.Teams;
 using ProjectMetadataPlatform.Infrastructure.Users;
+using static Cerbos.Api.V1.Policy.Match.Types;
 
 namespace ProjectMetadataPlatform.Infrastructure;
 
@@ -49,6 +61,8 @@ public static class DependencyInjection
         JwtBearerEvents jwtBearerEvents
     )
     {
+        var cerbosUrl = Environment.GetEnvironmentVariable("PMP_CERBOS_URL");
+
         serviceCollection.AddDbContextWithPostgresConnection();
         _ = serviceCollection.AddScoped<IUnitOfWork>(provider =>
             provider.GetRequiredService<ProjectMetadataPlatformDbContext>()
@@ -70,6 +84,8 @@ public static class DependencyInjection
         >();
         _ = serviceCollection.AddScoped<IPasswordHasher<ApiToken>, PasswordHasher<ApiToken>>();
         _ = serviceCollection.AddScoped<ILogRepository, LogRepository>();
+        _ = serviceCollection.AddScoped(provider => AddCerbosClient(cerbosUrl ?? ""));
+        _ = serviceCollection.AddScoped(provider => AddCerbosAdminClient(cerbosUrl ?? ""));
         return serviceCollection;
     }
 
@@ -294,4 +310,18 @@ public static class DependencyInjection
                 throw new ArgumentException("Can't Connect to DB");
         });
     }
+
+    public static ICerbosClient AddCerbosClient(string url)
+    {
+        return CerbosClientBuilder.ForTarget(url).WithPlaintext().Build();
+    }
+
+    public static ICerbosAdminClient AddCerbosAdminClient(string url)
+    {
+        var user = EnvironmentUtils.GetEnvVarOrLoadFromFile("PMP_CERBOS_USER");
+        var password = EnvironmentUtils.GetEnvVarOrLoadFromFile("PMP_CERBOS_PASSWORD");
+        return CerbosClientBuilder.ForTarget(url).WithPlaintext().BuildAdminClient(user, password);
+    }
+
+
 }
