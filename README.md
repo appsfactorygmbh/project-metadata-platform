@@ -334,93 +334,93 @@ Auth also has to be configured in the backend as described in [Backend-Auth](#au
 
 ### Frontend Screenshots
 Login Screen
-![Login Screen](./screenshots/Screenshot-2026-06-11-at-14-01-52-Project-Metadata-Platform-Login.png)
-
+![Login Screen Dark](./screenshots/login-screen-dark.png)
+![Login Screen Light](./screenshots/login-screen-light.png)
 
 Project View
-![Project View](./screenshots/Screenshot-2026-06-11-at-14-11-53-Project-Metadata-Platform-Project-View.png)
-
-
-Project View - Light Mode
-![Project View - Light Mode](./screenshots/Screenshot-2026-06-11-at-14-17-41-Project-Metadata-Platform-Project-View-Light-Mode.png)
-
-
-Create Project View
-![Create Project View](./screenshots/Screenshot-2026-06-11-at-14-05-48-Project-Metadata-Platform-Project-Creation.png)
-
+![Project View Dark](./screenshots/project-view-dark.png)
+![Project View Light](./screenshots/project-view-light.png)
 
 Project Information View
+![Project Information View Dark](./screenshots/project-information-view-dark.png)
+![Project Information View Light](./screenshots/project-information-view-light.png)
+Project Information Edit View
+![Project Information Edit View Dark](./screenshots/project-information-edit-view-dark.png)
+![Project Information Edit View Light](./screenshots/project-information-edit-view-light.png)
 
-![Project Information View](./screenshots/Screenshot-2026-06-11-at-14-24-09-Project-Metadata-Platform-Project-Information-View.png)
-
+Create Project View
+![Create Project View Dark](./screenshots/create-project-view-dark.png)
+![Create Project View Light](./screenshots/create-project-view-light.png)
 
 Settings View - User Management
-![Settings View - User Management](./screenshots/Screenshot-2026-06-11-at-14-32-05-Project-Metadata-Platform-User-Information.png)
-
+![Settings View - User Management Dark](./screenshots/user-management-view-dark.png)
+![Settings View - User Management Light](./screenshots/user-management-view-light.png)
 
 Settings View - User Creation
-![Settings View - User Creation](./screenshots/Screenshot-2026-06-11-at-14-29-12-Project-Metadata-Platform-User-Creation.png)
-
+![Settings View - User Creation Dark](./screenshots/user-creation-view-dark.png)
+![Settings View - User Creation Light](./screenshots/user-creation-view-light.png)
 
 Settings View - Team Management
-![Settings View - Team Management](./screenshots/Screenshot-2026-06-11-at-14-25-26-Project-Metadata-Platform-Team-Information.png)
-
+![Settings View - Team Management Dark](./screenshots/team-management-view-dark.png)
+![Settings View - Team Management Light](./screenshots/team-management-view-light.png)
 
 Settings View - Team Creation
-![Settings View - Team Creation](./screenshots/Screenshot-2026-06-11-at-14-27-17-Project-Metadata-Platform-Team-Creation.png)
-
+![Settings View - Team Creation Dark](./screenshots/team-creation-view-dark.png)
+![Settings View - Team Creation Light](./screenshots/team-creation-view-light.png)
 
 Settings View - Department Management
-![Settings View - Department Management](./screenshots/Screenshot-2026-06-11-at-14-33-55-Project-Metadata-Platform-Department-Information.png)
-
+![Settings View - Department Management Dark](./screenshots/department-management-view-dark.png)
+![Settings View - Department Management Light](./screenshots/department-management-view-light.png)
 
 Settings View - Department Creation
-![Settings View - Department Creation](./screenshots/Screenshot-2026-06-11-at-14-37-08-Project-Metadata-Platform-Department-Creation.png)
-
+![Settings View - Department Creation Dark](./screenshots/department-creation-view-dark.png)
+![Settings View - Department Creation Light](./screenshots/department-creation-view-light.png)
 
 Settings View - BU Management
-![Settings View - BU Management](./screenshots/Screenshot-2026-06-11-at-14-40-55-Project-Metadata-Platform-Business-Unit-Information.png)
-
+![Settings View - BU Management Dark](./screenshots/business-unit-management-view-dark.png)
+![Settings View - BU Management Light](./screenshots/business-unit-management-view-light.png)
 
 Settings View - BU Creation
-![Settings View - BU Creation](./screenshots/Screenshot-2026-06-11-at-14-41-40-Project-Metadata-Platform-Business-Unit-Creation.png)
-
+![Settings View - BU Creation Dark](./screenshots/business-unit-creation-view-dark.png)
+![Settings View - BU Creation Light](./screenshots/business-unit-creation-view-light.png)
 
 Settings View - Location Management
-![Settings View - Location Management](./screenshots/Screenshot-2026-06-11-at-14-47-23-Project-Metadata-Platform-Office-Location-Information.png)
-
+![Settings View - Location Management Dark](./screenshots/office-location-management-view-dark.png)
+![Settings View - Location Management Light](./screenshots/office-location-management-view-light.png)
 
 Settings View - Location Creation
-![Settings View - Location Creation](./screenshots/Screenshot-2026-06-11-at-14-48-07-Project-Metadata-Platform-Office-Location-Creation.png)
+![Settings View - Location Creation Dark](./screenshots/office-location-creation-view-dark.png)
+![Settings View - Location Creation Light](./screenshots/office-location-creation-view-light.png)
 
 
 Settings View - Company Management
-![Settings View - Company Management](./screenshots/Screenshot-2026-06-11-at-14-50-00-Project-Metadata-Platform-Company-Information.png)
-
+![Settings View - Company Management Dark](./screenshots/company-management-view-dark.png)
+![Settings View - Company Management Light](./screenshots/company-management-view-light.png)
 
 Settings View - Company Creation
-![Settings View - Company Creation](./screenshots/Screenshot-2026-06-11-at-14-50-00-Project-Metadata-Platform-Company-Information.png)
-
+![Settings View - Company Creation Dark](./screenshots/company-creation-view-dark.png)
+![Settings View - Company Creation Light](./screenshots/company-creation-view-light.png)
 
 Settings View - API-Token Management
-![Settings View - API-Token Management](./screenshots/Screenshot-2026-06-11-at-14-54-40-Project-Metadata-Platform-API-Token-Information.png)
-
+![Settings View - API-Token Management Dark](./screenshots/api-token-management-view-dark.png)
+![Settings View - API-Token Management Light](./screenshots/api-token-management-view-light.png)
 
 Settings View - API-Token Creation
-![Settings View - API-Token Creation](./screenshots/Screenshot-2026-06-11-at-14-52-04-Project-Metadata-Platform-API-Token-Creation.png)
-
+![Settings View - API-Token Creation Dark](./screenshots/api-token-creation-view-dark.png)
+![Settings View - API-Token Creation Light](./screenshots/api-token-creation-view-light.png)
 
 Settings View - Global Plugins Management
-![Settings View - Global Plugins Management](./screenshots/Screenshot-2026-06-11-at-14-55-53-Project-Metadata-Platform-Plugins.png)
-
+![Settings View - Global Plugins Management Dark](./screenshots/global-plugin-view-dark.png)
+![Settings View - Global Plugins Management Light](./screenshots/global-plugin-view-light.png)
 
 Settings View - Global Plugins Creation
-![Settings View - Global Plugins Creation](./screenshots/Screenshot-2026-06-11-at-14-56-06-Project-Metadata-Platform-Create-Plugin.png)
-
+![Settings View - Global Plugins Creation Dark](./screenshots/global-plugin-creation-view-dark.png)
+![Settings View - Global Plugins Creation Light](./screenshots/global-plugin-creation-view-light.png)
 
 Settings View - Global Plugins Edit
-![Settings View - Global Plugins Edit](./screenshots/Screenshot-2026-06-11-at-14-55-58-Project-Metadata-Platform-Edit-Plugin.png)
-
+![Settings View - Global Plugins Edit Dark](./screenshots/global-plugin-edit-view-dark.png)
+![Settings View - Global Plugins Edit Light](./screenshots/global-plugin-edit-view-light.png)
 
 Settings View - Global Logs
-![Settings View - Global Logs](./screenshots/Screenshot-2026-06-11-at-15-01-02-Project-Metadata-Platform-Global-Logs.png)
+![Settings View - Global Logs Dark](./screenshots/global-logs-view-dark.png)
+![Settings View - Global Logs Light](./screenshots/global-logs-view-light.png)

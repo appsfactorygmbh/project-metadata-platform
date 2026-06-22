@@ -166,10 +166,13 @@ jobs:
     name: Integration Tests (Cypress)
     runs-on: ubuntu-latest
     needs: install
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-
+        with:
+          lfs: true
       - name: setup corepack
         run: corepack enable
 
@@ -198,6 +201,12 @@ jobs:
         with:
           start: yarn preview --host 127.0.0.1 --port 8080
           wait-on: "http://127.0.0.1:8080"
-          command: npx cypress run --headless --e2e
+          command: npx cypress run --headless --e2e -b chrome
           build: yarn build
           working-directory: src/frontend
+      - name: Commit Updated Screenshots (Release Branch Only)
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'release-please--')
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: update README screenshots [skip ci]"
+          file_pattern: "screenshots/*.png"
