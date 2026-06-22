@@ -204,8 +204,8 @@ jobs:
           command: npx cypress run --headless --e2e -b chrome
           build: yarn build
           working-directory: src/frontend
-      - name: Commit Updated Screenshots (Release Branch Only)
-        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'release-please--')
+      - name: Commit Updated Screenshots (Main Branch Only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "docs: update README screenshots [skip ci]"
