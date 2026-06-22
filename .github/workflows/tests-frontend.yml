@@ -204,9 +204,13 @@ jobs:
           command: npx cypress run --headless --e2e -b chrome
           build: yarn build
           working-directory: src/frontend
-      - name: Commit Updated Screenshots (Main Branch Only)
+
+      - name: Create Pull Request with Updated Screenshots
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: peter-evans/create-pull-request@v6
         with:
-          commit_message: "docs: update README screenshots [skip ci]"
-          file_pattern: "screenshots/*.png"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs: update README screenshots"
+          title: "update README screenshots"
+          branch: "chore/update-screenshots"
+          add-paths: "screenshots/*.png"
