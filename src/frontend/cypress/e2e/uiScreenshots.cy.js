@@ -381,7 +381,7 @@ themes.forEach((theme) => {
       });
     });
 
-    it('captures the project information and edit view', () => {
+    it('captures the project information view', () => {
       cy.visit(
         '/' + projects[0].slug + '?isEditing=false&projectId=' + projects[0].id,
       );
@@ -395,6 +395,9 @@ themes.forEach((theme) => {
         capture: 'viewport',
         scale: true,
       });
+    });
+
+    it('captures the project edit view', () => {
       cy.visit(
         '/' + projects[0].slug + '?isEditing=true&projectId=' + projects[0].id,
       );
