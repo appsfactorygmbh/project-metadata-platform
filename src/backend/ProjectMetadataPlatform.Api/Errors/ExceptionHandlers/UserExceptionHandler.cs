@@ -19,7 +19,7 @@ public class UserExceptionHandler : ControllerBase, IExceptionHandler<UserExcept
         return exception switch
         {
             UserInvalidPasswordFormatException => BadRequest(new ErrorResponse(exception.Message)),
-            UserUnauthorizedException => Unauthorized(new ErrorResponse(exception.Message)),
+            UserUnauthenticatedException => Unauthorized(new ErrorResponse(exception.Message)),
             UserCantDeleteThemselfException => BadRequest(new ErrorResponse(exception.Message)),
             UserCouldNotBeDeletedException => BadRequest(new ErrorResponse(exception.Message)),
             UserCouldNotBeCreatedException => BadRequest(new ErrorResponse(exception.Message)),
