@@ -5549,15 +5549,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-formatter-gitlab@npm:^7.1.0":
-  version: 7.1.0
-  resolution: "eslint-formatter-gitlab@npm:7.1.0"
+"eslint-formatter-gitlab@npm:^7.2.0":
+  version: 7.2.0
+  resolution: "eslint-formatter-gitlab@npm:7.2.0"
   dependencies:
     eslint-formatter-codeclimate: "npm:^2.0.0"
     yaml: "npm:^2.0.0"
   peerDependencies:
     eslint: ">=9"
-  checksum: 10c0/4c7ceeb45752c54430e2665d625472f17c4a985665bf83defd4c5f81c1755ee36608a25ae50f7dd3319364a6edb87e607135b1f305f46b5c3c4a0b31e107fd1a
+  checksum: 10c0/1f13880c0edc24458ea743edb3a99053bcd6c48a38000c523b13f8db3ec8b7f88dd93aadb2aafa3644f0e0aaa26b43bc5f8716977daba6fc4a0e4506309af626
   languageName: node
   linkType: hard
 
@@ -6305,7 +6305,7 @@ __metadata:
     dayjs: "npm:^1.11.21"
     eslint: "npm:^10.5.0"
     eslint-config-prettier: "npm:^10.1.8"
-    eslint-formatter-gitlab: "npm:^7.1.0"
+    eslint-formatter-gitlab: "npm:^7.2.0"
     eslint-import-resolver-typescript: "npm:^4.4.5"
     eslint-plugin-prettier: "npm:^5.5.6"
     eslint-plugin-unused-imports: "npm:^4.4.1"
