@@ -366,6 +366,7 @@ themes.forEach((theme) => {
       cy.screenshot('login-screen-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -376,6 +377,7 @@ themes.forEach((theme) => {
       cy.screenshot('project-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -391,6 +393,7 @@ themes.forEach((theme) => {
       cy.screenshot('project-information-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
       cy.visit(
         '/' + projects[0].slug + '?isEditing=true&projectId=' + projects[0].id,
@@ -419,6 +422,7 @@ themes.forEach((theme) => {
       cy.screenshot('create-project-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -429,6 +433,7 @@ themes.forEach((theme) => {
       cy.screenshot('user-management-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -448,6 +453,7 @@ themes.forEach((theme) => {
       cy.screenshot('user-creation-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
     it('captures the team settings view', () => {
@@ -457,6 +463,7 @@ themes.forEach((theme) => {
       cy.screenshot('team-management-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -469,6 +476,7 @@ themes.forEach((theme) => {
       cy.screenshot('team-creation-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -481,6 +489,7 @@ themes.forEach((theme) => {
       cy.screenshot('department-management-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -493,6 +502,7 @@ themes.forEach((theme) => {
       cy.screenshot('department-creation-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -503,6 +513,7 @@ themes.forEach((theme) => {
       cy.screenshot('company-management-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -515,6 +526,7 @@ themes.forEach((theme) => {
       cy.screenshot('company-creation-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -528,6 +540,7 @@ themes.forEach((theme) => {
       cy.screenshot('business-unit-management-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -540,6 +553,7 @@ themes.forEach((theme) => {
       cy.screenshot('business-unit-creation-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -553,6 +567,7 @@ themes.forEach((theme) => {
       cy.screenshot('office-location-management-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -565,6 +580,7 @@ themes.forEach((theme) => {
       cy.screenshot('office-location-creation-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -575,6 +591,7 @@ themes.forEach((theme) => {
       cy.screenshot('api-token-management-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -587,6 +604,7 @@ themes.forEach((theme) => {
       cy.screenshot('api-token-creation-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -597,6 +615,7 @@ themes.forEach((theme) => {
       cy.screenshot('global-plugin-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -609,6 +628,7 @@ themes.forEach((theme) => {
       cy.screenshot('global-plugin-creation-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -621,6 +641,7 @@ themes.forEach((theme) => {
       cy.screenshot('global-plugin-edit-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
 
@@ -631,6 +652,7 @@ themes.forEach((theme) => {
       cy.screenshot('global-logs-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
+        scale: true,
       });
     });
   });
