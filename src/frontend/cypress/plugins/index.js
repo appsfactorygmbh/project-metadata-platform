@@ -9,7 +9,7 @@ on('before:browser:launch', (browser = {}, launchOptions) => {
   // the browser width and height we want to get
   // our screenshots and videos will be of that resolution
   const width = 1920;
-  const height = 1080;
+  const height = 1200;
 
   console.log('setting the browser window size to %d x %d', width, height);
 

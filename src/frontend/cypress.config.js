@@ -32,7 +32,7 @@ export default defineConfig({
           browser.isHeadless,
         );
         const width = 1920;
-        const height = 1080;
+        const height = 1200;
 
         console.log(
           'setting the browser window size to %d x %d',
