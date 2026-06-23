@@ -26,6 +26,7 @@ using Microsoft.Net.Http.Headers;
 using Polly.Registry;
 using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Application.Auth;
+using ProjectMetadataPlatform.Application.Authorization;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Authorization;
@@ -34,6 +35,7 @@ using ProjectMetadataPlatform.Infrastructure.Auth;
 using ProjectMetadataPlatform.Infrastructure.BusinessUnits;
 using ProjectMetadataPlatform.Infrastructure.Companies;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
+using ProjectMetadataPlatform.Infrastructure.DataAccess.Interceptors;
 using ProjectMetadataPlatform.Infrastructure.Departments;
 using ProjectMetadataPlatform.Infrastructure.Logs;
 using ProjectMetadataPlatform.Infrastructure.OfficeLocations;
@@ -62,7 +64,8 @@ public static class DependencyInjection
     )
     {
         var cerbosUrl = Environment.GetEnvironmentVariable("PMP_CERBOS_URL");
-
+        _ = serviceCollection.AddScoped<IAuthorizationTracker, AuthorizationTracker>();
+        _ = serviceCollection.AddScoped<AuthorizationEnforcerInterceptor>();
         serviceCollection.AddDbContextWithPostgresConnection();
         _ = serviceCollection.AddScoped<IUnitOfWork>(provider =>
             provider.GetRequiredService<ProjectMetadataPlatformDbContext>()
@@ -84,6 +87,7 @@ public static class DependencyInjection
         >();
         _ = serviceCollection.AddScoped<IPasswordHasher<ApiToken>, PasswordHasher<ApiToken>>();
         _ = serviceCollection.AddScoped<ILogRepository, LogRepository>();
+
         _ = serviceCollection.AddScoped(provider => AddCerbosClient(cerbosUrl ?? ""));
         _ = serviceCollection.AddScoped(provider => AddCerbosAdminClient(cerbosUrl ?? ""));
         return serviceCollection;
@@ -102,8 +106,12 @@ public static class DependencyInjection
         var connectionString =
             $"Host={url};Port={port};User Id={user};Password={password};Database={database}";
 
-        _ = serviceCollection.AddDbContext<ProjectMetadataPlatformDbContext>(options =>
-            options.UseNpgsql(connectionString)
+        _ = serviceCollection.AddDbContext<ProjectMetadataPlatformDbContext>(
+            (sp, options) =>
+            {
+                var authInterceptor = sp.GetRequiredService<AuthorizationEnforcerInterceptor>();
+                _ = options.UseNpgsql(connectionString).AddInterceptors(authInterceptor);
+            }
         );
     }
 
