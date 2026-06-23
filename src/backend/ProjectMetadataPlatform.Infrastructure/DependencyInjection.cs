@@ -360,6 +360,21 @@ public static class DependencyInjection
                                 },
                             },
                         },
+                        new PrincipalRule.Types.Action
+                        {
+                            Action_ = "*",
+                            Effect = Effect.Deny,
+                            Condition = new Condition
+                            {
+                                Match = new Match
+                                {
+                                    Any = new ExprList
+                                    {
+                                        Of = { new Match { Expr = "P.attr.IsActive == false" } },
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
             },
