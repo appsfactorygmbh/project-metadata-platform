@@ -168,11 +168,14 @@ jobs:
     needs: install
     permissions:
       contents: write
+      issues: write
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
           lfs: true
+          persist-credentials: false
       - name: setup corepack
         run: corepack enable
 
