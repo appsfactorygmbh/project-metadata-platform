@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
@@ -36,6 +37,7 @@ public class ExceptionFilter : IExceptionFilter
     private readonly IExceptionHandler<BusinessUnitException> _businessUnitExceptionHandler;
     private readonly IExceptionHandler<CompanyException> _companyExceptionHandler;
     private readonly IExceptionHandler<AuthException> _authExceptionHandler;
+    private readonly IExceptionHandler<AuthorizationException> _authorizationExceptionHandler;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ExceptionFilter"/> class.
@@ -51,6 +53,7 @@ public class ExceptionFilter : IExceptionFilter
     /// <param name="departmentExceptionHandler">The handler for department exceptions. </param>
     /// <param name="businessUnitExceptionHandler">The handler for business unit exceptions. </param>
     /// <param name="companyExceptionHandler">The handler for company exceptions. </param>
+    /// <param name="authorizationExceptionHandler">The handler for authorization exceptions.</param>
     public ExceptionFilter(
         IExceptionHandler<PmpException> basicExceptionHandler,
         IExceptionHandler<ProjectException> projectExceptionHandler,
@@ -62,7 +65,8 @@ public class ExceptionFilter : IExceptionFilter
         IExceptionHandler<OfficeLocationException> officeLocationExceptionHandler,
         IExceptionHandler<DepartmentException> departmentExceptionHandler,
         IExceptionHandler<BusinessUnitException> businessUnitExceptionHandler,
-        IExceptionHandler<CompanyException> companyExceptionHandler
+        IExceptionHandler<CompanyException> companyExceptionHandler,
+        IExceptionHandler<AuthorizationException> authorizationExceptionHandler
     )
     {
         _basicExceptionHandler = basicExceptionHandler;
@@ -76,6 +80,7 @@ public class ExceptionFilter : IExceptionFilter
         _departmentExceptionHandler = departmentExceptionHandler;
         _businessUnitExceptionHandler = businessUnitExceptionHandler;
         _companyExceptionHandler = companyExceptionHandler;
+        _authorizationExceptionHandler = authorizationExceptionHandler;
     }
 
     /// <summary>
@@ -103,6 +108,7 @@ public class ExceptionFilter : IExceptionFilter
                 businessUnitEx
             ),
             CompanyException companyEx => _companyExceptionHandler.Handle(companyEx),
+            AuthorizationException authEx => _authorizationExceptionHandler.Handle(authEx),
             PmpException basicEx => _basicExceptionHandler.Handle(basicEx),
             _ => HandleUnknownError(exception),
         };
