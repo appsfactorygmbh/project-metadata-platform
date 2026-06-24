@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # https://github.com/actions/setup-node/issues/899
       - name: setup corepack
@@ -49,7 +49,7 @@ jobs:
     needs: install
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: setup corepack
         run: corepack enable
@@ -73,7 +73,7 @@ jobs:
     needs: install
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: setup corepack
         run: corepack enable
@@ -99,7 +99,7 @@ jobs:
     needs: install
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: setup corepack
         run: corepack enable
@@ -125,7 +125,7 @@ jobs:
     needs: install
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -172,7 +172,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           lfs: true
           persist-credentials: false
@@ -187,7 +187,7 @@ jobs:
           cache-dependency-path: "src/frontend/yarn.lock"
 
       - name: Cache Cypress Binary
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/Cypress
           key: cypress-${{ runner.os }}-${{ hashFiles('src/frontend/yarn.lock') }}
@@ -210,7 +210,7 @@ jobs:
 
       - name: Create Pull Request with Updated Screenshots
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "docs: update README screenshots"
