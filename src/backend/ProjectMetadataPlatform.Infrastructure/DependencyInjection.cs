@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Cerbos.Api.V1.Effect;
 using Cerbos.Api.V1.Policy;
 using Cerbos.Sdk;
 using Cerbos.Sdk.Builder;
 using Cerbos.Sdk.Request;
-using Cerbos.Sdk.Response;
-using Cerbos.Sdk.Utility;
-using Google.Protobuf;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -32,6 +27,7 @@ using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.Auth;
+using ProjectMetadataPlatform.Infrastructure.Authorization;
 using ProjectMetadataPlatform.Infrastructure.BusinessUnits;
 using ProjectMetadataPlatform.Infrastructure.Companies;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -87,6 +83,7 @@ public static class DependencyInjection
         >();
         _ = serviceCollection.AddScoped<IPasswordHasher<ApiToken>, PasswordHasher<ApiToken>>();
         _ = serviceCollection.AddScoped<ILogRepository, LogRepository>();
+        _ = serviceCollection.AddScoped<IAuthorizationService, AuthorizationService>();
 
         _ = serviceCollection.AddScoped(provider => AddCerbosClient(cerbosUrl ?? ""));
         _ = serviceCollection.AddScoped(provider => AddCerbosAdminClient(cerbosUrl ?? ""));
@@ -336,7 +333,7 @@ public static class DependencyInjection
         using var scope = serviceProvider.CreateScope();
         var services = scope.ServiceProvider;
         var adminClient = services.GetRequiredService<ICerbosAdminClient>();
-        var basePolicy = new PrincipalPolicy()
+                var basePolicy = new PrincipalPolicy()
         {
             Principal = AuthorizationConstants.PRINCIPLE_USER,
             Version = AuthorizationConstants.POLICY_VERSION,
@@ -362,6 +359,11 @@ public static class DependencyInjection
                                             new Match
                                             {
                                                 Expr = "P.attr.Email == 'admin@admin.admin'",
+                                            },
+                                            new Match
+                                            {
+                                                Expr =
+                                                    "P.attr.Departments.exists(d, d.DepartmentName == 'IT')",
                                             },
                                         },
                                     },
