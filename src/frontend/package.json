@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "packageManager": "yarn@4.15.0",
+  "packageManager": "yarn@4.17.0",
   "scripts": {
     "vite:env": "LC_ALL=de_DE.UTF-8 TZ=UTC vite",
     "vitest:env": "LC_ALL=de_DE.UTF-8 TZ=UTC vitest",
