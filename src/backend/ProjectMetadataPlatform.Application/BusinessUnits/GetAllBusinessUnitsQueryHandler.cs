@@ -3,7 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 
 namespace ProjectMetadataPlatform.Application.BusinessUnits;
@@ -15,13 +17,18 @@ public class GetAllBusinessUnitsQueryHandler
     : IRequestHandler<GetAllBusinessUnitsQuery, IEnumerable<BusinessUnit>>
 {
     private readonly IBusinessUnitRepository _businessUnitRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetAllBusinessUnitsQueryHandler" />.
     /// </summary>
-    public GetAllBusinessUnitsQueryHandler(IBusinessUnitRepository businessUnitRepository)
+    public GetAllBusinessUnitsQueryHandler(
+        IBusinessUnitRepository businessUnitRepository,
+        IAuthorizationService authorizationService
+    )
     {
         _businessUnitRepository = businessUnitRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -36,8 +43,32 @@ public class GetAllBusinessUnitsQueryHandler
     )
     {
         var businessUnits = await _businessUnitRepository.GetBusinessUnitsAsync();
-        return businessUnits.OrderBy(businessUnit =>
-            businessUnit.BusinessUnitName.ToLowerInvariant()
+        var queriedBusinessUnits = await _authorizationService.TryGetPlanResourceQuery(
+            businessUnits
         );
+        if (queriedBusinessUnits == null)
+        {
+            List<BusinessUnit> filteredBusinessUnits = [];
+            foreach (var businessUnit in businessUnits)
+            {
+                if (
+                    (
+                        await _authorizationService.CheckAccess(
+                            businessUnit,
+                            [AuthorizationConstants.Actions.GET]
+                        )
+                    )[AuthorizationConstants.Actions.GET]
+                )
+                {
+                    filteredBusinessUnits.Add(businessUnit);
+                }
+            }
+            return filteredBusinessUnits.OrderBy(businessUnit =>
+                businessUnit.BusinessUnitName.ToLowerInvariant()
+            );
+        }
+        return (
+            await queriedBusinessUnits.ToListAsync(cancellationToken: cancellationToken)
+        ).OrderBy(businessUnit => businessUnit.BusinessUnitName.ToLowerInvariant());
     }
 }

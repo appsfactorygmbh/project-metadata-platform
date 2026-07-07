@@ -6,9 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Departments;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
@@ -30,6 +32,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
     private readonly ILogRepository _logRepository;
     private readonly ITeamRepository _teamRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="CreateUserCommandHandler" />.
@@ -42,6 +45,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
     /// <param name="officeLocationRepository">Repository for accessing office location data.</param>
     /// <param name="companyRepository">Repository for accessing company data.</param>
     /// <param name="unitOfWork">Unit of work for managing transactions.</param>
+    /// <param name="authorizationService"></param>
     public CreateUserCommandHandler(
         IUsersRepository usersRepository,
         ILogRepository logRepository,
@@ -50,7 +54,8 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
         IBusinessUnitRepository businessUnitRepository,
         IOfficeLocationRepository officeLocationRepository,
         ICompanyRepository companyRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _usersRepository = usersRepository;
@@ -61,6 +66,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
         _officeLocationRepository = officeLocationRepository;
         _departmentRepository = departmentRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -74,10 +80,6 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
         CancellationToken cancellationToken
     )
     {
-        if (await _usersRepository.CheckUserExists(request.EmployeeId))
-        {
-            throw new UserAlreadyExistsException("DuplicateEmployeeNumber");
-        }
         if (request.Password != null)
         {
             _ = await _usersRepository.CheckPasswordFormat(request.Password);
@@ -133,6 +135,21 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
             JobTitles = request.JobTitles?.Any() == true ? request.JobTitles : null,
             OfficeLocation = officeLocation,
         };
+        if (
+            !(
+                await _authorizationService.CheckAccess(
+                    user,
+                    [AuthorizationConstants.Actions.CREATE]
+                )
+            )[AuthorizationConstants.Actions.CREATE]
+        )
+        {
+            throw new UnauthorizedException();
+        }
+        if (await _usersRepository.CheckUserExists(request.EmployeeId))
+        {
+            throw new UserAlreadyExistsException("DuplicateEmployeeNumber");
+        }
         await AddCreatedUserLog(user);
         _ = await _usersRepository.CreateUserAsync(user, request.Password);
 

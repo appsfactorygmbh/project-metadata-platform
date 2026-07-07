@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Application.OfficeLocations;
@@ -12,13 +14,18 @@ namespace ProjectMetadataPlatform.Application.OfficeLocations;
 public class GetOfficeLocationQueryHandler : IRequestHandler<GetOfficeLocationQuery, OfficeLocation>
 {
     private readonly IOfficeLocationRepository _officeLocationRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetOfficeLocationQueryHandler" />.
     /// </summary>
-    public GetOfficeLocationQueryHandler(IOfficeLocationRepository officeLocationRepository)
+    public GetOfficeLocationQueryHandler(
+        IOfficeLocationRepository officeLocationRepository,
+        IAuthorizationService authorizationService
+    )
     {
         _officeLocationRepository = officeLocationRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -32,6 +39,18 @@ public class GetOfficeLocationQueryHandler : IRequestHandler<GetOfficeLocationQu
         CancellationToken cancellationToken
     )
     {
-        return await _officeLocationRepository.GetOfficeLocationAsync(request.Id);
+        var location = await _officeLocationRepository.GetOfficeLocationAsync(request.Id);
+        if (
+            !(
+                await _authorizationService.CheckAccess(
+                    location,
+                    [AuthorizationConstants.Actions.GET]
+                )
+            )[AuthorizationConstants.Actions.GET]
+        )
+        {
+            throw new UnauthorizedException();
+        }
+        return location;
     }
 }

@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Logs;
@@ -13,14 +16,20 @@ namespace ProjectMetadataPlatform.Application.Logs;
 public class GetLogsQueryHandler : IRequestHandler<GetLogsQuery, IEnumerable<Log>>
 {
     private readonly ILogRepository _logRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GetLogsQueryHandler"/> class.
     /// </summary>
     /// <param name="logRepository">The log repository instance.</param>
-    public GetLogsQueryHandler(ILogRepository logRepository)
+    /// <param name="authorizationService"></param>
+    public GetLogsQueryHandler(
+        ILogRepository logRepository,
+        IAuthorizationService authorizationService
+    )
     {
         _logRepository = logRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -37,7 +46,7 @@ public class GetLogsQueryHandler : IRequestHandler<GetLogsQuery, IEnumerable<Log
         CancellationToken cancellationToken
     )
     {
-        return request switch
+        var logs = request switch
         {
             { ProjectId: { } projectId } => await _logRepository.GetLogsForProject(projectId),
             { Search: { } search } => await _logRepository.GetLogsWithSearch(search),
@@ -47,5 +56,28 @@ public class GetLogsQueryHandler : IRequestHandler<GetLogsQuery, IEnumerable<Log
             ),
             _ => await _logRepository.GetAllLogs(),
         };
+        var queriedLogs = await _authorizationService.TryGetPlanResourceQuery(logs);
+        if (queriedLogs == null)
+        {
+            List<Log> filteredLogs = [];
+            foreach (var log in logs)
+            {
+                if (
+                    (
+                        await _authorizationService.CheckAccess(
+                            log,
+                            [AuthorizationConstants.Actions.GET]
+                        )
+                    )[AuthorizationConstants.Actions.GET]
+                )
+                {
+                    filteredLogs.Add(log);
+                }
+            }
+            return filteredLogs.OrderByDescending(log => log.TimeStamp);
+        }
+        return (
+            await queriedLogs.ToListAsync(cancellationToken: cancellationToken)
+        ).OrderByDescending(log => log.TimeStamp);
     }
 }

@@ -3,7 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 
@@ -17,6 +19,7 @@ public class CreateBusinessUnitCommandHandler : IRequestHandler<CreateBusinessUn
     private readonly IBusinessUnitRepository _businessUnitRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="CreateBusinessUnitCommandHandler " />.
@@ -24,12 +27,14 @@ public class CreateBusinessUnitCommandHandler : IRequestHandler<CreateBusinessUn
     public CreateBusinessUnitCommandHandler(
         IBusinessUnitRepository businessUnitRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _businessUnitRepository = businessUnitRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -44,6 +49,15 @@ public class CreateBusinessUnitCommandHandler : IRequestHandler<CreateBusinessUn
         CancellationToken cancellationToken
     )
     {
+        var bu = new BusinessUnit { BusinessUnitName = request.BusinessUnitName };
+        if (
+            !(await _authorizationService.CheckAccess(bu, [AuthorizationConstants.Actions.CREATE]))[
+                AuthorizationConstants.Actions.CREATE
+            ]
+        )
+        {
+            throw new UnauthorizedException();
+        }
         if (
             await _businessUnitRepository.CheckIfBusinessUnitNameExistsAsync(
                 request.BusinessUnitName
@@ -52,8 +66,6 @@ public class CreateBusinessUnitCommandHandler : IRequestHandler<CreateBusinessUn
         {
             throw new BusinessUnitNameAlreadyExistsException(request.BusinessUnitName);
         }
-
-        var bu = new BusinessUnit { BusinessUnitName = request.BusinessUnitName };
         await AddBusinessUnitLog(bu);
         await _businessUnitRepository.AddBusinessUnitAsync(bu);
         await _unitOfWork.CompleteAsync();

@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 
 namespace ProjectMetadataPlatform.Application.Auth;
 
@@ -16,6 +18,7 @@ public class RegenerateApiTokenCommandHandler : IRequestHandler<RegenerateApiTok
     private readonly IApiTokenRepository _apiTokenRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogRepository _logRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="RegenerateApiTokenCommandHandler" />.
@@ -23,15 +26,18 @@ public class RegenerateApiTokenCommandHandler : IRequestHandler<RegenerateApiTok
     /// <param name="apiTokenRepository"></param>
     /// <param name="unitOfWork"></param>
     /// <param name="logRepository"></param>
+    /// <param name="authorizationService"></param>
     public RegenerateApiTokenCommandHandler(
         IApiTokenRepository apiTokenRepository,
         IUnitOfWork unitOfWork,
-        ILogRepository logRepository
+        ILogRepository logRepository,
+        IAuthorizationService authorizationService
     )
     {
         _apiTokenRepository = apiTokenRepository;
         _unitOfWork = unitOfWork;
         _logRepository = logRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -46,6 +52,17 @@ public class RegenerateApiTokenCommandHandler : IRequestHandler<RegenerateApiTok
     )
     {
         var apiToken = await _apiTokenRepository.GetApiTokenById(request.TokenId);
+        if (
+            !(
+                await _authorizationService.CheckAccess(
+                    apiToken,
+                    [AuthorizationConstants.Actions.EDIT]
+                )
+            )[AuthorizationConstants.Actions.EDIT]
+        )
+        {
+            throw new UnauthorizedException();
+        }
         var expirationDate = DateTime.UtcNow.AddYears(1);
         var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(128));
 

@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
@@ -27,6 +29,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ISlugHelper _slugHelper;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="CreateProjectCommandHandler" />.
@@ -38,6 +41,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
     /// <param name="logRepository">Repository for Logs</param>
     /// <param name="unitOfWork"> Used to save changes to the DbContext</param>
     /// <param name="slugHelper"> Used to generate slugs</param>
+    /// <param name="authorizationService"></param>
     public CreateProjectCommandHandler(
         IProjectsRepository projectsRepository,
         IPluginRepository pluginRepository,
@@ -45,7 +49,8 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
         ICompanyRepository companyRepository,
         ILogRepository logRepository,
         IUnitOfWork unitOfWork,
-        ISlugHelper slugHelper
+        ISlugHelper slugHelper,
+        IAuthorizationService authorizationService
     )
     {
         _projectsRepository = projectsRepository;
@@ -55,6 +60,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
         _slugHelper = slugHelper;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -66,6 +72,33 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
     /// <exception cref="ProjectSlugAlreadyExistsException">When a project with the same slug already exists.</exception>
     public async Task<int> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
+        var projectSlug = _slugHelper.GenerateSlug(request.ProjectName);
+        var project = new Project
+        {
+            ProjectName = request.ProjectName,
+            Slug = projectSlug,
+            ClientName = request.ClientName,
+            OfferId = request.OfferId,
+            CompanyId = request.CompanyId,
+            CompanyState = request.CompanyState,
+            IsmsLevel = request.IsmsLevel,
+            ProjectPlugins = request.Plugins,
+            TeamId = request.TeamId,
+            IsEoC = request.IsEoC,
+            Notes = request.Notes,
+        };
+
+        if (
+            !(
+                await _authorizationService.CheckAccess(
+                    project,
+                    [AuthorizationConstants.Actions.CREATE]
+                )
+            )[AuthorizationConstants.Actions.CREATE]
+        )
+        {
+            throw new UnauthorizedException();
+        }
         foreach (var plugin in request.Plugins)
         {
             if (!await _pluginRepository.CheckPluginExists(plugin.PluginId))
@@ -88,8 +121,6 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
             throw new CompanyNotFoundException(request.CompanyId);
         }
 
-        var projectSlug = _slugHelper.GenerateSlug(request.ProjectName);
-
         if (await _slugHelper.CheckProjectSlugExists(projectSlug))
         {
             throw new ProjectSlugAlreadyExistsException(projectSlug);
@@ -99,21 +130,6 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
         {
             throw new ProjectNotesSizeException(request.Notes.Length);
         }
-        var project = new Project
-        {
-            ProjectName = request.ProjectName,
-            Slug = projectSlug,
-            ClientName = request.ClientName,
-            OfferId = request.OfferId,
-            CompanyId = request.CompanyId,
-            CompanyState = request.CompanyState,
-            IsmsLevel = request.IsmsLevel,
-            ProjectPlugins = request.Plugins,
-            TeamId = request.TeamId,
-            IsEoC = request.IsEoC,
-            Notes = request.Notes,
-        };
-
         await _projectsRepository.AddProjectAsync(project);
 
         await AddCreatedProjectLog(project);

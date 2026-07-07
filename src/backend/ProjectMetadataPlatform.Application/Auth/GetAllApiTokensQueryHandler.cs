@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
 
 namespace ProjectMetadataPlatform.Application.Auth;
 
@@ -14,14 +17,20 @@ public class GetAllApiTokensQueryHandler
     : IRequestHandler<GetAllApiTokensQuery, IEnumerable<ApiToken>>
 {
     private readonly IApiTokenRepository _apiTokenRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetAllApiTokensQueryHandler" />.
     /// </summary>
     /// <param name="apiTokenRepository"></param>
-    public GetAllApiTokensQueryHandler(IApiTokenRepository apiTokenRepository)
+    /// <param name="authorizationService"></param>
+    public GetAllApiTokensQueryHandler(
+        IApiTokenRepository apiTokenRepository,
+        IAuthorizationService authorizationService
+    )
     {
         _apiTokenRepository = apiTokenRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -37,6 +46,29 @@ public class GetAllApiTokensQueryHandler
     {
         var tokens = await _apiTokenRepository.GetApiTokens();
 
-        return tokens;
+        var queriedTokens = await _authorizationService.TryGetPlanResourceQuery(tokens);
+        if (queriedTokens == null)
+        {
+            List<ApiToken> apiTokens = [];
+            foreach (var token in tokens)
+            {
+                if (
+                    (
+                        await _authorizationService.CheckAccess(
+                            token,
+                            [AuthorizationConstants.Actions.GET]
+                        )
+                    )[AuthorizationConstants.Actions.GET]
+                )
+                {
+                    apiTokens.Add(token);
+                }
+            }
+            return apiTokens;
+        }
+        else
+        {
+            return await queriedTokens.ToListAsync(cancellationToken);
+        }
     }
 }

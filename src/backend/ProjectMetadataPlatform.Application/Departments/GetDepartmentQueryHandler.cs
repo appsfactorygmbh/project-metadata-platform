@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Departments;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 
 namespace ProjectMetadataPlatform.Application.Departments;
 
@@ -12,13 +14,18 @@ namespace ProjectMetadataPlatform.Application.Departments;
 public class GetDepartmentQueryHandler : IRequestHandler<GetDepartmentQuery, Department>
 {
     private readonly IDepartmentRepository _departmentRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetDepartmentQueryHandler" />.
     /// </summary>
-    public GetDepartmentQueryHandler(IDepartmentRepository departmentRepository)
+    public GetDepartmentQueryHandler(
+        IDepartmentRepository departmentRepository,
+        IAuthorizationService authorizationService
+    )
     {
         _departmentRepository = departmentRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -32,6 +39,18 @@ public class GetDepartmentQueryHandler : IRequestHandler<GetDepartmentQuery, Dep
         CancellationToken cancellationToken
     )
     {
-        return await _departmentRepository.GetDepartmentAsync(request.Id);
+        var department = await _departmentRepository.GetDepartmentAsync(request.Id);
+        if (
+            !(
+                await _authorizationService.CheckAccess(
+                    department,
+                    [AuthorizationConstants.Actions.GET]
+                )
+            )[AuthorizationConstants.Actions.GET]
+        )
+        {
+            throw new UnauthorizedException();
+        }
+        return department;
     }
 }

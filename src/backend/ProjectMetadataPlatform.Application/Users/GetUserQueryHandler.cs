@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Users;
@@ -15,14 +17,20 @@ public class GetUserQueryHandler : IRequestHandler<GetUserQuery, ApplicationUser
     /// The repository of users.
     /// </summary>
     private readonly IUsersRepository _usersRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GetUserQueryHandler"/> class.
     /// </summary>
     /// <param name="usersRepository">The repository of users.</param>
-    public GetUserQueryHandler(IUsersRepository usersRepository)
+    /// <param name="authorizationService"></param>
+    public GetUserQueryHandler(
+        IUsersRepository usersRepository,
+        IAuthorizationService authorizationService
+    )
     {
         _usersRepository = usersRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -31,8 +39,20 @@ public class GetUserQueryHandler : IRequestHandler<GetUserQuery, ApplicationUser
     /// <param name="request">The GetUserQuery.</param>
     /// <param name="cancellationToken">A cancellation token that can be used to cancel the work.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the user with the specified ID, or null if no user is found.</returns>
-    public Task<ApplicationUser> Handle(GetUserQuery request, CancellationToken cancellationToken)
+    public async Task<ApplicationUser> Handle(
+        GetUserQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        return _usersRepository.GetUserByIdAsync(request.EmployeeId);
+        var user = await _usersRepository.GetUserByIdAsync(request.EmployeeId);
+        if (
+            !(await _authorizationService.CheckAccess(user, [AuthorizationConstants.Actions.GET]))[
+                AuthorizationConstants.Actions.GET
+            ]
+        )
+        {
+            throw new UnauthorizedException();
+        }
+        return user;
     }
 }

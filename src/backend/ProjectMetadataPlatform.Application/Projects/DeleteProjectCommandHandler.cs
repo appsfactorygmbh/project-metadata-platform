@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Projects;
@@ -18,6 +20,7 @@ public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand,
     private readonly IProjectsRepository _projectsRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DeleteProjectCommandHandler"/> class.
@@ -25,15 +28,18 @@ public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand,
     /// <param name="projectsRepository">The repository of projects.</param>
     /// <param name="logRepository">Repository for Logs</param>
     /// <param name="unitOfWork"> Used to save changes to the DbContext</param>
+    /// <param name="authorizationService"></param>
     public DeleteProjectCommandHandler(
         IProjectsRepository projectsRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _projectsRepository = projectsRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -50,7 +56,17 @@ public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand,
     )
     {
         var project = await _projectsRepository.GetProjectAsync(request.Id);
-
+        if (
+            !(
+                await _authorizationService.CheckAccess(
+                    project,
+                    [AuthorizationConstants.Actions.DELETE]
+                )
+            )[AuthorizationConstants.Actions.DELETE]
+        )
+        {
+            throw new UnauthorizedException();
+        }
         switch (project)
         {
             case null:

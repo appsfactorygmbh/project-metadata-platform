@@ -5,6 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
@@ -27,6 +29,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
     private readonly ICompanyRepository _companyRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="UpdateProjectCommand"/>.
@@ -37,7 +40,8 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
         ITeamRepository teamRepository,
         ICompanyRepository companyRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _projectsRepository = projectsRepository;
@@ -46,6 +50,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
         _companyRepository = companyRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -60,7 +65,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
         var project =
             await _projectsRepository.GetProjectWithPluginsAsync(request.Id)
             ?? throw new ProjectNotFoundException(request.Id);
-
+        await CheckAuthorization(project, request);
         var globalPluginsById = (await _pluginRepository.GetGlobalPluginsAsync()).ToDictionary(
             plugin => plugin.Id
         );
@@ -361,6 +366,13 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
         }
     }
 
+    /// <summary>
+    /// Adds Log for updated Project Plugins
+    /// </summary>
+    /// <param name="existingPlugins">List of existing Plugins</param>
+    /// <param name="project">Updated Project</param>
+    /// <param name="request">Update Request</param>
+    /// <returns></returns>
     private async Task AddUpdatedPluginLogs(
         List<ProjectPlugins> existingPlugins,
         Project project,
@@ -410,6 +422,86 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
             }
 
             existingPlugin.Url = requestPlugin.Url;
+        }
+    }
+
+    /// <summary>
+    /// Checks Authorization for a Project and its update request.
+    /// </summary>
+    /// <param name="project">Requested Project.</param>
+    /// <param name="request">Update request for the project.</param>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedException">Thrown if Update Request is unauthorized</exception>
+    private async Task CheckAuthorization(Project project, UpdateProjectCommand request)
+    {
+        Dictionary<string, object?> updates = [];
+        if (request.ProjectName != project.ProjectName)
+        {
+            updates.Add(nameof(Project.ProjectName), request.ProjectName);
+        }
+        if (request.ClientName != project.ClientName)
+        {
+            updates.Add(nameof(Project.ClientName), request.ClientName);
+        }
+        if (request.OfferId != project.OfferId)
+        {
+            updates.Add(nameof(Project.OfferId), request.OfferId);
+        }
+        if (request.CompanyId != project.CompanyId)
+        {
+            updates.Add(
+                nameof(Project.Company),
+                await _companyRepository.GetCompanyAsync(request.CompanyId)
+            );
+        }
+        if (request.CompanyState != project.CompanyState)
+        {
+            updates.Add(nameof(Project.CompanyState), request.CompanyState);
+        }
+        if (request.TeamId != project.TeamId)
+        {
+            updates.Add(
+                nameof(Project.Team),
+                request.TeamId.HasValue ? _teamRepository.GetTeamAsync(request.TeamId.Value) : null
+            );
+        }
+        if (request.IsmsLevel != project.IsmsLevel)
+        {
+            updates.Add(nameof(Project.IsmsLevel), request.IsmsLevel);
+        }
+        if (
+            (request.Plugins.Count != (project.ProjectPlugins ?? []).Count)
+            || !request
+                .Plugins.Select(GetProjectPluginKey)
+                .ToHashSet()
+                .SetEquals((project.ProjectPlugins ?? []).Select(GetProjectPluginKey))
+        )
+        {
+            updates.Add(nameof(Project.ProjectPlugins), request.Plugins);
+        }
+        if (request.IsArchived != project.IsArchived)
+        {
+            updates.Add(nameof(Project.IsArchived), request.IsArchived);
+        }
+        if (request.IsEoC != project.IsEoC)
+        {
+            updates.Add(nameof(Project.IsEoC), request.IsEoC);
+        }
+        if (request.Notes != project.Notes)
+        {
+            updates.Add(nameof(Project.Notes), request.Notes);
+        }
+        if (
+            !(
+                await _authorizationService.CheckAccess(
+                    project,
+                    [AuthorizationConstants.Actions.EDIT],
+                    updates
+                )
+            )[AuthorizationConstants.Actions.EDIT]
+        )
+        {
+            throw new UnauthorizedException();
         }
     }
 }

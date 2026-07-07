@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 
 namespace ProjectMetadataPlatform.Application.BusinessUnits;
 
@@ -12,13 +14,18 @@ namespace ProjectMetadataPlatform.Application.BusinessUnits;
 public class GetBusinessUnitQueryHandler : IRequestHandler<GetBusinessUnitQuery, BusinessUnit>
 {
     private readonly IBusinessUnitRepository _businessUnitRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetBusinessUnitQueryHandler" />.
     /// </summary>
-    public GetBusinessUnitQueryHandler(IBusinessUnitRepository businessUnitRepository)
+    public GetBusinessUnitQueryHandler(
+        IBusinessUnitRepository businessUnitRepository,
+        IAuthorizationService authorizationService
+    )
     {
         _businessUnitRepository = businessUnitRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -32,6 +39,15 @@ public class GetBusinessUnitQueryHandler : IRequestHandler<GetBusinessUnitQuery,
         CancellationToken cancellationToken
     )
     {
-        return await _businessUnitRepository.GetBusinessUnitAsync(request.Id);
+        var bu = await _businessUnitRepository.GetBusinessUnitAsync(request.Id);
+        if (
+            !(await _authorizationService.CheckAccess(bu, [AuthorizationConstants.Actions.GET]))[
+                AuthorizationConstants.Actions.GET
+            ]
+        )
+        {
+            throw new UnauthorizedException();
+        }
+        return bu;
     }
 }

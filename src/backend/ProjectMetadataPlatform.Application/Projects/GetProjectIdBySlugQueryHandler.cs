@@ -11,13 +11,18 @@ namespace ProjectMetadataPlatform.Application.Projects;
 public class GetProjectIdBySlugQueryHandler : IRequestHandler<GetProjectIdBySlugQuery, int>
 {
     private readonly IProjectsRepository _projectsRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetProjectIdBySlugQueryHandler"/>.
     /// </summary>
-    public GetProjectIdBySlugQueryHandler(IProjectsRepository projectsRepository)
+    public GetProjectIdBySlugQueryHandler(
+        IProjectsRepository projectsRepository,
+        IAuthorizationService authorizationService
+    )
     {
         _projectsRepository = projectsRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -31,6 +36,9 @@ public class GetProjectIdBySlugQueryHandler : IRequestHandler<GetProjectIdBySlug
         CancellationToken cancellationToken
     )
     {
+        //Internal Command
+        await _authorizationService.BypassAuthorization();
+
         return await _projectsRepository.GetProjectIdBySlugAsync(request.Slug);
     }
 }

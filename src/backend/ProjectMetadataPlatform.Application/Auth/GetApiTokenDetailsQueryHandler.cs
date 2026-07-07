@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 
 namespace ProjectMetadataPlatform.Application.Auth;
 
@@ -12,14 +14,20 @@ namespace ProjectMetadataPlatform.Application.Auth;
 public class GetApiTokenDetailsQueryHandler : IRequestHandler<GetApiTokenDetailsQuery, ApiToken>
 {
     private readonly IApiTokenRepository _apiTokenRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetApiTokenDetailsQueryHandler" />.
     /// </summary>
     /// <param name="apiTokenRepository"></param>
-    public GetApiTokenDetailsQueryHandler(IApiTokenRepository apiTokenRepository)
+    /// <param name="authorizationService"></param>
+    public GetApiTokenDetailsQueryHandler(
+        IApiTokenRepository apiTokenRepository,
+        IAuthorizationService authorizationService
+    )
     {
         _apiTokenRepository = apiTokenRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -28,11 +36,20 @@ public class GetApiTokenDetailsQueryHandler : IRequestHandler<GetApiTokenDetails
     /// <param name="request">Request for a token.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The Api Token.</returns>
-    public Task<ApiToken> Handle(
+    public async Task<ApiToken> Handle(
         GetApiTokenDetailsQuery request,
         CancellationToken cancellationToken
     )
     {
-        return _apiTokenRepository.GetApiTokenById(request.TokenId);
+        var token = await _apiTokenRepository.GetApiTokenById(request.TokenId);
+        if (
+            !(await _authorizationService.CheckAccess(token, [AuthorizationConstants.Actions.GET]))[
+                AuthorizationConstants.Actions.GET
+            ]
+        )
+        {
+            throw new UnauthorizedException();
+        }
+        return token;
     }
 }
