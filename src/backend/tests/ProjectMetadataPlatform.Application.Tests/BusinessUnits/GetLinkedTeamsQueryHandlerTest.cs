@@ -1,10 +1,13 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.BusinessUnits;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 
 namespace ProjectMetadataPlatform.Application.Tests.BusinessUnits;
 
@@ -12,14 +15,17 @@ namespace ProjectMetadataPlatform.Application.Tests.BusinessUnits;
 public class GetLinkedTeamsQueryHandlerTest
 {
     private GetLinkedTeamsQueryHandler _handler;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
     private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockBusinessUnitRepository = new Mock<IBusinessUnitRepository>();
         _handler = new GetLinkedTeamsQueryHandler(
-            businessUnitRepository: _mockBusinessUnitRepository.Object
+            businessUnitRepository: _mockBusinessUnitRepository.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -49,7 +55,20 @@ public class GetLinkedTeamsQueryHandlerTest
                 },
             ],
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<BusinessUnit>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.GET, true },
+                }
+            );
         _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitWithTeamsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
@@ -70,6 +89,31 @@ public class GetLinkedTeamsQueryHandlerTest
         _mockBusinessUnitRepository.Verify(
             m => m.GetBusinessUnitWithTeamsAsync(It.Is<int>(id => id == 1)),
             Times.Once
+        );
+    }
+
+    [Test]
+    public async Task CreateBusinessUnitCommand_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<BusinessUnit>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.GET, false },
+                }
+            );
+
+        var request = new GetLinkedTeamsQuery(Id: 1);
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
 }

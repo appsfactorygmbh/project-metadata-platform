@@ -2,10 +2,12 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MockQueryable;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Projects;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
 
@@ -16,12 +18,17 @@ public class GetAllProjectsQueryHandlerTest
 {
     private GetAllProjectsQueryHandler _handler;
     private Mock<IProjectsRepository> _mockProjectRepo;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockProjectRepo = new Mock<IProjectsRepository>();
-        _handler = new GetAllProjectsQueryHandler(_mockProjectRepo.Object);
+        _handler = new GetAllProjectsQueryHandler(
+            _mockProjectRepo.Object,
+            authorizationService: _authorizationServiceMock.Object
+        );
     }
 
     [Test]
@@ -29,7 +36,16 @@ public class GetAllProjectsQueryHandlerTest
     {
         _ = _mockProjectRepo
             .Setup(m => m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>()))
-            .ReturnsAsync([]);
+            .ReturnsAsync(new List<Project> { }.BuildMock());
+
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.TryGetPlanResourceQuery(
+                    It.IsAny<IQueryable<Project>>(),
+                    It.IsAny<Dictionary<string, string>?>()
+                )
+            )
+            .ReturnsAsync((IQueryable<Project> query, Dictionary<string, string>? dict) => query);
         var request = new GetAllProjectsQuery(null, "");
         _ = await _handler.Handle(request, CancellationToken.None);
 
@@ -48,6 +64,14 @@ public class GetAllProjectsQueryHandlerTest
             BusinessUnit = new() { BusinessUnitName = "Health" },
             BusinessUnitId = 1,
         };
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.TryGetPlanResourceQuery(
+                    It.IsAny<IQueryable<Project>>(),
+                    It.IsAny<Dictionary<string, string>?>()
+                )
+            )
+            .ReturnsAsync((IQueryable<Project> query, Dictionary<string, string>? dict) => query);
         var projects = new List<Project>
         {
             new()
@@ -87,7 +111,7 @@ public class GetAllProjectsQueryHandlerTest
 
         _ = _mockProjectRepo
             .Setup(m => m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>()))
-            .ReturnsAsync(projects);
+            .ReturnsAsync(projects.BuildMock());
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
         Assert.That(result, Is.EquivalentTo(projects));
@@ -154,10 +178,17 @@ public class GetAllProjectsQueryHandlerTest
                 IsmsLevel = SecurityLevel.HIGH,
             },
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.TryGetPlanResourceQuery(
+                    It.IsAny<IQueryable<Project>>(),
+                    It.IsAny<Dictionary<string, string>?>()
+                )
+            )
+            .ReturnsAsync((IQueryable<Project> query, Dictionary<string, string>? dict) => query);
         _ = _mockProjectRepo
             .Setup(m => m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>()))
-            .ReturnsAsync(projects);
+            .ReturnsAsync(projects.BuildMock());
         var request = new GetAllProjectsQuery(null, null);
         var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).ToList();
 
@@ -169,5 +200,99 @@ public class GetAllProjectsQueryHandlerTest
             Assert.That(result[3].Id, Is.EqualTo(3));
             Assert.That(result[4].Id, Is.EqualTo(5));
         });
+    }
+
+    [Test]
+    public async Task HandleGetFilteredProjects_Test()
+    {
+        var projects = new List<Project>
+        {
+            new()
+            {
+                Id = 5,
+                ProjectName = "Aapfel",
+                Slug = "marika",
+                ClientName = "Zatan",
+                TeamId = 1,
+                Company = new() { CompanyName = "Ark" },
+                CompanyId = 2,
+                IsmsLevel = SecurityLevel.HIGH,
+            },
+            new()
+            {
+                Id = 1,
+                ProjectName = "Beta",
+                Slug = "heather",
+                ClientName = "Metatron",
+                TeamId = 1,
+                Company = new() { CompanyName = "Ag der Ags" },
+                CompanyId = 1,
+                IsmsLevel = SecurityLevel.HIGH,
+            },
+            new()
+            {
+                Id = 2,
+                ProjectName = "Apfel",
+                Slug = "james",
+                ClientName = "Metatron",
+                TeamId = 1,
+                Company = new() { CompanyName = "Ag der Ags" },
+                CompanyId = 1,
+                IsmsLevel = SecurityLevel.HIGH,
+            },
+            new()
+            {
+                Id = 3,
+                ProjectName = "Marika",
+                Slug = "marika",
+                ClientName = "Satan",
+                TeamId = 1,
+                Company = new() { CompanyName = "Ark" },
+                CompanyId = 2,
+                IsmsLevel = SecurityLevel.HIGH,
+            },
+            new()
+            {
+                Id = 4,
+                ProjectName = "Aarika",
+                Slug = "marika",
+                ClientName = "Satan",
+                TeamId = 1,
+                Company = new() { CompanyName = "Ark" },
+                CompanyId = 2,
+                IsmsLevel = SecurityLevel.HIGH,
+            },
+        };
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.TryGetPlanResourceQuery(
+                    It.IsAny<IQueryable<Project>>(),
+                    It.IsAny<Dictionary<string, string>?>()
+                )
+            )
+            .ReturnsAsync((IQueryable<Project>?)null);
+
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.GET, true },
+                }
+            );
+        _ = _mockProjectRepo
+            .Setup(m => m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>()))
+            .ReturnsAsync(projects.BuildMock());
+        var request = new GetAllProjectsQuery(null, null);
+        var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).ToList();
+
+
+        Assert.That(result, Is.EquivalentTo(projects));
     }
 }

@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MockQueryable;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Helper;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Projects;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
@@ -28,10 +31,12 @@ public class UpdateProjectCommandHandlerTest
     private Mock<IUnitOfWork> _mockUnitOfWork;
     private Mock<ILogRepository> _mockLogRepository;
     private Mock<ISlugHelper> _mockSlugHelper;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockProjectRepo = new Mock<IProjectsRepository>();
         _mockPluginRepo = new Mock<IPluginRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
@@ -45,7 +50,8 @@ public class UpdateProjectCommandHandlerTest
             _mockTeamRepository.Object,
             _mockCompanyRepository.Object,
             _mockLogRepository.Object,
-            _mockUnitOfWork.Object
+            _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -83,6 +89,20 @@ public class UpdateProjectCommandHandlerTest
         };
         var projectPluginList = new List<ProjectPlugins> { projectPlugin };
 
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo
             .Setup(m => m.GetProjectWithPluginsAsync(1))
             .ReturnsAsync(exampleProject);
@@ -90,7 +110,12 @@ public class UpdateProjectCommandHandlerTest
         _ = _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
         _ = _mockPluginRepo
             .Setup(repo => repo.GetGlobalPluginsAsync())
-            .ReturnsAsync([new Plugin { Id = 100, PluginName = "Example Plugin" }]);
+            .ReturnsAsync(
+                new List<Plugin>
+                {
+                    new Plugin { Id = 100, PluginName = "Example Plugin" },
+                }.BuildMock()
+            );
 
         var result = await _handler.Handle(
             new UpdateProjectCommand(
@@ -145,7 +170,20 @@ public class UpdateProjectCommandHandlerTest
             DisplayName = "Dummy",
         };
         var projectPluginList = new List<ProjectPlugins> { projectPlugin };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo.Setup(m => m.CheckProjectExists(1)).ReturnsAsync(false);
 
         _ = _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
@@ -205,12 +243,27 @@ public class UpdateProjectCommandHandlerTest
             DisplayName = "Dummy",
         };
         var projectPluginList = new List<ProjectPlugins> { projectPlugin };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo
             .Setup(m => m.GetProjectWithPluginsAsync(1))
             .ReturnsAsync(exampleProject);
 
-        _ = _mockPluginRepo.Setup(repo => repo.GetGlobalPluginsAsync()).ReturnsAsync([]);
+        _ = _mockPluginRepo
+            .Setup(repo => repo.GetGlobalPluginsAsync())
+            .ReturnsAsync(new List<Plugin> { }.BuildMock());
 
         var exception = Assert.ThrowsAsync<MultiplePluginsNotFoundException>(async () =>
             await _handler.Handle(
@@ -267,7 +320,20 @@ public class UpdateProjectCommandHandlerTest
             TeamId: null,
             Notes: "Updated Notes"
         );
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo
             .Setup(repository => repository.GetProjectWithPluginsAsync(1))
             .ReturnsAsync(project);
@@ -325,7 +391,20 @@ public class UpdateProjectCommandHandlerTest
             TeamId: null,
             Notes: "Updated Notes"
         );
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo
             .Setup(repository => repository.GetProjectWithPluginsAsync(1))
             .ReturnsAsync(project);
@@ -380,7 +459,20 @@ public class UpdateProjectCommandHandlerTest
             ],
             Notes = "Example Notes",
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         var updateCommand = new UpdateProjectCommand(
             ProjectName: "DB App",
             ClientName: "Unit 2",
@@ -421,11 +513,14 @@ public class UpdateProjectCommandHandlerTest
             .ReturnsAsync(project);
         _ = _mockPluginRepo
             .Setup(repo => repo.GetGlobalPluginsAsync())
-            .ReturnsAsync([
-                new Plugin { Id = 1, PluginName = "Plugin1" },
-                new Plugin { Id = 2, PluginName = "Plugin2" },
-                new Plugin { Id = 3, PluginName = "Plugin3" },
-            ]);
+            .ReturnsAsync(
+                new List<Plugin>
+                {
+                    new Plugin { Id = 1, PluginName = "Plugin1" },
+                    new Plugin { Id = 2, PluginName = "Plugin2" },
+                    new Plugin { Id = 3, PluginName = "Plugin3" },
+                }.BuildMock()
+            );
         _ = _mockCompanyRepository
             .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(true);
@@ -507,7 +602,20 @@ public class UpdateProjectCommandHandlerTest
             TeamId: null,
             Notes: "Example Notes"
         );
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo
             .Setup(repository => repository.GetProjectWithPluginsAsync(1))
             .ReturnsAsync(project);
@@ -557,7 +665,20 @@ public class UpdateProjectCommandHandlerTest
 
         var slugHelper = new SlugHelper(_mockProjectRepo.Object);
         var slug = slugHelper.GenerateSlug("New Project Name");
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(1))
             .ReturnsAsync(project);
@@ -661,7 +782,20 @@ public class UpdateProjectCommandHandlerTest
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(exampleProject.Id))
             .ReturnsAsync(exampleProject);
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = await _handler.Handle(updateCommand, CancellationToken.None);
 
         _mockLogRepository.Verify(
@@ -713,7 +847,20 @@ public class UpdateProjectCommandHandlerTest
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(project.Id))
             .ReturnsAsync(project);
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = await _handler.Handle(updateCommand, CancellationToken.None);
 
         _mockLogRepository.Verify(
@@ -772,7 +919,20 @@ public class UpdateProjectCommandHandlerTest
             TeamId: null,
             Notes: "New Notes"
         );
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(project.Id))
             .ReturnsAsync(project);
@@ -837,7 +997,20 @@ public class UpdateProjectCommandHandlerTest
             TeamId: null,
             Notes: project.Notes
         );
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(project.Id))
             .ReturnsAsync(project);
@@ -898,7 +1071,20 @@ public class UpdateProjectCommandHandlerTest
             TeamId: null, // Assuming TeamId can be null
             Notes: project.Notes
         );
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(project.Id))
             .ReturnsAsync(project);
@@ -963,7 +1149,20 @@ public class UpdateProjectCommandHandlerTest
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(project.Id))
             .ReturnsAsync(project);
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = await _handler.Handle(updateCommand, CancellationToken.None);
 
         Assert.That(project.IsArchived, Is.True);
@@ -1026,8 +1225,26 @@ public class UpdateProjectCommandHandlerTest
             .ReturnsAsync(project);
         _ = _mockPluginRepo
             .Setup(repo => repo.GetGlobalPluginsAsync())
-            .ReturnsAsync([new Plugin { Id = 1, PluginName = "ExamplePlugin" }]);
-
+            .ReturnsAsync(
+                new List<Plugin>
+                {
+                    new Plugin { Id = 1, PluginName = "ExamplePlugin" },
+                }.BuildMock()
+            );
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = await _handler.Handle(updateCommand, CancellationToken.None);
 
         _mockLogRepository.Verify(
@@ -1098,13 +1315,31 @@ public class UpdateProjectCommandHandlerTest
             IsArchived: false,
             TeamId: null // Assuming TeamId can be null
         );
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(project.Id))
             .ReturnsAsync(project);
         _ = _mockPluginRepo
             .Setup(repo => repo.GetGlobalPluginsAsync())
-            .ReturnsAsync([new Plugin { Id = 1, PluginName = "ExamplePlugin" }]);
+            .ReturnsAsync(
+                new List<Plugin>
+                {
+                    new Plugin { Id = 1, PluginName = "ExamplePlugin" },
+                }.BuildMock()
+            );
 
         _ = await _handler.Handle(updateCommand, CancellationToken.None);
 
@@ -1184,13 +1419,31 @@ public class UpdateProjectCommandHandlerTest
             TeamId: null,
             Notes: project.Notes
         );
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(project.Id))
             .ReturnsAsync(project);
         _ = _mockPluginRepo
             .Setup(repo => repo.GetGlobalPluginsAsync())
-            .ReturnsAsync([new Plugin { Id = 1, PluginName = "Example Plugin" }]);
+            .ReturnsAsync(
+                new List<Plugin>
+                {
+                    new Plugin { Id = 1, PluginName = "Example Plugin" },
+                }.BuildMock()
+            );
 
         _ = await _handler.Handle(updateCommand, CancellationToken.None);
 
@@ -1259,13 +1512,31 @@ public class UpdateProjectCommandHandlerTest
             IsArchived: false,
             TeamId: null // Assuming TeamId can be null
         );
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(project.Id))
             .ReturnsAsync(project);
         _ = _mockPluginRepo
             .Setup(repo => repo.GetGlobalPluginsAsync())
-            .ReturnsAsync([new Plugin { Id = 1, PluginName = "Example Plugin" }]);
+            .ReturnsAsync(
+                new List<Plugin>
+                {
+                    new Plugin { Id = 1, PluginName = "Example Plugin" },
+                }.BuildMock()
+            );
 
         _ = await _handler.Handle(updateCommand, CancellationToken.None);
 
@@ -1312,7 +1583,20 @@ public class UpdateProjectCommandHandlerTest
             IsArchived: false,
             TeamId: null // Assuming TeamId can be null
         );
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo.Setup(m => m.GetProjectWithPluginsAsync(1)).ReturnsAsync(project);
 
         var result = await _handler.Handle(updateCommand, CancellationToken.None);
@@ -1351,7 +1635,20 @@ public class UpdateProjectCommandHandlerTest
             Notes: new string('a', 501),
             TeamId: null // Assuming TeamId can be null
         );
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockProjectRepo.Setup(m => m.GetProjectWithPluginsAsync(1)).ReturnsAsync(project);
         _ = _mockSlugHelper.Setup(m => m.GenerateSlug(It.IsAny<string>())).Returns("new project");
         _ = _mockSlugHelper.Setup(m => m.CheckProjectSlugExists("new project")).ReturnsAsync(false);
@@ -1364,6 +1661,58 @@ public class UpdateProjectCommandHandlerTest
         Assert.That(
             ex.Message,
             Is.EqualTo("The project notes are 501 chars long. Maximum allowed is 500 chars.")
+        );
+    }
+
+    [Test]
+    public async Task EDITProject_AuthorizationFailsThrowsTest()
+    {
+        var project = new Project
+        {
+            Id = 1,
+            ProjectName = "Example Project",
+            Slug = "example project",
+            ClientName = "Example Client",
+            OfferId = "Offer A",
+            Company = new() { CompanyName = "Company A" },
+            CompanyId = 1,
+            CompanyState = CompanyState.EXTERNAL,
+            IsmsLevel = SecurityLevel.VERY_HIGH,
+            ProjectPlugins = [],
+            Notes = "Example Notes",
+        };
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, false },
+                }
+            );
+        _ = _mockProjectRepo.Setup(m => m.GetProjectWithPluginsAsync(1)).ReturnsAsync(project);
+        var request = new UpdateProjectCommand(
+            Id: 1,
+            ProjectName: "Example Project",
+            ClientName: "Example Business Unit",
+            OfferId: "1",
+            CompanyId: 1,
+            IsArchived: true,
+            CompanyState: CompanyState.EXTERNAL,
+            TeamId: null,
+            IsmsLevel: SecurityLevel.HIGH,
+            IsEoC: false,
+            Plugins: [],
+            Notes: new string('a', 501)
+        );
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
 }

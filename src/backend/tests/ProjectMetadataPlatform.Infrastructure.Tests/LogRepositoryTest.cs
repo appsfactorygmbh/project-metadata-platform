@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -797,7 +798,7 @@ public class LogRepositoryTest : TestsWithDatabase
         _ = await _context.Projects.AddAsync(exampleProject);
         _ = await _context.SaveChangesAsync();
 
-        var logs = await _loggingRepository.GetLogsForProject(301);
+        var logs = await (await _loggingRepository.GetLogsForProject(301)).ToListAsync();
 
         Assert.That(logs, Has.Count.EqualTo(1));
         Assert.That(logs[0], Is.EqualTo(exampleLog));
@@ -828,7 +829,8 @@ public class LogRepositoryTest : TestsWithDatabase
         _ = await _context.Projects.AddAsync(exampleProject);
         _ = await _context.SaveChangesAsync();
 
-        var logs = await _loggingRepository.GetLogsForProject(301);
+        var logs = await (await _loggingRepository.GetLogsForProject(301)).ToListAsync();
+        ;
 
         Assert.That(logs, Has.Count.EqualTo(0));
     }
@@ -897,7 +899,7 @@ public class LogRepositoryTest : TestsWithDatabase
         _ = await _context.Projects.AddAsync(exampleProject2);
         _ = await _context.SaveChangesAsync();
 
-        var logs = await _loggingRepository.GetAllLogs();
+        var logs = await (await _loggingRepository.GetAllLogs()).ToListAsync();
 
         Assert.That(logs, Has.Count.EqualTo(2));
     }
@@ -966,7 +968,9 @@ public class LogRepositoryTest : TestsWithDatabase
         _ = await _context.Projects.AddAsync(exampleProject2);
         _ = await _context.SaveChangesAsync();
 
-        var logs = await _loggingRepository.GetLogsWithSearch("Another Project");
+        var logs = await (
+            await _loggingRepository.GetLogsWithSearch("Another Project")
+        ).ToListAsync();
 
         Assert.That(logs, Has.Count.EqualTo(1));
 
@@ -1046,7 +1050,7 @@ public class LogRepositoryTest : TestsWithDatabase
         _ = await _context.Projects.AddAsync(exampleProject2);
         _ = await _context.SaveChangesAsync();
 
-        var logs = await _loggingRepository.GetLogsWithSearch("updated");
+        var logs = await (await _loggingRepository.GetLogsWithSearch("updated")).ToListAsync();
 
         Assert.That(logs, Has.Count.EqualTo(1));
 
@@ -1121,7 +1125,7 @@ public class LogRepositoryTest : TestsWithDatabase
         _ = await _context.Logs.AddAsync(exampleLog2);
         _ = await _context.SaveChangesAsync();
 
-        var logs = await _loggingRepository.GetLogsForUser("Newton");
+        var logs = await (await _loggingRepository.GetLogsForUser("Newton")).ToListAsync();
 
         Assert.That(logs, Has.Count.EqualTo(1));
 
@@ -1192,7 +1196,7 @@ public class LogRepositoryTest : TestsWithDatabase
         _ = await _context.Logs.AddAsync(exampleLog2);
         _ = await _context.SaveChangesAsync();
 
-        var logs = await _loggingRepository.GetLogsForGlobalPlugin(42);
+        var logs = await (await _loggingRepository.GetLogsForGlobalPlugin(42)).ToListAsync();
 
         Assert.That(logs, Has.Count.EqualTo(1));
 

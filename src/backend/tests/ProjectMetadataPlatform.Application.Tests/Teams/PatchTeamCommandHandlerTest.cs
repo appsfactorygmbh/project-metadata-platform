@@ -5,6 +5,8 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Teams;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Teams;
@@ -19,10 +21,12 @@ public class PatchTeamCommandHandlerTest
     private Mock<IUnitOfWork> _mockUnitOfWork;
     private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
     private Mock<ITeamRepository> _mockTeamRepository;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockTeamRepository = new Mock<ITeamRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
@@ -31,7 +35,8 @@ public class PatchTeamCommandHandlerTest
             teamRepository: _mockTeamRepository.Object,
             businessUnitRepository: _mockBusinessUnitRepository.Object,
             logRepository: _mockLogRepo.Object,
-            unitOfWork: _mockUnitOfWork.Object
+            unitOfWork: _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -47,7 +52,20 @@ public class PatchTeamCommandHandlerTest
             BusinessUnitId = 1,
             PTL = "Max Mustermann",
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Team>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
@@ -113,7 +131,20 @@ public class PatchTeamCommandHandlerTest
             BusinessUnitId = 1,
             PTL = "Max Mustermann",
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Team>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
@@ -156,7 +187,20 @@ public class PatchTeamCommandHandlerTest
             BusinessUnitId = 1,
             PTL = "Max Mustermann",
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Team>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, true },
+                }
+            );
         _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
@@ -178,5 +222,40 @@ public class PatchTeamCommandHandlerTest
         );
 
         Assert.That(ex.Message, Does.Contain("Test_2"));
+    }
+
+    [Test]
+    public async Task EditTeam_AuthorizationFailsThrowsTest()
+    {
+        var returnTeam = new Team()
+        {
+            Id = 1,
+            TeamName = "Test_1",
+            BusinessUnit = new() { BusinessUnitName = "BU Test" },
+            BusinessUnitId = 1,
+            PTL = "Max Mustermann",
+        };
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Team>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.EDIT, false },
+                }
+            );
+        _ = _mockTeamRepository
+            .Setup(repo => repo.GetTeamAsync(It.IsAny<int>()))
+            .ReturnsAsync(returnTeam);
+        var request = new PatchTeamCommand(Id: 1, TeamName: "Test_2", PTL: "Max Mustermann");
+  
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
+        );
     }
 }
