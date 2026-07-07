@@ -1,4 +1,5 @@
 const themes = ['dark', 'light'];
+const waitTime = 300;
 themes.forEach((theme) => {
   describe('Generate README Screenshots - ' + theme, () => {
     //define all object mocks
@@ -372,8 +373,9 @@ themes.forEach((theme) => {
 
     it('captures the project view', () => {
       cy.visit('/');
-      cy.wait(200);
+
       cy.wait(['@getProjects', '@getTeams', '@getCompanies']);
+      cy.wait(waitTime);
       cy.screenshot('project-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
@@ -389,7 +391,10 @@ themes.forEach((theme) => {
         '@getProject',
         '@getProjectPlugins',
         '@getUnarchivedProjectPlugins',
+        '@getTeams',
+        '@getCompanies'
       ]);
+      cy.wait(waitTime);
       cy.screenshot('project-information-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
@@ -405,8 +410,10 @@ themes.forEach((theme) => {
         '@getProject',
         '@getProjectPlugins',
         '@getUnarchivedProjectPlugins',
+        '@getTeams',
+        '@getCompanies'
       ]);
-      cy.wait(200);
+      cy.wait(waitTime);
       cy.screenshot('project-information-edit-view-' + theme, {
         overwrite: true,
       });
@@ -420,7 +427,7 @@ themes.forEach((theme) => {
 
       cy.get('.ant-modal').should('be.visible');
       cy.contains('.ant-modal-title', 'Create Project').click();
-      cy.wait(200);
+      cy.wait(waitTime);
 
       cy.screenshot('create-project-view-' + theme, {
         overwrite: true,
@@ -432,7 +439,7 @@ themes.forEach((theme) => {
     it('captures the user settings view', () => {
       cy.visit('/settings/user-management?userId=' + users[1].externalId);
       cy.wait(['@getUsers', '@getUser']);
-      cy.wait(200);
+      cy.wait(waitTime);
       cy.screenshot('user-management-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
@@ -451,7 +458,7 @@ themes.forEach((theme) => {
         '@getBusinessUnits',
       ]);
       cy.contains('.ant-modal-title', 'Create User').click();
-      cy.wait(200);
+      cy.wait(waitTime);
 
       cy.screenshot('user-creation-view-' + theme, {
         overwrite: true,
@@ -462,7 +469,7 @@ themes.forEach((theme) => {
     it('captures the team settings view', () => {
       cy.visit('/settings/team-management?teamId=' + teams[0].id);
       cy.wait(['@getTeams', '@getTeam']);
-      cy.wait(200);
+      cy.wait(waitTime);
       cy.screenshot('team-management-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
@@ -474,7 +481,7 @@ themes.forEach((theme) => {
       cy.visit('/settings/team-management/create');
       cy.wait(['@getTeams', '@getBusinessUnits']);
       cy.contains('.ant-modal-title', 'Create Team').click();
-      cy.wait(200);
+      cy.wait(waitTime);
 
       cy.screenshot('team-creation-view-' + theme, {
         overwrite: true,
@@ -488,7 +495,7 @@ themes.forEach((theme) => {
         '/settings/department-management?departmentId=' + departments[0].id,
       );
       cy.wait(['@getDepartments', '@getDepartment']);
-      cy.wait(200);
+      cy.wait(waitTime);
       cy.screenshot('department-management-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
@@ -500,7 +507,7 @@ themes.forEach((theme) => {
       cy.visit('/settings/department-management/create');
       cy.wait(['@getDepartments']);
       cy.contains('.ant-modal-title', 'Create Department').click();
-      cy.wait(200);
+      cy.wait(waitTime);
 
       cy.screenshot('department-creation-view-' + theme, {
         overwrite: true,
@@ -512,7 +519,7 @@ themes.forEach((theme) => {
     it('captures the company settings view', () => {
       cy.visit('/settings/company-management?companyId=' + companies[0].id);
       cy.wait(['@getCompanies', '@getCompany']);
-      cy.wait(200);
+      cy.wait(waitTime);
       cy.screenshot('company-management-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
@@ -524,7 +531,7 @@ themes.forEach((theme) => {
       cy.visit('/settings/company-management/create');
       cy.wait(['@getCompanies']);
       cy.contains('.ant-modal-title', 'Create Company').click();
-      cy.wait(200);
+      cy.wait(waitTime);
 
       cy.screenshot('company-creation-view-' + theme, {
         overwrite: true,
@@ -539,7 +546,7 @@ themes.forEach((theme) => {
           businessUnits[0].id,
       );
       cy.wait(['@getBusinessUnits', '@getBusinessUnit']);
-      cy.wait(200);
+      cy.wait(waitTime);
       cy.screenshot('business-unit-management-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
@@ -551,7 +558,7 @@ themes.forEach((theme) => {
       cy.visit('/settings/business-unit-management/create');
       cy.wait(['@getBusinessUnits']);
       cy.contains('.ant-modal-title', 'Create Business Unit').click();
-      cy.wait(200);
+      cy.wait(waitTime);
 
       cy.screenshot('business-unit-creation-view-' + theme, {
         overwrite: true,
@@ -566,7 +573,7 @@ themes.forEach((theme) => {
           officeLocations[0].id,
       );
       cy.wait(['@getOfficeLocations', '@getOfficeLocation']);
-      cy.wait(200);
+      cy.wait(waitTime);
       cy.screenshot('office-location-management-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
@@ -578,7 +585,7 @@ themes.forEach((theme) => {
       cy.visit('/settings/office-location-management/create');
       cy.wait(['@getOfficeLocations']);
       cy.contains('.ant-modal-title', 'Create Office Location').click();
-      cy.wait(200);
+      cy.wait(waitTime);
 
       cy.screenshot('office-location-creation-view-' + theme, {
         overwrite: true,
@@ -590,7 +597,7 @@ themes.forEach((theme) => {
     it('captures the token settings view', () => {
       cy.visit('/settings/api-token-management?tokenId=' + apiTokens[0].id);
       cy.wait(['@getApiTokens', '@getApiToken']);
-      cy.wait(200);
+      cy.wait(waitTime);
       cy.screenshot('api-token-management-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
@@ -602,7 +609,7 @@ themes.forEach((theme) => {
       cy.visit('/settings/api-token-management/create');
       cy.wait(['@getApiTokens']);
       cy.contains('.ant-modal-title', 'Create API-Token').click();
-      cy.wait(200);
+      cy.wait(waitTime);
 
       cy.screenshot('api-token-creation-view-' + theme, {
         overwrite: true,
@@ -614,7 +621,7 @@ themes.forEach((theme) => {
     it('captures the global plugin settings view', () => {
       cy.visit('/settings/global-plugins');
       cy.wait(['@getPlugins']);
-      cy.wait(200);
+      cy.wait(waitTime);
       cy.screenshot('global-plugin-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
@@ -626,7 +633,7 @@ themes.forEach((theme) => {
       cy.visit('/settings/global-plugins/create');
       cy.wait(['@getPlugins']);
       cy.contains('.ant-modal-title', 'Create Plugin').click();
-      cy.wait(200);
+      cy.wait(waitTime);
 
       cy.screenshot('global-plugin-creation-view-' + theme, {
         overwrite: true,
@@ -639,7 +646,7 @@ themes.forEach((theme) => {
       cy.visit('/settings/global-plugins/edit?pluginId=' + globalPlugins[0].id);
       cy.wait(['@getPlugins']);
       cy.contains('.ant-modal-title', 'Edit Plugin').click();
-      cy.wait(200);
+      cy.wait(waitTime);
 
       cy.screenshot('global-plugin-edit-view-' + theme, {
         overwrite: true,
