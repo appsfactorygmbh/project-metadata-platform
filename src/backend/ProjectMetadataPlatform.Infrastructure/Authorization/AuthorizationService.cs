@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Cerbos.Sdk;
 using Cerbos.Sdk.Builder;
@@ -12,7 +14,9 @@ using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
+using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
@@ -23,6 +27,9 @@ using Resource = Cerbos.Sdk.Builder.Resource;
 
 namespace ProjectMetadataPlatform.Infrastructure.Authorization;
 
+/// <summary>
+/// Implements <see cref="IAuthorizationService"/>
+/// </summary>
 public class AuthorizationService : IAuthorizationService
 {
     private readonly ICerbosClient _cerbosClient;
@@ -34,6 +41,14 @@ public class AuthorizationService : IAuthorizationService
 
     private readonly IApiTokenRepository _apiTokenRepository;
 
+    /// <summary>
+    /// Constructor for <see cref="AuthorizationService"/>
+    /// </summary>
+    /// <param name="cerbosClient">Cerbos Authorization Client.</param>
+    /// <param name="tracker">Authorization Tracker.</param>
+    /// <param name="httpContextAccessor">Http Context Accessor for getting Principles from Tokens.</param>
+    /// <param name="usersRepository">Repo for User access.</param>
+    /// <param name="apiTokenRepository">Repo for ApiToken access.</param>
     public AuthorizationService(
         ICerbosClient cerbosClient,
         IAuthorizationTracker tracker,
@@ -47,17 +62,28 @@ public class AuthorizationService : IAuthorizationService
         _httpContextAccessor = httpContextAccessor;
         _usersRepository = usersRepository;
         _apiTokenRepository = apiTokenRepository;
+
+        var options = new JsonSerializerOptions
+        {
+            ReferenceHandler = ReferenceHandler.IgnoreCycles,
+            PropertyNameCaseInsensitive = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        };
+        options.Converters.Add(new JsonStringEnumConverter());
+        AuthorizationConverter.Options = options;
     }
 
+    /// <inheritdoc/>
     public async Task BypassAuthorization()
     {
         _tracker.MarkAsChecked();
     }
 
+    /// <inheritdoc/>
     public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
         ApiToken token,
         IEnumerable<AuthorizationConstants.Actions> actions,
-        IEnumerable<ResourceUpdate>? updates = null
+        Dictionary<string, object?>? updates = null
     )
     {
         var result = (
@@ -70,10 +96,11 @@ public class AuthorizationService : IAuthorizationService
         return HandleCheckAuthorizationResult(actions, result);
     }
 
+    /// <inheritdoc/>
     public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
         BusinessUnit businessUnit,
         IEnumerable<AuthorizationConstants.Actions> actions,
-        IEnumerable<ResourceUpdate>? updates = null
+        Dictionary<string, object?>? updates = null
     )
     {
         var result = (
@@ -87,10 +114,11 @@ public class AuthorizationService : IAuthorizationService
         return HandleCheckAuthorizationResult(actions, result);
     }
 
+    /// <inheritdoc/>
     public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
         Company company,
         IEnumerable<AuthorizationConstants.Actions> actions,
-        IEnumerable<ResourceUpdate>? updates = null
+        Dictionary<string, object?>? updates = null
     )
     {
         var result = (
@@ -104,10 +132,29 @@ public class AuthorizationService : IAuthorizationService
         return HandleCheckAuthorizationResult(actions, result);
     }
 
+    /// <inheritdoc/>
+    public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
+        Department department,
+        IEnumerable<AuthorizationConstants.Actions> actions,
+        Dictionary<string, object?>? updates = null
+    )
+    {
+        var result = (
+            await CheckRequest(
+                await GetPrincipalFromContext(),
+                department.ToResource(nameof(Department), department.Id.ToString(), updates),
+                actions.Select(action => action.ToString())
+            )
+        ).Find(department.Id.ToString());
+
+        return HandleCheckAuthorizationResult(actions, result);
+    }
+
+    /// <inheritdoc/>
     public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
         OfficeLocation location,
         IEnumerable<AuthorizationConstants.Actions> actions,
-        IEnumerable<ResourceUpdate>? updates = null
+        Dictionary<string, object?>? updates = null
     )
     {
         var result = (
@@ -121,10 +168,11 @@ public class AuthorizationService : IAuthorizationService
         return HandleCheckAuthorizationResult(actions, result);
     }
 
+    /// <inheritdoc/>
     public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
         Plugin plugin,
         IEnumerable<AuthorizationConstants.Actions> actions,
-        IEnumerable<ResourceUpdate>? updates = null
+        Dictionary<string, object?>? updates = null
     )
     {
         var result = (
@@ -138,10 +186,11 @@ public class AuthorizationService : IAuthorizationService
         return HandleCheckAuthorizationResult(actions, result);
     }
 
+    /// <inheritdoc/>
     public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
         Project project,
         IEnumerable<AuthorizationConstants.Actions> actions,
-        IEnumerable<ResourceUpdate>? updates = null
+        Dictionary<string, object?>? updates = null
     )
     {
         var result = (
@@ -155,10 +204,11 @@ public class AuthorizationService : IAuthorizationService
         return HandleCheckAuthorizationResult(actions, result);
     }
 
+    /// <inheritdoc/>
     public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
         Team team,
         IEnumerable<AuthorizationConstants.Actions> actions,
-        IEnumerable<ResourceUpdate>? updates = null
+        Dictionary<string, object?>? updates = null
     )
     {
         var result = (
@@ -172,10 +222,11 @@ public class AuthorizationService : IAuthorizationService
         return HandleCheckAuthorizationResult(actions, result);
     }
 
+    /// <inheritdoc/>
     public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
         ApplicationUser user,
         IEnumerable<AuthorizationConstants.Actions> actions,
-        IEnumerable<ResourceUpdate>? updates = null
+        Dictionary<string, object?>? updates = null
     )
     {
         var result = (
@@ -189,6 +240,25 @@ public class AuthorizationService : IAuthorizationService
         return HandleCheckAuthorizationResult(actions, result);
     }
 
+    /// <inheritdoc/>
+    public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
+        Log log,
+        IEnumerable<AuthorizationConstants.Actions> actions,
+        Dictionary<string, object?>? updates = null
+    )
+    {
+        var result = (
+            await CheckRequest(
+                await GetPrincipalFromContext(),
+                log.ToResource(nameof(Log), log.Id.ToString(), updates),
+                actions.Select(action => action.ToString())
+            )
+        ).Find(log.Id.ToString());
+
+        return HandleCheckAuthorizationResult(actions, result);
+    }
+
+    /// <inheritdoc/>
     public async Task<IQueryable<T>?> TryGetPlanResourceQuery<T>(
         IQueryable<T> query,
         Dictionary<string, string>? attributeMap = null
@@ -199,7 +269,7 @@ public class AuthorizationService : IAuthorizationService
             var result = await PlanRequest(
                 await GetPrincipalFromContext(),
                 Resource
-                    .NewInstance(nameof(T))
+                    .NewInstance(typeof(T).Name)
                     .WithPolicyVersion(AuthorizationConstants.POLICY_VERSION),
                 [AuthorizationConstants.Actions.GET.ToString()]
             );
@@ -215,10 +285,15 @@ public class AuthorizationService : IAuthorizationService
         catch (Exception e)
         {
             Console.WriteLine($"{nameof(this.TryGetPlanResourceQuery)} failed: {e.Message}");
-            return query;
+            return null;
         }
     }
 
+    /// <summary>
+    /// Gets the Principal from its Authentication Method.
+    /// </summary>
+    /// <returns>Authorization Principle.</returns>
+    /// <exception cref="UnknownAuthentificationMethodException">Thrown if Authentication Method is unknown.</exception>
     private async Task<Principal> GetPrincipalFromContext()
     {
         return _httpContextAccessor.HttpContext?.User.FindFirstValue(
@@ -231,6 +306,10 @@ public class AuthorizationService : IAuthorizationService
         };
     }
 
+    /// <summary>
+    /// Returns the User Principle from HttpContext.
+    /// </summary>
+    /// <returns>Authorization Principle.</returns>
     private async Task<Principal> GetUserPrincipal()
     {
         var email =
@@ -241,6 +320,10 @@ public class AuthorizationService : IAuthorizationService
         return user.ToPrincipal(AuthorizationConstants.PRINCIPLE_USER);
     }
 
+    /// <summary>
+    /// Returns the Token Principle from HttpContext.
+    /// </summary>
+    /// <returns>Authorization Principle.</returns>
     private async Task<Principal> GetApiTokenPrincipalAsync()
     {
         var name =
@@ -251,6 +334,13 @@ public class AuthorizationService : IAuthorizationService
         return token.ToPrincipal(AuthorizationConstants.PRINCIPLE_TOKEN);
     }
 
+    /// <summary>
+    /// Execute a Authorization Access Request.
+    /// </summary>
+    /// <param name="principal">Authorization Principal.</param>
+    /// <param name="resource">Requested Resource.</param>
+    /// <param name="actions">Requested Actions.</param>
+    /// <returns>Check Resources Response.</returns>
     private async Task<Cerbos.Sdk.Response.CheckResourcesResponse> CheckRequest(
         Principal principal,
         Resource resource,
@@ -261,12 +351,20 @@ public class AuthorizationService : IAuthorizationService
             .NewInstance()
             .WithRequestId(RequestId.Generate())
             .WithPrincipal(principal)
-            .WithResourceEntries(ResourceEntry.NewInstance(resource, [.. actions]));
+            .WithResourceEntries(ResourceEntry.NewInstance(resource, [.. actions]))
+            .WithIncludeMeta(true);
         var result = await _cerbosClient.CheckResourcesAsync(request);
 
         return result;
     }
 
+    /// <summary>
+    /// Execute a Authorization Plan Access Request.
+    /// </summary>
+    /// <param name="principal">Authorization Principal.</param>
+    /// <param name="resource">Requested Resource.</param>
+    /// <param name="actions">Requested Actions.</param>
+    /// <returns>Plan Resources Response.</returns>
     private async Task<Cerbos.Sdk.Response.PlanResourcesResponse> PlanRequest(
         Principal principal,
         Resource resource,
@@ -284,6 +382,12 @@ public class AuthorizationService : IAuthorizationService
         return result;
     }
 
+    /// <summary>
+    /// Converts a Check Authorization Result to a Dictionary of Actions and results.
+    /// </summary>
+    /// <param name="actions">Actions that where checked.</param>
+    /// <param name="result">Authorization Result.</param>
+    /// <returns>Result Dictionary.</returns>
     private Dictionary<AuthorizationConstants.Actions, bool> HandleCheckAuthorizationResult(
         IEnumerable<AuthorizationConstants.Actions> actions,
         Cerbos.Sdk.Response.CheckResourcesResponse.Types.ResultEntry result

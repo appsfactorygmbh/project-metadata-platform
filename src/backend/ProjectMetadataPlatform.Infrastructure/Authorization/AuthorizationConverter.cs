@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Text.Json;
 using Cerbos.Api.V1.Engine;
 using Cerbos.Sdk.Builder;
-using Cerbos.Sdk.Response;
 using Google.Protobuf.WellKnownTypes;
 using ProjectMetadataPlatform.Domain.Authorization;
 using Principal = Cerbos.Sdk.Builder.Principal;
@@ -13,8 +12,22 @@ using Resource = Cerbos.Sdk.Builder.Resource;
 
 namespace ProjectMetadataPlatform.Infrastructure.Authorization;
 
+/// <summary>
+/// Helper Class for conversion between PmP and Cerbos objects.
+/// </summary>
 public static class AuthorizationConverter
 {
+    /// <summary>
+    /// Options for Json Serialization.
+    /// </summary>
+    public static JsonSerializerOptions Options { get; set; } = new();
+
+    /// <summary>
+    /// Converts an Object to a Authorization Principle.
+    /// </summary>
+    /// <param name="obj"> Object to be converted.</param>
+    /// <param name="kind">The Kind of Principle.</param>
+    /// <returns>Cerbos Principle.</returns>
     public static Principal ToPrincipal(this Object obj, string kind)
     {
         return Principal
@@ -23,17 +36,28 @@ public static class AuthorizationConverter
             .WithAttributes(ConvertObjectToAttributeDict(obj));
     }
 
+    /// <summary>
+    /// Converts an Object to a Authorization Resource.
+    /// </summary>
+    /// <param name="obj"> Object to be converted.</param>
+    /// <param name="kind">The Kind of Resource.</param>
+    /// <param name="id">Id of the Resource.</param>
+    /// <param name="updates">Dictionary of Update Requests.</param>
+    /// <returns>Cerbos Resource</returns>
     public static Resource ToResource(
-        this Object obj,
+        this object obj,
         string kind,
         string id,
-        IEnumerable<ResourceUpdate>? updates = null
+        Dictionary<string, object?>? updates = null
     )
     {
         var attributeDict = ConvertObjectToAttributeDict(obj);
         if (updates != null)
         {
-            attributeDict.Add("UpdateRequests", ConvertListToAttributeValue(updates));
+            attributeDict.Add(
+                "UpdateRequests",
+                AttributeValue.MapValue(ConvertObjectToAttributeDict(updates))
+            );
         }
         return Resource
             .NewInstance(kind, id)
@@ -41,13 +65,19 @@ public static class AuthorizationConverter
             .WithAttributes(attributeDict);
     }
 
+    /// <summary>
+    /// Converts a Object to an Dictionary of Attribute names and Cerbos Attribute Values.
+    /// </summary>
+    /// <param name="obj">Object to be converted</param>
+    /// <returns>Dictionary Representing the Object.</returns>
+    /// <exception cref="ArgumentException">Thrown if the Object Serialized as Json is not an complex object.</exception>
     private static Dictionary<string, AttributeValue> ConvertObjectToAttributeDict(Object obj)
     {
         if (obj == null)
         {
             return [];
         }
-        var element = JsonSerializer.SerializeToElement(obj);
+        var element = JsonSerializer.SerializeToElement(obj, Options);
 
         if (element.ValueKind != JsonValueKind.Object)
         {
@@ -56,21 +86,11 @@ public static class AuthorizationConverter
         return ConvertJsonElementToAttributeDict(element);
     }
 
-    private static AttributeValue ConvertListToAttributeValue(Object obj)
-    {
-        if (obj == null)
-        {
-            return AttributeValue.NullValue();
-        }
-        var element = JsonSerializer.SerializeToElement(obj);
-
-        if (element.ValueKind != JsonValueKind.Array)
-        {
-            throw new ArgumentException("Non Json-Arrays can't be converted");
-        }
-        return ConvertJsonElementToAttributeValue(element);
-    }
-
+    /// <summary>
+    /// Converts a Json Element to an Dictionary of Attribute names and Cerbos Attribute Values.
+    /// </summary>
+    /// <param name="element">Element to be converted.</param>
+    /// <returns>Dictionary Representing the Element</returns>
     private static Dictionary<string, AttributeValue> ConvertJsonElementToAttributeDict(
         JsonElement element
     )
@@ -85,6 +105,11 @@ public static class AuthorizationConverter
         return attributeDict;
     }
 
+    /// <summary>
+    /// Converts a Json Element to its Cerbos Attribute Value.
+    /// </summary>
+    /// <param name="element">Element to be converted.</param>
+    /// <returns>Attribute Value representing the Json Element</returns>
     private static AttributeValue ConvertJsonElementToAttributeValue(JsonElement element)
     {
         return element.ValueKind switch
@@ -103,6 +128,11 @@ public static class AuthorizationConverter
         };
     }
 
+    /// <summary>
+    /// Converts a Json Element to a Array of Cerbos Attribute Values.
+    /// </summary>
+    /// <param name="element">Element to be converted.</param>
+    /// <returns>Array of Attribute Values representing the Json Element</returns>
     private static AttributeValue[] ConvertJsonElementToAttributeValueArray(JsonElement element)
     {
         List<AttributeValue> list = [];
@@ -113,6 +143,14 @@ public static class AuthorizationConverter
         return [.. list];
     }
 
+    /// <summary>
+    /// Converts a Cerbos Plan Filter to an EFCore IQueryable
+    /// </summary>
+    /// <typeparam name="T">Type of Resource.</typeparam>
+    /// <param name="query">Base Query.</param>
+    /// <param name="filter">Cerbos AST to be converted.</param>
+    /// <param name="attributeMap">Optional Mapping of Attribute Names to names used in policies.</param>
+    /// <returns>IQueryable representing the AST.</returns>
     public static IQueryable<T> ConvertAstToQueryable<T>(
         IQueryable<T> query,
         PlanResourcesFilter filter,
@@ -144,6 +182,14 @@ public static class AuthorizationConverter
         return query.Where(lambda);
     }
 
+    /// <summary>
+    /// Traverses a Cerbos Filter Expression and converts it to a Linq Expression.
+    /// </summary>
+    /// <param name="expression">Expression of a Cerbos AST</param>
+    /// <param name="param">Parameter Expression</param>
+    /// <param name="attributeMap">Optional Mapping of Attribute Names to names used in policies.</param>
+    /// <returns>LinQ Expression representing the Filter Expression.</returns>
+    /// <exception cref="NotSupportedException">Thrown if Cerbos Operation is not supported by this method.</exception>
     private static Expression Traverse(
         PlanResourcesFilter.Types.Expression expression,
         ParameterExpression param,
@@ -246,6 +292,13 @@ public static class AuthorizationConverter
         throw new NotSupportedException($"The Cerbos operator '{op}' is currently not supported.");
     }
 
+    /// <summary>
+    /// Resolves a Filter Operand to an LinQ Expression.
+    /// </summary>
+    /// <param name="operand">Operand to be converted.</param>
+    /// <param name="param">Parameter Expression</param>
+    /// <param name="attributeMap"> Optional Mapping of Attribute Names to names used in policies. </param>
+    /// <returns>LinQ Expression representing the Operand.</returns>
     private static Expression ResolveOperand(
         PlanResourcesFilter.Types.Expression.Types.Operand operand,
         ParameterExpression param,
@@ -274,7 +327,12 @@ public static class AuthorizationConverter
         }
     }
 
-    private static Expression ResolveValue(Value value)
+    /// <summary>
+    /// Resolves a Protobuf wellknow type to an LinQ Expression.
+    /// </summary>
+    /// <param name="value">Value to be Converted.</param>
+    /// <returns>LinQ Expression Representing the Value</returns>
+    private static ConstantExpression ResolveValue(Value value)
     {
         switch (value.KindCase)
         {
@@ -287,9 +345,7 @@ public static class AuthorizationConverter
             case Value.KindOneofCase.NullValue:
                 return Expression.Constant(null);
             case Value.KindOneofCase.ListValue:
-                var constants = value
-                    .ListValue.Values.Select(v => ((ConstantExpression)ResolveValue(v)).Value)
-                    .ToArray();
+                var constants = value.ListValue.Values.Select(v => ResolveValue(v).Value).ToArray();
                 return Expression.Constant(constants);
             case Value.KindOneofCase.None:
             case Value.KindOneofCase.StructValue:
@@ -298,7 +354,13 @@ public static class AuthorizationConverter
         }
     }
 
-    private static Expression BuildInOperator(Expression item, Expression list)
+    /// <summary>
+    /// Converts an Cerbos in-Expression to a LinQ Expression.
+    /// </summary>
+    /// <param name="item">Item that in-Expression is checked for.</param>
+    /// <param name="list">List that in-Expression is checked for.</param>
+    /// <returns>LinQ Expression representing in-Constraint.</returns>
+    private static MethodCallExpression BuildInOperator(Expression item, Expression list)
     {
         if (list.NodeType == ExpressionType.Constant)
         {
@@ -330,11 +392,22 @@ public static class AuthorizationConverter
         return Expression.Call(null, containsMethod, list, item);
     }
 
+    /// <summary>
+    /// Creates Member Expression from a Parameter and a Property Path
+    /// </summary>
+    /// <param name="param">LinQ Parameter</param>
+    /// <param name="propertyPath">Path to Property.</param>
+    /// <returns>Member Expression.</returns>
     private static Expression GetMemberExpression(Expression param, string propertyPath)
     {
         return propertyPath.Split('.').Aggregate(param, Expression.PropertyOrField);
     }
 
+    /// <summary>
+    /// Aligns the types of two LinQ Constant Expressions
+    /// </summary>
+    /// <param name="left">A LinQ Constant.</param>
+    /// <param name="right">Another LinQ Constant.</param>
     private static void AlignTypes(ref Expression left, ref Expression right)
     {
         if (left.Type == right.Type)
