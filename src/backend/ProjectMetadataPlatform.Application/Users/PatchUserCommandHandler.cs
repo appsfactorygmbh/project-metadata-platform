@@ -96,7 +96,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
 
         var response = await _usersRepository.StoreUser(user);
 
-        await CheckAuthorization(user, oldUser);
+        await CheckAuthorization(oldUser, user);
         if (changes.Count > 0)
         {
             await _logRepository.AddUserLogForCurrentActor(user, Action.UPDATED_USER, changes);

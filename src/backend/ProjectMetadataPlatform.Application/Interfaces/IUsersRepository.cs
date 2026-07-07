@@ -36,7 +36,7 @@ public interface IUsersRepository
     /// Returns the user with the given email.
     /// </summary>
     /// <param name="email">The email of the searched for user.</param>
-    /// <returns>The user that is searched for or null.</returns>
+    /// <returns>The user that is searched for.</returns>
     Task<ApplicationUser> GetUserByEmailAsync(string email);
 
     /// <summary>
@@ -78,7 +78,14 @@ public interface IUsersRepository
     /// <summary>
     /// Returns an untracked user from the database by their id.
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">Employee Id of the user</param>
+    /// <returns>The user that is searched for. </returns>
     Task<ApplicationUser> GetUserByIdNoTrackingAsync(string id);
+
+    /// <summary>
+    /// Returns an untracked user from the database by their email.
+    /// </summary>
+    /// <param name="email">Email of the User</param>
+    /// <returns>The user that is searched for.</returns>
+    Task<ApplicationUser> GetUserByEmailNoTrackingAsync(string email);
 }
