@@ -406,6 +406,7 @@ themes.forEach((theme) => {
       cy.visit(
         '/' + projects[0].slug + '?isEditing=true&projectId=' + projects[0].id,
       );
+      cy.wait(waitTime);
       cy.wait([
         '@getProject',
         '@getProjectPlugins',
@@ -413,9 +414,11 @@ themes.forEach((theme) => {
         '@getTeams',
         '@getCompanies',
       ]);
-      cy.wait(waitTime);
+
       cy.screenshot('project-information-edit-view-' + theme, {
         overwrite: true,
+        capture: 'viewport',
+        scale: true,
       });
     });
 
