@@ -5,6 +5,8 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.OfficeLocations;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
@@ -18,17 +20,20 @@ public class DeleteOfficeLocationCommandHandlerTest
     private Mock<IOfficeLocationRepository> _mockOfficeLocationRepository;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockOfficeLocationRepository = new Mock<IOfficeLocationRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _handler = new DeleteOfficeLocationCommandHandler(
             officeLocationRepository: _mockOfficeLocationRepository.Object,
             logRepository: _mockLogRepo.Object,
-            unitOfWork: _mockUnitOfWork.Object
+            unitOfWork: _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -37,7 +42,20 @@ public class DeleteOfficeLocationCommandHandlerTest
     {
         // Arrange
         var returnOfficeLocation = new OfficeLocation() { Id = 1, OfficeLocationName = "Test_1" };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<OfficeLocation>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.DELETE, true },
+                }
+            );
         _ = _mockOfficeLocationRepository
             .Setup(repo => repo.GetOfficeLocationAsync(It.IsAny<int>()))
             .ReturnsAsync(returnOfficeLocation);
@@ -66,6 +84,31 @@ public class DeleteOfficeLocationCommandHandlerTest
                     )
                 ),
             Times.Once
+        );
+    }
+
+    [Test]
+    public async Task DeleteOfficeLocation_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<OfficeLocation>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.DELETE, false },
+                }
+            );
+
+        var request = new DeleteOfficeLocationCommand(Id: 1);
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
 }

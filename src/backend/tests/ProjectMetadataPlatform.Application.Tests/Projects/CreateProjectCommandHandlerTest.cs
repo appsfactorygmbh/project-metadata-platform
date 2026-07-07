@@ -6,6 +6,8 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Projects;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
@@ -26,6 +28,7 @@ public class CreateProjectCommandHandlerTest
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
     private Mock<ISlugHelper> _mockSlugHelper;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
@@ -37,6 +40,7 @@ public class CreateProjectCommandHandlerTest
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockSlugHelper = new Mock<ISlugHelper>();
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _handler = new CreateProjectCommandHandler(
             _mockProjectRepo.Object,
             _mockPluginRepo.Object,
@@ -44,7 +48,8 @@ public class CreateProjectCommandHandlerTest
             _companyRepository.Object,
             _mockLogRepo.Object,
             _mockUnitOfWork.Object,
-            _mockSlugHelper.Object
+            _mockSlugHelper.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -70,6 +75,20 @@ public class CreateProjectCommandHandlerTest
                 new InvalidOperationException(
                     "Project with this slug does not exist: example_project"
                 )
+            );
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, true },
+                }
             );
         // act
 
@@ -115,6 +134,21 @@ public class CreateProjectCommandHandlerTest
     {
         var plugins = new List<ProjectPlugins>();
         plugins.Add(new ProjectPlugins { Url = "https://example.com", PluginId = 200 });
+
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, true },
+                }
+            );
         _ = _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
         _ = _mockSlugHelper
             .Setup(m => m.GenerateSlug(It.IsAny<string>()))
@@ -176,6 +210,21 @@ public class CreateProjectCommandHandlerTest
     {
         var plugins = new List<ProjectPlugins>();
         plugins.Add(new ProjectPlugins { Url = "https://example.com", PluginId = 200 });
+
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, true },
+                }
+            );
         _ = _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
         _ = _companyRepository
             .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
@@ -227,6 +276,21 @@ public class CreateProjectCommandHandlerTest
     {
         var plugins = new List<ProjectPlugins>();
         plugins.Add(new ProjectPlugins { Url = "https://example.com", PluginId = 200 });
+
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, true },
+                }
+            );
         _ = _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
         _ = _mockSlugHelper
             .Setup(m => m.GenerateSlug(It.IsAny<string>()))
@@ -288,5 +352,41 @@ public class CreateProjectCommandHandlerTest
             Times.Never
         );
         _mockProjectRepo.Verify(m => m.AddProjectAsync(It.IsAny<Project>()), Times.Never);
+    }
+
+    [Test]
+    public async Task CreateProject_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, false },
+                }
+            );
+
+        var request = new CreateProjectCommand(
+            ProjectName: "Example Project",
+            ClientName: "Example Business Unit",
+            OfferId: "1",
+            CompanyId: 1,
+            CompanyState: CompanyState.EXTERNAL,
+            TeamId: null,
+            IsmsLevel: SecurityLevel.HIGH,
+            IsEoC: false,
+            Plugins: [],
+            Notes: new string('a', 501)
+        );
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
+        );
     }
 }

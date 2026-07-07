@@ -15,12 +15,17 @@ public class RefreshTokenQueryHandlerTest
 {
     private RefreshTokenQueryHandler _handler;
     private Mock<IRefreshTokenRepository> _mockRefreshTokenRepo;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
-        _handler = new RefreshTokenQueryHandler(_mockRefreshTokenRepo.Object);
+        _handler = new RefreshTokenQueryHandler(
+            _mockRefreshTokenRepo.Object,
+            _authorizationServiceMock.Object
+        );
     }
 
     [Test]
@@ -45,6 +50,7 @@ public class RefreshTokenQueryHandlerTest
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.InstanceOf<JwtTokens>());
+        _authorizationServiceMock.Verify(a => a.BypassAuthorization(), Times.Once);
     }
 
     [Test]
@@ -58,5 +64,6 @@ public class RefreshTokenQueryHandlerTest
         _ = Assert.ThrowsAsync<AuthInvalidRefreshTokenException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
+        _authorizationServiceMock.Verify(a => a.BypassAuthorization(), Times.Once);
     }
 }

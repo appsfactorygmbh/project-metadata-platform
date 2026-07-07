@@ -5,7 +5,9 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.BusinessUnits;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
@@ -17,6 +19,7 @@ public class CreateBusinessUnitCommandHandlerTest
 {
     private CreateBusinessUnitCommandHandler _handler;
     private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
 
@@ -24,13 +27,14 @@ public class CreateBusinessUnitCommandHandlerTest
     public void Setup()
     {
         _mockBusinessUnitRepository = new Mock<IBusinessUnitRepository>();
-
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _handler = new CreateBusinessUnitCommandHandler(
             businessUnitRepository: _mockBusinessUnitRepository.Object,
             logRepository: _mockLogRepo.Object,
-            unitOfWork: _mockUnitOfWork.Object
+            unitOfWork: _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -51,7 +55,20 @@ public class CreateBusinessUnitCommandHandlerTest
                 }
             )
             .Returns(Task.CompletedTask);
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<BusinessUnit>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, true },
+                }
+            );
         // Act
         var result = await _handler.Handle(
             new CreateBusinessUnitCommand(BusinessUnitName: "Test Name"),
@@ -78,12 +95,38 @@ public class CreateBusinessUnitCommandHandlerTest
                 ),
             Times.Once
         );
+        _authorizationServiceMock.Verify(
+            a =>
+                a.CheckAccess(
+                    It.IsAny<BusinessUnit>(),
+                    new List<AuthorizationConstants.Actions>
+                    {
+                        AuthorizationConstants.Actions.CREATE,
+                    },
+                    null
+                ),
+            Times.Once
+        );
     }
 
     [Test]
     public void CreateBusinessUnit_NameAlreadyExists_ThrowsBusinessUnitNameAlreadyExistsException()
     {
         // Arrange
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<BusinessUnit>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, true },
+                }
+            );
         _ = _mockBusinessUnitRepository
             .Setup(repo => repo.CheckIfBusinessUnitNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
@@ -96,5 +139,30 @@ public class CreateBusinessUnitCommandHandlerTest
         );
 
         Assert.That(ex.Message, Does.Contain("Test Name"));
+    }
+
+    [Test]
+    public async Task CreateBusinessUnitCommand_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<BusinessUnit>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, false },
+                }
+            );
+
+        var request = new CreateBusinessUnitCommand(BusinessUnitName: "Test Name");
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
+        );
     }
 }

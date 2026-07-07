@@ -5,7 +5,9 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Companies;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
@@ -17,6 +19,7 @@ public class CreateCompanyCommandHandlerTest
 {
     private CreateCompanyCommandHandler _handler;
     private Mock<ICompanyRepository> _mockCompanyRepository;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
 
@@ -24,13 +27,14 @@ public class CreateCompanyCommandHandlerTest
     public void Setup()
     {
         _mockCompanyRepository = new Mock<ICompanyRepository>();
-
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _handler = new CreateCompanyCommandHandler(
             companyRepository: _mockCompanyRepository.Object,
             logRepository: _mockLogRepo.Object,
-            unitOfWork: _mockUnitOfWork.Object
+            unitOfWork: _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -38,6 +42,20 @@ public class CreateCompanyCommandHandlerTest
     public async Task CreateCompany_NameDoesNotAlreadyExists_WorksFine()
     {
         // Arrange
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Company>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, true },
+                }
+            );
         _ = _mockCompanyRepository
             .Setup(repo => repo.CheckIfCompanyNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
@@ -79,6 +97,20 @@ public class CreateCompanyCommandHandlerTest
     public void CreateCompany_NameAlreadyExists_ThrowsCompanyNameAlreadyExistsException()
     {
         // Arrange
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Company>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, true },
+                }
+            );
         _ = _mockCompanyRepository
             .Setup(repo => repo.CheckIfCompanyNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
@@ -91,5 +123,30 @@ public class CreateCompanyCommandHandlerTest
         );
 
         Assert.That(ex.Message, Does.Contain("Test Name"));
+    }
+
+    [Test]
+    public async Task CreateCompanyCommand_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Company>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, false },
+                }
+            );
+
+        var request = new CreateCompanyCommand(CompanyName: "Test Name");
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
+        );
     }
 }

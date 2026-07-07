@@ -7,6 +7,8 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Domain.Users;
@@ -21,7 +23,7 @@ public class CreateUserCommandHandlerTest
     private Mock<IUsersRepository> _mockUsersRepo;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<ITeamRepository> _mockTeamRepo;
-
+    private Mock<IAuthorizationService> _authorizationServiceMock;
     private Mock<IOfficeLocationRepository> _mockOfficeLocationRepository;
 
     private Mock<ICompanyRepository> _mockCompanyRepository;
@@ -33,6 +35,7 @@ public class CreateUserCommandHandlerTest
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockUsersRepo = new Mock<IUsersRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockTeamRepo = new Mock<ITeamRepository>();
@@ -49,13 +52,28 @@ public class CreateUserCommandHandlerTest
             _mockBusinessUnitRepository.Object,
             _mockOfficeLocationRepository.Object,
             _mockCompanyRepository.Object,
-            _mockUnitOfWork.Object
+            _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
     [Test]
     public async Task CreateUser_Test()
     {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, true },
+                }
+            );
         _ = _mockTeamRepo
             .SetupSequence(m => m.GetTeamByNameAsync(It.IsAny<string>()))
             .ReturnsAsync(
@@ -122,6 +140,20 @@ public class CreateUserCommandHandlerTest
     [Test]
     public void CreateUser_ThrowsException_Test()
     {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, true },
+                }
+            );
         _ = _mockUsersRepo
             .Setup(m => m.CreateUserAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ThrowsAsync(new Exception("Error"));
@@ -160,6 +192,20 @@ public class CreateUserCommandHandlerTest
     [Test]
     public async Task CreateUserLog_Test()
     {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, true },
+                }
+            );
         _ = _mockUsersRepo
             .Setup(m => m.CreateUserAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync("1");
@@ -198,6 +244,44 @@ public class CreateUserCommandHandlerTest
                     )
                 ),
             Times.Once
+        );
+    }
+
+    [Test]
+    public async Task CreateUser_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, false },
+                }
+            );
+
+        var request = new CreateUserCommand(
+            "",
+            "thetruestrepairmanwillrepairmen@greendale.edu",
+            null,
+            true,
+            true,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
 }

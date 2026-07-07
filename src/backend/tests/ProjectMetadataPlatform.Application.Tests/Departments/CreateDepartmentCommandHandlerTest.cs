@@ -5,7 +5,9 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Departments;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Departments;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
@@ -19,18 +21,20 @@ public class CreateDepartmentCommandHandlerTest
     private Mock<IDepartmentRepository> _mockDepartmentRepository;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
         _mockDepartmentRepository = new Mock<IDepartmentRepository>();
-
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _handler = new CreateDepartmentCommandHandler(
             departmentRepository: _mockDepartmentRepository.Object,
             logRepository: _mockLogRepo.Object,
-            unitOfWork: _mockUnitOfWork.Object
+            unitOfWork: _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -38,6 +42,20 @@ public class CreateDepartmentCommandHandlerTest
     public async Task CreateDepartment_NameDoesNotAlreadyExists_WorksFine()
     {
         // Arrange
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Department>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, true },
+                }
+            );
         _ = _mockDepartmentRepository
             .Setup(repo => repo.CheckIfDepartmentNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
@@ -82,6 +100,20 @@ public class CreateDepartmentCommandHandlerTest
     public void CreateDepartment_NameAlreadyExists_ThrowsDepartmentNameAlreadyExistsException()
     {
         // Arrange
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Department>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, true },
+                }
+            );
         _ = _mockDepartmentRepository
             .Setup(repo => repo.CheckIfDepartmentNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
@@ -94,5 +126,30 @@ public class CreateDepartmentCommandHandlerTest
         );
 
         Assert.That(ex.Message, Does.Contain("Test Name"));
+    }
+
+    [Test]
+    public async Task CreateDepartment_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Department>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.CREATE, false },
+                }
+            );
+
+        var request = new CreateDepartmentCommand(DepartmentName: "Test Name");
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
+        );
     }
 }

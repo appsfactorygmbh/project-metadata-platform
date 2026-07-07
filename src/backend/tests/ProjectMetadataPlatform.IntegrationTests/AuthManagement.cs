@@ -136,9 +136,19 @@ public class AuthManagement : IntegrationTestsBase
     public async Task DeletedApiTokenIsNotAccepted()
     {
         var client = CreateClient();
-        await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
-        await CreateApiTokenAndAddItToDefaultRequestHeadersOfClient(client);
 
+        await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
+        var tokenValue = (
+            await ToJsonElement(
+                client.PostAsJsonAsync(
+                    "/auth/ApiTokens",
+                    new { Name = "Token", Scopes = new string[] { "GET_PROJECT" } }
+                ),
+                HttpStatusCode.Created
+            )
+        )
+            .GetProperty("token")
+            .GetString();
         var tokens = await ToJsonElement(client.GetAsync("auth/ApiTokens"), HttpStatusCode.OK);
         Assert.That(tokens.GetArrayLength(), Is.EqualTo(1));
 
@@ -147,7 +157,9 @@ public class AuthManagement : IntegrationTestsBase
         var deleteResponse = await client.DeleteAsync($"auth/ApiTokens/{tokenId}");
 
         Assert.That(deleteResponse.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
-        var error = await client.GetAsync("auth/ApiTokens");
+        client.DefaultRequestHeaders.Clear();
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {tokenValue}");
+        var error = await client.GetAsync("Projects");
 
         Assert.That(error.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
     }
@@ -157,7 +169,17 @@ public class AuthManagement : IntegrationTestsBase
     {
         var client = CreateClient();
         await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
-        await CreateApiTokenAndAddItToDefaultRequestHeadersOfClient(client);
+        var tokenValue = (
+            await ToJsonElement(
+                client.PostAsJsonAsync(
+                    "/auth/ApiTokens",
+                    new { Name = "Token", Scopes = new string[] { "GET_PROJECT" } }
+                ),
+                HttpStatusCode.Created
+            )
+        )
+            .GetProperty("token")
+            .GetString();
 
         var tokens = await ToJsonElement(client.GetAsync("auth/ApiTokens"), HttpStatusCode.OK);
         Assert.That(tokens.GetArrayLength(), Is.EqualTo(1));
@@ -165,17 +187,14 @@ public class AuthManagement : IntegrationTestsBase
         var tokenId = tokens[0].GetProperty("id").GetInt32();
 
         var token = await ToJsonElement(client.PatchAsync($"auth/ApiTokens/{tokenId}", null));
-
-        var error = await client.GetAsync("auth/ApiTokens");
+        client.DefaultRequestHeaders.Clear();
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {tokenValue}");
+        var error = await client.GetAsync("Projects");
 
         Assert.That(error.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
 
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token.GetProperty("token")}");
-        var tokensAfterRegen = await ToJsonElement(
-            client.GetAsync("auth/ApiTokens"),
-            HttpStatusCode.OK
-        );
-        Assert.That(tokensAfterRegen.GetArrayLength(), Is.EqualTo(1));
+        _ = await ToJsonElement(client.GetAsync("Projects"), HttpStatusCode.OK);
     }
 }

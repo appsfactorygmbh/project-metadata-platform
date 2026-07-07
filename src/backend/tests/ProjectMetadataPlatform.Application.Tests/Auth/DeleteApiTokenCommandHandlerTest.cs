@@ -6,6 +6,8 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Tests.Auth;
@@ -15,6 +17,7 @@ public class DeleteApiTokenCommandHandlerTest
 {
     private Mock<IApiTokenRepository> _apiTokenRepositoryMock;
     private Mock<ILogRepository> _logRepositoryMock;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
     private Mock<IUnitOfWork> _unitOfWorkMock;
 
     private DeleteApiTokenCommandHandler _handler;
@@ -25,10 +28,13 @@ public class DeleteApiTokenCommandHandlerTest
         _apiTokenRepositoryMock = new Mock<IApiTokenRepository>();
         _logRepositoryMock = new Mock<ILogRepository>();
         _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _handler = new DeleteApiTokenCommandHandler(
             _apiTokenRepositoryMock.Object,
             _unitOfWorkMock.Object,
-            _logRepositoryMock.Object
+            _logRepositoryMock.Object,
+            _authorizationServiceMock.Object
         );
     }
 
@@ -42,6 +48,21 @@ public class DeleteApiTokenCommandHandlerTest
             Token = "TokeHash",
             Scopes = new List<TokenScopes> { TokenScopes.SCIM },
         };
+
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApiToken>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.DELETE, true },
+                }
+            );
         _ = _apiTokenRepositoryMock
             .Setup(m => m.GetApiTokenById(It.IsAny<int>()))
             .ReturnsAsync(token);
@@ -49,6 +70,18 @@ public class DeleteApiTokenCommandHandlerTest
         var request = new DeleteApiTokenCommand(1);
 
         await _handler.Handle(request, It.IsAny<CancellationToken>());
+        _authorizationServiceMock.Verify(
+            a =>
+                a.CheckAccess(
+                    token,
+                    new List<AuthorizationConstants.Actions>
+                    {
+                        AuthorizationConstants.Actions.DELETE,
+                    },
+                    null
+                ),
+            Times.Once()
+        );
         _apiTokenRepositoryMock.Verify(m => m.DeleteApiToken(token), Times.Once);
         _logRepositoryMock.Verify(
             m =>
@@ -58,6 +91,30 @@ public class DeleteApiTokenCommandHandlerTest
                     It.IsAny<List<LogChange>>()
                 ),
             Times.Once
+        );
+    }
+
+    [Test]
+    public async Task DeleteApiTokenCommand_AuthorizationFailsThrows()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApiToken>(),
+                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(
+                new Dictionary<AuthorizationConstants.Actions, bool>
+                {
+                    { AuthorizationConstants.Actions.DELETE, false },
+                }
+            );
+
+        var request = new DeleteApiTokenCommand(1);
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
 }

@@ -13,10 +13,15 @@ public class GetProjectIdBySlugQueryHandlerTest
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockProjectRepo = new Mock<IProjectsRepository>();
-        _handler = new GetProjectIdBySlugQueryHandler(_mockProjectRepo.Object);
+        _handler = new GetProjectIdBySlugQueryHandler(
+            _mockProjectRepo.Object,
+            authorizationService: _authorizationServiceMock.Object
+        );
     }
 
+    private Mock<IAuthorizationService> _authorizationServiceMock;
     private GetProjectIdBySlugQueryHandler _handler;
     private Mock<IProjectsRepository> _mockProjectRepo;
 
@@ -30,5 +35,6 @@ public class GetProjectIdBySlugQueryHandlerTest
 
         Assert.That(result, Is.InstanceOf<int?>());
         Assert.That(result, Is.EqualTo(2));
+        _authorizationServiceMock.Verify(a => a.BypassAuthorization(), Times.Once);
     }
 }
