@@ -392,7 +392,7 @@ themes.forEach((theme) => {
         '@getProjectPlugins',
         '@getUnarchivedProjectPlugins',
         '@getTeams',
-        '@getCompanies'
+        '@getCompanies',
       ]);
       cy.wait(waitTime);
       cy.screenshot('project-information-view-' + theme, {
@@ -411,7 +411,7 @@ themes.forEach((theme) => {
         '@getProjectPlugins',
         '@getUnarchivedProjectPlugins',
         '@getTeams',
-        '@getCompanies'
+        '@getCompanies',
       ]);
       cy.wait(waitTime);
       cy.screenshot('project-information-edit-view-' + theme, {
