@@ -253,7 +253,7 @@ public class PatchTeamCommandHandlerTest
             .Setup(repo => repo.GetTeamAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
         var request = new PatchTeamCommand(Id: 1, TeamName: "Test_2", PTL: "Max Mustermann");
-  
+
         _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );

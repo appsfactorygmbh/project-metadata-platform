@@ -161,7 +161,7 @@ public class GetGlobalPluginsQueryHandlerTest
     {
         _ = _pluginRepositoryMock
             .Setup(r => r.GetGlobalPluginsAsync())
-            .ReturnsAsync(new List<Plugin>{}.BuildMock());
+            .ReturnsAsync(new List<Plugin> { }.BuildMock());
         _ = _authorizationServiceMock
             .Setup(a =>
                 a.TryGetPlanResourceQuery(

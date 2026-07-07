@@ -96,7 +96,8 @@ public class GetDepartmentQueryHandlerTest
 
         Assert.That(ex.Message, Does.Contain("1"));
     }
-        [Test]
+
+    [Test]
     public async Task GetDepartment_AuthorizationFailsThrowsTest()
     {
         _ = _authorizationServiceMock
