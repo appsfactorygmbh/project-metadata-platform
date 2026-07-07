@@ -87,6 +87,25 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
     }
 
     /// <summary>
+    /// Returns the user with the given email without tracking changes.
+    /// </summary>
+    /// <param name="email">The email of the user to be searched for.</param>
+    /// <returns>The user with the specified email, or null if not found.</returns>
+    public async Task<ApplicationUser> GetUserByEmailNoTrackingAsync(string email)
+    {
+        return await _context
+                .Users.AsNoTracking()
+                .Include(p => p.Teams)
+                .Include(u => u.TeamSupport)
+                .Include(u => u.Company)
+                .Include(u => u.BusinessUnits)
+                .Include(u => u.Departments)
+                .Include(u => u.OfficeLocation)
+                .FirstOrDefaultAsync(u => u.Email == email)
+            ?? throw new UserNotFoundException(email);
+    }
+
+    /// <summary>
     /// Creates a new user with the given data.
     /// </summary>
     /// <param name="user">User to be created.</param>

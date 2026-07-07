@@ -315,7 +315,7 @@ public class AuthorizationService : IAuthorizationService
         var email =
             _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
             ?? "Unknown user";
-        var user = await _usersRepository.GetUserByEmailAsync(email);
+        var user = await _usersRepository.GetUserByEmailNoTrackingAsync(email);
 
         return user.ToPrincipal(AuthorizationConstants.PRINCIPLE_USER);
     }
