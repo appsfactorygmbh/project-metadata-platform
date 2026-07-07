@@ -292,7 +292,6 @@ public class GetAllProjectsQueryHandlerTest
         var request = new GetAllProjectsQuery(null, null);
         var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).ToList();
 
-
         Assert.That(result, Is.EquivalentTo(projects));
     }
 }
