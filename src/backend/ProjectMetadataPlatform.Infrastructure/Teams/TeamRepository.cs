@@ -27,7 +27,7 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
     }
 
     /// <inheritdoc/>
-    public async Task<List<Team>> GetTeamsAsync(string? fullTextQuery, string? teamName)
+    public async Task<IQueryable<Team>> GetTeamsAsync(string? fullTextQuery, string? teamName)
     {
         var filteredQuery = _context.Teams.AsQueryable();
         if (!string.IsNullOrWhiteSpace(fullTextQuery))
@@ -35,7 +35,7 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
             var lowerTextSearch = fullTextQuery.ToLowerInvariant();
             filteredQuery = filteredQuery.Where(team =>
                 EF.Functions.Like(
-                    team.BusinessUnit.BusinessUnitName.ToLower(),
+                    team.BusinessUnit!.BusinessUnitName.ToLower(),
                     $"%{lowerTextSearch}%"
                 )
                 || (
@@ -51,7 +51,10 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
                 EF.Functions.Like(team.TeamName.ToLower(), $"%{teamName.ToLower()}%")
             );
         }
-        return await filteredQuery.Include(t => t.BusinessUnit).ToListAsync();
+        return filteredQuery
+            .Include(t => t.BusinessUnit)
+                .ThenInclude(b => b!.Users!)
+                    .ThenInclude(u => u.Departments);
     }
 
     /// <inheritdoc/>

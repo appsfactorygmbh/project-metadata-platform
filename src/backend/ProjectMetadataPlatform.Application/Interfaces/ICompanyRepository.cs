@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ProjectMetadataPlatform.Domain.Companies;
 
@@ -13,7 +14,7 @@ public interface ICompanyRepository
     /// Returns all companies.
     /// </summary>
     /// <returns>List of all Companies.</returns>
-    Task<IList<Company>> GetCompaniesAsync();
+    Task<IQueryable<Company>> GetCompaniesAsync();
 
     /// <summary>
     /// Returns a Company by its Id.

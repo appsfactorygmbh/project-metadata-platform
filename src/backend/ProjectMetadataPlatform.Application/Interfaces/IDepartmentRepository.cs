@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ProjectMetadataPlatform.Domain.Departments;
 
@@ -13,7 +14,7 @@ public interface IDepartmentRepository
     /// Returns all Departments.
     /// </summary>
     /// <returns>List of all Departments.</returns>
-    Task<IList<Department>> GetDepartmentsAsync();
+    Task<IQueryable<Department>> GetDepartmentsAsync();
 
     /// <summary>
     /// Returns a Department by its Id.
