@@ -1,9 +1,11 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Projects;
 
 namespace ProjectMetadataPlatform.Application.Projects;
@@ -12,13 +14,18 @@ namespace ProjectMetadataPlatform.Application.Projects;
 public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, IEnumerable<Project>>
 {
     private readonly IProjectsRepository _projectRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetAllProjectsQueryHandler" />.
     /// </summary>
-    public GetAllProjectsQueryHandler(IProjectsRepository projectsRepository)
+    public GetAllProjectsQueryHandler(
+        IProjectsRepository projectsRepository,
+        IAuthorizationService authorizationService
+    )
     {
         _projectRepository = projectsRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <inheritdoc />
@@ -28,7 +35,27 @@ public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, I
     )
     {
         var projects = await _projectRepository.GetProjectsAsync(request);
-        return projects
+        var queriedProjects = await _authorizationService.TryGetPlanResourceQuery(projects);
+        if (queriedProjects == null)
+        {
+            List<Project> filteredProjects = [];
+            foreach (var project in projects)
+            {
+                if (
+                    (
+                        await _authorizationService.CheckAccess(
+                            project,
+                            [AuthorizationConstants.Actions.GET]
+                        )
+                    )[AuthorizationConstants.Actions.GET]
+                )
+                {
+                    filteredProjects.Add(project);
+                }
+            }
+            return filteredProjects.OrderBy(project => project.ProjectName.ToLowerInvariant());
+        }
+        return (await queriedProjects.ToListAsync(cancellationToken: cancellationToken))
             .OrderBy(project => project.ClientName)
             .ThenBy(project => project.ProjectName);
     }

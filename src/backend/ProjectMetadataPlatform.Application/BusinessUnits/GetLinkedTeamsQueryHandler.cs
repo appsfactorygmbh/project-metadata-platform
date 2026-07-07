@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 
 namespace ProjectMetadataPlatform.Application.BusinessUnits;
 
@@ -13,13 +15,18 @@ namespace ProjectMetadataPlatform.Application.BusinessUnits;
 public class GetLinkedTeamsQueryHandler : IRequestHandler<GetLinkedTeamsQuery, List<int>>
 {
     private readonly IBusinessUnitRepository _businessUnitRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetLinkedTeamsQueryHandler" />.
     /// </summary>
-    public GetLinkedTeamsQueryHandler(IBusinessUnitRepository businessUnitRepository)
+    public GetLinkedTeamsQueryHandler(
+        IBusinessUnitRepository businessUnitRepository,
+        IAuthorizationService authorizationService
+    )
     {
         _businessUnitRepository = businessUnitRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -33,12 +40,15 @@ public class GetLinkedTeamsQueryHandler : IRequestHandler<GetLinkedTeamsQuery, L
         CancellationToken cancellationToken
     )
     {
-        return
-        [
-            .. (
-                (await _businessUnitRepository.GetBusinessUnitWithTeamsAsync(request.Id)).Teams
-                ?? []
-            ).Select(team => team.Id),
-        ];
+        var bu = await _businessUnitRepository.GetBusinessUnitWithTeamsAsync(request.Id);
+        if (
+            !(await _authorizationService.CheckAccess(bu, [AuthorizationConstants.Actions.GET]))[
+                AuthorizationConstants.Actions.GET
+            ]
+        )
+        {
+            throw new UnauthorizedException();
+        }
+        return [.. (bu.Teams ?? []).Select(team => team.Id)];
     }
 }

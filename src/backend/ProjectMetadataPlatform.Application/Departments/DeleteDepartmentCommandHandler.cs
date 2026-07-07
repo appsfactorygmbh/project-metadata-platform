@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Departments;
@@ -14,6 +16,7 @@ public class DeleteDepartmentCommandHandler : IRequestHandler<DeleteDepartmentCo
     private readonly IDepartmentRepository _departmentRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="DeleteDepartmentCommandHandler" />.
@@ -21,12 +24,14 @@ public class DeleteDepartmentCommandHandler : IRequestHandler<DeleteDepartmentCo
     public DeleteDepartmentCommandHandler(
         IDepartmentRepository departmentRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _departmentRepository = departmentRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -38,6 +43,17 @@ public class DeleteDepartmentCommandHandler : IRequestHandler<DeleteDepartmentCo
     public async Task Handle(DeleteDepartmentCommand request, CancellationToken cancellationToken)
     {
         var department = await _departmentRepository.GetDepartmentAsync(request.Id);
+        if (
+            !(
+                await _authorizationService.CheckAccess(
+                    department,
+                    [AuthorizationConstants.Actions.DELETE]
+                )
+            )[AuthorizationConstants.Actions.DELETE]
+        )
+        {
+            throw new UnauthorizedException();
+        }
         _ = await _departmentRepository.DeleteDepartmentAsync(department);
         await _logRepository.AddDepartmentLogForCurrentActor(
             department,

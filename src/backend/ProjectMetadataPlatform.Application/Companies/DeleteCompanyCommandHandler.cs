@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 
@@ -16,6 +18,7 @@ public class DeleteCompanyCommandHandler : IRequestHandler<DeleteCompanyCommand>
     private readonly ICompanyRepository _companyRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="DeleteCompanyCommandHandler" />.
@@ -23,12 +26,14 @@ public class DeleteCompanyCommandHandler : IRequestHandler<DeleteCompanyCommand>
     public DeleteCompanyCommandHandler(
         ICompanyRepository companyRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _companyRepository = companyRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -41,6 +46,17 @@ public class DeleteCompanyCommandHandler : IRequestHandler<DeleteCompanyCommand>
     public async Task Handle(DeleteCompanyCommand request, CancellationToken cancellationToken)
     {
         var company = await _companyRepository.GetCompanyWithProjectsAsync(request.Id);
+        if (
+            !(
+                await _authorizationService.CheckAccess(
+                    company,
+                    [AuthorizationConstants.Actions.DELETE]
+                )
+            )[AuthorizationConstants.Actions.DELETE]
+        )
+        {
+            throw new UnauthorizedException();
+        }
         if (company.Projects != null && company.Projects.Count > 0)
         {
             throw new CompanyStillLinkedToProjectsException(

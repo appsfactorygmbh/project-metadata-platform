@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
@@ -18,6 +20,7 @@ public class UpdateOfficeLocationCommandHandler
     private readonly IOfficeLocationRepository _officeLocationRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref=" UpdateOfficeLocationCommandHandler" />.
@@ -25,12 +28,14 @@ public class UpdateOfficeLocationCommandHandler
     public UpdateOfficeLocationCommandHandler(
         IOfficeLocationRepository officeLocationRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _officeLocationRepository = officeLocationRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -46,6 +51,7 @@ public class UpdateOfficeLocationCommandHandler
     )
     {
         var location = await _officeLocationRepository.GetOfficeLocationAsync(request.Id);
+        await CheckAuthorization(location, request);
         var logChanges = new List<LogChange> { };
         if (
             request.OfficeLocationName != null
@@ -91,5 +97,36 @@ public class UpdateOfficeLocationCommandHandler
         }
 
         return location;
+    }
+
+    /// <summary>
+    /// Checks Authorization for a Office Location and its update request.
+    /// </summary>
+    /// <param name="location">Requested Office Location.</param>
+    /// <param name="request">Update Request for the Location.</param>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedException">Thrown if Update Request is unauthorized</exception>
+    private async Task CheckAuthorization(
+        OfficeLocation location,
+        UpdateOfficeLocationCommand request
+    )
+    {
+        Dictionary<string, object?> updates = [];
+        if (request.OfficeLocationName != location.OfficeLocationName)
+        {
+            updates.Add(nameof(OfficeLocation.OfficeLocationName), request.OfficeLocationName);
+        }
+        if (
+            !(
+                await _authorizationService.CheckAccess(
+                    location,
+                    [AuthorizationConstants.Actions.EDIT],
+                    updates
+                )
+            )[AuthorizationConstants.Actions.EDIT]
+        )
+        {
+            throw new UnauthorizedException();
+        }
     }
 }

@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
@@ -20,6 +22,7 @@ public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, int>
     private readonly IBusinessUnitRepository _businessUnitRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of<see cref="CreateTeamCommandHandler" />.
@@ -28,17 +31,20 @@ public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, int>
     /// <param name="businessUnitRepository">The repository for managing bus.</param>
     /// <param name="logRepository">The repository for managing logs.</param>
     /// <param name="unitOfWork">The unit of work for managing transactions.</param>
+    /// <param name="authorizationService"></param>
     public CreateTeamCommandHandler(
         ITeamRepository teamRepository,
         IBusinessUnitRepository businessUnitRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _teamRepository = teamRepository;
         _businessUnitRepository = businessUnitRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -50,6 +56,24 @@ public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, int>
     /// <exception cref="TeamNameAlreadyExistsException">The Team name already exists.</exception>
     public async Task<int> Handle(CreateTeamCommand request, CancellationToken cancellationToken)
     {
+        var team = new Team
+        {
+            TeamName = request.TeamName,
+            BusinessUnitId = request.BusinessUnitId,
+            PTL = request.PTL,
+        };
+        if (
+            !(
+                await _authorizationService.CheckAccess(
+                    team,
+                    [AuthorizationConstants.Actions.CREATE]
+                )
+            )[AuthorizationConstants.Actions.CREATE]
+        )
+        {
+            throw new UnauthorizedException();
+        }
+
         if (await _teamRepository.CheckIfTeamNameExistsAsync(request.TeamName))
         {
             throw new TeamNameAlreadyExistsException(request.TeamName);
@@ -59,14 +83,6 @@ public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, int>
         {
             throw new BusinessUnitNotFoundException(request.BusinessUnitId);
         }
-
-        var team = new Team
-        {
-            TeamName = request.TeamName,
-            BusinessUnitId = request.BusinessUnitId,
-            PTL = request.PTL,
-        };
-
         await AddTeamPluginLog(team, request);
         await _teamRepository.AddTeamAsync(team);
         await _unitOfWork.CompleteAsync();
