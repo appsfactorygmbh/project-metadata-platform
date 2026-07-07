@@ -275,8 +275,10 @@ public static class DependencyInjection
                     + string.Join(", ", identityResult.Errors.Select(e => e.Description))
             );
         }
-
+        var tracker = scope.ServiceProvider.GetRequiredService<IAuthorizationTracker>();
+        tracker.MarkAsChecked();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
         _ = unitOfWork.CompleteAsync();
     }
 
@@ -316,11 +318,21 @@ public static class DependencyInjection
         });
     }
 
+    /// <summary>
+    /// Adds the Cerbos Client.
+    /// </summary>
+    /// <param name="url">Service Url</param>
+    /// <returns>The new Client</returns>
     public static ICerbosClient AddCerbosClient(string url)
     {
         return CerbosClientBuilder.ForTarget(url).WithPlaintext().Build();
     }
 
+    /// <summary>
+    /// Adds the Cerbos Admin Client.
+    /// </summary>
+    /// <param name="url">Service Url</param>
+    /// <returns>The new Client</returns>
     public static ICerbosAdminClient AddCerbosAdminClient(string url)
     {
         var user = EnvironmentUtils.GetEnvVarOrLoadFromFile("PMP_CERBOS_USER");
@@ -328,12 +340,16 @@ public static class DependencyInjection
         return CerbosClientBuilder.ForTarget(url).WithPlaintext().BuildAdminClient(user, password);
     }
 
+    /// <summary>
+    /// Adds the Default Principal Policies for Users and Tokens.
+    /// </summary>
+    /// <returns></returns>
     public static async Task AddDefaultPolicies(this IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
         var services = scope.ServiceProvider;
         var adminClient = services.GetRequiredService<ICerbosAdminClient>();
-                var basePolicy = new PrincipalPolicy()
+        var basePolicy = new PrincipalPolicy()
         {
             Principal = AuthorizationConstants.PRINCIPLE_USER,
             Version = AuthorizationConstants.POLICY_VERSION,
@@ -363,7 +379,7 @@ public static class DependencyInjection
                                             new Match
                                             {
                                                 Expr =
-                                                    "P.attr.Departments.exists(d, d.DepartmentName == 'IT')",
+                                                    "P.attr.Departments.exists(d, d.DepartmentName in ['IT Admin', 'IT Development'])",
                                             },
                                         },
                                     },
@@ -431,6 +447,10 @@ public static class DependencyInjection
         scope.Dispose();
     }
 
+    /// <summary>
+    /// Creates Conditions for Actions for Api Tokens.
+    /// </summary>
+    /// <returns>List of Conditions per Action.</returns>
     private static Google.Protobuf.Collections.RepeatedField<PrincipalRule.Types.Action> CreateApiTokenActionConditions()
     {
         var actionsList =
@@ -480,7 +500,11 @@ public static class DependencyInjection
                             {
                                 Of =
                                 {
-                                    new Match { Expr = $"'{action}_' + R.kind in P.attr.Scopes" },
+                                    new Match
+                                    {
+                                        Expr =
+                                            $"'{action}_' + R.kind.upperAscii() in P.attr.Scopes",
+                                    },
                                     new Match
                                     {
                                         Expr =
