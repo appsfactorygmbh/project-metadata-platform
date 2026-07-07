@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
@@ -14,7 +14,7 @@ public interface IApiTokenRepository
     /// Gets a List of all Api Tokens.
     /// </summary>
     /// <returns>List of Api Tokens</returns>
-    Task<IEnumerable<ApiToken>> GetApiTokens();
+    Task<IQueryable<ApiToken>> GetApiTokens();
 
     /// <summary>
     /// Gets a specific Api Token via its id.

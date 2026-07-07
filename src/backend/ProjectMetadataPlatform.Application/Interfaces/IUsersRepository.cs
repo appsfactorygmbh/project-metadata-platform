@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ProjectMetadataPlatform.Domain.Users;
 
@@ -22,7 +23,7 @@ public interface IUsersRepository
     /// </summary>
     /// <param name="filter">Scim style filter.</param>
     /// <returns>Enumerable of all filtered User-Objects</returns>
-    Task<IEnumerable<ApplicationUser>> GetUsersAsync(string filter);
+    Task<IQueryable<ApplicationUser>> GetUsersAsync(string filter);
 
     /// <summary>
     /// Returns a user by their ID.
@@ -73,4 +74,11 @@ public interface IUsersRepository
     /// <param name="id">Employee Id of the user.</param>
     /// <returns>boolean representing the existence of the user.</returns>
     Task<bool> CheckUserExists(string id);
+
+    /// <summary>
+    /// Returns an untracked user from the database by their id.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task<ApplicationUser> GetUserByIdNoTrackingAsync(string id);
 }

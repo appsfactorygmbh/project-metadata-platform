@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -26,9 +27,9 @@ public class DepartmentRepository : RepositoryBase<Department>, IDepartmentRepos
     }
 
     /// <inheritdoc/>
-    public async Task<IList<Department>> GetDepartmentsAsync()
+    public async Task<IQueryable<Department>> GetDepartmentsAsync()
     {
-        return await _context.Departments.AsNoTracking().ToListAsync();
+        return _context.Departments.AsNoTracking();
     }
 
     /// <inheritdoc/>

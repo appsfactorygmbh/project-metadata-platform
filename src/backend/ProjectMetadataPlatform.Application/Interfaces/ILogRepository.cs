@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
@@ -124,32 +125,32 @@ public interface ILogRepository
     /// </summary>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <returns>A list of logs associated with the specified project.</returns>
-    Task<List<Log>> GetLogsForProject(int projectId);
+    Task<IQueryable<Log>> GetLogsForProject(int projectId);
 
     /// <summary>
     /// Retrieves logs that match the specified search term.
     /// </summary>
     /// <param name="search">The search term to filter logs.</param>
     /// <returns>A list of logs that match the search term.</returns>
-    Task<List<Log>> GetLogsWithSearch(string search);
+    Task<IQueryable<Log>> GetLogsWithSearch(string search);
 
     /// <summary>
     /// Retrieves the logs for a specific user.
     /// </summary>
     /// <param name="userId">The unique identifier of the user.</param>
     /// <returns> A list of logs associated with the specified user.</returns>
-    Task<List<Log>> GetLogsForUser(string userId);
+    Task<IQueryable<Log>> GetLogsForUser(string userId);
 
     /// <summary>
     /// Retrieves the logs for a specific project.
     /// </summary>
     /// <param name="globalPluginId">The unique identifier of the global plugin.</param>
     /// <returns> A list of logs associated with the specified global plugin.</returns>
-    Task<List<Log>> GetLogsForGlobalPlugin(int globalPluginId);
+    Task<IQueryable<Log>> GetLogsForGlobalPlugin(int globalPluginId);
 
     /// <summary>
     /// Retrieves all logs from the database.
     /// </summary>
     /// <returns>A list of all logs, sorted by timestamp.</returns>
-    Task<List<Log>> GetAllLogs();
+    Task<IQueryable<Log>> GetAllLogs();
 }

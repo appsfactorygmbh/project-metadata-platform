@@ -32,7 +32,7 @@ public class ApiTokenRepository : RepositoryBase<ApiToken>, IApiTokenRepository
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<ApiToken>> GetApiTokens()
+    public async Task<IQueryable<ApiToken>> GetApiTokens()
     {
         return GetEverything();
     }

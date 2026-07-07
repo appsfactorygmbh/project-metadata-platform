@@ -426,7 +426,7 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
     }
 
     ///  <inheritdoc />
-    public async Task<List<Log>> GetLogsForProject(int projectId)
+    public async Task<IQueryable<Log>> GetLogsForProject(int projectId)
     {
         var res = _context
             .Logs.Include(l => l.Changes)
@@ -434,11 +434,11 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
             .Include(l => l.Author)
             .Include(l => l.AuthorToken)
             .Where(log => log.ProjectId == projectId);
-        return SortByTimestamp(await res.ToListAsync());
+        return res;
     }
 
     ///  <inheritdoc />
-    public async Task<List<Log>> GetLogsWithSearch(string search)
+    public async Task<IQueryable<Log>> GetLogsWithSearch(string search)
     {
         var lowerSearch = search.ToLower();
 
@@ -481,11 +481,11 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
                 )
             );
 
-        return SortByTimestamp(await res.ToListAsync());
+        return res;
     }
 
     ///  <inheritdoc />
-    public async Task<List<Log>> GetLogsForUser(string userId)
+    public async Task<IQueryable<Log>> GetLogsForUser(string userId)
     {
         var res = _context
             .Logs.Include(l => l.Changes)
@@ -493,11 +493,11 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
             .Include(l => l.AuthorToken)
             .Include(l => l.Author)
             .Where(log => log.AffectedUserId == userId);
-        return SortByTimestamp(await res.ToListAsync());
+        return res;
     }
 
     ///  <inheritdoc />
-    public async Task<List<Log>> GetLogsForGlobalPlugin(int globalPluginId)
+    public async Task<IQueryable<Log>> GetLogsForGlobalPlugin(int globalPluginId)
     {
         var res = _context
             .Logs.Include(l => l.Changes)
@@ -505,35 +505,22 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
             .Include(l => l.Author)
             .Include(l => l.AuthorToken)
             .Where(log => log.GlobalPluginId == globalPluginId);
-        return SortByTimestamp(await res.ToListAsync());
+        return res;
     }
 
     ///  <inheritdoc />
-    public async Task<List<Log>> GetAllLogs()
+    public async Task<IQueryable<Log>> GetAllLogs()
     {
-        return SortByTimestamp(
-            await GetEverything()
-                .Include(log => log.Project)
-                .Include(log => log.Team)
-                .Include(log => log.AffectedToken)
-                .Include(log => log.Company)
-                .Include(log => log.Department)
-                .Include(log => log.BusinessUnit)
-                .Include(log => log.OfficeLocation)
-                .Include(log => log.Author)
-                .Include(l => l.AuthorToken)
-                .Include(log => log.Changes)
-                .ToListAsync()
-        );
-    }
-
-    /// <summary>
-    /// Sorts a list of logs by their timestamp.
-    /// </summary>
-    /// <param name="logs">The list of logs to be sorted.</param>
-    /// <returns>A list of logs sorted by timestamp.</returns>
-    private static List<Log> SortByTimestamp(List<Log> logs)
-    {
-        return [.. logs.OrderByDescending(log => log.TimeStamp)];
+        return GetEverything()
+            .Include(log => log.Project)
+            .Include(log => log.Team)
+            .Include(log => log.AffectedToken)
+            .Include(log => log.Company)
+            .Include(log => log.Department)
+            .Include(log => log.BusinessUnit)
+            .Include(log => log.OfficeLocation)
+            .Include(log => log.Author)
+            .Include(l => l.AuthorToken)
+            .Include(log => log.Changes);
     }
 }
