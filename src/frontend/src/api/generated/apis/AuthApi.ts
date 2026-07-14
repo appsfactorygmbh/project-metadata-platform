@@ -16,12 +16,14 @@ import * as runtime from '../runtime';
 import type {
   CreateApiTokenRequest,
   GetApiTokenDetailsResponse,
+  GetApiTokenDetailsResponseGetListResponse,
   LoginRequest,
   LoginResponse,
 } from '../models/index';
 import {
   CreateApiTokenRequestToJSON,
   GetApiTokenDetailsResponseFromJSON,
+  GetApiTokenDetailsResponseGetListResponseFromJSON,
   LoginRequestToJSON,
   LoginResponseFromJSON,
 } from '../models/index';
@@ -62,14 +64,14 @@ export interface AuthApiInterface {
    */
   authApiTokensGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetApiTokenDetailsResponse>>>;
+  ): Promise<runtime.ApiResponse<GetApiTokenDetailsResponseGetListResponse>>;
 
   /**
    * Returns a List of all Api Tokens without details.
    */
   authApiTokensGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetApiTokenDetailsResponse>>;
+  ): Promise<GetApiTokenDetailsResponseGetListResponse>;
 
   /**
    *
@@ -204,7 +206,7 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
    */
   async authApiTokensGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetApiTokenDetailsResponse>>> {
+  ): Promise<runtime.ApiResponse<GetApiTokenDetailsResponseGetListResponse>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -228,7 +230,7 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(GetApiTokenDetailsResponseFromJSON),
+      GetApiTokenDetailsResponseGetListResponseFromJSON(jsonValue),
     );
   }
 
@@ -237,7 +239,7 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
    */
   async authApiTokensGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetApiTokenDetailsResponse>> {
+  ): Promise<GetApiTokenDetailsResponseGetListResponse> {
     const response = await this.authApiTokensGetRaw(initOverrides);
     return await response.value();
   }

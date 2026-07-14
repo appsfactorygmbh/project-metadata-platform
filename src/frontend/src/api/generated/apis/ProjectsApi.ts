@@ -15,16 +15,16 @@
 import * as runtime from '../runtime';
 import type {
   GetPluginResponse,
-  GetProjectResponse,
-  GetProjectsResponse,
+  GetProjectDetailsResponse,
+  GetProjectResponseGetListResponse,
   PutProjectRequest,
   PutProjectResponse,
   SecurityLevel,
 } from '../models/index';
 import {
   GetPluginResponseFromJSON,
-  GetProjectResponseFromJSON,
-  GetProjectsResponseFromJSON,
+  GetProjectDetailsResponseFromJSON,
+  GetProjectResponseGetListResponseFromJSON,
   PutProjectRequestToJSON,
   PutProjectResponseFromJSON,
 } from '../models/index';
@@ -109,7 +109,7 @@ export interface ProjectsApiInterface {
   projectsGetRaw(
     requestParameters: ProjectsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetProjectsResponse>>>;
+  ): Promise<runtime.ApiResponse<GetProjectResponseGetListResponse>>;
 
   /**
    * Gets all projects or all projects that match the given search string. Also orders response alphabetical by ClientName and then by ProjectName
@@ -117,7 +117,7 @@ export interface ProjectsApiInterface {
   projectsGet(
     requestParameters: ProjectsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetProjectsResponse>>;
+  ): Promise<GetProjectResponseGetListResponse>;
 
   /**
    *
@@ -151,7 +151,7 @@ export interface ProjectsApiInterface {
   projectsIdGetRaw(
     requestParameters: ProjectsIdGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetProjectResponse>>;
+  ): Promise<runtime.ApiResponse<GetProjectDetailsResponse>>;
 
   /**
    * Gets the project with the given id.
@@ -159,7 +159,7 @@ export interface ProjectsApiInterface {
   projectsIdGet(
     requestParameters: ProjectsIdGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetProjectResponse>;
+  ): Promise<GetProjectDetailsResponse>;
 
   /**
    *
@@ -257,7 +257,7 @@ export interface ProjectsApiInterface {
   projectsSlugGetRaw(
     requestParameters: ProjectsSlugGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetProjectResponse>>;
+  ): Promise<runtime.ApiResponse<GetProjectDetailsResponse>>;
 
   /**
    * Gets the project with the given slug.
@@ -265,7 +265,7 @@ export interface ProjectsApiInterface {
   projectsSlugGet(
     requestParameters: ProjectsSlugGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetProjectResponse>;
+  ): Promise<GetProjectDetailsResponse>;
 
   /**
    *
@@ -345,7 +345,7 @@ export class ProjectsApi
   async projectsGetRaw(
     requestParameters: ProjectsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetProjectsResponse>>> {
+  ): Promise<runtime.ApiResponse<GetProjectResponseGetListResponse>> {
     const queryParameters: any = {};
 
     if (requestParameters['projectName'] != null) {
@@ -405,7 +405,7 @@ export class ProjectsApi
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(GetProjectsResponseFromJSON),
+      GetProjectResponseGetListResponseFromJSON(jsonValue),
     );
   }
 
@@ -415,7 +415,7 @@ export class ProjectsApi
   async projectsGet(
     requestParameters: ProjectsGetRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetProjectsResponse>> {
+  ): Promise<GetProjectResponseGetListResponse> {
     const response = await this.projectsGetRaw(
       requestParameters,
       initOverrides,
@@ -481,7 +481,7 @@ export class ProjectsApi
   async projectsIdGetRaw(
     requestParameters: ProjectsIdGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetProjectResponse>> {
+  ): Promise<runtime.ApiResponse<GetProjectDetailsResponse>> {
     if (requestParameters['id'] == null) {
       throw new runtime.RequiredError(
         'id',
@@ -515,7 +515,7 @@ export class ProjectsApi
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetProjectResponseFromJSON(jsonValue),
+      GetProjectDetailsResponseFromJSON(jsonValue),
     );
   }
 
@@ -525,7 +525,7 @@ export class ProjectsApi
   async projectsIdGet(
     requestParameters: ProjectsIdGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetProjectResponse> {
+  ): Promise<GetProjectDetailsResponse> {
     const response = await this.projectsIdGetRaw(
       requestParameters,
       initOverrides,
@@ -762,7 +762,7 @@ export class ProjectsApi
   async projectsSlugGetRaw(
     requestParameters: ProjectsSlugGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<GetProjectResponse>> {
+  ): Promise<runtime.ApiResponse<GetProjectDetailsResponse>> {
     if (requestParameters['slug'] == null) {
       throw new runtime.RequiredError(
         'slug',
@@ -796,7 +796,7 @@ export class ProjectsApi
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      GetProjectResponseFromJSON(jsonValue),
+      GetProjectDetailsResponseFromJSON(jsonValue),
     );
   }
 
@@ -806,7 +806,7 @@ export class ProjectsApi
   async projectsSlugGet(
     requestParameters: ProjectsSlugGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<GetProjectResponse> {
+  ): Promise<GetProjectDetailsResponse> {
     const response = await this.projectsSlugGetRaw(
       requestParameters,
       initOverrides,

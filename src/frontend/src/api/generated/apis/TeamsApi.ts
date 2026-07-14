@@ -19,6 +19,7 @@ import type {
   DeleteTeamResponse,
   GetLinkedProjectsResponse,
   GetTeamResponse,
+  GetTeamResponseGetListResponse,
   PatchTeamRequest,
 } from '../models/index';
 import {
@@ -27,6 +28,7 @@ import {
   DeleteTeamResponseFromJSON,
   GetLinkedProjectsResponseFromJSON,
   GetTeamResponseFromJSON,
+  GetTeamResponseGetListResponseFromJSON,
   PatchTeamRequestToJSON,
 } from '../models/index';
 
@@ -75,7 +77,7 @@ export interface TeamsApiInterface {
   teamsGetRaw(
     requestParameters: TeamsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetTeamResponse>>>;
+  ): Promise<runtime.ApiResponse<GetTeamResponseGetListResponse>>;
 
   /**
    * Gets all teams that match the given filters. Filters are optional.
@@ -83,7 +85,7 @@ export interface TeamsApiInterface {
   teamsGet(
     requestParameters: TeamsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetTeamResponse>>;
+  ): Promise<GetTeamResponseGetListResponse>;
 
   /**
    *
@@ -202,7 +204,7 @@ export class TeamsApi extends runtime.BaseAPI implements TeamsApiInterface {
   async teamsGetRaw(
     requestParameters: TeamsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetTeamResponse>>> {
+  ): Promise<runtime.ApiResponse<GetTeamResponseGetListResponse>> {
     const queryParameters: any = {};
 
     if (requestParameters['teamName'] != null) {
@@ -234,7 +236,7 @@ export class TeamsApi extends runtime.BaseAPI implements TeamsApiInterface {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(GetTeamResponseFromJSON),
+      GetTeamResponseGetListResponseFromJSON(jsonValue),
     );
   }
 
@@ -244,7 +246,7 @@ export class TeamsApi extends runtime.BaseAPI implements TeamsApiInterface {
   async teamsGet(
     requestParameters: TeamsGetRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetTeamResponse>> {
+  ): Promise<GetTeamResponseGetListResponse> {
     const response = await this.teamsGetRaw(requestParameters, initOverrides);
     return await response.value();
   }

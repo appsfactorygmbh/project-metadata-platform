@@ -12,6 +12,9 @@
  * Do not edit the class manually.
  */
 
+import type { Actions } from './Actions';
+import { ActionsFromJSON, ActionsToJSON } from './Actions';
+
 /**
  * Represents a Response containing a single Office Location.
  * @export
@@ -30,6 +33,12 @@ export interface GetOfficeLocationResponse {
    * @memberof GetOfficeLocationResponse
    */
   officeLocationName: string;
+  /**
+   * Permissions on the office location.
+   * @type {Array<Actions>}
+   * @memberof GetOfficeLocationResponse
+   */
+  permissions?: Array<Actions> | null;
 }
 
 /**
@@ -63,6 +72,10 @@ export function GetOfficeLocationResponseFromJSONTyped(
   return {
     id: json['id'],
     officeLocationName: json['officeLocationName'],
+    permissions:
+      json['permissions'] == null
+        ? undefined
+        : (json['permissions'] as Array<any>).map(ActionsFromJSON),
   };
 }
 
@@ -83,5 +96,9 @@ export function GetOfficeLocationResponseToJSONTyped(
   return {
     id: value['id'],
     officeLocationName: value['officeLocationName'],
+    permissions:
+      value['permissions'] == null
+        ? undefined
+        : (value['permissions'] as Array<any>).map(ActionsToJSON),
   };
 }

@@ -17,6 +17,7 @@ import type {
   CreateBusinessUnitRequest,
   CreateBusinessUnitResponse,
   GetBusinessUnitResponse,
+  GetBusinessUnitResponseGetListResponse,
   GetLinkedTeamsForBusinessUnitResponse,
   UpdateBusinessUnitRequest,
 } from '../models/index';
@@ -24,6 +25,7 @@ import {
   CreateBusinessUnitRequestToJSON,
   CreateBusinessUnitResponseFromJSON,
   GetBusinessUnitResponseFromJSON,
+  GetBusinessUnitResponseGetListResponseFromJSON,
   GetLinkedTeamsForBusinessUnitResponseFromJSON,
   UpdateBusinessUnitRequestToJSON,
 } from '../models/index';
@@ -65,14 +67,14 @@ export interface BusinessUnitsApiInterface {
    */
   businessUnitsGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetBusinessUnitResponse>>>;
+  ): Promise<runtime.ApiResponse<GetBusinessUnitResponseGetListResponse>>;
 
   /**
    * Gets all Business Units.
    */
   businessUnitsGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetBusinessUnitResponse>>;
+  ): Promise<GetBusinessUnitResponseGetListResponse>;
 
   /**
    *
@@ -193,7 +195,7 @@ export class BusinessUnitsApi
    */
   async businessUnitsGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetBusinessUnitResponse>>> {
+  ): Promise<runtime.ApiResponse<GetBusinessUnitResponseGetListResponse>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -217,7 +219,7 @@ export class BusinessUnitsApi
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(GetBusinessUnitResponseFromJSON),
+      GetBusinessUnitResponseGetListResponseFromJSON(jsonValue),
     );
   }
 
@@ -226,7 +228,7 @@ export class BusinessUnitsApi
    */
   async businessUnitsGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetBusinessUnitResponse>> {
+  ): Promise<GetBusinessUnitResponseGetListResponse> {
     const response = await this.businessUnitsGetRaw(initOverrides);
     return await response.value();
   }

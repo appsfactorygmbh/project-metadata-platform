@@ -22,83 +22,105 @@ import {
   GetCompanyResponseFromJSON,
   GetCompanyResponseToJSON,
 } from './GetCompanyResponse';
+import type { Actions } from './Actions';
+import { ActionsFromJSON, ActionsToJSON } from './Actions';
 import type { SecurityLevel } from './SecurityLevel';
 import { SecurityLevelFromJSON, SecurityLevelToJSON } from './SecurityLevel';
+import type { CompanyState } from './CompanyState';
+import { CompanyStateFromJSON, CompanyStateToJSON } from './CompanyState';
 
 /**
- * Represents a response for the GetProjects API call.
+ * Represents a response to the GetProject API call.
  * @export
- * @interface GetProjectResponse
+ * @interface GetProjectDetailsResponse
  */
-export interface GetProjectResponse {
+export interface GetProjectDetailsResponse {
   /**
-   * The id of the project.
+   * The identification number for the project.
    * @type {number}
-   * @memberof GetProjectResponse
+   * @memberof GetProjectDetailsResponse
    */
   id: number;
   /**
    * The Slug for the project name.
    * @type {string}
-   * @memberof GetProjectResponse
+   * @memberof GetProjectDetailsResponse
    */
   slug: string;
   /**
-   * The name of the project.
+   *
    * @type {string}
-   * @memberof GetProjectResponse
+   * @memberof GetProjectDetailsResponse
    */
   projectName: string;
   /**
-   * The name of the client associated with the project.
+   *
    * @type {string}
-   * @memberof GetProjectResponse
+   * @memberof GetProjectDetailsResponse
    */
   clientName: string;
   /**
+   * Internal id of the offer associated with the project.
+   * @type {string}
+   * @memberof GetProjectDetailsResponse
+   */
+  offerId?: string | null;
+  /**
    *
    * @type {GetCompanyResponse}
-   * @memberof GetProjectResponse
+   * @memberof GetProjectDetailsResponse
    */
   company: GetCompanyResponse;
   /**
    * If the project is archived or not.
    * @type {boolean}
-   * @memberof GetProjectResponse
+   * @memberof GetProjectDetailsResponse
    */
   isArchived: boolean;
   /**
    * If the project is an Engineer on Call project.
    * @type {boolean}
-   * @memberof GetProjectResponse
+   * @memberof GetProjectDetailsResponse
    */
   isEoC: boolean;
   /**
    *
    * @type {GetTeamResponse}
-   * @memberof GetProjectResponse
+   * @memberof GetProjectDetailsResponse
    */
   team?: GetTeamResponse;
   /**
    *
+   * @type {CompanyState}
+   * @memberof GetProjectDetailsResponse
+   */
+  companyState: CompanyState;
+  /**
+   *
    * @type {SecurityLevel}
-   * @memberof GetProjectResponse
+   * @memberof GetProjectDetailsResponse
    */
   ismsLevel: SecurityLevel;
   /**
    * Additonal Notes on the project
    * @type {string}
-   * @memberof GetProjectResponse
+   * @memberof GetProjectDetailsResponse
    */
   notes: string;
+  /**
+   * Permissions on the project.
+   * @type {Array<Actions>}
+   * @memberof GetProjectDetailsResponse
+   */
+  permissions?: Array<Actions> | null;
 }
 
 /**
- * Check if a given object implements the GetProjectResponse interface.
+ * Check if a given object implements the GetProjectDetailsResponse interface.
  */
-export function instanceOfGetProjectResponse(
+export function instanceOfGetProjectDetailsResponse(
   value: object,
-): value is GetProjectResponse {
+): value is GetProjectDetailsResponse {
   if (!('id' in value) || value['id'] === undefined) return false;
   if (!('slug' in value) || value['slug'] === undefined) return false;
   if (!('projectName' in value) || value['projectName'] === undefined)
@@ -109,19 +131,23 @@ export function instanceOfGetProjectResponse(
   if (!('isArchived' in value) || value['isArchived'] === undefined)
     return false;
   if (!('isEoC' in value) || value['isEoC'] === undefined) return false;
+  if (!('companyState' in value) || value['companyState'] === undefined)
+    return false;
   if (!('ismsLevel' in value) || value['ismsLevel'] === undefined) return false;
   if (!('notes' in value) || value['notes'] === undefined) return false;
   return true;
 }
 
-export function GetProjectResponseFromJSON(json: any): GetProjectResponse {
-  return GetProjectResponseFromJSONTyped(json, false);
+export function GetProjectDetailsResponseFromJSON(
+  json: any,
+): GetProjectDetailsResponse {
+  return GetProjectDetailsResponseFromJSONTyped(json, false);
 }
 
-export function GetProjectResponseFromJSONTyped(
+export function GetProjectDetailsResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): GetProjectResponse {
+): GetProjectDetailsResponse {
   if (json == null) {
     return json;
   }
@@ -130,22 +156,30 @@ export function GetProjectResponseFromJSONTyped(
     slug: json['slug'],
     projectName: json['projectName'],
     clientName: json['clientName'],
+    offerId: json['offerId'] == null ? undefined : json['offerId'],
     company: GetCompanyResponseFromJSON(json['company']),
     isArchived: json['isArchived'],
     isEoC: json['isEoC'],
     team:
       json['team'] == null ? undefined : GetTeamResponseFromJSON(json['team']),
+    companyState: CompanyStateFromJSON(json['companyState']),
     ismsLevel: SecurityLevelFromJSON(json['ismsLevel']),
     notes: json['notes'],
+    permissions:
+      json['permissions'] == null
+        ? undefined
+        : (json['permissions'] as Array<any>).map(ActionsFromJSON),
   };
 }
 
-export function GetProjectResponseToJSON(json: any): GetProjectResponse {
-  return GetProjectResponseToJSONTyped(json, false);
+export function GetProjectDetailsResponseToJSON(
+  json: any,
+): GetProjectDetailsResponse {
+  return GetProjectDetailsResponseToJSONTyped(json, false);
 }
 
-export function GetProjectResponseToJSONTyped(
-  value?: GetProjectResponse | null,
+export function GetProjectDetailsResponseToJSONTyped(
+  value?: GetProjectDetailsResponse | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {
@@ -157,11 +191,17 @@ export function GetProjectResponseToJSONTyped(
     slug: value['slug'],
     projectName: value['projectName'],
     clientName: value['clientName'],
+    offerId: value['offerId'],
     company: GetCompanyResponseToJSON(value['company']),
     isArchived: value['isArchived'],
     isEoC: value['isEoC'],
     team: GetTeamResponseToJSON(value['team']),
+    companyState: CompanyStateToJSON(value['companyState']),
     ismsLevel: SecurityLevelToJSON(value['ismsLevel']),
     notes: value['notes'],
+    permissions:
+      value['permissions'] == null
+        ? undefined
+        : (value['permissions'] as Array<any>).map(ActionsToJSON),
   };
 }

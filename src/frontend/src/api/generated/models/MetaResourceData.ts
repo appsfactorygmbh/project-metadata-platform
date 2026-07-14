@@ -12,6 +12,9 @@
  * Do not edit the class manually.
  */
 
+import type { Actions } from './Actions';
+import { ActionsFromJSON, ActionsToJSON } from './Actions';
+
 /**
  * Record representing metadata properties.
  * @export
@@ -48,6 +51,12 @@ export interface MetaResourceData {
    * @memberof MetaResourceData
    */
   version?: string | null;
+  /**
+   * Permissions on the User resource.
+   * @type {Array<Actions>}
+   * @memberof MetaResourceData
+   */
+  permissions?: Array<Actions> | null;
 }
 
 /**
@@ -78,6 +87,10 @@ export function MetaResourceDataFromJSONTyped(
       json['lastModified'] == null ? undefined : json['lastModified'],
     location: json['location'] == null ? undefined : json['location'],
     version: json['version'] == null ? undefined : json['version'],
+    permissions:
+      json['permissions'] == null
+        ? undefined
+        : (json['permissions'] as Array<any>).map(ActionsFromJSON),
   };
 }
 
@@ -99,5 +112,9 @@ export function MetaResourceDataToJSONTyped(
     lastModified: value['lastModified'],
     location: value['location'],
     version: value['version'],
+    permissions:
+      value['permissions'] == null
+        ? undefined
+        : (value['permissions'] as Array<any>).map(ActionsToJSON),
   };
 }

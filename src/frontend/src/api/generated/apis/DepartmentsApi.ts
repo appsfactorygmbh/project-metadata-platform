@@ -17,12 +17,14 @@ import type {
   CreateDepartmentRequest,
   CreateDepartmentResponse,
   GetDepartmentResponse,
+  GetDepartmentResponseGetListResponse,
   UpdateDepartmentRequest,
 } from '../models/index';
 import {
   CreateDepartmentRequestToJSON,
   CreateDepartmentResponseFromJSON,
   GetDepartmentResponseFromJSON,
+  GetDepartmentResponseGetListResponseFromJSON,
   UpdateDepartmentRequestToJSON,
 } from '../models/index';
 
@@ -59,14 +61,14 @@ export interface DepartmentsApiInterface {
    */
   departmentsGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetDepartmentResponse>>>;
+  ): Promise<runtime.ApiResponse<GetDepartmentResponseGetListResponse>>;
 
   /**
    * Gets all Departments.
    */
   departmentsGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetDepartmentResponse>>;
+  ): Promise<GetDepartmentResponseGetListResponse>;
 
   /**
    *
@@ -166,7 +168,7 @@ export class DepartmentsApi
    */
   async departmentsGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetDepartmentResponse>>> {
+  ): Promise<runtime.ApiResponse<GetDepartmentResponseGetListResponse>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -190,7 +192,7 @@ export class DepartmentsApi
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(GetDepartmentResponseFromJSON),
+      GetDepartmentResponseGetListResponseFromJSON(jsonValue),
     );
   }
 
@@ -199,7 +201,7 @@ export class DepartmentsApi
    */
   async departmentsGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetDepartmentResponse>> {
+  ): Promise<GetDepartmentResponseGetListResponse> {
     const response = await this.departmentsGetRaw(initOverrides);
     return await response.value();
   }

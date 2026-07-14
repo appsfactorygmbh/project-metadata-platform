@@ -17,12 +17,14 @@ import type {
   CreateOfficeLocationRequest,
   CreateOfficeLocationResponse,
   GetOfficeLocationResponse,
+  GetOfficeLocationResponseGetListResponse,
   UpdateOfficeLocationRequest,
 } from '../models/index';
 import {
   CreateOfficeLocationRequestToJSON,
   CreateOfficeLocationResponseFromJSON,
   GetOfficeLocationResponseFromJSON,
+  GetOfficeLocationResponseGetListResponseFromJSON,
   UpdateOfficeLocationRequestToJSON,
 } from '../models/index';
 
@@ -59,14 +61,14 @@ export interface OfficeLocationsApiInterface {
    */
   officeLocationsGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetOfficeLocationResponse>>>;
+  ): Promise<runtime.ApiResponse<GetOfficeLocationResponseGetListResponse>>;
 
   /**
    * Gets all Office Locations.
    */
   officeLocationsGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetOfficeLocationResponse>>;
+  ): Promise<GetOfficeLocationResponseGetListResponse>;
 
   /**
    *
@@ -166,7 +168,7 @@ export class OfficeLocationsApi
    */
   async officeLocationsGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetOfficeLocationResponse>>> {
+  ): Promise<runtime.ApiResponse<GetOfficeLocationResponseGetListResponse>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -190,7 +192,7 @@ export class OfficeLocationsApi
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(GetOfficeLocationResponseFromJSON),
+      GetOfficeLocationResponseGetListResponseFromJSON(jsonValue),
     );
   }
 
@@ -199,7 +201,7 @@ export class OfficeLocationsApi
    */
   async officeLocationsGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetOfficeLocationResponse>> {
+  ): Promise<GetOfficeLocationResponseGetListResponse> {
     const response = await this.officeLocationsGetRaw(initOverrides);
     return await response.value();
   }
