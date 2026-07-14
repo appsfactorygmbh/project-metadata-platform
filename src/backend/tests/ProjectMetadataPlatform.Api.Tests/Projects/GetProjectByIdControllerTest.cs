@@ -56,7 +56,7 @@ public class GetProjectByIdControllerTest
             .Setup(m =>
                 m.Send(It.Is<GetProjectQuery>(q => q.Id == 50), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync(projectsResponseContent);
+            .ReturnsAsync((projectsResponseContent, []));
 
         // act
         var result = await _controller.Get(50);
@@ -66,9 +66,9 @@ public class GetProjectByIdControllerTest
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult.Value, Is.InstanceOf<GetProjectResponse>());
+        Assert.That(okResult.Value, Is.InstanceOf<GetProjectDetailsResponse>());
 
-        var project = okResult.Value as GetProjectResponse;
+        var project = okResult.Value as GetProjectDetailsResponse;
         Assert.That(project, Is.Not.Null);
 
         Assert.Multiple(() =>

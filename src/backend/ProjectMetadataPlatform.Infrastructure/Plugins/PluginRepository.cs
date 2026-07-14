@@ -99,9 +99,9 @@ public class PluginRepository : RepositoryBase<Plugin>, IPluginRepository
     /// Gets all global plugins from the database.
     /// </summary>
     /// <returns>All global plugins</returns>
-    public async Task<IEnumerable<Plugin>> GetGlobalPluginsAsync()
+    public async Task<IQueryable<Plugin>> GetGlobalPluginsAsync()
     {
-        return await _context.Plugins.ToListAsync();
+        return _context.Plugins;
     }
 
     /// <summary>

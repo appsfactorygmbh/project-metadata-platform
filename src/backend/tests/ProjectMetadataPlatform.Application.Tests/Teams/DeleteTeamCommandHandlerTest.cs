@@ -5,6 +5,8 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Teams;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Teams;
@@ -19,17 +21,20 @@ public class DeleteTeamCommandHandlerTest
     private Mock<ITeamRepository> _mockTeamRepository;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockTeamRepository = new Mock<ITeamRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _handler = new DeleteTeamCommandHandler(
             teamRepository: _mockTeamRepository.Object,
             logRepository: _mockLogRepo.Object,
-            unitOfWork: _mockUnitOfWork.Object
+            unitOfWork: _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -46,7 +51,15 @@ public class DeleteTeamCommandHandlerTest
             PTL = "Max Mustermann",
             Projects = [],
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Team>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamWithProjectsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
@@ -106,7 +119,15 @@ public class DeleteTeamCommandHandlerTest
                 },
             ],
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Team>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamWithProjectsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
@@ -117,5 +138,23 @@ public class DeleteTeamCommandHandlerTest
         );
 
         Assert.That(ex.Message, Does.Contain("111"));
+    }
+
+    [Test]
+    public async Task DeleteTeam_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Team>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(new DeleteTeamCommand(Id: 1), It.IsAny<CancellationToken>())
+        );
     }
 }

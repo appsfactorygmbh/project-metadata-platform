@@ -16,19 +16,23 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, JwtTokens>
     private readonly IRefreshTokenRepository _refreshTokenRepository;
 
     private readonly IUsersRepository _userRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of<see cref="LoginQueryHandler" />.
     /// </summary>
     /// <param name="refreshTokenRepository"></param>
     /// <param name="usersRepository"></param>
+    /// <param name="authorizationService"></param>
     public LoginQueryHandler(
         IRefreshTokenRepository refreshTokenRepository,
-        IUsersRepository usersRepository
+        IUsersRepository usersRepository,
+        IAuthorizationService authorizationService
     )
     {
         _refreshTokenRepository = refreshTokenRepository;
         _userRepository = usersRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -39,6 +43,7 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, JwtTokens>
     /// <returns>JwtTokens when successful.</returns>
     public async Task<JwtTokens> Handle(LoginQuery request, CancellationToken cancellationToken)
     {
+        await _authorizationService.BypassAuthorization();
         if (!_userRepository.CheckLogin(request.Email, request.Password).Result)
         {
             throw new AuthInvalidLoginCredentialsException();

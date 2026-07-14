@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.BusinessUnits;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
@@ -17,19 +18,22 @@ public class DeleteBusinessUnitCommandHandlerTest
 {
     private DeleteBusinessUnitCommandHandler _handler;
     private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockBusinessUnitRepository = new Mock<IBusinessUnitRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _handler = new DeleteBusinessUnitCommandHandler(
             businessUnitRepository: _mockBusinessUnitRepository.Object,
             logRepository: _mockLogRepo.Object,
-            unitOfWork: _mockUnitOfWork.Object
+            unitOfWork: _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -43,7 +47,15 @@ public class DeleteBusinessUnitCommandHandlerTest
             BusinessUnitName = "Test_1",
             Teams = [],
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<BusinessUnit>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitWithTeamsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
@@ -67,6 +79,15 @@ public class DeleteBusinessUnitCommandHandlerTest
                     It.Is<BusinessUnit>(businessUnit =>
                         businessUnit.Id == 1 && businessUnit.BusinessUnitName == "Test_1"
                     )
+                ),
+            Times.Once
+        );
+        _authorizationServiceMock.Verify(
+            a =>
+                a.CheckAccess(
+                    It.IsAny<BusinessUnit>(),
+                    AuthorizationConstants.Actions.DELETE,
+                    null
                 ),
             Times.Once
         );
@@ -94,7 +115,15 @@ public class DeleteBusinessUnitCommandHandlerTest
                 },
             ],
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<BusinessUnit>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitWithTeamsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
@@ -106,7 +135,15 @@ public class DeleteBusinessUnitCommandHandlerTest
                 It.IsAny<CancellationToken>()
             )
         );
-
+        _authorizationServiceMock.Verify(
+            a =>
+                a.CheckAccess(
+                    It.IsAny<BusinessUnit>(),
+                    AuthorizationConstants.Actions.DELETE,
+                    null
+                ),
+            Times.Once
+        );
         Assert.That(ex.Message, Does.Contain("111"));
     }
 }

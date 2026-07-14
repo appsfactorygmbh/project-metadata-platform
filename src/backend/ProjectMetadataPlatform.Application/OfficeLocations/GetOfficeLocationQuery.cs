@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using System.Collections.Generic;
+using MediatR;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Application.OfficeLocations;
@@ -7,4 +9,5 @@ namespace ProjectMetadataPlatform.Application.OfficeLocations;
 /// Query for getting an Office Location by Id.
 /// </summary>
 /// <param name="Id">Id of the office location.</param>
-public record GetOfficeLocationQuery(int Id) : IRequest<OfficeLocation>;
+public record GetOfficeLocationQuery(int Id)
+    : IRequest<(OfficeLocation, IEnumerable<AuthorizationConstants.Actions>)>;

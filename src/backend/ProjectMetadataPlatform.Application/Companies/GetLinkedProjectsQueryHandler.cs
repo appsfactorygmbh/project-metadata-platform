@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 
 namespace ProjectMetadataPlatform.Application.Companies;
 
@@ -13,13 +15,18 @@ namespace ProjectMetadataPlatform.Application.Companies;
 public class GetLinkedProjectsQueryHandler : IRequestHandler<GetLinkedProjectsQuery, List<string>>
 {
     private readonly ICompanyRepository _companyRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetLinkedProjectsQueryHandler" />.
     /// </summary>
-    public GetLinkedProjectsQueryHandler(ICompanyRepository companyRepository)
+    public GetLinkedProjectsQueryHandler(
+        ICompanyRepository companyRepository,
+        IAuthorizationService authorizationService
+    )
     {
         _companyRepository = companyRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -33,11 +40,11 @@ public class GetLinkedProjectsQueryHandler : IRequestHandler<GetLinkedProjectsQu
         CancellationToken cancellationToken
     )
     {
-        return
-        [
-            .. (
-                (await _companyRepository.GetCompanyWithProjectsAsync(request.Id)).Projects ?? []
-            ).Select(project => project.Slug),
-        ];
+        var company = await _companyRepository.GetCompanyWithProjectsAsync(request.Id);
+        if (!await _authorizationService.CheckAccess(company, AuthorizationConstants.Actions.GET))
+        {
+            throw new UnauthorizedException();
+        }
+        return [.. (company.Projects ?? []).Select(project => project.Slug)];
     }
 }

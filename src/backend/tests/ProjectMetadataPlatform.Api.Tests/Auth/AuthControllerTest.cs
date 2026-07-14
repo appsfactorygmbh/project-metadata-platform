@@ -11,6 +11,7 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Auth;
 using ProjectMetadataPlatform.Api.Auth.Models;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Domain.Auth;
@@ -114,17 +115,17 @@ public class Tests
     {
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync([]);
+            .ReturnsAsync(([], []));
         var result = await _controller.GetApiTokens();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult.Value, Is.InstanceOf<IEnumerable<GetApiTokenDetailsResponse>>());
+        Assert.That(okResult.Value, Is.InstanceOf<GetListResponse<GetApiTokenDetailsResponse>>());
 
         var getTokensResponseList = (
-            okResult.Value as IEnumerable<GetApiTokenDetailsResponse>
-        )!.ToList();
+            okResult.Value as GetListResponse<GetApiTokenDetailsResponse>
+        )!.Resources.ToList();
         Assert.That(getTokensResponseList, Is.Not.Null);
 
         Assert.That(getTokensResponseList, Has.Count.EqualTo(0));
@@ -135,31 +136,36 @@ public class Tests
     {
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync([
-                new ApiToken
-                {
-                    Id = 1,
-                    Name = "Token1",
-                    Token = "Secret",
-                },
-                new ApiToken
-                {
-                    Id = 2,
-                    Name = "Token2",
-                    Token = "AlsoASecret",
-                    ExpirationDate = DateTime.Now,
-                },
-            ]);
+            .ReturnsAsync(
+                (
+                    [
+                        new ApiToken
+                        {
+                            Id = 1,
+                            Name = "Token1",
+                            Token = "Secret",
+                        },
+                        new ApiToken
+                        {
+                            Id = 2,
+                            Name = "Token2",
+                            Token = "AlsoASecret",
+                            ExpirationDate = DateTime.Now,
+                        },
+                    ],
+                    []
+                )
+            );
         var result = await _controller.GetApiTokens();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult.Value, Is.InstanceOf<IEnumerable<GetApiTokenDetailsResponse>>());
+        Assert.That(okResult.Value, Is.InstanceOf<GetListResponse<GetApiTokenDetailsResponse>>());
 
         var getTokensResponseList = (
-            okResult.Value as IEnumerable<GetApiTokenDetailsResponse>
-        )!.ToList();
+            okResult.Value as GetListResponse<GetApiTokenDetailsResponse>
+        )!.Resources.ToList();
         Assert.That(getTokensResponseList, Is.Not.Null);
 
         Assert.That(getTokensResponseList, Has.Count.EqualTo(2));
@@ -197,14 +203,17 @@ public class Tests
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetApiTokenDetailsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(
-                new ApiToken
-                {
-                    Name = "Token",
-                    Id = 1,
-                    Scopes = [TokenScopes.SCIM],
-                    ExpirationDate = new DateTimeOffset(),
-                    Token = "SuperCriticalSecret",
-                }
+                (
+                    new ApiToken
+                    {
+                        Name = "Token",
+                        Id = 1,
+                        Scopes = [TokenScopes.SCIM],
+                        ExpirationDate = new DateTimeOffset(),
+                        Token = "SuperCriticalSecret",
+                    },
+                    []
+                )
             );
         var result = await _controller.GetApiToken(1);
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());

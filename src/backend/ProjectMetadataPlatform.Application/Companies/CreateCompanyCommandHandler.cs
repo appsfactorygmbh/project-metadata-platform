@@ -3,7 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 
@@ -17,6 +19,7 @@ public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand,
     private readonly ICompanyRepository _companyRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="CreateCompanyCommandHandler" />.
@@ -24,12 +27,14 @@ public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand,
     public CreateCompanyCommandHandler(
         ICompanyRepository companyRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _companyRepository = companyRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -41,12 +46,17 @@ public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand,
     /// <exception cref="CompanyNameAlreadyExistsException">Thrown if company with same name already exists.</exception>
     public async Task<int> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
     {
+        var company = new Company { CompanyName = request.CompanyName };
+        if (
+            !await _authorizationService.CheckAccess(company, AuthorizationConstants.Actions.CREATE)
+        )
+        {
+            throw new UnauthorizedException();
+        }
         if (await _companyRepository.CheckIfCompanyNameExistsAsync(request.CompanyName))
         {
             throw new CompanyNameAlreadyExistsException(request.CompanyName);
         }
-
-        var company = new Company { CompanyName = request.CompanyName };
         await AddCompanyLog(company);
         await _companyRepository.AddCompanyAsync(company);
         await _unitOfWork.CompleteAsync();

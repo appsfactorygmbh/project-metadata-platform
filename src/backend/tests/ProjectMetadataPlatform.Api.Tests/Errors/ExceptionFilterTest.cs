@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -10,6 +11,7 @@ using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BasicExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
@@ -38,6 +40,8 @@ public class ExceptionFilterTest
     private Mock<IExceptionHandler<DepartmentException>> _departmentExceptionHandler;
     private Mock<IExceptionHandler<BusinessUnitException>> _businessUnitExceptionHandler;
     private Mock<IExceptionHandler<CompanyException>> _companyExceptionHandler;
+
+    private Mock<IExceptionHandler<AuthorizationException>> _authorizationExceptionHandler;
     private Mock<ExceptionContext> _context;
 
     [SetUp]
@@ -54,6 +58,8 @@ public class ExceptionFilterTest
         _departmentExceptionHandler = new Mock<IExceptionHandler<DepartmentException>>();
         _businessUnitExceptionHandler = new Mock<IExceptionHandler<BusinessUnitException>>();
         _companyExceptionHandler = new Mock<IExceptionHandler<CompanyException>>();
+        _authorizationExceptionHandler = new Mock<IExceptionHandler<AuthorizationException>>();
+
         _context = SetupExceptionContext();
         _filter = new ExceptionFilter(
             basicExceptionHandler: _basicExceptionHandler.Object,
@@ -66,7 +72,8 @@ public class ExceptionFilterTest
             companyExceptionHandler: _companyExceptionHandler.Object,
             businessUnitExceptionHandler: _businessUnitExceptionHandler.Object,
             officeLocationExceptionHandler: _officeLocationExceptionHandler.Object,
-            departmentExceptionHandler: _departmentExceptionHandler.Object
+            departmentExceptionHandler: _departmentExceptionHandler.Object,
+            authorizationExceptionHandler: _authorizationExceptionHandler.Object
         );
     }
 
@@ -237,6 +244,35 @@ public class ExceptionFilterTest
         _filter.OnException(_context.Object);
 
         _logExceptionHandler.Verify(h => h.Handle(It.IsAny<LogException>()), Times.Once);
+        _context.VerifySet(c => c.Result = It.IsAny<IActionResult>(), Times.Once);
+    }
+
+    [Test]
+    public void CallAuthorizationExceptionHandlerForAuthorizationException_Test()
+    {
+        var mockException = new Mock<AuthorizationException>("some error message");
+        _ = _context.SetupGet(c => c.Exception).Returns(mockException.Object);
+
+        var result = new StatusCodeResult(500);
+        _ = _authorizationExceptionHandler
+            .Setup(h => h.Handle(It.IsAny<AuthorizationException>()))
+            .Returns(result);
+
+        _ = _context
+            .SetupSet(c => c.Result = It.IsAny<IActionResult>())
+            .Callback(
+                (IActionResult r) =>
+                {
+                    Assert.That(r, Is.EqualTo(result));
+                }
+            );
+
+        _filter.OnException(_context.Object);
+
+        _authorizationExceptionHandler.Verify(
+            h => h.Handle(It.IsAny<AuthorizationException>()),
+            Times.Once
+        );
         _context.VerifySet(c => c.Result = It.IsAny<IActionResult>(), Times.Once);
     }
 

@@ -10,6 +10,7 @@ using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Api.Logs;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
@@ -48,6 +49,10 @@ public static class DependencyInjection
         _ = serviceCollection.AddScoped<IExceptionHandler<TeamException>, TeamExceptionHandler>();
         _ = serviceCollection.AddScoped<IExceptionHandler<AuthException>, AuthExceptionHandler>();
         _ = serviceCollection.AddScoped<IExceptionHandler<UserException>, UserExceptionHandler>();
+        _ = serviceCollection.AddScoped<
+            IExceptionHandler<AuthorizationException>,
+            AuthorizationExceptionHandler
+        >();
         _ = serviceCollection.AddScoped<
             IExceptionHandler<OfficeLocationException>,
             OfficeLocationsExceptionHandler

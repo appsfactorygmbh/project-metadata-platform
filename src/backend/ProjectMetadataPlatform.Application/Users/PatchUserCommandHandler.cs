@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Departments;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Teams;
@@ -33,6 +35,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
     private readonly ICompanyRepository _companyRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogRepository _logRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PatchUserCommandHandler"/> class.
@@ -46,6 +49,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
     /// <param name="companyRepository">Repository for accessing company data.</param>
     /// <param name="unitOfWork">The unit of work for managing transactions.</param>
     /// <param name="logRepository">The repository for logging user actions.</param>
+    /// <param name="authorizationService"></param>
     public PatchUserCommandHandler(
         IUsersRepository usersRepository,
         IPasswordHasher<ApplicationUser> passwordHasher,
@@ -55,7 +59,8 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         IOfficeLocationRepository officeLocationRepository,
         ICompanyRepository companyRepository,
         IUnitOfWork unitOfWork,
-        ILogRepository logRepository
+        ILogRepository logRepository,
+        IAuthorizationService authorizationService
     )
     {
         _usersRepository = usersRepository;
@@ -67,6 +72,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         _departmentRepository = departmentRepository;
         _unitOfWork = unitOfWork;
         _logRepository = logRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -83,11 +89,14 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         var user = await _usersRepository.CheckUserExists(request.Id)
             ? await _usersRepository.GetUserByIdAsync(request.Id)
             : await _usersRepository.GetUserByEmailAsync(request.Id);
+
+        var oldUser = await _usersRepository.GetUserByIdNoTrackingAsync(user.EmployeeId);
         var changes = new List<LogChange>();
         await UpdateUser(request, user, changes);
 
         var response = await _usersRepository.StoreUser(user);
 
+        await CheckAuthorization(oldUser, user);
         if (changes.Count > 0)
         {
             await _logRepository.AddUserLogForCurrentActor(user, Action.UPDATED_USER, changes);
@@ -749,6 +758,108 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
                 return await JsonElementToPrimitive(value.GetProperty("value"));
             default:
                 throw new NotSupportedException("Unsupported Value Type");
+        }
+    }
+
+    /// <summary>
+    /// Checks Authorization for a User and its updated Attributes.
+    /// </summary>
+    /// <param name="oldUser">Requested User without updated Attributes.</param>
+    /// <param name="updatedUser">Updated User</param>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedException">Thrown if Update Request is unauthorized</exception>
+    private async Task CheckAuthorization(ApplicationUser oldUser, ApplicationUser updatedUser)
+    {
+        Dictionary<string, object?> updates = [];
+        if (oldUser.EmployeeId != updatedUser.EmployeeId)
+        {
+            updates.Add(nameof(ApplicationUser.EmployeeId), updatedUser.EmployeeId);
+        }
+        if (oldUser.Email != updatedUser.Email)
+        {
+            updates.Add(nameof(ApplicationUser.Email), updatedUser.Email);
+        }
+        if (
+            ((oldUser.Teams ?? []).Count != (updatedUser.Teams ?? []).Count)
+            || !(oldUser.Teams ?? [])
+                .Select(team => team.TeamName)
+                .ToHashSet()
+                .SetEquals((updatedUser.Teams ?? []).Select(team => team.TeamName))
+        )
+        {
+            updates.Add(nameof(ApplicationUser.Teams), updatedUser.Teams);
+        }
+        if (
+            ((oldUser.TeamSupport ?? []).Count != (updatedUser.TeamSupport ?? []).Count)
+            || !(oldUser.TeamSupport ?? [])
+                .Select(team => team.TeamName)
+                .ToHashSet()
+                .SetEquals((updatedUser.TeamSupport ?? []).Select(team => team.TeamName))
+        )
+        {
+            updates.Add(nameof(ApplicationUser.TeamSupport), updatedUser.TeamSupport);
+        }
+        if (oldUser.IsActive != updatedUser.IsActive)
+        {
+            updates.Add(nameof(ApplicationUser.IsActive), updatedUser.IsActive);
+        }
+        if (oldUser.IsScimProvisioned != updatedUser.IsScimProvisioned)
+        {
+            updates.Add(nameof(ApplicationUser.IsScimProvisioned), updatedUser.IsScimProvisioned);
+        }
+
+        if (
+            ((oldUser.BusinessUnits ?? []).Count != (updatedUser.BusinessUnits ?? []).Count)
+            || !(oldUser.BusinessUnits ?? [])
+                .Select(bu => bu.BusinessUnitName)
+                .ToHashSet()
+                .SetEquals((updatedUser.BusinessUnits ?? []).Select(bu => bu.BusinessUnitName))
+        )
+        {
+            updates.Add(nameof(ApplicationUser.BusinessUnits), updatedUser.BusinessUnits);
+        }
+        if (
+            ((oldUser.JobTitles ?? []).Count != (updatedUser.JobTitles ?? []).Count)
+            || !(oldUser.JobTitles ?? []).ToHashSet().SetEquals(updatedUser.JobTitles ?? [])
+        )
+        {
+            updates.Add(nameof(ApplicationUser.JobTitles), updatedUser.JobTitles);
+        }
+        if (
+            ((oldUser.Departments ?? []).Count != (updatedUser.Departments ?? []).Count)
+            || !(oldUser.Departments ?? [])
+                .Select(department => department.DepartmentName)
+                .ToHashSet()
+                .SetEquals(
+                    (updatedUser.Departments ?? []).Select(department => department.DepartmentName)
+                )
+        )
+        {
+            updates.Add(nameof(ApplicationUser.Departments), updatedUser.Departments);
+        }
+        if (oldUser.Company?.CompanyName != updatedUser.Company?.CompanyName)
+        {
+            updates.Add(nameof(ApplicationUser.Company), updatedUser.Company?.CompanyName);
+        }
+        if (
+            oldUser.OfficeLocation?.OfficeLocationName
+            != updatedUser.OfficeLocation?.OfficeLocationName
+        )
+        {
+            updates.Add(
+                nameof(ApplicationUser.OfficeLocation),
+                updatedUser.OfficeLocation?.OfficeLocationName
+            );
+        }
+        if (
+            !await _authorizationService.CheckAccess(
+                oldUser,
+                AuthorizationConstants.Actions.EDIT,
+                updates
+            )
+        )
+        {
+            throw new UnauthorizedException();
         }
     }
 }

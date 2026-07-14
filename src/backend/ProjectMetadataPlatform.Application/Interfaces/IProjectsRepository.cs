@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
@@ -16,7 +17,7 @@ public interface IProjectsRepository
     /// </summary>
     /// <param name="query">The query containing filters and search pattern.</param>
     /// <returns>An Enumeration of projects.</returns>
-    Task<IEnumerable<Project>> GetProjectsAsync(GetAllProjectsQuery query);
+    Task<IQueryable<Project>> GetProjectsAsync(GetAllProjectsQuery query);
 
     /// <summary>
     /// Returns a collection of all projects.

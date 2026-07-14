@@ -1,0 +1,39 @@
+﻿using System.Collections.Generic;
+using ProjectMetadataPlatform.Api.Companies.Models;
+using ProjectMetadataPlatform.Api.Teams.Models;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Projects;
+
+namespace ProjectMetadataPlatform.Api.Projects.Models;
+
+/// <summary>
+/// Represents a response to the GetProject API call.
+/// </summary>
+/// <param name="ProjectName"></param>
+/// <param name="ClientName"></param>
+/// <param name="Id">The identification number for the project.</param>
+/// <param name="Slug">The Slug for the project name.</param>
+/// <param name="IsArchived">If the project is archived or not.</param>
+/// <param name="IsEoC">If the project is an Engineer on Call project.</param>
+/// <param name="OfferId">Internal id of the offer associated with the project.</param>
+/// <param name="Company">The company that is responsible for the project.</param>
+/// <param name="Team">The team working on the project. Optional.</param>
+/// <param name="CompanyState">The state of the company. (INTERNAL or EXTERNAL)</param>
+/// <param name="IsmsLevel">The security level of the project (NORMAL, HIGH, VERY_HIGH)</param>
+/// <param name="Notes">Additonal Notes on the project</param>
+/// <param name="Permissions">Permissions on the project.</param>
+public record GetProjectDetailsResponse(
+    int Id,
+    string Slug,
+    string ProjectName,
+    string ClientName,
+    string? OfferId,
+    GetCompanyResponse Company,
+    bool IsArchived,
+    bool IsEoC,
+    GetTeamResponse? Team,
+    CompanyState CompanyState,
+    SecurityLevel IsmsLevel,
+    string Notes,
+    List<AuthorizationConstants.Actions>? Permissions = null
+);

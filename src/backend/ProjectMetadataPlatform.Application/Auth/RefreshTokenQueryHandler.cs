@@ -14,14 +14,20 @@ namespace ProjectMetadataPlatform.Application.Auth;
 public class RefreshTokenQueryHandler : IRequestHandler<RefreshTokenQuery, JwtTokens>
 {
     private readonly IRefreshTokenRepository _refreshTokenRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of<see cref="RefreshTokenQueryHandler" />.
     /// </summary>
     /// <param name="refreshTokenRepository"></param>
-    public RefreshTokenQueryHandler(IRefreshTokenRepository refreshTokenRepository)
+    /// <param name="authorizationService"></param>
+    public RefreshTokenQueryHandler(
+        IRefreshTokenRepository refreshTokenRepository,
+        IAuthorizationService authorizationService
+    )
     {
         _refreshTokenRepository = refreshTokenRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -36,6 +42,7 @@ public class RefreshTokenQueryHandler : IRequestHandler<RefreshTokenQuery, JwtTo
         CancellationToken cancellationToken
     )
     {
+        await _authorizationService.BypassAuthorization();
         if (!await _refreshTokenRepository.CheckRefreshTokenRequest(request.RefreshToken))
         {
             throw new AuthInvalidRefreshTokenException();

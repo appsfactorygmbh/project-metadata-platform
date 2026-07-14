@@ -4,6 +4,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Cerbos.Api.V1.Effect;
+using Cerbos.Api.V1.Policy;
+using Cerbos.Sdk;
+using Cerbos.Sdk.Builder;
+using Cerbos.Sdk.Request;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -16,13 +21,17 @@ using Microsoft.Net.Http.Headers;
 using Polly.Registry;
 using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Application.Auth;
+using ProjectMetadataPlatform.Application.Authorization;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.Auth;
+using ProjectMetadataPlatform.Infrastructure.Authorization;
 using ProjectMetadataPlatform.Infrastructure.BusinessUnits;
 using ProjectMetadataPlatform.Infrastructure.Companies;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
+using ProjectMetadataPlatform.Infrastructure.DataAccess.Interceptors;
 using ProjectMetadataPlatform.Infrastructure.Departments;
 using ProjectMetadataPlatform.Infrastructure.Logs;
 using ProjectMetadataPlatform.Infrastructure.OfficeLocations;
@@ -30,6 +39,7 @@ using ProjectMetadataPlatform.Infrastructure.Plugins;
 using ProjectMetadataPlatform.Infrastructure.Projects;
 using ProjectMetadataPlatform.Infrastructure.Teams;
 using ProjectMetadataPlatform.Infrastructure.Users;
+using static Cerbos.Api.V1.Policy.Match.Types;
 
 namespace ProjectMetadataPlatform.Infrastructure;
 
@@ -49,6 +59,9 @@ public static class DependencyInjection
         JwtBearerEvents jwtBearerEvents
     )
     {
+        var cerbosUrl = Environment.GetEnvironmentVariable("PMP_CERBOS_URL");
+        _ = serviceCollection.AddScoped<IAuthorizationTracker, AuthorizationTracker>();
+        _ = serviceCollection.AddScoped<AuthorizationEnforcerInterceptor>();
         serviceCollection.AddDbContextWithPostgresConnection();
         _ = serviceCollection.AddScoped<IUnitOfWork>(provider =>
             provider.GetRequiredService<ProjectMetadataPlatformDbContext>()
@@ -70,6 +83,10 @@ public static class DependencyInjection
         >();
         _ = serviceCollection.AddScoped<IPasswordHasher<ApiToken>, PasswordHasher<ApiToken>>();
         _ = serviceCollection.AddScoped<ILogRepository, LogRepository>();
+        _ = serviceCollection.AddScoped<IAuthorizationService, AuthorizationService>();
+
+        _ = serviceCollection.AddScoped(provider => AddCerbosClient(cerbosUrl ?? ""));
+        _ = serviceCollection.AddScoped(provider => AddCerbosAdminClient(cerbosUrl ?? ""));
         return serviceCollection;
     }
 
@@ -86,8 +103,12 @@ public static class DependencyInjection
         var connectionString =
             $"Host={url};Port={port};User Id={user};Password={password};Database={database}";
 
-        _ = serviceCollection.AddDbContext<ProjectMetadataPlatformDbContext>(options =>
-            options.UseNpgsql(connectionString)
+        _ = serviceCollection.AddDbContext<ProjectMetadataPlatformDbContext>(
+            (sp, options) =>
+            {
+                var authInterceptor = sp.GetRequiredService<AuthorizationEnforcerInterceptor>();
+                _ = options.UseNpgsql(connectionString).AddInterceptors(authInterceptor);
+            }
         );
     }
 
@@ -254,8 +275,10 @@ public static class DependencyInjection
                     + string.Join(", ", identityResult.Errors.Select(e => e.Description))
             );
         }
-
+        var tracker = scope.ServiceProvider.GetRequiredService<IAuthorizationTracker>();
+        tracker.MarkAsChecked();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
         _ = unitOfWork.CompleteAsync();
     }
 
@@ -293,5 +316,207 @@ public static class DependencyInjection
             if (dbContext.Database.IsNpgsql() && !await dbContext.Database.CanConnectAsync(token))
                 throw new ArgumentException("Can't Connect to DB");
         });
+    }
+
+    /// <summary>
+    /// Adds the Cerbos Client.
+    /// </summary>
+    /// <param name="url">Service Url</param>
+    /// <returns>The new Client</returns>
+    public static ICerbosClient AddCerbosClient(string url)
+    {
+        return CerbosClientBuilder.ForTarget(url).WithPlaintext().Build();
+    }
+
+    /// <summary>
+    /// Adds the Cerbos Admin Client.
+    /// </summary>
+    /// <param name="url">Service Url</param>
+    /// <returns>The new Client</returns>
+    public static ICerbosAdminClient AddCerbosAdminClient(string url)
+    {
+        var user = EnvironmentUtils.GetEnvVarOrLoadFromFile("PMP_CERBOS_USER");
+        var password = EnvironmentUtils.GetEnvVarOrLoadFromFile("PMP_CERBOS_PASSWORD");
+        return CerbosClientBuilder.ForTarget(url).WithPlaintext().BuildAdminClient(user, password);
+    }
+
+    /// <summary>
+    /// Adds the Default Principal Policies for Users and Tokens.
+    /// </summary>
+    /// <returns></returns>
+    public static async Task AddDefaultPolicies(this IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var services = scope.ServiceProvider;
+        var adminClient = services.GetRequiredService<ICerbosAdminClient>();
+        var basePolicy = new PrincipalPolicy()
+        {
+            Principal = AuthorizationConstants.PRINCIPLE_USER,
+            Version = AuthorizationConstants.POLICY_VERSION,
+            Rules =
+            {
+                new PrincipalRule
+                {
+                    Resource = "*",
+                    Actions =
+                    {
+                        new PrincipalRule.Types.Action
+                        {
+                            Action_ = "*",
+                            Effect = Effect.Allow,
+                            Condition = new Condition
+                            {
+                                Match = new Match
+                                {
+                                    Any = new ExprList
+                                    {
+                                        Of =
+                                        {
+                                            new Match
+                                            {
+                                                Expr = "P.attr.Email == 'admin@admin.admin'",
+                                            },
+                                            new Match
+                                            {
+                                                Expr =
+                                                    "P.attr.Departments.exists(d, d.DepartmentName in ['IT Admin', 'IT Development'])",
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        new PrincipalRule.Types.Action
+                        {
+                            Action_ = "*",
+                            Effect = Effect.Deny,
+                            Condition = new Condition
+                            {
+                                Match = new Match
+                                {
+                                    Any = new ExprList
+                                    {
+                                        Of = { new Match { Expr = "P.attr.IsActive == false" } },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        };
+        var basePolicyRequest = AddOrUpdatePolicyRequest
+            .NewInstance()
+            .With(
+                new Cerbos.Sdk.Policy.Policy(
+                    new Policy
+                    {
+                        ApiVersion = AuthorizationConstants.API_VERSION,
+                        PrincipalPolicy = basePolicy,
+                    }
+                )
+            );
+        _ = await adminClient.AddOrUpdatePolicyAsync(basePolicyRequest);
+
+        var apiTokenPolicy = new PrincipalPolicy
+        {
+            Principal = AuthorizationConstants.PRINCIPLE_TOKEN,
+            Version = AuthorizationConstants.POLICY_VERSION,
+            Rules =
+            {
+                new PrincipalRule
+                {
+                    Resource = "*",
+                    Actions = { CreateApiTokenActionConditions() },
+                },
+            },
+        };
+        var apiTokenPolicyRequest = AddOrUpdatePolicyRequest
+            .NewInstance()
+            .With(
+                new Cerbos.Sdk.Policy.Policy(
+                    new Policy
+                    {
+                        ApiVersion = AuthorizationConstants.API_VERSION,
+                        PrincipalPolicy = apiTokenPolicy,
+                    }
+                )
+            );
+        _ = await adminClient.AddOrUpdatePolicyAsync(apiTokenPolicyRequest);
+
+        scope.Dispose();
+    }
+
+    /// <summary>
+    /// Creates Conditions for Actions for Api Tokens.
+    /// </summary>
+    /// <returns>List of Conditions per Action.</returns>
+    private static Google.Protobuf.Collections.RepeatedField<PrincipalRule.Types.Action> CreateApiTokenActionConditions()
+    {
+        var actionsList =
+            new Google.Protobuf.Collections.RepeatedField<PrincipalRule.Types.Action>();
+
+        foreach (var action in Enum.GetValues<AuthorizationConstants.Actions>())
+        {
+            actionsList.Add(
+                new PrincipalRule.Types.Action
+                {
+                    Action_ = action.ToString(),
+                    Effect = Effect.Allow,
+                    Condition = new Condition
+                    {
+                        Match = new Match
+                        {
+                            Any = new ExprList
+                            {
+                                Of =
+                                {
+                                    new Match
+                                    {
+                                        Expr =
+                                            $"'{action}_' + R.kind.upperAscii() in P.attr.Scopes",
+                                    },
+                                    new Match
+                                    {
+                                        Expr =
+                                            $"'SCIM' in P.attr.Scopes && R.kind == '{nameof(ApplicationUser)}'",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                }
+            );
+            actionsList.Add(
+                new PrincipalRule.Types.Action
+                {
+                    Action_ = action.ToString(),
+                    Effect = Effect.Deny,
+                    Condition = new Condition
+                    {
+                        Match = new Match
+                        {
+                            None = new ExprList
+                            {
+                                Of =
+                                {
+                                    new Match
+                                    {
+                                        Expr =
+                                            $"'{action}_' + R.kind.upperAscii() in P.attr.Scopes",
+                                    },
+                                    new Match
+                                    {
+                                        Expr =
+                                            $"'SCIM' in P.attr.Scopes && R.kind == '{nameof(ApplicationUser)}'",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                }
+            );
+        }
+        return actionsList;
     }
 }

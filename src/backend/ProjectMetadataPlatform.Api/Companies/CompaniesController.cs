@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Companies.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Companies;
@@ -35,20 +36,23 @@ public class CompaniesController : ControllerBase
     /// <summary>
     /// Returns all Companies
     /// </summary>
-    /// <returns>List of Companies</returns>
+    /// <returns>List of Companies with allowed actions for the type</returns>
     /// <response code="200"> Companies are returned succesfully. </response>
     /// <response code="500"> Internal Error. </response>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<GetCompanyResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<GetCompanyResponse>>> Get()
+    [ProducesResponseType(typeof(GetListResponse<GetCompanyResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<GetListResponse<GetCompanyResponse>>> Get()
     {
         var query = new GetAllCompaniesQuery();
-        var companies = await _mediator.Send(query);
-        var response = companies.Select(company => new GetCompanyResponse(
+        var (companies, permissions) = await _mediator.Send(query);
+        var companyResponse = companies.Select(company => new GetCompanyResponse(
             Id: company.Id,
             CompanyName: company.CompanyName
         ));
-
+        var response = new GetListResponse<GetCompanyResponse>(
+            [.. companyResponse],
+            [.. permissions]
+        );
         return Ok(response);
     }
 
@@ -56,7 +60,7 @@ public class CompaniesController : ControllerBase
     /// Returns the specified Company.
     /// </summary>
     /// <param name="id">Id of the specified Company.</param>
-    /// <returns>A Company.</returns>1
+    /// <returns>A Company and the allowed actions for it.</returns>
     /// <response code="200"> Company was returned succesfully.</response>
     /// <response code="404">Company could not be found. </response>
     /// <response code="500"> Internal error. </response>
@@ -66,8 +70,12 @@ public class CompaniesController : ControllerBase
     public async Task<ActionResult<IEnumerable<GetCompanyResponse>>> Get(int id)
     {
         var query = new GetCompanyQuery(id);
-        var company = await _mediator.Send(query);
-        var response = new GetCompanyResponse(Id: company.Id, CompanyName: company.CompanyName);
+        var (company, permissions) = await _mediator.Send(query);
+        var response = new GetCompanyResponse(
+            Id: company.Id,
+            CompanyName: company.CompanyName,
+            Permissions: [.. permissions]
+        );
 
         return Ok(response);
     }

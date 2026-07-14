@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using ProjectMetadataPlatform.Domain.Authorization;
 
 namespace ProjectMetadataPlatform.Api.Users.Models;
 
@@ -23,4 +24,9 @@ public record GetUsersResponse
     /// </summary>
     [JsonPropertyName("Resources")]
     public IEnumerable<PmpScimUser> Resources { get; init; } = [];
+
+    /// <summary>
+    /// Permissions on User Resources.
+    /// </summary>
+    public List<AuthorizationConstants.Actions>? Permissions { get; set; }
 }

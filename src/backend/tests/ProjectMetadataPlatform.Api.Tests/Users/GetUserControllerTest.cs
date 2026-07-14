@@ -38,7 +38,7 @@ public class GetUserControllerTest
         };
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetUserQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(user);
+            .ReturnsAsync((user, []));
 
         var result = await _controller.GetUserById("1");
 

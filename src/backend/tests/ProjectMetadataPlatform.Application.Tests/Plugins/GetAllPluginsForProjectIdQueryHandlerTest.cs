@@ -6,6 +6,8 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Plugins;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 
@@ -17,12 +19,20 @@ public class GetAllPluginsForProjectIdQueryHandlerTest
     [SetUp]
     public void SetUp()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _pluginRepositoryMock = new Mock<IPluginRepository>();
-        _handler = new GetAllPluginsForProjectIdQueryHandler(_pluginRepositoryMock.Object);
+        _mockProjectRepo = new Mock<IProjectsRepository>();
+        _handler = new GetAllPluginsForProjectIdQueryHandler(
+            _pluginRepositoryMock.Object,
+            _mockProjectRepo.Object,
+            authorizationService: _authorizationServiceMock.Object
+        );
     }
 
     private GetAllPluginsForProjectIdQueryHandler _handler;
     private Mock<IPluginRepository> _pluginRepositoryMock;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IProjectsRepository> _mockProjectRepo;
 
     [Test]
     public async Task HandleGetAllProjectsForProjectIdQueryHandlerTest()
@@ -64,7 +74,15 @@ public class GetAllPluginsForProjectIdQueryHandlerTest
         _ = _pluginRepositoryMock
             .Setup(r => r.GetAllPluginsForProjectIdAsync(1))
             .ReturnsAsync(plugins);
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         var query = new GetAllPluginsForProjectIdQuery(1);
         var result = (await _handler.Handle(query, It.IsAny<CancellationToken>())).ToList();
 
@@ -89,8 +107,37 @@ public class GetAllPluginsForProjectIdQueryHandlerTest
     [Test]
     public async Task HandleGetAllProjectsForProjectIdQueryHandler_WhenZeroPlugins_Test()
     {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         var queryFail = new GetAllPluginsForProjectIdQuery(0);
         var resultFail = await _handler.Handle(queryFail, It.IsAny<CancellationToken>());
         Assert.That(resultFail, Is.Null);
+    }
+
+    [Test]
+    public async Task HandleGetAllPluginsForProjectIdQueryHandler_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+
+        var request = new GetAllPluginsForProjectIdQuery(0);
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
+        );
     }
 }

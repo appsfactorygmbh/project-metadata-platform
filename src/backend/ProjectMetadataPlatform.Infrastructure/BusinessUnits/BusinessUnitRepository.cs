@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -26,9 +26,9 @@ public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUni
     }
 
     /// <inheritdoc/>
-    public async Task<IList<BusinessUnit>> GetBusinessUnitsAsync()
+    public async Task<IQueryable<BusinessUnit>> GetBusinessUnitsAsync()
     {
-        return await _context.BusinessUnits.AsNoTracking().ToListAsync();
+        return _context.BusinessUnits.AsNoTracking();
     }
 
     /// <inheritdoc/>

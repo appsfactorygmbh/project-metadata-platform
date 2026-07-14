@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.BusinessUnits.Models;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Teams.Models;
 using ProjectMetadataPlatform.Application.Teams;
@@ -69,7 +69,7 @@ public class TeamsController : ControllerBase
     /// Gets the team with the given id.
     /// </summary>
     /// <param name="id">The id of the team.</param>
-    /// <returns>The team.</returns>
+    /// <returns>The team with all actions allowed on it.</returns>
     /// <response code="200">The team is returned successfully.</response>
     /// <response code="404">The team could not be found.</response>
     /// <response code="500">An internal error occurred.</response>
@@ -79,7 +79,7 @@ public class TeamsController : ControllerBase
     public async Task<ActionResult<GetTeamResponse>> Get(int id)
     {
         var query = new GetTeamQuery(id);
-        var team = await _mediator.Send(query);
+        var (team, permissions) = await _mediator.Send(query);
 
         var response = new GetTeamResponse()
         {
@@ -90,6 +90,7 @@ public class TeamsController : ControllerBase
                 team.BusinessUnit!.BusinessUnitName
             ),
             PTL = team.PTL,
+            Permissions = [.. permissions],
         };
 
         return Ok(response);
@@ -100,19 +101,19 @@ public class TeamsController : ControllerBase
     /// </summary>
     /// <param name="teamName">Search string to filter teams with that team name.</param>
     /// <param name="search">Search string to filter the teams by (across all attributes).</param>
-    /// <returns>All teams that match the given filters.</returns>
+    /// <returns>All teams that match the given filters and allowed actions for the type.</returns>
     /// <response code="200">The teams are returned successfully.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<GetTeamResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<GetTeamResponse>>> Get(
+    [ProducesResponseType(typeof(GetListResponse<GetTeamResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<GetListResponse<GetTeamResponse>>> Get(
         string? teamName = "",
         string? search = ""
     )
     {
         var query = new GetAllTeamsQuery(FullTextQuery: search, TeamName: teamName);
-        var teams = await _mediator.Send(query);
-        var response = teams.Select(t => new GetTeamResponse()
+        var (teams, permissions) = await _mediator.Send(query);
+        var teamResponse = teams.Select(t => new GetTeamResponse()
         {
             Id = t.Id,
             TeamName = t.TeamName,
@@ -122,6 +123,7 @@ public class TeamsController : ControllerBase
             ),
             PTL = t.PTL,
         });
+        var response = new GetListResponse<GetTeamResponse>([.. teamResponse], [.. permissions]);
         return Ok(response);
     }
 

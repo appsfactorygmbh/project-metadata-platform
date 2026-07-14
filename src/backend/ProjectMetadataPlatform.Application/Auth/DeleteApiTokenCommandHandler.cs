@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Auth;
@@ -19,21 +21,26 @@ public class DeleteApiTokenCommandHandler : IRequestHandler<DeleteApiTokenComman
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogRepository _logRepository;
 
+    private readonly IAuthorizationService _authorizationService;
+
     /// <summary>
     ///  Creates a new instance of <see cref="DeleteApiTokenCommandHandler" />.
     /// </summary>
     /// <param name="apiTokenRepository"></param>
     /// <param name="unitOfWork"></param>
     /// <param name="logRepository"></param>
+    /// <param name="authorizationService"></param>
     public DeleteApiTokenCommandHandler(
         IApiTokenRepository apiTokenRepository,
         IUnitOfWork unitOfWork,
-        ILogRepository logRepository
+        ILogRepository logRepository,
+        IAuthorizationService authorizationService
     )
     {
         _apiTokenRepository = apiTokenRepository;
         _unitOfWork = unitOfWork;
         _logRepository = logRepository;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -45,6 +52,10 @@ public class DeleteApiTokenCommandHandler : IRequestHandler<DeleteApiTokenComman
     public async Task Handle(DeleteApiTokenCommand request, CancellationToken cancellationToken)
     {
         var token = await _apiTokenRepository.GetApiTokenById(request.TokenId);
+        if (!await _authorizationService.CheckAccess(token, AuthorizationConstants.Actions.DELETE))
+        {
+            throw new UnauthorizedException();
+        }
         await _apiTokenRepository.DeleteApiToken(token);
         await AddDeleteTokenLog(token);
         await _unitOfWork.CompleteAsync();

@@ -6,7 +6,10 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Containers;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -20,14 +23,43 @@ namespace ProjectMetadataPlatform.IntegrationTests.Utilities;
 public class IntegrationTestsBase : IDisposable
 {
     private readonly PmpWebApplicationFactory _factory = new();
+    private IContainer? _cerbosContainer;
 
     protected HttpClient CreateClient() => _factory.CreateClient();
 
+    [OneTimeSetUp]
+    public async Task OneTimeSetUp()
+    {
+        Environment.SetEnvironmentVariable("TESTCONTAINERS_RYUK_DISABLED", "true");
+        _cerbosContainer = new ContainerBuilder("ghcr.io/cerbos/cerbos:latest")
+            .WithPortBinding(3592, true)
+            .WithPortBinding(3593, true)
+            .WithCommand(
+                "server",
+                "--set=storage.driver=sqlite3",
+                "--set=storage.sqlite3.dsn=:memory:",
+                "--set=server.adminAPI.enabled=true",
+                "--set=server.adminAPI.adminCredentials.username=cerbos_user",
+                "--set=server.adminAPI.adminCredentials.passwordHash=JDJ5JDEwJHl2ZjJJRERFS3VES2FTcExZU2xacmU5a1lLZHA0Z2FnL2c4VU8yaTguZnpacUo3emozSk4yCgo="
+            )
+            .Build();
+
+        await _cerbosContainer.StartAsync();
+        var cerbosHttpPort = _cerbosContainer.GetMappedPublicPort(3593);
+        Environment.SetEnvironmentVariable("PMP_CERBOS_URL", $"http://localhost:{cerbosHttpPort}");
+        Environment.SetEnvironmentVariable("PMP_CERBOS_USER", "cerbos_user");
+        Environment.SetEnvironmentVariable("PMP_CERBOS_PASSWORD", "changeme");
+    }
+
     [OneTimeTearDown]
-    public void CleanUp()
+    public async Task CleanUpAsync()
     {
         SqliteConnection.ClearAllPools();
         File.Delete("unittest-db.db");
+        if (_cerbosContainer is not null)
+        {
+            await _cerbosContainer.DisposeAsync();
+        }
     }
 
     [SetUp]
@@ -121,8 +153,15 @@ public class IntegrationTestsBase : IDisposable
             new { Name = name, Scopes = scopes ?? [] }
         );
         _ = response.EnsureSuccessStatusCode();
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
 
-        var content = await response.Content.ReadFromJsonAsync<GetApiTokenDetailsResponse>();
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        };
+        options.Converters.Add(new JsonStringEnumConverter());
+        var content = await response.Content.ReadFromJsonAsync<GetApiTokenDetailsResponse>(options);
 
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {content!.Token}");

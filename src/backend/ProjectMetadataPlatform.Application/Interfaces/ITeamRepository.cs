@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using ProjectMetadataPlatform.Domain.Teams;
 
@@ -15,7 +15,7 @@ public interface ITeamRepository
     /// <param name="fullTextQuery">Optional. Full text search over all attributes of a team except the id.</param>
     /// <param name="teamName">Optional. The name of the team to filter by.</param>
     /// <returns></returns>
-    Task<List<Team>> GetTeamsAsync(string? fullTextQuery, string? teamName);
+    Task<IQueryable<Team>> GetTeamsAsync(string? fullTextQuery, string? teamName);
 
     /// <summary>
     /// Retrieves the team by the given id.

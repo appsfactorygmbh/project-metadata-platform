@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +31,7 @@ public class ApiTokenRepository : RepositoryBase<ApiToken>, IApiTokenRepository
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<ApiToken>> GetApiTokens()
+    public async Task<IQueryable<ApiToken>> GetApiTokens()
     {
         return GetEverything();
     }

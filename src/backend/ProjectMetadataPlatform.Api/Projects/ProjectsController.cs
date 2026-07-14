@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.BusinessUnits.Models;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Companies.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Plugins.Models;
@@ -40,19 +41,19 @@ public class ProjectsController : ControllerBase
     /// </summary>
     /// <param name="request">The collection of filters to search by.</param>
     /// <param name="search">Search string to filter the projects by.</param>
-    /// <returns>All projects or all projects that match the given search string or filters.</returns>
+    /// <returns>All projects or all projects that match the given search string or filters with the allowed actions on the type.</returns>
     /// <response code="200">The projects are returned successfully.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<GetProjectsResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<GetProjectsResponse>>> Get(
+    [ProducesResponseType(typeof(GetListResponse<GetProjectResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<GetListResponse<GetProjectResponse>>> Get(
         [FromQuery] ProjectFilterRequest? request,
         string? search = " "
     )
     {
         var query = new GetAllProjectsQuery(request, search);
-        var projects = await _mediator.Send(query);
-        var response = projects.Select(project => new GetProjectsResponse(
+        var (projects, permissions) = await _mediator.Send(query);
+        var projectResponse = projects.Select(project => new GetProjectResponse(
             Id: project.Id,
             Slug: project.Slug,
             ProjectName: project.ProjectName,
@@ -75,6 +76,10 @@ public class ProjectsController : ControllerBase
             IsEoC: project.IsEoC,
             Notes: project.Notes
         ));
+        var response = new GetListResponse<GetProjectResponse>(
+            [.. projectResponse],
+            [.. permissions]
+        );
         return Ok(response);
     }
 
@@ -82,14 +87,14 @@ public class ProjectsController : ControllerBase
     /// Gets the project with the given slug.
     /// </summary>
     /// <param name="slug">The slug of the project.</param>
-    /// <returns> The project.</returns>
+    /// <returns> The project with actions allowed on it.</returns>
     /// <response code="200">The Project is returned successfully.</response>
     /// <response code="404">The project could not be found.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpGet("{slug}")]
-    [ProducesResponseType(typeof(GetProjectResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetProjectDetailsResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GetProjectResponse>> Get(string slug)
+    public async Task<ActionResult<GetProjectDetailsResponse>> Get(string slug)
     {
         var projectId = await GetProjectId(slug);
         return await Get(projectId);
@@ -104,14 +109,14 @@ public class ProjectsController : ControllerBase
     /// <response code="404">The project could not be found.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpGet("{id:int}")]
-    [ProducesResponseType(typeof(GetProjectResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetProjectDetailsResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GetProjectResponse>> Get(int id)
+    public async Task<ActionResult<GetProjectDetailsResponse>> Get(int id)
     {
         var query = new GetProjectQuery(id);
-        var project = await _mediator.Send(query);
+        var (project, permissions) = await _mediator.Send(query);
 
-        var response = new GetProjectResponse(
+        var response = new GetProjectDetailsResponse(
             Id: project.Id,
             Slug: project.Slug,
             OfferId: project.OfferId,
@@ -134,7 +139,8 @@ public class ProjectsController : ControllerBase
                 },
             IsEoC: project.IsEoC,
             IsmsLevel: project.IsmsLevel,
-            Notes: project.Notes
+            Notes: project.Notes,
+            Permissions: [.. permissions]
         );
 
         return Ok(response);

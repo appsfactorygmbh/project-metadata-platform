@@ -128,7 +128,7 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<GetUsersResponse>> Get([FromQuery] string filter = "")
     {
         var query = new GetAllUsersQuery(filter);
-        var users = await _mediator.Send(query);
+        var (users, permissions) = await _mediator.Send(query);
 
         var response = new GetUsersResponse
         {
@@ -169,6 +169,7 @@ public class UsersController : ControllerBase
                 })
                 .OrderBy(u => u.UserName),
             TotalResults = users.Count(),
+            Permissions = [.. permissions],
         };
         return Ok(response);
     }
@@ -187,7 +188,7 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<PmpScimUser>> GetUserById(string userId)
     {
         var query = new GetUserQuery(userId);
-        var user = await _mediator.Send(query);
+        var (user, permissions) = await _mediator.Send(query);
 
         var response = new PmpScimUser
         {
@@ -220,6 +221,7 @@ public class UsersController : ControllerBase
                 BusinessUnits = user.BusinessUnits?.Select(bu => bu.BusinessUnitName).ToList(),
                 IsScimProvisioned = user.IsScimProvisioned,
             },
+            Meta = new PmpScimUser.MetaResourceData { Permissions = [.. permissions] },
         };
         return Ok(response);
     }
@@ -327,11 +329,11 @@ public class UsersController : ControllerBase
     {
         var email =
             _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
-            ?? throw new UserUnauthorizedException();
+            ?? throw new UserUnauthenticatedException();
 
         var query = new GetUserByEmailQuery(email);
 
-        var user = await _mediator.Send(query);
+        var (user, permissions) = await _mediator.Send(query);
 
         var response = new PmpScimUser
         {
@@ -364,6 +366,7 @@ public class UsersController : ControllerBase
                 BusinessUnits = user.BusinessUnits?.Select(bu => bu.BusinessUnitName).ToList(),
                 IsScimProvisioned = user.IsScimProvisioned,
             },
+            Meta = new PmpScimUser.MetaResourceData { Permissions = [.. permissions] },
         };
         return Ok(response);
     }

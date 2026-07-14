@@ -32,7 +32,7 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
     /// </summary>
     /// <param name="query">The query containing filters and search pattern.</param>
     /// <returns>A task representing the asynchronous operation. When this task completes, it returns a collection of projects.</returns>
-    public async Task<IEnumerable<Project>> GetProjectsAsync(GetAllProjectsQuery query)
+    public async Task<IQueryable<Project>> GetProjectsAsync(GetAllProjectsQuery query)
     {
         var filteredQuery = _context.Projects.AsQueryable();
 
@@ -126,11 +126,10 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
             }
         }
 
-        return await filteredQuery
+        return filteredQuery
             .Include(p => p.Team)
                 .ThenInclude(t => t!.BusinessUnit)
-            .Include(p => p.Company)
-            .ToListAsync();
+            .Include(p => p.Company);
     }
 
     /// <summary>

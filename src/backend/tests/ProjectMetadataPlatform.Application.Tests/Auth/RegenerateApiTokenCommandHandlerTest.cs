@@ -7,6 +7,8 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Tests.Auth;
@@ -17,25 +19,36 @@ public class RegenerateApiTokenCommandHandlerTest
     private Mock<IApiTokenRepository> _apiTokenRepositoryMock;
     private Mock<ILogRepository> _logRepositoryMock;
     private Mock<IUnitOfWork> _unitOfWorkMock;
-
+    private Mock<IAuthorizationService> _authorizationServiceMock;
     private RegenerateApiTokenCommandHandler _handler;
 
     [SetUp]
     public void SetUp()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _apiTokenRepositoryMock = new Mock<IApiTokenRepository>();
         _logRepositoryMock = new Mock<ILogRepository>();
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _handler = new RegenerateApiTokenCommandHandler(
             _apiTokenRepositoryMock.Object,
             _unitOfWorkMock.Object,
-            _logRepositoryMock.Object
+            _logRepositoryMock.Object,
+            _authorizationServiceMock.Object
         );
     }
 
     [Test]
     public async Task RegenerateApiTokenCommand_SuccessfulRegenerationTest()
     {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApiToken>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _apiTokenRepositoryMock
             .Setup(m => m.GetApiTokenById(It.IsAny<int>()))
             .ReturnsAsync(
@@ -64,6 +77,40 @@ public class RegenerateApiTokenCommandHandlerTest
                     It.IsAny<List<LogChange>>()
                 ),
             Times.Once
+        );
+        _authorizationServiceMock.Verify(
+            a => a.CheckAccess(It.IsAny<ApiToken>(), AuthorizationConstants.Actions.EDIT, null),
+            Times.Once
+        );
+    }
+
+    [Test]
+    public async Task RegenerateApiTokenCommand_AuthorizationFailsThrows()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApiToken>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+        _ = _apiTokenRepositoryMock
+            .Setup(m => m.GetApiTokenById(It.IsAny<int>()))
+            .ReturnsAsync(
+                new ApiToken
+                {
+                    Name = "Token",
+                    Scopes = new List<TokenScopes> { TokenScopes.CREATE_BUSINESSUNIT },
+                    Token = "TokenHash",
+                    ExpirationDate = new DateTimeOffset(),
+                }
+            );
+
+        var request = new RegenerateApiTokenCommand(1);
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
 }

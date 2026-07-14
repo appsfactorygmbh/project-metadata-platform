@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.OfficeLocations;
 using ProjectMetadataPlatform.Api.OfficeLocations.Models;
 using ProjectMetadataPlatform.Application.OfficeLocations;
@@ -33,17 +34,17 @@ public class OfficeLocationsControllerTest
             .Setup(m =>
                 m.Send(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync([]);
+            .ReturnsAsync(([], []));
         var result = await _controller.Get();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult.Value, Is.InstanceOf<IEnumerable<GetOfficeLocationResponse>>());
+        Assert.That(okResult.Value, Is.InstanceOf<GetListResponse<GetOfficeLocationResponse>>());
 
         var getOfficeLocationsResponseList = (
-            okResult.Value as IEnumerable<GetOfficeLocationResponse>
-        )!.ToList();
+            okResult.Value as GetListResponse<GetOfficeLocationResponse>
+        )!.Resources.ToList();
         Assert.That(getOfficeLocationsResponseList, Is.Not.Null);
 
         Assert.That(getOfficeLocationsResponseList, Has.Count.EqualTo(0));
@@ -56,20 +57,25 @@ public class OfficeLocationsControllerTest
             .Setup(m =>
                 m.Send(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync([
-                new OfficeLocation { Id = 1, OfficeLocationName = "OfficeLocation1" },
-                new OfficeLocation { Id = 2, OfficeLocationName = "OfficeLocation2" },
-            ]);
+            .ReturnsAsync(
+                (
+                    [
+                        new OfficeLocation { Id = 1, OfficeLocationName = "OfficeLocation1" },
+                        new OfficeLocation { Id = 2, OfficeLocationName = "OfficeLocation2" },
+                    ],
+                    []
+                )
+            );
         var result = await _controller.Get();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult.Value, Is.InstanceOf<IEnumerable<GetOfficeLocationResponse>>());
+        Assert.That(okResult.Value, Is.InstanceOf<GetListResponse<GetOfficeLocationResponse>>());
 
         var getOfficeLocationsResponseList = (
-            okResult.Value as IEnumerable<GetOfficeLocationResponse>
-        )!.ToList();
+            okResult.Value as GetListResponse<GetOfficeLocationResponse>
+        )!.Resources.ToList();
         Assert.That(getOfficeLocationsResponseList, Is.Not.Null);
 
         Assert.That(getOfficeLocationsResponseList, Has.Count.EqualTo(2));
@@ -112,7 +118,9 @@ public class OfficeLocationsControllerTest
     {
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetOfficeLocationQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new OfficeLocation { OfficeLocationName = "OfficeLocation", Id = 1 });
+            .ReturnsAsync(
+                (new OfficeLocation { OfficeLocationName = "OfficeLocation", Id = 1 }, [])
+            );
         var result = await _controller.Get(1);
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 

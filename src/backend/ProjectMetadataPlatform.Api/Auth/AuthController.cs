@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Auth.Models;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Domain.Auth;
@@ -76,21 +76,28 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Returns a List of all Api Tokens without details.
     /// </summary>
-    /// <returns>List of Api Tokens.</returns>
+    /// <returns>List of Api Tokens with permissions on the type.</returns>
     /// <response code="200">Returns the Api Tokens.</response>
     [HttpGet("ApiTokens")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.SELECTOR)]
-    [ProducesResponseType(typeof(IEnumerable<GetApiTokenDetailsResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<GetApiTokenDetailsResponse>>> GetApiTokens()
+    [ProducesResponseType(
+        typeof(GetListResponse<GetApiTokenDetailsResponse>),
+        StatusCodes.Status200OK
+    )]
+    public async Task<ActionResult<GetListResponse<GetApiTokenDetailsResponse>>> GetApiTokens()
     {
         var query = new GetAllApiTokensQuery();
-        var tokens = await _mediator.Send(query);
-        var response = tokens.Select(t => new GetApiTokenDetailsResponse(
+        var (tokens, permissions) = await _mediator.Send(query);
+        var tokenResponse = tokens.Select(t => new GetApiTokenDetailsResponse(
             t.Id,
             t.Name,
             t.Scopes ?? [],
             t.ExpirationDate
         ));
+        var response = new GetListResponse<GetApiTokenDetailsResponse>(
+            [.. tokenResponse],
+            [.. permissions]
+        );
         return Ok(response);
     }
 
@@ -98,7 +105,7 @@ public class AuthController : ControllerBase
     /// Gets the Api Token with the given id.
     /// </summary>
     /// <param name="tokenId">Id of the requested token.</param>
-    /// <returns>The Api Token with its details minus the actual token value.</returns>
+    /// <returns>The Api Token with its details minus the actual token value and the allowed actions on the token.</returns>
     /// <response code="200">Returns the Api Token.</response>
     /// <response code="404">If the token wasn't found.</response>
     [HttpGet("ApiTokens/{tokenId}")]
@@ -108,12 +115,13 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<GetApiTokenDetailsResponse>> GetApiToken(int tokenId)
     {
         var command = new GetApiTokenDetailsQuery(tokenId);
-        var token = await _mediator.Send(command);
+        var (token, permissions) = await _mediator.Send(command);
         var response = new GetApiTokenDetailsResponse(
             token.Id,
             token.Name,
             token.Scopes ?? [],
-            token.ExpirationDate
+            token.ExpirationDate,
+            Permissions: [.. permissions]
         );
         return Ok(response);
     }

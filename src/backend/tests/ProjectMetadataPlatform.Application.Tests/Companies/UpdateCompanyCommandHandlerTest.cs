@@ -5,7 +5,9 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Companies;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 
@@ -17,7 +19,7 @@ public class UpdateCompanyCommandHandlerTest
     private UpdateCompanyCommandHandler _handler;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
-
+    private Mock<IAuthorizationService> _authorizationServiceMock;
     private Mock<ICompanyRepository> _mockCompanyRepository;
 
     [SetUp]
@@ -26,11 +28,12 @@ public class UpdateCompanyCommandHandlerTest
         _mockCompanyRepository = new Mock<ICompanyRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _handler = new UpdateCompanyCommandHandler(
             companyRepository: _mockCompanyRepository.Object,
             logRepository: _mockLogRepo.Object,
-            unitOfWork: _mockUnitOfWork.Object
+            unitOfWork: _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -39,7 +42,15 @@ public class UpdateCompanyCommandHandlerTest
     {
         // Arrange
         var returnCompany = new Company() { Id = 1, CompanyName = "Test_1" };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Company>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyAsync(It.IsAny<int>()))
             .ReturnsAsync(returnCompany);
@@ -92,7 +103,15 @@ public class UpdateCompanyCommandHandlerTest
     {
         // Arrange
         var returnCompany = new Company() { Id = 1, CompanyName = "Test_1" };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Company>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyAsync(It.IsAny<int>()))
             .ReturnsAsync(returnCompany);
@@ -128,7 +147,15 @@ public class UpdateCompanyCommandHandlerTest
     {
         // Arrange
         var returnCompany = new Company() { Id = 1, CompanyName = "Test_1" };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Company>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyAsync(It.IsAny<int>()))
             .ReturnsAsync(returnCompany);
@@ -150,5 +177,28 @@ public class UpdateCompanyCommandHandlerTest
         );
 
         Assert.That(ex.Message, Does.Contain("Test_2"));
+    }
+
+    [Test]
+    public async Task UpdateCompanyCommand_AuthorizationFailsThrowsTest()
+    {
+        var returnCompany = new Company() { Id = 1, CompanyName = "Test_1" };
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Company>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+        _ = _mockCompanyRepository
+            .Setup(repo => repo.GetCompanyAsync(It.IsAny<int>()))
+            .ReturnsAsync(returnCompany);
+        var request = new UpdateCompanyCommand(Id: 1, CompanyName: "Test_2");
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
+        );
     }
 }

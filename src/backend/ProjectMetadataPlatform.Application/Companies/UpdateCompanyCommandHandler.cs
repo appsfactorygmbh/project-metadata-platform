@@ -3,7 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 
@@ -17,6 +19,7 @@ public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand,
     private readonly ICompanyRepository _companyRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="UpdateCompanyCommandHandler" />.
@@ -24,12 +27,14 @@ public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand,
     public UpdateCompanyCommandHandler(
         ICompanyRepository companyRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _companyRepository = companyRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -45,6 +50,7 @@ public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand,
     )
     {
         var company = await _companyRepository.GetCompanyAsync(request.Id);
+        await CheckAuthorization(company, request);
         var logChanges = new List<LogChange> { };
         if (request.CompanyName != null && request.CompanyName != company.CompanyName)
         {
@@ -58,7 +64,6 @@ public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand,
             {
                 throw new CompanyNameAlreadyExistsException(request.CompanyName);
             }
-
             logChanges.Add(
                 new LogChange
                 {
@@ -82,5 +87,31 @@ public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand,
         }
 
         return company;
+    }
+
+    /// <summary>
+    /// Checks Authorization for a Company and its update request.
+    /// </summary>
+    /// <param name="company">Company that is checked.</param>
+    /// <param name="request">Updated Request for the company.</param>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedException">Thrown if Update Request is unauthorized</exception>
+    private async Task CheckAuthorization(Company company, UpdateCompanyCommand request)
+    {
+        Dictionary<string, object?> updates = [];
+        if (request.CompanyName != company.CompanyName)
+        {
+            updates.Add(nameof(Company.CompanyName), request.CompanyName);
+        }
+        if (
+            !await _authorizationService.CheckAccess(
+                company,
+                AuthorizationConstants.Actions.EDIT,
+                updates
+            )
+        )
+        {
+            throw new UnauthorizedException();
+        }
     }
 }
