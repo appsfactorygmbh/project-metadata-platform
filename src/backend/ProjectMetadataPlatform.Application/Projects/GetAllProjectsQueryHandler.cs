@@ -11,7 +11,11 @@ using ProjectMetadataPlatform.Domain.Projects;
 namespace ProjectMetadataPlatform.Application.Projects;
 
 /// <inheritdoc />
-public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, IEnumerable<Project>>
+public class GetAllProjectsQueryHandler
+    : IRequestHandler<
+        GetAllProjectsQuery,
+        (IEnumerable<Project>, IEnumerable<AuthorizationConstants.Actions>)
+    >
 {
     private readonly IProjectsRepository _projectRepository;
     private readonly IAuthorizationService _authorizationService;
@@ -29,34 +33,39 @@ public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, I
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<Project>> Handle(
+    public async Task<(IEnumerable<Project>, IEnumerable<AuthorizationConstants.Actions>)> Handle(
         GetAllProjectsQuery request,
         CancellationToken cancellationToken
     )
     {
         var projects = await _projectRepository.GetProjectsAsync(request);
         var queriedProjects = await _authorizationService.TryGetPlanResourceQuery(projects);
+        var permissions = await _authorizationService.GetPermissions<Project>();
         if (queriedProjects == null)
         {
             List<Project> filteredProjects = [];
             foreach (var project in projects)
             {
                 if (
-                    (
-                        await _authorizationService.CheckAccess(
-                            project,
-                            [AuthorizationConstants.Actions.GET]
-                        )
-                    )[AuthorizationConstants.Actions.GET]
+                    await _authorizationService.CheckAccess(
+                        project,
+                        AuthorizationConstants.Actions.GET
+                    )
                 )
                 {
                     filteredProjects.Add(project);
                 }
             }
-            return filteredProjects.OrderBy(project => project.ProjectName.ToLowerInvariant());
+            return (
+                filteredProjects.OrderBy(project => project.ProjectName.ToLowerInvariant()),
+                permissions
+            );
         }
-        return (await queriedProjects.ToListAsync(cancellationToken: cancellationToken))
-            .OrderBy(project => project.ClientName)
-            .ThenBy(project => project.ProjectName);
+        return (
+            (await queriedProjects.ToListAsync(cancellationToken: cancellationToken))
+                .OrderBy(project => project.ClientName)
+                .ThenBy(project => project.ProjectName),
+            permissions
+        );
     }
 }

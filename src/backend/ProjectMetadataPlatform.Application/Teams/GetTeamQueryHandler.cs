@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -9,7 +10,8 @@ using ProjectMetadataPlatform.Domain.Teams;
 namespace ProjectMetadataPlatform.Application.Teams;
 
 /// <inheritdoc />
-public class GetTeamQueryHandler : IRequestHandler<GetTeamQuery, Team>
+public class GetTeamQueryHandler
+    : IRequestHandler<GetTeamQuery, (Team, IEnumerable<AuthorizationConstants.Actions>)>
 {
     private readonly ITeamRepository _teamRepository;
     private readonly IAuthorizationService _authorizationService;
@@ -27,17 +29,17 @@ public class GetTeamQueryHandler : IRequestHandler<GetTeamQuery, Team>
     }
 
     /// <inheritdoc/>
-    public async Task<Team> Handle(GetTeamQuery request, CancellationToken cancellationToken)
+    public async Task<(Team, IEnumerable<AuthorizationConstants.Actions>)> Handle(
+        GetTeamQuery request,
+        CancellationToken cancellationToken
+    )
     {
         var team = await _teamRepository.GetTeamAsync(request.Id);
-        if (
-            !(await _authorizationService.CheckAccess(team, [AuthorizationConstants.Actions.GET]))[
-                AuthorizationConstants.Actions.GET
-            ]
-        )
+        if (!await _authorizationService.CheckAccess(team, AuthorizationConstants.Actions.GET))
         {
             throw new UnauthorizedException();
         }
-        return team;
+        var permissions = await _authorizationService.GetPermissions(team);
+        return (team, permissions);
     }
 }

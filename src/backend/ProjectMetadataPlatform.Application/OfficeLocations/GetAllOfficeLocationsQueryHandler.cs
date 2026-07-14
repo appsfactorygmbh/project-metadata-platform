@@ -14,7 +14,10 @@ namespace ProjectMetadataPlatform.Application.OfficeLocations;
 /// Handler for the <see cref="GetAllOfficeLocationsQuery" />.
 /// </summary>
 public class GetAllOfficeLocationsQueryHandler
-    : IRequestHandler<GetAllOfficeLocationsQuery, IEnumerable<OfficeLocation>>
+    : IRequestHandler<
+        GetAllOfficeLocationsQuery,
+        (IEnumerable<OfficeLocation>, IEnumerable<AuthorizationConstants.Actions>)
+    >
 {
     private readonly IOfficeLocationRepository _officeLocationRepository;
     private readonly IAuthorizationService _authorizationService;
@@ -36,39 +39,44 @@ public class GetAllOfficeLocationsQueryHandler
     /// </summary>
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
-    /// <returns>List of Office Locations.</returns>
-    public async Task<IEnumerable<OfficeLocation>> Handle(
-        GetAllOfficeLocationsQuery request,
-        CancellationToken cancellationToken
-    )
+    /// <returns>List of Office Locations and allowed actions.</returns>
+    public async Task<(
+        IEnumerable<OfficeLocation>,
+        IEnumerable<AuthorizationConstants.Actions>
+    )> Handle(GetAllOfficeLocationsQuery request, CancellationToken cancellationToken)
     {
         var officeLocations = await _officeLocationRepository.GetOfficeLocationsAsync();
         var queriedOfficeLocations = await _authorizationService.TryGetPlanResourceQuery(
             officeLocations
         );
+        var permissions = await _authorizationService.GetPermissions<OfficeLocation>();
         if (queriedOfficeLocations == null)
         {
             List<OfficeLocation> filteredOfficeLocations = [];
             foreach (var officeLocation in officeLocations)
             {
                 if (
-                    (
-                        await _authorizationService.CheckAccess(
-                            officeLocation,
-                            [AuthorizationConstants.Actions.GET]
-                        )
-                    )[AuthorizationConstants.Actions.GET]
+                    await _authorizationService.CheckAccess(
+                        officeLocation,
+                        AuthorizationConstants.Actions.GET
+                    )
                 )
                 {
                     filteredOfficeLocations.Add(officeLocation);
                 }
             }
-            return filteredOfficeLocations.OrderBy(officeLocation =>
-                officeLocation.OfficeLocationName.ToLowerInvariant()
+            return (
+                filteredOfficeLocations.OrderBy(officeLocation =>
+                    officeLocation.OfficeLocationName.ToLowerInvariant()
+                ),
+                permissions
             );
         }
         return (
-            await queriedOfficeLocations.ToListAsync(cancellationToken: cancellationToken)
-        ).OrderBy(officeLocation => officeLocation.OfficeLocationName.ToLowerInvariant());
+            (
+                await queriedOfficeLocations.ToListAsync(cancellationToken: cancellationToken)
+            ).OrderBy(officeLocation => officeLocation.OfficeLocationName.ToLowerInvariant()),
+            permissions
+        );
     }
 }

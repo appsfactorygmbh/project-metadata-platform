@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using MediatR;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Teams;
 
 namespace ProjectMetadataPlatform.Application.Teams;
@@ -10,4 +11,4 @@ namespace ProjectMetadataPlatform.Application.Teams;
 /// <param name="TeamName">Optional. The name of the team to filter by.</param>
 /// </summary>
 public record GetAllTeamsQuery(string? FullTextQuery, string? TeamName)
-    : IRequest<IEnumerable<Team>>;
+    : IRequest<(IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)>;

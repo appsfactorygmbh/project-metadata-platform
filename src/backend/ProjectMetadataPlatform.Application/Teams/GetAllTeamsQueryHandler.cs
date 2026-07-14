@@ -11,7 +11,11 @@ using ProjectMetadataPlatform.Domain.Teams;
 namespace ProjectMetadataPlatform.Application.Teams;
 
 /// <inheritdoc />
-public class GetAllTeamsQueryHandler : IRequestHandler<GetAllTeamsQuery, IEnumerable<Team>>
+public class GetAllTeamsQueryHandler
+    : IRequestHandler<
+        GetAllTeamsQuery,
+        (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)
+    >
 {
     private readonly ITeamRepository _teamRepository;
     private readonly IAuthorizationService _authorizationService;
@@ -29,7 +33,7 @@ public class GetAllTeamsQueryHandler : IRequestHandler<GetAllTeamsQuery, IEnumer
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<Team>> Handle(
+    public async Task<(IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)> Handle(
         GetAllTeamsQuery request,
         CancellationToken cancellationToken
     )
@@ -40,27 +44,29 @@ public class GetAllTeamsQueryHandler : IRequestHandler<GetAllTeamsQuery, IEnumer
         );
 
         var queriedteams = await _authorizationService.TryGetPlanResourceQuery(teams);
+        var permissions = await _authorizationService.GetPermissions<Team>();
         if (queriedteams == null)
         {
             List<Team> filteredteams = [];
             foreach (var team in teams)
             {
                 if (
-                    (
-                        await _authorizationService.CheckAccess(
-                            team,
-                            [AuthorizationConstants.Actions.GET]
-                        )
-                    )[AuthorizationConstants.Actions.GET]
+                    await _authorizationService.CheckAccess(
+                        team,
+                        AuthorizationConstants.Actions.GET
+                    )
                 )
                 {
                     filteredteams.Add(team);
                 }
             }
-            return filteredteams.OrderBy(team => team.TeamName.ToLowerInvariant());
+            return (filteredteams.OrderBy(team => team.TeamName.ToLowerInvariant()), permissions);
         }
-        return (await queriedteams.ToListAsync(cancellationToken: cancellationToken)).OrderBy(
-            team => team.TeamName.ToLowerInvariant()
+        return (
+            (await queriedteams.ToListAsync(cancellationToken: cancellationToken)).OrderBy(team =>
+                team.TeamName.ToLowerInvariant()
+            ),
+            permissions
         );
     }
 }

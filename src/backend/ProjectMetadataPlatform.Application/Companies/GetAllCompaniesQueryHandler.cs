@@ -14,7 +14,10 @@ namespace ProjectMetadataPlatform.Application.Companies;
 /// Handler for the <see cref="GetAllCompaniesQuery" />.
 /// </summary>
 public class GetAllCompaniesQueryHandler
-    : IRequestHandler<GetAllCompaniesQuery, IEnumerable<Company>>
+    : IRequestHandler<
+        GetAllCompaniesQuery,
+        (IEnumerable<Company>, IEnumerable<AuthorizationConstants.Actions>)
+    >
 {
     private readonly ICompanyRepository _companyRepository;
     private readonly IAuthorizationService _authorizationService;
@@ -36,35 +39,40 @@ public class GetAllCompaniesQueryHandler
     /// </summary>
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
-    /// <returns>List of Companies.</returns>
-    public async Task<IEnumerable<Company>> Handle(
+    /// <returns>List of Companies and allowed actions.</returns>
+    public async Task<(IEnumerable<Company>, IEnumerable<AuthorizationConstants.Actions>)> Handle(
         GetAllCompaniesQuery request,
         CancellationToken cancellationToken
     )
     {
         var companies = await _companyRepository.GetCompaniesAsync();
         var queriedCompanies = await _authorizationService.TryGetPlanResourceQuery(companies);
+        var permissions = await _authorizationService.GetPermissions<Company>();
         if (queriedCompanies == null)
         {
             List<Company> filteredCompanies = [];
             foreach (var company in companies)
             {
                 if (
-                    (
-                        await _authorizationService.CheckAccess(
-                            company,
-                            [AuthorizationConstants.Actions.GET]
-                        )
-                    )[AuthorizationConstants.Actions.GET]
+                    await _authorizationService.CheckAccess(
+                        company,
+                        AuthorizationConstants.Actions.GET
+                    )
                 )
                 {
                     filteredCompanies.Add(company);
                 }
             }
-            return filteredCompanies.OrderBy(company => company.CompanyName.ToLowerInvariant());
+            return (
+                filteredCompanies.OrderBy(company => company.CompanyName.ToLowerInvariant()),
+                permissions
+            );
         }
-        return (await queriedCompanies.ToListAsync(cancellationToken: cancellationToken)).OrderBy(
-            company => company.CompanyName.ToLowerInvariant()
+        return (
+            (await queriedCompanies.ToListAsync(cancellationToken: cancellationToken)).OrderBy(
+                company => company.CompanyName.ToLowerInvariant()
+            ),
+            permissions
         );
     }
 }

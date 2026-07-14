@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.BusinessUnits.Models;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Auth;
@@ -34,20 +35,26 @@ public class BusinessUnitsController : ControllerBase
     /// <summary>
     /// Gets all Business Units.
     /// </summary>
-    /// <returns>List of Business Units</returns>
+    /// <returns>List of Business Units with permissions on the resource type.</returns>
     /// <response code="200">The business Units are returned successfully.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<GetBusinessUnitResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<GetBusinessUnitResponse>>> Get()
+    [ProducesResponseType(
+        typeof(GetListResponse<GetBusinessUnitResponse>),
+        StatusCodes.Status200OK
+    )]
+    public async Task<ActionResult<GetListResponse<GetBusinessUnitResponse>>> Get()
     {
         var query = new GetAllBusinessUnitsQuery();
-        var businessUnits = await _mediator.Send(query);
-        var response = businessUnits.Select(businessUnit => new GetBusinessUnitResponse(
+        var (businessUnits, permissions) = await _mediator.Send(query);
+        var buResponse = businessUnits.Select(businessUnit => new GetBusinessUnitResponse(
             Id: businessUnit.Id,
             BusinessUnitName: businessUnit.BusinessUnitName
         ));
-
+        var response = new GetListResponse<GetBusinessUnitResponse>(
+            [.. buResponse],
+            [.. permissions]
+        );
         return Ok(response);
     }
 
@@ -55,7 +62,7 @@ public class BusinessUnitsController : ControllerBase
     /// Returns a bu specified by id.
     /// </summary>
     /// <param name="id">Id of the bu.</param>
-    /// <returns>The specified bu.</returns>
+    /// <returns>The specified bu with allowed actions for it.</returns>
     /// <response code="200"> bu returned succesfully.</response>
     /// <response code="404"> bu not found. </response>
     /// <response code="500"> internal error. </response>
@@ -65,10 +72,11 @@ public class BusinessUnitsController : ControllerBase
     public async Task<ActionResult<IEnumerable<GetBusinessUnitResponse>>> Get(int id)
     {
         var query = new GetBusinessUnitQuery(id);
-        var businessUnit = await _mediator.Send(query);
+        var (businessUnit, permissions) = await _mediator.Send(query);
         var response = new GetBusinessUnitResponse(
             Id: businessUnit.Id,
-            BusinessUnitName: businessUnit.BusinessUnitName
+            BusinessUnitName: businessUnit.BusinessUnitName,
+            [.. permissions]
         );
 
         return Ok(response);

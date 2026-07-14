@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -11,7 +12,11 @@ namespace ProjectMetadataPlatform.Application.OfficeLocations;
 /// <summary>
 /// Handler for the <see cref="GetOfficeLocationQuery" />.
 /// </summary>
-public class GetOfficeLocationQueryHandler : IRequestHandler<GetOfficeLocationQuery, OfficeLocation>
+public class GetOfficeLocationQueryHandler
+    : IRequestHandler<
+        GetOfficeLocationQuery,
+        (OfficeLocation, IEnumerable<AuthorizationConstants.Actions>)
+    >
 {
     private readonly IOfficeLocationRepository _officeLocationRepository;
     private readonly IAuthorizationService _authorizationService;
@@ -33,24 +38,18 @@ public class GetOfficeLocationQueryHandler : IRequestHandler<GetOfficeLocationQu
     /// </summary>
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
-    /// <returns>A Office Location.</returns>
-    public async Task<OfficeLocation> Handle(
+    /// <returns>A Office Location and allowed actions.</returns>
+    public async Task<(OfficeLocation, IEnumerable<AuthorizationConstants.Actions>)> Handle(
         GetOfficeLocationQuery request,
         CancellationToken cancellationToken
     )
     {
         var location = await _officeLocationRepository.GetOfficeLocationAsync(request.Id);
-        if (
-            !(
-                await _authorizationService.CheckAccess(
-                    location,
-                    [AuthorizationConstants.Actions.GET]
-                )
-            )[AuthorizationConstants.Actions.GET]
-        )
+        if (!await _authorizationService.CheckAccess(location, AuthorizationConstants.Actions.GET))
         {
             throw new UnauthorizedException();
         }
-        return location;
+        var permissions = await _authorizationService.GetPermissions(location);
+        return (location, permissions);
     }
 }

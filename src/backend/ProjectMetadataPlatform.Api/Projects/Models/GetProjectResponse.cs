@@ -5,31 +5,27 @@ using ProjectMetadataPlatform.Domain.Projects;
 namespace ProjectMetadataPlatform.Api.Projects.Models;
 
 /// <summary>
-/// Represents a response to the GetProject API call.
+/// Represents a response for the GetProjects API call.
 /// </summary>
-/// <param name="ProjectName"></param>
-/// <param name="ClientName"></param>
-/// <param name="Id">The identification number for the project.</param>
+/// <param name="Id">The id of the project.</param>
 /// <param name="Slug">The Slug for the project name.</param>
+/// <param name="ProjectName">The name of the project.</param>
+/// <param name="ClientName">The name of the client associated with the project.</param>
 /// <param name="IsArchived">If the project is archived or not.</param>
 /// <param name="IsEoC">If the project is an Engineer on Call project.</param>
-/// <param name="OfferId">Internal id of the offer associated with the project.</param>
-/// <param name="Company">The company that is responsible for the project.</param>
+/// <param name="Company">The company associated with the project.</param>
 /// <param name="Team">The team working on the project. Optional.</param>
-/// <param name="CompanyState">The state of the company. (INTERNAL or EXTERNAL)</param>
-/// <param name="IsmsLevel">The security level of the project (NORMAL, HIGH, VERY_HIGH)</param>
+/// <param name="IsmsLevel">The ISMS (Information Security Management System) level of the project.</param>
 /// <param name="Notes">Additonal Notes on the project</param>
 public record GetProjectResponse(
     int Id,
     string Slug,
     string ProjectName,
     string ClientName,
-    string? OfferId,
     GetCompanyResponse Company,
     bool IsArchived,
     bool IsEoC,
     GetTeamResponse? Team,
-    CompanyState CompanyState,
     SecurityLevel IsmsLevel,
     string Notes
 );

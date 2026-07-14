@@ -1,5 +1,7 @@
-﻿using MediatR;
+﻿using System.Collections.Generic;
+using MediatR;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
 
 namespace ProjectMetadataPlatform.Application.Auth;
 
@@ -7,4 +9,5 @@ namespace ProjectMetadataPlatform.Application.Auth;
 /// Query for getting the details of a token.
 /// </summary>
 /// <param name="TokenId">Id of the token</param>
-public record GetApiTokenDetailsQuery(int TokenId) : IRequest<ApiToken>;
+public record GetApiTokenDetailsQuery(int TokenId)
+    : IRequest<(ApiToken, IEnumerable<AuthorizationConstants.Actions>)>;

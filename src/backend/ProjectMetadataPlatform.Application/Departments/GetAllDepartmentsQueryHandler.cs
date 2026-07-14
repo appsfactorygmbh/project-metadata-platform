@@ -14,7 +14,10 @@ namespace ProjectMetadataPlatform.Application.Departments;
 /// Handler for the <see cref="GetAllDepartmentsQuery" />.
 /// </summary>
 public class GetAllDepartmentsQueryHandler
-    : IRequestHandler<GetAllDepartmentsQuery, IEnumerable<Department>>
+    : IRequestHandler<
+        GetAllDepartmentsQuery,
+        (IEnumerable<Department>, IEnumerable<AuthorizationConstants.Actions>)
+    >
 {
     private readonly IDepartmentRepository _departmentRepository;
     private readonly IAuthorizationService _authorizationService;
@@ -36,37 +39,42 @@ public class GetAllDepartmentsQueryHandler
     /// </summary>
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
-    /// <returns>List of Departments.</returns>
-    public async Task<IEnumerable<Department>> Handle(
-        GetAllDepartmentsQuery request,
-        CancellationToken cancellationToken
-    )
+    /// <returns>List of Departments and allowed actions.</returns>
+    public async Task<(
+        IEnumerable<Department>,
+        IEnumerable<AuthorizationConstants.Actions>
+    )> Handle(GetAllDepartmentsQuery request, CancellationToken cancellationToken)
     {
         var departments = await _departmentRepository.GetDepartmentsAsync();
         var queriedDepartments = await _authorizationService.TryGetPlanResourceQuery(departments);
+        var permissions = await _authorizationService.GetPermissions<Department>();
         if (queriedDepartments == null)
         {
             List<Department> filteredDepartments = [];
             foreach (var department in departments)
             {
                 if (
-                    (
-                        await _authorizationService.CheckAccess(
-                            department,
-                            [AuthorizationConstants.Actions.GET]
-                        )
-                    )[AuthorizationConstants.Actions.GET]
+                    await _authorizationService.CheckAccess(
+                        department,
+                        AuthorizationConstants.Actions.GET
+                    )
                 )
                 {
                     filteredDepartments.Add(department);
                 }
             }
-            return filteredDepartments.OrderBy(department =>
-                department.DepartmentName.ToLowerInvariant()
+            return (
+                filteredDepartments.OrderBy(department =>
+                    department.DepartmentName.ToLowerInvariant()
+                ),
+                permissions
             );
         }
-        return (await queriedDepartments.ToListAsync(cancellationToken: cancellationToken)).OrderBy(
-            department => department.DepartmentName.ToLowerInvariant()
+        return (
+            (await queriedDepartments.ToListAsync(cancellationToken: cancellationToken)).OrderBy(
+                department => department.DepartmentName.ToLowerInvariant()
+            ),
+            permissions
         );
     }
 }

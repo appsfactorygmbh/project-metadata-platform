@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -11,7 +12,8 @@ namespace ProjectMetadataPlatform.Application.Companies;
 /// <summary>
 /// Handler for the <see cref="GetCompanyQuery" />.
 /// </summary>
-public class GetCompanyQueryHandler : IRequestHandler<GetCompanyQuery, Company>
+public class GetCompanyQueryHandler
+    : IRequestHandler<GetCompanyQuery, (Company, IEnumerable<AuthorizationConstants.Actions>)>
 {
     private readonly ICompanyRepository _companyRepository;
     private readonly IAuthorizationService _authorizationService;
@@ -33,21 +35,18 @@ public class GetCompanyQueryHandler : IRequestHandler<GetCompanyQuery, Company>
     /// </summary>
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
-    /// <returns>A Company.</returns>
-    public async Task<Company> Handle(GetCompanyQuery request, CancellationToken cancellationToken)
+    /// <returns>A Company and allowed actions.</returns>
+    public async Task<(Company, IEnumerable<AuthorizationConstants.Actions>)> Handle(
+        GetCompanyQuery request,
+        CancellationToken cancellationToken
+    )
     {
         var company = await _companyRepository.GetCompanyAsync(request.Id);
-        if (
-            !(
-                await _authorizationService.CheckAccess(
-                    company,
-                    [AuthorizationConstants.Actions.GET]
-                )
-            )[AuthorizationConstants.Actions.GET]
-        )
+        if (!await _authorizationService.CheckAccess(company, AuthorizationConstants.Actions.GET))
         {
             throw new UnauthorizedException();
         }
-        return company;
+        var permissions = await _authorizationService.GetPermissions(company);
+        return (company, permissions);
     }
 }

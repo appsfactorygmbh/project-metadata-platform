@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using ProjectMetadataPlatform.Domain.Authorization;
 
 namespace ProjectMetadataPlatform.Api.Users.Models;
 
@@ -154,5 +155,10 @@ public record PmpScimUser
         /// Version of the resource.
         /// </summary>
         public string? Version { get; set; }
+
+        /// <summary>
+        /// Permissions on the User resource.
+        /// </summary>
+        public List<AuthorizationConstants.Actions>? Permissions { get; set; }
     }
 }
