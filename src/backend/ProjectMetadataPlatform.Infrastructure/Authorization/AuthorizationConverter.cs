@@ -45,7 +45,7 @@ public static class AuthorizationConverter
     /// <param name="updates">Dictionary of Update Requests.</param>
     /// <returns>Cerbos Resource</returns>
     public static Resource ToResource(
-        this object obj,
+        this object? obj,
         string kind,
         string id,
         Dictionary<string, object?>? updates = null
@@ -71,7 +71,7 @@ public static class AuthorizationConverter
     /// <param name="obj">Object to be converted</param>
     /// <returns>Dictionary Representing the Object.</returns>
     /// <exception cref="ArgumentException">Thrown if the Object Serialized as Json is not an complex object.</exception>
-    private static Dictionary<string, AttributeValue> ConvertObjectToAttributeDict(Object obj)
+    private static Dictionary<string, AttributeValue> ConvertObjectToAttributeDict(Object? obj)
     {
         if (obj == null)
         {
@@ -265,6 +265,15 @@ public static class AuthorizationConverter
                     return BuildInOperator(left, right);
                 case "index":
                     return Expression.ArrayIndex(left, right);
+                case "get-field":
+                    var fieldName = operands[1].Variable;
+                    return Expression.PropertyOrField(left, fieldName);
+                case "if":
+                    var condition = ResolveOperand(operands[0], param, attributeMap);
+                    var trueVal = ResolveOperand(operands[1], param, attributeMap);
+                    var falseVal = ResolveOperand(operands[2], param, attributeMap);
+                    AlignTypes(ref trueVal, ref falseVal);
+                    return Expression.Condition(condition, trueVal, falseVal);
                 default:
                     break;
             }
