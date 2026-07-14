@@ -56,16 +56,11 @@ public class PatchTeamCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
@@ -135,16 +130,11 @@ public class PatchTeamCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
@@ -191,16 +181,11 @@ public class PatchTeamCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
@@ -239,16 +224,11 @@ public class PatchTeamCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, false },
-                }
-            );
+            .ReturnsAsync(false);
         _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);

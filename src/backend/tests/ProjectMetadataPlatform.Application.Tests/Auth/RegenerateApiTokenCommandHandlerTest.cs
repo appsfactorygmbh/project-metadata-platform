@@ -44,16 +44,11 @@ public class RegenerateApiTokenCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApiToken>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _apiTokenRepositoryMock
             .Setup(m => m.GetApiTokenById(It.IsAny<int>()))
             .ReturnsAsync(
@@ -84,15 +79,7 @@ public class RegenerateApiTokenCommandHandlerTest
             Times.Once
         );
         _authorizationServiceMock.Verify(
-            a =>
-                a.CheckAccess(
-                    It.IsAny<ApiToken>(),
-                    new List<AuthorizationConstants.Actions>
-                    {
-                        AuthorizationConstants.Actions.EDIT,
-                    },
-                    null
-                ),
+            a => a.CheckAccess(It.IsAny<ApiToken>(), AuthorizationConstants.Actions.EDIT, null),
             Times.Once
         );
     }
@@ -104,16 +91,11 @@ public class RegenerateApiTokenCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApiToken>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, false },
-                }
-            );
+            .ReturnsAsync(false);
         _ = _apiTokenRepositoryMock
             .Setup(m => m.GetApiTokenById(It.IsAny<int>()))
             .ReturnsAsync(

@@ -50,22 +50,17 @@ public class GetTeamQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Act
         var result = await _handler.Handle(new GetTeamQuery(Id: 1), It.IsAny<CancellationToken>());
 
         // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.EqualTo(returnTeam));
+        Assert.That(result.Item1, Is.Not.Null);
+        Assert.That(result.Item1, Is.EqualTo(returnTeam));
         _mockTeamRepository.Verify(m => m.GetTeamAsync(It.Is<int>(id => id == 1)), Times.Once);
     }
 
@@ -80,16 +75,11 @@ public class GetTeamQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Act + Assert
         var ex = Assert.ThrowsAsync<TeamNotFoundException>(async () =>
             await _handler.Handle(new GetTeamQuery(Id: 1), It.IsAny<CancellationToken>())
@@ -105,16 +95,11 @@ public class GetTeamQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new GetTeamQuery(Id: 1);
 

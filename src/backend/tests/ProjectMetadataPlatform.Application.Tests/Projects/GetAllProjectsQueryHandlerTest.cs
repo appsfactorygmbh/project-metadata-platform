@@ -114,7 +114,7 @@ public class GetAllProjectsQueryHandlerTest
             .ReturnsAsync(projects.BuildMock());
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
-        Assert.That(result, Is.EquivalentTo(projects));
+        Assert.That(result.Item1, Is.EquivalentTo(projects));
     }
 
     [Test]
@@ -190,7 +190,7 @@ public class GetAllProjectsQueryHandlerTest
             .Setup(m => m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>()))
             .ReturnsAsync(projects.BuildMock());
         var request = new GetAllProjectsQuery(null, null);
-        var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).ToList();
+        var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).Item1.ToList();
 
         Assert.Multiple(() =>
         {
@@ -276,21 +276,16 @@ public class GetAllProjectsQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo
             .Setup(m => m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>()))
             .ReturnsAsync(projects.BuildMock());
         var request = new GetAllProjectsQuery(null, null);
-        var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).ToList();
+        var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).Item1.ToList();
 
         Assert.That(result, Is.EquivalentTo(projects));
     }

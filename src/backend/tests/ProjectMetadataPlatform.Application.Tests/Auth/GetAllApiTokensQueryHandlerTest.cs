@@ -53,19 +53,14 @@ public class GetAllApiTokensQueryHandlerTest
         var request = new GetAllApiTokensQuery();
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
-        Assert.That(result, Is.EqualTo(tokens));
+        Assert.That(result.Item1, Is.EqualTo(tokens));
 
         _authorizationServiceMock.Verify(
             a => a.TryGetPlanResourceQuery(It.IsAny<IQueryable<ApiToken>>(), null),
             Times.Once
         );
         _authorizationServiceMock.Verify(
-            a =>
-                a.CheckAccess(
-                    It.IsAny<ApiToken>(),
-                    new List<AuthorizationConstants.Actions> { AuthorizationConstants.Actions.GET },
-                    null
-                ),
+            a => a.CheckAccess(It.IsAny<ApiToken>(), AuthorizationConstants.Actions.GET, null),
             Times.Never
         );
     }
@@ -92,31 +87,21 @@ public class GetAllApiTokensQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApiToken>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         var request = new GetAllApiTokensQuery();
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
-        Assert.That(result, Is.EqualTo(tokens));
+        Assert.That(result.Item1, Is.EqualTo(tokens.ToList()));
         _authorizationServiceMock.Verify(
             a => a.TryGetPlanResourceQuery(It.IsAny<IQueryable<ApiToken>>(), null),
             Times.Once
         );
         _authorizationServiceMock.Verify(
-            a =>
-                a.CheckAccess(
-                    It.IsAny<ApiToken>(),
-                    new List<AuthorizationConstants.Actions> { AuthorizationConstants.Actions.GET },
-                    null
-                ),
+            a => a.CheckAccess(It.IsAny<ApiToken>(), AuthorizationConstants.Actions.GET, null),
             Times.Exactly(2)
         );
     }

@@ -54,8 +54,8 @@ public class GetAllCompaniesQueryHandlerTest
         );
 
         // Assert
-        Assert.That(result.Count, Is.EqualTo(1));
-        Assert.That(result.First(), Is.EqualTo(returnCompany));
+        Assert.That(result.Item1.Count, Is.EqualTo(1));
+        Assert.That(result.Item1.First(), Is.EqualTo(returnCompany));
         _mockCompanyRepository.Verify(m => m.GetCompaniesAsync(), Times.Once);
     }
 
@@ -90,10 +90,10 @@ public class GetAllCompaniesQueryHandlerTest
         );
 
         // Assert
-        var resultList = result.ToList();
+        var resultList = result.Item1.ToList();
         Assert.Multiple(() =>
         {
-            Assert.That(result.Count, Is.EqualTo(4));
+            Assert.That(result.Item1.Count, Is.EqualTo(4));
             Assert.That(resultList[0], Is.EqualTo(returnCompany[3]));
             Assert.That(resultList[1], Is.EqualTo(returnCompany[0]));
             Assert.That(resultList[2], Is.EqualTo(returnCompany[2]));
@@ -128,16 +128,11 @@ public class GetAllCompaniesQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Company>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
 
         // Act
         var result = await _handler.Handle(
@@ -146,10 +141,10 @@ public class GetAllCompaniesQueryHandlerTest
         );
 
         // Assert
-        var resultList = result.ToList();
+        var resultList = result.Item1.ToList();
         Assert.Multiple(() =>
         {
-            Assert.That(result.Count, Is.EqualTo(4));
+            Assert.That(result.Item1.Count, Is.EqualTo(4));
             Assert.That(resultList[0], Is.EqualTo(returnCompany[3]));
             Assert.That(resultList[1], Is.EqualTo(returnCompany[0]));
             Assert.That(resultList[2], Is.EqualTo(returnCompany[2]));

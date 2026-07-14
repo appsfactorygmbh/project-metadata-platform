@@ -36,20 +36,15 @@ public class GetProjectByIdQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo.Setup(m => m.GetProjectAsync(2))!.ReturnsAsync((Project?)null);
         var query = new GetProjectQuery(2);
         var result = await _handler.Handle(query, It.IsAny<CancellationToken>());
-        Assert.That(result, Is.Null);
+        Assert.That(result.Item1, Is.Null);
     }
 
     [Test]
@@ -67,23 +62,18 @@ public class GetProjectByIdQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo.Setup(m => m.GetProjectAsync(2)).ReturnsAsync(projectsResponseContent);
         var query = new GetProjectQuery(2);
         var result = await _handler.Handle(query, It.IsAny<CancellationToken>());
 
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.InstanceOf<Project>());
-        Assert.That(result, Is.EqualTo(projectsResponseContent));
+        Assert.That(result.Item1, Is.Not.Null);
+        Assert.That(result.Item1, Is.InstanceOf<Project>());
+        Assert.That(result.Item1, Is.EqualTo(projectsResponseContent));
     }
 
     [Test]
@@ -93,16 +83,11 @@ public class GetProjectByIdQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new GetProjectQuery(2);
 

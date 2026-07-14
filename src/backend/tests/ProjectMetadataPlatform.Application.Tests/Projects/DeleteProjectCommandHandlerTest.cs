@@ -55,16 +55,11 @@ public class DeleteProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
         _ = _mockProjectRepo
             .Setup(m => m.DeleteProjectAsync(It.IsAny<Project>()))
@@ -94,16 +89,11 @@ public class DeleteProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
 
         var ex = Assert.ThrowsAsync<ProjectNotArchivedException>(() =>
@@ -122,16 +112,11 @@ public class DeleteProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         var ex = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
             _handler.Handle(new DeleteProjectCommand(1), It.IsAny<CancellationToken>())
         );
@@ -161,16 +146,11 @@ public class DeleteProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _handler.Handle(new DeleteProjectCommand(1), It.IsAny<CancellationToken>());
 
         _mockLogRepo.Verify(
@@ -201,16 +181,11 @@ public class DeleteProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new DeleteProjectCommand(1);
 

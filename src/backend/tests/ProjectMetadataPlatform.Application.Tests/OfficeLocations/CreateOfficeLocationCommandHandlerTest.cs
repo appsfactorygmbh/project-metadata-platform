@@ -46,16 +46,11 @@ public class CreateOfficeLocationCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<OfficeLocation>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockOfficeLocationRepository
             .Setup(repo => repo.CheckIfOfficeLocationNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
@@ -106,16 +101,11 @@ public class CreateOfficeLocationCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<OfficeLocation>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockOfficeLocationRepository
             .Setup(repo => repo.CheckIfOfficeLocationNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
@@ -137,16 +127,11 @@ public class CreateOfficeLocationCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<OfficeLocation>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new CreateOfficeLocationCommand(OfficeLocationName: "Test Name");
 

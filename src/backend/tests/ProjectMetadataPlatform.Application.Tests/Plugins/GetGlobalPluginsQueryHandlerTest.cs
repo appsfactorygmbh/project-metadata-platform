@@ -60,7 +60,7 @@ public class GetGlobalPluginsQueryHandlerTest
             )
             .ReturnsAsync((IQueryable<Plugin> query, Dictionary<string, string>? dict) => query);
         var query = new GetGlobalPluginsQuery();
-        var result = (await _handler.Handle(query, It.IsAny<CancellationToken>())).ToList();
+        var result = (await _handler.Handle(query, It.IsAny<CancellationToken>())).Item1.ToList();
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.TypeOf<List<Plugin>>());
@@ -120,18 +120,13 @@ public class GetGlobalPluginsQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         var query = new GetGlobalPluginsQuery();
-        var result = (await _handler.Handle(query, It.IsAny<CancellationToken>())).ToList();
+        var result = (await _handler.Handle(query, It.IsAny<CancellationToken>())).Item1.ToList();
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.TypeOf<List<Plugin>>());
@@ -172,6 +167,6 @@ public class GetGlobalPluginsQueryHandlerTest
             .ReturnsAsync((IQueryable<Plugin>? query, Dictionary<string, string>? dict) => query);
         var queryFail = new GetGlobalPluginsQuery();
         var resultFail = await _handler.Handle(queryFail, It.IsAny<CancellationToken>());
-        Assert.That(resultFail, Is.Empty);
+        Assert.That(resultFail.Item1, Is.Empty);
     }
 }

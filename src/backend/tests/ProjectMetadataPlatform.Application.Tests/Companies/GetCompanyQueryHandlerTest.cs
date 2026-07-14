@@ -39,16 +39,11 @@ public class GetCompanyQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Company>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyAsync(It.IsAny<int>()))
             .ReturnsAsync(returnCompany);
@@ -60,8 +55,8 @@ public class GetCompanyQueryHandlerTest
         );
 
         // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.EqualTo(returnCompany));
+        Assert.That(result.Item1, Is.Not.Null);
+        Assert.That(result.Item1, Is.EqualTo(returnCompany));
         _mockCompanyRepository.Verify(
             m => m.GetCompanyAsync(It.Is<int>(id => id == 1)),
             Times.Once
@@ -77,16 +72,11 @@ public class GetCompanyQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Company>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyAsync(It.IsAny<int>()))
             .ThrowsAsync(new CompanyNotFoundException(1));
@@ -106,16 +96,11 @@ public class GetCompanyQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Company>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new GetCompanyQuery(Id: 1);
 

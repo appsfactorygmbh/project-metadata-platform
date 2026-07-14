@@ -36,16 +36,11 @@ public class GetApiTokenDetailsQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApiToken>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
 
         ApiToken token = new ApiToken { Name = "Token1", Token = "TokenHash1" };
 
@@ -55,14 +50,9 @@ public class GetApiTokenDetailsQueryHandlerTest
         var request = new GetApiTokenDetailsQuery(1);
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
-        Assert.That(result, Is.EqualTo(token));
+        Assert.That(result.Item1, Is.EqualTo(token));
         _authorizationServiceMock.Verify(
-            a =>
-                a.CheckAccess(
-                    token,
-                    new List<AuthorizationConstants.Actions> { AuthorizationConstants.Actions.GET },
-                    null
-                ),
+            a => a.CheckAccess(token, AuthorizationConstants.Actions.GET, null),
             Times.Once
         );
     }
@@ -74,16 +64,11 @@ public class GetApiTokenDetailsQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApiToken>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new GetApiTokenDetailsQuery(1);
 

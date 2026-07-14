@@ -46,16 +46,11 @@ public class DeleteDepartmentCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Department>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
             .ReturnsAsync(returnDepartment);
@@ -91,16 +86,11 @@ public class DeleteDepartmentCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Department>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new DeleteDepartmentCommand(Id: 1);
 

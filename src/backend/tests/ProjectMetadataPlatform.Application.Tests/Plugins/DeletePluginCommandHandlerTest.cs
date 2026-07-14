@@ -51,16 +51,11 @@ public class DeletePluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(m => m.StorePlugin(It.IsAny<Plugin>())).ReturnsAsync(plugin);
         _ = _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo.Setup(m => m.DeleteGlobalPlugin(plugin)).ReturnsAsync(true);
@@ -85,16 +80,11 @@ public class DeletePluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(m => m.StorePlugin(It.IsAny<Plugin>())).ReturnsAsync(plugin);
         _ = _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
 
@@ -110,16 +100,11 @@ public class DeletePluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync((Plugin)null!);
         _ = Assert.ThrowsAsync<PluginNotFoundException>(() =>
             _handler.Handle(new DeleteGlobalPluginCommand(42), It.IsAny<CancellationToken>())
@@ -141,16 +126,11 @@ public class DeletePluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo.Setup(m => m.DeleteGlobalPlugin(plugin)).ReturnsAsync(true);
 
@@ -188,16 +168,11 @@ public class DeletePluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(m => m.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
 
         // Act
@@ -219,16 +194,11 @@ public class DeletePluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Act
         _ = Assert.ThrowsAsync<PluginNotFoundException>(() =>
             _handler.Handle(new DeleteGlobalPluginCommand(42), CancellationToken.None)
@@ -253,16 +223,11 @@ public class DeletePluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new DeleteGlobalPluginCommand(42);
 

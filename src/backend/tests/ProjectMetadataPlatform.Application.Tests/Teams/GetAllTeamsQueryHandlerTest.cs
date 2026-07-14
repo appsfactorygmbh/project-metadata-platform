@@ -61,8 +61,8 @@ public class GetAllTeamsQueryHandlerTest
         );
 
         // Assert
-        Assert.That(result.Count, Is.EqualTo(1));
-        Assert.That(result.First(), Is.EqualTo(returnTeam));
+        Assert.That(result.Item1.Count, Is.EqualTo(1));
+        Assert.That(result.Item1.First(), Is.EqualTo(returnTeam));
         _mockTeamRepository.Verify(
             m =>
                 m.GetTeamsAsync(
@@ -131,10 +131,10 @@ public class GetAllTeamsQueryHandlerTest
         );
 
         // Assert
-        var resultList = result.ToList();
+        var resultList = result.Item1.ToList();
         Assert.Multiple(() =>
         {
-            Assert.That(result.Count, Is.EqualTo(4));
+            Assert.That(result.Item1.Count, Is.EqualTo(4));
             Assert.That(resultList[0], Is.EqualTo(returnTeam[3]));
             Assert.That(resultList[1], Is.EqualTo(returnTeam[0]));
             Assert.That(resultList[2], Is.EqualTo(returnTeam[2]));
@@ -198,22 +198,17 @@ public class GetAllTeamsQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Act
         var result = await _handler.Handle(
             new GetAllTeamsQuery(FullTextQuery: null, TeamName: null),
             It.IsAny<CancellationToken>()
         );
 
-        Assert.That(result, Is.EquivalentTo(returnTeam));
+        Assert.That(result.Item1, Is.EquivalentTo(returnTeam));
     }
 }

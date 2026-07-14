@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Teams;
 using ProjectMetadataPlatform.Api.Teams.Models;
@@ -156,7 +157,7 @@ public class TeamsControllerTest
             .Setup(m =>
                 m.Send(It.Is<GetTeamQuery>(q => q.Id == teamId), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync(team);
+            .ReturnsAsync((team, []));
 
         // Act
         var actionResult = await _controller.Get(teamId);
@@ -221,7 +222,7 @@ public class TeamsControllerTest
         };
         _ = _mediatorMock
             .Setup(m => m.Send(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(teams);
+            .ReturnsAsync((teams, []));
 
         // Act
         var actionResult = await _controller.Get(null, null);
@@ -231,10 +232,10 @@ public class TeamsControllerTest
         var okResult = actionResult.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var response = okResult.Value as IEnumerable<GetTeamResponse>;
+        var response = okResult.Value as GetListResponse<GetTeamResponse>;
         Assert.That(response, Is.Not.Null);
-        Assert.That(response.Count(), Is.EqualTo(teams.Count));
-        var firstResponseTeam = response.First();
+        Assert.That(response.Resources.Count(), Is.EqualTo(teams.Count));
+        var firstResponseTeam = response.Resources.First();
         var firstOriginalTeam = teams.First();
         Assert.Multiple(() =>
         {
@@ -249,7 +250,7 @@ public class TeamsControllerTest
         // Arrange
         _ = _mediatorMock
             .Setup(m => m.Send(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<Team>());
+            .ReturnsAsync((new List<Team>(), []));
 
         // Act
         var actionResult = await _controller.Get(null, null);
@@ -258,8 +259,8 @@ public class TeamsControllerTest
         Assert.That(actionResult.Result, Is.InstanceOf<OkObjectResult>());
         var okResult = actionResult.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
-        var response = okResult.Value as IEnumerable<GetTeamResponse>;
-        Assert.That(response, Is.Not.Null.And.Empty);
+        var response = okResult.Value as GetListResponse<GetTeamResponse>;
+        Assert.That(response.Resources, Is.Not.Null.And.Empty);
     }
 
     [Test]
@@ -270,7 +271,7 @@ public class TeamsControllerTest
         var searchQuery = "SearchKeyword";
         _ = _mediatorMock
             .Setup(m => m.Send(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<Team>());
+            .ReturnsAsync((new List<Team>(), []));
 
         // Act
         _ = await _controller.Get(teamName: teamNameFilter, search: searchQuery);

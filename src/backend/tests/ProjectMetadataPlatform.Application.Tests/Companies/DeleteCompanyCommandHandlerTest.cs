@@ -52,16 +52,11 @@ public class DeleteCompanyCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Company>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyWithProjectsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnCompany);
@@ -99,16 +94,11 @@ public class DeleteCompanyCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Company>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         var returnCompany = new Company()
         {
             Id = 1,
@@ -145,16 +135,11 @@ public class DeleteCompanyCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Company>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new DeleteCompanyCommand(Id: 1);
 

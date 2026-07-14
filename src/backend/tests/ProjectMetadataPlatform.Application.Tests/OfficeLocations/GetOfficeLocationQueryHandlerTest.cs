@@ -43,16 +43,11 @@ public class GetOfficeLocationQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<OfficeLocation>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Act
         var result = await _handler.Handle(
             new GetOfficeLocationQuery(Id: 1),
@@ -60,8 +55,8 @@ public class GetOfficeLocationQueryHandlerTest
         );
 
         // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.EqualTo(returnOfficeLocation));
+        Assert.That(result.Item1, Is.Not.Null);
+        Assert.That(result.Item1, Is.EqualTo(returnOfficeLocation));
         _mockOfficeLocationRepository.Verify(
             m => m.GetOfficeLocationAsync(It.Is<int>(id => id == 1)),
             Times.Once
@@ -76,16 +71,11 @@ public class GetOfficeLocationQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<OfficeLocation>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockOfficeLocationRepository
             .Setup(repo => repo.GetOfficeLocationAsync(It.IsAny<int>()))
             .ThrowsAsync(new OfficeLocationNotFoundException(1));
@@ -105,16 +95,11 @@ public class GetOfficeLocationQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<OfficeLocation>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new GetOfficeLocationQuery(Id: 1);
 

@@ -49,7 +49,7 @@ public class GetAllUsersQueryHandlerTest
         var request = new GetAllUsersQuery("");
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
-        ApplicationUser[] resultArray = result as ApplicationUser[] ?? result.ToArray();
+        ApplicationUser[] resultArray = result.Item1 as ApplicationUser[] ?? result.Item1.ToArray();
         Assert.That(resultArray, Is.Not.Null);
         Assert.That(resultArray, Is.InstanceOf<IEnumerable<ApplicationUser>>());
 
@@ -84,7 +84,7 @@ public class GetAllUsersQueryHandlerTest
             .Setup(m => m.GetUsersAsync("qweqweqwe"))
             .ReturnsAsync(usersResponseContent.BuildMock());
         var request = new GetAllUsersQuery("qweqweqwe");
-        var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).ToList();
+        var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).Item1.ToList();
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.InstanceOf<IEnumerable<ApplicationUser>>());
@@ -127,21 +127,16 @@ public class GetAllUsersQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockUserRepo
             .Setup(m => m.GetUsersAsync("qweqweqwe"))
             .ReturnsAsync(usersResponseContent.BuildMock());
         var request = new GetAllUsersQuery("qweqweqwe");
-        var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).ToList();
+        var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).Item1.ToList();
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.InstanceOf<IEnumerable<ApplicationUser>>());

@@ -44,23 +44,18 @@ public class GetUserByEmailQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockUserRepo
             .Setup(m => m.GetUserByEmailAsync("squidlauncher@bankofevil.com"))
             .ReturnsAsync(user);
 
         var request = new GetUserByEmailQuery("squidlauncher@bankofevil.com");
 
-        var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
+        var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).Item1;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.InstanceOf<ApplicationUser>());
@@ -84,21 +79,16 @@ public class GetUserByEmailQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         var request = new GetUserByEmailQuery("Vector");
 
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
-        Assert.That(result, Is.Null);
+        Assert.That(result.Item1, Is.Null);
     }
 
     [Test]
@@ -108,16 +98,11 @@ public class GetUserByEmailQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new GetUserByEmailQuery("Vector");
 

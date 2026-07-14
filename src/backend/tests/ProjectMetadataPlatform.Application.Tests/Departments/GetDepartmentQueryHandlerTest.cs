@@ -43,16 +43,11 @@ public class GetDepartmentQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Department>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Act
         var result = await _handler.Handle(
             new GetDepartmentQuery(Id: 1),
@@ -60,8 +55,8 @@ public class GetDepartmentQueryHandlerTest
         );
 
         // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.EqualTo(returnDepartment));
+        Assert.That(result.Item1, Is.Not.Null);
+        Assert.That(result.Item1, Is.EqualTo(returnDepartment));
         _mockDepartmentRepository.Verify(
             m => m.GetDepartmentAsync(It.Is<int>(id => id == 1)),
             Times.Once
@@ -79,16 +74,11 @@ public class GetDepartmentQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Department>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Act + Assert
         var ex = Assert.ThrowsAsync<DepartmentNotFoundException>(async () =>
             await _handler.Handle(new GetDepartmentQuery(Id: 1), It.IsAny<CancellationToken>())
@@ -104,16 +94,11 @@ public class GetDepartmentQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Department>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new GetDepartmentQuery(Id: 1);
 

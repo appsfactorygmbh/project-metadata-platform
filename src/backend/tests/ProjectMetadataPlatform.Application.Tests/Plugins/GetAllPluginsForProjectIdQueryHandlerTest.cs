@@ -78,16 +78,11 @@ public class GetAllPluginsForProjectIdQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         var query = new GetAllPluginsForProjectIdQuery(1);
         var result = (await _handler.Handle(query, It.IsAny<CancellationToken>())).ToList();
 
@@ -116,16 +111,11 @@ public class GetAllPluginsForProjectIdQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         var queryFail = new GetAllPluginsForProjectIdQuery(0);
         var resultFail = await _handler.Handle(queryFail, It.IsAny<CancellationToken>());
         Assert.That(resultFail, Is.Null);
@@ -138,16 +128,11 @@ public class GetAllPluginsForProjectIdQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new GetAllPluginsForProjectIdQuery(0);
 

@@ -46,16 +46,11 @@ public class DeleteOfficeLocationCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<OfficeLocation>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockOfficeLocationRepository
             .Setup(repo => repo.GetOfficeLocationAsync(It.IsAny<int>()))
             .ReturnsAsync(returnOfficeLocation);
@@ -94,16 +89,11 @@ public class DeleteOfficeLocationCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<OfficeLocation>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new DeleteOfficeLocationCommand(Id: 1);
 

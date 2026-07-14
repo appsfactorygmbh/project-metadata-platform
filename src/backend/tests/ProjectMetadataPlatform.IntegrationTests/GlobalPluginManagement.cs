@@ -35,7 +35,7 @@ public class GlobalPluginManagement : IntegrationTestsBase
             .GetProperty("id")
             .GetInt32();
 
-        var plugins = await ToJsonElement(client.GetAsync("/Plugins"));
+        var plugins = (await ToJsonElement(client.GetAsync("/Plugins"))).GetProperty("resources");
         Assert.Multiple(() =>
         {
             Assert.That(plugins.GetArrayLength(), Is.EqualTo(2));
@@ -103,7 +103,7 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(updatedPlugin.GetProperty("keys").EnumerateArray(), Is.Empty);
         });
 
-        var plugins = await ToJsonElement(client.GetAsync("/Plugins"));
+        var plugins = (await ToJsonElement(client.GetAsync("/Plugins"))).GetProperty("resources");
         Assert.Multiple(() =>
         {
             Assert.That(plugins.GetArrayLength(), Is.EqualTo(1));
@@ -158,7 +158,7 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(updatedPlugin.GetProperty("isArchived").GetBoolean(), Is.True);
             Assert.That(updatedPlugin.GetProperty("keys").EnumerateArray(), Is.Empty);
         });
-        var plugins = await ToJsonElement(client.GetAsync("/Plugins"));
+        var plugins = (await ToJsonElement(client.GetAsync("/Plugins"))).GetProperty("resources");
         Assert.Multiple(() =>
         {
             Assert.That(plugins.GetArrayLength(), Is.EqualTo(1));
@@ -178,7 +178,7 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(updatedPlugin.GetProperty("isArchived").GetBoolean(), Is.False);
             Assert.That(updatedPlugin.GetProperty("keys").EnumerateArray(), Is.Empty);
         });
-        plugins = await ToJsonElement(client.GetAsync("/Plugins"));
+        plugins = (await ToJsonElement(client.GetAsync("/Plugins"))).GetProperty("resources");
 
         Assert.Multiple(() =>
         {
@@ -234,7 +234,7 @@ public class GlobalPluginManagement : IntegrationTestsBase
 
         var deleteResponse = await ToJsonElement(client.DeleteAsync($"/Plugins/{pluginId}"));
         Assert.That(deleteResponse.GetProperty("pluginId").GetInt32(), Is.EqualTo(pluginId));
-        var plugins = await ToJsonElement(client.GetAsync("/Plugins"));
+        var plugins = (await ToJsonElement(client.GetAsync("/Plugins"))).GetProperty("resources");
 
         Assert.That(plugins.GetArrayLength(), Is.EqualTo(0));
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
