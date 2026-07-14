@@ -12,6 +12,9 @@
  * Do not edit the class manually.
  */
 
+import type { Actions } from './Actions';
+import { ActionsFromJSON, ActionsToJSON } from './Actions';
+
 /**
  * Record representing a single returned business unit.
  * @export
@@ -30,6 +33,12 @@ export interface GetBusinessUnitResponse {
    * @memberof GetBusinessUnitResponse
    */
   businessUnitName: string;
+  /**
+   * Permissions on the Resource.
+   * @type {Array<Actions>}
+   * @memberof GetBusinessUnitResponse
+   */
+  permissions?: Array<Actions> | null;
 }
 
 /**
@@ -60,6 +69,10 @@ export function GetBusinessUnitResponseFromJSONTyped(
   return {
     id: json['id'],
     businessUnitName: json['businessUnitName'],
+    permissions:
+      json['permissions'] == null
+        ? undefined
+        : (json['permissions'] as Array<any>).map(ActionsFromJSON),
   };
 }
 
@@ -80,5 +93,9 @@ export function GetBusinessUnitResponseToJSONTyped(
   return {
     id: value['id'],
     businessUnitName: value['businessUnitName'],
+    permissions:
+      value['permissions'] == null
+        ? undefined
+        : (value['permissions'] as Array<any>).map(ActionsToJSON),
   };
 }

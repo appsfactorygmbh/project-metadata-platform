@@ -12,6 +12,9 @@
  * Do not edit the class manually.
  */
 
+import type { Actions } from './Actions';
+import { ActionsFromJSON, ActionsToJSON } from './Actions';
+
 /**
  * Represents a Response containing a single department.
  * @export
@@ -30,6 +33,12 @@ export interface GetDepartmentResponse {
    * @memberof GetDepartmentResponse
    */
   departmentName: string;
+  /**
+   * Permissions on the department.
+   * @type {Array<Actions>}
+   * @memberof GetDepartmentResponse
+   */
+  permissions?: Array<Actions> | null;
 }
 
 /**
@@ -60,6 +69,10 @@ export function GetDepartmentResponseFromJSONTyped(
   return {
     id: json['id'],
     departmentName: json['departmentName'],
+    permissions:
+      json['permissions'] == null
+        ? undefined
+        : (json['permissions'] as Array<any>).map(ActionsFromJSON),
   };
 }
 
@@ -78,5 +91,9 @@ export function GetDepartmentResponseToJSONTyped(
   return {
     id: value['id'],
     departmentName: value['departmentName'],
+    permissions:
+      value['permissions'] == null
+        ? undefined
+        : (value['permissions'] as Array<any>).map(ActionsToJSON),
   };
 }

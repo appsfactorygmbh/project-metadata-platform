@@ -26,7 +26,6 @@
     "openapi:generate": "TS_POST_PROCESS_FILE=\"./openapi-post-process.sh\" && openapi-generator-cli generate && ./openapi-post-process.sh ./src/api/generated/runtime.ts && yarn lint"
   },
   "dependencies": {
-    "@ant-design/icons": "^6.2.5",
     "@ant-design/icons-vue": "^7.0.1",
     "@azure/msal-browser": "^5.13.0",
     "@heroicons/vue": "^2.2.0",

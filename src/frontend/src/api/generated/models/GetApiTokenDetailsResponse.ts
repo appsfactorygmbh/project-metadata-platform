@@ -14,6 +14,8 @@
 
 import type { TokenScopes } from './TokenScopes';
 import { TokenScopesFromJSON, TokenScopesToJSON } from './TokenScopes';
+import type { Actions } from './Actions';
+import { ActionsFromJSON, ActionsToJSON } from './Actions';
 
 /**
  * Response representing a Api Token with its details.
@@ -51,6 +53,12 @@ export interface GetApiTokenDetailsResponse {
    * @memberof GetApiTokenDetailsResponse
    */
   token?: string | null;
+  /**
+   * Permissions on the Resource
+   * @type {Array<Actions>}
+   * @memberof GetApiTokenDetailsResponse
+   */
+  permissions?: Array<Actions> | null;
 }
 
 /**
@@ -86,6 +94,10 @@ export function GetApiTokenDetailsResponseFromJSONTyped(
     scopes: (json['scopes'] as Array<any>).map(TokenScopesFromJSON),
     expirationDate: new Date(json['expirationDate']),
     token: json['token'] == null ? undefined : json['token'],
+    permissions:
+      json['permissions'] == null
+        ? undefined
+        : (json['permissions'] as Array<any>).map(ActionsFromJSON),
   };
 }
 
@@ -109,5 +121,9 @@ export function GetApiTokenDetailsResponseToJSONTyped(
     scopes: (value['scopes'] as Array<any>).map(TokenScopesToJSON),
     expirationDate: value['expirationDate'].toISOString(),
     token: value['token'],
+    permissions:
+      value['permissions'] == null
+        ? undefined
+        : (value['permissions'] as Array<any>).map(ActionsToJSON),
   };
 }

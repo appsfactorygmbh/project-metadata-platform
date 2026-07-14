@@ -12,6 +12,9 @@
  * Do not edit the class manually.
  */
 
+import type { Actions } from './Actions';
+import { ActionsFromJSON, ActionsToJSON } from './Actions';
+
 /**
  * Represents a Response containing a single Company.
  * @export
@@ -30,6 +33,12 @@ export interface GetCompanyResponse {
    * @memberof GetCompanyResponse
    */
   companyName: string;
+  /**
+   * Permissions on the Company.
+   * @type {Array<Actions>}
+   * @memberof GetCompanyResponse
+   */
+  permissions?: Array<Actions> | null;
 }
 
 /**
@@ -58,6 +67,10 @@ export function GetCompanyResponseFromJSONTyped(
   return {
     id: json['id'],
     companyName: json['companyName'],
+    permissions:
+      json['permissions'] == null
+        ? undefined
+        : (json['permissions'] as Array<any>).map(ActionsFromJSON),
   };
 }
 
@@ -76,5 +89,9 @@ export function GetCompanyResponseToJSONTyped(
   return {
     id: value['id'],
     companyName: value['companyName'],
+    permissions:
+      value['permissions'] == null
+        ? undefined
+        : (value['permissions'] as Array<any>).map(ActionsToJSON),
   };
 }
