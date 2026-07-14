@@ -10,18 +10,8 @@ using Cerbos.Sdk.Builder;
 using Cerbos.Sdk.Utility;
 using Microsoft.AspNetCore.Http;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Authorization;
-using ProjectMetadataPlatform.Domain.BusinessUnits;
-using ProjectMetadataPlatform.Domain.Companies;
-using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
-using ProjectMetadataPlatform.Domain.Logs;
-using ProjectMetadataPlatform.Domain.OfficeLocations;
-using ProjectMetadataPlatform.Domain.Plugins;
-using ProjectMetadataPlatform.Domain.Projects;
-using ProjectMetadataPlatform.Domain.Teams;
-using ProjectMetadataPlatform.Domain.Users;
 using Principal = Cerbos.Sdk.Builder.Principal;
 using Resource = Cerbos.Sdk.Builder.Resource;
 
@@ -80,182 +70,22 @@ public class AuthorizationService : IAuthorizationService
     }
 
     /// <inheritdoc/>
-    public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        ApiToken token,
-        IEnumerable<AuthorizationConstants.Actions> actions,
+    public async Task<bool> CheckAccess<T>(
+        T resource,
+        AuthorizationConstants.Actions action,
         Dictionary<string, object?>? updates = null
     )
+        where T : class
     {
         var result = (
             await CheckRequest(
                 await GetPrincipalFromContext(),
-                token.ToResource(nameof(ApiToken), token.Id.ToString(), updates),
-                actions.Select(action => action.ToString())
+                resource.ToResource(typeof(T).Name, "Default", updates),
+                [action.ToString()]
             )
-        ).Find(token.Id.ToString());
-        return HandleCheckAuthorizationResult(actions, result);
-    }
-
-    /// <inheritdoc/>
-    public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        BusinessUnit businessUnit,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    )
-    {
-        var result = (
-            await CheckRequest(
-                await GetPrincipalFromContext(),
-                businessUnit.ToResource(nameof(BusinessUnit), businessUnit.Id.ToString(), updates),
-                actions.Select(action => action.ToString())
-            )
-        ).Find(businessUnit.Id.ToString());
-
-        return HandleCheckAuthorizationResult(actions, result);
-    }
-
-    /// <inheritdoc/>
-    public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        Company company,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    )
-    {
-        var result = (
-            await CheckRequest(
-                await GetPrincipalFromContext(),
-                company.ToResource(nameof(Company), company.Id.ToString(), updates),
-                actions.Select(action => action.ToString())
-            )
-        ).Find(company.Id.ToString());
-
-        return HandleCheckAuthorizationResult(actions, result);
-    }
-
-    /// <inheritdoc/>
-    public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        Department department,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    )
-    {
-        var result = (
-            await CheckRequest(
-                await GetPrincipalFromContext(),
-                department.ToResource(nameof(Department), department.Id.ToString(), updates),
-                actions.Select(action => action.ToString())
-            )
-        ).Find(department.Id.ToString());
-
-        return HandleCheckAuthorizationResult(actions, result);
-    }
-
-    /// <inheritdoc/>
-    public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        OfficeLocation location,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    )
-    {
-        var result = (
-            await CheckRequest(
-                await GetPrincipalFromContext(),
-                location.ToResource(nameof(OfficeLocation), location.Id.ToString(), updates),
-                actions.Select(action => action.ToString())
-            )
-        ).Find(location.Id.ToString());
-
-        return HandleCheckAuthorizationResult(actions, result);
-    }
-
-    /// <inheritdoc/>
-    public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        Plugin plugin,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    )
-    {
-        var result = (
-            await CheckRequest(
-                await GetPrincipalFromContext(),
-                plugin.ToResource(nameof(Plugin), plugin.Id.ToString(), updates),
-                actions.Select(action => action.ToString())
-            )
-        ).Find(plugin.Id.ToString());
-
-        return HandleCheckAuthorizationResult(actions, result);
-    }
-
-    /// <inheritdoc/>
-    public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        Project project,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    )
-    {
-        var result = (
-            await CheckRequest(
-                await GetPrincipalFromContext(),
-                project.ToResource(nameof(Project), project.Id.ToString(), updates),
-                actions.Select(action => action.ToString())
-            )
-        ).Find(project.Id.ToString());
-
-        return HandleCheckAuthorizationResult(actions, result);
-    }
-
-    /// <inheritdoc/>
-    public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        Team team,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    )
-    {
-        var result = (
-            await CheckRequest(
-                await GetPrincipalFromContext(),
-                team.ToResource(nameof(Team), team.Id.ToString(), updates),
-                actions.Select(action => action.ToString())
-            )
-        ).Find(team.Id.ToString());
-
-        return HandleCheckAuthorizationResult(actions, result);
-    }
-
-    /// <inheritdoc/>
-    public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        ApplicationUser user,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    )
-    {
-        var result = (
-            await CheckRequest(
-                await GetPrincipalFromContext(),
-                user.ToResource(nameof(ApplicationUser), user.Id.ToString(), updates),
-                actions.Select(action => action.ToString())
-            )
-        ).Find(user.Id.ToString());
-
-        return HandleCheckAuthorizationResult(actions, result);
-    }
-
-    /// <inheritdoc/>
-    public async Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        Log log,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    )
-    {
-        var result = (
-            await CheckRequest(
-                await GetPrincipalFromContext(),
-                log.ToResource(nameof(Log), log.Id.ToString(), updates),
-                actions.Select(action => action.ToString())
-            )
-        ).Find(log.Id.ToString());
-
-        return HandleCheckAuthorizationResult(actions, result);
+        ).Find("Default");
+        _tracker.MarkAsChecked();
+        return result.IsAllowed(action.ToString());
     }
 
     /// <inheritdoc/>
@@ -263,6 +93,7 @@ public class AuthorizationService : IAuthorizationService
         IQueryable<T> query,
         Dictionary<string, string>? attributeMap = null
     )
+        where T : class
     {
         try
         {
@@ -287,6 +118,32 @@ public class AuthorizationService : IAuthorizationService
             Console.WriteLine($"{nameof(this.TryGetPlanResourceQuery)} failed: {e.Message}");
             return null;
         }
+    }
+
+    /// <inheritdoc/>
+    public async Task<IEnumerable<AuthorizationConstants.Actions>> GetPermissions<T>(
+        T? resource = null
+    )
+        where T : class
+    {
+        List<AuthorizationConstants.Actions> approvedActions = [];
+
+        foreach (var action in Enum.GetValues<AuthorizationConstants.Actions>())
+        {
+            var authorizationResult = await PlanRequest(
+                await GetPrincipalFromContext(),
+                resource.ToResource(typeof(T).Name, "Default"),
+                [action.ToString()]
+            );
+            if (
+                authorizationResult.Filter.Kind
+                != Cerbos.Api.V1.Engine.PlanResourcesFilter.Types.Kind.AlwaysDenied
+            )
+            {
+                approvedActions.Add(action);
+            }
+        }
+        return approvedActions;
     }
 
     /// <summary>
@@ -380,26 +237,5 @@ public class AuthorizationService : IAuthorizationService
         var result = await _cerbosClient.PlanResourcesAsync(request);
 
         return result;
-    }
-
-    /// <summary>
-    /// Converts a Check Authorization Result to a Dictionary of Actions and results.
-    /// </summary>
-    /// <param name="actions">Actions that where checked.</param>
-    /// <param name="result">Authorization Result.</param>
-    /// <returns>Result Dictionary.</returns>
-    private Dictionary<AuthorizationConstants.Actions, bool> HandleCheckAuthorizationResult(
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Cerbos.Sdk.Response.CheckResourcesResponse.Types.ResultEntry result
-    )
-    {
-        var accessDict = new Dictionary<AuthorizationConstants.Actions, bool> { };
-        foreach (var action in actions)
-        {
-            accessDict.Add(action, result.IsAllowed(action.ToString()));
-        }
-        _tracker.MarkAsChecked();
-
-        return accessDict;
     }
 }

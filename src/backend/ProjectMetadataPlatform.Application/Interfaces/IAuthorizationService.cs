@@ -1,17 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Authorization;
-using ProjectMetadataPlatform.Domain.BusinessUnits;
-using ProjectMetadataPlatform.Domain.Companies;
-using ProjectMetadataPlatform.Domain.Departments;
-using ProjectMetadataPlatform.Domain.Logs;
-using ProjectMetadataPlatform.Domain.OfficeLocations;
-using ProjectMetadataPlatform.Domain.Plugins;
-using ProjectMetadataPlatform.Domain.Projects;
-using ProjectMetadataPlatform.Domain.Teams;
-using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
 
@@ -29,132 +19,17 @@ public interface IAuthorizationService
     /// <summary>
     /// Checks Access Request.
     /// </summary>
-    /// <param name="token">Requested Resource.</param>
-    /// <param name="actions">Requested Actions.</param>
-    /// <param name="updates">Optional Updates Requests.</param>
-    /// <returns>Dictionary with Access Results per Action </returns>
-    Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        ApiToken token,
-        IEnumerable<AuthorizationConstants.Actions> actions,
+    /// <typeparam name="T">Type of Resource.</typeparam>
+    /// <param name="resource">Requested Resource.</param>
+    /// <param name="action">Requested Action.</param>
+    /// <param name="updates">Optional Update Requests.</param>
+    /// <returns>Boolean indicating if the access is allowd. </returns>
+    Task<bool> CheckAccess<T>(
+        T resource,
+        AuthorizationConstants.Actions action,
         Dictionary<string, object?>? updates = null
-    );
-
-    /// <summary>
-    /// Checks Access Request.
-    /// </summary>
-    /// <param name="businessUnit">Requested Resource.</param>
-    /// <param name="actions">Requested Actions.</param>
-    /// <param name="updates">Optional Updates Requests.</param>
-    /// <returns>Dictionary with Access Results per Action </returns>
-    Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        BusinessUnit businessUnit,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    );
-
-    /// <summary>
-    /// Checks Access Request.
-    /// </summary>
-    /// <param name="department">Requested Resource.</param>
-    /// <param name="actions">Requested Actions.</param>
-    /// <param name="updates">Optional Updates Requests.</param>
-    /// <returns>Dictionary with Access Results per Action </returns>
-    Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        Department department,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    );
-
-    /// <summary>
-    /// Checks Access Request.
-    /// </summary>
-    /// <param name="company">Requested Resource.</param>
-    /// <param name="actions">Requested Actions.</param>
-    /// <param name="updates">Optional Updates Requests.</param>
-    /// <returns>Dictionary with Access Results per Action </returns>
-    Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        Company company,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    );
-
-    /// <summary>
-    /// Checks Access Request.
-    /// </summary>
-    /// <param name="location">Requested Resource.</param>
-    /// <param name="actions">Requested Actions.</param>
-    /// <param name="updates">Optional Updates Requests.</param>
-    /// <returns>Dictionary with Access Results per Action </returns>
-    Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        OfficeLocation location,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    );
-
-    /// <summary>
-    /// Checks Access Request.
-    /// </summary>
-    /// <param name="plugin">Requested Resource.</param>
-    /// <param name="actions">Requested Actions.</param>
-    /// <param name="updates">Optional Updates Requests.</param>
-    /// <returns>Dictionary with Access Results per Action </returns>
-    Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        Plugin plugin,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    );
-
-    /// <summary>
-    /// Checks Access Request.
-    /// </summary>
-    /// <param name="project">Requested Resource.</param>
-    /// <param name="actions">Requested Actions.</param>
-    /// <param name="updates">Optional Updates Requests.</param>
-    /// <returns>Dictionary with Access Results per Action </returns>
-    Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        Project project,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    );
-
-    /// <summary>
-    /// Checks Access Request.
-    /// </summary>
-    /// <param name="team">Requested Resource.</param>
-    /// <param name="actions">Requested Actions.</param>
-    /// <param name="updates">Optional Updates Requests.</param>
-    /// <returns>Dictionary with Access Results per Action </returns>
-    Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        Team team,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    );
-
-    /// <summary>
-    /// Checks Access Request.
-    /// </summary>
-    /// <param name="user">Requested Resource.</param>
-    /// <param name="actions">Requested Actions.</param>
-    /// <param name="updates">Optional Updates Requests.</param>
-    /// <returns>Dictionary with Access Results per Action </returns>
-    Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        ApplicationUser user,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    );
-
-    /// <summary>
-    /// Checks Access Request.
-    /// </summary>
-    /// <param name="log">Requested Resource.</param>
-    /// <param name="actions">Requested Actions.</param>
-    /// <param name="updates">Optional Updates Requests.</param>
-    /// <returns>Dictionary with Access Results per Action </returns>
-    Task<Dictionary<AuthorizationConstants.Actions, bool>> CheckAccess(
-        Log log,
-        IEnumerable<AuthorizationConstants.Actions> actions,
-        Dictionary<string, object?>? updates = null
-    );
+    )
+        where T : class;
 
     /// <summary>
     /// Creates a Query for getting accessible resources.
@@ -166,5 +41,15 @@ public interface IAuthorizationService
     Task<IQueryable<T>?> TryGetPlanResourceQuery<T>(
         IQueryable<T> query,
         Dictionary<string, string>? attributeMap = null
-    );
+    )
+        where T : class;
+
+    /// <summary>
+    /// Gets all allowed (not denied) actions for a Resource or its type.
+    /// </summary>
+    /// <typeparam name="T">Type of resource to check permissions on.</typeparam>
+    /// <param name="resource"> Optional actual resource to check permissions on.</param>
+    /// <returns>List of allowed action.</returns>
+    Task<IEnumerable<AuthorizationConstants.Actions>> GetPermissions<T>(T? resource = null)
+        where T : class;
 }
