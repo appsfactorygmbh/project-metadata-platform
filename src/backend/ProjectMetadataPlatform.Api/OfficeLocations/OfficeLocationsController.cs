@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.OfficeLocations.Models;
 using ProjectMetadataPlatform.Application.OfficeLocations;
@@ -34,20 +35,26 @@ public class OfficeLocationsController : ControllerBase
     /// <summary>
     /// Gets all Office Locations.
     /// </summary>
-    /// <returns>List of Office Locations</returns>
+    /// <returns>List of Office Locations with allowed actions for the type.</returns>
     /// <response code="200">TheOffice Locations are returned successfully.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<GetOfficeLocationResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<GetOfficeLocationResponse>>> Get()
+    [ProducesResponseType(
+        typeof(GetListResponse<GetOfficeLocationResponse>),
+        StatusCodes.Status200OK
+    )]
+    public async Task<ActionResult<GetListResponse<GetOfficeLocationResponse>>> Get()
     {
         var query = new GetAllOfficeLocationsQuery();
-        var locations = await _mediator.Send(query);
-        var response = locations.Select(location => new GetOfficeLocationResponse(
+        var (locations, permissions) = await _mediator.Send(query);
+        var locationResponse = locations.Select(location => new GetOfficeLocationResponse(
             Id: location.Id,
             OfficeLocationName: location.OfficeLocationName
         ));
-
+        var response = new GetListResponse<GetOfficeLocationResponse>(
+            [.. locationResponse],
+            [.. permissions]
+        );
         return Ok(response);
     }
 
@@ -55,7 +62,7 @@ public class OfficeLocationsController : ControllerBase
     /// Returns a Office Location specified by id.
     /// </summary>
     /// <param name="id">Id of the Office Location.</param>
-    /// <returns>The specified Office Location.</returns>
+    /// <returns>The specified Office Location with actions allowed on it.</returns>
     /// <response code="200"> Office Location returned succesfully.</response>
     /// <response code="404"> Office Location not found. </response>
     /// <response code="500"> internal error. </response>
@@ -65,10 +72,11 @@ public class OfficeLocationsController : ControllerBase
     public async Task<ActionResult<IEnumerable<GetOfficeLocationResponse>>> Get(int id)
     {
         var query = new GetOfficeLocationQuery(id);
-        var location = await _mediator.Send(query);
+        var (location, permissions) = await _mediator.Send(query);
         var response = new GetOfficeLocationResponse(
             Id: location.Id,
-            OfficeLocationName: location.OfficeLocationName
+            OfficeLocationName: location.OfficeLocationName,
+            Permissions: [.. permissions]
         );
 
         return Ok(response);

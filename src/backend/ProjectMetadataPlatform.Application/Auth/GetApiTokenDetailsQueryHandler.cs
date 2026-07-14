@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -11,7 +12,11 @@ namespace ProjectMetadataPlatform.Application.Auth;
 /// <summary>
 /// Handler for the <see cref="GetApiTokenDetailsQuery" />.
 /// </summary>
-public class GetApiTokenDetailsQueryHandler : IRequestHandler<GetApiTokenDetailsQuery, ApiToken>
+public class GetApiTokenDetailsQueryHandler
+    : IRequestHandler<
+        GetApiTokenDetailsQuery,
+        (ApiToken, IEnumerable<AuthorizationConstants.Actions>)
+    >
 {
     private readonly IApiTokenRepository _apiTokenRepository;
     private readonly IAuthorizationService _authorizationService;
@@ -35,21 +40,18 @@ public class GetApiTokenDetailsQueryHandler : IRequestHandler<GetApiTokenDetails
     /// </summary>
     /// <param name="request">Request for a token.</param>
     /// <param name="cancellationToken"></param>
-    /// <returns>The Api Token.</returns>
-    public async Task<ApiToken> Handle(
+    /// <returns>The Api Token and allowed actions.</returns>
+    public async Task<(ApiToken, IEnumerable<AuthorizationConstants.Actions>)> Handle(
         GetApiTokenDetailsQuery request,
         CancellationToken cancellationToken
     )
     {
         var token = await _apiTokenRepository.GetApiTokenById(request.TokenId);
-        if (
-            !(await _authorizationService.CheckAccess(token, [AuthorizationConstants.Actions.GET]))[
-                AuthorizationConstants.Actions.GET
-            ]
-        )
+        if (!await _authorizationService.CheckAccess(token, AuthorizationConstants.Actions.GET))
         {
             throw new UnauthorizedException();
         }
-        return token;
+        var permissions = await _authorizationService.GetPermissions(token);
+        return (token, permissions);
     }
 }

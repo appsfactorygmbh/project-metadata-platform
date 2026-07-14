@@ -11,7 +11,10 @@ namespace ProjectMetadataPlatform.Application.Plugins;
 
 ///  <inheritdoc />
 public class GetGlobalPluginsQueryHandler
-    : IRequestHandler<GetGlobalPluginsQuery, IEnumerable<Plugin>>
+    : IRequestHandler<
+        GetGlobalPluginsQuery,
+        (IEnumerable<Plugin>, IEnumerable<AuthorizationConstants.Actions>)
+    >
 {
     private readonly IPluginRepository _pluginRepository;
     private readonly IAuthorizationService _authorizationService;
@@ -29,32 +32,35 @@ public class GetGlobalPluginsQueryHandler
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<Plugin>> Handle(
+    public async Task<(IEnumerable<Plugin>, IEnumerable<AuthorizationConstants.Actions>)> Handle(
         GetGlobalPluginsQuery request,
         CancellationToken cancellationToken
     )
     {
         var plugins = await _pluginRepository.GetGlobalPluginsAsync();
         var queriedPlugins = await _authorizationService.TryGetPlanResourceQuery(plugins);
+
+        var permissions = await _authorizationService.GetPermissions<Plugin>();
         if (queriedPlugins == null)
         {
             List<Plugin> filteredPlugins = [];
             foreach (var plugin in plugins)
             {
                 if (
-                    (
-                        await _authorizationService.CheckAccess(
-                            plugin,
-                            [AuthorizationConstants.Actions.GET]
-                        )
-                    )[AuthorizationConstants.Actions.GET]
+                    await _authorizationService.CheckAccess(
+                        plugin,
+                        AuthorizationConstants.Actions.GET
+                    )
                 )
                 {
                     filteredPlugins.Add(plugin);
                 }
             }
-            return filteredPlugins;
+            return (filteredPlugins, permissions);
         }
-        return await queriedPlugins.ToListAsync(cancellationToken: cancellationToken);
+        return (
+            await queriedPlugins.ToListAsync(cancellationToken: cancellationToken),
+            permissions
+        );
     }
 }

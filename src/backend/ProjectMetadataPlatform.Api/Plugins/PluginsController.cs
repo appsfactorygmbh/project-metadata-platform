@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Plugins.Models;
 using ProjectMetadataPlatform.Application.Plugins;
@@ -108,25 +108,31 @@ public class PluginsController : ControllerBase
     /// <summary>
     /// Gets all global plugins.
     /// </summary>
-    /// <returns>All global plugins.</returns>
+    /// <returns>All global plugins and permissions on the type.</returns>
     /// <response code="200">All global plugins are returned successfully.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<GetGlobalPluginResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<GetGlobalPluginResponse>>> GetGlobal()
+    [ProducesResponseType(
+        typeof(GetListResponse<GetGlobalPluginResponse>),
+        StatusCodes.Status200OK
+    )]
+    public async Task<ActionResult<GetListResponse<GetGlobalPluginResponse>>> GetGlobal()
     {
         var query = new GetGlobalPluginsQuery();
-        var plugins = await _mediator.Send(query);
+        var (plugins, permissions) = await _mediator.Send(query);
 
         string[] keys = [];
-        var response = plugins.Select(plugin => new GetGlobalPluginResponse(
+        var pluginResponse = plugins.Select(plugin => new GetGlobalPluginResponse(
             plugin.PluginName,
             plugin.Id,
             plugin.IsArchived,
             keys,
             plugin.BaseUrl
         ));
-
+        var response = new GetListResponse<GetGlobalPluginResponse>(
+            [.. pluginResponse],
+            [.. permissions]
+        );
         return Ok(response);
     }
 

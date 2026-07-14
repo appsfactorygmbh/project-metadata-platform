@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -11,7 +12,8 @@ namespace ProjectMetadataPlatform.Application.Departments;
 /// <summary>
 /// Handler for the <see cref="GetDepartmentQuery" />.
 /// </summary>
-public class GetDepartmentQueryHandler : IRequestHandler<GetDepartmentQuery, Department>
+public class GetDepartmentQueryHandler
+    : IRequestHandler<GetDepartmentQuery, (Department, IEnumerable<AuthorizationConstants.Actions>)>
 {
     private readonly IDepartmentRepository _departmentRepository;
     private readonly IAuthorizationService _authorizationService;
@@ -33,24 +35,20 @@ public class GetDepartmentQueryHandler : IRequestHandler<GetDepartmentQuery, Dep
     /// </summary>
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
-    /// <returns>A department.</returns>
-    public async Task<Department> Handle(
+    /// <returns>A department and allowed actions.</returns>
+    public async Task<(Department, IEnumerable<AuthorizationConstants.Actions>)> Handle(
         GetDepartmentQuery request,
         CancellationToken cancellationToken
     )
     {
         var department = await _departmentRepository.GetDepartmentAsync(request.Id);
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    department,
-                    [AuthorizationConstants.Actions.GET]
-                )
-            )[AuthorizationConstants.Actions.GET]
+            !await _authorizationService.CheckAccess(department, AuthorizationConstants.Actions.GET)
         )
         {
             throw new UnauthorizedException();
         }
-        return department;
+        var permissions = await _authorizationService.GetPermissions(department);
+        return (department, permissions);
     }
 }

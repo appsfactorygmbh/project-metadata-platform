@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Departments.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Departments;
@@ -34,20 +35,23 @@ public class DepartmentsController : ControllerBase
     /// <summary>
     /// Gets all Departments.
     /// </summary>
-    /// <returns>List of Departments. </returns>
+    /// <returns>List of Departments with allowed actions for the type. </returns>
     /// <response code="200">The Departments are returned successfully.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<GetDepartmentResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<GetDepartmentResponse>>> Get()
+    [ProducesResponseType(typeof(GetListResponse<GetDepartmentResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<GetListResponse<GetDepartmentResponse>>> Get()
     {
         var query = new GetAllDepartmentsQuery();
-        var departments = await _mediator.Send(query);
-        var response = departments.Select(department => new GetDepartmentResponse(
+        var (departments, permissions) = await _mediator.Send(query);
+        var departmentResponse = departments.Select(department => new GetDepartmentResponse(
             Id: department.Id,
             DepartmentName: department.DepartmentName
         ));
-
+        var response = new GetListResponse<GetDepartmentResponse>(
+            [.. departmentResponse],
+            [.. permissions]
+        );
         return Ok(response);
     }
 
@@ -55,7 +59,7 @@ public class DepartmentsController : ControllerBase
     /// Returns a department specified by id.
     /// </summary>
     /// <param name="id">Id of the department.</param>
-    /// <returns>The specified department.</returns>
+    /// <returns>The specified department with permissions on it.</returns>
     /// <response code="200"> department returned succesfully.</response>
     /// <response code="404"> department not found. </response>
     /// <response code="500"> internal error. </response>
@@ -65,10 +69,11 @@ public class DepartmentsController : ControllerBase
     public async Task<ActionResult<IEnumerable<GetDepartmentResponse>>> Get(int id)
     {
         var query = new GetDepartmentQuery(id);
-        var department = await _mediator.Send(query);
+        var (department, permissions) = await _mediator.Send(query);
         var response = new GetDepartmentResponse(
             Id: department.Id,
-            DepartmentName: department.DepartmentName
+            DepartmentName: department.DepartmentName,
+            Permissions: [.. permissions]
         );
 
         return Ok(response);

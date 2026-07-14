@@ -1,11 +1,13 @@
-﻿using ProjectMetadataPlatform.Api.BusinessUnits.Models;
+﻿using System.Collections.Generic;
+using ProjectMetadataPlatform.Api.BusinessUnits.Models;
+using ProjectMetadataPlatform.Domain.Authorization;
 
 namespace ProjectMetadataPlatform.Api.Teams.Models;
 
 /// <summary>
 /// The representation of a team in responses.
 /// </summary>
-public class GetTeamResponse
+public record GetTeamResponse
 {
     /// <summary>
     /// Gets or sets the id of the team dto.
@@ -26,4 +28,9 @@ public class GetTeamResponse
     /// Gets or sets the PTL associated with the team. This property is optional.
     /// </summary>
     public string? PTL { get; set; }
+
+    /// <summary>
+    ///List of allow Actions on the Team.
+    /// </summary>
+    public List<AuthorizationConstants.Actions>? Permissions { get; set; }
 }
