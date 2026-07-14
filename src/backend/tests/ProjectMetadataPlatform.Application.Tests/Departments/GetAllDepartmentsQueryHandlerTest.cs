@@ -56,8 +56,8 @@ public class GetAllDepartmentsQueryHandlerTest
         );
 
         // Assert
-        Assert.That(result.Count, Is.EqualTo(1));
-        Assert.That(result.First(), Is.EqualTo(returnDepartment));
+        Assert.That(result.Item1.Count, Is.EqualTo(1));
+        Assert.That(result.Item1.First(), Is.EqualTo(returnDepartment));
         _mockDepartmentRepository.Verify(m => m.GetDepartmentsAsync(), Times.Once);
     }
 
@@ -93,10 +93,10 @@ public class GetAllDepartmentsQueryHandlerTest
         );
 
         // Assert
-        var resultList = result.ToList();
+        var resultList = result.Item1.ToList();
         Assert.Multiple(() =>
         {
-            Assert.That(result.Count, Is.EqualTo(4));
+            Assert.That(result.Item1.Count, Is.EqualTo(4));
             Assert.That(resultList[0], Is.EqualTo(returnDepartment[3]));
             Assert.That(resultList[1], Is.EqualTo(returnDepartment[0]));
             Assert.That(resultList[2], Is.EqualTo(returnDepartment[2]));
@@ -131,16 +131,11 @@ public class GetAllDepartmentsQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Department>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Act
         var result = await _handler.Handle(
             new GetAllDepartmentsQuery(),
@@ -148,10 +143,10 @@ public class GetAllDepartmentsQueryHandlerTest
         );
 
         // Assert
-        var resultList = result.ToList();
+        var resultList = result.Item1.ToList();
         Assert.Multiple(() =>
         {
-            Assert.That(result.Count, Is.EqualTo(4));
+            Assert.That(result.Item1.Count, Is.EqualTo(4));
             Assert.That(resultList[0], Is.EqualTo(returnDepartment[3]));
             Assert.That(resultList[1], Is.EqualTo(returnDepartment[0]));
             Assert.That(resultList[2], Is.EqualTo(returnDepartment[2]));

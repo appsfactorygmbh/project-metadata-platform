@@ -221,7 +221,7 @@ public class ProjectManagement : IntegrationTestsBase
         Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         var getResponseContent = await getResponse.Content.ReadFromJsonAsync<JsonDocument>();
 
-        var rootElement = getResponseContent!.RootElement;
+        var rootElement = getResponseContent!.RootElement.GetProperty("resources");
 
         Assert.That(rootElement.GetArrayLength(), Is.EqualTo(2));
         var firstProject = rootElement[0];
@@ -285,6 +285,7 @@ public class ProjectManagement : IntegrationTestsBase
         var getResponseContent = await getResponse.Content.ReadFromJsonAsync<JsonDocument>();
 
         var rootElement = getResponseContent!.RootElement;
+
         Assert.That(rootElement.GetProperty("projectName").GetString(), Is.EqualTo("testProject"));
         Assert.That(rootElement.GetProperty("clientName").GetString(), Is.EqualTo("testClient2"));
         Assert.That(rootElement.GetProperty("offerId").GetString(), Is.EqualTo("testId2"));
@@ -337,7 +338,9 @@ public class ProjectManagement : IntegrationTestsBase
             .GetProperty("id")
             .GetInt32();
 
-        var projectPlugins = await ToJsonElement(client.GetAsync($"/Projects/{projectId}/Plugins"));
+        var projectPlugins = (
+            await ToJsonElement(client.GetAsync($"/Projects/{projectId}/Plugins"))
+        );
 
         Assert.That(projectPlugins.GetArrayLength(), Is.EqualTo(2));
         Assert.That(
@@ -371,7 +374,7 @@ public class ProjectManagement : IntegrationTestsBase
         Assert.That(project.GetProperty("notes").GetString(), Is.EqualTo("testNotes"));
         Assert.That(project.GetProperty("id").GetInt32(), Is.GreaterThan(0));
 
-        projectPlugins = await ToJsonElement(client.GetAsync($"/Projects/{projectId}/Plugins"));
+        projectPlugins = (await ToJsonElement(client.GetAsync($"/Projects/{projectId}/Plugins")));
 
         Assert.That(projectPlugins.GetArrayLength(), Is.EqualTo(2));
         Assert.That(
@@ -488,7 +491,9 @@ public class ProjectManagement : IntegrationTestsBase
         )
             .GetProperty("id")
             .GetInt32();
-        var projects = await ToJsonElement(client.GetAsync($"/Projects/"));
+        var projects = (await ToJsonElement(client.GetAsync($"/Projects/"))).GetProperty(
+            "resources"
+        );
         var count = projects.GetArrayLength();
         _ = await client.PutAsync(
             $"/Projects?projectId=" + projectId,
@@ -500,7 +505,9 @@ public class ProjectManagement : IntegrationTestsBase
             Is.EqualTo(HttpStatusCode.NoContent)
         );
 
-        var projects2 = await ToJsonElement(client.GetAsync($"/Projects/"));
+        var projects2 = (await ToJsonElement(client.GetAsync($"/Projects/"))).GetProperty(
+            "resources"
+        );
         Assert.That(projects2.GetArrayLength(), Is.EqualTo(count - 1));
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));

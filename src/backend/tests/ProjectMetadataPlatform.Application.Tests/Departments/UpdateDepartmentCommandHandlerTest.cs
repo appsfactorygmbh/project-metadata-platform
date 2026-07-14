@@ -46,16 +46,11 @@ public class UpdateDepartmentCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Department>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
             .ReturnsAsync(returnDepartment);
@@ -114,16 +109,11 @@ public class UpdateDepartmentCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Department>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
             .ReturnsAsync(returnDepartment);
@@ -137,7 +127,7 @@ public class UpdateDepartmentCommandHandlerTest
             .ReturnsAsync(false);
 
         // Act
-        var result = await _handler.Handle(
+        _ = await _handler.Handle(
             new UpdateDepartmentCommand(Id: 1, DepartmentName: "Test_1"),
             It.IsAny<CancellationToken>()
         );
@@ -163,16 +153,11 @@ public class UpdateDepartmentCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Department>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
             .ReturnsAsync(returnDepartment);
@@ -204,16 +189,11 @@ public class UpdateDepartmentCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Department>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, false },
-                }
-            );
+            .ReturnsAsync(false);
         _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
             .ReturnsAsync(returnDepartment);

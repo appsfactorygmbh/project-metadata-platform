@@ -151,16 +151,11 @@ public class GetLogsQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Log>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockLogsRepo
             .Setup(r => r.GetAllLogs())
             .ReturnsAsync(new List<Log> { log, log2 }.BuildMock());

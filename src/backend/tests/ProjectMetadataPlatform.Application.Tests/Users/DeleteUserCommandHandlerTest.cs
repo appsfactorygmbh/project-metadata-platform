@@ -71,16 +71,11 @@ public class DeleteUserCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockUsersRepo.Setup(m => m.GetUserByIdAsync("2")).ReturnsAsync(user);
         _ = _mockUsersRepo.Setup(m => m.DeleteUserAsync(user)).ReturnsAsync(user);
         var result = await _handler.Handle(new DeleteUserCommand("2"), CancellationToken.None);
@@ -108,16 +103,11 @@ public class DeleteUserCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockUsersRepo
             .Setup(m => m.GetUserByIdAsync("1"))
             .ThrowsAsync(new UserNotFoundException("1"));
@@ -142,16 +132,11 @@ public class DeleteUserCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockUsersRepo.Setup(m => m.GetUserByIdAsync("200")).ReturnsAsync(user);
         _ = _mockUsersRepo.Setup(m => m.GetUserByEmailAsync("camo")).ReturnsAsync(user);
 
@@ -167,16 +152,11 @@ public class DeleteUserCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new DeleteUserCommand("200");
 

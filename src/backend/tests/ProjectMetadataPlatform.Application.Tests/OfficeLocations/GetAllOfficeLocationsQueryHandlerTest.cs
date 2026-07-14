@@ -56,8 +56,8 @@ public class GetAllOfficeLocationsQueryHandlerTest
         );
 
         // Assert
-        Assert.That(result.Count, Is.EqualTo(1));
-        Assert.That(result.First(), Is.EqualTo(returnOfficeLocation));
+        Assert.That(result.Item1.Count, Is.EqualTo(1));
+        Assert.That(result.Item1.First(), Is.EqualTo(returnOfficeLocation));
         _mockOfficeLocationRepository.Verify(m => m.GetOfficeLocationsAsync(), Times.Once);
     }
 
@@ -93,10 +93,10 @@ public class GetAllOfficeLocationsQueryHandlerTest
         );
 
         // Assert
-        var resultList = result.ToList();
+        var resultList = result.Item1.ToList();
         Assert.Multiple(() =>
         {
-            Assert.That(result.Count, Is.EqualTo(4));
+            Assert.That(result.Item1.Count, Is.EqualTo(4));
             Assert.That(resultList[0], Is.EqualTo(returnOfficeLocation[3]));
             Assert.That(resultList[1], Is.EqualTo(returnOfficeLocation[0]));
             Assert.That(resultList[2], Is.EqualTo(returnOfficeLocation[2]));
@@ -132,16 +132,11 @@ public class GetAllOfficeLocationsQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<OfficeLocation>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Act
         var result = await _handler.Handle(
             new GetAllOfficeLocationsQuery(),
@@ -149,10 +144,10 @@ public class GetAllOfficeLocationsQueryHandlerTest
         );
 
         // Assert
-        var resultList = result.ToList();
+        var resultList = result.Item1.ToList();
         Assert.Multiple(() =>
         {
-            Assert.That(result.Count, Is.EqualTo(4));
+            Assert.That(result.Item1.Count, Is.EqualTo(4));
             Assert.That(resultList[0], Is.EqualTo(returnOfficeLocation[3]));
             Assert.That(resultList[1], Is.EqualTo(returnOfficeLocation[0]));
             Assert.That(resultList[2], Is.EqualTo(returnOfficeLocation[2]));

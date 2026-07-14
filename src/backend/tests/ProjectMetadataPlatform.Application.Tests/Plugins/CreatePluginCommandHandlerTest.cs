@@ -51,16 +51,11 @@ public class CreatePluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         var result = await _handler.Handle(
             new CreatePluginCommand("Airlock", true, [], "https://airlock.com"),
             It.IsAny<CancellationToken>()
@@ -107,16 +102,11 @@ public class CreatePluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(m => m.CheckGlobalPluginNameExists("Airlock")).ReturnsAsync(true);
 
         _ = Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() =>
@@ -135,16 +125,11 @@ public class CreatePluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new CreatePluginCommand("Airlock", true, [], "https://airlock.com");
 

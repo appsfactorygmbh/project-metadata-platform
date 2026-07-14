@@ -54,16 +54,11 @@ public class PatchGlobalPluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.CheckGlobalPluginNameExists("Mercury Atlas"))
@@ -141,16 +136,11 @@ public class PatchGlobalPluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
@@ -217,16 +207,11 @@ public class PatchGlobalPluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
@@ -282,16 +267,11 @@ public class PatchGlobalPluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
@@ -354,16 +334,11 @@ public class PatchGlobalPluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Assert
         _ = Assert.ThrowsAsync<PluginNotFoundException>(() =>
             _handler.Handle(new PatchGlobalPluginCommand(42), It.IsAny<CancellationToken>())
@@ -385,16 +360,11 @@ public class PatchGlobalPluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
@@ -469,16 +439,11 @@ public class PatchGlobalPluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo
             .Setup(repo => repo.CheckGlobalPluginNameExists("Atlas Agena"))
             .ReturnsAsync(true);
@@ -505,16 +470,11 @@ public class PatchGlobalPluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
@@ -582,16 +542,11 @@ public class PatchGlobalPluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
@@ -667,16 +622,11 @@ public class PatchGlobalPluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
@@ -736,16 +686,11 @@ public class PatchGlobalPluginCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Plugin>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, false },
-                }
-            );
+            .ReturnsAsync(false);
         var plugin = new Plugin
         {
             Id = 42,

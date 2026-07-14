@@ -84,16 +84,11 @@ public class PatchUserCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(false);
         _ = _mockUsersRepo.Setup(repo => repo.GetUserByEmailAsync("123")).ReturnsAsync(user);
         _ = _mockUsersRepo
@@ -231,16 +226,11 @@ public class PatchUserCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
         _ = _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("123")).ReturnsAsync(user);
         _ = _mockUsersRepo
@@ -274,16 +264,11 @@ public class PatchUserCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = Assert.ThrowsAsync<UserNotFoundException>(() =>
             _handler.Handle(new PatchUserCommand { Id = "42" }, It.IsAny<CancellationToken>())
         );
@@ -314,16 +299,11 @@ public class PatchUserCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = await _handler.Handle(
             new PatchUserCommand
             {
@@ -376,16 +356,11 @@ public class PatchUserCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
         _ = _mockUsersRepo
             .Setup(repo => repo.CheckPasswordFormat("newPassword"))
@@ -451,16 +426,11 @@ public class PatchUserCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, false },
-                }
-            );
+            .ReturnsAsync(false);
         _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
         _ = _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("42")).ReturnsAsync(user);
         _ = _mockUsersRepo

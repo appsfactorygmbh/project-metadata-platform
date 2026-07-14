@@ -9,6 +9,7 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.BusinessUnits;
 using ProjectMetadataPlatform.Api.BusinessUnits.Models;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Application.BusinessUnits;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 
@@ -31,17 +32,17 @@ public class BusinessUnitsControllerTest
     {
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllBusinessUnitsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync([]);
+            .ReturnsAsync(([], []));
         var result = await _controller.Get();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult.Value, Is.InstanceOf<IEnumerable<GetBusinessUnitResponse>>());
+        Assert.That(okResult.Value, Is.InstanceOf<GetListResponse<GetBusinessUnitResponse>>());
 
         var getBusinessUnitsResponseList = (
-            okResult.Value as IEnumerable<GetBusinessUnitResponse>
-        )!.ToList();
+            okResult.Value as GetListResponse<GetBusinessUnitResponse>
+        )!.Resources.ToList();
         Assert.That(getBusinessUnitsResponseList, Is.Not.Null);
 
         Assert.That(getBusinessUnitsResponseList, Has.Count.EqualTo(0));
@@ -52,20 +53,25 @@ public class BusinessUnitsControllerTest
     {
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllBusinessUnitsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync([
-                new BusinessUnit { Id = 1, BusinessUnitName = "BusinessUnit1" },
-                new BusinessUnit { Id = 2, BusinessUnitName = "BusinessUnit2" },
-            ]);
+            .ReturnsAsync(
+                (
+                    [
+                        new BusinessUnit { Id = 1, BusinessUnitName = "BusinessUnit1" },
+                        new BusinessUnit { Id = 2, BusinessUnitName = "BusinessUnit2" },
+                    ],
+                    []
+                )
+            );
         var result = await _controller.Get();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult.Value, Is.InstanceOf<IEnumerable<GetBusinessUnitResponse>>());
+        Assert.That(okResult.Value, Is.InstanceOf<GetListResponse<GetBusinessUnitResponse>>());
 
         var getBusinessUnitsResponseList = (
-            okResult.Value as IEnumerable<GetBusinessUnitResponse>
-        )!.ToList();
+            okResult.Value as GetListResponse<GetBusinessUnitResponse>
+        )!.Resources.ToList();
         Assert.That(getBusinessUnitsResponseList, Is.Not.Null);
 
         Assert.That(getBusinessUnitsResponseList, Has.Count.EqualTo(2));
@@ -102,7 +108,7 @@ public class BusinessUnitsControllerTest
     {
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetBusinessUnitQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new BusinessUnit { BusinessUnitName = "BusinessUnit", Id = 1 });
+            .ReturnsAsync((new BusinessUnit { BusinessUnitName = "BusinessUnit", Id = 1 }, []));
         var result = await _controller.Get(1);
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 

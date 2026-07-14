@@ -43,16 +43,11 @@ public class GetBusinessUnitQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Act
         var result = await _handler.Handle(
             new GetBusinessUnitQuery(Id: 1),
@@ -60,20 +55,15 @@ public class GetBusinessUnitQueryHandlerTest
         );
 
         // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.EqualTo(returnBusinessUnit));
+        Assert.That(result.Item1, Is.Not.Null);
+        Assert.That(result.Item1, Is.EqualTo(returnBusinessUnit));
         _mockBusinessUnitRepository.Verify(
             m => m.GetBusinessUnitAsync(It.Is<int>(id => id == 1)),
             Times.Once
         );
 
         _authorizationServiceMock.Verify(
-            a =>
-                a.CheckAccess(
-                    It.IsAny<BusinessUnit>(),
-                    new List<AuthorizationConstants.Actions> { AuthorizationConstants.Actions.GET },
-                    null
-                ),
+            a => a.CheckAccess(It.IsAny<BusinessUnit>(), AuthorizationConstants.Actions.GET, null),
             Times.Once
         );
     }
@@ -89,16 +79,11 @@ public class GetBusinessUnitQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Act + Assert
         var ex = Assert.ThrowsAsync<BusinessUnitNotFoundException>(async () =>
             await _handler.Handle(new GetBusinessUnitQuery(Id: 1), It.IsAny<CancellationToken>())
@@ -114,16 +99,11 @@ public class GetBusinessUnitQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new GetBusinessUnitQuery(Id: 1);
 

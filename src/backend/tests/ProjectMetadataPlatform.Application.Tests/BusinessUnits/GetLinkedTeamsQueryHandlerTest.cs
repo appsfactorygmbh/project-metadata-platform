@@ -59,16 +59,11 @@ public class GetLinkedTeamsQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitWithTeamsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
@@ -99,16 +94,11 @@ public class GetLinkedTeamsQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new GetLinkedTeamsQuery(Id: 1);
 

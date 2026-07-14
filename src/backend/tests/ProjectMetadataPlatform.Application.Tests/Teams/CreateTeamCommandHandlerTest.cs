@@ -51,16 +51,11 @@ public class CreateTeamCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockTeamRepository
             .Setup(repo => repo.CheckIfTeamNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
@@ -116,16 +111,11 @@ public class CreateTeamCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockTeamRepository
             .Setup(repo => repo.CheckIfTeamNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
@@ -155,16 +145,11 @@ public class CreateTeamCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockTeamRepository
             .Setup(repo => repo.CheckIfTeamNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
@@ -193,16 +178,11 @@ public class CreateTeamCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new CreateTeamCommand(
             TeamName: "Test Name",

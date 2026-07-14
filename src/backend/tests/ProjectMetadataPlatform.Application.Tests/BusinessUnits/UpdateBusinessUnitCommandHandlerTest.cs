@@ -58,16 +58,11 @@ public class UpdateBusinessUnitCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Act
         var result = await _handler.Handle(
             new UpdateBusinessUnitCommand(Id: 1, BusinessUnitName: "Test_2"),
@@ -114,16 +109,11 @@ public class UpdateBusinessUnitCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
@@ -163,16 +153,11 @@ public class UpdateBusinessUnitCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
@@ -204,16 +189,11 @@ public class UpdateBusinessUnitCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, false },
-                }
-            );
+            .ReturnsAsync(false);
         _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);

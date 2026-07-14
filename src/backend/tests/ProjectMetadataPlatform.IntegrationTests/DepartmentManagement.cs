@@ -39,7 +39,9 @@ public class DepartmentManagement : IntegrationTestsBase
             .GetProperty("id")
             .GetInt32();
 
-        var departments = await ToJsonElement(client.GetAsync("/Departments"));
+        var departments = (await ToJsonElement(client.GetAsync("/Departments"))).GetProperty(
+            "resources"
+        );
 
         Assert.Multiple(() =>
         {
@@ -111,7 +113,9 @@ public class DepartmentManagement : IntegrationTestsBase
         )
             .GetProperty("id")
             .GetInt32();
-        var departments = await ToJsonElement(client.GetAsync("/Departments"));
+        var departments = (await ToJsonElement(client.GetAsync("/Departments"))).GetProperty(
+            "resources"
+        );
 
         Assert.That(departments.GetArrayLength(), Is.EqualTo(1));
         Assert.That(departments[0].GetProperty("id").GetInt32(), Is.EqualTo(departmentId1));
@@ -123,7 +127,9 @@ public class DepartmentManagement : IntegrationTestsBase
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
 
-        var departmentsAfterDelete = await ToJsonElement(client.GetAsync("/Departments"));
+        var departmentsAfterDelete = (
+            await ToJsonElement(client.GetAsync("/Departments"))
+        ).GetProperty("resources");
 
         Assert.That(departmentsAfterDelete.GetArrayLength(), Is.EqualTo(0));
     }

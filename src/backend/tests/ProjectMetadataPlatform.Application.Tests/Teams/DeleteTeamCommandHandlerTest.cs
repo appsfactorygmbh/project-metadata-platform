@@ -55,16 +55,11 @@ public class DeleteTeamCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamWithProjectsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
@@ -128,16 +123,11 @@ public class DeleteTeamCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamWithProjectsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
@@ -157,16 +147,11 @@ public class DeleteTeamCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Team>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(new DeleteTeamCommand(Id: 1), It.IsAny<CancellationToken>())

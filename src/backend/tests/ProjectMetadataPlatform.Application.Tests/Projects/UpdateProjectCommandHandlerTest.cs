@@ -93,16 +93,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo
             .Setup(m => m.GetProjectWithPluginsAsync(1))
             .ReturnsAsync(exampleProject);
@@ -174,16 +169,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo.Setup(m => m.CheckProjectExists(1)).ReturnsAsync(false);
 
         _ = _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
@@ -247,16 +237,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo
             .Setup(m => m.GetProjectWithPluginsAsync(1))
             .ReturnsAsync(exampleProject);
@@ -324,16 +309,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo
             .Setup(repository => repository.GetProjectWithPluginsAsync(1))
             .ReturnsAsync(project);
@@ -395,16 +375,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo
             .Setup(repository => repository.GetProjectWithPluginsAsync(1))
             .ReturnsAsync(project);
@@ -463,16 +438,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         var updateCommand = new UpdateProjectCommand(
             ProjectName: "DB App",
             ClientName: "Unit 2",
@@ -606,16 +576,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo
             .Setup(repository => repository.GetProjectWithPluginsAsync(1))
             .ReturnsAsync(project);
@@ -669,16 +634,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(1))
             .ReturnsAsync(project);
@@ -786,16 +746,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = await _handler.Handle(updateCommand, CancellationToken.None);
 
         _mockLogRepository.Verify(
@@ -851,16 +806,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = await _handler.Handle(updateCommand, CancellationToken.None);
 
         _mockLogRepository.Verify(
@@ -923,16 +873,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(project.Id))
             .ReturnsAsync(project);
@@ -1001,16 +946,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(project.Id))
             .ReturnsAsync(project);
@@ -1075,16 +1015,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(project.Id))
             .ReturnsAsync(project);
@@ -1153,16 +1088,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = await _handler.Handle(updateCommand, CancellationToken.None);
 
         Assert.That(project.IsArchived, Is.True);
@@ -1235,16 +1165,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = await _handler.Handle(updateCommand, CancellationToken.None);
 
         _mockLogRepository.Verify(
@@ -1319,16 +1244,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(project.Id))
             .ReturnsAsync(project);
@@ -1423,16 +1343,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(project.Id))
             .ReturnsAsync(project);
@@ -1516,16 +1431,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo
             .Setup(repo => repo.GetProjectWithPluginsAsync(project.Id))
             .ReturnsAsync(project);
@@ -1587,16 +1497,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo.Setup(m => m.GetProjectWithPluginsAsync(1)).ReturnsAsync(project);
 
         var result = await _handler.Handle(updateCommand, CancellationToken.None);
@@ -1639,16 +1544,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo.Setup(m => m.GetProjectWithPluginsAsync(1)).ReturnsAsync(project);
         _ = _mockSlugHelper.Setup(m => m.GenerateSlug(It.IsAny<string>())).Returns("new project");
         _ = _mockSlugHelper.Setup(m => m.CheckProjectSlugExists("new project")).ReturnsAsync(false);
@@ -1685,16 +1585,11 @@ public class UpdateProjectCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.EDIT, false },
-                }
-            );
+            .ReturnsAsync(false);
         _ = _mockProjectRepo.Setup(m => m.GetProjectWithPluginsAsync(1)).ReturnsAsync(project);
         var request = new UpdateProjectCommand(
             Id: 1,

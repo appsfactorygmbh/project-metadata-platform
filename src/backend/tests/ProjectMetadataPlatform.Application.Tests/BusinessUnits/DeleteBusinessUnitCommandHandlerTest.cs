@@ -51,16 +51,11 @@ public class DeleteBusinessUnitCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitWithTeamsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
@@ -91,10 +86,7 @@ public class DeleteBusinessUnitCommandHandlerTest
             a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    new List<AuthorizationConstants.Actions>
-                    {
-                        AuthorizationConstants.Actions.DELETE,
-                    },
+                    AuthorizationConstants.Actions.DELETE,
                     null
                 ),
             Times.Once
@@ -127,16 +119,11 @@ public class DeleteBusinessUnitCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockBusinessUnitRepository
             .Setup(repo => repo.GetBusinessUnitWithTeamsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnBusinessUnit);
@@ -152,10 +139,7 @@ public class DeleteBusinessUnitCommandHandlerTest
             a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    new List<AuthorizationConstants.Actions>
-                    {
-                        AuthorizationConstants.Actions.DELETE,
-                    },
+                    AuthorizationConstants.Actions.DELETE,
                     null
                 ),
             Times.Once

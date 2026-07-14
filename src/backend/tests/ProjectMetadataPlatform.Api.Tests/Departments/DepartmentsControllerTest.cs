@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Departments;
 using ProjectMetadataPlatform.Api.Departments.Models;
 using ProjectMetadataPlatform.Application.Departments;
@@ -31,17 +32,17 @@ public class DepartmentsControllerTest
     {
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllDepartmentsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync([]);
+            .ReturnsAsync(([], []));
         var result = await _controller.Get();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult.Value, Is.InstanceOf<IEnumerable<GetDepartmentResponse>>());
+        Assert.That(okResult.Value, Is.InstanceOf<GetListResponse<GetDepartmentResponse>>());
 
         var getDepartmentsResponseList = (
-            okResult.Value as IEnumerable<GetDepartmentResponse>
-        )!.ToList();
+            okResult.Value as GetListResponse<GetDepartmentResponse>
+        )!.Resources.ToList();
         Assert.That(getDepartmentsResponseList, Is.Not.Null);
 
         Assert.That(getDepartmentsResponseList, Has.Count.EqualTo(0));
@@ -52,20 +53,25 @@ public class DepartmentsControllerTest
     {
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllDepartmentsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync([
-                new Department { Id = 1, DepartmentName = "Department1" },
-                new Department { Id = 2, DepartmentName = "Department2" },
-            ]);
+            .ReturnsAsync(
+                (
+                    [
+                        new Department { Id = 1, DepartmentName = "Department1" },
+                        new Department { Id = 2, DepartmentName = "Department2" },
+                    ],
+                    []
+                )
+            );
         var result = await _controller.Get();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult.Value, Is.InstanceOf<IEnumerable<GetDepartmentResponse>>());
+        Assert.That(okResult.Value, Is.InstanceOf<GetListResponse<GetDepartmentResponse>>());
 
         var getDepartmentsResponseList = (
-            okResult.Value as IEnumerable<GetDepartmentResponse>
-        )!.ToList();
+            okResult.Value as GetListResponse<GetDepartmentResponse>
+        )!.Resources.ToList();
         Assert.That(getDepartmentsResponseList, Is.Not.Null);
 
         Assert.That(getDepartmentsResponseList, Has.Count.EqualTo(2));
@@ -102,7 +108,7 @@ public class DepartmentsControllerTest
     {
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetDepartmentQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new Department { DepartmentName = "Department", Id = 1 });
+            .ReturnsAsync((new Department { DepartmentName = "Department", Id = 1 }, []));
         var result = await _controller.Get(1);
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 

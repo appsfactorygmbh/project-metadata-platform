@@ -46,16 +46,11 @@ public class CreateDepartmentCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Department>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockDepartmentRepository
             .Setup(repo => repo.CheckIfDepartmentNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
@@ -104,16 +99,11 @@ public class CreateDepartmentCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Department>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockDepartmentRepository
             .Setup(repo => repo.CheckIfDepartmentNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
@@ -135,16 +125,11 @@ public class CreateDepartmentCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Department>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new CreateDepartmentCommand(DepartmentName: "Test Name");
 

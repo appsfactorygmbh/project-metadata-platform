@@ -56,8 +56,8 @@ public class GetAllBusinessUnitsQueryHandlerTest
         );
 
         // Assert
-        Assert.That(result.Count, Is.EqualTo(1));
-        Assert.That(result.First(), Is.EqualTo(returnBusinessUnit));
+        Assert.That(result.Item1.Count, Is.EqualTo(1));
+        Assert.That(result.Item1.First(), Is.EqualTo(returnBusinessUnit));
         _mockBusinessUnitRepository.Verify(m => m.GetBusinessUnitsAsync(), Times.Once);
     }
 
@@ -93,10 +93,10 @@ public class GetAllBusinessUnitsQueryHandlerTest
         );
 
         // Assert
-        var resultList = result.ToList();
+        var resultList = result.Item1.ToList();
         Assert.Multiple(() =>
         {
-            Assert.That(result.Count, Is.EqualTo(4));
+            Assert.That(result.Item1.Count, Is.EqualTo(4));
             Assert.That(resultList[0], Is.EqualTo(returnBusinessUnit[3]));
             Assert.That(resultList[1], Is.EqualTo(returnBusinessUnit[0]));
             Assert.That(resultList[2], Is.EqualTo(returnBusinessUnit[2]));
@@ -131,16 +131,11 @@ public class GetAllBusinessUnitsQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Act
         var result = await _handler.Handle(
             new GetAllBusinessUnitsQuery(),
@@ -148,10 +143,10 @@ public class GetAllBusinessUnitsQueryHandlerTest
         );
 
         // Assert
-        var resultList = result.ToList();
+        var resultList = result.Item1.ToList();
         Assert.Multiple(() =>
         {
-            Assert.That(result.Count, Is.EqualTo(4));
+            Assert.That(result.Item1.Count, Is.EqualTo(4));
             Assert.That(resultList[0], Is.EqualTo(returnBusinessUnit[3]));
             Assert.That(resultList[1], Is.EqualTo(returnBusinessUnit[0]));
             Assert.That(resultList[2], Is.EqualTo(returnBusinessUnit[2]));

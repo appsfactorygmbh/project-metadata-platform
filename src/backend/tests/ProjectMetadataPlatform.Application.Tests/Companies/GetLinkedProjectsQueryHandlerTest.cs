@@ -67,16 +67,11 @@ public class GetLinkedProjectsQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Company>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         var result = await _handler.Handle(
             new GetLinkedProjectsQuery(Id: 1),
             It.IsAny<CancellationToken>()
@@ -102,16 +97,11 @@ public class GetLinkedProjectsQueryHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Company>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new GetLinkedProjectsQuery(Id: 1);
 

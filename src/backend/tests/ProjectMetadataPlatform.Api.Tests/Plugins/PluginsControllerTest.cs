@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Plugins;
 using ProjectMetadataPlatform.Api.Plugins.Models;
@@ -222,15 +223,15 @@ public class Tests
     {
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetGlobalPluginsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<Plugin>());
+            .ReturnsAsync(([], []));
         var result = await _controller.GetGlobal();
 
         Assert.That(result, Is.Not.Null);
 
         var value = result.Result as OkObjectResult;
-        var responses = value?.Value as IEnumerable<GetGlobalPluginResponse>;
+        var responses = value?.Value as GetListResponse<GetGlobalPluginResponse>;
 
-        Assert.That(responses, Is.Not.Null.And.Empty);
+        Assert.That(responses!.Resources, Is.Not.Null.And.Empty);
     }
 
     [Test]
@@ -247,7 +248,7 @@ public class Tests
 
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetGlobalPluginsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(pluginList);
+            .ReturnsAsync((pluginList, []));
         var result = await _controller.GetGlobal();
 
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
@@ -256,10 +257,12 @@ public class Tests
         Assert.Multiple(() =>
         {
             Assert.That(okResult!.Value, Is.Not.Null);
-            Assert.That(okResult.Value, Is.InstanceOf<IEnumerable<GetGlobalPluginResponse>>());
+            Assert.That(okResult.Value, Is.InstanceOf<GetListResponse<GetGlobalPluginResponse>>());
         });
 
-        var resultValue = (okResult?.Value as IEnumerable<GetGlobalPluginResponse>)!.ToList();
+        var resultValue = (
+            okResult?.Value as GetListResponse<GetGlobalPluginResponse>
+        )!.Resources.ToList();
         Assert.That(resultValue, Has.Count.EqualTo(1));
 
         var resultObj = resultValue[0];

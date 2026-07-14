@@ -59,16 +59,11 @@ public class CreateBusinessUnitCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         // Act
         var result = await _handler.Handle(
             new CreateBusinessUnitCommand(BusinessUnitName: "Test Name"),
@@ -99,10 +94,7 @@ public class CreateBusinessUnitCommandHandlerTest
             a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    new List<AuthorizationConstants.Actions>
-                    {
-                        AuthorizationConstants.Actions.CREATE,
-                    },
+                    AuthorizationConstants.Actions.CREATE,
                     null
                 ),
             Times.Once
@@ -117,16 +109,11 @@ public class CreateBusinessUnitCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockBusinessUnitRepository
             .Setup(repo => repo.CheckIfBusinessUnitNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
@@ -148,16 +135,11 @@ public class CreateBusinessUnitCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<BusinessUnit>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new CreateBusinessUnitCommand(BusinessUnitName: "Test Name");
 

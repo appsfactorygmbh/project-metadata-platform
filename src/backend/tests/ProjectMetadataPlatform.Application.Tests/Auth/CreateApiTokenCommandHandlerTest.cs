@@ -46,16 +46,11 @@ public class CreateApiTokenCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApiToken>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _apiTokenRepositoryMock.Setup(m => m.CheckScimTokenExists()).ReturnsAsync(true);
 
         var request = new CreateApiTokenCommand("Token", [TokenScopes.SCIM]);
@@ -72,16 +67,11 @@ public class CreateApiTokenCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApiToken>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new CreateApiTokenCommand("Token", [TokenScopes.SCIM]);
 
@@ -97,16 +87,11 @@ public class CreateApiTokenCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApiToken>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _apiTokenRepositoryMock.Setup(m => m.CheckScimTokenExists()).ReturnsAsync(false);
 
         var request = new CreateApiTokenCommand("Token", [TokenScopes.SCIM]);
@@ -114,15 +99,7 @@ public class CreateApiTokenCommandHandlerTest
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
         _apiTokenRepositoryMock.Verify(m => m.StoreApiToken(It.IsAny<ApiToken>()), Times.Once);
         _authorizationServiceMock.Verify(
-            a =>
-                a.CheckAccess(
-                    It.IsAny<ApiToken>(),
-                    new List<AuthorizationConstants.Actions>
-                    {
-                        AuthorizationConstants.Actions.CREATE,
-                    },
-                    null
-                ),
+            a => a.CheckAccess(It.IsAny<ApiToken>(), AuthorizationConstants.Actions.CREATE, null),
             Times.Once
         );
         Assert.That(result.Name, Is.EqualTo("Token"));

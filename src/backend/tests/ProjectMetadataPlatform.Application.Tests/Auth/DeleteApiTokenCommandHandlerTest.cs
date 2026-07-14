@@ -53,16 +53,11 @@ public class DeleteApiTokenCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApiToken>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _apiTokenRepositoryMock
             .Setup(m => m.GetApiTokenById(It.IsAny<int>()))
             .ReturnsAsync(token);
@@ -71,15 +66,7 @@ public class DeleteApiTokenCommandHandlerTest
 
         await _handler.Handle(request, It.IsAny<CancellationToken>());
         _authorizationServiceMock.Verify(
-            a =>
-                a.CheckAccess(
-                    token,
-                    new List<AuthorizationConstants.Actions>
-                    {
-                        AuthorizationConstants.Actions.DELETE,
-                    },
-                    null
-                ),
+            a => a.CheckAccess(token, AuthorizationConstants.Actions.DELETE, null),
             Times.Once()
         );
         _apiTokenRepositoryMock.Verify(m => m.DeleteApiToken(token), Times.Once);
@@ -101,16 +88,11 @@ public class DeleteApiTokenCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApiToken>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.DELETE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new DeleteApiTokenCommand(1);
         _ = Assert.ThrowsAsync<UnauthorizedException>(() =>

@@ -43,7 +43,7 @@ public class GetMeControllerTest
                     It.IsAny<System.Threading.CancellationToken>()
                 )
             )
-            .ReturnsAsync(user);
+            .ReturnsAsync((user, []));
         var controller = new UsersController(
             _mediator.Object,
             MockHttpContextAccessor("moonstealer@gruhq.com")

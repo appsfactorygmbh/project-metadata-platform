@@ -149,7 +149,9 @@ public class AuthManagement : IntegrationTestsBase
         )
             .GetProperty("token")
             .GetString();
-        var tokens = await ToJsonElement(client.GetAsync("auth/ApiTokens"), HttpStatusCode.OK);
+        var tokens = (
+            await ToJsonElement(client.GetAsync("auth/ApiTokens"), HttpStatusCode.OK)
+        ).GetProperty("resources");
         Assert.That(tokens.GetArrayLength(), Is.EqualTo(1));
 
         var tokenId = tokens[0].GetProperty("id").GetInt32();
@@ -181,7 +183,10 @@ public class AuthManagement : IntegrationTestsBase
             .GetProperty("token")
             .GetString();
 
-        var tokens = await ToJsonElement(client.GetAsync("auth/ApiTokens"), HttpStatusCode.OK);
+        var tokens = (
+            await ToJsonElement(client.GetAsync("auth/ApiTokens"), HttpStatusCode.OK)
+        ).GetProperty("resources");
+
         Assert.That(tokens.GetArrayLength(), Is.EqualTo(1));
 
         var tokenId = tokens[0].GetProperty("id").GetInt32();

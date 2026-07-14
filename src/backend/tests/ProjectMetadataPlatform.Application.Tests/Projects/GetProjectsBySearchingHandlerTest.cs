@@ -49,7 +49,7 @@ public class GetProjectsBySearchingHandlerTest
             .ReturnsAsync(emptyProjectList.BuildMock());
 
         var result = await _handler.Handle(query, It.IsAny<CancellationToken>());
-        Assert.That(result, Is.Empty);
+        Assert.That(result.Item1, Is.Empty);
     }
 
     [Test]
@@ -82,7 +82,7 @@ public class GetProjectsBySearchingHandlerTest
 
         var result = await _handler.Handle(query, It.IsAny<CancellationToken>());
 
-        Assert.That(result, Is.EqualTo(projectsResponseContent));
+        Assert.That(result.Item1, Is.EqualTo(projectsResponseContent));
     }
 
     [Test]
@@ -121,7 +121,7 @@ public class GetProjectsBySearchingHandlerTest
         var query = new GetAllProjectsQuery(null, "");
         var result = await _handler.Handle(query, It.IsAny<CancellationToken>());
 
-        Assert.That(result, Is.EqualTo(projectsResponseContent));
+        Assert.That(result.Item1, Is.EqualTo(projectsResponseContent));
     }
 
     [Test]
@@ -198,21 +198,16 @@ public class GetProjectsBySearchingHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<Project>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.GET, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockProjectRepo
             .Setup(m => m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>()))
             .ReturnsAsync(projects.BuildMock());
         var request = new GetAllProjectsQuery(null, "");
-        var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).ToList();
+        var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).Item1.ToList();
 
         Assert.That(result, Is.EquivalentTo(projects));
     }

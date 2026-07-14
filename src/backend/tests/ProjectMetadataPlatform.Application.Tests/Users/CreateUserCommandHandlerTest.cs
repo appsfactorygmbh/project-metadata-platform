@@ -64,16 +64,11 @@ public class CreateUserCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockTeamRepo
             .SetupSequence(m => m.GetTeamByNameAsync(It.IsAny<string>()))
             .ReturnsAsync(
@@ -144,16 +139,11 @@ public class CreateUserCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockUsersRepo
             .Setup(m => m.CreateUserAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ThrowsAsync(new Exception("Error"));
@@ -196,16 +186,11 @@ public class CreateUserCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, true },
-                }
-            );
+            .ReturnsAsync(true);
         _ = _mockUsersRepo
             .Setup(m => m.CreateUserAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync("1");
@@ -254,16 +239,11 @@ public class CreateUserCommandHandlerTest
             .Setup(a =>
                 a.CheckAccess(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<IEnumerable<AuthorizationConstants.Actions>>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
             )
-            .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, bool>
-                {
-                    { AuthorizationConstants.Actions.CREATE, false },
-                }
-            );
+            .ReturnsAsync(false);
 
         var request = new CreateUserCommand(
             "",
