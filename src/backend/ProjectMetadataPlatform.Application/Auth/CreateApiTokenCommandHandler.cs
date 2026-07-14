@@ -70,12 +70,10 @@ public class CreateApiTokenCommandHandler : IRequestHandler<CreateApiTokenComman
             ExpirationDate = expirationDate,
         };
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    apiToken,
-                    [AuthorizationConstants.Actions.CREATE]
-                )
-            )[AuthorizationConstants.Actions.CREATE]
+            !await _authorizationService.CheckAccess(
+                apiToken,
+                AuthorizationConstants.Actions.CREATE
+            )
         )
         {
             throw new UnauthorizedException();

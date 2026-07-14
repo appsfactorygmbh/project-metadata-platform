@@ -104,13 +104,11 @@ public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand,
             updates.Add(nameof(Company.CompanyName), request.CompanyName);
         }
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    company,
-                    [AuthorizationConstants.Actions.EDIT],
-                    updates
-                )
-            )[AuthorizationConstants.Actions.EDIT]
+            !await _authorizationService.CheckAccess(
+                company,
+                AuthorizationConstants.Actions.EDIT,
+                updates
+            )
         )
         {
             throw new UnauthorizedException();

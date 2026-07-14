@@ -47,12 +47,10 @@ public class DeleteOfficeLocationCommandHandler : IRequestHandler<DeleteOfficeLo
     {
         var location = await _officeLocationRepository.GetOfficeLocationAsync(request.Id);
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    location,
-                    [AuthorizationConstants.Actions.DELETE]
-                )
-            )[AuthorizationConstants.Actions.DELETE]
+            !await _authorizationService.CheckAccess(
+                location,
+                AuthorizationConstants.Actions.DELETE
+            )
         )
         {
             throw new UnauthorizedException();

@@ -47,12 +47,7 @@ public class DeleteCompanyCommandHandler : IRequestHandler<DeleteCompanyCommand>
     {
         var company = await _companyRepository.GetCompanyWithProjectsAsync(request.Id);
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    company,
-                    [AuthorizationConstants.Actions.DELETE]
-                )
-            )[AuthorizationConstants.Actions.DELETE]
+            !await _authorizationService.CheckAccess(company, AuthorizationConstants.Actions.DELETE)
         )
         {
             throw new UnauthorizedException();

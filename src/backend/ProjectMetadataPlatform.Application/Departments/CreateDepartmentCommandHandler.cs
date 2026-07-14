@@ -51,12 +51,10 @@ public class CreateDepartmentCommandHandler : IRequestHandler<CreateDepartmentCo
     {
         var department = new Department { DepartmentName = request.DepartmentName };
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    department,
-                    [AuthorizationConstants.Actions.CREATE]
-                )
-            )[AuthorizationConstants.Actions.CREATE]
+            !await _authorizationService.CheckAccess(
+                department,
+                AuthorizationConstants.Actions.CREATE
+            )
         )
         {
             throw new UnauthorizedException();

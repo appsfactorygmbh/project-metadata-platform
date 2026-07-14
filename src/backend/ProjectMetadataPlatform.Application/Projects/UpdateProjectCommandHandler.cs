@@ -492,13 +492,11 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
             updates.Add(nameof(Project.Notes), request.Notes);
         }
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    project,
-                    [AuthorizationConstants.Actions.EDIT],
-                    updates
-                )
-            )[AuthorizationConstants.Actions.EDIT]
+            !await _authorizationService.CheckAccess(
+                project,
+                AuthorizationConstants.Actions.EDIT,
+                updates
+            )
         )
         {
             throw new UnauthorizedException();

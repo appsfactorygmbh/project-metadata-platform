@@ -52,12 +52,10 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandler
 
         var plugins = await _pluginRepository.GetAllUnarchivedPluginsForProjectIdAsync(request.Id);
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    await _projectsRepository.GetProjectAsync(request.Id),
-                    [AuthorizationConstants.Actions.GET]
-                )
-            )[AuthorizationConstants.Actions.GET]
+            !await _authorizationService.CheckAccess(
+                await _projectsRepository.GetProjectAsync(request.Id),
+                AuthorizationConstants.Actions.GET
+            )
         )
         {
             throw new UnauthorizedException();

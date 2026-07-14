@@ -34,11 +34,7 @@ public class GetLinkedProjectsQueryHandler : IRequestHandler<GetLinkedProjectsQu
     )
     {
         var team = await _teamRepository.GetTeamWithProjectsAsync(request.Id);
-        if (
-            !(await _authorizationService.CheckAccess(team, [AuthorizationConstants.Actions.GET]))[
-                AuthorizationConstants.Actions.GET
-            ]
-        )
+        if (!await _authorizationService.CheckAccess(team, AuthorizationConstants.Actions.GET))
         {
             throw new UnauthorizedException();
         }

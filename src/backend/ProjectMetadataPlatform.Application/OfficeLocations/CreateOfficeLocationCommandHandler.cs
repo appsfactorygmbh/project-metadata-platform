@@ -51,12 +51,10 @@ public class CreateOfficeLocationCommandHandler : IRequestHandler<CreateOfficeLo
     {
         var officeLocation = new OfficeLocation { OfficeLocationName = request.OfficeLocationName };
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    officeLocation,
-                    [AuthorizationConstants.Actions.CREATE]
-                )
-            )[AuthorizationConstants.Actions.CREATE]
+            !await _authorizationService.CheckAccess(
+                officeLocation,
+                AuthorizationConstants.Actions.CREATE
+            )
         )
         {
             throw new UnauthorizedException();

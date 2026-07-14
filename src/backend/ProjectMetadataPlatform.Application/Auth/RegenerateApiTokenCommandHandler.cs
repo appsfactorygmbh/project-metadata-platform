@@ -52,14 +52,7 @@ public class RegenerateApiTokenCommandHandler : IRequestHandler<RegenerateApiTok
     )
     {
         var apiToken = await _apiTokenRepository.GetApiTokenById(request.TokenId);
-        if (
-            !(
-                await _authorizationService.CheckAccess(
-                    apiToken,
-                    [AuthorizationConstants.Actions.EDIT]
-                )
-            )[AuthorizationConstants.Actions.EDIT]
-        )
+        if (!await _authorizationService.CheckAccess(apiToken, AuthorizationConstants.Actions.EDIT))
         {
             throw new UnauthorizedException();
         }

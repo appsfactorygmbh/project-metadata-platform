@@ -89,12 +89,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
         };
 
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    project,
-                    [AuthorizationConstants.Actions.CREATE]
-                )
-            )[AuthorizationConstants.Actions.CREATE]
+            !await _authorizationService.CheckAccess(project, AuthorizationConstants.Actions.CREATE)
         )
         {
             throw new UnauthorizedException();

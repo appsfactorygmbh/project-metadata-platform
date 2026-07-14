@@ -159,13 +159,11 @@ public class PatchTeamCommandHandler : IRequestHandler<PatchTeamCommand, Team>
             updates.Add(nameof(Team.PTL), request.PTL);
         }
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    team,
-                    [AuthorizationConstants.Actions.EDIT],
-                    updates
-                )
-            )[AuthorizationConstants.Actions.EDIT]
+            !await _authorizationService.CheckAccess(
+                team,
+                AuthorizationConstants.Actions.EDIT,
+                updates
+            )
         )
         {
             throw new UnauthorizedException();

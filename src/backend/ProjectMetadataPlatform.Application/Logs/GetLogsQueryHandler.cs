@@ -63,12 +63,7 @@ public class GetLogsQueryHandler : IRequestHandler<GetLogsQuery, IEnumerable<Log
             foreach (var log in logs)
             {
                 if (
-                    (
-                        await _authorizationService.CheckAccess(
-                            log,
-                            [AuthorizationConstants.Actions.GET]
-                        )
-                    )[AuthorizationConstants.Actions.GET]
+                    await _authorizationService.CheckAccess(log, AuthorizationConstants.Actions.GET)
                 )
                 {
                     filteredLogs.Add(log);

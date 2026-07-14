@@ -118,13 +118,11 @@ public class UpdateBusinessUnitCommandHandler
             updates.Add(nameof(BusinessUnit.BusinessUnitName), request.BusinessUnitName);
         }
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    businessUnit,
-                    [AuthorizationConstants.Actions.EDIT],
-                    updates
-                )
-            )[AuthorizationConstants.Actions.EDIT]
+            !await _authorizationService.CheckAccess(
+                businessUnit,
+                AuthorizationConstants.Actions.EDIT,
+                updates
+            )
         )
         {
             throw new UnauthorizedException();

@@ -47,12 +47,10 @@ public class DeleteBusinessUnitCommandHandler : IRequestHandler<DeleteBusinessUn
     {
         var businessUnit = await _businessUnitRepository.GetBusinessUnitWithTeamsAsync(request.Id);
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    businessUnit,
-                    [AuthorizationConstants.Actions.DELETE]
-                )
-            )[AuthorizationConstants.Actions.DELETE]
+            !await _authorizationService.CheckAccess(
+                businessUnit,
+                AuthorizationConstants.Actions.DELETE
+            )
         )
         {
             throw new UnauthorizedException();

@@ -44,12 +44,10 @@ public class DeleteDepartmentCommandHandler : IRequestHandler<DeleteDepartmentCo
     {
         var department = await _departmentRepository.GetDepartmentAsync(request.Id);
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    department,
-                    [AuthorizationConstants.Actions.DELETE]
-                )
-            )[AuthorizationConstants.Actions.DELETE]
+            !await _authorizationService.CheckAccess(
+                department,
+                AuthorizationConstants.Actions.DELETE
+            )
         )
         {
             throw new UnauthorizedException();

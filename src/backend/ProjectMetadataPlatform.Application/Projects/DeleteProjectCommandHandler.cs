@@ -57,12 +57,7 @@ public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand,
     {
         var project = await _projectsRepository.GetProjectAsync(request.Id);
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    project,
-                    [AuthorizationConstants.Actions.DELETE]
-                )
-            )[AuthorizationConstants.Actions.DELETE]
+            !await _authorizationService.CheckAccess(project, AuthorizationConstants.Actions.DELETE)
         )
         {
             throw new UnauthorizedException();

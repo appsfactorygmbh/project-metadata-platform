@@ -41,14 +41,7 @@ public class GetLinkedProjectsQueryHandler : IRequestHandler<GetLinkedProjectsQu
     )
     {
         var company = await _companyRepository.GetCompanyWithProjectsAsync(request.Id);
-        if (
-            !(
-                await _authorizationService.CheckAccess(
-                    company,
-                    [AuthorizationConstants.Actions.GET]
-                )
-            )[AuthorizationConstants.Actions.GET]
-        )
+        if (!await _authorizationService.CheckAccess(company, AuthorizationConstants.Actions.GET))
         {
             throw new UnauthorizedException();
         }

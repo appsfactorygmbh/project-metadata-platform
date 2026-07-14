@@ -852,13 +852,11 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
             );
         }
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    oldUser,
-                    [AuthorizationConstants.Actions.EDIT],
-                    updates
-                )
-            )[AuthorizationConstants.Actions.EDIT]
+            !await _authorizationService.CheckAccess(
+                oldUser,
+                AuthorizationConstants.Actions.EDIT,
+                updates
+            )
         )
         {
             throw new UnauthorizedException();

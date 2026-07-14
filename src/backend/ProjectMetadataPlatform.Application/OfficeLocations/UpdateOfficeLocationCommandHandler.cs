@@ -117,13 +117,11 @@ public class UpdateOfficeLocationCommandHandler
             updates.Add(nameof(OfficeLocation.OfficeLocationName), request.OfficeLocationName);
         }
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    location,
-                    [AuthorizationConstants.Actions.EDIT],
-                    updates
-                )
-            )[AuthorizationConstants.Actions.EDIT]
+            !await _authorizationService.CheckAccess(
+                location,
+                AuthorizationConstants.Actions.EDIT,
+                updates
+            )
         )
         {
             throw new UnauthorizedException();
