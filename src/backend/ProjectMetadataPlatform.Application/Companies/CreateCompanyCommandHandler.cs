@@ -48,12 +48,7 @@ public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand,
     {
         var company = new Company { CompanyName = request.CompanyName };
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    company,
-                    [AuthorizationConstants.Actions.CREATE]
-                )
-            )[AuthorizationConstants.Actions.CREATE]
+            !await _authorizationService.CheckAccess(company, AuthorizationConstants.Actions.CREATE)
         )
         {
             throw new UnauthorizedException();

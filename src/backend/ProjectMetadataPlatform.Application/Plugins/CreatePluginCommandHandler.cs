@@ -59,14 +59,7 @@ public class CreatePluginCommandHandler : IRequestHandler<CreatePluginCommand, i
             ProjectPlugins = [],
             BaseUrl = request.BaseUrl,
         };
-        if (
-            !(
-                await _authorizationService.CheckAccess(
-                    plugin,
-                    [AuthorizationConstants.Actions.CREATE]
-                )
-            )[AuthorizationConstants.Actions.CREATE]
-        )
+        if (!await _authorizationService.CheckAccess(plugin, AuthorizationConstants.Actions.CREATE))
         {
             throw new UnauthorizedException();
         }

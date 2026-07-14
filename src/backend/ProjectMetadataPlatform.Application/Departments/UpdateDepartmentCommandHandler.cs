@@ -108,13 +108,11 @@ public class UpdateDepartmentCommandHandler : IRequestHandler<UpdateDepartmentCo
             updates.Add(nameof(Department.DepartmentName), request.DepartmentName);
         }
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    department,
-                    [AuthorizationConstants.Actions.EDIT],
-                    updates
-                )
-            )[AuthorizationConstants.Actions.EDIT]
+            !await _authorizationService.CheckAccess(
+                department,
+                AuthorizationConstants.Actions.EDIT,
+                updates
+            )
         )
         {
             throw new UnauthorizedException();

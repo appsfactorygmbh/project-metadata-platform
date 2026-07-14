@@ -64,14 +64,7 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Appli
     )
     {
         var user = await _usersRepository.GetUserByIdAsync(request.EmployeeId);
-        if (
-            !(
-                await _authorizationService.CheckAccess(
-                    user,
-                    [AuthorizationConstants.Actions.DELETE]
-                )
-            )[AuthorizationConstants.Actions.DELETE]
-        )
+        if (!await _authorizationService.CheckAccess(user, AuthorizationConstants.Actions.DELETE))
         {
             throw new UnauthorizedException();
         }

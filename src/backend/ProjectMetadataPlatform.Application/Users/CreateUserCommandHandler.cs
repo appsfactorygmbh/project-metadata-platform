@@ -135,14 +135,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Appli
             JobTitles = request.JobTitles?.Any() == true ? request.JobTitles : null,
             OfficeLocation = officeLocation,
         };
-        if (
-            !(
-                await _authorizationService.CheckAccess(
-                    user,
-                    [AuthorizationConstants.Actions.CREATE]
-                )
-            )[AuthorizationConstants.Actions.CREATE]
-        )
+        if (!await _authorizationService.CheckAccess(user, AuthorizationConstants.Actions.CREATE))
         {
             throw new UnauthorizedException();
         }

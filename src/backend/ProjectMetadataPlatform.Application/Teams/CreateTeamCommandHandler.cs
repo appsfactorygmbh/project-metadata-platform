@@ -62,14 +62,7 @@ public class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, int>
             BusinessUnitId = request.BusinessUnitId,
             PTL = request.PTL,
         };
-        if (
-            !(
-                await _authorizationService.CheckAccess(
-                    team,
-                    [AuthorizationConstants.Actions.CREATE]
-                )
-            )[AuthorizationConstants.Actions.CREATE]
-        )
+        if (!await _authorizationService.CheckAccess(team, AuthorizationConstants.Actions.CREATE))
         {
             throw new UnauthorizedException();
         }

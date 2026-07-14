@@ -52,14 +52,7 @@ public class DeleteApiTokenCommandHandler : IRequestHandler<DeleteApiTokenComman
     public async Task Handle(DeleteApiTokenCommand request, CancellationToken cancellationToken)
     {
         var token = await _apiTokenRepository.GetApiTokenById(request.TokenId);
-        if (
-            !(
-                await _authorizationService.CheckAccess(
-                    token,
-                    [AuthorizationConstants.Actions.DELETE]
-                )
-            )[AuthorizationConstants.Actions.DELETE]
-        )
+        if (!await _authorizationService.CheckAccess(token, AuthorizationConstants.Actions.DELETE))
         {
             throw new UnauthorizedException();
         }

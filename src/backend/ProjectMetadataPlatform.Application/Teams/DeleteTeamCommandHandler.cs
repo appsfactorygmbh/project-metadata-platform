@@ -52,12 +52,10 @@ public class DeleteTeamCommandHandler : IRequestHandler<DeleteTeamCommand>
     {
         var teamToDelete = await _teamRepository.GetTeamWithProjectsAsync(request.Id);
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    teamToDelete,
-                    [AuthorizationConstants.Actions.DELETE]
-                )
-            )[AuthorizationConstants.Actions.DELETE]
+            !await _authorizationService.CheckAccess(
+                teamToDelete,
+                AuthorizationConstants.Actions.DELETE
+            )
         )
         {
             throw new UnauthorizedException();

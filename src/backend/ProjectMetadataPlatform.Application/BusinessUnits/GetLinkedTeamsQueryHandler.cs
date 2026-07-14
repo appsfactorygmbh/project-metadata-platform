@@ -41,11 +41,7 @@ public class GetLinkedTeamsQueryHandler : IRequestHandler<GetLinkedTeamsQuery, L
     )
     {
         var bu = await _businessUnitRepository.GetBusinessUnitWithTeamsAsync(request.Id);
-        if (
-            !(await _authorizationService.CheckAccess(bu, [AuthorizationConstants.Actions.GET]))[
-                AuthorizationConstants.Actions.GET
-            ]
-        )
+        if (!await _authorizationService.CheckAccess(bu, AuthorizationConstants.Actions.GET))
         {
             throw new UnauthorizedException();
         }

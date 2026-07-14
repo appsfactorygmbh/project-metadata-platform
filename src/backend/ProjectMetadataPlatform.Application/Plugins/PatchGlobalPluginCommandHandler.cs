@@ -170,13 +170,11 @@ public class PatchGlobalPluginCommandHandler : IRequestHandler<PatchGlobalPlugin
             updates.Add(nameof(Plugin.BaseUrl), request.BaseUrl);
         }
         if (
-            !(
-                await _authorizationService.CheckAccess(
-                    plugin,
-                    [AuthorizationConstants.Actions.EDIT],
-                    updates
-                )
-            )[AuthorizationConstants.Actions.EDIT]
+            !await _authorizationService.CheckAccess(
+                plugin,
+                AuthorizationConstants.Actions.EDIT,
+                updates
+            )
         )
         {
             throw new UnauthorizedException();

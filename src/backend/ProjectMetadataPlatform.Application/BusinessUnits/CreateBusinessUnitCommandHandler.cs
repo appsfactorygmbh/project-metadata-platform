@@ -50,11 +50,7 @@ public class CreateBusinessUnitCommandHandler : IRequestHandler<CreateBusinessUn
     )
     {
         var bu = new BusinessUnit { BusinessUnitName = request.BusinessUnitName };
-        if (
-            !(await _authorizationService.CheckAccess(bu, [AuthorizationConstants.Actions.CREATE]))[
-                AuthorizationConstants.Actions.CREATE
-            ]
-        )
+        if (!await _authorizationService.CheckAccess(bu, AuthorizationConstants.Actions.CREATE))
         {
             throw new UnauthorizedException();
         }
