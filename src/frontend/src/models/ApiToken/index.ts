@@ -1,4 +1,4 @@
 import type { CreateApiTokenModel } from './CreateApiTokenModel';
-import type { ApiTokenModel } from './ApiTokenModel';
+import type { ApiTokenListModel, ApiTokenModel } from './ApiTokenModel';
 
-export type { CreateApiTokenModel, ApiTokenModel };
+export type { CreateApiTokenModel, ApiTokenModel, ApiTokenListModel };

@@ -1,5 +1,8 @@
-import type { GetProjectResponse, GetProjectsResponse } from '@/api/generated';
+import type { GetProjectDetailsResponse, GetProjectResponse, GetProjectResponseGetListResponse } from '@/api/generated';
 
-export type ProjectModel = GetProjectsResponse;
+export type ProjectModel = GetProjectResponse;
 
-export type DetailedProjectModel = GetProjectResponse;
+
+export type ProjectListModel = GetProjectResponseGetListResponse;
+
+export type DetailedProjectModel = GetProjectDetailsResponse;

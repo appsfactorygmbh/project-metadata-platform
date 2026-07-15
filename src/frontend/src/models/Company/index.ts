@@ -1,5 +1,5 @@
 import type { CreateCompanyModel } from './CreateCompanyModel';
 import type { CompanyEditModel } from './CompanyEditModel';
-import type { CompanyModel } from './CompanyModel';
+import type { CompanyListModel, CompanyModel } from './CompanyModel';
 
-export type { CreateCompanyModel, CompanyEditModel, CompanyModel };
+export type { CreateCompanyModel, CompanyEditModel, CompanyModel, CompanyListModel };
