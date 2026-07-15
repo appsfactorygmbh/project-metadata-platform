@@ -1,5 +1,8 @@
 import { DepartmentsApi } from '@/api/generated';
-import type { DepartmentModel } from '@/models/Department/DepartmentModel';
+import type {
+  DepartmentListModel,
+  DepartmentModel,
+} from '@/models/Department/DepartmentModel';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
@@ -130,11 +133,12 @@ export const useDepartmentStore = (pinia: Pinia = piniaInstance): Store => {
         async fetchAll(): Promise<void> {
           try {
             this.setLoadingDepartments(true);
-            const departmentsGet: DepartmentModel[] = await this.callApi(
+            const departmentsGet: DepartmentListModel = await this.callApi(
               'departmentsGet',
               undefined,
             );
-            this.setDepartments(departmentsGet);
+            this.setDepartments(departmentsGet.resources);
+            this.setPermissions(departmentsGet.permissions);
           } finally {
             this.setLoadingDepartments(false);
           }

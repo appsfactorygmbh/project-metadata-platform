@@ -1,4 +1,7 @@
-import type { GetOfficeLocationResponse, GetOfficeLocationResponseGetListResponse } from '@/api/generated';
+import type {
+  GetOfficeLocationResponse,
+  GetOfficeLocationResponseGetListResponse,
+} from '@/api/generated';
 
 export type OfficeLocationModel = GetOfficeLocationResponse;
 

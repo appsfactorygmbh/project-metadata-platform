@@ -164,8 +164,9 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         async fetchAll(): Promise<void> {
           this.setIsLoadingUsers(true);
           try {
+            const result = await this.callApi('usersGet', {});
             const users: UserListModel[] =
-              (await this.callApi('usersGet', {})).resources.map((user) => ({
+              result.resources.map((user) => ({
                 externalId: user.externalId,
                 userName: user.userName,
                 isScimProvisioned:
@@ -173,6 +174,7 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
                     .isScimProvisioned,
               })) ?? [];
             this.setUsers(users);
+            this.setPermissions(result.permissions ?? []);
           } finally {
             this.setIsLoadingUsers(false);
           }

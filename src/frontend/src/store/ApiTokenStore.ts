@@ -1,4 +1,8 @@
-import type { ApiTokenModel, CreateApiTokenModel } from '@/models/ApiToken';
+import type {
+  ApiTokenListModel,
+  ApiTokenModel,
+  CreateApiTokenModel,
+} from '@/models/ApiToken';
 import { type Pinia } from 'pinia';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
@@ -160,10 +164,13 @@ export const useApiTokenStore = (pinia: Pinia = piniaInstance): Store => {
         async fetchAll(): Promise<void> {
           this.setIsLoadingApiTokens(true);
           try {
-            const tokens: ApiTokenModel[] =
-              (await this.callApi('authApiTokensGet', {})) ?? [];
-            tokens.sort((a, b) => a.id - b.id);
-            this.setApiTokens(tokens);
+            const tokens: ApiTokenListModel = await this.callApi(
+              'authApiTokensGet',
+              {},
+            );
+            tokens.resources.sort((a, b) => a.id - b.id);
+            this.setApiTokens(tokens.resources);
+            this.setPermissions(tokens.permissions);
           } finally {
             this.setIsLoadingApiTokens(false);
           }

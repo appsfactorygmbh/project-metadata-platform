@@ -1,5 +1,5 @@
 import { TeamsApi } from '@/api/generated';
-import type { TeamModel } from '@/models/Team/TeamModel';
+import type { TeamListModel, TeamModel } from '@/models/Team/TeamModel';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
@@ -125,11 +125,12 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
         async fetchAll(): Promise<void> {
           try {
             this.setLoadingTeams(true);
-            const teamsGet: TeamModel[] = await this.callApi(
+            const teamsGet: TeamListModel = await this.callApi(
               'teamsGet',
               undefined,
             );
-            this.setTeams(teamsGet);
+            this.setTeams(teamsGet.resources);
+            this.setPermissions(teamsGet.permissions);
           } finally {
             this.setLoadingTeams(false);
           }

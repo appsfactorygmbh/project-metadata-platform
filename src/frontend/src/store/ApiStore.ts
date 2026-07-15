@@ -6,6 +6,7 @@ import { type UnwrapRef } from 'vue';
 import type { Pinia } from 'pinia';
 import { piniaInstance } from './piniaInstance';
 import type { GenericStore } from '@/utils/store';
+import type { ResourceActions } from '@/models/utils';
 
 type ApiStore<Api extends ApiTypes> = PiniaStore<
   'api',
@@ -15,11 +16,15 @@ type ApiStore<Api extends ApiTypes> = PiniaStore<
     api: Api | null;
     isLoading: boolean;
     name: string;
+    permissions: ResourceActions[];
   },
-  unknown,
+  {
+    getPermissions: () => ResourceActions[];
+  },
   {
     initApi: () => void;
     setIsLoading: (isLoading: boolean) => void;
+    setPermissions: (actions: ResourceActions[]) => void;
     callApi: <
       Endpoint extends keyof Api,
       //@ts-expect-error function type is not inferred correctly
@@ -43,8 +48,13 @@ export const useApiStore = <Api extends ApiTypes>(
       api: null,
       isLoading: false,
       name: '',
+      permissions: [],
     },
-
+    getters: {
+      getPermissions(): ResourceActions[] {
+        return this.permissions;
+      },
+    },
     actions: {
       initApi() {
         const accessToken = this.auth.authToken;
@@ -56,7 +66,9 @@ export const useApiStore = <Api extends ApiTypes>(
       setIsLoading(isLoading: boolean) {
         this.isLoading = isLoading;
       },
-
+      setPermissions(actions: ResourceActions[]) {
+        this.permissions = actions;
+      },
       //@ts-expect-error return type is always a Promise but type is not inferred correctly
       async callApi(apiCall, args) {
         try {

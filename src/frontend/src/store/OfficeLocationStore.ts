@@ -1,5 +1,8 @@
 import { OfficeLocationsApi } from '@/api/generated';
-import type { OfficeLocationModel } from '@/models/OfficeLocation/OfficeLocationModel';
+import type {
+  OfficeLocationListModel,
+  OfficeLocationModel,
+} from '@/models/OfficeLocation/OfficeLocationModel';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
@@ -138,9 +141,10 @@ export const useOfficeLocationStore = (pinia: Pinia = piniaInstance): Store => {
         async fetchAll(): Promise<void> {
           try {
             this.setLoadingOfficeLocations(true);
-            const officeLocationsGet: OfficeLocationModel[] =
+            const officeLocationsGet: OfficeLocationListModel =
               await this.callApi('officeLocationsGet', undefined);
-            this.setOfficeLocations(officeLocationsGet);
+            this.setOfficeLocations(officeLocationsGet.resources);
+            this.setPermissions(officeLocationsGet.permissions);
           } finally {
             this.setLoadingOfficeLocations(false);
           }
