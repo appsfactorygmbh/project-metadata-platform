@@ -1,5 +1,8 @@
 import { CompaniesApi } from '@/api/generated';
-import type { CompanyModel } from '@/models/Company/CompanyModel';
+import type {
+  CompanyListModel,
+  CompanyModel,
+} from '@/models/Company/CompanyModel';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
@@ -133,11 +136,12 @@ export const useCompanyStore = (pinia: Pinia = piniaInstance): Store => {
         async fetchAll(): Promise<void> {
           try {
             this.setLoadingCompanies(true);
-            const companiesGet: CompanyModel[] = await this.callApi(
+            const companiesGet: CompanyListModel = await this.callApi(
               'companiesGet',
               undefined,
             );
-            this.setCompanies(companiesGet);
+            this.setCompanies(companiesGet.resources);
+            this.setPermissions(companiesGet.permissions);
           } finally {
             this.setLoadingCompanies(false);
           }

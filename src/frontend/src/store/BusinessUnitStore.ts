@@ -1,5 +1,8 @@
 import { BusinessUnitsApi } from '@/api/generated';
-import type { BusinessUnitModel } from '@/models/BusinessUnit/BusinessUnitModel';
+import type {
+  BusinessUnitListModel,
+  BusinessUnitModel,
+} from '@/models/BusinessUnit/BusinessUnitModel';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
@@ -139,11 +142,12 @@ export const useBusinessUnitStore = (pinia: Pinia = piniaInstance): Store => {
         async fetchAll(): Promise<void> {
           try {
             this.setLoadingBusinessUnits(true);
-            const businessUnitsGet: BusinessUnitModel[] = await this.callApi(
+            const businessUnitsGet: BusinessUnitListModel = await this.callApi(
               'businessUnitsGet',
               undefined,
             );
-            this.setBusinessUnits(businessUnitsGet);
+            this.setBusinessUnits(businessUnitsGet.resources);
+            this.setPermissions(businessUnitsGet.permissions);
           } finally {
             this.setLoadingBusinessUnits(false);
           }

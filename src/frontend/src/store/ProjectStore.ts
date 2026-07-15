@@ -1,6 +1,7 @@
 import type {
   CreateProjectModel,
   DetailedProjectModel,
+  ProjectListModel,
   ProjectModel,
   UpdateProjectModel,
 } from '@/models/Project';
@@ -180,10 +181,14 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
         async fetchAll({ setCache = true, search } = {}) {
           try {
             this.setLoadingProjects(true);
-            const projects: ProjectModel[] =
+            const projects: ProjectListModel =
               (await this.callApi('projectsGet', { search })) ?? [];
-            if (setCache) this.setProjects(projects);
-            return projects;
+            if (setCache) {
+              this.setProjects(projects.resources);
+              this.setPermissions(projects.permissions);
+            }
+
+            return projects.resources;
           } finally {
             this.setLoadingProjects(false);
           }

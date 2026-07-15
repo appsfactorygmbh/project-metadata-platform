@@ -1,4 +1,7 @@
-import type { GetTeamResponse, GetTeamResponseGetListResponse } from '@/api/generated';
+import type {
+  GetTeamResponse,
+  GetTeamResponseGetListResponse,
+} from '@/api/generated';
 
 export type TeamModel = GetTeamResponse;
 

@@ -1,4 +1,7 @@
-import type { GetCompanyResponse, GetCompanyResponseGetListResponse } from '@/api/generated';
+import type {
+  GetCompanyResponse,
+  GetCompanyResponseGetListResponse,
+} from '@/api/generated';
 
 export type CompanyModel = GetCompanyResponse;
 
