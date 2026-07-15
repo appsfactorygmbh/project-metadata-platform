@@ -15,8 +15,6 @@
   import { usePluginStore, useProjectStore } from '@/store';
   import type { PluginModel } from '@/models/Plugin';
   import _ from 'lodash';
-  import type { FloatButtonModel } from '@/components/Button';
-  import { AppstoreAddOutlined } from '@ant-design/icons-vue';
   import { AddPluginView } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
   import { useThemeToken } from '@/utils/hooks';
 
@@ -186,33 +184,8 @@
 
   const openAddPluginModal = ref<boolean>(false);
 
-  const syncEditStore = (normalPlugins: PluginModel[]) => {
-    if (!normalPlugins?.length) return;
-    for (let i = 0; i < normalPlugins.length; i++) {
-      projectEditStore?.initialAdd(normalPlugins[i]);
-    }
-  };
-
-  const handleClickAddPlugin = () => {
-    projectEditStore?.resetPluginChanges();
-    syncEditStore(pluginStore.getUnarchivedPlugins);
-    openAddPluginModal.value = true;
-  };
-
   const closeAddPluginModal = () => {
     openAddPluginModal.value = false;
-  };
-
-  const button: FloatButtonModel = {
-    name: 'AddPluginButton',
-    onClick: () => {
-      handleClickAddPlugin();
-    },
-    type: 'primary',
-    icon: AppstoreAddOutlined,
-    status: 'activated',
-    size: 'large',
-    tooltip: 'Click here to add a new plugin',
   };
 </script>
 
@@ -224,11 +197,6 @@
       :key="rerenderPlugins"
       class="pluginView"
       @set-blur="setBlur"
-    />
-    <FloatingButton
-      v-if="!isEditing && projectStore.getProject"
-      :button="button"
-      class="addPlugin"
     />
     <AddPluginView
       v-if="openAddPluginModal"
