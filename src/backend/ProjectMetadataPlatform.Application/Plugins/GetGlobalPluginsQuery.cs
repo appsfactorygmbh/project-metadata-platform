@@ -9,4 +9,7 @@ namespace ProjectMetadataPlatform.Application.Plugins;
 /// Query to get all global plugins.
 /// </summary>
 public record GetGlobalPluginsQuery
-    : IRequest<(IEnumerable<Plugin>, IEnumerable<AuthorizationConstants.Actions>)>;
+    : IRequest<(
+        IEnumerable<(Plugin plugin, IEnumerable<AuthorizationConstants.Actions> permissions)>,
+        IEnumerable<AuthorizationConstants.Actions>
+    )>;

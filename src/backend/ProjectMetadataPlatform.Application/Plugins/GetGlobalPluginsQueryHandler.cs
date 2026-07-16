@@ -13,7 +13,10 @@ namespace ProjectMetadataPlatform.Application.Plugins;
 public class GetGlobalPluginsQueryHandler
     : IRequestHandler<
         GetGlobalPluginsQuery,
-        (IEnumerable<Plugin>, IEnumerable<AuthorizationConstants.Actions>)
+        (
+            IEnumerable<(Plugin plugin, IEnumerable<AuthorizationConstants.Actions> permissions)>,
+            IEnumerable<AuthorizationConstants.Actions>
+        )
     >
 {
     private readonly IPluginRepository _pluginRepository;
@@ -32,19 +35,19 @@ public class GetGlobalPluginsQueryHandler
     }
 
     /// <inheritdoc />
-    public async Task<(IEnumerable<Plugin>, IEnumerable<AuthorizationConstants.Actions>)> Handle(
-        GetGlobalPluginsQuery request,
-        CancellationToken cancellationToken
-    )
+    public async Task<(
+        IEnumerable<(Plugin plugin, IEnumerable<AuthorizationConstants.Actions> permissions)>,
+        IEnumerable<AuthorizationConstants.Actions>
+    )> Handle(GetGlobalPluginsQuery request, CancellationToken cancellationToken)
     {
-        var plugins = await _pluginRepository.GetGlobalPluginsAsync();
-        var queriedPlugins = await _authorizationService.TryGetPlanResourceQuery(plugins);
+        var pluginQuery = await _pluginRepository.GetGlobalPluginsAsync();
+        var queriedPlugins = await _authorizationService.TryGetPlanResourceQuery(pluginQuery);
 
-        var permissions = await _authorizationService.GetPermissions<Plugin>();
+        var globalPermissions = await _authorizationService.GetPermissions<Plugin>();
+        List<(Plugin, IEnumerable<AuthorizationConstants.Actions>)> plugins = [];
         if (queriedPlugins == null)
         {
-            List<Plugin> filteredPlugins = [];
-            foreach (var plugin in plugins)
+            foreach (var plugin in pluginQuery)
             {
                 if (
                     await _authorizationService.CheckAccess(
@@ -53,14 +56,18 @@ public class GetGlobalPluginsQueryHandler
                     )
                 )
                 {
-                    filteredPlugins.Add(plugin);
+                    plugins.Add((plugin, await _authorizationService.GetPermissions(plugin)));
                 }
             }
-            return (filteredPlugins, permissions);
+            return (plugins, globalPermissions);
         }
-        return (
-            await queriedPlugins.ToListAsync(cancellationToken: cancellationToken),
-            permissions
-        );
+
+        foreach (
+            var plugin in await queriedPlugins.ToListAsync(cancellationToken: cancellationToken)
+        )
+        {
+            plugins.Add((plugin, await _authorizationService.GetPermissions(plugin)));
+        }
+        return (plugins, globalPermissions);
     }
 }

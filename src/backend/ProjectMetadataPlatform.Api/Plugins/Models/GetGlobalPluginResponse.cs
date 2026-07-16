@@ -1,4 +1,7 @@
-﻿namespace ProjectMetadataPlatform.Api.Plugins.Models;
+﻿using System.Collections.Generic;
+using ProjectMetadataPlatform.Domain.Authorization;
+
+namespace ProjectMetadataPlatform.Api.Plugins.Models;
 
 /// <summary>
 /// Response Model representing a Plugin.
@@ -8,10 +11,12 @@
 /// <param name="IsArchived">If the plugin is archived or not</param>
 /// <param name="Keys">empty array keys</param>
 /// <param name="BaseUrl">Base URL of the plugin</param>
+/// <param name="Permissions">Actions allowed on the resource.</param>
 public record GetGlobalPluginResponse(
     string PluginName,
     int Id,
     bool IsArchived,
     string[] Keys,
-    string? BaseUrl
+    string? BaseUrl,
+    List<AuthorizationConstants.Actions>? Permissions = null
 );

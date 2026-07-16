@@ -63,25 +63,28 @@ public class GetGlobalPluginsQueryHandlerTest
         var result = (await _handler.Handle(query, It.IsAny<CancellationToken>())).Item1.ToList();
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.TypeOf<List<Plugin>>());
+        Assert.That(
+            result,
+            Is.TypeOf<List<(Plugin, IEnumerable<AuthorizationConstants.Actions>)>>()
+        );
         Assert.That(result, Has.Count.EqualTo(2));
 
         Assert.Multiple(() =>
         {
-            Assert.That(result[0].Id, Is.EqualTo(1));
-            Assert.That(result[1].Id, Is.EqualTo(2));
+            Assert.That(result[0].plugin.Id, Is.EqualTo(1));
+            Assert.That(result[1].plugin.Id, Is.EqualTo(2));
         });
 
         Assert.Multiple(() =>
         {
-            Assert.That(result[0].PluginName, Is.EqualTo("plugin 1"));
-            Assert.That(result[1].PluginName, Is.EqualTo("plugin 2"));
+            Assert.That(result[0].plugin.PluginName, Is.EqualTo("plugin 1"));
+            Assert.That(result[1].plugin.PluginName, Is.EqualTo("plugin 2"));
         });
 
         Assert.Multiple(() =>
         {
-            Assert.That(result[0].IsArchived, Is.False);
-            Assert.That(result[1].IsArchived, Is.False);
+            Assert.That(result[0].plugin.IsArchived, Is.False);
+            Assert.That(result[1].plugin.IsArchived, Is.False);
         });
     }
 
@@ -129,25 +132,28 @@ public class GetGlobalPluginsQueryHandlerTest
         var result = (await _handler.Handle(query, It.IsAny<CancellationToken>())).Item1.ToList();
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.TypeOf<List<Plugin>>());
+        Assert.That(
+            result,
+            Is.TypeOf<List<(Plugin, IEnumerable<AuthorizationConstants.Actions>)>>()
+        );
         Assert.That(result, Has.Count.EqualTo(2));
 
         Assert.Multiple(() =>
         {
-            Assert.That(result[0].Id, Is.EqualTo(1));
-            Assert.That(result[1].Id, Is.EqualTo(2));
+            Assert.That(result[0].plugin.Id, Is.EqualTo(1));
+            Assert.That(result[1].plugin.Id, Is.EqualTo(2));
         });
 
         Assert.Multiple(() =>
         {
-            Assert.That(result[0].PluginName, Is.EqualTo("plugin 1"));
-            Assert.That(result[1].PluginName, Is.EqualTo("plugin 2"));
+            Assert.That(result[0].plugin.PluginName, Is.EqualTo("plugin 1"));
+            Assert.That(result[1].plugin.PluginName, Is.EqualTo("plugin 2"));
         });
 
         Assert.Multiple(() =>
         {
-            Assert.That(result[0].IsArchived, Is.False);
-            Assert.That(result[1].IsArchived, Is.False);
+            Assert.That(result[0].plugin.IsArchived, Is.False);
+            Assert.That(result[1].plugin.IsArchived, Is.False);
         });
     }
 

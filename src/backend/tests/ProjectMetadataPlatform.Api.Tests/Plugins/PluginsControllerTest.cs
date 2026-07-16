@@ -13,6 +13,7 @@ using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Plugins;
 using ProjectMetadataPlatform.Api.Plugins.Models;
 using ProjectMetadataPlatform.Application.Plugins;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Plugins;
 
@@ -244,7 +245,10 @@ public class Tests
             IsArchived = false,
             BaseUrl = "https://plugin1.com",
         };
-        var pluginList = new List<Plugin> { plugin };
+        var pluginList = new List<(Plugin, IEnumerable<AuthorizationConstants.Actions>)>
+        {
+            (plugin, []),
+        };
 
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetGlobalPluginsQuery>(), It.IsAny<CancellationToken>()))
