@@ -12,6 +12,9 @@
  * Do not edit the class manually.
  */
 
+import type { Actions } from './Actions';
+import { ActionsFromJSON, ActionsToJSON } from './Actions';
+
 /**
  * Response Model representing a Plugin.
  * @export
@@ -48,6 +51,12 @@ export interface GetGlobalPluginResponse {
    * @memberof GetGlobalPluginResponse
    */
   baseUrl?: string | null;
+  /**
+   * Actions allowed on the resource.
+   * @type {Array<Actions>}
+   * @memberof GetGlobalPluginResponse
+   */
+  permissions?: Array<Actions> | null;
 }
 
 /**
@@ -84,6 +93,10 @@ export function GetGlobalPluginResponseFromJSONTyped(
     isArchived: json['isArchived'],
     keys: json['keys'],
     baseUrl: json['baseUrl'] == null ? undefined : json['baseUrl'],
+    permissions:
+      json['permissions'] == null
+        ? undefined
+        : (json['permissions'] as Array<any>).map(ActionsFromJSON),
   };
 }
 
@@ -107,5 +120,9 @@ export function GetGlobalPluginResponseToJSONTyped(
     isArchived: value['isArchived'],
     keys: value['keys'],
     baseUrl: value['baseUrl'],
+    permissions:
+      value['permissions'] == null
+        ? undefined
+        : (value['permissions'] as Array<any>).map(ActionsToJSON),
   };
 }
