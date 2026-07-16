@@ -119,19 +119,20 @@ public class PluginsController : ControllerBase
     public async Task<ActionResult<GetListResponse<GetGlobalPluginResponse>>> GetGlobal()
     {
         var query = new GetGlobalPluginsQuery();
-        var (plugins, permissions) = await _mediator.Send(query);
+        var (plugins, globalPermissions) = await _mediator.Send(query);
 
         string[] keys = [];
-        var pluginResponse = plugins.Select(plugin => new GetGlobalPluginResponse(
-            plugin.PluginName,
-            plugin.Id,
-            plugin.IsArchived,
+        var pluginResponse = plugins.Select(item => new GetGlobalPluginResponse(
+            item.plugin.PluginName,
+            item.plugin.Id,
+            item.plugin.IsArchived,
             keys,
-            plugin.BaseUrl
+            item.plugin.BaseUrl,
+            [.. item.permissions]
         ));
         var response = new GetListResponse<GetGlobalPluginResponse>(
             [.. pluginResponse],
-            [.. permissions]
+            [.. globalPermissions]
         );
         return Ok(response);
     }
