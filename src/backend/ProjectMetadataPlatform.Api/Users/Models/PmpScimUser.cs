@@ -48,7 +48,7 @@ public record PmpScimUser
     /// List of addresses of the User.
     /// </summary>
     [JsonPropertyName("addresses")]
-    public List<AddressRecord> Addresses { get; set; } = [];
+    public List<AddressRecord>? Addresses { get; set; } = [];
 
     /// <summary>
     /// Contains properties of the enterprise extension.
