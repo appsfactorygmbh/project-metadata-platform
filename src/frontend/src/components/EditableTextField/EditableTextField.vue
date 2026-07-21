@@ -123,10 +123,12 @@
     justify-content: center;
   }
 
-  .info label {
+  .info .label {
     width: 5em;
     min-width: 5em;
     margin-right: 3em;
+    font-size: 1em;
+    font-weight: bold;
   }
 
   .input {

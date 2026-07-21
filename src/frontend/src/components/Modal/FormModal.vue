@@ -19,6 +19,11 @@
       type: Boolean,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+      required: false,
+    },
   });
 
   const isOpen = ref<boolean>(initiallyOpen);
@@ -41,7 +46,11 @@
         emit('close');
       })
       .catch((e) => {
-        console.error('error submitting input' + e);
+        if (e && e.errorFields) {
+          console.warn('Form validation failed:', e.errorFields);
+          return;
+        }
+        console.error('Error submitting form:', e);
       });
   };
 
@@ -58,10 +67,13 @@
     v-model:open="isOpen"
     width="400px"
     :title="title"
-    :ok-button-props="{ disabled: false }"
+    :ok-button-props="{ disabled: disabled }"
     @ok="handleOk"
     @cancel="resetModal"
   >
     <slot />
+    <template v-if="$slots.footer" #footer>
+      <slot name="footer" :handle-ok="handleOk" :reset-modal="resetModal" />
+    </template>
   </a-modal>
 </template>

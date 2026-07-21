@@ -1,19 +1,8 @@
 <script lang="ts" setup>
-  import type { PropType } from 'vue';
-  import { reactive, watch } from 'vue';
-  import type { FormSubmitType } from '@/components/Form/types';
-  import { type FormStore } from '@/components/Form';
-  import type { UpdateUserModel } from '@/models/User';
-  import { useUserStore } from '@/store';
-  import useNotification from 'ant-design-vue/es/notification/useNotification';
-  import { PatchOperations } from '@/api/generated';
-  import { useEditing } from '@/utils/hooks';
-  import EditButtons from '@/components/EditableTextField/EditButtons.vue';
-
-  const props = defineProps({
-    userId: {
-      type: String,
-      required: true,
+  defineProps({
+    checked: {
+      type: Boolean,
+      default: false,
     },
     attributeName: {
       type: String,
@@ -21,116 +10,19 @@
     },
     label: {
       type: String,
-      required: false,
       default: undefined,
     },
-    formStore: {
-      type: Object as PropType<FormStore>,
-      required: true,
-    },
-    default: {
+    disabled: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     isLoading: {
       type: Boolean,
-      required: true,
-    },
-    isEditingKey: {
-      type: String,
-      required: true,
-    },
-    hasEditKeys: {
-      type: Boolean,
-      required: true,
+      default: false,
     },
   });
 
-  const emit = defineEmits(['savedChanges']);
-
-  const userStore = useUserStore();
-  const [notificationApi] = useNotification();
-
-  // Hook into the editing state
-  const { isEditing } = useEditing(props.isEditingKey);
-
-  // Initialize the reactive form state
-  const dynamicValidateForm = reactive<Record<string, boolean>>({
-    [props.attributeName]: props.default,
-  });
-
-  // Keep the switch in sync if the parent updates the default value (e.g., after an abort)
-  watch(
-    () => props.default,
-    (newVal) => {
-      dynamicValidateForm[props.attributeName] = newVal;
-    },
-  );
-
-  watch(isEditing, (newEditingValue) => {
-    if (!newEditingValue) {
-      const currentValue = dynamicValidateForm[props.attributeName];
-
-      if (currentValue !== props.default) {
-        dynamicValidateForm[props.attributeName] = props.default;
-      }
-    }
-  });
-
-  const onSubmit: FormSubmitType = async () => {
-    const value = dynamicValidateForm[props.attributeName];
-    console.log(`value read from the store (${props.attributeName}): ${value}`);
-
-    if (value === undefined) {
-      console.error(
-        `[EditableInputSwitch] Value for ${props.attributeName} is undefined during submission.`,
-      );
-      notificationApi.error({
-        message: `Submission Error`,
-        description: `Value for ${props.attributeName} is missing. Please try again.`,
-      });
-      return;
-    }
-
-    const payload: UpdateUserModel = {
-      operations: [
-        {
-          op: PatchOperations.Replace,
-          path: props.attributeName,
-          value: value,
-        },
-      ],
-    };
-
-    await userStore
-      .update(props.userId, payload)
-      .then((res) => {
-        console.log('res successful ' + JSON.stringify(res));
-        notificationApi.success({
-          message: `${props.label || props.attributeName} updated successfully.`,
-        });
-        emit('savedChanges');
-      })
-      .catch((error) => {
-        const errorMessage =
-          error.response?.data?.message ||
-          error.message ||
-          `An error occurred.`;
-        notificationApi.error({
-          message: `Error updating ${props.attributeName}`,
-          description: `${errorMessage} The switch could not be updated.`,
-        });
-        console.error(
-          `Error updating ${props.attributeName} for user ${props.userId}:`,
-          error,
-        );
-        // Revert the switch locally if the API call fails
-        dynamicValidateForm[props.attributeName] = props.default;
-      });
-  };
-
-  props.formStore.setModel(dynamicValidateForm);
-  props.formStore.setOnSubmit(onSubmit);
+  const emit = defineEmits(['update:checked']);
 </script>
 
 <template>
@@ -147,25 +39,14 @@
     <label v-if="label != null" class="label">{{ label }}:</label>
 
     <template v-if="!isLoading">
-      <a-form ref="formRef" :model="dynamicValidateForm" class="switch-form">
-        <a-form-item :name="props.attributeName" class="formItem">
-          <a-switch
-            v-model:checked="dynamicValidateForm[props.attributeName]"
-            class="custom-color-switch"
-            :disabled="!isEditing"
-          />
-        </a-form-item>
-      </a-form>
-
-      <EditButtons
-        v-if="hasEditKeys"
-        class="editButton"
-        :is-editing-key="props.isEditingKey"
-        :is-loading="props.isLoading"
-        :safe-disabled="props.isLoading"
-        :form-store="props.formStore"
-        @saved-changes="emit('savedChanges')"
-      />
+      <a-form-item :name="attributeName" class="formItem">
+        <a-switch
+          :checked="checked"
+          class="custom-color-switch"
+          :disabled="disabled"
+          @update:checked="(val) => emit('update:checked', val)"
+        />
+      </a-form-item>
     </template>
 
     <a-skeleton
