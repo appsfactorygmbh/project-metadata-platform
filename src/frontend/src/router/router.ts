@@ -1,10 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { SplitView } from '@/views';
-import { CreateGlobalPluginView } from '@/views/GlobalPlugins/CreateGlobalPlugin';
-import { EditGlobalPluginView } from '@/views/GlobalPlugins/EditGlobalPlugin';
 import { ProviderCollection } from './Provider';
 import { SettingView } from '@/views/SettingView';
-import { GlobalPluginsView } from '@/views/GlobalPlugins';
+
 import ProjectSlugResolver from './Resolver/ProjectSlugResolver.vue';
 import NotFoundView from '@/views/Service/NotFoundView.vue';
 import { LoginView } from '@/views/Auth';
@@ -33,6 +31,9 @@ import { CreateOfficeLocationView } from '@/views/SettingView/OfficeLocationMana
 import { DepartmentListView } from '@/views/SettingView/DepartmentsManagementView/DepartmentListView/index.ts';
 import { CreateDepartmentView } from '@/views/SettingView/DepartmentsManagementView/CreateDepartment/index.ts';
 import { DepartmentInformationView } from '@/views/SettingView/DepartmentsManagementView/DepartmentInformationView/index.ts';
+import { CreateGlobalPluginView } from '@/views/SettingView/GlobalPlugins/CreateGlobalPlugin/index.ts';
+import { GlobalPluginsView } from '@/views/SettingView/GlobalPlugins/index.ts';
+import { EditGlobalPluginView } from '@/views/SettingView/GlobalPlugins/EditGlobalPlugin/index.ts';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -322,7 +323,7 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach(async (to, _, next) => {
+router.beforeEach(async (to) => {
   const auth = useAuth();
 
   auth.ready();
@@ -333,15 +334,15 @@ router.beforeEach(async (to, _, next) => {
 
   if (!noAuthRequired && !isAuthenticated) {
     if (to.hash.includes('code=') || to.hash.includes('access_token=')) {
-      return next();
+      return true;
     }
     const redirectUrl = to.fullPath; // Get the full path of the route the user tried to access
-    next({
+    return {
       path: '/login',
       query: { redirect: redirectUrl },
-    });
+    };
   } else {
-    next();
+    return true;
   }
 });
 

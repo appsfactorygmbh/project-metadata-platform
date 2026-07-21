@@ -10,6 +10,7 @@ import { PluginsApi } from '@/api/generated';
 import { useApiStore } from './ApiStore';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
+import type { ResourceActions } from '@/models/utils';
 
 type StoreState = {
   globalPlugins: GlobalPluginModel[];
@@ -41,6 +42,7 @@ type StoreActions = {
 
 type StoreGetters = {
   getGlobalPlugins: () => GlobalPluginModel[];
+  getPermissions: () => ResourceActions[];
   getIsLoadingGlobalPlugins: () => boolean;
   getIsLoadingDelete: () => boolean;
   getRemovedSuccessfully: () => boolean;
@@ -71,6 +73,9 @@ export const useGlobalPluginStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getRemovedSuccessfully(): boolean {
           return this.removedSuccessfully;
+        },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
         },
       },
 

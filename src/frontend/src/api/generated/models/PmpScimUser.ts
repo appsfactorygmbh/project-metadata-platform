@@ -77,7 +77,7 @@ export interface PmpScimUser {
    * @type {Array<AddressRecord>}
    * @memberof PmpScimUser
    */
-  addresses: Array<AddressRecord>;
+  addresses?: Array<AddressRecord> | null;
   /**
    *
    * @type {EnterpriseUserExtension}
@@ -106,7 +106,6 @@ export function instanceOfPmpScimUser(value: object): value is PmpScimUser {
     return false;
   if (!('userName' in value) || value['userName'] === undefined) return false;
   if (!('active' in value) || value['active'] === undefined) return false;
-  if (!('addresses' in value) || value['addresses'] === undefined) return false;
   if (
     !('urnIetfParamsScimSchemasExtensionEnterprise20User' in value) ||
     value['urnIetfParamsScimSchemasExtensionEnterprise20User'] === undefined
@@ -139,7 +138,10 @@ export function PmpScimUserFromJSONTyped(
     userName: json['userName'],
     active: json['active'],
     password: json['password'] == null ? undefined : json['password'],
-    addresses: (json['addresses'] as Array<any>).map(AddressRecordFromJSON),
+    addresses:
+      json['addresses'] == null
+        ? undefined
+        : (json['addresses'] as Array<any>).map(AddressRecordFromJSON),
     urnIetfParamsScimSchemasExtensionEnterprise20User:
       EnterpriseUserExtensionFromJSON(
         json['urn:ietf:params:scim:schemas:extension:enterprise:2.0:User'],
@@ -170,7 +172,10 @@ export function PmpScimUserToJSONTyped(
     userName: value['userName'],
     active: value['active'],
     password: value['password'],
-    addresses: (value['addresses'] as Array<any>).map(AddressRecordToJSON),
+    addresses:
+      value['addresses'] == null
+        ? undefined
+        : (value['addresses'] as Array<any>).map(AddressRecordToJSON),
     'urn:ietf:params:scim:schemas:extension:enterprise:2.0:User':
       EnterpriseUserExtensionToJSON(
         value['urnIetfParamsScimSchemasExtensionEnterprise20User'],

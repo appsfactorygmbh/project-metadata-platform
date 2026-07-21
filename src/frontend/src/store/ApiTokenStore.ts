@@ -7,6 +7,7 @@ import { type Pinia } from 'pinia';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
 import { type ApiStore, useApiStore } from './ApiStore';
+import type { ResourceActions } from '@/models/utils';
 import { AuthApi } from '@/api/generated';
 
 type StoreState = {
@@ -30,6 +31,7 @@ type StoreGetters = {
   getApiToken: () => ApiTokenModel | null;
   getTokenValue: () => string | null | undefined;
   getHasTokenValue: () => boolean;
+  getPermissions: () => ResourceActions[];
   getIsLoading: () => boolean;
   getIsLoadingCreate: () => boolean;
   getIsLoadingApiToken: () => boolean;
@@ -94,6 +96,9 @@ export const useApiTokenStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getHasTokenValue(): boolean {
           return this.tokenValue != null && this.tokenValue != undefined;
+        },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
         },
         getIsLoading(): boolean {
           return this.isLoadingCreate || this.isLoadingApiTokens;

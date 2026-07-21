@@ -9,6 +9,7 @@ import type { Pinia } from 'pinia';
 import type { CreateBusinessUnitModel } from '@/models/BusinessUnit/CreateBusinessUnitModel';
 import type { BusinessUnitEditModel } from '@/models/BusinessUnit';
 import { type ApiStore, useApiStore } from './ApiStore';
+import type { ResourceActions } from '@/models/utils';
 
 type StoreState = {
   businessUnits: BusinessUnitModel[];
@@ -24,6 +25,7 @@ type StoreGetters = {
   getBusinessUnit: () => BusinessUnitModel | undefined;
   getLinkedTeams: () => number[];
   getBusinessUnitNames: () => string[];
+  getPermissions: () => ResourceActions[];
   getIsLoadingBusinessUnits: () => boolean;
   getIsLoadingBusinessUnit: () => boolean;
 };
@@ -68,6 +70,9 @@ export const useBusinessUnitStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getBusinessUnit(): BusinessUnitModel | undefined {
           return this.businessUnit;
+        },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
         },
         getIsLoadingBusinessUnits(): boolean {
           return this.isLoadingBusinessUnits;
