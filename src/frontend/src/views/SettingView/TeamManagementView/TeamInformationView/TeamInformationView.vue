@@ -1,5 +1,10 @@
 <script lang="ts" setup>
-  import { DeleteOutlined } from '@ant-design/icons-vue';
+  import {
+    CloseOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    SaveOutlined,
+  } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { inject, ref } from 'vue';
   import { teamRoutingSymbol, teamStoreSymbol } from '@/store/injectionSymbols';
@@ -7,15 +12,19 @@
 
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
-  import { useFormStore } from '@/components/Form';
-  import { TeamNameInputField } from '@/components/EditableTextField';
-  import { useThemeToken } from '@/utils/hooks';
+  import { useEditing, useThemeToken } from '@/utils/hooks';
   import { message } from 'ant-design-vue';
   import { useBusinessUnitStore } from '@/store';
+  import { ResourceActions } from '@/models/utils';
+  import type { Rule } from 'ant-design-vue/es/form';
+  import type { TeamModel } from '@/models/Team';
 
   const token = useThemeToken();
 
   const route = useRoute();
+
+  const { isEditing, stopEditing, startEditing } = useEditing();
+  const formRef = ref();
 
   const teamStore = inject(teamStoreSymbol)!;
   const { getTeam, getIsLoadingTeam, getLinkedProjects } =
@@ -28,13 +37,84 @@
 
   const emit = defineEmits(['teamDeleted']);
 
-  const teamNameFormStore = useFormStore('editTeamNameForm');
-  const businessUnitFormStore = useFormStore('editBuForm');
-  const ptlFormStore = useFormStore('editPtlForm');
-
   onMounted(async () => {
     buStore.fetchAll();
   });
+
+  onBeforeUnmount(() => {
+    if (isEditing.value) {
+      stopEditing();
+    }
+  });
+  const toggleEditingMode = async () => {
+    if (isEditing.value) {
+      await stopEditing();
+    } else {
+      await startEditing();
+    }
+  };
+
+  const formData = reactive({
+    teamName: '',
+    businessUnitId: undefined as number | undefined,
+    ptl: '',
+  });
+
+  watch(
+    () => team.value,
+    (newTeam) => {
+      if (!newTeam) return;
+      formData.teamName = newTeam.teamName ?? '';
+      formData.businessUnitId = newTeam.businessUnit.id ?? undefined;
+      formData.ptl = newTeam.ptl ?? '';
+    },
+  );
+
+  const resetFormData = () => {
+    const newTeam = team.value;
+    if (!newTeam) return;
+    formData.teamName = newTeam.teamName ?? '';
+    formData.businessUnitId = newTeam.businessUnit.id ?? undefined;
+    formData.ptl = newTeam.ptl ?? '';
+  };
+
+  watch(
+    () => team.value?.id,
+    (newId, oldId) => {
+      if (!newId || newId === oldId) return;
+      stopEditing();
+      resetFormData();
+    },
+    { immediate: true },
+  );
+  watch(isEditing, (newVal) => {
+    if (!newVal) {
+      resetFormData();
+    }
+  });
+
+  const handleBulkSave = async () => {
+    try {
+      await formRef.value.validate();
+      if (!team.value?.id) return;
+
+      const updateRequest = {
+        teamName: formData.teamName,
+        businessUnitId: formData.businessUnitId,
+        ptl: formData.ptl,
+      };
+
+      await teamStore.update(team.value.id, updateRequest);
+
+      await teamStore.fetch(team.value?.id);
+
+      message.success('Team updated successfully');
+      await stopEditing();
+    } catch (error) {
+      console.error('Validation or API error:', error);
+      message.error('Failed to update team. Please check your inputs.');
+    }
+  };
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
@@ -49,6 +129,11 @@
   };
   const closeModal = () => {
     isConfirmModalOpen.value = false;
+  };
+
+  const isCancelModalOpen = ref(false);
+  const openCancelModal = () => {
+    isCancelModalOpen.value = true;
   };
 
   //Button for adding new Team and deleting Teams
@@ -67,8 +152,64 @@
         tooltip: 'Click here to delete this team',
         isLink: false,
       },
+      {
+        name: 'EditTeamButton',
+        onClick: () => {
+          toggleEditingMode();
+        },
+        icon: EditOutlined,
+        type: 'primary',
+        size: 'large',
+        status: 'activated',
+        tooltip: 'Click here to edit this team',
+        isLink: false,
+      },
+      {
+        name: 'CancelButton',
+        onClick: () => {
+          openCancelModal();
+        },
+        icon: CloseOutlined,
+        status: 'activated',
+        type: 'primary',
+        size: 'large',
+        specialType: 'danger',
+        tooltip: 'Click to cancel editing',
+      },
+      {
+        name: 'SafeEditButton',
+        onClick: () => {
+          handleBulkSave();
+        },
+        icon: SaveOutlined,
+        status: 'activated',
+        type: 'primary',
+        size: 'large',
+        specialType: 'success',
+        tooltip: 'Click to save changes',
+      },
     ];
-    if (!team.value) tempButtons[0].status = 'deactivated';
+    if (
+      !team.value ||
+      isEditing.value ||
+      !teamStore.getPermissions.includes(ResourceActions.Delete)
+    )
+      tempButtons[0].status = 'deactivated';
+
+    if (
+      !team.value?.id ||
+      isEditing.value ||
+      !team.value?.permissions?.includes(ResourceActions.Edit)
+    )
+      tempButtons[1].status = 'deactivated';
+
+    if (!isEditing.value) {
+      tempButtons[2].status = 'deactivated';
+      tempButtons[3].status = 'deactivated';
+    }
+    if (!team.value?.permissions?.includes(ResourceActions.Edit)) {
+      tempButtons[3].status = 'deactivated';
+    }
     return tempButtons;
   });
 
@@ -79,6 +220,32 @@
     teamStore.nullTeam();
     setTeamId(null);
   };
+
+  const isUniqueTeamName = (_rule: Rule, name: string) => {
+    const teams: TeamModel[] = teamStore.getTeams;
+    const currentTeam: TeamModel | undefined = teamStore.getTeam;
+    if (!currentTeam) {
+      return Promise.reject(new Error('Current team undefined'));
+    }
+    if (
+      teams?.every(
+        (team) => team.teamName !== name || name === currentTeam.teamName,
+      )
+    ) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error('This team name is already in use.'));
+  };
+
+  const teamNameRules: Rule[] = [
+    {
+      required: true,
+      message: 'Please insert an unique team name.',
+      validator: isUniqueTeamName,
+      trigger: 'change',
+      type: 'string',
+    },
+  ];
 </script>
 <template>
   <ConfirmationDialog
@@ -89,72 +256,75 @@
     @cancel="closeModal"
     @update:is-open="isConfirmModalOpen = $event"
   />
+  <ConfirmAction
+    :is-open="isCancelModalOpen"
+    title="Cancel Editing"
+    message="Are you sure you want to cancel all changes?"
+    @confirm="stopEditing"
+    @cancel="isCancelModalOpen = false"
+    @update:is-open="(value) => (isCancelModalOpen = value)"
+  />
   <div v-if="team && team.id" class="panel">
-    <a-flex
-      class="userInfoBox"
-      :body-style="{
-        height: 'fit-content',
-      }"
-    >
-      <EditableTextField
-        class="textField teamName"
-        :value="team?.teamName ?? ''"
-        :is-loading="isLoading"
-        :label="'Team\xa0Name'"
-        :is-editing-key="'isEditingTeamName'"
-        :form-store="teamNameFormStore"
-        :has-edit-keys="true"
+    <a-form ref="formRef" :model="formData" layout="vertical">
+      <a-flex
+        class="userInfoBox"
+        :body-style="{
+          height: 'fit-content',
+        }"
       >
-        <TeamNameInputField
-          :team-id="team?.id ?? -1"
-          :form-store="teamNameFormStore"
-          :placeholder="team?.teamName ?? ''"
-          :default="team?.teamName ?? ''"
-        />
-      </EditableTextField>
-
-      <EditableTextField
-        :value="
-          team == undefined ? '' : (team.businessUnit.businessUnitName ?? '')
-        "
-        :label="'Business\xa0Unit'"
-        :is-editing-key="'isEditingBU'"
-        :is-loading="isLoading"
-        :form-store="businessUnitFormStore"
-        :has-edit-keys="true"
-      >
-        <TeamInformationSearchSelectField
-          :team-id="team?.id ?? 0"
-          :attributeName="'businessUnitId'"
-          :form-store="businessUnitFormStore"
-          :default="team?.businessUnit?.businessUnitName ?? ''"
-          :placeholder="team?.businessUnit?.businessUnitName ?? ''"
-          :options="
-            buStore.getBusinessUnits.map((bu) => ({
-              id: bu.id,
-              name: bu.businessUnitName,
-            }))
-          "
-        />
-      </EditableTextField>
-      <EditableTextField
-        :value="team == undefined ? '' : (team.ptl ?? '')"
-        :label="'PTL'"
-        :is-editing-key="'isEditingPTL'"
-        :is-loading="isLoading"
-        :form-store="ptlFormStore"
-        :has-edit-keys="true"
-      >
-        <TeamInformationInputField
-          :team-id="team?.id ?? -1"
-          :attributeName="'ptl'"
-          :form-store="ptlFormStore"
-          :default="team == undefined ? '' : (team.ptl ?? '')"
-          :placeholder="'PTL'"
+        <EditableTextField
+          class="textField teamName"
+          :value="team?.teamName ?? ''"
+          :is-loading="isLoading"
+          :label="'Team\xa0Name'"
+          :is-editing-key="'isEditing'"
+          :has-edit-keys="false"
         >
-        </TeamInformationInputField>
-      </EditableTextField>
-    </a-flex>
+          <InformationInputField
+            v-model:value="formData.teamName"
+            attribute-name="teamName"
+            :placeholder="team?.teamName ?? ''"
+            :rules="teamNameRules"
+          />
+        </EditableTextField>
+
+        <EditableTextField
+          :value="
+            team == undefined ? '' : (team.businessUnit.businessUnitName ?? '')
+          "
+          :label="'Business\xa0Unit'"
+          :is-editing-key="'isEditing'"
+          :is-loading="isLoading"
+          :has-edit-keys="false"
+        >
+          <InformationSearchSelectField
+            v-model:value="formData.businessUnitId"
+            :attributeName="'businessUnitId'"
+            :placeholder="team?.businessUnit?.businessUnitName ?? ''"
+            :options="
+              buStore.getBusinessUnits.map((bu) => ({
+                id: bu.id,
+                name: bu.businessUnitName,
+              }))
+            "
+          />
+        </EditableTextField>
+        <EditableTextField
+          :value="team == undefined ? '' : (team.ptl ?? '')"
+          :label="'PTL'"
+          :is-editing-key="'isEditing'"
+          :is-loading="isLoading"
+          :has-edit-keys="false"
+        >
+          <InformationInputField
+            v-model:value="formData.ptl"
+            :attributeName="'ptl'"
+            :placeholder="'PTL'"
+          >
+          </InformationInputField>
+        </EditableTextField>
+      </a-flex>
+    </a-form>
   </div>
   <a-skeleton
     v-else-if="isLoading"
@@ -172,7 +342,6 @@
 <style scoped>
   .panel {
     position: relative;
-    /* Make sure the panel is a positioning context */
     min-width: 150px;
     max-height: 100vh;
     overflow-y: auto;

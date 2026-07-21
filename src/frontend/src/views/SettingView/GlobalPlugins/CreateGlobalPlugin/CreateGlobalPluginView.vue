@@ -3,9 +3,11 @@
   import { CreateGlobalPluginForm } from './';
   import { useFormStore } from '@/components/Form';
   import { useRouter } from 'vue-router';
+  import { useGlobalPluginStore } from '@/store';
+  import { ResourceActions } from '@/models/utils';
 
   const formStore = useFormStore('createPluginForm');
-
+  const pluginStore = useGlobalPluginStore();
   const router = useRouter();
 
   const onClose = () => {
@@ -14,7 +16,12 @@
 </script>
 
 <template>
-  <FormModal title="Create Plugin" :form-store="formStore" @close="onClose">
+  <FormModal
+    title="Create Plugin"
+    :form-store="formStore"
+    :disabled="!pluginStore.getPermissions.includes(ResourceActions.Create)"
+    @close="onClose"
+  >
     <CreateGlobalPluginForm :form-store="formStore" />
   </FormModal>
 </template>

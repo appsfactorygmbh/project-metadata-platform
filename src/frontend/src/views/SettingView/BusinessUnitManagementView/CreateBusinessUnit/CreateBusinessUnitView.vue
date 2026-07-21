@@ -8,6 +8,7 @@
     businessUnitRoutingSymbol,
     businessUnitStoreSymbol,
   } from '@/store/injectionSymbols.ts';
+  import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
   const { setBusinessUnitId } = inject(businessUnitRoutingSymbol)!;
 
@@ -37,6 +38,9 @@
   <FormModal
     title="Create Business Unit"
     :form-store="formStore"
+    :disabled="
+      !businessUnitStore.getPermissions.includes(ResourceActions.Create)
+    "
     @cancel="onCancel"
   >
     <CreateBusinessUnitForm

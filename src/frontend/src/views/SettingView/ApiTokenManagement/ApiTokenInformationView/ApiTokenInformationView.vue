@@ -15,6 +15,7 @@
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useThemeToken } from '@/utils/hooks';
+  import { ResourceActions } from '@/models/utils';
 
   const token = useThemeToken();
 
@@ -91,6 +92,12 @@
     ];
     if (!routerApiTokenId.value) {
       tempButtons[0].status = 'deactivated';
+      tempButtons[1].status = 'deactivated';
+    }
+    if (!apiTokenStore.getPermissions.includes(ResourceActions.Delete)) {
+      tempButtons[0].status = 'deactivated';
+    }
+    if (!apiTokenStore.getPermissions.includes(ResourceActions.Edit)) {
       tempButtons[1].status = 'deactivated';
     }
 

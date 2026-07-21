@@ -7,10 +7,11 @@
   import { MenuButtons } from '@/components/MenuButtons';
   import { CreateProjectView } from '@/views/CreateProject';
   import ProjectView from '../ProjectView/ProjectView.vue';
-
+  import { ResourceActions } from '@/models/utils';
   import { useEditing, useThemeToken } from '@/utils/hooks';
   import { useCompanyStore } from '@/store/CompanyStore.ts';
   import { useTeamStore } from '@/store/TeamStore.ts';
+  import { useProjectStore } from '@/store/ProjectStore.ts';
 
   const token = useThemeToken();
 
@@ -23,7 +24,7 @@
 
   const companyStore = useCompanyStore();
   const teamStore = useTeamStore();
-
+  const projectStore = useProjectStore();
   onBeforeMount(() => {
     const paneSizeFromLocalStorage = localStorage.getItem('paneSizes');
     if (paneSizeFromLocalStorage) {
@@ -64,7 +65,12 @@
       <pane :size="rightPaneWidth" min-size="32" class="rightPane">
         <ProjectView></ProjectView>
         <MenuButtons />
-        <CreateProjectView v-if="!isEditing" />
+        <CreateProjectView
+          v-if="
+            !isEditing &&
+            projectStore.getPermissions.includes(ResourceActions.Create)
+          "
+        />
       </pane>
     </splitpanes>
   </div>

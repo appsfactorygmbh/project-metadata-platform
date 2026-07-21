@@ -8,6 +8,7 @@
     companyRoutingSymbol,
     companyStoreSymbol,
   } from '@/store/injectionSymbols.ts';
+  import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
   const { setCompanyId } = inject(companyRoutingSymbol)!;
 
@@ -34,7 +35,12 @@
 </script>
 
 <template>
-  <FormModal title="Create Company" :form-store="formStore" @cancel="onCancel">
+  <FormModal
+    title="Create Company"
+    :form-store="formStore"
+    :disabled="!companyStore.getPermissions.includes(ResourceActions.Create)"
+    @cancel="onCancel"
+  >
     <CreateCompanyForm
       :form-store="formStore"
       :initial-values="initialFormValues"

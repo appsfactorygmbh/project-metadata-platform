@@ -4,6 +4,7 @@
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
+  import { ResourceActions } from '@/models/utils';
   const token = useThemeToken();
 
   const collapsed = ref<boolean>(false);
@@ -19,19 +20,17 @@
 
   const selectedUserId = ref<string>('');
 
-  userStore.fetchMe();
-
   watch(
     () => routerUserId.value,
     async () => {
-      // if no query is present -> check if data is in store -> if so set the userId query
       if (routerUserId.value == '') {
         if (selectedUserId.value != '') {
           setUserId(selectedUserId.value);
         }
+      } else {
+        await userStore?.fetchUser(routerUserId.value);
+        selectedKeys.value = [routerUserId.value];
       }
-      await userStore?.fetchUser(routerUserId.value);
-      selectedKeys.value = [routerUserId.value];
     },
   );
 
@@ -42,13 +41,11 @@
 
   const getNameFromEmail = (email: string) => email.split('@')[0];
 
-  // when mounted -> look if there is already data loaded into the store -> if so set the userId to the one in the store
-  // this is used for when coming back to the User Management tab to have the same user selected as before
   onMounted(async () => {
+    await userStore?.fetchAll();
     if (userStore.getUser?.externalId != undefined) {
       setUserId(userStore.getUser?.externalId);
     }
-    await userStore?.fetchAll();
     if (routerUserId.value) {
       await userStore?.fetchUser(routerUserId.value);
     }
@@ -71,6 +68,7 @@
         class="menuItem"
       >
         <a-menu-item
+          v-if="userStore.getPermissions.includes(ResourceActions.Create)"
           key="create-user"
           class="create-menu-item"
           @click="router.push('/settings/user-management/create')"

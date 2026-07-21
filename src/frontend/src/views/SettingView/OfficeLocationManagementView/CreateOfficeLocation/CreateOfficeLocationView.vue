@@ -8,6 +8,7 @@
     officeLocationRoutingSymbol,
     officeLocationStoreSymbol,
   } from '@/store/injectionSymbols.ts';
+  import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
   const { setOfficeLocationId } = inject(officeLocationRoutingSymbol)!;
 
@@ -37,6 +38,9 @@
   <FormModal
     title="Create Office Location"
     :form-store="formStore"
+    :disabled="
+      !officeLocationStore.getPermissions.includes(ResourceActions.Create)
+    "
     @cancel="onCancel"
   >
     <CreateOfficeLocationForm

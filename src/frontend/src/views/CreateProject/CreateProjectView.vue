@@ -19,6 +19,7 @@
   import { message } from 'ant-design-vue';
   import { storeToRefs } from 'pinia';
   import type { SelectValue } from 'ant-design-vue/es/select';
+  import { ResourceActions } from '@/models/utils';
 
   const token = useThemeToken();
 
@@ -212,7 +213,11 @@
       v-model:open="open"
       width="400px"
       title="Create Project"
-      :ok-button-props="{ disabled: isAdding }"
+      :ok-button-props="{
+        disabled:
+          isAdding ||
+          !projectStore.getPermissions.includes(ResourceActions.Create),
+      }"
       @ok="handleOk"
       @cancel="resetModal"
     >

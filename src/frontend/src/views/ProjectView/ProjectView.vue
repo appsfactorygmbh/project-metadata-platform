@@ -17,16 +17,15 @@
   import _ from 'lodash';
   import { AddPluginView } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
   import { useThemeToken } from '@/utils/hooks';
+  import { ResourceActions } from '@/models/utils';
 
   const token = useThemeToken();
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectEditStore = inject(projectEditStoreSymbol);
 
-  const projectRouting = inject(projectRoutingSymbol);
+  const projectRouting = inject(projectRoutingSymbol)!;
 
-  // 🐛 FIX: Create a computed property that safely checks if a project is active.
-  // This completely satisfies TypeScript's type-checker.
   const hasActiveProject = computed(() => {
     return !!projectRouting?.routerProjectId?.value;
   });
@@ -35,6 +34,7 @@
   const projectStore = useProjectStore();
   const rerenderPlugins = ref(1);
   const isModalOpen = ref(false);
+  const isArchiveModalOpen = ref(false);
   const openModal = () => {
     isModalOpen.value = true;
   };
@@ -49,7 +49,7 @@
   };
 
   watch(
-    () => isEditing,
+    () => isEditing.value,
     (newVal) => {
       if (newVal) {
         projectEditStore?.resetPluginChanges();
@@ -187,11 +187,75 @@
   const closeAddPluginModal = () => {
     openAddPluginModal.value = false;
   };
+
+  const getNextActiveProjectId = (currentid?: number): number | undefined => {
+    const projects = projectStore.getProjects;
+    const nextProject = projects.find(
+      (project) => !project.isArchived && project.id != currentid,
+    );
+    if (!nextProject) return undefined;
+    return nextProject.id;
+  };
+
+  const handleArchive = () => {
+    isArchiveModalOpen.value = true;
+  };
+
+  const confirmArchive = async () => {
+    const projectID = projectStore?.getProject?.id;
+    const detailedProject = projectStore?.getProject;
+
+    if (!detailedProject) {
+      throw new Error('No project found to update');
+    }
+
+    const projectData: UpdateProjectModel = {
+      projectName: detailedProject.projectName,
+      clientName: detailedProject.clientName,
+      offerId: detailedProject.offerId,
+
+      companyId: detailedProject.company.id,
+      teamId: detailedProject.team ? detailedProject.team.id : null,
+
+      companyState: detailedProject.companyState,
+      ismsLevel: detailedProject.ismsLevel,
+      isEoC: detailedProject.isEoC,
+      notes: detailedProject.notes,
+      isArchived: detailedProject.isArchived,
+
+      pluginList: null,
+    };
+    projectData.pluginList = pluginStore?.getPlugins;
+
+    if (projectID) {
+      try {
+        await projectStore.archive(projectID);
+        await projectStore.fetchAll();
+      } finally {
+        isArchiveModalOpen.value = false;
+        isModalOpen.value = false;
+        projectEditStore?.resetPluginChanges();
+        stopEditing();
+        await localLogStore?.fetch(projectID);
+        const newProjectId = getNextActiveProjectId(projectID);
+        if (!newProjectId) projectRouting.setProjectId(undefined);
+        projectRouting.setProjectId(newProjectId);
+      }
+    }
+  };
 </script>
 
 <template>
   <div v-if="hasActiveProject && !isEmpty">
-    <ProjectEditButtons v-if="isEditing" @cancel="openModal" @save="saveEdit" />
+    <ProjectEditButtons
+      v-if="isEditing"
+      :can-edit="
+        projectStore.getProject?.permissions?.includes(ResourceActions.Edit)
+      "
+      @cancel="openModal"
+      @archive="handleArchive"
+      @save="saveEdit"
+    />
     <ProjectInformation />
     <ProjectPlugins
       :key="rerenderPlugins"
@@ -211,6 +275,14 @@
       @confirm="cancelEdit"
       @cancel="isModalOpen = false"
       @update:is-open="(value) => (isModalOpen = value)"
+    />
+    <ConfirmAction
+      :is-open="isArchiveModalOpen"
+      title="Archive Project"
+      message="Are you sure you want to archive this project?"
+      @confirm="confirmArchive"
+      @cancel="isArchiveModalOpen = false"
+      @update:is-open="(value) => (isArchiveModalOpen = value)"
     />
   </div>
   <a-flex v-else justify="center" align="center" class="empty-state-container">

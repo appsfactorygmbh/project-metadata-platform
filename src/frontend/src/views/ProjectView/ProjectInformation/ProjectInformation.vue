@@ -14,7 +14,6 @@
   import {
     DeleteOutlined,
     EditOutlined,
-    InboxOutlined,
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
@@ -35,6 +34,7 @@
   } from '@/components/EditableTextField';
   import { useDeselect, useThemeToken } from '@/utils/hooks';
   import { CompanyState, SecurityLevel } from '@/api/generated';
+  import { ResourceActions } from '@/models/utils';
 
   const localLogStore = inject(localLogStoreSymbol);
   const projectStore = useProjectStore();
@@ -281,13 +281,7 @@
     projectData.notes.value = loadedData.notes;
   }
 
-  const isArchiveModalOpen = ref(false);
   const isDeleteModalOpen = ref(false);
-  const isModalOpen = ref(false);
-
-  const handleArchive = () => {
-    isArchiveModalOpen.value = true;
-  };
 
   const handleDelete = async () => {
     isDeleteModalOpen.value = true;
@@ -311,7 +305,6 @@
 
       projectRouting.setProjectId(newProjectId);
     }
-    return;
   };
 
   const getNextArchivedProjectId = (): number | undefined => {
@@ -319,53 +312,6 @@
     const nextProject = projects.find((project) => project.isArchived);
     if (!nextProject) return undefined;
     return nextProject.id;
-  };
-
-  const getNextActiveProjectId = (): number | undefined => {
-    const projects = projectStore.getProjects;
-    const nextProject = projects.find((project) => !project.isArchived);
-    if (!nextProject) return undefined;
-    return nextProject.id;
-  };
-
-  const confirmArchive = async () => {
-    const projectID = projectStore?.getProject?.id;
-    const detailedProject = projectStore?.getProject;
-
-    if (!detailedProject) {
-      throw new Error('No project found to update');
-    }
-
-    const projectData: UpdateProjectModel = {
-      projectName: detailedProject.projectName,
-      clientName: detailedProject.clientName,
-      offerId: detailedProject.offerId,
-
-      companyId: detailedProject.company.id,
-      teamId: detailedProject.team ? detailedProject.team.id : null,
-
-      companyState: detailedProject.companyState,
-      ismsLevel: detailedProject.ismsLevel,
-      isEoC: detailedProject.isEoC,
-      notes: detailedProject.notes,
-      isArchived: detailedProject.isArchived,
-
-      pluginList: null,
-    };
-    projectData.pluginList = pluginStore?.getPlugins;
-
-    if (projectID) {
-      try {
-        await projectStore.archive(projectID);
-      } finally {
-        isArchiveModalOpen.value = false;
-        isModalOpen.value = false;
-        await localLogStore?.fetch(projectID);
-        const newProjectId = getNextActiveProjectId();
-        if (!newProjectId) projectRouting.setProjectId(undefined);
-        projectRouting.setProjectId(newProjectId);
-      }
-    }
   };
 
   const reactivateProject = async () => {
@@ -408,7 +354,10 @@
       <div v-if="!isEditing" class="projectNameContainer">
         <!-- Reactivate Button -->
         <IconButton
-          v-if="projectStore.getProject?.isArchived"
+          v-if="
+            projectStore.getProject?.isArchived &&
+            projectStore.getProject?.permissions?.includes(ResourceActions.Edit)
+          "
           tooltip-position="left"
           tooltip="Click here to reactivate"
           @click="reactivateProject"
@@ -420,7 +369,12 @@
 
         <!-- Delete Button -->
         <IconButton
-          v-if="projectStore.getProject?.isArchived"
+          v-if="
+            projectStore.getProject?.isArchived &&
+            projectStore.getProject?.permissions?.includes(
+              ResourceActions.Delete,
+            )
+          "
           tooltip-position="right"
           tooltip="Click here to delete the project"
           @click="handleDelete"
@@ -439,21 +393,13 @@
           @update:is-open="(value) => (isDeleteModalOpen = value)"
         />
 
-        <!-- Archive Button -->
-        <IconButton
-          v-if="!projectStore.getProject?.isArchived && !isEditing"
-          tooltip-position="right"
-          tooltip="Click here to archive the project"
-          @click="handleArchive"
-        >
-          <template #icon>
-            <InboxOutlined class="icon" />
-          </template>
-        </IconButton>
-
         <!-- Edit Button -->
         <IconButton
-          v-if="!projectStore.getProject?.isArchived && !isEditing"
+          v-if="
+            !projectStore.getProject?.isArchived &&
+            !isEditing &&
+            projectStore.getProject?.permissions?.includes(ResourceActions.Edit)
+          "
           tooltip-position="left"
           tooltip="Click here to activate Edit-View"
           @click="toggleEditingMode"
@@ -463,14 +409,6 @@
           </template>
         </IconButton>
 
-        <ConfirmAction
-          :is-open="isArchiveModalOpen"
-          title="Archive Project"
-          message="Are you sure you want to archive this project?"
-          @confirm="confirmArchive"
-          @cancel="isArchiveModalOpen = false"
-          @update:is-open="(value) => (isArchiveModalOpen = value)"
-        />
         <h1 v-if="!isLoading" class="projectName">
           {{ projectData.projectName.value }}
         </h1>
@@ -486,7 +424,7 @@
           :is-editing="true"
           :required-value="true"
           @updated="
-            (newValue) => {
+            (newValue: string) => {
               projectData.projectName.value = newValue;
               updateProjectInformation();
             }
@@ -558,7 +496,7 @@
             :edit-store="projectEditStore"
             :required-value="field.requiredValue"
             @updated="
-              (newValue) => {
+              (newValue: string | number) => {
                 field.value = newValue;
                 updateProjectInformation();
               }
