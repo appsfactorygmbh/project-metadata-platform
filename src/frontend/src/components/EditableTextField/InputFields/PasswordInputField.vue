@@ -1,8 +1,4 @@
 <script setup lang="ts">
-  import { PatchOperations } from '@/api/generated';
-  import type { FormStore } from '@/components/Form';
-  import type { FormSubmitType, RulesObject } from '@/components/Form/types';
-  import { useUserStore } from '@/store';
   import {
     hasEightCharacters,
     hasSpecialCharacter,
@@ -11,177 +7,119 @@
     hasLowerCaseLetter,
   } from '@/utils/form/userValidation';
   import type { Rule } from 'ant-design-vue/es/form';
-  import useNotification from 'ant-design-vue/es/notification/useNotification';
 
-  const { formStore, userId } = defineProps({
-    userId: {
+  const props = defineProps({
+    value: {
       type: String,
-      required: true,
-    },
-    formStore: {
-      type: Object as PropType<FormStore>,
-      required: true,
+      default: '',
     },
   });
 
-  type EditPasswordFormData = {
-    currentPassword: string;
-    newPassword: string;
-    confirmPassword: string;
-  };
-
-  const userStore = useUserStore();
-
-  const dynamicValidateForm = reactive<EditPasswordFormData>({
-    currentPassword: '',
-    newPassword: '',
+  const emit = defineEmits(['update:value']);
+  const localState = reactive({
+    password: props.value,
     confirmPassword: '',
   });
+
+  watch(
+    () => props.value,
+    (val) => {
+      localState.password = val;
+    },
+  );
 
   const validateConfirmPassword = async (_rule: Rule, value: string) => {
     if (value === '') {
       return Promise.reject('Please confirm the password.');
-    } else if (value !== dynamicValidateForm.newPassword) {
+    } else if (value !== localState.password) {
       return Promise.reject("The passwords don't match.");
     } else {
       return Promise.resolve();
     }
   };
 
-  const rulesRef = reactive<RulesObject<EditPasswordFormData>>({
-    currentPassword: [
-      {
-        required: true,
-        message: 'Please enter your current password.',
-        trigger: 'change',
-        type: 'string',
+  const passwordRules: Rule[] = [
+    {
+      validator: async (_rule, value) => {
+        if (!value) return Promise.resolve();
+        return Promise.resolve();
       },
-    ],
-    newPassword: [
-      {
-        required: true,
-        message: 'Please insert at least 8 characters.',
-        validator: hasEightCharacters,
-        trigger: 'change',
-        type: 'string',
-      },
-      {
-        required: true,
-        message: 'Please insert a special character.',
-        validator: hasSpecialCharacter,
-        trigger: 'change',
-        type: 'string',
-      },
-      {
-        required: true,
-        message: 'Please insert a number.',
-        validator: hasDigit,
-        trigger: 'change',
-        type: 'string',
-      },
-      {
-        required: true,
-        message: 'Please insert a upper case letter.',
-        validator: hasUpperCaseLetter,
-        trigger: 'change',
-        type: 'string',
-      },
-      {
-        required: true,
-        message: 'Please insert a lower case letter.',
-        validator: hasLowerCaseLetter,
-        trigger: 'change',
-        type: 'string',
-      },
-    ],
-    confirmPassword: [
-      {
-        required: true,
-        message: 'This password does not match your new Password',
-        validator: validateConfirmPassword,
-        trigger: 'change',
-        type: 'string',
-      },
-    ],
-  });
+      trigger: 'change',
+    },
+    {
+      validator: hasEightCharacters,
+      trigger: 'change',
+      message: 'At least 8 characters required.',
+    },
+    {
+      validator: hasSpecialCharacter,
+      trigger: 'change',
+      message: 'Special character required.',
+    },
+    { validator: hasDigit, trigger: 'change', message: 'Number required.' },
+    {
+      validator: hasUpperCaseLetter,
+      trigger: 'change',
+      message: 'Uppercase letter required.',
+    },
+    {
+      validator: hasLowerCaseLetter,
+      trigger: 'change',
+      message: 'Lowercase letter required.',
+    },
+  ];
 
-  const [notificationApi] = useNotification();
+  const confirmRules: Rule[] = [
+    {
+      validator: validateConfirmPassword,
+      trigger: ['change', 'blur'],
+    },
+  ];
 
-  const onSubmit: FormSubmitType = (fields) => {
-    userStore
-      ?.update(userId, {
-        operations: [
-          {
-            op: PatchOperations.Replace,
-            path: 'password',
-            value: toRaw(fields).newPassword,
-          },
-        ],
-      })
-      .then(() => {
-        notificationApi.success({
-          message: 'Password updated',
-        });
-      })
-      .catch((error) => {
-        notificationApi.error({
-          message: 'An error occurred. The password could not be updated',
-        });
-        console.error('Error updating password:', error);
-      });
+  const handlePasswordChange = (val: string) => {
+    localState.password = val;
+    emit('update:value', val);
   };
-
-  formStore.setOnSubmit(onSubmit);
-  formStore.setModel(dynamicValidateForm);
-  formStore.setRules(rulesRef);
 </script>
 
 <template>
-  <a-form ref="formRef" :model="dynamicValidateForm" class="form">
-    <a-form-item
-      name="currentPassword"
-      class="formItem"
-      :whitespace="true"
-      :rules="rulesRef.currentPassword"
-    >
-      <a-input
-        v-model:value="dynamicValidateForm.currentPassword"
-        type="password"
-        placeholder="Enter your current password"
-        :rules="rulesRef.currentPassword"
-      >
-      </a-input>
-    </a-form-item>
+  <div class="password-fieldset">
     <a-form-item
       has-feedback
-      name="newPassword"
+      name="password"
       class="formItem"
-      :whitespace="true"
-      :rules="rulesRef.newPassword"
+      :rules="localState.password ? passwordRules : []"
     >
       <a-input
-        v-model:value="dynamicValidateForm.newPassword"
+        :value="localState.password"
         type="password"
-        placeholder="Enter your new password"
-        :rules="rulesRef.newPassword"
-      >
-      </a-input>
+        placeholder="Enter new password"
+        @update:value="handlePasswordChange"
+      />
     </a-form-item>
+
     <a-form-item
+      v-if="localState.password"
       has-feedback
       name="confirmPassword"
       class="lastFormItem"
-      :whitespace="true"
-      :rules="rulesRef.confirmPassword"
+      :rules="localState.password ? confirmRules : []"
     >
       <a-input
-        v-model:value="dynamicValidateForm.confirmPassword"
+        v-model:value="localState.confirmPassword"
         type="password"
-        placeholder="Confirm you new Password"
-        :rules="rulesRef.confirmPassword"
-        class="password"
-      >
-      </a-input>
+        placeholder="Confirm new password"
+      />
     </a-form-item>
-  </a-form>
+  </div>
 </template>
+
+<style scoped>
+  .formItem {
+    margin-bottom: 12px;
+  }
+
+  .lastFormItem {
+    margin-bottom: 0;
+  }
+</style>
