@@ -6,6 +6,7 @@ import type { Pinia } from 'pinia';
 import type { CreateTeamModel } from '@/models/Team/CreateTeamModel';
 import type { TeamEditModel } from '@/models/Team';
 import { type ApiStore, useApiStore } from './ApiStore';
+import type { ResourceActions } from '@/models/utils';
 
 type StoreState = {
   teams: TeamModel[];
@@ -21,6 +22,7 @@ type StoreGetters = {
   getTeam: () => TeamModel | undefined;
   getLinkedProjects: () => string[];
   getTeamNames: () => string[];
+  getPermissions: () => ResourceActions[];
   getIsLoadingTeams: () => boolean;
   getIsLoadingTeam: () => boolean;
 };
@@ -74,6 +76,9 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getLinkedProjects(): string[] {
           return this.linkedProjects;
+        },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
         },
       },
 

@@ -9,6 +9,7 @@ import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
 import { type ApiStore, useApiStore } from './ApiStore';
 import { UsersApi } from '@/api/generated';
+import type { ResourceActions } from '@/models/utils';
 
 type StoreState = {
   users: UserListModel[];
@@ -29,6 +30,7 @@ type StoreGetters = {
   getUsers: () => UserListModel[];
   getUser: () => UserModel | null;
   getMe: () => UserModel | null;
+  getPermissions: () => ResourceActions[];
   getIsLoading: () => boolean;
   getIsLoadingCreate: () => boolean;
   getIsLoadingUser: () => boolean;
@@ -121,6 +123,9 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getUpdatedSuccessfully(): boolean {
           return this.updatedSuccessfully;
+        },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
         },
       },
       actions: {

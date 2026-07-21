@@ -9,6 +9,7 @@ import type { Pinia } from 'pinia';
 import type { CreateDepartmentModel } from '@/models/Department/CreateDepartmentModel';
 import type { DepartmentEditModel } from '@/models/Department';
 import { type ApiStore, useApiStore } from './ApiStore';
+import type { ResourceActions } from '@/models/utils';
 
 type StoreState = {
   departments: DepartmentModel[];
@@ -21,7 +22,7 @@ type StoreState = {
 type StoreGetters = {
   getDepartments: () => DepartmentModel[];
   getDepartment: () => DepartmentModel | undefined;
-
+  getPermissions: () => ResourceActions[];
   getDepartmentNames: () => string[];
   getIsLoadingDepartments: () => boolean;
   getIsLoadingDepartment: () => boolean;
@@ -77,6 +78,9 @@ export const useDepartmentStore = (pinia: Pinia = piniaInstance): Store => {
           return this.departments.map(
             (department) => department.departmentName,
           );
+        },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
         },
       },
 

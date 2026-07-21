@@ -18,9 +18,7 @@ type ApiStore<Api extends ApiTypes> = PiniaStore<
     name: string;
     permissions: ResourceActions[];
   },
-  {
-    getPermissions: () => ResourceActions[];
-  },
+  unknown,
   {
     initApi: () => void;
     setIsLoading: (isLoading: boolean) => void;
@@ -49,11 +47,6 @@ export const useApiStore = <Api extends ApiTypes>(
       isLoading: false,
       name: '',
       permissions: [],
-    },
-    getters: {
-      getPermissions(): ResourceActions[] {
-        return this.permissions;
-      },
     },
     actions: {
       initApi() {

@@ -9,6 +9,7 @@ import type { Pinia } from 'pinia';
 import type { CreateOfficeLocationModel } from '@/models/OfficeLocation/CreateOfficeLocationModel';
 import type { OfficeLocationEditModel } from '@/models/OfficeLocation';
 import { type ApiStore, useApiStore } from './ApiStore';
+import type { ResourceActions } from '@/models/utils';
 
 type StoreState = {
   officeLocations: OfficeLocationModel[];
@@ -21,7 +22,7 @@ type StoreState = {
 type StoreGetters = {
   getOfficeLocations: () => OfficeLocationModel[];
   getOfficeLocation: () => OfficeLocationModel | undefined;
-
+  getPermissions: () => ResourceActions[];
   getOfficeLocationNames: () => string[];
   getIsLoadingOfficeLocations: () => boolean;
   getIsLoadingOfficeLocation: () => boolean;
@@ -82,6 +83,9 @@ export const useOfficeLocationStore = (pinia: Pinia = piniaInstance): Store => {
           return this.officeLocations.map(
             (officeLocation) => officeLocation.officeLocationName,
           );
+        },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
         },
       },
 

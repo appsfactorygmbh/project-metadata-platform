@@ -11,6 +11,7 @@ import { type PiniaStore, useStore } from 'pinia-generic';
 import { type ApiStore, useApiStore } from './ApiStore';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
+import type { ResourceActions } from '@/models/utils';
 
 type StoreState = {
   projects: ProjectModel[];
@@ -26,6 +27,7 @@ type StoreState = {
 type StoreGetters = {
   getProjects: () => ProjectModel[];
   getProject: () => DetailedProjectModel | null;
+  getPermissions: () => ResourceActions[];
   getIsLoading: () => boolean;
   getIsLoadingAdd: () => boolean;
   getIsLoadingUpdate: () => boolean;
@@ -120,6 +122,9 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getUpdatedSuccessfully(): boolean {
           return this.updatedSuccessfully;
+        },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
         },
       },
       actions: {

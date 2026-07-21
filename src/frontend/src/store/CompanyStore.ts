@@ -9,6 +9,7 @@ import type { Pinia } from 'pinia';
 import type { CreateCompanyModel } from '@/models/Company/CreateCompanyModel';
 import type { CompanyEditModel } from '@/models/Company';
 import { type ApiStore, useApiStore } from './ApiStore';
+import type { ResourceActions } from '@/models/utils';
 
 type StoreState = {
   companies: CompanyModel[];
@@ -24,6 +25,7 @@ type StoreGetters = {
   getCompany: () => CompanyModel | undefined;
   getLinkedProjects: () => string[];
   getCompanyNames: () => string[];
+  getPermissions: () => ResourceActions[];
   getIsLoadingCompanies: () => boolean;
   getIsLoadingCompany: () => boolean;
 };
@@ -80,6 +82,9 @@ export const useCompanyStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getLinkedProjects(): string[] {
           return this.linkedProjects;
+        },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
         },
       },
 
