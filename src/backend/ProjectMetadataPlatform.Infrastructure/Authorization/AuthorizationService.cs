@@ -127,12 +127,13 @@ public class AuthorizationService : IAuthorizationService
         where T : class
     {
         List<AuthorizationConstants.Actions> approvedActions = [];
-
+        var principal = await GetPrincipalFromContext();
+        var resourceObject = resource.ToResource(typeof(T).Name, "Default");
         foreach (var action in Enum.GetValues<AuthorizationConstants.Actions>())
         {
             var authorizationResult = await PlanRequest(
-                await GetPrincipalFromContext(),
-                resource.ToResource(typeof(T).Name, "Default"),
+                principal,
+                resourceObject,
                 [action.ToString()]
             );
             if (
