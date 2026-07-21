@@ -8,6 +8,7 @@
     departmentRoutingSymbol,
     departmentStoreSymbol,
   } from '@/store/injectionSymbols.ts';
+  import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
   const { setDepartmentId } = inject(departmentRoutingSymbol)!;
 
@@ -37,6 +38,7 @@
   <FormModal
     title="Create Department"
     :form-store="formStore"
+    :disabled="!departmentStore.getPermissions.includes(ResourceActions.Create)"
     @cancel="onCancel"
   >
     <CreateDepartmentForm

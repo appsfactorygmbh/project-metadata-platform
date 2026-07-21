@@ -1,5 +1,10 @@
 <script lang="ts" setup>
-  import { DeleteOutlined } from '@ant-design/icons-vue';
+  import {
+    CloseOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    SaveOutlined,
+  } from '@ant-design/icons-vue';
   import type { FloatButtonModel } from '@/components/Button/FloatButtonModel';
   import { inject, ref } from 'vue';
   import {
@@ -10,28 +15,92 @@
 
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
-  import { useFormStore } from '@/components/Form';
-  import { useThemeToken } from '@/utils/hooks';
-  import { useBusinessUnitStore } from '@/store';
+  import { useEditing, useThemeToken } from '@/utils/hooks';
+  import { ResourceActions } from '@/models/utils';
+  import message from 'ant-design-vue/es/message';
+  import type { Rule } from 'ant-design-vue/es/form';
+  import type { DepartmentModel } from '@/models/Department';
 
   const token = useThemeToken();
 
   const route = useRoute();
-
+  const { isEditing, stopEditing, startEditing } = useEditing();
+  const formRef = ref();
   const departmentStore = inject(departmentStoreSymbol)!;
   const { getDepartment, getIsLoadingDepartment } =
     storeToRefs(departmentStore);
-  const buStore = useBusinessUnitStore();
   const department = computed(() => getDepartment.value);
   const isLoading = computed(() => getIsLoadingDepartment.value);
   const { setDepartmentId } = inject(departmentRoutingSymbol)!;
 
   const emit = defineEmits(['departmentDeleted']);
 
-  const departmentNameFormStore = useFormStore('editDepartmentNameForm');
-  onMounted(async () => {
-    buStore.fetchAll();
+  onBeforeUnmount(() => {
+    if (isEditing.value) {
+      stopEditing();
+    }
   });
+  const toggleEditingMode = async () => {
+    if (isEditing.value) {
+      await stopEditing();
+    } else {
+      await startEditing();
+    }
+  };
+
+  const formData = reactive({
+    departmentName: '',
+  });
+
+  watch(
+    () => department.value,
+    (newDepartment) => {
+      if (!newDepartment) return;
+      formData.departmentName = newDepartment.departmentName ?? '';
+    },
+  );
+
+  const resetFormData = () => {
+    const newDepartment = department.value;
+    if (!newDepartment) return;
+    formData.departmentName = newDepartment.departmentName ?? '';
+  };
+
+  watch(
+    () => department.value?.id,
+    (newId, oldId) => {
+      if (!newId || newId === oldId) return;
+      stopEditing();
+      resetFormData();
+    },
+    { immediate: true },
+  );
+  watch(isEditing, (newVal) => {
+    if (!newVal) {
+      resetFormData();
+    }
+  });
+
+  const handleBulkSave = async () => {
+    try {
+      await formRef.value.validate();
+      if (!department.value?.id) return;
+
+      const updateRequest = {
+        departmentName: formData.departmentName,
+      };
+
+      await departmentStore.update(department.value.id, updateRequest);
+
+      await departmentStore.fetch(department.value?.id);
+
+      message.success('Department updated successfully');
+      await stopEditing();
+    } catch (error) {
+      console.error('Validation or API error:', error);
+      message.error('Failed to update department. Please check your inputs.');
+    }
+  };
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
@@ -57,8 +126,64 @@
         tooltip: 'Click here to delete this department',
         isLink: false,
       },
+      {
+        name: 'EditDepartmentButton',
+        onClick: () => {
+          toggleEditingMode();
+        },
+        icon: EditOutlined,
+        type: 'primary',
+        size: 'large',
+        status: 'activated',
+        tooltip: 'Click here to edit this department',
+        isLink: false,
+      },
+      {
+        name: 'CancelButton',
+        onClick: () => {
+          openCancelModal();
+        },
+        icon: CloseOutlined,
+        status: 'activated',
+        type: 'primary',
+        size: 'large',
+        specialType: 'danger',
+        tooltip: 'Click to cancel editing',
+      },
+      {
+        name: 'SafeEditButton',
+        onClick: () => {
+          handleBulkSave();
+        },
+        icon: SaveOutlined,
+        status: 'activated',
+        type: 'primary',
+        size: 'large',
+        specialType: 'success',
+        tooltip: 'Click to save changes',
+      },
     ];
-    if (!department.value) tempButtons[0].status = 'deactivated';
+    if (
+      !department.value ||
+      isEditing.value ||
+      !departmentStore.getPermissions.includes(ResourceActions.Delete)
+    )
+      tempButtons[0].status = 'deactivated';
+
+    if (
+      !department.value?.id ||
+      isEditing.value ||
+      !department.value?.permissions?.includes(ResourceActions.Edit)
+    )
+      tempButtons[1].status = 'deactivated';
+
+    if (!isEditing.value) {
+      tempButtons[2].status = 'deactivated';
+      tempButtons[3].status = 'deactivated';
+    }
+    if (!department.value?.permissions?.includes(ResourceActions.Edit)) {
+      tempButtons[3].status = 'deactivated';
+    }
     return tempButtons;
   });
 
@@ -69,6 +194,40 @@
     departmentStore.nullDepartment();
     setDepartmentId(null);
   };
+
+  const isCancelModalOpen = ref(false);
+  const openCancelModal = () => {
+    isCancelModalOpen.value = true;
+  };
+
+  const isUniqueDepartmentName = (_rule: Rule, name: string) => {
+    const departments: DepartmentModel[] = departmentStore.getDepartments;
+    const currentDepartment: DepartmentModel | undefined =
+      departmentStore.getDepartment;
+    if (!currentDepartment) {
+      return Promise.reject(new Error('Current department undefined'));
+    }
+    if (
+      departments?.every(
+        (department) =>
+          department.departmentName !== name ||
+          name === currentDepartment.departmentName,
+      )
+    ) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error('This department name is already in use.'));
+  };
+
+  const departmentNameRules: Rule[] = [
+    {
+      required: true,
+      message: 'Please insert an unique department name.',
+      validator: isUniqueDepartmentName,
+      trigger: 'change',
+      type: 'string',
+    },
+  ];
 </script>
 <template>
   <ConfirmationDialog
@@ -79,30 +238,39 @@
     @cancel="closeModal"
     @update:is-open="isConfirmModalOpen = $event"
   />
+  <ConfirmAction
+    :is-open="isCancelModalOpen"
+    title="Cancel Editing"
+    message="Are you sure you want to cancel all changes?"
+    @confirm="stopEditing"
+    @cancel="isCancelModalOpen = false"
+    @update:is-open="(value) => (isCancelModalOpen = value)"
+  />
   <div v-if="department && department.id" class="panel">
-    <a-flex
-      class="userInfoBox"
-      :body-style="{
-        height: 'fit-content',
-      }"
-    >
-      <EditableTextField
-        class="textField departmentName"
-        :value="department?.departmentName ?? ''"
-        :is-loading="isLoading"
-        :label="'Department Name'"
-        :is-editing-key="'isEditingDepartmentName'"
-        :form-store="departmentNameFormStore"
-        :has-edit-keys="true"
+    <a-form ref="formRef" :model="formData" layout="vertical">
+      <a-flex
+        class="userInfoBox"
+        :body-style="{
+          height: 'fit-content',
+        }"
       >
-        <DepartmentNameInputField
-          :department-id="department?.id ?? -1"
-          :form-store="departmentNameFormStore"
-          :placeholder="department?.departmentName ?? ''"
-          :default="department?.departmentName ?? ''"
-        />
-      </EditableTextField>
-    </a-flex>
+        <EditableTextField
+          class="textField departmentName"
+          :value="department?.departmentName ?? ''"
+          :is-loading="isLoading"
+          :label="'Department Name'"
+          :is-editing-key="'isEditing'"
+          :has-edit-keys="false"
+        >
+          <InformationInputField
+            v-model:value="formData.departmentName"
+            attribute-name="departmentName"
+            :placeholder="department?.departmentName ?? ''"
+            :rules="departmentNameRules"
+          />
+        </EditableTextField>
+      </a-flex>
+    </a-form>
   </div>
   <a-skeleton
     v-else-if="isLoading"

@@ -39,8 +39,6 @@
       });
   });
 
-  const [notificationApi, contextHolder] = notification.useNotification();
-
   function findMatchingGlobalPlugin(url: string): string | null {
     try {
       if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -73,6 +71,9 @@
         return result;
       } else return null;
     } catch (error) {
+      notification.error({
+        message: 'An error occurred. Invalid URL provided.',
+      });
       console.error('Invalid URL provided:', error);
       return null;
     }
@@ -96,7 +97,7 @@
       addPlugin(pluginDef);
       emit('addedPlugin');
     } catch (error) {
-      notificationApi.error({
+      notification.error({
         message: 'An error occurred. The plugin could not be created',
       });
       console.error('error while creating a new project plugin', error);
@@ -274,5 +275,4 @@
       />
     </a-form-item>
   </a-form>
-  <contextHolder />
 </template>

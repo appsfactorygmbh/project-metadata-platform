@@ -8,6 +8,7 @@
   } from '@/store/injectionSymbols.ts';
   import type { CreateApiTokenFormData } from './CreateApiTokenFormData.ts';
   import { CreateApiTokenForm } from './';
+  import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
   const { setApiTokenId } = inject(apiTokenRoutingSymbol)!;
 
@@ -38,6 +39,7 @@
   <FormModal
     title="Create API-Token"
     :form-store="formStore"
+    :disabled="!apiTokenStore.getPermissions.includes(ResourceActions.Create)"
     @cancel="onCancel"
   >
     <CreateApiTokenForm

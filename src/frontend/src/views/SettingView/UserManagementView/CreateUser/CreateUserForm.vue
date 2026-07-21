@@ -40,8 +40,6 @@
   const { getDepartmentNames } = storeToRefs(departmentStore);
   const { getOfficeLocationNames } = storeToRefs(officeLocationStore);
 
-  const [notificationApi, contextHolder] = notification.useNotification();
-
   const onSubmit: FormSubmitType = (fields) => {
     try {
       const userDef: CreateUserModel = {
@@ -67,7 +65,7 @@
       };
       userStore?.create(userDef);
     } catch (error) {
-      notificationApi.error({
+      notification.error({
         message: 'An error occurred. The user could not be created',
       });
       console.error('Error creating user:', error);
@@ -459,7 +457,6 @@
       />
     </a-form-item>
   </a-form>
-  <contextHolder />
 </template>
 
 <style scoped>

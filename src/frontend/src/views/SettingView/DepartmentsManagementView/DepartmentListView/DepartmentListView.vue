@@ -7,6 +7,7 @@
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
+  import { ResourceActions } from '@/models/utils';
 
   const token = useThemeToken();
 
@@ -31,12 +32,12 @@
     async () => {
       if (routerDepartmentId.value == '') {
         if (selectedDepartmentId.value != '') {
-          console.log('write ');
           setDepartmentId(selectedDepartmentId.value);
         }
+      } else {
+        await departmentStore?.fetch(Number(routerDepartmentId.value));
+        selectedKeys.value = [routerDepartmentId.value];
       }
-      await departmentStore?.fetch(Number(routerDepartmentId.value));
-      selectedKeys.value = [routerDepartmentId.value];
     },
   );
 
@@ -99,6 +100,7 @@
         class="menuItem"
       >
         <a-menu-item
+          v-if="departmentStore.getPermissions.includes(ResourceActions.Create)"
           key="create-department"
           class="create-menu-item"
           @click="router.push('/settings/department-management/create')"

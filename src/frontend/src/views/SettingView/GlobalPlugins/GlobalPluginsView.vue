@@ -1,5 +1,8 @@
 <template>
-  <FloatingButton :button="addButton" />
+  <FloatingButton
+    v-if="globalPluginsStore.getPermissions.includes(ResourceActions.Create)"
+    :button="addButton"
+  />
 
   <a-tooltip
     placement="left"
@@ -37,24 +40,17 @@
               </div>
               <div v-if="filterType" class="buttons">
                 <a-button
+                  v-if="item.permissions?.includes(ResourceActions.Edit)"
                   style="margin-right: 1em"
                   title="Edit Plugin"
                   @click="handleEdit(item.id)"
                 >
                   <EditOutlined />
                 </a-button>
-                <a-button
-                  :loading="isButtonLoading(item.id)"
-                  :disabled="isButtonLoading(item.id)"
-                  title="Archive Plugin"
-                  name="archivePluginButton"
-                  @click="showDialog(item.id, 'archive')"
-                >
-                  <InboxOutlined />
-                </a-button>
               </div>
               <div v-else class="buttons">
                 <a-button
+                  v-if="item.permissions?.includes(ResourceActions.Edit)"
                   style="margin-right: 1em"
                   title="Reactivate Plugin"
                   @click="handleReactivate(item.id)"
@@ -62,6 +58,7 @@
                   <UndoOutlined />
                 </a-button>
                 <a-button
+                  v-if="item.permissions?.includes(ResourceActions.Delete)"
                   :loading="isButtonLoading(item.id)"
                   :disabled="isButtonLoading(item.id)"
                   title="Delete Plugin"
@@ -112,6 +109,7 @@
   import { useToggle } from '@vueuse/core';
   import type { GlobalPluginModel } from '@/models/GlobalPlugin';
   import { useThemeToken } from '@/utils/hooks';
+  import { ResourceActions } from '@/models/utils';
 
   const token = useThemeToken();
 

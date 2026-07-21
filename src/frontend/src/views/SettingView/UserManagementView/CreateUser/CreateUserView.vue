@@ -6,6 +6,7 @@
   import { userStoreSymbol } from '@/store/injectionSymbols.ts';
   import { inject } from 'vue';
   import router from '@/router/router.ts';
+  import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
   const onClose = () => {
     router.push('/settings/user-management');
@@ -31,7 +32,12 @@
 </script>
 
 <template>
-  <FormModal title="Create User" :form-store="formStore" @close="onClose">
+  <FormModal
+    title="Create User"
+    :form-store="formStore"
+    :disabled="!userStore.getPermissions.includes(ResourceActions.Create)"
+    @close="onClose"
+  >
     <CreateUserForm
       :form-store="formStore"
       :initial-values="initialFormValues"

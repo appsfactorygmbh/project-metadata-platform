@@ -7,6 +7,7 @@
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
+  import { ResourceActions } from '@/models/utils';
 
   const token = useThemeToken();
 
@@ -34,9 +35,10 @@
           console.log('write ');
           setBusinessUnitId(selectedBusinessUnitId.value);
         }
+      } else {
+        await businessUnitStore?.fetch(Number(routerBusinessUnitId.value));
+        selectedKeys.value = [routerBusinessUnitId.value];
       }
-      await businessUnitStore?.fetch(Number(routerBusinessUnitId.value));
-      selectedKeys.value = [routerBusinessUnitId.value];
     },
   );
 
@@ -99,6 +101,9 @@
         class="menuItem"
       >
         <a-menu-item
+          v-if="
+            businessUnitStore.getPermissions.includes(ResourceActions.Create)
+          "
           key="create-businessUnit"
           class="create-menu-item"
           @click="router.push('/settings/business-unit-management/create')"

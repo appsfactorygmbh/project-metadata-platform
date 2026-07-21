@@ -7,6 +7,7 @@
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
+  import { ResourceActions } from '@/models/utils';
 
   const token = useThemeToken();
 
@@ -34,9 +35,10 @@
           console.log('write ');
           setOfficeLocationId(selectedOfficeLocationId.value);
         }
+      } else {
+        await officeLocationStore?.fetch(Number(routerOfficeLocationId.value));
+        selectedKeys.value = [routerOfficeLocationId.value];
       }
-      await officeLocationStore?.fetch(Number(routerOfficeLocationId.value));
-      selectedKeys.value = [routerOfficeLocationId.value];
     },
   );
 
@@ -99,6 +101,9 @@
         class="menuItem"
       >
         <a-menu-item
+          v-if="
+            officeLocationStore.getPermissions.includes(ResourceActions.Create)
+          "
           key="create-officeLocation"
           class="create-menu-item"
           @click="router.push('/settings/office-location-management/create')"

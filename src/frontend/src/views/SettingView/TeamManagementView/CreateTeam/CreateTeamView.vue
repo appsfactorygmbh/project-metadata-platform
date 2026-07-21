@@ -8,6 +8,7 @@
     teamRoutingSymbol,
     teamStoreSymbol,
   } from '@/store/injectionSymbols.ts';
+  import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
   const { setTeamId } = inject(teamRoutingSymbol)!;
 
@@ -36,7 +37,12 @@
 </script>
 
 <template>
-  <FormModal title="Create Team" :form-store="formStore" @cancel="onCancel">
+  <FormModal
+    title="Create Team"
+    :form-store="formStore"
+    :disabled="!teamStore.getPermissions.includes(ResourceActions.Create)"
+    @cancel="onCancel"
+  >
     <CreateTeamForm
       :form-store="formStore"
       :initial-values="initialFormValues"

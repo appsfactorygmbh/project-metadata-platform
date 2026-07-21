@@ -138,7 +138,6 @@
       />
     </a-form-item>
   </a-form>
-  <contextHolder />
 </template>
 
 <style scoped>
