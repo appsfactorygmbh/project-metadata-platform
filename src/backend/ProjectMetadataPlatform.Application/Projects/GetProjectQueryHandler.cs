@@ -39,7 +39,7 @@ public class GetProjectQueryHandler
         {
             throw new UnauthorizedException();
         }
-        var permissions = await _authorizationService.GetPermissions(project);
+        var permissions = await _authorizationService.GetPermissions(project,[AuthorizationConstants.Actions.EDIT,AuthorizationConstants.Actions.DELETE]);
         return (project, permissions);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
@@ -9,6 +10,7 @@ using Cerbos.Sdk;
 using Cerbos.Sdk.Builder;
 using Cerbos.Sdk.Utility;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.ObjectPool;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
@@ -122,14 +124,15 @@ public class AuthorizationService : IAuthorizationService
 
     /// <inheritdoc/>
     public async Task<IEnumerable<AuthorizationConstants.Actions>> GetPermissions<T>(
-        T? resource = null
+        T? resource = null,
+        IEnumerable<AuthorizationConstants.Actions>? actions = null
     )
         where T : class
     {
         List<AuthorizationConstants.Actions> approvedActions = [];
         var principal = await GetPrincipalFromContext();
         var resourceObject = resource.ToResource(typeof(T).Name, "Default");
-        foreach (var action in Enum.GetValues<AuthorizationConstants.Actions>())
+        foreach (var action in actions ?? Enum.GetValues<AuthorizationConstants.Actions>())
         {
             var authorizationResult = await PlanRequest(
                 principal,
@@ -229,6 +232,7 @@ public class AuthorizationService : IAuthorizationService
         IEnumerable<string> actions
     )
     {
+        var t = Stopwatch.GetTimestamp();
         var request = PlanResourcesRequest
             .NewInstance()
             .WithRequestId(RequestId.Generate())
@@ -236,7 +240,8 @@ public class AuthorizationService : IAuthorizationService
             .WithResource(resource)
             .WithActions([.. actions]);
         var result = await _cerbosClient.PlanResourcesAsync(request);
-
+        var d = Stopwatch.GetElapsedTime(t);
+            Console.WriteLine("TIMEE: " + d.ToString());
         return result;
     }
 }

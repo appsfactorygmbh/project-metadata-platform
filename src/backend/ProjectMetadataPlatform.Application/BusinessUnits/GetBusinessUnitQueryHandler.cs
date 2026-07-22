@@ -49,7 +49,7 @@ public class GetBusinessUnitQueryHandler
         {
             throw new UnauthorizedException();
         }
-        var permissions = await _authorizationService.GetPermissions(bu);
+        var permissions = await _authorizationService.GetPermissions(bu,[AuthorizationConstants.Actions.EDIT,AuthorizationConstants.Actions.DELETE]);
         return (bu, permissions);
     }
 }
