@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 
@@ -18,6 +19,6 @@ public class AuthorizationExceptionHandler
     /// <returns>An IActionResult representing the result of handling the log exception.</returns>
     public IActionResult? Handle(AuthorizationException exception)
     {
-        return new UnauthorizedResult();
+        return new StatusCodeResult(StatusCodes.Status403Forbidden);
     }
 }
