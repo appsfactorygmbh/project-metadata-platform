@@ -81,9 +81,7 @@ This project supports User Provisioning via SCIM. The following user scheme with
 | urn:ietf:params:scim:schemas:extension:pmp:User:departments             | Departments        |    creates new Departments if they don't exist already                              |
 
 ## Appsfactory “Metadata Platform” Backend
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=alert_status&token=0c6013f6d8cd878e6d2e9736839f77872d3b5d8e)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=code_smells&token=0c6013f6d8cd878e6d2e9736839f77872d3b5d8e)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-backend&metric=coverage&token=0c6013f6d8cd878e6d2e9736839f77872d3b5d8e)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-backend)
+
 ### Overview
 
 This project is an ASP.NET Core application using Entity Framework Core and PostgreSQL. It provides a RESTful API for managing metadata of projects.
@@ -221,9 +219,7 @@ When changing the domain models or their configurations in the infrastructure la
 9. Run the migration script on the database once the merge request is approved and merged onto main.
 
 ## Appsfactory “Metadata Platform” Frontend
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-frontend&metric=alert_status&token=e8a8f47687810247f3027043088407c7e0222acc)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-frontend)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-frontend&metric=code_smells&token=e8a8f47687810247f3027043088407c7e0222acc)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-frontend)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=appsfactory_project-metadata-platform-frontend&metric=coverage&token=e8a8f47687810247f3027043088407c7e0222acc)](https://sonarcloud.io/summary/new_code?id=appsfactory_project-metadata-platform-frontend)
+
 ### Overview
 
 This project is a Vue 3 web application with TypeScript integration, utilizing modern tools like Vite, ESLint, Prettier, and Vitest for development and testing.
