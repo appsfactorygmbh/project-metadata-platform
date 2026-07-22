@@ -51,7 +51,7 @@
     "@eslint/eslintrc": "^3.3.6",
     "@eslint/js": "^10.0.1",
     "@openapitools/openapi-generator-cli": "^2.40.0",
-    "@pinia/testing": "^1.0.3",
+    "@pinia/testing": "^2.0.1",
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/vue": "^8.1.0",
     "@tsconfig/node20": "^20.1.9",
