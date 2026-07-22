@@ -49,7 +49,7 @@ public class GetAllOfficeLocationsQueryHandler
         var queriedOfficeLocations = await _authorizationService.TryGetPlanResourceQuery(
             officeLocations
         );
-        var permissions = await _authorizationService.GetPermissions<OfficeLocation>();
+        var permissions = await _authorizationService.GetPermissions<OfficeLocation>(            actions: [AuthorizationConstants.Actions.CREATE]);
         if (queriedOfficeLocations == null)
         {
             List<OfficeLocation> filteredOfficeLocations = [];

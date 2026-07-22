@@ -48,7 +48,7 @@ public class GetDepartmentQueryHandler
         {
             throw new UnauthorizedException();
         }
-        var permissions = await _authorizationService.GetPermissions(department);
+        var permissions = await _authorizationService.GetPermissions(department,[AuthorizationConstants.Actions.EDIT,AuthorizationConstants.Actions.DELETE]);
         return (department, permissions);
     }
 }

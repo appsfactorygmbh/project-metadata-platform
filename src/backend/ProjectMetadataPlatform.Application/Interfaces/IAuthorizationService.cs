@@ -45,11 +45,15 @@ public interface IAuthorizationService
         where T : class;
 
     /// <summary>
-    /// Gets all allowed (not denied) actions for a Resource or its type.
+    /// Gets allowed (not denied) actions for a Resource or its type.
     /// </summary>
     /// <typeparam name="T">Type of resource to check permissions on.</typeparam>
     /// <param name="resource"> Optional actual resource to check permissions on.</param>
+    /// <param name="actions">Optional: Actions to check. If null checks all Actions.</param>
     /// <returns>List of allowed action.</returns>
-    Task<IEnumerable<AuthorizationConstants.Actions>> GetPermissions<T>(T? resource = null)
+    Task<IEnumerable<AuthorizationConstants.Actions>> GetPermissions<T>(
+        T? resource = null,
+        IEnumerable<AuthorizationConstants.Actions>? actions = null
+    )
         where T : class;
 }

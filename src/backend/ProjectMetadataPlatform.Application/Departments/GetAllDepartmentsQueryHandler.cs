@@ -47,7 +47,7 @@ public class GetAllDepartmentsQueryHandler
     {
         var departments = await _departmentRepository.GetDepartmentsAsync();
         var queriedDepartments = await _authorizationService.TryGetPlanResourceQuery(departments);
-        var permissions = await _authorizationService.GetPermissions<Department>();
+        var permissions = await _authorizationService.GetPermissions<Department>(            actions: [AuthorizationConstants.Actions.CREATE]);
         if (queriedDepartments == null)
         {
             List<Department> filteredDepartments = [];

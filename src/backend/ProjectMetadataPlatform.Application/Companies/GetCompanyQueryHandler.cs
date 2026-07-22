@@ -46,7 +46,7 @@ public class GetCompanyQueryHandler
         {
             throw new UnauthorizedException();
         }
-        var permissions = await _authorizationService.GetPermissions(company);
+        var permissions = await _authorizationService.GetPermissions(company,[AuthorizationConstants.Actions.EDIT,AuthorizationConstants.Actions.DELETE]);
         return (company, permissions);
     }
 }

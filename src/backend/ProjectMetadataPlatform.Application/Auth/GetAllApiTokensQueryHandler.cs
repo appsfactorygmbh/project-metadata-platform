@@ -50,7 +50,9 @@ public class GetAllApiTokensQueryHandler
         var tokens = await _apiTokenRepository.GetApiTokens();
 
         var queriedTokens = await _authorizationService.TryGetPlanResourceQuery(tokens);
-        var permissions = await _authorizationService.GetPermissions<ApiToken>();
+        var permissions = await _authorizationService.GetPermissions<ApiToken>(
+            actions: [AuthorizationConstants.Actions.CREATE]
+        );
         if (queriedTokens == null)
         {
             List<ApiToken> apiTokens = [];

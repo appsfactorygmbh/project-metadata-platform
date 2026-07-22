@@ -43,7 +43,7 @@ public class GetGlobalPluginsQueryHandler
         var pluginQuery = await _pluginRepository.GetGlobalPluginsAsync();
         var queriedPlugins = await _authorizationService.TryGetPlanResourceQuery(pluginQuery);
 
-        var globalPermissions = await _authorizationService.GetPermissions<Plugin>();
+        var globalPermissions = await _authorizationService.GetPermissions<Plugin>(actions:[AuthorizationConstants.Actions.CREATE]);
         List<(Plugin, IEnumerable<AuthorizationConstants.Actions>)> plugins = [];
         if (queriedPlugins == null)
         {
@@ -56,7 +56,7 @@ public class GetGlobalPluginsQueryHandler
                     )
                 )
                 {
-                    plugins.Add((plugin, await _authorizationService.GetPermissions(plugin)));
+                    plugins.Add((plugin, await _authorizationService.GetPermissions(plugin,[AuthorizationConstants.Actions.EDIT,AuthorizationConstants.Actions.DELETE])));
                 }
             }
             return (plugins, globalPermissions);
@@ -66,7 +66,7 @@ public class GetGlobalPluginsQueryHandler
             var plugin in await queriedPlugins.ToListAsync(cancellationToken: cancellationToken)
         )
         {
-            plugins.Add((plugin, await _authorizationService.GetPermissions(plugin)));
+            plugins.Add((plugin, await _authorizationService.GetPermissions(plugin,[AuthorizationConstants.Actions.EDIT,AuthorizationConstants.Actions.DELETE])));
         }
         return (plugins, globalPermissions);
     }

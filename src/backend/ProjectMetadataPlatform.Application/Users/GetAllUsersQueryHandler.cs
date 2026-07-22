@@ -43,7 +43,9 @@ public class GetAllUsersQueryHandler
     {
         var users = await _usersRepository.GetUsersAsync(request.Filter);
         var queriedUsers = await _authorizationService.TryGetPlanResourceQuery(users);
-        var permissions = await _authorizationService.GetPermissions<ApplicationUser>();
+        var permissions = await _authorizationService.GetPermissions<ApplicationUser>(
+            actions: [AuthorizationConstants.Actions.CREATE]
+        );
         if (queriedUsers == null)
         {
             List<ApplicationUser> filteredUsers = [];
