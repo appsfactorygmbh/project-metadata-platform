@@ -112,7 +112,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       reporters: ['default', 'html'],
       outputFile: {
         junit: './junit-report.xml',
-        'vitest-sonar-reporter': 'sonar-report.xml',
+
       },
     },
   };

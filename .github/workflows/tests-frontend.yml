@@ -1,9 +1,4 @@
-name: Frontend_Unit_Tests_and_SonarCloud_Analysis
-
-env:
-  SONAR_ORGANIZATION_KEY: "appsfactory"
-  SONAR_PROJECT_KEY: "appsfactory_project-metadata-platform-frontend"
-
+name: Frontend_Unit_Tests
 defaults:
   run:
     working-directory: src/frontend
@@ -119,8 +114,8 @@ jobs:
           corepack enable
           yarn lint:check .
 
-  unit_tests_and_sonar:
-    name: Unit Tests, Coverage & SonarCloud
+  unit_tests:
+    name: Unit Tests & Coverage
     runs-on: ubuntu-latest
     needs: install
     steps:
@@ -148,19 +143,6 @@ jobs:
           yarn coverage
         env:
           NODE_OPTIONS: "--no-experimental-webstorage"
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
-        with:
-          args: >
-            -Dsonar.organization=${{ env.SONAR_ORGANIZATION_KEY }}
-            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
-            -Dsonar.javascript.lcov.reportPaths=src/frontend/coverage/lcov.info
-            -Dsonar.sources=src/frontend/src
-            -Dsonar.exclusions=**/__tests__/**,**/__mocks__/**,**/*.spec.ts,**/*.test.ts,**/generated/**
 
   integration_test:
     name: Integration Tests (Cypress)
