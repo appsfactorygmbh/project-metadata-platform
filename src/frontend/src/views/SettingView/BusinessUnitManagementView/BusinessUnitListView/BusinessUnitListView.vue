@@ -36,8 +36,16 @@
           setBusinessUnitId(selectedBusinessUnitId.value);
         }
       } else {
-        await businessUnitStore?.fetch(Number(routerBusinessUnitId.value));
-        selectedKeys.value = [routerBusinessUnitId.value];
+        try {
+          await businessUnitStore?.fetch(Number(routerBusinessUnitId.value));
+          selectedKeys.value = [routerBusinessUnitId.value];
+        } catch (error) {
+          if ((error as Error).message === 'This action is unauthorized.') {
+            router.push('/403');
+          } else {
+            console.error('Failed to fetch Business Unit:', error);
+          }
+        }
       }
     },
   );
@@ -78,9 +86,17 @@
     }
     await businessUnitStore?.fetchAll();
     if (routerBusinessUnitId.value) {
-      await businessUnitStore?.fetch(Number(routerBusinessUnitId.value));
-      selectedKeys.value = [routerBusinessUnitId.value];
-      scrollToSelectedMenuItem();
+      try {
+        await businessUnitStore?.fetch(Number(routerBusinessUnitId.value));
+        selectedKeys.value = [routerBusinessUnitId.value];
+        scrollToSelectedMenuItem();
+      } catch (error) {
+        if ((error as Error).message === 'This action is unauthorized.') {
+          router.push('/403');
+        } else {
+          console.error('Failed to fetch Business Unit:', error);
+        }
+      }
     }
   });
 </script>

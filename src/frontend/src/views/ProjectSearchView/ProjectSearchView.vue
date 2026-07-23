@@ -18,7 +18,7 @@
   } from '@ant-design/icons-vue';
   import { usePluginStore, useProjectStore } from '@/store';
   import { useQuery, useThemeToken } from '@/utils/hooks';
-
+  const router = useRouter();
   const token = useThemeToken();
 
   const props = defineProps({
@@ -182,10 +182,18 @@
   };
 
   const fetchProject = async (id: number) => {
-    await projectStore.fetch(id);
-    await pluginStore.fetch(id);
-    await pluginStore?.fetchUnarchived(id);
-    await localLogStore?.fetch(id);
+    try {
+      await projectStore.fetch(id);
+      await pluginStore.fetch(id);
+      await pluginStore?.fetchUnarchived(id);
+      await localLogStore?.fetch(id);
+    } catch (error) {
+      if ((error as Error).message === 'This action is unauthorized.') {
+        router.push('/403');
+      } else {
+        console.error('Failed to fetch Project:', error);
+      }
+    }
   };
 
   onMounted(async () => {
@@ -196,13 +204,21 @@
     console.log(routerProjectSlug.value, routerProjectId.value);
 
     if (routerProjectSlug.value) {
-      const project = await projectStore.findProjectBySlug(
-        routerProjectSlug.value,
-        { fullObjectNeeded: false },
-      );
-      if (project) {
-        if (routerProjectId.value === project.id) fetchProject(project.id);
-        setProjectId(project.id);
+      try {
+        const project = await projectStore.findProjectBySlug(
+          routerProjectSlug.value,
+          { fullObjectNeeded: false },
+        );
+        if (project) {
+          if (routerProjectId.value === project.id) fetchProject(project.id);
+          setProjectId(project.id);
+        }
+      } catch (error) {
+        if ((error as Error).message === 'This action is unauthorized.') {
+          router.push('/403');
+        } else {
+          console.error('Failed to fetch Project:', error);
+        }
       }
     } else if (routerProjectId.value) {
       await fetchProject(routerProjectId.value);

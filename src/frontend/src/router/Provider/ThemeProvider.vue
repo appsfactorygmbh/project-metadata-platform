@@ -5,6 +5,8 @@
 </script>
 <template>
   <a-config-provider :theme="themeConfig">
-    <slot />
+    <a-app>
+      <slot />
+    </a-app>
   </a-config-provider>
 </template>

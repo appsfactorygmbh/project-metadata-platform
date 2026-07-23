@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { type FormStore, type FormSubmitType } from '@/components/Form';
-  import { message } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
   import { reactive, toRaw } from 'vue';
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateCompanyFormData } from './CreateCompanyFormData.ts';
@@ -13,7 +13,7 @@
     initialValues: CreateCompanyFormData;
     companyStore: CompanyStore;
   }>();
-
+  const { notification } = App.useApp();
   const emit = defineEmits<(e: 'newId', id: number) => void>();
   const onSubmit: FormSubmitType = async (fields) => {
     try {
@@ -22,11 +22,18 @@
       };
       const id = await companyStore.create(companyDef);
       await companyStore.fetchAll();
-      message.success('Company created', 2);
+      notification.success({
+        message: 'Success!',
+        description: 'Company created successfully.',
+      });
       emit('newId', id);
     } catch (error) {
-      message.error('An error occurred. The company could not be created', 10);
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
       console.error('Error creating company:', error);
+      throw error;
     }
   };
 

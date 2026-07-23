@@ -28,8 +28,16 @@
           setUserId(selectedUserId.value);
         }
       } else {
-        await userStore?.fetchUser(routerUserId.value);
-        selectedKeys.value = [routerUserId.value];
+        try {
+          await userStore?.fetchUser(routerUserId.value);
+          selectedKeys.value = [routerUserId.value];
+        } catch (error) {
+          if ((error as Error).message === 'This action is unauthorized.') {
+            router.push('/403');
+          } else {
+            console.error('Failed to fetch User:', error);
+          }
+        }
       }
     },
   );
@@ -47,7 +55,15 @@
       setUserId(userStore.getUser?.externalId);
     }
     if (routerUserId.value) {
-      await userStore?.fetchUser(routerUserId.value);
+      try {
+        await userStore?.fetchUser(routerUserId.value);
+      } catch (error) {
+        if ((error as Error).message === 'This action is unauthorized.') {
+          router.push('/403');
+        } else {
+          console.error('Failed to fetch User:', error);
+        }
+      }
     }
     selectedKeys.value = [routerUserId.value];
   });

@@ -16,13 +16,13 @@
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useEditing, useThemeToken } from '@/utils/hooks';
-  import { message } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
   import { ResourceActions } from '@/models/utils';
   import type { Rule } from 'ant-design-vue/es/form';
   import type { BusinessUnitModel } from '@/models/BusinessUnit';
 
   const token = useThemeToken();
-
+  const { notification } = App.useApp();
   const route = useRoute();
   const { isEditing, stopEditing, startEditing } = useEditing();
   const formRef = ref();
@@ -96,21 +96,27 @@
 
       await businessUnitStore.fetch(businessUnit.value?.id);
 
-      message.success('Business Unit updated successfully');
+      notification.success({
+        message: 'Success!',
+        description: 'Business Unit updated successfully.',
+      });
       await stopEditing();
     } catch (error) {
       console.error('Validation or API error:', error);
-      message.error('Failed to update businessUnit. Please check your inputs.');
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
     }
   };
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
     if (linkedTeams.value.length > 0) {
-      message.error(
-        `Business Unit is still linked to these teams: [${linkedTeams.value}]`,
-        5,
-      );
+      notification.error({
+        message: 'Error!',
+        description: `Business Unit is still linked to these teams: [${linkedTeams.value}]`,
+      });
       return;
     }
     isConfirmModalOpen.value = true;
@@ -175,7 +181,7 @@
     if (
       !businessUnit.value ||
       isEditing.value ||
-      !businessUnitStore.getPermissions.includes(ResourceActions.Delete)
+      !businessUnit.value?.permissions?.includes(ResourceActions.Delete)
     )
       tempButtons[0].status = 'deactivated';
 
@@ -198,10 +204,21 @@
 
   const deleteBusinessUnit = async () => {
     if (!businessUnit.value) return;
-    await businessUnitStore.delete(businessUnit.value?.id);
-    emit('businessUnitDeleted');
-    businessUnitStore.nullBusinessUnit();
-    setBusinessUnitId(null);
+    try {
+      await businessUnitStore.delete(businessUnit.value?.id);
+      notification.success({
+        message: 'Success!',
+        description: 'Business Unit deleted successfully.',
+      });
+      emit('businessUnitDeleted');
+      businessUnitStore.nullBusinessUnit();
+      setBusinessUnitId(null);
+    } catch (error) {
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+    }
   };
 
   const isCancelModalOpen = ref(false);

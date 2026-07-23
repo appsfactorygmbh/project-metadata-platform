@@ -11,7 +11,7 @@
     projectRoutingSymbol,
   } from '@/store/injectionSymbols';
   import { inject, ref, watch } from 'vue';
-  import { message } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
   import { usePluginStore, useProjectStore } from '@/store';
   import type { PluginModel } from '@/models/Plugin';
   import _ from 'lodash';
@@ -19,6 +19,7 @@
   import { useThemeToken } from '@/utils/hooks';
   import { ResourceActions } from '@/models/utils';
 
+  const { notification } = App.useApp();
   const token = useThemeToken();
 
   const localLogStore = inject(localLogStoreSymbol);
@@ -87,11 +88,8 @@
     if (!newVal) {
       if (projectStore.getUpdatedSuccessfully) {
         projectEditStore?.resetPluginChanges();
-        message.success('Project updated successfully.', 2);
         projectStore.fetch(projectStore.getProject?.id ?? 0);
         stopEditing();
-      } else {
-        message.error('Could not update Project.', 5);
       }
     }
   });
@@ -102,10 +100,11 @@
 
     // If error occurred, display message and return
     if (!projectEditStore?.getCanBeAdded) {
-      message.error(
-        'Could not update Project. There are empty fields or duplicated plugins.',
-        5,
-      );
+      notification.error({
+        message: 'Error!',
+        description:
+          'Could not update Project. There are empty fields or duplicated plugins.',
+      });
       return;
     }
 
@@ -165,13 +164,25 @@
 
     const projectID = computed(() => projectStore.getProject?.id);
     if (projectID.value) {
-      await projectStore.update(projectID.value, updatedProject);
+      try {
+        await projectStore.update(projectID.value, updatedProject);
+        notification.success({
+          message: 'Success!',
+          description: 'Project edited successfully.',
+        });
+      } catch (error) {
+        notification.error({
+          message: 'Error!',
+          description: (error as Error).message ?? 'An error occurred.',
+        });
+      }
       await projectStore.fetchAll();
       await projectStore.fetch(projectID.value);
       await pluginStore.fetchUnarchived(projectID.value);
       await pluginStore.fetch(projectID.value);
       await localLogStore?.fetch(projectID.value);
     }
+
     closeAddPluginModal();
   };
 
@@ -231,15 +242,23 @@
       try {
         await projectStore.archive(projectID);
         await projectStore.fetchAll();
+        notification.success({
+          message: 'Success!',
+          description: 'Project archived successfully.',
+        });
+        const newProjectId = getNextActiveProjectId(projectID);
+        if (!newProjectId) projectRouting.setProjectId(undefined);
+        projectRouting.setProjectId(newProjectId);
+      } catch (error) {
+        notification.error({
+          message: 'Error!',
+          description: (error as Error).message ?? 'An error occurred.',
+        });
       } finally {
         isArchiveModalOpen.value = false;
         isModalOpen.value = false;
         projectEditStore?.resetPluginChanges();
-        stopEditing();
         await localLogStore?.fetch(projectID);
-        const newProjectId = getNextActiveProjectId(projectID);
-        if (!newProjectId) projectRouting.setProjectId(undefined);
-        projectRouting.setProjectId(newProjectId);
       }
     }
   };

@@ -35,7 +35,9 @@
   import { useDeselect, useThemeToken } from '@/utils/hooks';
   import { CompanyState, SecurityLevel } from '@/api/generated';
   import { ResourceActions } from '@/models/utils';
+  import { App } from 'ant-design-vue';
 
+  const { notification } = App.useApp();
   const localLogStore = inject(localLogStoreSymbol);
   const projectStore = useProjectStore();
   const projectEditStore = inject(projectEditStoreSymbol)!;
@@ -297,8 +299,17 @@
 
     try {
       await projectStore.delete(project.id);
+      notification.success({
+        message: 'Success!',
+        description: 'Project deleted successfully.',
+      });
     } catch (error) {
       console.error('Error deleting project:', error);
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+      return;
     } finally {
       isDeleteModalOpen.value = false;
       const newProjectId = getNextArchivedProjectId();
@@ -317,33 +328,46 @@
   const reactivateProject = async () => {
     const detailedProject = projectStore?.getProject;
 
-    if (!detailedProject) {
-      throw new Error('No project found to update');
+    try {
+      if (!detailedProject) {
+        throw new Error('No project found to update');
+      }
+
+      const currentProject: UpdateProjectModel = {
+        projectName: detailedProject.projectName,
+        clientName: detailedProject.clientName,
+        offerId: detailedProject.offerId,
+
+        companyId: detailedProject.company.id,
+        teamId: detailedProject.team ? detailedProject.team.id : null,
+
+        companyState: detailedProject.companyState,
+        ismsLevel: detailedProject.ismsLevel,
+        isEoC: detailedProject.isEoC,
+        notes: detailedProject.notes,
+        isArchived: detailedProject.isArchived,
+
+        pluginList: null,
+      };
+      const projectId = projectStore.getProject?.id;
+      currentProject.pluginList = pluginStore.getPlugins;
+
+      await projectStore.unarchive(projectId);
+      await localLogStore?.fetch(projectId);
+      notification.success({
+        message: 'Success!',
+        description: 'Project reactivated successfully.',
+      });
+    } catch (error) {
+      console.error('Error reactivating project:', error);
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+    } finally {
+      const newProjectId = getNextArchivedProjectId();
+      projectRouting.setProjectId(newProjectId);
     }
-
-    const currentProject: UpdateProjectModel = {
-      projectName: detailedProject.projectName,
-      clientName: detailedProject.clientName,
-      offerId: detailedProject.offerId,
-
-      companyId: detailedProject.company.id,
-      teamId: detailedProject.team ? detailedProject.team.id : null,
-
-      companyState: detailedProject.companyState,
-      ismsLevel: detailedProject.ismsLevel,
-      isEoC: detailedProject.isEoC,
-      notes: detailedProject.notes,
-      isArchived: detailedProject.isArchived,
-
-      pluginList: null,
-    };
-    const projectId = projectStore.getProject?.id;
-    currentProject.pluginList = pluginStore.getPlugins;
-
-    await projectStore.unarchive(projectId);
-    await localLogStore?.fetch(projectId);
-    const newProjectId = getNextArchivedProjectId();
-    projectRouting.setProjectId(newProjectId);
   };
 </script>
 
