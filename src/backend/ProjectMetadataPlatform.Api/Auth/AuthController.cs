@@ -141,7 +141,11 @@ public class AuthController : ControllerBase
         [FromBody] CreateApiTokenRequest request
     )
     {
-        var command = new CreateApiTokenCommand(request.Name, request.Scopes);
+        if (request.Name != null && string.IsNullOrWhiteSpace(request.Name))
+        {
+            return BadRequest(new ErrorResponse("Api Token Name can't be whitespaces"));
+        }
+        var command = new CreateApiTokenCommand(request.Name!, request.Scopes);
         var token = await _mediator.Send(command);
         var response = new GetApiTokenDetailsResponse(
             token.Id,
