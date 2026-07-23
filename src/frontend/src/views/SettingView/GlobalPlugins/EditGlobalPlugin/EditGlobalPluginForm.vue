@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { type FormStore, type FormSubmitType } from '@/components/Form';
-  import { message } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
   import { useGlobalPluginStore } from '@/store';
   import { onMounted, reactive } from 'vue';
   import { useRoute } from 'vue-router';
@@ -11,7 +11,7 @@
   const { formStore } = defineProps<{
     formStore: FormStore;
   }>();
-
+  const { notification } = App.useApp();
   const globalPluginStore = useGlobalPluginStore();
 
   const onSubmit: FormSubmitType = (fields: PatchGlobalPluginRequest) => {
@@ -21,9 +21,17 @@
 
     globalPluginStore
       .update(pluginIdRef.value, { ...fields })
-      .then(() => message.success('Plugin updated successfully.'))
+      .then(() =>
+        notification.success({
+          message: 'Success!',
+          description: 'Plugin updated successfully.',
+        }),
+      )
       .catch((error) => {
-        message.error((error as Error).message ?? 'An error occurred');
+        notification.error({
+          message: 'Error!',
+          description: (error as Error).message ?? 'An error occurred.',
+        });
         throw error;
       });
   };

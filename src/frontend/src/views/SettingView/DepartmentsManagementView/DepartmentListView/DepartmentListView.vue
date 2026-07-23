@@ -35,8 +35,16 @@
           setDepartmentId(selectedDepartmentId.value);
         }
       } else {
-        await departmentStore?.fetch(Number(routerDepartmentId.value));
-        selectedKeys.value = [routerDepartmentId.value];
+        try {
+          await departmentStore?.fetch(Number(routerDepartmentId.value));
+          selectedKeys.value = [routerDepartmentId.value];
+        } catch (error) {
+          if ((error as Error).message === 'This action is unauthorized.') {
+            router.push('/403');
+          } else {
+            console.error('Failed to fetch Department:', error);
+          }
+        }
       }
     },
   );
@@ -77,9 +85,17 @@
     }
     await departmentStore?.fetchAll();
     if (routerDepartmentId.value) {
-      await departmentStore?.fetch(Number(routerDepartmentId.value));
-      selectedKeys.value = [routerDepartmentId.value];
-      scrollToSelectedMenuItem();
+      try {
+        await departmentStore?.fetch(Number(routerDepartmentId.value));
+        selectedKeys.value = [routerDepartmentId.value];
+        scrollToSelectedMenuItem();
+      } catch (error) {
+        if ((error as Error).message === 'This action is unauthorized.') {
+          router.push('/403');
+        } else {
+          console.error('Failed to fetch Department:', error);
+        }
+      }
     }
   });
 </script>

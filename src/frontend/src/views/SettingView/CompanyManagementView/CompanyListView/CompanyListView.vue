@@ -32,9 +32,18 @@
           console.log('write ');
           setCompanyId(selectedCompanyId.value);
         }
+      } else {
+        try {
+          await companyStore?.fetch(Number(routerCompanyId.value));
+          selectedKeys.value = [routerCompanyId.value];
+        } catch (error) {
+          if ((error as Error).message === 'This action is unauthorized.') {
+            router.push('/403');
+          } else {
+            console.error('Failed to fetch Company:', error);
+          }
+        }
       }
-      await companyStore?.fetch(Number(routerCompanyId.value));
-      selectedKeys.value = [routerCompanyId.value];
     },
   );
 
@@ -74,9 +83,17 @@
     }
     await companyStore?.fetchAll();
     if (routerCompanyId.value) {
-      await companyStore?.fetch(Number(routerCompanyId.value));
-      selectedKeys.value = [routerCompanyId.value];
-      scrollToSelectedMenuItem();
+      try {
+        await companyStore?.fetch(Number(routerCompanyId.value));
+        selectedKeys.value = [routerCompanyId.value];
+        scrollToSelectedMenuItem();
+      } catch (error) {
+        if ((error as Error).message === 'This action is unauthorized.') {
+          router.push('/403');
+        } else {
+          console.error('Failed to fetch Company:', error);
+        }
+      }
     }
   });
 </script>

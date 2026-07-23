@@ -75,10 +75,11 @@
   const mapSearchableColumn = (
     column: ArrayElement<typeof props.columns>,
   ): TableColumnType => {
-    const index = column.dataIndex;
+    const col = { ...column } as TableColumnType & SearchableColumn;
+    const index = col.dataIndex;
 
-    if (column.searchable) {
-      column.onFilter = (value, record) => {
+    if (col.searchable) {
+      col.onFilter = (value, record) => {
         const cellValue = record[index];
         if (cellValue == null) {
           return false;
@@ -91,8 +92,8 @@
           .toLowerCase()
           .includes(String(value).toLowerCase());
       };
-      column.customFilterDropdown = true;
-      column.onFilterDropdownOpenChange = (visible: boolean) => {
+      col.customFilterDropdown = true;
+      col.onFilterDropdownOpenChange = (visible: boolean) => {
         if (visible) {
           setTimeout(() => {
             searchInput.value?.focus();
@@ -100,17 +101,19 @@
         }
       };
       // to set the coloumn.filteredValue to filtered.Info
-      column.filteredValue = filteredInfo[index] ? [filteredInfo[index]] : null;
+      col.filteredValue = filteredInfo[index] ? [filteredInfo[index]] : null;
     }
 
-    if (column.sortMethod) {
-      if (column.sortMethod == 'string') {
-        column.sorter = (a, b) => stringSorter(a, b, index);
+    if (col.sortMethod) {
+      if (col.sortMethod === 'string') {
+        col.sorter = (a: ProjectSearchModel, b: ProjectSearchModel) =>
+          stringSorter(a, b, index as keyof ProjectSearchModel);
       } else {
-        column.sorter = (a, b) => numberSorter(a, b, index);
+        col.sorter = (a: ProjectSearchModel, b: ProjectSearchModel) =>
+          numberSorter(a, b, index as keyof ProjectSearchModel);
       }
     }
-    return column;
+    return col;
   };
 
   const columns: ComputedRef<TableProps['columns']> = computed(() =>

@@ -5,20 +5,28 @@
   import GlobalPluginForm from '../GlobalPluginForm/GlobalPluginForm.vue';
   import type { GlobalPluginFormData } from '../GlobalPluginForm';
   import type { CreatePluginRequest } from '@/api/generated';
-  import { message } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
 
   const { formStore } = defineProps<{
     formStore: FormStore;
   }>();
-
+  const { notification } = App.useApp();
   const globalPluginStore = useGlobalPluginStore();
 
   const onSubmit: FormSubmitType = (fields: CreatePluginRequest) => {
     globalPluginStore
       .create(fields)
-      .then(() => message.success('Plugin created successfully'))
+      .then(() =>
+        notification.success({
+          message: 'Success!',
+          description: 'Plugin created successfully.',
+        }),
+      )
       .catch((error) => {
-        message.error((error as Error).message ?? 'An error occurred');
+        notification.error({
+          message: 'Error!',
+          description: (error as Error).message ?? 'An error occurred.',
+        });
         throw error;
       });
   };

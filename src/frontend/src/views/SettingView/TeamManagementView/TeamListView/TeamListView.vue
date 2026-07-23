@@ -29,8 +29,16 @@
           setTeamId(selectedTeamId.value);
         }
       } else {
-        await teamStore?.fetch(Number(routerTeamId.value));
-        selectedKeys.value = [routerTeamId.value];
+        try {
+          await teamStore?.fetch(Number(routerTeamId.value));
+          selectedKeys.value = [routerTeamId.value];
+        } catch (error) {
+          if ((error as Error).message === 'This action is unauthorized.') {
+            router.push('/403');
+          } else {
+            console.error('Failed to fetch Team:', error);
+          }
+        }
       }
     },
   );
@@ -71,9 +79,17 @@
     }
     await teamStore?.fetchAll();
     if (routerTeamId.value) {
-      await teamStore?.fetch(Number(routerTeamId.value));
-      selectedKeys.value = [routerTeamId.value];
-      scrollToSelectedMenuItem();
+      try {
+        await teamStore?.fetch(Number(routerTeamId.value));
+        selectedKeys.value = [routerTeamId.value];
+        scrollToSelectedMenuItem();
+      } catch (error) {
+        if ((error as Error).message === 'This action is unauthorized.') {
+          router.push('/403');
+        } else {
+          console.error('Failed to fetch Team:', error);
+        }
+      }
     }
   });
 </script>

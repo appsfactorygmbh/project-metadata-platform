@@ -19,12 +19,12 @@
   import { useEditing, useThemeToken } from '@/utils/hooks';
 
   import { ResourceActions } from '@/models/utils';
-  import { message } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
   import type { Rule } from 'ant-design-vue/es/form';
   import type { OfficeLocationModel } from '@/models/OfficeLocation';
 
   const token = useThemeToken();
-
+  const { notification } = App.useApp();
   const route = useRoute();
   const { isEditing, stopEditing, startEditing } = useEditing();
   const formRef = ref();
@@ -96,13 +96,17 @@
 
       await officeLocationStore.fetch(officeLocation.value?.id);
 
-      message.success('Office location updated successfully');
+      notification.success({
+        message: 'Success!',
+        description: 'Office Location updated successfully.',
+      });
       await stopEditing();
     } catch (error) {
       console.error('Validation or API error:', error);
-      message.error(
-        'Failed to update office location. Please check your inputs.',
-      );
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
     }
   };
 
@@ -170,7 +174,7 @@
     if (
       !officeLocation.value ||
       isEditing.value ||
-      !officeLocationStore.getPermissions.includes(ResourceActions.Delete)
+      !officeLocation.value?.permissions?.includes(ResourceActions.Delete)
     )
       tempButtons[0].status = 'deactivated';
 
@@ -193,10 +197,21 @@
 
   const deleteOfficeLocation = async () => {
     if (!officeLocation.value) return;
-    await officeLocationStore.delete(officeLocation.value?.id);
-    emit('officeLocationDeleted');
-    officeLocationStore.nullOfficeLocation();
-    setOfficeLocationId(null);
+    try {
+      await officeLocationStore.delete(officeLocation.value?.id);
+      notification.success({
+        message: 'Success!',
+        description: 'Office Location deleted successfully.',
+      });
+      emit('officeLocationDeleted');
+      officeLocationStore.nullOfficeLocation();
+      setOfficeLocationId(null);
+    } catch (error) {
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+    }
   };
 
   const isCancelModalOpen = ref(false);

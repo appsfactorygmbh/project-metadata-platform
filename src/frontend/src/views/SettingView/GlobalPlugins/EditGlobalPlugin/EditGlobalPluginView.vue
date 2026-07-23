@@ -4,7 +4,7 @@
   import { useFormStore } from '@/components/Form';
   import { useRouter } from 'vue-router';
   import { useGlobalPluginStore } from '@/store';
-  import { message } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { ResourceActions } from '@/models/utils';
 
@@ -13,7 +13,7 @@
   const router = useRouter();
   const route = useRoute();
   const isDialogOpen = ref(false);
-
+  const { notification } = App.useApp();
   const numericPluginId = computed(() => {
     const id = route.query.pluginId;
     if (typeof id !== 'string') return null;
@@ -21,21 +21,25 @@
     return Number.isNaN(parsed) ? null : parsed;
   });
   const canEdit = ref(false);
-  watchEffect(async () => {
-    if (numericPluginId.value === null) {
-      canEdit.value = false;
-      return;
-    }
+  watch(
+    () => numericPluginId.value,
+    async (newId) => {
+      if (newId === null) {
+        canEdit.value = false;
+        return;
+      }
 
-    try {
-      const plugin = await globalPluginsStore.findPlugin(numericPluginId.value);
-      canEdit.value =
-        plugin?.permissions?.includes(ResourceActions.Edit) ?? false;
-    } catch (error) {
-      console.error('Failed to fetch plugin permissions:', error);
-      canEdit.value = false;
-    }
-  });
+      try {
+        const plugin = await globalPluginsStore.findPlugin(newId);
+        canEdit.value =
+          plugin?.permissions?.includes(ResourceActions.Edit) ?? false;
+      } catch (error) {
+        console.error('Failed to fetch plugin permissions:', error);
+        canEdit.value = false;
+      }
+    },
+    { immediate: true },
+  );
 
   const onClose = () => {
     router.push('/settings/global-plugins');
@@ -46,15 +50,25 @@
   };
 
   const handleConfirm = async () => {
-    if (numericPluginId.value) {
-      await globalPluginsStore?.archive(numericPluginId.value);
-      message.success('The plugin has been archived', 2);
-    } else {
-      message.error('The plugin could not be archived', 2);
-    }
-    isDialogOpen.value = false;
+    try {
+      if (numericPluginId.value) {
+        await globalPluginsStore?.archive(numericPluginId.value);
+        notification.success({
+          message: 'Success!',
+          description: 'Plugin archived successfully.',
+        });
+        isDialogOpen.value = false;
 
-    onClose();
+        onClose();
+      } else {
+        throw new Error('The Plugin could not be archived.');
+      }
+    } catch (error) {
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+    }
   };
 
   const handleCancel = () => {

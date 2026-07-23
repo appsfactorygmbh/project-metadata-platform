@@ -24,11 +24,11 @@
   } from '@/store';
   import { ResourceActions } from '@/models/utils';
   import { PatchOperations } from '@/api/generated';
-  import { message } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
   import type { UserListModel, UserModel } from '@/models/User';
   import type { Rule } from 'ant-design-vue/es/form';
   import { isValidEmail } from '@/utils/form/userValidation';
-
+  const { notification } = App.useApp();
   const token = useThemeToken();
 
   const route = useRoute();
@@ -287,9 +287,10 @@
       }
 
       if (operations.length === 0) {
-        message.info(
-          'No changes detected \n You did not modify any fields for this user.',
-        );
+        notification.info({
+          message: 'No changes detected!',
+          description: 'You did not modify any fields for this user.',
+        });
         return;
       }
 
@@ -305,11 +306,17 @@
       if (targetId === me.value?.externalId) {
         userStore.fetchMe();
       }
-      message.success('User updated successfully');
+      notification.success({
+        message: 'Success!',
+        description: 'User updated successfully.',
+      });
       await stopEditing();
     } catch (error) {
       console.error('Validation or API error:', error);
-      message.error('Failed to update user. Please check your inputs.');
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
     }
   };
 
@@ -393,12 +400,23 @@
 
   const deleteUser = async () => {
     if (!user.value) return;
-    await userStore.delete(user.value?.externalId);
-    await userStore.fetchAll();
-    await userStore.fetchMe();
-    const myId: string =
-      userStore.getMe?.externalId ?? userStore.getUsers[0]?.externalId ?? '1';
-    setUserId(myId);
+    try {
+      await userStore.delete(user.value?.externalId);
+      notification.success({
+        message: 'Success!',
+        description: 'User deleted successfully.',
+      });
+      await userStore.fetchAll();
+      await userStore.fetchMe();
+      const myId: string =
+        userStore.getMe?.externalId ?? userStore.getUsers[0]?.externalId ?? '1';
+      setUserId(myId);
+    } catch (error) {
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+    }
   };
 
   const isUniqueEmail = (_rule: Rule, email: string) => {

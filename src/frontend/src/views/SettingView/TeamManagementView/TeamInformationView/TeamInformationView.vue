@@ -13,14 +13,14 @@
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useEditing, useThemeToken } from '@/utils/hooks';
-  import { message } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
   import { useBusinessUnitStore } from '@/store';
   import { ResourceActions } from '@/models/utils';
   import type { Rule } from 'ant-design-vue/es/form';
   import type { TeamModel } from '@/models/Team';
 
   const token = useThemeToken();
-
+  const { notification } = App.useApp();
   const route = useRoute();
 
   const { isEditing, stopEditing, startEditing } = useEditing();
@@ -108,21 +108,27 @@
 
       await teamStore.fetch(team.value?.id);
 
-      message.success('Team updated successfully');
+      notification.success({
+        message: 'Success!',
+        description: 'Team updated successfully.',
+      });
       await stopEditing();
     } catch (error) {
       console.error('Validation or API error:', error);
-      message.error('Failed to update team. Please check your inputs.');
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
     }
   };
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
     if (linkedProjects.value.length > 0) {
-      message.error(
-        `Team is still linked to these projects: [${linkedProjects.value}]`,
-        5,
-      );
+      notification.error({
+        message: 'Error!',
+        description: `Team is still linked to these projects: [${linkedProjects.value}]`,
+      });
       return;
     }
     isConfirmModalOpen.value = true;
@@ -192,7 +198,7 @@
     if (
       !team.value ||
       isEditing.value ||
-      !teamStore.getPermissions.includes(ResourceActions.Delete)
+      !team.value?.permissions?.includes(ResourceActions.Delete)
     )
       tempButtons[0].status = 'deactivated';
 
@@ -215,10 +221,21 @@
 
   const deleteTeam = async () => {
     if (!team.value) return;
-    await teamStore.delete(team.value?.id);
-    emit('teamDeleted');
-    teamStore.nullTeam();
-    setTeamId(null);
+    try {
+      await teamStore.delete(team.value?.id);
+      notification.success({
+        message: 'Success!',
+        description: 'Team deleted successfully.',
+      });
+      emit('teamDeleted');
+      teamStore.nullTeam();
+      setTeamId(null);
+    } catch (error) {
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+    }
   };
 
   const isUniqueTeamName = (_rule: Rule, name: string) => {

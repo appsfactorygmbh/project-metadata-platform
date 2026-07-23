@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { type FormStore, type FormSubmitType } from '@/components/Form';
-  import { message } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
   import { reactive, toRaw } from 'vue';
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateApiTokenFormData } from './CreateApiTokenFormData.ts';
@@ -11,7 +11,7 @@
     CreateOnlyOneScimToken,
   } from '@/utils/form/userValidation.ts';
   import { TokenScopes } from '@/api/generated/index.ts';
-
+  const { notification } = App.useApp();
   const { formStore, initialValues, apiTokenStore } = defineProps<{
     formStore: FormStore;
     initialValues: CreateApiTokenFormData;
@@ -29,8 +29,12 @@
       await apiTokenStore.fetchAll();
       emit('newId', id);
     } catch (error) {
-      message.error('An error occurred. The Token could not be created', 10);
-      console.error('Error creating team:', error);
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+      console.error('Error creating token:', error);
+      throw error;
     }
   };
 

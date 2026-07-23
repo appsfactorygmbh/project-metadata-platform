@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { type FormStore, type FormSubmitType } from '@/components/Form';
-  import { message } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
   import { reactive, toRaw } from 'vue';
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateTeamFormData } from './CreateTeamFormData.ts';
@@ -15,7 +15,7 @@
     initialValues: CreateTeamFormData;
     teamStore: TeamStore;
   }>();
-
+  const { notification } = App.useApp();
   const buStore = useBusinessUnitStore();
 
   const { getBusinessUnits } = storeToRefs(buStore);
@@ -41,11 +41,19 @@
       };
       const id = await teamStore.create(teamDef);
       await teamStore.fetchAll();
-      message.success('Team created', 2);
+      notification.success({
+        message: 'Success!',
+        description: 'Team created successfully.',
+      });
       emit('newId', id);
     } catch (error) {
-      message.error('An error occurred. The team could not be created', 10);
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
       console.error('Error creating team:', error);
+
+      throw error;
     }
   };
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { type FormStore, type FormSubmitType } from '@/components/Form';
-  import { message, notification } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
   import { reactive, toRaw } from 'vue';
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateUserFormData } from './CreateUserFormData.ts';
@@ -29,6 +29,7 @@
     initialValues: CreateUserFormData;
     userStore: UserStore;
   }>();
+  const { notification } = App.useApp();
   const teamStore = useTeamStore();
   const departmentStore = useDepartmentStore();
   const buStore = useBusinessUnitStore();
@@ -40,7 +41,7 @@
   const { getDepartmentNames } = storeToRefs(departmentStore);
   const { getOfficeLocationNames } = storeToRefs(officeLocationStore);
 
-  const onSubmit: FormSubmitType = (fields) => {
+  const onSubmit: FormSubmitType = async (fields) => {
     try {
       const userDef: CreateUserModel = {
         externalId: toRaw(fields).employeeNumber,
@@ -63,14 +64,18 @@
         },
         meta: {},
       };
-      userStore?.create(userDef);
+      await userStore?.create(userDef);
+      notification.success({
+        message: 'Success!',
+        description: 'User created successfully.',
+      });
     } catch (error) {
       notification.error({
-        message: 'An error occurred. The user could not be created',
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
       });
       console.error('Error creating user:', error);
-    } finally {
-      message.success('User created', 2);
+      throw error;
     }
   };
 

@@ -16,10 +16,13 @@
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useEditing, useThemeToken } from '@/utils/hooks';
-  import { message } from 'ant-design-vue';
+
   import { ResourceActions } from '@/models/utils';
   import type { Rule } from 'ant-design-vue/es/form';
   import type { CompanyModel } from '@/models/Company';
+  import { App } from 'ant-design-vue';
+
+  const { notification } = App.useApp();
 
   const token = useThemeToken();
 
@@ -95,21 +98,29 @@
 
       await companyStore.fetch(company.value?.id);
 
-      message.success('Company updated successfully');
+      notification.success({
+        message: 'Success!',
+        description: 'Company updated successfully.',
+      });
       await stopEditing();
     } catch (error) {
       console.error('Validation or API error:', error);
-      message.error('Failed to update company. Please check your inputs.');
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred',
+      });
+      return;
     }
   };
 
   const isConfirmModalOpen = ref<boolean>(false);
   const openModal = () => {
     if (linkedProjects.value.length > 0) {
-      message.error(
-        `Company is still linked to these projects: [${linkedProjects.value}]`,
-        5,
-      );
+      notification.error({
+        message: 'Error!',
+        description: `Company is still linked to these projects: [${linkedProjects.value}]`,
+      });
+
       return;
     }
     isConfirmModalOpen.value = true;
@@ -174,7 +185,7 @@
     if (
       !company.value ||
       isEditing.value ||
-      !companyStore.getPermissions.includes(ResourceActions.Delete)
+      !company.value?.permissions?.includes(ResourceActions.Delete)
     )
       tempButtons[0].status = 'deactivated';
 
@@ -197,10 +208,21 @@
 
   const deleteCompany = async () => {
     if (!company.value) return;
-    await companyStore.delete(company.value?.id);
-    emit('companyDeleted');
-    companyStore.nullCompany();
-    setCompanyId(null);
+    try {
+      notification.success({
+        message: 'Success!',
+        description: 'Company deleted successfully.',
+      });
+      await companyStore.delete(company.value?.id);
+      emit('companyDeleted');
+      companyStore.nullCompany();
+      setCompanyId(null);
+    } catch (error) {
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+    }
   };
 
   const isCancelModalOpen = ref(false);

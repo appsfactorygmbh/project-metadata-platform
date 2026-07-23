@@ -17,12 +17,12 @@
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useEditing, useThemeToken } from '@/utils/hooks';
   import { ResourceActions } from '@/models/utils';
-  import message from 'ant-design-vue/es/message';
   import type { Rule } from 'ant-design-vue/es/form';
   import type { DepartmentModel } from '@/models/Department';
+  import { App } from 'ant-design-vue';
 
   const token = useThemeToken();
-
+  const { notification } = App.useApp();
   const route = useRoute();
   const { isEditing, stopEditing, startEditing } = useEditing();
   const formRef = ref();
@@ -94,11 +94,17 @@
 
       await departmentStore.fetch(department.value?.id);
 
-      message.success('Department updated successfully');
+      notification.success({
+        message: 'Success!',
+        description: 'Department updated successfully.',
+      });
       await stopEditing();
     } catch (error) {
       console.error('Validation or API error:', error);
-      message.error('Failed to update department. Please check your inputs.');
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
     }
   };
 
@@ -166,7 +172,7 @@
     if (
       !department.value ||
       isEditing.value ||
-      !departmentStore.getPermissions.includes(ResourceActions.Delete)
+      !department.value?.permissions?.includes(ResourceActions.Delete)
     )
       tempButtons[0].status = 'deactivated';
 
@@ -189,10 +195,21 @@
 
   const deleteDepartment = async () => {
     if (!department.value) return;
-    await departmentStore.delete(department.value?.id);
-    emit('departmentDeleted');
-    departmentStore.nullDepartment();
-    setDepartmentId(null);
+    try {
+      await departmentStore.delete(department.value?.id);
+      emit('departmentDeleted');
+      notification.success({
+        message: 'Success!',
+        description: 'Department deleted successfully.',
+      });
+      departmentStore.nullDepartment();
+      setDepartmentId(null);
+    } catch (error) {
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+    }
   };
 
   const isCancelModalOpen = ref(false);

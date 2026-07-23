@@ -5,6 +5,7 @@
   import { useTheme } from '@/utils/hooks';
   import { LogoutOutlined, SettingOutlined } from '@ant-design/icons-vue';
   import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline';
+  import { App } from 'ant-design-vue';
   import { useAuth } from 'vue-auth3';
   import { useRouter } from 'vue-router';
 
@@ -12,6 +13,7 @@
   const router = useRouter();
   const auth = useAuth();
   const { toggleDark, isDark } = useTheme();
+  const { notification } = App.useApp();
 
   const goToSetting = () => {
     router.push('/settings');
@@ -53,6 +55,7 @@
         {
           name: 'ToggleThemeButton',
           onClick: () => {
+            notification.destroy();
             toggleDark();
           },
           icon: isDark.value ? SunIcon : MoonIcon,

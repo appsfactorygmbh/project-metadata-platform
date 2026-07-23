@@ -16,9 +16,10 @@
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useThemeToken } from '@/utils/hooks';
   import { ResourceActions } from '@/models/utils';
+  import { App } from 'ant-design-vue';
 
   const token = useThemeToken();
-
+  const { notification } = App.useApp();
   const route = useRoute();
   const apiTokenStore = inject(apiTokenStoreSymbol)!;
   const { setApiTokenId, routerApiTokenId } = inject(apiTokenRoutingSymbol)!;
@@ -59,8 +60,6 @@
     isConfirmRegenerateModalOpen.value = false;
   };
 
-  onMounted(async () => {});
-
   //Button for adding new User and deleting User
   const buttons = computed((): FloatButtonModel[] => {
     const tempButtons: FloatButtonModel[] = [
@@ -94,10 +93,10 @@
       tempButtons[0].status = 'deactivated';
       tempButtons[1].status = 'deactivated';
     }
-    if (!apiTokenStore.getPermissions.includes(ResourceActions.Delete)) {
+    if (!apiToken.value?.permissions?.includes(ResourceActions.Delete)) {
       tempButtons[0].status = 'deactivated';
     }
-    if (!apiTokenStore.getPermissions.includes(ResourceActions.Edit)) {
+    if (!apiToken.value?.permissions?.includes(ResourceActions.Edit)) {
       tempButtons[1].status = 'deactivated';
     }
 
@@ -106,14 +105,32 @@
 
   const deleteApiToken = async () => {
     if (!apiToken.value) return;
-    await apiTokenStore.delete(apiToken.value?.id);
-    setApiTokenId(null);
-    apiTokenStore.setApiToken(null);
+    try {
+      await apiTokenStore.delete(apiToken.value?.id);
+      setApiTokenId(null);
+      apiTokenStore.setApiToken(null);
+      notification.success({
+        message: 'Success!',
+        description: 'Token deleted successfully.',
+      });
+    } catch (error) {
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+    }
   };
   const regenerateApiToken = async () => {
     if (!apiToken.value) return;
-    await apiTokenStore.regenerate(apiToken.value?.id);
-    await apiTokenStore.fetchApiToken(apiToken.value?.id);
+    try {
+      await apiTokenStore.regenerate(apiToken.value?.id);
+      await apiTokenStore.fetchApiToken(apiToken.value?.id);
+    } catch (error) {
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+    }
   };
 </script>
 <template>

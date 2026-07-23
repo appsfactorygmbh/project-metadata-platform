@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { type FormStore, type FormSubmitType } from '@/components/Form';
-  import { message } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
   import { reactive, toRaw } from 'vue';
   import type { RulesObject } from '@/components/Form/types';
   import type { CreateBusinessUnitFormData } from './CreateBusinessUnitFormData.ts';
@@ -13,7 +13,7 @@
     initialValues: CreateBusinessUnitFormData;
     businessUnitStore: BusinessUnitStore;
   }>();
-
+  const { notification } = App.useApp();
   const emit = defineEmits<(e: 'newId', id: number) => void>();
   const onSubmit: FormSubmitType = async (fields) => {
     try {
@@ -22,14 +22,18 @@
       };
       const id = await businessUnitStore.create(businessUnitDef);
       await businessUnitStore.fetchAll();
-      message.success('Business Unit created', 2);
+      notification.success({
+        message: 'Success!',
+        description: 'Business Unit created successfully.',
+      });
       emit('newId', id);
     } catch (error) {
-      message.error(
-        'An error occurred. The business unit could not be created',
-        10,
-      );
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
       console.error('Error creating business unit:', error);
+      throw error;
     }
   };
 
