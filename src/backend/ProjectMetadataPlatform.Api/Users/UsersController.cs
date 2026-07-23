@@ -55,6 +55,10 @@ public class UsersController : ControllerBase
         {
             return BadRequest(new ErrorResponse("email can't be empty."));
         }
+        if (string.IsNullOrWhiteSpace(request.ExternalId))
+        {
+            return BadRequest(new ErrorResponse("employee number can't be empty."));
+        }
         var isScimProvisioned = _httpContextAccessor.HttpContext?.User.FindFirstValue(
             ClaimTypes.AuthenticationMethod
         ) switch
@@ -75,7 +79,7 @@ public class UsersController : ControllerBase
             BusinessUnits: request.PmpUser?.BusinessUnits,
             JobTitles: request.PmpUser?.JobTitles,
             Departments: request.PmpUser?.Departments,
-            OfficeLocation: request.Addresses.FirstOrDefault()?.Locality,
+            OfficeLocation: request.Addresses?.FirstOrDefault()?.Locality,
             Company: request.EnterpriseUser?.Organization
         );
         var user = await _mediator.Send(command);
