@@ -40,6 +40,7 @@ using ProjectMetadataPlatform.Infrastructure.Projects;
 using ProjectMetadataPlatform.Infrastructure.Teams;
 using ProjectMetadataPlatform.Infrastructure.Users;
 using static Cerbos.Api.V1.Policy.Match.Types;
+using static Cerbos.Sdk.Response.HealthCheckResponse.Types;
 
 namespace ProjectMetadataPlatform.Infrastructure;
 
@@ -301,7 +302,7 @@ public static class DependencyInjection
     }
 
     /// <summary>
-    /// Checks the Connection to the database context. Retries if no connection.
+    /// Checks the Connection to the database context and cerbos services. Retries if no connection.
     /// </summary>
     public static async Task CheckConnection(this IServiceProvider serviceProvider)
     {
@@ -310,11 +311,33 @@ public static class DependencyInjection
         var pipelineProvider = services.GetRequiredService<ResiliencePipelineProvider<string>>();
         var pipeline = pipelineProvider.GetPipeline("DbCheck-Pipeline");
         var dbContext = services.GetRequiredService<ProjectMetadataPlatformDbContext>();
-
+        var cerbosClient = services.GetRequiredService<ICerbosClient>();
         await pipeline.ExecuteAsync(async token =>
         {
             if (dbContext.Database.IsNpgsql() && !await dbContext.Database.CanConnectAsync(token))
+            {
                 throw new ArgumentException("Can't Connect to DB");
+            }
+
+            if (
+                (
+                    (
+                        await cerbosClient.CheckHealthAsync(
+                            HealthCheckRequest.NewInstance(HealthCheckRequest.Types.Service.Cerbos)
+                        )
+                    ).Status != ServiceStatus.Serving
+                )
+                || (
+                    (
+                        await cerbosClient.CheckHealthAsync(
+                            HealthCheckRequest.NewInstance(HealthCheckRequest.Types.Service.Admin)
+                        )
+                    ).Status != ServiceStatus.Serving
+                )
+            )
+            {
+                throw new ArgumentException("Can't Connect to PDP");
+            }
         });
     }
 
