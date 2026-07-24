@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/appsfactorygmbh/project-metadata-platform/compare/v1.0.0...v1.0.1) (2026-07-24)
+
+
+### Bug Fixes
+
+* **frontend:** fix splitpanes height in projects split view ([b37d5b6](https://github.com/appsfactorygmbh/project-metadata-platform/commit/b37d5b60bfd49f2ad5897a28a86d0f1c0107a533))
+* **frontend:** fix splitpanes height in projects split view ([8efad65](https://github.com/appsfactorygmbh/project-metadata-platform/commit/8efad65b73d81ed2a78d5e50294115e6480a56d1))
+
 ## 1.0.0 (2026-06-15)
 
 
