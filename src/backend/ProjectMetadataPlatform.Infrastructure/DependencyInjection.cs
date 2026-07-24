@@ -302,22 +302,37 @@ public static class DependencyInjection
     }
 
     /// <summary>
-    /// Checks the Connection to the database context and cerbos services. Retries if no connection.
+    /// Checks the Connection to the database context. Retries if no connection.
     /// </summary>
-    public static async Task CheckConnection(this IServiceProvider serviceProvider)
+    public static async Task CheckDbConnection(this IServiceProvider serviceProvider)
     {
         using var serviceScope = serviceProvider.CreateScope();
         var services = serviceScope.ServiceProvider;
         var pipelineProvider = services.GetRequiredService<ResiliencePipelineProvider<string>>();
         var pipeline = pipelineProvider.GetPipeline("DbCheck-Pipeline");
         var dbContext = services.GetRequiredService<ProjectMetadataPlatformDbContext>();
-        var cerbosClient = services.GetRequiredService<ICerbosClient>();
         await pipeline.ExecuteAsync(async token =>
         {
             if (dbContext.Database.IsNpgsql() && !await dbContext.Database.CanConnectAsync(token))
             {
                 throw new ArgumentException("Can't Connect to DB");
             }
+
+        });
+    }
+
+    /// <summary>
+    /// Checks the Connection to the cerbos services. Retries if no connection.
+    /// </summary>
+    public static async Task CheckPdpConnection(this IServiceProvider serviceProvider)
+    {
+        using var serviceScope = serviceProvider.CreateScope();
+        var services = serviceScope.ServiceProvider;
+        var pipelineProvider = services.GetRequiredService<ResiliencePipelineProvider<string>>();
+        var pipeline = pipelineProvider.GetPipeline("DbCheck-Pipeline");
+        var cerbosClient = services.GetRequiredService<ICerbosClient>();
+        await pipeline.ExecuteAsync(async token =>
+        {
 
             if (
                 (
