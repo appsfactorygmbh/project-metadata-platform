@@ -244,7 +244,7 @@ public class Tests
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() =>
-            _controller.PostApiToken(new CreateApiTokenRequest("", []))
+            _controller.PostApiToken(new CreateApiTokenRequest("A", []))
         );
     }
 
