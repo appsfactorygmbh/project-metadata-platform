@@ -73,7 +73,7 @@ const router = createRouter({
         {
           path: '/settings',
           name: 'settings',
-          redirect: '/settings/global-plugins',
+          redirect: '/settings/user-management',
           component: SettingView,
           meta: { title: 'Project Metadata Platform - Settings' },
           children: [
