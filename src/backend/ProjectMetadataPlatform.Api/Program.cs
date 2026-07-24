@@ -24,7 +24,7 @@ using ProjectMetadataPlatform.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var serviceName = "projet-metadata-platform";
+var serviceName = "project-metadata-platform";
 var otlpEndpoint = new Uri("http://alloy:4317");
 
 builder.Logging.AddProvider(new ActivityErrorLoggerProvider());
@@ -128,10 +128,11 @@ builder.Services.AddResiliencePipeline(
 );
 
 var app = builder.Build();
-await app.Services.CheckConnection();
+await app.Services.CheckDbConnection();
 
 app.Services.MigrateDatabase();
 app.Services.AddAdminUser();
+await app.Services.CheckPdpConnection();
 await app.Services.AddDefaultPolicies();
 app.UseCors();
 app.UseSwagger();
