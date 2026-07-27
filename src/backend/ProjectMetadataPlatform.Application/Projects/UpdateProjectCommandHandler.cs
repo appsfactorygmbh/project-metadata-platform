@@ -462,7 +462,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
         {
             updates.Add(
                 nameof(Project.Team),
-                request.TeamId.HasValue ? _teamRepository.GetTeamAsync(request.TeamId.Value) : null
+                request.TeamId.HasValue ? await _teamRepository.GetTeamAsync(request.TeamId.Value) : null
             );
         }
         if (request.IsmsLevel != project.IsmsLevel)
