@@ -8,6 +8,7 @@ import {
 import { useCompanyStore } from '@/store';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { CompanyListView } from '..';
+import { ResourceActions } from '@/models/utils';
 
 vi.mock('vue-router', () => ({
   useRouter: () => ({
@@ -34,7 +35,8 @@ describe('CompanyListView.vue', () => {
     });
 
     const companyStore = useCompanyStore();
-
+    // @ts-expect-error: Overriding getter for testing purposes
+    companyStore.getPermissions = [ResourceActions.Create];
     const mockCompanyRouting = {
       routerCompanyId: ref(''),
       setCompanyId: vi.fn(),

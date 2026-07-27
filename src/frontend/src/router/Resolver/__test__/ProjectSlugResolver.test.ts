@@ -4,7 +4,7 @@ import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { ProjectSlugResolver } from '..';
 import { createTestingPinia } from '@pinia/testing';
 import { createRouter, createWebHistory } from 'vue-router';
-import { SplitView } from '@/views';
+
 import { ProviderCollection } from '@/router/Provider';
 import { setActivePinia } from 'pinia';
 import type { ProjectModel } from '@/models/Project';
@@ -74,12 +74,12 @@ describe('ProjectSlugResolver.vue', () => {
               {
                 path: '/',
                 name: 'SplitViewDefault',
-                component: SplitView,
+                component: { template: '<div class="split-view-stub"></div>' },
               },
               {
                 path: '/:projectSlug',
                 name: 'SplitView',
-                component: SplitView,
+                component: { template: '<div class="split-view-stub"></div>' },
               },
             ],
           },

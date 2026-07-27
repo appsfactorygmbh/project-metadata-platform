@@ -68,7 +68,7 @@
         <CreateProjectView
           v-if="
             !isEditing &&
-            projectStore.getPermissions.includes(ResourceActions.Create)
+            projectStore.getPermissions?.includes(ResourceActions.Create)
           "
         />
       </pane>

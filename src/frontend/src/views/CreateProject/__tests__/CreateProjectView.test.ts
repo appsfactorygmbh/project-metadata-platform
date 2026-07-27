@@ -6,7 +6,8 @@ import { useProjectRouting } from '@/utils/hooks';
 import router from '@/router';
 import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
-import { useTeamStore, useCompanyStore } from '@/store';
+import { useTeamStore, useCompanyStore, useProjectStore } from '@/store';
+import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
 describe('CreateProjectView.vue', () => {
   type CreateProjectViewInstance = {
@@ -25,6 +26,7 @@ describe('CreateProjectView.vue', () => {
   };
 
   let wrapper: VueWrapper<CreateProjectViewInstance>;
+  let projectStore: ReturnType<typeof useProjectStore>;
   let teamStore: ReturnType<typeof useTeamStore>;
   let companyStore: ReturnType<typeof useCompanyStore>;
 
@@ -55,6 +57,9 @@ describe('CreateProjectView.vue', () => {
 
     teamStore = useTeamStore(testingPinia);
     companyStore = useCompanyStore(testingPinia);
+    projectStore = useProjectStore(testingPinia);
+
+    (projectStore as any).permissions = [ResourceActions.Create];
 
     teamStore.getNameToId = vi.fn(
       (id: number) => mockTeams.find((t) => t.id === id)?.teamName,

@@ -8,6 +8,7 @@ import {
 import { useApiTokenStore } from '@/store';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { ApiTokenListView } from '..';
+import { ResourceActions } from '@/models/utils';
 
 vi.mock('vue-router', () => ({
   useRouter: () => ({
@@ -37,7 +38,9 @@ describe('ApiTokenListView.vue', () => {
       },
     });
 
-    const tokenStore = useApiTokenStore();
+    const tokenStore = useApiTokenStore(pinia);
+    // @ts-expect-error: Overriding getter for testing purposes
+    tokenStore.getPermissions = [ResourceActions.Create];
 
     const mockApiTokenRouting = {
       routerApiTokenId: ref(''),

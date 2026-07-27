@@ -5,6 +5,7 @@ import { teamRoutingSymbol, teamStoreSymbol } from '@/store/injectionSymbols';
 import { useTeamStore } from '@/store';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { TeamListView } from '..';
+import { ResourceActions } from '@/models/utils';
 
 vi.mock('vue-router', () => ({
   useRouter: () => ({
@@ -33,7 +34,8 @@ describe('TeamListView.vue', () => {
     });
 
     const teamStore = useTeamStore();
-
+    // @ts-expect-error: Overriding getter for testing purposes
+    teamStore.getPermissions = [ResourceActions.Create];
     const mockTeamRouting = {
       routerTeamId: ref(''),
       setTeamId: vi.fn(),
@@ -73,7 +75,7 @@ describe('TeamListView.vue', () => {
 
   it('calls fetchAll on mount', () => {
     generateWrapper();
-    const userStore = useTeamStore();
-    expect(userStore.fetchAll).toHaveBeenCalled();
+    const teamStore = useTeamStore();
+    expect(teamStore.fetchAll).toHaveBeenCalled();
   });
 });

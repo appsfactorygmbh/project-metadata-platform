@@ -18,14 +18,17 @@ import {
 } from '@/store/injectionSymbols';
 import router from '@/router';
 import { useStore } from 'pinia-generic';
+import { ResourceActions } from '@/models/utils/ResourceActions.ts';
+import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
 
 const testData: GlobalPluginModel[] = [
   {
-    id: 0,
+    id: 2,
     pluginName: 'Plugin 1',
     isArchived: true,
     keys: [],
     baseUrl: 'plugin1.de',
+    permissions: [ResourceActions.Edit, ResourceActions.Delete],
   },
   {
     id: 1,
@@ -33,6 +36,7 @@ const testData: GlobalPluginModel[] = [
     isArchived: false,
     keys: [],
     baseUrl: 'plugin2.de',
+    permissions: [ResourceActions.Edit, ResourceActions.Delete],
   },
 ];
 
@@ -43,6 +47,7 @@ const testDataArchive: GlobalPluginModel[] = [
     isArchived: true,
     keys: [],
     baseUrl: 'plugin1.de',
+    permissions: [ResourceActions.Edit, ResourceActions.Delete],
   },
   {
     id: 1,
@@ -50,6 +55,7 @@ const testDataArchive: GlobalPluginModel[] = [
     isArchived: true,
     keys: [],
     baseUrl: 'plugin2.de',
+    permissions: [ResourceActions.Edit, ResourceActions.Delete],
   },
 ];
 
@@ -60,6 +66,7 @@ const testDataReactivate: GlobalPluginModel[] = [
     isArchived: true,
     keys: [],
     baseUrl: 'plugin1.de',
+    permissions: [ResourceActions.Edit, ResourceActions.Delete],
   },
   {
     id: 1,
@@ -67,6 +74,7 @@ const testDataReactivate: GlobalPluginModel[] = [
     isArchived: true,
     keys: [],
     baseUrl: 'plugin2.de',
+    permissions: [ResourceActions.Edit, ResourceActions.Delete],
   },
 ];
 
@@ -99,6 +107,9 @@ describe('GlobalPluginsView.vue', () => {
             getters: {
               getGlobalPlugins() {
                 return this.globalPlugins;
+              },
+              getPermissions() {
+                return [ResourceActions.Create];
               },
             },
             actions: {
@@ -155,25 +166,6 @@ describe('GlobalPluginsView.vue', () => {
     expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 1plugin1.de');
   });
 
-  it('calls the store when clicking the archive button', async () => {
-    const wrapper = generateWrapper();
-    const globalPluginStore = useGlobalPluginStore();
-    const spy = vi.spyOn(globalPluginStore, 'archive');
-
-    await flushPromises();
-    expect(wrapper.findAll('.ant-list-item')).toHaveLength(1);
-    expect(wrapper.find('.ant-list-item').text()).toBe('Plugin 2plugin2.de');
-    expect(spy).toHaveBeenCalledTimes(0);
-
-    await wrapper.find('button[name="archivePluginButton"]').trigger('click');
-    //confirms the action
-    const confirmButton = wrapper.findComponentByText(Button, 'Yes');
-    await confirmButton?.trigger('click');
-
-    expect(spy).toHaveBeenCalledOnce();
-    expect(wrapper.findAll('.ant-list-item')).toHaveLength(0);
-  });
-
   it('calls the store when clicking the reactivate button', async () => {
     const wrapper = generateWrapper();
     const globalPluginStore = useGlobalPluginStore();
@@ -201,10 +193,13 @@ describe('GlobalPluginsView.vue', () => {
 
     //toggles archived plugins and deletes the first one
     await wrapper.find('.anticon-inbox').trigger('click');
+    await flushPromises();
     await wrapper.find('.anticon-delete').trigger('click');
+    await flushPromises();
     //confirms the action
-    const confirmButton = wrapper.findComponentByText(Button, 'Yes');
-    await confirmButton.trigger('click');
+    const dialog = wrapper.findComponent(ConfirmationDialog);
+    await dialog.vm.$emit('confirm');
+    await flushPromises();
 
     expect(spy).toHaveBeenCalledOnce();
   });

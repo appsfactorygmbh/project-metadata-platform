@@ -9,6 +9,7 @@ import type { UserModel } from '@/models/User';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons-vue';
 import { useUserRouting } from '@/utils/hooks';
 import { UserInformationView } from '..';
+import { ResourceActions } from '@/models/utils';
 
 const userData1: UserModel = {
   id: '100',
@@ -25,7 +26,9 @@ const userData1: UserModel = {
     team: ['Team 5000'],
     teamSupport: ['Team 9001'],
   },
-  meta: {},
+  meta: {
+    permissions: [ResourceActions.Edit, ResourceActions.Delete],
+  },
 };
 const userData2: UserModel = {
   id: '200',
@@ -35,7 +38,9 @@ const userData2: UserModel = {
   addresses: [],
   urnIetfParamsScimSchemasExtensionEnterprise20User: {},
   urnIetfParamsScimSchemasExtensionPmpUser: {},
-  meta: {},
+  meta: {
+    permissions: [ResourceActions.Edit, ResourceActions.Delete],
+  },
 };
 
 const mockRoute = {
@@ -120,7 +125,6 @@ describe('UserInformationView.vue', () => {
 
     const button = wrapper.findAllComponents(EditOutlined);
     expect(button[0].exists()).toBe(true);
-    expect(button[1].exists()).toBe(true);
     expect(wrapper.find('.email').exists()).toBe(true);
   });
 

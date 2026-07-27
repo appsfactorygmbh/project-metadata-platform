@@ -11,6 +11,7 @@ import CreateDepartmentView from '../CreateDepartmentView.vue';
 import type { DepartmentModel } from '@/models/Department';
 import { useDepartmentStore } from '@/store';
 import { useFormStore } from '@/components/Form';
+import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
 describe('CreateDepartmentView.vue', () => {
   setActivePinia(createTestingPinia({ stubActions: false }));
@@ -25,12 +26,15 @@ describe('CreateDepartmentView.vue', () => {
   const mockDepartmentRoutingService = {
     setDepartmentId: vi.fn((id: number) => Promise.resolve()),
   };
-
+  const departmentStore = useDepartmentStore();
+  // @ts-expect-error: Overriding getter for testing purposes
+  departmentStore.getPermissions = [ResourceActions.Create];
+  departmentStore.fetchAll = vi.fn();
   it('renders correctly', () => {
     wrapper = mount(CreateDepartmentView, {
       global: {
         provide: {
-          [departmentStoreSymbol as symbol]: useDepartmentStore(),
+          [departmentStoreSymbol as symbol]: departmentStore,
           [departmentRoutingSymbol as symbol]: mockDepartmentRoutingService,
         },
       },
@@ -65,7 +69,7 @@ describe('CreateDepartmentView.vue', () => {
       ],
       global: {
         provide: {
-          [departmentStoreSymbol as symbol]: useDepartmentStore(),
+          [departmentStoreSymbol as symbol]: departmentStore,
           [departmentRoutingSymbol as symbol]: mockDepartmentRoutingService,
         },
       },
@@ -88,7 +92,7 @@ describe('CreateDepartmentView.vue', () => {
         departmentName: 'Test Name',
       },
     ];
-
+    departmentStore.$patch({ departments: testData });
     wrapper = mount(CreateDepartmentView, {
       plugins: [
         createTestingPinia({
@@ -102,7 +106,7 @@ describe('CreateDepartmentView.vue', () => {
       ],
       global: {
         provide: {
-          [departmentStoreSymbol as symbol]: useDepartmentStore(),
+          [departmentStoreSymbol as symbol]: departmentStore,
           [departmentRoutingSymbol as symbol]: mockDepartmentRoutingService,
         },
       },
@@ -119,7 +123,6 @@ describe('CreateDepartmentView.vue', () => {
   });
 
   it('submits the form correctly', async () => {
-    const departmentStore = useDepartmentStore();
     const formStore = useFormStore('CreateDepartmentForm');
     const createSpy = vi
       .spyOn(departmentStore, 'create')

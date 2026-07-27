@@ -16,6 +16,7 @@ import {
   InboxOutlined,
   UndoOutlined,
 } from '@ant-design/icons-vue';
+import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
 const testData: DetailedProjectModel = {
   id: 1,
@@ -35,6 +36,7 @@ const testData: DetailedProjectModel = {
   ismsLevel: 'NORMAL',
   isEoC: false,
   notes: 'TestNotes',
+  permissions: [ResourceActions.Edit, ResourceActions.Delete],
 };
 
 describe('ProjectInformation.vue', () => {

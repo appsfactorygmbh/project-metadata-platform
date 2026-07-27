@@ -8,6 +8,7 @@ import {
 import { useDepartmentStore } from '@/store';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { DepartmentListView } from '..';
+import { ResourceActions } from '@/models/utils';
 
 vi.mock('vue-router', () => ({
   useRouter: () => ({
@@ -37,6 +38,8 @@ describe('DepartmentListView.vue', () => {
     });
 
     const departmentStore = useDepartmentStore();
+    // @ts-expect-error: Overriding getter for testing purposes
+    departmentStore.getPermissions = [ResourceActions.Create];
 
     const mockDepartmentRouting = {
       routerDepartmentId: ref(''),

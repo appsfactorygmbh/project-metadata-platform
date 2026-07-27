@@ -4,6 +4,7 @@ import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 import { config, mount } from '@vue/test-utils';
 import { defineGenericStore } from 'pinia-generic';
+import { App } from 'ant-design-vue';
 
 // See https://github.com/vitest-dev/vitest/issues/821
 Object.defineProperty(window, 'matchMedia', {
@@ -146,3 +147,16 @@ config.plugins.VueWrapper.install(() => {
     },
   };
 });
+
+vi.spyOn(App, 'useApp').mockReturnValue({
+  notification: {
+    error: vi.fn(),
+    success: vi.fn(),
+    info: vi.fn(),
+    warning: vi.fn(),
+    open: vi.fn(),
+    destroy: vi.fn(),
+  },
+  message: {},
+  modal: {},
+} as unknown as ReturnType<typeof App.useApp>);

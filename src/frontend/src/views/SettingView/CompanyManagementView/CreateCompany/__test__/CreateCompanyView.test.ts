@@ -11,6 +11,7 @@ import CreateCompanyView from '../CreateCompanyView.vue';
 import type { CompanyModel } from '@/models/Company';
 import { useCompanyStore } from '@/store';
 import { useFormStore } from '@/components/Form';
+import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
 describe('CreateCompanyView.vue', () => {
   setActivePinia(createTestingPinia({ stubActions: false }));
@@ -21,16 +22,18 @@ describe('CreateCompanyView.vue', () => {
       wrapper.unmount();
     }
   });
-
+  const companyStore = useCompanyStore();
   const mockCompanyRoutingService = {
     setCompanyId: vi.fn((id: number) => Promise.resolve()),
   };
-
+  // @ts-expect-error: Overriding getter for testing purposes
+  companyStore.getPermissions = [ResourceActions.Create];
+  companyStore.fetchAll = vi.fn();
   it('renders correctly', () => {
     wrapper = mount(CreateCompanyView, {
       global: {
         provide: {
-          [companyStoreSymbol as symbol]: useCompanyStore(),
+          [companyStoreSymbol as symbol]: companyStore,
           [companyRoutingSymbol as symbol]: mockCompanyRoutingService,
         },
       },
@@ -65,7 +68,7 @@ describe('CreateCompanyView.vue', () => {
       ],
       global: {
         provide: {
-          [companyStoreSymbol as symbol]: useCompanyStore(),
+          [companyStoreSymbol as symbol]: companyStore,
           [companyRoutingSymbol as symbol]: mockCompanyRoutingService,
         },
       },
@@ -88,7 +91,7 @@ describe('CreateCompanyView.vue', () => {
         companyName: 'Test Name',
       },
     ];
-
+    companyStore.$patch({ companies: testData });
     wrapper = mount(CreateCompanyView, {
       plugins: [
         createTestingPinia({
@@ -102,7 +105,7 @@ describe('CreateCompanyView.vue', () => {
       ],
       global: {
         provide: {
-          [companyStoreSymbol as symbol]: useCompanyStore(),
+          [companyStoreSymbol as symbol]: companyStore,
           [companyRoutingSymbol as symbol]: mockCompanyRoutingService,
         },
       },
@@ -119,7 +122,6 @@ describe('CreateCompanyView.vue', () => {
   });
 
   it('submits the form correctly', async () => {
-    const companyStore = useCompanyStore();
     const formStore = useFormStore('CreateCompanyForm');
     const createSpy = vi
       .spyOn(companyStore, 'create')
