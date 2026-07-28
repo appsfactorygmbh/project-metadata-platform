@@ -40,10 +40,17 @@ public interface IApiTokenRepository
     Task DeleteApiToken(ApiToken token);
 
     /// <summary>
-    /// Checks if a token with the scope scim exists in the database.
+    /// Checks if a token with the scope SCIM exists in the database.
     /// </summary>
-    /// <returns>boolean representing the existing of a scim token.</returns>
+    /// <returns>boolean representing the existence of a SCIM token.</returns>
     Task<bool> CheckScimTokenExists();
+
+    /// <summary>
+    /// Checks if the token with the given name exists and has the scope SCIM.
+    /// </summary>
+    /// <param name="name">Name of the Token.</param>
+    /// <returns></returns>
+    Task<bool> IsScimToken(string name);
 
     /// <summary>
     /// Creates a new Api Token in the database and hashes its token value.

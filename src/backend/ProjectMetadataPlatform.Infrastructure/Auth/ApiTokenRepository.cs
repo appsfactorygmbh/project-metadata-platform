@@ -1,5 +1,7 @@
 ﻿using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -60,6 +62,14 @@ public class ApiTokenRepository : RepositoryBase<ApiToken>, IApiTokenRepository
     public async Task<bool> CheckScimTokenExists()
     {
         return await GetIf(t => t.Scopes != null && t.Scopes.Contains(TokenScopes.SCIM)).AnyAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task<bool> IsScimToken(string name)
+    {
+        var token = await GetIf(t => t.Name == name).FirstOrDefaultAsync();
+
+        return token != null && (token.Scopes ?? []).Contains(TokenScopes.SCIM);
     }
 
     /// <inheritdoc/>

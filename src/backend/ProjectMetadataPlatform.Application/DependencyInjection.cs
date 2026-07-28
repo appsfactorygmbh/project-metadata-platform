@@ -21,6 +21,7 @@ public static class DependencyInjection
     )
     {
         _ = serviceCollection.AddScoped<ISlugHelper, SlugHelper>();
+        _ = serviceCollection.AddScoped<IGetOrCreateHelper, GetOrCreateHelper>();
         _ = serviceCollection.AddMediatR(configuration =>
             configuration.RegisterServicesFromAssemblyContaining(typeof(DependencyInjection))
         );
