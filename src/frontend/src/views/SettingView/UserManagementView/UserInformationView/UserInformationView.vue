@@ -295,7 +295,11 @@
       }
 
       await userStore.update(user.value.id, { operations });
-
+      notification.success({
+        message: 'Success!',
+        description: 'User updated successfully.',
+      });
+      await stopEditing();
       const targetId = formData.externalId || user.value.externalId;
       await userStore.fetchUser(targetId);
 
@@ -306,11 +310,6 @@
       if (targetId === me.value?.externalId) {
         userStore.fetchMe();
       }
-      notification.success({
-        message: 'Success!',
-        description: 'User updated successfully.',
-      });
-      await stopEditing();
     } catch (error) {
       console.error('Validation or API error:', error);
       notification.error({

@@ -28,10 +28,11 @@
     },
   );
 
-  const validateConfirmPassword = async (_rule: Rule, value: string) => {
-    if (value === '') {
+  const validateConfirmPassword = async () => {
+    const confirmVal = localState.confirmPassword;
+    if (confirmVal === '') {
       return Promise.reject('Please confirm the password.');
-    } else if (value !== localState.password) {
+    } else if (confirmVal !== localState.password) {
       return Promise.reject("The passwords don't match.");
     } else {
       return Promise.resolve();
