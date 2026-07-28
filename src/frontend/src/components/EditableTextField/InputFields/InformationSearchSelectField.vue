@@ -3,7 +3,7 @@
   import type { Rule } from 'ant-design-vue/es/form';
 
   export interface SelectOption {
-    id: number;
+    id: number | string | null;
     name: string;
   }
   const props = defineProps({

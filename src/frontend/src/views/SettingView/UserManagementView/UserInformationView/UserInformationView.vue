@@ -687,11 +687,21 @@
           :is-editing-key="'isEditing'"
           :has-edit-keys="false"
         >
-          <InformationAutoCompleteInputField
+          <InformationSearchSelectField
             v-model:value="formData.officeLocation"
             :attribute-name="'OfficeLocation'"
             :placeholder="(user?.addresses ?? [{}])[0]?.locality ?? ''"
-            :options="officeLocationStore.getOfficeLocationNames"
+            :options="
+              officeLocationStore.getOfficeLocationNames
+                .map((name): { id: string | null; name: string } => ({
+                  id: name,
+                  name: name,
+                }))
+                .concat({
+                  id: null,
+                  name: 'No Office Location',
+                })
+            "
           />
         </EditableTextField>
         <EditableTextField
@@ -705,14 +715,24 @@
           :is-editing-key="'isEditing'"
           :has-edit-keys="false"
         >
-          <InformationAutoCompleteInputField
+          <InformationSearchSelectField
             v-model:value="formData.company"
             :attribute-name="'Company'"
             :placeholder="
               user?.urnIetfParamsScimSchemasExtensionEnterprise20User
                 .organization ?? ''
             "
-            :options="companyStore.getCompanyNames"
+            :options="
+              companyStore.getCompanyNames
+                .map((name): { id: string | null; name: string } => ({
+                  id: name,
+                  name: name,
+                }))
+                .concat({
+                  id: null,
+                  name: 'No Company',
+                })
+            "
           />
         </EditableTextField>
       </a-flex>

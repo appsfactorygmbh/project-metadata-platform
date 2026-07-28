@@ -189,31 +189,6 @@
     ],
   });
 
-  const getCustomOptions = (
-    currentValue: string | undefined,
-    sourceArray: string[],
-  ) => {
-    const currentInput = currentValue?.trim() || '';
-    const sourceList = sourceArray || [];
-
-    const filteredItems = sourceList.filter((name) =>
-      name.toLowerCase().includes(currentInput.toLowerCase()),
-    );
-
-    const formattedOptions = filteredItems.map((name) => ({ value: name }));
-
-    if (
-      currentInput &&
-      !filteredItems.some(
-        (name) => name.toLowerCase() === currentInput.toLowerCase(),
-      )
-    ) {
-      return [{ value: currentInput }, ...formattedOptions];
-    }
-
-    return formattedOptions;
-  };
-
   formStore.setOnSubmit(onSubmit);
   formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
@@ -373,53 +348,51 @@
         ></a-select-option>
       </a-select>
     </a-form-item>
-    <a-tooltip title="Press [Enter] to add a department to the list.">
-      <a-form-item
-        has-feedback
-        name="departments"
-        :whitespace="false"
-        :rules="[{ required: false }]"
+    <a-form-item
+      has-feedback
+      name="departments"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-select
+        id="inputCreateUserDepartments"
+        v-model:value="dynamicValidateForm.departments"
+        mode="multiple"
+        placeholder="Departments"
+        :not-found-content="null"
+        :disabled="dynamicValidateForm.inputsDisabled"
       >
-        <a-select
-          id="inputCreateUserDepartments"
-          v-model:value="dynamicValidateForm.departments"
-          mode="tags"
-          placeholder="Departments"
-          :not-found-content="null"
-          :disabled="dynamicValidateForm.inputsDisabled"
-        >
-          <a-select-option
-            v-for="department in getDepartmentNames"
-            :key="department"
-            :value="department"
-          ></a-select-option>
-        </a-select>
-      </a-form-item>
-    </a-tooltip>
-    <a-tooltip title="Press [Enter] to add a business unit to the list.">
-      <a-form-item
-        has-feedback
-        name="businessUnits"
-        class="selectcolumnbottom"
-        :whitespace="false"
-        :rules="[{ required: false }]"
+        <a-select-option
+          v-for="department in getDepartmentNames"
+          :key="department"
+          :value="department"
+        ></a-select-option>
+      </a-select>
+    </a-form-item>
+
+    <a-form-item
+      has-feedback
+      name="businessUnits"
+      class="selectcolumnbottom"
+      :whitespace="false"
+      :rules="[{ required: false }]"
+    >
+      <a-select
+        id="inputCreateUserBusinessUnits"
+        v-model:value="dynamicValidateForm.businessUnits"
+        mode="multiple"
+        placeholder="Business Units"
+        :not-found-content="null"
+        :disabled="dynamicValidateForm.inputsDisabled"
       >
-        <a-select
-          id="inputCreateUserBusinessUnits"
-          v-model:value="dynamicValidateForm.businessUnits"
-          mode="tags"
-          placeholder="Business Units"
-          :not-found-content="null"
-          :disabled="dynamicValidateForm.inputsDisabled"
-        >
-          <a-select-option
-            v-for="businessUnit in getBusinessUnitNames"
-            :key="businessUnit"
-            :value="businessUnit"
-          ></a-select-option>
-        </a-select>
-      </a-form-item>
-    </a-tooltip>
+        <a-select-option
+          v-for="businessUnit in getBusinessUnitNames"
+          :key="businessUnit"
+          :value="businessUnit"
+        ></a-select-option>
+      </a-select>
+    </a-form-item>
+
     <a-form-item
       has-feedback
       name="company"
@@ -427,17 +400,21 @@
       :whitespace="false"
       :rules="[{ required: false }]"
     >
-      <a-auto-complete
+      <a-select
         id="inputCreateUserCompany"
         v-model:value="dynamicValidateForm.company"
+        show-search
         class="inputField"
         placeholder="Company"
         :disabled="dynamicValidateForm.inputsDisabled"
-        :options="
-          getCustomOptions(dynamicValidateForm.company, getCompanyNames)
-        "
-        :filter-option="false"
-      />
+      >
+        <a-select-option
+          v-for="company in getCompanyNames"
+          :key="company"
+          :value="company"
+        ></a-select-option>
+        <a-select-option :value="null">{{ 'No Company' }}</a-select-option>
+      </a-select>
     </a-form-item>
     <a-form-item
       has-feedback
@@ -446,20 +423,23 @@
       :whitespace="false"
       :rules="[{ required: false }]"
     >
-      <a-auto-complete
+      <a-select
         id="inputCreateUserOfficeLocation"
         v-model:value="dynamicValidateForm.officeLocation"
+        show-search
         class="inputField"
         placeholder="Office Location"
         :disabled="dynamicValidateForm.inputsDisabled"
-        :options="
-          getCustomOptions(
-            dynamicValidateForm.officeLocation,
-            getOfficeLocationNames,
-          )
-        "
-        :filter-option="false"
-      />
+      >
+        <a-select-option
+          v-for="officeLocation in getOfficeLocationNames"
+          :key="officeLocation"
+          :value="officeLocation"
+        ></a-select-option>
+        <a-select-option :value="null">{{
+          'No Office Location'
+        }}</a-select-option>
+      </a-select>
     </a-form-item>
   </a-form>
 </template>
