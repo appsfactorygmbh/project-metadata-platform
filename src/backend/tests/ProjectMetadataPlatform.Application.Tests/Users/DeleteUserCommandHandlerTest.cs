@@ -26,7 +26,13 @@ public class DeleteUserCommandHandlerTest
         _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockUsersRepo = new Mock<IUsersRepository>();
         var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-        var identity = new ClaimsIdentity([new Claim(ClaimTypes.Email, "camo")], "TestAuth");
+        var identity = new ClaimsIdentity(
+            [
+                new Claim(ClaimTypes.Email, "camo"),
+                new Claim(ClaimTypes.AuthenticationMethod, "JWT Token"),
+            ],
+            "TestAuth"
+        );
         var contextUser = new ClaimsPrincipal(identity);
 
         var httpContext = new DefaultHttpContext { User = contextUser };

@@ -29,7 +29,6 @@ describe('CreateBusinessUnitView.vue', () => {
   const businessUnitStore = useBusinessUnitStore();
   // @ts-expect-error: Overriding getter for testing purposes
   businessUnitStore.getPermissions = [ResourceActions.Create];
-  businessUnitStore.fetchAll = vi.fn();
 
   it('renders correctly', () => {
     wrapper = mount(CreateBusinessUnitView, {

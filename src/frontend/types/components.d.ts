@@ -12,7 +12,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AAlert: typeof import('ant-design-vue/es')['Alert']
     AApp: typeof import('ant-design-vue/es')['App']
     AAutoComplete: typeof import('ant-design-vue/es')['AutoComplete']
     AAvatar: typeof import('ant-design-vue/es')['Avatar']
@@ -95,7 +94,6 @@ declare module 'vue' {
 
 // For TSX support
 declare global {
-  const AAlert: typeof import('ant-design-vue/es')['Alert']
   const AApp: typeof import('ant-design-vue/es')['App']
   const AAutoComplete: typeof import('ant-design-vue/es')['AutoComplete']
   const AAvatar: typeof import('ant-design-vue/es')['Avatar']

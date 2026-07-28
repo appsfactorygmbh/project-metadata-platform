@@ -15,7 +15,7 @@ describe('CreateUserView.vue', () => {
   const userStore = useUserStore();
   // @ts-expect-error: Overriding getter for testing purposes
   userStore.getPermissions = [ResourceActions.Create];
-  userStore.fetchAll = vi.fn();
+
   let wrapper: VueWrapper;
   afterEach(() => {
     if (wrapper) {

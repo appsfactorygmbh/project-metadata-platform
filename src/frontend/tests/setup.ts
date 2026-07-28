@@ -90,6 +90,7 @@ beforeAll(() => {
         actions: {
           callApi: vi.fn().mockResolvedValue([]),
           initApi: vi.fn(),
+          setPermissions: vi.fn(),
         },
       });
     }),

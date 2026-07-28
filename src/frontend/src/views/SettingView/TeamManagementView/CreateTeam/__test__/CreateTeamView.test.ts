@@ -26,7 +26,7 @@ describe('CreateTeamView.vue', () => {
   const teamStore = useTeamStore();
   // @ts-expect-error: Overriding getter for testing purposes
   teamStore.getPermissions = [ResourceActions.Create];
-  teamStore.fetchAll = vi.fn();
+
   it('renders correctly', () => {
     wrapper = mount(CreateTeamView, {
       global: {

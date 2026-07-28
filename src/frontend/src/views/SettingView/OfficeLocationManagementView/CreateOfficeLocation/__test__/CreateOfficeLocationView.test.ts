@@ -29,7 +29,6 @@ describe('CreateOfficeLocationView.vue', () => {
   const locationStore = useOfficeLocationStore();
   // @ts-expect-error: Overriding getter for testing purposes
   locationStore.getPermissions = [ResourceActions.Create];
-  locationStore.fetchAll = vi.fn();
   it('renders correctly', () => {
     wrapper = mount(CreateOfficeLocationView, {
       global: {

@@ -7,6 +7,7 @@ using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 
 namespace ProjectMetadataPlatform.Application.Tests.Helper;
 
+[TestFixture]
 public class SlugHelperTest
 {
     private SlugHelper _slugHelper;

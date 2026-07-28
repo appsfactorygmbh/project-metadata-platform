@@ -28,7 +28,6 @@ describe('CreateCompanyView.vue', () => {
   };
   // @ts-expect-error: Overriding getter for testing purposes
   companyStore.getPermissions = [ResourceActions.Create];
-  companyStore.fetchAll = vi.fn();
   it('renders correctly', () => {
     wrapper = mount(CreateCompanyView, {
       global: {

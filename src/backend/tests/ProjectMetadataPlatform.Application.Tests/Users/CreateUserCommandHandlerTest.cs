@@ -8,8 +8,11 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Domain.Users;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
@@ -24,12 +27,7 @@ public class CreateUserCommandHandlerTest
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<ITeamRepository> _mockTeamRepo;
     private Mock<IAuthorizationService> _authorizationServiceMock;
-    private Mock<IOfficeLocationRepository> _mockOfficeLocationRepository;
-
-    private Mock<ICompanyRepository> _mockCompanyRepository;
-
-    private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
-    private Mock<IDepartmentRepository> _mockDepartmentRepository;
+    private Mock<IGetOrCreateHelper> _getOrCreateHelperMock;
     private Mock<IUnitOfWork> _mockUnitOfWork;
 
     [SetUp]
@@ -40,20 +38,14 @@ public class CreateUserCommandHandlerTest
         _mockLogRepo = new Mock<ILogRepository>();
         _mockTeamRepo = new Mock<ITeamRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockBusinessUnitRepository = new Mock<IBusinessUnitRepository>();
-        _mockCompanyRepository = new Mock<ICompanyRepository>();
-        _mockOfficeLocationRepository = new Mock<IOfficeLocationRepository>();
-        _mockDepartmentRepository = new Mock<IDepartmentRepository>();
+        _getOrCreateHelperMock = new Mock<IGetOrCreateHelper>();
         _handler = new CreateUserCommandHandler(
             _mockUsersRepo.Object,
             _mockLogRepo.Object,
             _mockTeamRepo.Object,
-            _mockDepartmentRepository.Object,
-            _mockBusinessUnitRepository.Object,
-            _mockOfficeLocationRepository.Object,
-            _mockCompanyRepository.Object,
             _mockUnitOfWork.Object,
-            authorizationService: _authorizationServiceMock.Object
+            authorizationService: _authorizationServiceMock.Object,
+            getOrCreateHelper: _getOrCreateHelperMock.Object
         );
     }
 
@@ -87,6 +79,16 @@ public class CreateUserCommandHandlerTest
                     BusinessUnitId = 1,
                 }
             );
+        _getOrCreateHelperMock
+            .Setup(g => g.GetOrCreateDepartment(It.IsAny<string>()))
+            .ReturnsAsync(new Department { DepartmentName = "Design" });
+        _getOrCreateHelperMock
+            .Setup(g => g.GetOrCreateOfficeLocation(It.IsAny<string>()))
+            .ReturnsAsync(new OfficeLocation { OfficeLocationName = "Leipzig" });
+
+        _getOrCreateHelperMock
+            .Setup(g => g.GetOrCreateCompany(It.IsAny<string>()))
+            .ReturnsAsync(new Company { CompanyName = "Appsfactory" });
         _ = _mockUnitOfWork.Setup(m => m.CompleteAsync()).Returns(Task.CompletedTask);
         _ = _mockLogRepo
             .Setup(m =>

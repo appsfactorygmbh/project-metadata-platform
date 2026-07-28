@@ -29,7 +29,6 @@ describe('CreateDepartmentView.vue', () => {
   const departmentStore = useDepartmentStore();
   // @ts-expect-error: Overriding getter for testing purposes
   departmentStore.getPermissions = [ResourceActions.Create];
-  departmentStore.fetchAll = vi.fn();
   it('renders correctly', () => {
     wrapper = mount(CreateDepartmentView, {
       global: {
