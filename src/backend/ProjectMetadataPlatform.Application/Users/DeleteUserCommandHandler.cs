@@ -68,14 +68,21 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Appli
         {
             throw new UnauthorizedException();
         }
-        var email =
-            _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
-            ?? "Unknown user";
-        var activeUser = await _usersRepository.GetUserByEmailAsync(email);
 
-        if (user == activeUser)
+        if (
+            _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.AuthenticationMethod)
+            == "JWT Token"
+        )
         {
-            throw new UserCantDeleteThemselfException();
+            var email =
+                _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
+                ?? "Unknown user";
+            var activeUser = await _usersRepository.GetUserByEmailAsync(email);
+
+            if (user == activeUser)
+            {
+                throw new UserCantDeleteThemselfException();
+            }
         }
 
         var change = new LogChange
