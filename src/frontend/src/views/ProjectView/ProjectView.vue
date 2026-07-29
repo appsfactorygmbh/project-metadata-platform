@@ -18,6 +18,7 @@
   import { AddPluginView } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
   import { useThemeToken } from '@/utils/hooks';
   import { ResourceActions } from '@/models/utils';
+  import router from '@/router';
 
   const { notification } = App.useApp();
   const token = useThemeToken();
@@ -171,10 +172,23 @@
           description: 'Project edited successfully.',
         });
       } catch (error) {
+        const updated = projectStore.getUpdatedSuccessfully;
+        if (updated) {
+          notification.success({
+            message: 'Success!',
+            description: 'Project edited successfully.',
+          });
+        }
         notification.error({
           message: 'Error!',
           description: (error as Error).message ?? 'An error occurred.',
         });
+        if (
+          updated &&
+          (error as Error).message === 'This action is unauthorized.'
+        ) {
+          router.push('/403');
+        }
       }
       await projectStore.fetchAll();
       await projectStore.fetch(projectID.value);

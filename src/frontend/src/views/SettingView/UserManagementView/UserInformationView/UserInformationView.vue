@@ -28,6 +28,7 @@
   import type { UserListModel, UserModel } from '@/models/User';
   import type { Rule } from 'ant-design-vue/es/form';
   import { isValidEmail } from '@/utils/form/userValidation';
+  import router from '@/router';
   const { notification } = App.useApp();
   const token = useThemeToken();
 
@@ -299,15 +300,17 @@
         message: 'Success!',
         description: 'User updated successfully.',
       });
-      await stopEditing();
       const targetId = formData.externalId || user.value.externalId;
+      const isMe = user.value.externalId === me.value?.externalId;
+      await stopEditing();
+
       await userStore.fetchUser(targetId);
 
-      if (formData.externalId && formData.externalId !== routerUserId.value) {
-        setUserId(formData.externalId);
+      if (targetId && targetId !== routerUserId.value) {
+        setUserId(targetId);
       }
 
-      if (targetId === me.value?.externalId) {
+      if (isMe) {
         userStore.fetchMe();
       }
     } catch (error) {
@@ -316,6 +319,13 @@
         message: 'Error!',
         description: (error as Error).message ?? 'An error occurred.',
       });
+      if (
+        !isEditing.value &&
+        (error as Error).message === 'This action is unauthorized.'
+      ) {
+        setUserId(null);
+        router.push('/403');
+      }
     }
   };
 

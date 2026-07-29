@@ -22,6 +22,7 @@
   import { App } from 'ant-design-vue';
   import type { Rule } from 'ant-design-vue/es/form';
   import type { OfficeLocationModel } from '@/models/OfficeLocation';
+  import router from '@/router';
 
   const token = useThemeToken();
   const { notification } = App.useApp();
@@ -94,19 +95,24 @@
 
       await officeLocationStore.update(officeLocation.value.id, updateRequest);
 
-      await officeLocationStore.fetch(officeLocation.value?.id);
-
       notification.success({
         message: 'Success!',
         description: 'Office Location updated successfully.',
       });
       await stopEditing();
+      await officeLocationStore.fetch(officeLocation.value?.id);
     } catch (error) {
       console.error('Validation or API error:', error);
       notification.error({
         message: 'Error!',
         description: (error as Error).message ?? 'An error occurred.',
       });
+      if (
+        !isEditing.value &&
+        (error as Error).message === 'This action is unauthorized.'
+      ) {
+        router.push('/403');
+      }
     }
   };
 

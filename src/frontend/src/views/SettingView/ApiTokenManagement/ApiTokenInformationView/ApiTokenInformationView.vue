@@ -17,6 +17,7 @@
   import { useThemeToken } from '@/utils/hooks';
   import { ResourceActions } from '@/models/utils';
   import { App } from 'ant-design-vue';
+  import router from '@/router';
 
   const token = useThemeToken();
   const { notification } = App.useApp();
@@ -37,12 +38,16 @@
   );
 
   const isTokenModalVisible = ref(false);
+  const isRegenerating = ref(false);
 
-  watch(getHasTokenValue, (newValue) => {
-    if (newValue) {
-      isTokenModalVisible.value = true;
-    }
-  });
+  watch(
+    () => getHasTokenValue.value && !isLoading.value && !isRegenerating.value,
+    (isReady) => {
+      if (isReady) {
+        isTokenModalVisible.value = true;
+      }
+    },
+  );
 
   const isConfirmDeleteModalOpen = ref<boolean>(false);
   const openConfirmDeleteModal = () => {
@@ -122,14 +127,29 @@
   };
   const regenerateApiToken = async () => {
     if (!apiToken.value) return;
+
+    let isRegenerated = false;
+    isRegenerating.value = true;
     try {
       await apiTokenStore.regenerate(apiToken.value?.id);
+      isRegenerated = true;
+
       await apiTokenStore.fetchApiToken(apiToken.value?.id);
+      isRegenerating.value = true;
     } catch (error) {
       notification.error({
         message: 'Error!',
         description: (error as Error).message ?? 'An error occurred.',
       });
+
+      if (
+        isRegenerated &&
+        (error as Error).message === 'This action is unauthorized.'
+      ) {
+        apiTokenStore.setTokenValue(null);
+        router.push('/403');
+      }
+      isRegenerating.value = false;
     }
   };
 </script>

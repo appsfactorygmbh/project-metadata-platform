@@ -20,6 +20,7 @@
   import type { Rule } from 'ant-design-vue/es/form';
   import type { DepartmentModel } from '@/models/Department';
   import { App } from 'ant-design-vue';
+  import router from '@/router';
 
   const token = useThemeToken();
   const { notification } = App.useApp();
@@ -91,20 +92,25 @@
       };
 
       await departmentStore.update(department.value.id, updateRequest);
-
-      await departmentStore.fetch(department.value?.id);
+      await stopEditing();
 
       notification.success({
         message: 'Success!',
         description: 'Department updated successfully.',
       });
-      await stopEditing();
+      await departmentStore.fetch(department.value?.id);
     } catch (error) {
       console.error('Validation or API error:', error);
       notification.error({
         message: 'Error!',
         description: (error as Error).message ?? 'An error occurred.',
       });
+      if (
+        !isEditing.value &&
+        (error as Error).message === 'This action is unauthorized.'
+      ) {
+        router.push('/403');
+      }
     }
   };
 

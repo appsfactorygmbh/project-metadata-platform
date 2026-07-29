@@ -18,6 +18,7 @@
   import { ResourceActions } from '@/models/utils';
   import type { Rule } from 'ant-design-vue/es/form';
   import type { TeamModel } from '@/models/Team';
+  import router from '@/router';
 
   const token = useThemeToken();
   const { notification } = App.useApp();
@@ -106,19 +107,24 @@
 
       await teamStore.update(team.value.id, updateRequest);
 
-      await teamStore.fetch(team.value?.id);
-
       notification.success({
         message: 'Success!',
         description: 'Team updated successfully.',
       });
       await stopEditing();
+      await teamStore.fetch(team.value?.id);
     } catch (error) {
       console.error('Validation or API error:', error);
       notification.error({
         message: 'Error!',
         description: (error as Error).message ?? 'An error occurred.',
       });
+      if (
+        !isEditing.value &&
+        (error as Error).message === 'This action is unauthorized.'
+      ) {
+        router.push('/403');
+      }
     }
   };
 

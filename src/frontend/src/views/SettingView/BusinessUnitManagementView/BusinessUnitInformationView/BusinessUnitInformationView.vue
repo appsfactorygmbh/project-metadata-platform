@@ -20,6 +20,7 @@
   import { ResourceActions } from '@/models/utils';
   import type { Rule } from 'ant-design-vue/es/form';
   import type { BusinessUnitModel } from '@/models/BusinessUnit';
+  import router from '@/router';
 
   const token = useThemeToken();
   const { notification } = App.useApp();
@@ -94,19 +95,24 @@
 
       await businessUnitStore.update(businessUnit.value.id, updateRequest);
 
-      await businessUnitStore.fetch(businessUnit.value?.id);
-
       notification.success({
         message: 'Success!',
         description: 'Business Unit updated successfully.',
       });
       await stopEditing();
+      await businessUnitStore.fetch(businessUnit.value?.id);
     } catch (error) {
       console.error('Validation or API error:', error);
       notification.error({
         message: 'Error!',
         description: (error as Error).message ?? 'An error occurred.',
       });
+      if (
+        !isEditing.value &&
+        (error as Error).message === 'This action is unauthorized.'
+      ) {
+        router.push('/403');
+      }
     }
   };
 
