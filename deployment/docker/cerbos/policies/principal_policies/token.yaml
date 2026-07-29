@@ -60,7 +60,7 @@ principalPolicy:
               any:
                 of:
                   - expr: "'DELETE_' + R.kind.upperAscii() in P.attr.Scopes"
-                  - expr: "'SCIM' in P.attr.Scopes && R.kind == '{nameof(ApplicationUser)}'"
+                  - expr: "'SCIM' in P.attr.Scopes && R.kind == 'ApplicationUser'"
         - action: 'DELETE'
           effect: EFFECT_DENY
           condition:
@@ -68,5 +68,5 @@ principalPolicy:
               none:
                 of:
                   - expr: "'DELETE_' + R.kind.upperAscii() in P.attr.Scopes"
-                  - expr: "'SCIM' in P.attr.Scopes && R.kind == '{nameof(ApplicationUser)}'"
+                  - expr: "'SCIM' in P.attr.Scopes && R.kind == 'ApplicationUser'"
       resource: '*'
