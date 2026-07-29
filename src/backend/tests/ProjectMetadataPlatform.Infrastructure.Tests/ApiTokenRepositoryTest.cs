@@ -167,6 +167,54 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
     }
 
     [Test]
+    public async Task IsScimToken_NoToken_False_Test()
+    {
+        var result = await _apiTokenRepository.IsScimToken("Token1");
+
+        Assert.That(result, Is.False);
+    }
+
+    [Test]
+    public async Task IsScimToken_NoScimScope_False_Test()
+    {
+        var token = new ApiToken
+        {
+            Id = 1,
+            Name = "Token1",
+            Token = "TokenHash1",
+            Scopes = new List<TokenScopes>
+            {
+                TokenScopes.GET_APPLICATIONUSER,
+                TokenScopes.DELETE_PLUGIN,
+            },
+        };
+
+        _ = await _context.ApiTokens.AddAsync(token);
+        _ = await _context.SaveChangesAsync();
+        var result = await _apiTokenRepository.IsScimToken("Token1");
+
+        Assert.That(result, Is.False);
+    }
+
+    [Test]
+    public async Task IsScimToken_True_Test()
+    {
+        var token = new ApiToken
+        {
+            Id = 1,
+            Name = "Token1",
+            Token = "TokenHash1",
+            Scopes = new List<TokenScopes> { TokenScopes.SCIM },
+        };
+
+        _ = await _context.ApiTokens.AddAsync(token);
+        _ = await _context.SaveChangesAsync();
+        var result = await _apiTokenRepository.IsScimToken("Token1");
+
+        Assert.That(result, Is.True);
+    }
+
+    [Test]
     public async Task StoreApiTokenTest()
     {
         _ = _passwordHasherMock
