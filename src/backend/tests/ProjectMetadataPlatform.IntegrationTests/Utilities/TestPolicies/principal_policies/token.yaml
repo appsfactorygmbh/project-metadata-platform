@@ -1,0 +1,11 @@
+apiVersion: api.cerbos.dev/v1
+principalPolicy:
+  principal: ApiToken
+  version: default
+  rules:
+    - actions:
+        - action: '*'
+          effect: EFFECT_ALLOW
+
+      resource: '*'
+

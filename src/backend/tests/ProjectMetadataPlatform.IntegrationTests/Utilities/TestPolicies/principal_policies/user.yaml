@@ -1,0 +1,10 @@
+apiVersion: api.cerbos.dev/v1
+principalPolicy:
+  principal: User
+  version: default
+  rules:
+    - actions:
+        - action: '*'
+          effect: EFFECT_ALLOW
+
+      resource: '*'

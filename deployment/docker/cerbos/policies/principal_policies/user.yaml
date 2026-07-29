@@ -1,0 +1,22 @@
+apiVersion: api.cerbos.dev/v1
+principalPolicy:
+  principal: User
+  version: default
+  rules:
+    - actions:
+        - action: '*'
+          effect: EFFECT_ALLOW
+          condition: 
+            match:
+              any:
+                of:
+                  - expr: "P.attr.Email == 'admin@admin.admin'"
+                  - expr: "P.attr.Departments.exists(d, d.DepartmentName in ['IT Admin', 'IT Development'])"
+        - action: '*'
+          effect: EFFECT_DENY
+          condition:
+            match:
+              any:
+                of:
+                  - expr: "P.attr.IsActive == false"
+      resource: '*'

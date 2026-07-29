@@ -133,7 +133,7 @@ await app.Services.CheckDbConnection();
 app.Services.MigrateDatabase();
 app.Services.AddAdminUser();
 await app.Services.CheckPdpConnection();
-await app.Services.AddDefaultPolicies();
+
 app.UseCors();
 app.UseSwagger();
 app.UseSwaggerUI(options =>

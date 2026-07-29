@@ -30,14 +30,31 @@ public class IntegrationTestsBase : IDisposable
     [OneTimeSetUp]
     public async Task OneTimeSetUp()
     {
+        var policiesDirectory = Path.GetFullPath(
+            Path.Combine(
+                TestContext.CurrentContext.TestDirectory,
+                "..",
+                "..",
+                "..",
+                "Utilities",
+                "TestPolicies"
+            )
+        );
+
+        if (!Directory.Exists(policiesDirectory))
+        {
+            Directory.CreateDirectory(policiesDirectory);
+        }
+
         Environment.SetEnvironmentVariable("TESTCONTAINERS_RYUK_DISABLED", "true");
         _cerbosContainer = new ContainerBuilder("ghcr.io/cerbos/cerbos:latest")
             .WithPortBinding(3592, true)
             .WithPortBinding(3593, true)
+            .WithResourceMapping(policiesDirectory, "/policies/")
             .WithCommand(
                 "server",
-                "--set=storage.driver=sqlite3",
-                "--set=storage.sqlite3.dsn=:memory:",
+                "--set=storage.driver=disk",
+                "--set=storage.disk.directory=policies",
                 "--set=server.adminAPI.enabled=true",
                 "--set=server.adminAPI.adminCredentials.username=cerbos_user",
                 "--set=server.adminAPI.adminCredentials.passwordHash=JDJ5JDEwJHl2ZjJJRERFS3VES2FTcExZU2xacmU5a1lLZHA0Z2FnL2c4VU8yaTguZnpacUo3emozSk4yCgo="
@@ -45,7 +62,9 @@ public class IntegrationTestsBase : IDisposable
             .Build();
 
         await _cerbosContainer.StartAsync();
+
         var cerbosHttpPort = _cerbosContainer.GetMappedPublicPort(3593);
+
         Environment.SetEnvironmentVariable("PMP_CERBOS_URL", $"http://localhost:{cerbosHttpPort}");
         Environment.SetEnvironmentVariable("PMP_CERBOS_USER", "cerbos_user");
         Environment.SetEnvironmentVariable("PMP_CERBOS_PASSWORD", "changeme");

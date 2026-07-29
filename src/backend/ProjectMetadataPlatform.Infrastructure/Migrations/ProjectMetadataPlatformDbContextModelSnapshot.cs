@@ -35,7 +35,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("ApplicationUserBusinessUnit");
+                    b.ToTable("ApplicationUserBusinessUnit", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationUserDepartment", b =>
@@ -50,7 +50,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("ApplicationUserDepartment");
+                    b.ToTable("ApplicationUserDepartment", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationUserTeam", b =>
@@ -65,7 +65,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("ApplicationUserTeam");
+                    b.ToTable("ApplicationUserTeam", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationUserTeam1", b =>
@@ -80,7 +80,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TeamSupportUsersId");
 
-                    b.ToTable("ApplicationUserTeam1");
+                    b.ToTable("ApplicationUserTeam1", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -230,7 +230,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.PrimitiveCollection<int[]>("Scopes")
+                    b.Property<int[]>("Scopes")
                         .HasColumnType("integer[]");
 
                     b.Property<string>("Token")
@@ -242,7 +242,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("ApiTokens");
+                    b.ToTable("ApiTokens", (string)null);
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Auth.RefreshToken", b =>
@@ -266,7 +266,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshToken");
+                    b.ToTable("RefreshToken", (string)null);
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.BusinessUnits.BusinessUnit", b =>
@@ -286,7 +286,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("BusinessUnitName")
                         .IsUnique();
 
-                    b.ToTable("BusinessUnits");
+                    b.ToTable("BusinessUnits", (string)null);
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Companies.Company", b =>
@@ -306,7 +306,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("CompanyName")
                         .IsUnique();
 
-                    b.ToTable("Companies");
+                    b.ToTable("Companies", (string)null);
 
                     b.HasData(
                         new
@@ -338,7 +338,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("DepartmentName")
                         .IsUnique();
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", (string)null);
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Logs.Log", b =>
@@ -442,7 +442,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Logs");
+                    b.ToTable("Logs", (string)null);
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Logs.LogChange", b =>
@@ -472,7 +472,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("LogId");
 
-                    b.ToTable("LogChange");
+                    b.ToTable("LogChange", (string)null);
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.OfficeLocations.OfficeLocation", b =>
@@ -492,7 +492,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("OfficeLocationName")
                         .IsUnique();
 
-                    b.ToTable("OfficeLocations");
+                    b.ToTable("OfficeLocations", (string)null);
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Plugins.Plugin", b =>
@@ -518,7 +518,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("PluginName")
                         .IsUnique();
 
-                    b.ToTable("Plugins");
+                    b.ToTable("Plugins", (string)null);
 
                     b.HasData(
                         new
@@ -559,7 +559,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("ProjectPluginsRelation");
+                    b.ToTable("ProjectPluginsRelation", (string)null);
 
                     b.HasData(
                         new
@@ -681,7 +681,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
 
                     b.HasData(
                         new
@@ -753,7 +753,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("TeamName")
                         .IsUnique();
 
-                    b.ToTable("Teams");
+                    b.ToTable("Teams", (string)null);
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Users.ApplicationUser", b =>
@@ -788,7 +788,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Property<bool>("IsScimProvisioned")
                         .HasColumnType("boolean");
 
-                    b.PrimitiveCollection<List<string>>("JobTitles")
+                    b.Property<List<string>>("JobTitles")
                         .HasColumnType("text[]");
 
                     b.Property<bool>("LockoutEnabled")
