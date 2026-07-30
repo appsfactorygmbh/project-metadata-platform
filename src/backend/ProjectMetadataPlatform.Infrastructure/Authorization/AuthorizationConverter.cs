@@ -31,7 +31,7 @@ public static class AuthorizationConverter
     public static Principal ToPrincipal(this Object obj, string kind)
     {
         return Principal
-            .NewInstance(kind, "Default")
+            .NewInstance(kind, "User")
             .WithPolicyVersion(AuthorizationConstants.POLICY_VERSION)
             .WithAttributes(ConvertObjectToAttributeDict(obj));
     }
@@ -223,7 +223,7 @@ public static class AuthorizationConverter
             var left = ResolveOperand(operands[0], param, attributeMap);
             var right = ResolveOperand(operands[1], param, attributeMap);
 
-            AlignTypes(ref left, ref right);
+            AlignTypes(ref left, ref right, op);
 
             switch (op)
             {
@@ -239,6 +239,15 @@ public static class AuthorizationConverter
                     return Expression.GreaterThan(left, right);
                 case "ge":
                     return Expression.GreaterThanOrEqual(left, right);
+                case "contains":
+                    var containsMethod = typeof(string).GetMethod("Contains", [typeof(string)]);
+                    return Expression.Call(left, containsMethod!, right);
+                case "startsWith":
+                    var startsWithMethod = typeof(string).GetMethod("StartsWith", [typeof(string)]);
+                    return Expression.Call(left, startsWithMethod!, right);
+                case "endsWith":
+                    var endsWithMethod = typeof(string).GetMethod("EndsWith", [typeof(string)]);
+                    return Expression.Call(left, endsWithMethod!, right);
                 case "add":
                     if (left.Type == typeof(string) || right.Type == typeof(string))
                     {
@@ -272,7 +281,7 @@ public static class AuthorizationConverter
                     var condition = ResolveOperand(operands[0], param, attributeMap);
                     var trueVal = ResolveOperand(operands[1], param, attributeMap);
                     var falseVal = ResolveOperand(operands[2], param, attributeMap);
-                    AlignTypes(ref trueVal, ref falseVal);
+                    AlignTypes(ref trueVal, ref falseVal, op);
                     return Expression.Condition(condition, trueVal, falseVal);
                 default:
                     break;
@@ -378,18 +387,54 @@ public static class AuthorizationConverter
             {
                 var elementType = item.Type;
                 var underlyingType = Nullable.GetUnderlyingType(elementType) ?? elementType;
+
+                var allParsed = true;
                 var typedArray = Array.CreateInstance(elementType, objArray.Length);
 
                 for (var i = 0; i < objArray.Length; i++)
                 {
-                    var convertedVal =
-                        underlyingType.IsEnum && objArray[i] is string strVal
-                            ? System.Enum.Parse(underlyingType, strVal, ignoreCase: true)
-                            : Convert.ChangeType(objArray[i], underlyingType);
-
-                    typedArray.SetValue(convertedVal, i);
+                    try
+                    {
+                        if (underlyingType.IsEnum && objArray[i] is string strVal)
+                        {
+                            if (System.Enum.TryParse(underlyingType, strVal, true, out var enumVal))
+                            {
+                                typedArray.SetValue(enumVal, i);
+                            }
+                            else
+                            {
+                                allParsed = false;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            var convertedVal = Convert.ChangeType(objArray[i], underlyingType);
+                            typedArray.SetValue(convertedVal, i);
+                        }
+                    }
+                    catch
+                    {
+                        allParsed = false;
+                        break;
+                    }
                 }
-                list = Expression.Constant(typedArray);
+
+                if (allParsed)
+                {
+                    list = Expression.Constant(typedArray);
+                }
+                else if (underlyingType.IsEnum)
+                {
+                    item = Expression.Call(item, typeof(object).GetMethod("ToString")!);
+
+                    var strArray = Array.CreateInstance(typeof(string), objArray.Length);
+                    for (var i = 0; i < objArray.Length; i++)
+                    {
+                        strArray.SetValue(objArray[i]?.ToString(), i);
+                    }
+                    list = Expression.Constant(strArray);
+                }
             }
         }
 
@@ -417,7 +462,8 @@ public static class AuthorizationConverter
     /// </summary>
     /// <param name="left">A LinQ Constant.</param>
     /// <param name="right">Another LinQ Constant.</param>
-    private static void AlignTypes(ref Expression left, ref Expression right)
+    /// <param name="op">Operator that will be done on the two constants.</param>
+    private static void AlignTypes(ref Expression left, ref Expression right, string op)
     {
         if (left.Type == right.Type)
         {
@@ -426,17 +472,28 @@ public static class AuthorizationConverter
 
         var leftUnderlying = Nullable.GetUnderlyingType(left.Type) ?? left.Type;
         var rightUnderlying = Nullable.GetUnderlyingType(right.Type) ?? right.Type;
-
+        if (op is "contains" or "startsWith" or "endsWith")
+        {
+            if (leftUnderlying.IsEnum && right.Type == typeof(string))
+            {
+                left = Expression.Call(left, typeof(object).GetMethod("ToString")!);
+                return;
+            }
+            if (rightUnderlying.IsEnum && left.Type == typeof(string))
+            {
+                right = Expression.Call(right, typeof(object).GetMethod("ToString")!);
+                return;
+            }
+        }
         if (left.NodeType == ExpressionType.Constant && right.NodeType != ExpressionType.Constant)
         {
-            var val = ((ConstantExpression)left).Value;
-            if (val != null)
+            if (TryConvertConstant(left, rightUnderlying, out var convertedLeft))
             {
-                var converted =
-                    rightUnderlying.IsEnum && val is string strVal
-                        ? System.Enum.Parse(rightUnderlying, strVal, ignoreCase: true)
-                        : Convert.ChangeType(val, rightUnderlying);
-                left = Expression.Constant(converted, right.Type);
+                left = Expression.Constant(convertedLeft, right.Type);
+            }
+            else if (rightUnderlying.IsEnum && left.Type == typeof(string))
+            {
+                right = Expression.Call(right, typeof(object).GetMethod("ToString")!);
             }
         }
         else if (
@@ -444,16 +501,54 @@ public static class AuthorizationConverter
             && left.NodeType != ExpressionType.Constant
         )
         {
-            var val = ((ConstantExpression)right).Value;
-            if (val != null)
+            if (TryConvertConstant(right, leftUnderlying, out var convertedRight))
             {
-                var converted =
-                    leftUnderlying.IsEnum && val is string strVal
-                        ? System.Enum.Parse(leftUnderlying, strVal, ignoreCase: true)
-                        : Convert.ChangeType(val, leftUnderlying);
-
-                right = Expression.Constant(converted, left.Type);
+                right = Expression.Constant(convertedRight, left.Type);
             }
+            else if (leftUnderlying.IsEnum && right.Type == typeof(string))
+            {
+                left = Expression.Call(left, typeof(object).GetMethod("ToString")!);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Tries to convert an Constant to a target type.
+    /// </summary>
+    /// <param name="constantExpr">Constant to be converted.</param>
+    /// <param name="targetType">Target type of the conversion</param>
+    /// <param name="result">Result of the conversion.</param>
+    /// <returns>If the conversion was successfull.</returns>
+    private static bool TryConvertConstant(
+        Expression constantExpr,
+        System.Type targetType,
+        out object? result
+    )
+    {
+        result = null;
+        var val = ((ConstantExpression)constantExpr).Value;
+        if (val == null)
+        {
+            return true;
+        }
+
+        try
+        {
+            if (targetType.IsEnum && val is string strVal)
+            {
+                if (System.Enum.TryParse(targetType, strVal, true, out result))
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            result = Convert.ChangeType(val, targetType);
+            return true;
+        }
+        catch
+        {
+            return false;
         }
     }
 }

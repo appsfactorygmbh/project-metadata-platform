@@ -232,7 +232,6 @@ public class AuthorizationService : IAuthorizationService
         IEnumerable<string> actions
     )
     {
-        var t = Stopwatch.GetTimestamp();
         var request = PlanResourcesRequest
             .NewInstance()
             .WithRequestId(RequestId.Generate())
@@ -240,8 +239,6 @@ public class AuthorizationService : IAuthorizationService
             .WithResource(resource)
             .WithActions([.. actions]);
         var result = await _cerbosClient.PlanResourcesAsync(request);
-        var d = Stopwatch.GetElapsedTime(t);
-            Console.WriteLine("TIMEE: " + d.ToString());
         return result;
     }
 }
