@@ -57,11 +57,7 @@ axios.interceptors.response.use(
 );
 
 type RequestOptionType =
-  | 'drivers'
-  | 'refreshToken'
-  | 'loginData'
-  | 'registerData'
-  | 'fetchData';
+  'drivers' | 'refreshToken' | 'loginData' | 'registerData' | 'fetchData';
 type BaseAuthOptions = Omit<AuthOptions, RequestOptionType>;
 type RequestAuthOptions = Pick<AuthOptions, RequestOptionType>;
 
