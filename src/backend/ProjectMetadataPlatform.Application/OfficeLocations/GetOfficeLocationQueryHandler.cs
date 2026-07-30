@@ -49,7 +49,10 @@ public class GetOfficeLocationQueryHandler
         {
             throw new UnauthorizedException();
         }
-        var permissions = await _authorizationService.GetPermissions(location,[AuthorizationConstants.Actions.EDIT,AuthorizationConstants.Actions.DELETE]);
+        var permissions = await _authorizationService.GetPermissions(
+            location,
+            [AuthorizationConstants.Actions.EDIT, AuthorizationConstants.Actions.DELETE]
+        );
         return (location, permissions);
     }
 }

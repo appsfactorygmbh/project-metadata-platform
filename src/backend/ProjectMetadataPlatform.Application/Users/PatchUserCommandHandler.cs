@@ -58,9 +58,9 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         ITeamRepository teamRepository,
         IUnitOfWork unitOfWork,
         ILogRepository logRepository,
-        IAuthorizationService authorizationService
-,
-        IGetOrCreateHelper getOrCreateHelper)
+        IAuthorizationService authorizationService,
+        IGetOrCreateHelper getOrCreateHelper
+    )
     {
         _usersRepository = usersRepository;
         _passwordHasher = passwordHasher;
@@ -332,8 +332,6 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         }
     }
 
-
-
     /// <summary>
     /// Updates the user bu's.
     /// </summary>
@@ -384,8 +382,6 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         }
     }
 
-
-
     /// <summary>
     /// Updates the user officeLocation.
     /// </summary>
@@ -424,8 +420,6 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         }
     }
 
-
-
     /// <summary>
     /// Updates the user company.
     /// </summary>
@@ -460,8 +454,6 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
             );
         }
     }
-
-
 
     /// <summary>
     /// Updates any Property of the User

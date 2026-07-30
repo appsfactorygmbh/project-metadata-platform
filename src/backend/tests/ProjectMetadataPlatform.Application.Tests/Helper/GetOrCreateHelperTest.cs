@@ -81,9 +81,7 @@ public class GetOrCreateHelperTest
     public async Task GetOrCreateDepartment_DepartmentDoesntExistNoScimTokenTest()
     {
         var identity = new ClaimsIdentity(
-            [
-                new Claim(ClaimTypes.AuthenticationMethod, "JWT Token"),
-            ],
+            [new Claim(ClaimTypes.AuthenticationMethod, "JWT Token")],
             "TestAuth"
         );
         var contextUser = new ClaimsPrincipal(identity);
@@ -141,7 +139,7 @@ public class GetOrCreateHelperTest
         );
     }
 
-        [Test]
+    [Test]
     public async Task GetOrCreateCompany_CompanyExistsTest()
     {
         var name = "A Name";
@@ -167,9 +165,7 @@ public class GetOrCreateHelperTest
     public async Task GetOrCreateCompany_CompanyDoesntExistNoScimTokenTest()
     {
         var identity = new ClaimsIdentity(
-            [
-                new Claim(ClaimTypes.AuthenticationMethod, "JWT Token"),
-            ],
+            [new Claim(ClaimTypes.AuthenticationMethod, "JWT Token")],
             "TestAuth"
         );
         var contextUser = new ClaimsPrincipal(identity);
@@ -227,7 +223,7 @@ public class GetOrCreateHelperTest
         );
     }
 
-        [Test]
+    [Test]
     public async Task GetOrCreateOfficeLocation_OfficeLocationExistsTest()
     {
         var name = "A Name";
@@ -253,9 +249,7 @@ public class GetOrCreateHelperTest
     public async Task GetOrCreateOfficeLocation_OfficeLocationDoesntExistNoScimTokenTest()
     {
         var identity = new ClaimsIdentity(
-            [
-                new Claim(ClaimTypes.AuthenticationMethod, "JWT Token"),
-            ],
+            [new Claim(ClaimTypes.AuthenticationMethod, "JWT Token")],
             "TestAuth"
         );
         var contextUser = new ClaimsPrincipal(identity);
@@ -313,7 +307,7 @@ public class GetOrCreateHelperTest
         );
     }
 
-        [Test]
+    [Test]
     public async Task GetOrCreateBusinessUnit_BusinessUnitExistsTest()
     {
         var name = "A Name";
@@ -339,9 +333,7 @@ public class GetOrCreateHelperTest
     public async Task GetOrCreateBusinessUnit_BusinessUnitDoesntExistNoScimTokenTest()
     {
         var identity = new ClaimsIdentity(
-            [
-                new Claim(ClaimTypes.AuthenticationMethod, "JWT Token"),
-            ],
+            [new Claim(ClaimTypes.AuthenticationMethod, "JWT Token")],
             "TestAuth"
         );
         var contextUser = new ClaimsPrincipal(identity);

@@ -51,7 +51,10 @@ public class GetUserByEmailQueryHandler
         {
             throw new UnauthorizedException();
         }
-        var permissions = await _authorizationService.GetPermissions(user,[AuthorizationConstants.Actions.EDIT,AuthorizationConstants.Actions.DELETE]);
+        var permissions = await _authorizationService.GetPermissions(
+            user,
+            [AuthorizationConstants.Actions.EDIT, AuthorizationConstants.Actions.DELETE]
+        );
         return (user, permissions);
     }
 }

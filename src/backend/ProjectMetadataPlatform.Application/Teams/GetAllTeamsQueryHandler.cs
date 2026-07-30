@@ -44,7 +44,9 @@ public class GetAllTeamsQueryHandler
         );
 
         var queriedteams = await _authorizationService.TryGetPlanResourceQuery(teams);
-        var permissions = await _authorizationService.GetPermissions<Team>(            actions: [AuthorizationConstants.Actions.CREATE]);
+        var permissions = await _authorizationService.GetPermissions<Team>(
+            actions: [AuthorizationConstants.Actions.CREATE]
+        );
         if (queriedteams == null)
         {
             List<Team> filteredteams = [];

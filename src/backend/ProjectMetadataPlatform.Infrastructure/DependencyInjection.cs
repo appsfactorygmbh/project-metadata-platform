@@ -317,7 +317,6 @@ public static class DependencyInjection
             {
                 throw new ArgumentException("Can't Connect to DB");
             }
-
         });
     }
 
@@ -333,7 +332,6 @@ public static class DependencyInjection
         var cerbosClient = services.GetRequiredService<ICerbosClient>();
         await pipeline.ExecuteAsync(async token =>
         {
-
             if (
                 (
                     (
@@ -377,5 +375,4 @@ public static class DependencyInjection
         var password = EnvironmentUtils.GetEnvVarOrLoadFromFile("PMP_CERBOS_PASSWORD");
         return CerbosClientBuilder.ForTarget(url).WithPlaintext().BuildAdminClient(user, password);
     }
-
 }
