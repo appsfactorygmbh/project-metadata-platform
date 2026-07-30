@@ -5,6 +5,7 @@
 This project is an application for the storage and management of project metadata. This repository contains both an ASP.NET Core backend providing a RESTful API and a VUE 3 web frontend.
 
 ### Project Structure
+
 - `.github`:
   - `workflows`: GitHub Actions
 - `.vscode`: Config for IDE
@@ -17,7 +18,7 @@ This project is an application for the storage and management of project metadat
 
 ### Prerequisites
 
--   [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - Node.js (v26+)
 - Corepack (manages package managers like Yarn)
 - Yarn
@@ -27,16 +28,16 @@ This project is an application for the storage and management of project metadat
 
 1. Clone the repository:
 
-    ```sh
-    git clone <repository-url>
-    cd project-metadata-platform
-    ```
+   ```sh
+   git clone <repository-url>
+   cd project-metadata-platform
+   ```
 
 2. Restore the backend dependencies:
-    ```sh
-    cd src/backend
-    dotnet restore
-    ```
+   ```sh
+   cd src/backend
+   dotnet restore
+   ```
 3. Enable Corepack and install frontend dependencies:
    ```sh
    cd ../../src/frontend
@@ -44,18 +45,24 @@ This project is an application for the storage and management of project metadat
    yarn install
    ```
 4. Add Pre-Commit Hook for making sure Commits follow Conventional Commits format:
+
 ```sh
   cd ../..
   pre-commit install --hook-type commit-msg
 ```
+
 ### Local Deployment
+
 The folder deployment/docker folder contains a minimal docker compose file for local deployment for testing purposes. To build and start the application run this command in the directory:
-   ```sh
-   docker compose -f docker-compose-local-build.yml up --build -d
-   ```
+
+```sh
+docker compose -f docker-compose-local-build.yml up --build -d
+```
+
 The frontend is available at `http://localhost:8090` and the Swagger UI of the backend API is available at `http://localhost:8090/swagger/index.html`.
 
 If SSO should be enabled add the following env variables to `deployment/docker/docker-compose-local-build.yml`:
+
 ```yml
 - AZURE_AUTHORITY=<Valid Authority Url>
 - AZURE_BACKEND_CLIENT_ID=<Valid Webapi App Registration>
@@ -67,18 +74,18 @@ If SSO should be enabled add the following env variables to `deployment/docker/d
 
 This project supports User Provisioning via SCIM. The following user scheme with a custom PMP extension is used:
 
-| SCIM Attribute                                                          | PMP User Attribute | Notes                            |
-|-------------------------------------------------------------------------|--------------------|----------------------------------|
-| externalId                                                              | Employee Number/Id | Matching precedence: 1; required |
-| userName                                                                | Email              | Matching precedence: 2; required |
-| active                                                                  | IsActive           | required                         |
-| addresses[type eq "work"].locality          | OfficeLocation       |  Creates new Office Location if it doesn't exist already                                | 
-| urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:organization | Company            | creates new Company if it doesn't exist already                                 |
-| urn:ietf:params:scim:schemas:extension:pmp:User:teamSupport             | TeamSupport        | checks for existing team         |
-| urn:ietf:params:scim:schemas:extension:pmp:User:team                    | Teams              | checks for existing team         |
-| urn:ietf:params:scim:schemas:extension:pmp:User:jobTitles               | JobTitles          |                                  |
-| urn:ietf:params:scim:schemas:extension:pmp:User:businessUnits           | BusinessUnits      |     creates new Business Units if they don't exist already                             |
-| urn:ietf:params:scim:schemas:extension:pmp:User:departments             | Departments        |    creates new Departments if they don't exist already                              |
+| SCIM Attribute                                                          | PMP User Attribute | Notes                                                   |
+| ----------------------------------------------------------------------- | ------------------ | ------------------------------------------------------- |
+| externalId                                                              | Employee Number/Id | Matching precedence: 1; required                        |
+| userName                                                                | Email              | Matching precedence: 2; required                        |
+| active                                                                  | IsActive           | required                                                |
+| addresses[type eq "work"].locality                                      | OfficeLocation     | Creates new Office Location if it doesn't exist already |
+| urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:organization | Company            | creates new Company if it doesn't exist already         |
+| urn:ietf:params:scim:schemas:extension:pmp:User:teamSupport             | TeamSupport        | checks for existing team                                |
+| urn:ietf:params:scim:schemas:extension:pmp:User:team                    | Teams              | checks for existing team                                |
+| urn:ietf:params:scim:schemas:extension:pmp:User:jobTitles               | JobTitles          |                                                         |
+| urn:ietf:params:scim:schemas:extension:pmp:User:businessUnits           | BusinessUnits      | creates new Business Units if they don't exist already  |
+| urn:ietf:params:scim:schemas:extension:pmp:User:departments             | Departments        | creates new Departments if they don't exist already     |
 
 ## Appsfactory “Metadata Platform” Backend
 
@@ -105,6 +112,7 @@ Then, run the following command inside the folder deployment/docker to start the
 ```sh
 docker compose -f docker-compose-database.yml up --remove-orphans -d
 ```
+
 When using Visual Studio Code its enough to start debugging wth the configuration `C#: PMP Backend Debug`. A pre-launch task will automatically start and post-debug task will automatically stop the database.
 
 Next, open a terminal in the ProjectMetadataPlatform.Api directory and run the following command to apply any existing migrations to the database:
@@ -139,15 +147,15 @@ Runs unit tests with NUnit.
 
 The project is build following the Clean Architecture principles. The project is structured as follows:
 
--   `ProjectMetadataPlatform.Application`: Application layer
--   `ProjectMetadataPlatform.Domain`: Domain layer
--   `ProjectMetadataPlatform.Infrastructure`: Infrastructure layer
--   `ProjectMetadataPlatform.Api`: Api/Presentation layer
+- `ProjectMetadataPlatform.Application`: Application layer
+- `ProjectMetadataPlatform.Domain`: Domain layer
+- `ProjectMetadataPlatform.Infrastructure`: Infrastructure layer
+- `ProjectMetadataPlatform.Api`: Api/Presentation layer
 
--   `tests/ProjectMetadataPlatform.Application.Tests`: Application layer tests
--   `tests/ProjectMetadataPlatform.Domain.Tests`: Domain layer tests
--   `tests/ProjectMetadataPlatform.Infrastructure.Tests`: Infrastructure layer tests
--   `tests/ProjectMetadataPlatform.Api.Tests`: Api/Presentation layer tests
+- `tests/ProjectMetadataPlatform.Application.Tests`: Application layer tests
+- `tests/ProjectMetadataPlatform.Domain.Tests`: Domain layer tests
+- `tests/ProjectMetadataPlatform.Infrastructure.Tests`: Infrastructure layer tests
+- `tests/ProjectMetadataPlatform.Api.Tests`: Api/Presentation layer tests
 
 ### Development
 
@@ -158,11 +166,22 @@ See the [Run-Script](#run) section for how to run the application with a local d
 ### Auth
 
 The Application supports authentication via basic login and SSO with Microsoft Entra ID (modeled after BFF pattern). By default, the config for SSO is filled with placeholder values. When needing to debug SSO the following values in `ProjectMetadataPlatform.Api/Properties/launchsettings.json` have to be changed:
+
 ```json
         "AZURE_AUTHORITY":"<Valid Authority URI>",
         "AZURE_BACKEND_CLIENT_ID":"<Valid Client ID for WebApi App Registration>",
         "AZURE_SCOPE":"<Valid API Scope>",
         "AZURE_FRONTEND_CLIENT_ID":"<Valid Client ID for SPA App Registration>",
+```
+
+### Authorization
+
+The Application supports access control via the [cerbos pdp](https://github.com/cerbos/cerbos) as a sidecar service. Both example docker compose files contain a cerbos service configured for file storage and two base policies for user and api token access. For Production any cerbos storage driver can be used but this application itself doesn't implement policy management. When debugging authorization the following values in `ProjectMetadataPlatform.Api/Properties/launchsettings.json` have to be changed:
+
+```json
+        "PMP_CERBOS_URL": "<Url of the Cerbos Service>",
+        "PMP_CERBOS_USER": "<Cerbos Admin User>",
+        "PMP_CERBOS_PASSWORD": "<Cerbos Admin Password>",
 ```
 
 #### Database Migrations
@@ -173,48 +192,48 @@ When changing the domain models or their configurations in the infrastructure la
 2. Open a terminal in the `ProjectMetadataPlatform.Api` directory.
 3. Run the following command to apply the existing migrations to the database:
 
-    With powershell:
+   With powershell:
 
-    ```pwsh
-    pwsh .\dotnet_ef.ps1 database update
-    ```
+   ```pwsh
+   pwsh .\dotnet_ef.ps1 database update
+   ```
 
     With bash:
 
     ```sh
-     sh ./dotnet_ef.sh database update
+    sh ./dotnet_ef.sh database update
     ```
 
 4. Make the required changes to the domain models or their configurations.
 5. Run the following command to create a new migration:
 
-    With powershell:
+   With powershell:
 
-    ```pwsh
-    pwsh .\dotnet_ef.ps1 migrations add <migration-name>
-    ```
+   ```pwsh
+   pwsh .\dotnet_ef.ps1 migrations add <migration-name>
+   ```
 
-    With bash:
+   With bash:
 
-    ```sh
-     sh ./dotnet_ef.sh migrations add <migration-name>
-    ```
+   ```sh
+    sh ./dotnet_ef.sh migrations add <migration-name>
+   ```
 
 6. Commit the generated migration files. The files can be found in the `ProjectMetadataPlatform.Infrastructure/Migrations` directory.
 7. Push the changes to GitHub and create a merge request.
 8. Run the following command to create the migration script, then add it to the merge request description:
 
-    With powershell:
+   With powershell:
 
-    ```pwsh
-    pwsh .\dotnet_ef.ps1 migrations script <name-of-the-last-migration>
-    ```
+   ```pwsh
+   pwsh .\dotnet_ef.ps1 migrations script <name-of-the-last-migration>
+   ```
 
-    With bash:
+   With bash:
 
-    ```sh
-     sh ./dotnet_ef.sh migrations script <name-of-the-last-migration>
-    ```
+   ```sh
+    sh ./dotnet_ef.sh migrations script <name-of-the-last-migration>
+   ```
 
 9. Run the migration script on the database once the merge request is approved and merged onto main.
 
@@ -294,25 +313,26 @@ Runs the Vitest UI.
   - `store`: Pinia stores
   - `views`: Vue views/pages
 
-
 ### Development
 
 #### Debugging the application
 
 When using Visual Studio Code you can debug the application with either Chrome or Firefox when using the debug configurations `Chrome: PMP Frontend Debug` or `Firefox: PMP Frontend Debug`. A pre-launch task will automatically run the application in development mode, so that the browser debugger can attach, and a post-debug task will cstop the application. When using a version of Chrome / Firefox that was installed via snap package, Flatpak etc. it might be necessary to alter the launch.json and add a tmp directionary for the browser to use.
-Otherwise, when not using Visual Studio Code, just start the application with: 
+Otherwise, when not using Visual Studio Code, just start the application with:
+
 ```sh
 yarn dev
 ```
+
 #### Development with Backend Service
 
-To use the backend service during development, one needs to run the backend service locally. 
+To use the backend service during development, one needs to run the backend service locally.
 
 1. Start the backend as described in the [Run-Script](#run) section.
 2. The backend service should now be available at `http://localhost:5091`. This URL is already configured in the `.env` file of the frontend. Simply use `import.meta.env.VITE_BACKEND_URL + "/<your-endpoint>"` to access the api. For example:
 
    ```ts
-   const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/projects');
+   const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/projects");
    ```
 
 3. The env files are already configured to use the correct backend URLs in the staging and production environments. No further changes are necessary after local development is over.
@@ -320,15 +340,19 @@ To use the backend service during development, one needs to run the backend serv
 5. To stop the backend service, hit `Ctrl+C` in the terminal where the service is running or when using Visual Studio Code stop the backend debugging session.
 
 #### Auth
+
 The Frontend supports authentication via basic login and SSO with Microsoft Entra ID (modeled after BFF pattern). By default, the config for SSO is not set. When debugging SSO add the following env variables to `.env`:
+
 ```env
 VITE_AZURE_FRONTEND_CLIENT_ID=<Valid Client ID for SPA App Registration>
 VITE_AZURE_AUTHORITY=<Valid Authority URI>
 VITE_AZURE_SCOPE=<Valid API SCope>
 ```
+
 Auth also has to be configured in the backend as described in [Backend-Auth](#auth).
 
 ### Frontend Screenshots
+
 Login Screen
 ![Login Screen Dark](./screenshots/login-screen-dark.png)
 ![Login Screen Light](./screenshots/login-screen-light.png)
@@ -388,7 +412,6 @@ Settings View - Location Creation
 ![Settings View - Location Creation Dark](./screenshots/office-location-creation-view-dark.png)
 ![Settings View - Location Creation Light](./screenshots/office-location-creation-view-light.png)
 
-
 Settings View - Company Management
 ![Settings View - Company Management Dark](./screenshots/company-management-view-dark.png)
 ![Settings View - Company Management Light](./screenshots/company-management-view-light.png)
@@ -420,3 +443,7 @@ Settings View - Global Plugins Edit
 Settings View - Global Logs
 ![Settings View - Global Logs Dark](./screenshots/global-logs-view-dark.png)
 ![Settings View - Global Logs Light](./screenshots/global-logs-view-light.png)
+
+```
+
+```
