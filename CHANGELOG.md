@@ -30,7 +30,6 @@
 * **backend:** mark user adresses as nullable ([e47b6ac](https://github.com/appsfactorygmbh/project-metadata-platform/commit/e47b6ac7f9e9672b1c22786afc7a8b6999aa9c4c))
 * **backend:** now refuses creating users with whitespace only employee id ([445e3f9](https://github.com/appsfactorygmbh/project-metadata-platform/commit/445e3f9151cd488a034f975fee87ad9420115821))
 * **frontend:** fix settings tab defaulting on mount ([15c9057](https://github.com/appsfactorygmbh/project-metadata-platform/commit/15c90573a6fb09d52dc05b839ac9a0f274fac452))
-* **frontend:** fix splitpanes height in projects split view ([b37d5b6](https://github.com/appsfactorygmbh/project-metadata-platform/commit/b37d5b60bfd49f2ad5897a28a86d0f1c0107a533))
 * **frontend:** fix splitpanes height in projects split view ([8efad65](https://github.com/appsfactorygmbh/project-metadata-platform/commit/8efad65b73d81ed2a78d5e50294115e6480a56d1))
 * **frontend:** make user management default settings page; ([10b87b0](https://github.com/appsfactorygmbh/project-metadata-platform/commit/10b87b0d10525c8140ec3db19cf21ba83b774786))
 * **frontend:** remove secret unfinished addPlugins button ([c07bbcd](https://github.com/appsfactorygmbh/project-metadata-platform/commit/c07bbcda23388911a4039cbb7a96e967b5cb3d52))
