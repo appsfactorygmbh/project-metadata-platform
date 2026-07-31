@@ -8,8 +8,14 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Departments;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Domain.Users;
 
@@ -25,34 +31,27 @@ public class PatchUserCommandHandlerTest
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<ITeamRepository> _mockTeamRepo;
     private Mock<IOfficeLocationRepository> _mockOfficeLocationRepository;
-
-    private Mock<ICompanyRepository> _mockCompanyRepository;
-
-    private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
-    private Mock<IDepartmentRepository> _mockDepartmentRepository;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IGetOrCreateHelper> _getOrCreateHelperMock;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockUsersRepo = new Mock<IUsersRepository>();
         _mockPasswordHasher = new Mock<IPasswordHasher<ApplicationUser>>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockTeamRepo = new Mock<ITeamRepository>();
-        _mockBusinessUnitRepository = new Mock<IBusinessUnitRepository>();
-        _mockCompanyRepository = new Mock<ICompanyRepository>();
-        _mockOfficeLocationRepository = new Mock<IOfficeLocationRepository>();
-        _mockDepartmentRepository = new Mock<IDepartmentRepository>();
+        _getOrCreateHelperMock = new Mock<IGetOrCreateHelper>();
         _handler = new PatchUserCommandHandler(
             _mockUsersRepo.Object,
             _mockPasswordHasher.Object,
             _mockTeamRepo.Object,
-            _mockDepartmentRepository.Object,
-            _mockBusinessUnitRepository.Object,
-            _mockOfficeLocationRepository.Object,
-            _mockCompanyRepository.Object,
             _mockUnitOfWork.Object,
-            _mockLogRepo.Object
+            _mockLogRepo.Object,
+            authorizationService: _authorizationServiceMock.Object,
+            getOrCreateHelper: _getOrCreateHelperMock.Object
         );
     }
 
@@ -76,8 +75,20 @@ public class PatchUserCommandHandlerTest
                 },
             },
         };
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(false);
         _ = _mockUsersRepo.Setup(repo => repo.GetUserByEmailAsync("123")).ReturnsAsync(user);
+        _ = _mockUsersRepo
+            .Setup(repo => repo.GetUserByIdNoTrackingAsync(user.EmployeeId))
+            .ReturnsAsync(user);
         _ = _mockUsersRepo
             .Setup(repo => repo.StoreUser(It.IsAny<ApplicationUser>()))
             .ReturnsAsync((ApplicationUser p) => p);
@@ -101,6 +112,23 @@ public class PatchUserCommandHandlerTest
                     BusinessUnitId = 1,
                 }
             );
+
+        _getOrCreateHelperMock
+            .Setup(g => g.GetOrCreateBusinessUnit(It.IsAny<string>()))
+            .ReturnsAsync(new BusinessUnit { BusinessUnitName = "Health" });
+
+        _getOrCreateHelperMock
+            .Setup(g => g.GetOrCreateCompany(It.IsAny<string>()))
+            .ReturnsAsync(new Company { CompanyName = "AiFactory" });
+
+        _getOrCreateHelperMock
+            .Setup(g => g.GetOrCreateOfficeLocation(It.IsAny<string>()))
+            .ReturnsAsync(new OfficeLocation { OfficeLocationName = "Leipzig" });
+
+        _getOrCreateHelperMock
+            .SetupSequence(g => g.GetOrCreateDepartment(It.IsAny<string>()))
+            .ReturnsAsync(new Department { DepartmentName = "Design" })
+            .ReturnsAsync(new Department { DepartmentName = "QA" });
 
         var operations = new List<PatchUserCommand.OperationRecord>
         {
@@ -206,9 +234,20 @@ public class PatchUserCommandHandlerTest
             IsActive = true,
             IsScimProvisioned = false,
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
         _ = _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("123")).ReturnsAsync(user);
+        _ = _mockUsersRepo
+            .Setup(repo => repo.GetUserByIdNoTrackingAsync(user.EmployeeId))
+            .ReturnsAsync(user);
         _ = _mockUsersRepo
             .Setup(repo => repo.StoreUser(It.IsAny<ApplicationUser>()))
             .ReturnsAsync((ApplicationUser p) => p);
@@ -233,7 +272,15 @@ public class PatchUserCommandHandlerTest
         _ = _mockUsersRepo
             .Setup(repo => repo.GetUserByIdAsync("42"))
             .ThrowsAsync(new UserNotFoundException("42"));
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = Assert.ThrowsAsync<UserNotFoundException>(() =>
             _handler.Handle(new PatchUserCommand { Id = "42" }, It.IsAny<CancellationToken>())
         );
@@ -255,9 +302,20 @@ public class PatchUserCommandHandlerTest
         _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
         _ = _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("42")).ReturnsAsync(user);
         _ = _mockUsersRepo
+            .Setup(repo => repo.GetUserByIdNoTrackingAsync(user.EmployeeId))
+            .ReturnsAsync(user);
+        _ = _mockUsersRepo
             .Setup(repo => repo.StoreUser(It.IsAny<ApplicationUser>()))
             .ReturnsAsync((ApplicationUser p) => p);
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = await _handler.Handle(
             new PatchUserCommand
             {
@@ -306,11 +364,23 @@ public class PatchUserCommandHandlerTest
         };
         var newPassword = "newPassword";
         var newPasswordHash = "newPasswordHash";
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
         _ = _mockUsersRepo
             .Setup(repo => repo.CheckPasswordFormat("newPassword"))
             .ReturnsAsync(true);
         _ = _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("42")).ReturnsAsync(user);
+        _ = _mockUsersRepo
+            .Setup(repo => repo.GetUserByIdNoTrackingAsync(user.EmployeeId))
+            .ReturnsAsync(user);
         _ = _mockUsersRepo
             .Setup(repo => repo.StoreUser(It.IsAny<ApplicationUser>()))
             .ReturnsAsync((ApplicationUser p) => p);
@@ -349,6 +419,51 @@ public class PatchUserCommandHandlerTest
                     )
                 ),
             Times.Once
+        );
+    }
+
+    [Test]
+    public async Task PatchUser_AuthorizationFailsThrowsTest()
+    {
+        var user = new ApplicationUser
+        {
+            EmployeeId = "42",
+            Id = "42",
+            Email = "hanSolo",
+            PasswordHash = "oldPassword",
+            IsActive = true,
+            IsScimProvisioned = false,
+        };
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+        _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
+        _ = _mockUsersRepo.Setup(repo => repo.GetUserByIdAsync("42")).ReturnsAsync(user);
+        _ = _mockUsersRepo
+            .Setup(repo => repo.GetUserByIdNoTrackingAsync(user.EmployeeId))
+            .ReturnsAsync(user);
+        var request = new PatchUserCommand
+        {
+            Id = "42",
+            Operations =
+            [
+                new PatchUserCommand.OperationRecord
+                {
+                    Path = "password",
+                    Operation = PatchOperations.Replace,
+                    Value = JsonDocument.Parse($"\"Password\"").RootElement,
+                },
+            ],
+        };
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
 }

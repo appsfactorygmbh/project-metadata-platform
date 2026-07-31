@@ -9,52 +9,62 @@ themes.forEach((theme) => {
         name: 'SCIM Token',
         scopes: ['SCIM'],
         expirationDate: '2027-04-30T14:22:01.578921+00:00',
+        permissions: ['EDIT'],
       },
       {
         id: 3,
         name: 'Read Projects Token',
-        scopes: [],
+        scopes: ['GET_PROJECT'],
         expirationDate: '2027-04-3T24:12:01.578921+00:00',
+        permissions: ['EDIT', 'DELETE'],
       },
     ];
     let businessUnits = [
       {
         id: 1,
         businessUnitName: 'Finance',
+        permissions: ['EDIT', 'DELETE'],
       },
       {
         id: 3,
         businessUnitName: 'General',
+        permissions: ['EDIT', 'DELETE'],
       },
     ];
     let companies = [
       {
         id: 1,
         companyName: 'Appsfactory GmbH',
+        permissions: ['EDIT', 'DELETE'],
       },
       {
         id: 2,
         companyName: 'Appscompany GmbH',
+        permissions: ['EDIT', 'DELETE'],
       },
     ];
     let departments = [
       {
         id: 1,
         departmentName: 'Design',
+        permissions: ['EDIT', 'DELETE'],
       },
       {
         id: 3,
         departmentName: 'Consulting',
+        permissions: ['EDIT', 'DELETE'],
       },
     ];
     let officeLocations = [
       {
         id: 1,
         officeLocationName: 'Leipzig',
+        permissions: ['EDIT', 'DELETE'],
       },
       {
         id: 3,
         officeLocationName: 'München',
+        permissions: ['EDIT', 'DELETE'],
       },
     ];
     let teams = [
@@ -63,12 +73,14 @@ themes.forEach((theme) => {
         teamName: 'Team 1',
         businessUnit: businessUnits[0],
         ptl: 'Max Mustermann',
+        permissions: ['EDIT', 'DELETE'],
       },
       {
         id: 8,
         teamName: 'Team 2',
         businessUnit: businessUnits[1],
         ptl: 'Jane Doe',
+        permissions: ['EDIT', 'DELETE'],
       },
     ];
     let projectPlugins = [
@@ -92,6 +104,7 @@ themes.forEach((theme) => {
         isArchived: false,
         keys: [],
         baseUrl: 'https://info.cern.ch/hypertext/WWW/TheProject.html',
+        permissions: ['EDIT', 'DELETE'],
       },
       {
         pluginName: 'Repository',
@@ -99,6 +112,7 @@ themes.forEach((theme) => {
         isArchived: false,
         keys: [],
         baseUrl: 'https://info.cern.ch/hypertext/WWW/TheProject.html',
+        permissions: ['EDIT', 'DELETE'],
       },
     ];
     let projects = [
@@ -114,6 +128,7 @@ themes.forEach((theme) => {
         team: teams[0],
         ismsLevel: 'NORMAL',
         notes: 'These are notes',
+        permissions: ['EDIT', 'DELETE'],
       },
       {
         id: 303,
@@ -125,6 +140,7 @@ themes.forEach((theme) => {
         isEoC: false,
         ismsLevel: 'VERY_HIGH',
         notes: '',
+        permissions: ['EDIT', 'DELETE'],
       },
       {
         id: 304,
@@ -137,6 +153,7 @@ themes.forEach((theme) => {
         team: teams[1],
         ismsLevel: 'NORMAL',
         notes: '',
+        permissions: ['EDIT', 'DELETE'],
       },
     ];
     let users = [
@@ -162,6 +179,9 @@ themes.forEach((theme) => {
           businessUnits: [],
           isScimProvisioned: false,
         },
+        meta: {
+          permissions: ['EDIT', 'DELETE'],
+        },
       },
       {
         schemas: [
@@ -184,6 +204,9 @@ themes.forEach((theme) => {
           team: teams.map((t) => t.teamName),
           businessUnits: businessUnits.map((b) => b.businessUnitName),
           isScimProvisioned: true,
+        },
+        meta: {
+          permissions: ['DELETE'],
         },
       },
     ];
@@ -265,6 +288,7 @@ themes.forEach((theme) => {
           schemas: ['urn:ietf:params:scim:api:messages:2.0:ListResponse'],
           totalResults: 13,
           Resources: users,
+          permissions: ['CREATE'],
         },
       }).as('getUsers');
       cy.intercept('GET', '/Users/me', { statusCode: 200, body: users[0] }).as(
@@ -273,7 +297,7 @@ themes.forEach((theme) => {
 
       cy.intercept('GET', '/Companies', {
         statusCode: 200,
-        body: companies,
+        body: { resources: companies, permissions: ['CREATE'] },
       }).as('getCompanies');
       cy.intercept('GET', '/Companies/**', {
         statusCode: 200,
@@ -282,7 +306,7 @@ themes.forEach((theme) => {
 
       cy.intercept('GET', '/BusinessUnits', {
         statusCode: 200,
-        body: businessUnits,
+        body: { resources: businessUnits, permissions: ['CREATE'] },
       }).as('getBusinessUnits');
       cy.intercept('GET', '/BusinessUnits/**', {
         statusCode: 200,
@@ -291,7 +315,7 @@ themes.forEach((theme) => {
 
       cy.intercept('GET', '/Departments', {
         statusCode: 200,
-        body: departments,
+        body: { resources: departments, permissions: ['CREATE'] },
       }).as('getDepartments');
       cy.intercept('GET', '/Departments/**', {
         statusCode: 200,
@@ -300,7 +324,7 @@ themes.forEach((theme) => {
 
       cy.intercept('GET', '/OfficeLocations', {
         statusCode: 200,
-        body: officeLocations,
+        body: { resources: officeLocations, permissions: ['CREATE'] },
       }).as('getOfficeLocations');
       cy.intercept('GET', '/OfficeLocations/**', {
         statusCode: 200,
@@ -309,28 +333,29 @@ themes.forEach((theme) => {
 
       cy.intercept('GET', '/Auth/ApiTokens', {
         statusCode: 200,
-        body: apiTokens,
+        body: { resources: apiTokens, permissions: ['CREATE'] },
       }).as('getApiTokens');
       cy.intercept('GET', '/Auth/ApiTokens/**', {
         statusCode: 200,
         body: apiTokens[0],
       }).as('getApiToken');
 
-      cy.intercept('GET', '/Teams', { statusCode: 200, body: teams }).as(
-        'getTeams',
-      );
+      cy.intercept('GET', '/Teams', {
+        statusCode: 200,
+        body: { resources: teams, permissions: ['CREATE'] },
+      }).as('getTeams');
       cy.intercept('GET', '/Teams/**', { statusCode: 200, body: teams[0] }).as(
         'getTeam',
       );
 
       cy.intercept('GET', '/Plugins', {
         statusCode: 200,
-        body: globalPlugins,
+        body: { resources: globalPlugins, permissions: ['CREATE'] },
       }).as('getPlugins');
 
       cy.intercept('GET', '/Projects', {
         statusCode: 200,
-        body: projects,
+        body: { resources: projects, permissions: ['CREATE'] },
       }).as('getProjects');
       cy.intercept('GET', '/Projects/*', {
         statusCode: 200,

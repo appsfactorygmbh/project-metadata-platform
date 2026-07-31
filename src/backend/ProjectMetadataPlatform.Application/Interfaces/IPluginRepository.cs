@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ProjectMetadataPlatform.Domain.Plugins;
 
@@ -41,7 +42,7 @@ public interface IPluginRepository
     /// Returns all global plugins
     /// </summary>
     /// <returns>Collection of all global plugins</returns>
-    Task<IEnumerable<Plugin>> GetGlobalPluginsAsync();
+    Task<IQueryable<Plugin>> GetGlobalPluginsAsync();
 
     /// <summary>
     /// Checks if a plugin exists.

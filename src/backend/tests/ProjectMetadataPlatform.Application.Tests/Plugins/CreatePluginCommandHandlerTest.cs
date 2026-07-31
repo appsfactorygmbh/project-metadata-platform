@@ -6,6 +6,8 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Plugins;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Plugins;
@@ -19,17 +21,20 @@ public class CreatePluginCommandHandlerTest
     private Mock<IPluginRepository> _mockPluginRepo;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockPluginRepo = new Mock<IPluginRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _handler = new CreatePluginCommandHandler(
             _mockPluginRepo.Object,
             _mockLogRepo.Object,
-            _mockUnitOfWork.Object
+            _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -42,7 +47,15 @@ public class CreatePluginCommandHandlerTest
         _ = _mockPluginRepo
             .Setup(m => m.CheckGlobalPluginNameExists("Airlock"))
             .ReturnsAsync(false);
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Plugin>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         var result = await _handler.Handle(
             new CreatePluginCommand("Airlock", true, [], "https://airlock.com"),
             It.IsAny<CancellationToken>()
@@ -85,6 +98,15 @@ public class CreatePluginCommandHandlerTest
     [Test]
     public void CreatePlugin_NameConflict_Test()
     {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Plugin>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(m => m.CheckGlobalPluginNameExists("Airlock")).ReturnsAsync(true);
 
         _ = Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() =>
@@ -94,5 +116,25 @@ public class CreatePluginCommandHandlerTest
             )
         );
         _mockPluginRepo.Verify(r => r.CheckGlobalPluginNameExists("Airlock"), Times.Once);
+    }
+
+    [Test]
+    public async Task CreatePlugin_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Plugin>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+
+        var request = new CreatePluginCommand("Airlock", true, [], "https://airlock.com");
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
+        );
     }
 }

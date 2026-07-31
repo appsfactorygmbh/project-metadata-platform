@@ -11,6 +11,7 @@ import CreateBusinessUnitView from '../CreateBusinessUnitView.vue';
 import type { BusinessUnitModel } from '@/models/BusinessUnit';
 import { useBusinessUnitStore } from '@/store';
 import { useFormStore } from '@/components/Form';
+import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
 describe('CreateBusinessUnitView.vue', () => {
   setActivePinia(createTestingPinia({ stubActions: false }));
@@ -25,12 +26,15 @@ describe('CreateBusinessUnitView.vue', () => {
   const mockBusinessUnitRoutingService = {
     setBusinessUnitId: vi.fn((id: number) => Promise.resolve()),
   };
+  const businessUnitStore = useBusinessUnitStore();
+  // @ts-expect-error: Overriding getter for testing purposes
+  businessUnitStore.getPermissions = [ResourceActions.Create];
 
   it('renders correctly', () => {
     wrapper = mount(CreateBusinessUnitView, {
       global: {
         provide: {
-          [businessUnitStoreSymbol as symbol]: useBusinessUnitStore(),
+          [businessUnitStoreSymbol as symbol]: businessUnitStore,
           [businessUnitRoutingSymbol as symbol]: mockBusinessUnitRoutingService,
         },
       },
@@ -51,7 +55,7 @@ describe('CreateBusinessUnitView.vue', () => {
         businessUnitName: 'Test Name',
       },
     ];
-
+    businessUnitStore.$patch({ businessUnits: testData });
     wrapper = mount(CreateBusinessUnitView, {
       plugins: [
         createTestingPinia({
@@ -65,7 +69,7 @@ describe('CreateBusinessUnitView.vue', () => {
       ],
       global: {
         provide: {
-          [businessUnitStoreSymbol as symbol]: useBusinessUnitStore(),
+          [businessUnitStoreSymbol as symbol]: businessUnitStore,
           [businessUnitRoutingSymbol as symbol]: mockBusinessUnitRoutingService,
         },
       },
@@ -102,7 +106,7 @@ describe('CreateBusinessUnitView.vue', () => {
       ],
       global: {
         provide: {
-          [businessUnitStoreSymbol as symbol]: useBusinessUnitStore(),
+          [businessUnitStoreSymbol as symbol]: businessUnitStore,
           [businessUnitRoutingSymbol as symbol]: mockBusinessUnitRoutingService,
         },
       },
@@ -119,7 +123,6 @@ describe('CreateBusinessUnitView.vue', () => {
   });
 
   it('submits the form correctly', async () => {
-    const businessUnitStore = useBusinessUnitStore();
     const formStore = useFormStore('CreateBusinessUnitForm');
     const createSpy = vi
       .spyOn(businessUnitStore, 'create')

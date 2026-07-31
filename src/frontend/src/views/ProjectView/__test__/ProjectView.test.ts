@@ -19,13 +19,7 @@ import {
 import { createTestingPinia } from '@pinia/testing';
 import type { PluginModel } from '@/models/Plugin';
 import type { DetailedProjectModel } from '@/models/Project';
-
-vi.mock('vue-auth3', () => ({
-  useAuth: () => ({
-    ready: vi.fn().mockResolvedValue(undefined),
-    check: vi.fn().mockReturnValue(true),
-  }),
-}));
+import { ResourceActions } from '@/models/utils';
 
 vi.mock('vue-auth3', () => ({
   useAuth: () => ({
@@ -76,6 +70,7 @@ const testProject: DetailedProjectModel = {
   ismsLevel: 'HIGH',
   isEoC: false,
   notes: 'Test Notes',
+  permissions: [ResourceActions.Edit],
 };
 
 const pinia = createTestingPinia({

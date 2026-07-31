@@ -9,6 +9,7 @@ import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
 import { type ApiStore, useApiStore } from './ApiStore';
 import { UsersApi } from '@/api/generated';
+import type { ResourceActions } from '@/models/utils';
 
 type StoreState = {
   users: UserListModel[];
@@ -29,6 +30,7 @@ type StoreGetters = {
   getUsers: () => UserListModel[];
   getUser: () => UserModel | null;
   getMe: () => UserModel | null;
+  getPermissions: () => ResourceActions[];
   getIsLoading: () => boolean;
   getIsLoadingCreate: () => boolean;
   getIsLoadingUser: () => boolean;
@@ -122,6 +124,9 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         getUpdatedSuccessfully(): boolean {
           return this.updatedSuccessfully;
         },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
+        },
       },
       actions: {
         refreshAuth(): void {
@@ -164,8 +169,9 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         async fetchAll(): Promise<void> {
           this.setIsLoadingUsers(true);
           try {
+            const result = await this.callApi('usersGet', {});
             const users: UserListModel[] =
-              (await this.callApi('usersGet', {})).resources.map((user) => ({
+              result.resources.map((user) => ({
                 externalId: user.externalId,
                 userName: user.userName,
                 isScimProvisioned:
@@ -173,6 +179,7 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
                     .isScimProvisioned,
               })) ?? [];
             this.setUsers(users);
+            this.setPermissions(result.permissions ?? []);
           } finally {
             this.setIsLoadingUsers(false);
           }

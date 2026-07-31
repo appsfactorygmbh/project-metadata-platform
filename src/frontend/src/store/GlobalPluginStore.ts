@@ -1,5 +1,6 @@
 import type {
   CreateGlobalPluginModel,
+  GlobalPluginListModel,
   GlobalPluginModel,
   PatchGlobalPluginModel,
 } from '@/models/GlobalPlugin';
@@ -9,6 +10,7 @@ import { PluginsApi } from '@/api/generated';
 import { useApiStore } from './ApiStore';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
+import type { ResourceActions } from '@/models/utils';
 
 type StoreState = {
   globalPlugins: GlobalPluginModel[];
@@ -40,6 +42,7 @@ type StoreActions = {
 
 type StoreGetters = {
   getGlobalPlugins: () => GlobalPluginModel[];
+  getPermissions: () => ResourceActions[];
   getIsLoadingGlobalPlugins: () => boolean;
   getIsLoadingDelete: () => boolean;
   getRemovedSuccessfully: () => boolean;
@@ -71,6 +74,9 @@ export const useGlobalPluginStore = (pinia: Pinia = piniaInstance): Store => {
         getRemovedSuccessfully(): boolean {
           return this.removedSuccessfully;
         },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
+        },
       },
 
       actions: {
@@ -101,11 +107,12 @@ export const useGlobalPluginStore = (pinia: Pinia = piniaInstance): Store => {
         async fetchAll() {
           try {
             this.setLoadingGlobalPlugins(true);
-            const globalPlugins: GlobalPluginModel[] = await this.callApi(
+            const globalPlugins: GlobalPluginListModel = await this.callApi(
               'pluginsGet',
               {},
             );
-            this.setGlobalPlugins(globalPlugins);
+            this.setGlobalPlugins(globalPlugins.resources);
+            this.setPermissions(globalPlugins.permissions);
           } finally {
             this.setLoadingGlobalPlugins(false);
           }

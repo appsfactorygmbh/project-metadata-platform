@@ -6,6 +6,8 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Plugins;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Plugins;
@@ -20,10 +22,12 @@ public class PatchGlobalPluginCommandHandlerTest
     private Mock<IPluginRepository> _mockPluginRepo;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockPluginRepo = new Mock<IPluginRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
@@ -31,7 +35,8 @@ public class PatchGlobalPluginCommandHandlerTest
         _handler = new PatchGlobalPluginCommandHandler(
             _mockPluginRepo.Object,
             _mockLogRepo.Object,
-            _mockUnitOfWork.Object
+            _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -45,7 +50,15 @@ public class PatchGlobalPluginCommandHandlerTest
             PluginName = "Mercury Redstone",
             IsArchived = false,
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Plugin>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.CheckGlobalPluginNameExists("Mercury Atlas"))
@@ -119,7 +132,15 @@ public class PatchGlobalPluginCommandHandlerTest
             PluginName = "Mercury Redstone",
             IsArchived = false,
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Plugin>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
@@ -182,7 +203,15 @@ public class PatchGlobalPluginCommandHandlerTest
             PluginName = "Mercury Redstone",
             IsArchived = false,
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Plugin>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
@@ -234,7 +263,15 @@ public class PatchGlobalPluginCommandHandlerTest
             PluginName = "Mercury Redstone",
             IsArchived = true,
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Plugin>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
@@ -293,7 +330,15 @@ public class PatchGlobalPluginCommandHandlerTest
     {
         // Arrange
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync((Plugin?)null);
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Plugin>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         // Assert
         _ = Assert.ThrowsAsync<PluginNotFoundException>(() =>
             _handler.Handle(new PatchGlobalPluginCommand(42), It.IsAny<CancellationToken>())
@@ -311,7 +356,15 @@ public class PatchGlobalPluginCommandHandlerTest
             IsArchived = false,
             BaseUrl = "https://mercuryredstone.com",
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Plugin>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
@@ -382,7 +435,15 @@ public class PatchGlobalPluginCommandHandlerTest
             BaseUrl = "https://mercuryredstone.com",
         };
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Plugin>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockPluginRepo
             .Setup(repo => repo.CheckGlobalPluginNameExists("Atlas Agena"))
             .ReturnsAsync(true);
@@ -405,7 +466,15 @@ public class PatchGlobalPluginCommandHandlerTest
             PluginName = "Mercury Redstone",
             IsArchived = false,
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Plugin>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
@@ -469,7 +538,15 @@ public class PatchGlobalPluginCommandHandlerTest
             PluginName = "Vega c",
             IsArchived = false,
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Plugin>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
@@ -541,7 +618,15 @@ public class PatchGlobalPluginCommandHandlerTest
             BaseUrl = "https://mercury.redstone",
             IsArchived = false,
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Plugin>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         _ = _mockPluginRepo
             .Setup(repo => repo.StorePlugin(It.IsAny<Plugin>()))
@@ -592,5 +677,32 @@ public class PatchGlobalPluginCommandHandlerTest
 
             _mockUnitOfWork.Verify(uow => uow.CompleteAsync(), Times.Once);
         });
+    }
+
+    [Test]
+    public async Task EditPlugin_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Plugin>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+        var plugin = new Plugin
+        {
+            Id = 42,
+            PluginName = "Mercury Redstone",
+            BaseUrl = "https://mercury.redstone",
+            IsArchived = false,
+        };
+        _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
+        var request = new PatchGlobalPluginCommand(42, null, false, "https://mercury.redstone");
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
+        );
     }
 }

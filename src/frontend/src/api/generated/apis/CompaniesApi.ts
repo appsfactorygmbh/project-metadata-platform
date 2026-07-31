@@ -17,6 +17,7 @@ import type {
   CreateCompanyRequest,
   CreateCompanyResponse,
   GetCompanyResponse,
+  GetCompanyResponseGetListResponse,
   GetLinkedProjectsForCompanyResponse,
   UpdateCompanyRequest,
 } from '../models/index';
@@ -24,6 +25,7 @@ import {
   CreateCompanyRequestToJSON,
   CreateCompanyResponseFromJSON,
   GetCompanyResponseFromJSON,
+  GetCompanyResponseGetListResponseFromJSON,
   GetLinkedProjectsForCompanyResponseFromJSON,
   UpdateCompanyRequestToJSON,
 } from '../models/index';
@@ -65,14 +67,14 @@ export interface CompaniesApiInterface {
    */
   companiesGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetCompanyResponse>>>;
+  ): Promise<runtime.ApiResponse<GetCompanyResponseGetListResponse>>;
 
   /**
    * Returns all Companies
    */
   companiesGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetCompanyResponse>>;
+  ): Promise<GetCompanyResponseGetListResponse>;
 
   /**
    *
@@ -193,7 +195,7 @@ export class CompaniesApi
    */
   async companiesGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetCompanyResponse>>> {
+  ): Promise<runtime.ApiResponse<GetCompanyResponseGetListResponse>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -217,7 +219,7 @@ export class CompaniesApi
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(GetCompanyResponseFromJSON),
+      GetCompanyResponseGetListResponseFromJSON(jsonValue),
     );
   }
 
@@ -226,7 +228,7 @@ export class CompaniesApi
    */
   async companiesGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetCompanyResponse>> {
+  ): Promise<GetCompanyResponseGetListResponse> {
     const response = await this.companiesGetRaw(initOverrides);
     return await response.value();
   }

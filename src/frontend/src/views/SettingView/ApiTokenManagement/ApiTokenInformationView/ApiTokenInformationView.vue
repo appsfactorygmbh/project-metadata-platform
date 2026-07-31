@@ -15,9 +15,12 @@
   import FloatingButtonGroup from '@/components/Button/FloatingButtonGroup.vue';
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { useThemeToken } from '@/utils/hooks';
+  import { ResourceActions } from '@/models/utils';
+  import { App } from 'ant-design-vue';
+  import router from '@/router';
 
   const token = useThemeToken();
-
+  const { notification } = App.useApp();
   const route = useRoute();
   const apiTokenStore = inject(apiTokenStoreSymbol)!;
   const { setApiTokenId, routerApiTokenId } = inject(apiTokenRoutingSymbol)!;
@@ -35,12 +38,16 @@
   );
 
   const isTokenModalVisible = ref(false);
+  const isRegenerating = ref(false);
 
-  watch(getHasTokenValue, (newValue) => {
-    if (newValue) {
-      isTokenModalVisible.value = true;
-    }
-  });
+  watch(
+    () => getHasTokenValue.value && !isLoading.value && !isRegenerating.value,
+    (isReady) => {
+      if (isReady) {
+        isTokenModalVisible.value = true;
+      }
+    },
+  );
 
   const isConfirmDeleteModalOpen = ref<boolean>(false);
   const openConfirmDeleteModal = () => {
@@ -57,8 +64,6 @@
   const closeConfirmRegenerateModal = () => {
     isConfirmRegenerateModalOpen.value = false;
   };
-
-  onMounted(async () => {});
 
   //Button for adding new User and deleting User
   const buttons = computed((): FloatButtonModel[] => {
@@ -93,20 +98,59 @@
       tempButtons[0].status = 'deactivated';
       tempButtons[1].status = 'deactivated';
     }
+    if (!apiToken.value?.permissions?.includes(ResourceActions.Delete)) {
+      tempButtons[0].status = 'deactivated';
+    }
+    if (!apiToken.value?.permissions?.includes(ResourceActions.Edit)) {
+      tempButtons[1].status = 'deactivated';
+    }
 
     return tempButtons;
   });
 
   const deleteApiToken = async () => {
     if (!apiToken.value) return;
-    await apiTokenStore.delete(apiToken.value?.id);
-    setApiTokenId(null);
-    apiTokenStore.setApiToken(null);
+    try {
+      await apiTokenStore.delete(apiToken.value?.id);
+      setApiTokenId(null);
+      apiTokenStore.setApiToken(null);
+      notification.success({
+        message: 'Success!',
+        description: 'Token deleted successfully.',
+      });
+    } catch (error) {
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+    }
   };
   const regenerateApiToken = async () => {
     if (!apiToken.value) return;
-    await apiTokenStore.regenerate(apiToken.value?.id);
-    await apiTokenStore.fetchApiToken(apiToken.value?.id);
+
+    let isRegenerated = false;
+    isRegenerating.value = true;
+    try {
+      await apiTokenStore.regenerate(apiToken.value?.id);
+      isRegenerated = true;
+
+      await apiTokenStore.fetchApiToken(apiToken.value?.id);
+      isRegenerating.value = true;
+    } catch (error) {
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+
+      if (
+        isRegenerated &&
+        (error as Error).message === 'This action is unauthorized.'
+      ) {
+        apiTokenStore.setTokenValue(null);
+        router.push('/403');
+      }
+      isRegenerating.value = false;
+    }
   };
 </script>
 <template>

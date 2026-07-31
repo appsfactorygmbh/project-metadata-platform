@@ -1,3 +1,8 @@
-import type { GetDepartmentResponse } from '@/api/generated';
+import type {
+  GetDepartmentResponse,
+  GetDepartmentResponseGetListResponse,
+} from '@/api/generated';
 
 export type DepartmentModel = GetDepartmentResponse;
+
+export type DepartmentListModel = GetDepartmentResponseGetListResponse;

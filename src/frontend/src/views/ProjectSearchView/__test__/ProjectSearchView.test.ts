@@ -32,13 +32,15 @@ vi.mock('vue-auth3', () => ({
 }));
 
 describe('ProjectSearchView.vue', () => {
+  const pinia = createTestingPinia({ stubActions: false });
+  setActivePinia(pinia);
+
+  const projectStore = useProjectStore(pinia);
+  projectStore.fetchAll = vi.fn();
+
   const generateWrapper = (pWidth: number) => {
     return mount(ProjectSearchView, {
-      plugins: [
-        createTestingPinia({
-          stubActions: false,
-        }),
-      ],
+      plugins: [pinia],
       global: {
         provide: {
           [projectRoutingSymbol as symbol]: useProjectRouting(router),
@@ -52,8 +54,6 @@ describe('ProjectSearchView.vue', () => {
       },
     });
   };
-
-  setActivePinia(createTestingPinia());
 
   beforeEach(() => {
     sessionStorage.clear();
@@ -70,7 +70,6 @@ describe('ProjectSearchView.vue', () => {
   });
 
   it('hides columns when the pane width is not large enough', async () => {
-    createTestingPinia({});
     const wrapper = generateWrapper(300);
     await flushPromises();
     expect(wrapper.findAll('.ant-table-column-sorters')).toHaveLength(3);

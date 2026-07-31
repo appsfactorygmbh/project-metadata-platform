@@ -22,7 +22,7 @@
   // Component state using refs
   const collapsed = ref<boolean>(false);
   const selectedKeys = ref<string[]>([]);
-  const tab = ref<string>('Global Plugins');
+  const tab = ref<string>('');
 
   // Router instance
   const router = useRouter();
@@ -62,11 +62,11 @@
         router.push(`/settings/department-management`);
         break;
       }
-      case 'BusinessUnit': {
+      case 'Business Unit': {
         router.push(`/settings/business-unit-management`);
         break;
       }
-      case 'OfficeLocation': {
+      case 'Office Location': {
         router.push(`/settings/office-location-management`);
         break;
       }
@@ -93,44 +93,49 @@
     // set the selected tab based on the current route
     if (router.currentRoute) {
       switch (router?.currentRoute.value.path) {
-        case '/settings/user-management': {
-          selectedKeys.value = ['1'];
-          break;
-        }
         case '/settings/team-management': {
+          tab.value = 'Team';
           selectedKeys.value = ['2'];
           break;
         }
         case '/settings/department-management': {
+          tab.value = 'Department';
           selectedKeys.value = ['3'];
           break;
         }
         case '/settings/business-unit-management': {
+          tab.value = 'Business Unit';
           selectedKeys.value = ['4'];
           break;
         }
         case '/settings/office-location-management': {
+          tab.value = 'Office Location';
           selectedKeys.value = ['5'];
           break;
         }
         case '/settings/company-management': {
+          tab.value = 'Company';
           selectedKeys.value = ['6'];
           break;
         }
         case '/settings/api-token-management': {
+          tab.value = 'API-Token';
           selectedKeys.value = ['7'];
           break;
         }
         case '/settings/global-plugins': {
+          tab.value = 'Global Plugins';
           selectedKeys.value = ['8'];
           break;
         }
         case '/settings/global-logs': {
+          tab.value = 'Global Logs';
           selectedKeys.value = ['9'];
           break;
         }
-
+        case '/settings/user-management':
         default: {
+          tab.value = 'User';
           selectedKeys.value = ['1'];
           break;
         }
@@ -182,7 +187,7 @@
         <a-menu-item
           key="4"
           class="businessUnitManagement"
-          @click="clickTab('BusinessUnit')"
+          @click="clickTab('Business Unit')"
         >
           <GoldOutlined class="icons" />
           <span>BU Management</span>
@@ -190,7 +195,7 @@
         <a-menu-item
           key="5"
           class="officeLocationManagement"
-          @click="clickTab('OfficeLocation')"
+          @click="clickTab('Office Location')"
         >
           <EnvironmentOutlined class="icons" />
           <span>Location Management</span>

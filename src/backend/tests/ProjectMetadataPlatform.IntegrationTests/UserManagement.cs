@@ -12,10 +12,10 @@ namespace ProjectMetadataPlatform.IntegrationTests;
 public class UserManagement : IntegrationTestsBase
 {
     private static readonly StringContent CreateRequest = StringContent(
-        """{ "userName": "test@mail.de", "password": "1K@sekuchen", "externalId": "123" }"""
+        """{ "userName": "test@mail.de", "password": "1K@sekuchen", "externalId": "123", "active": true }"""
     );
     private static readonly StringContent CreateRequest2 = StringContent(
-        """{ "userName": "foo@bar.de", "password": "SecretP@ssw0rd", "externalId": "1234" }"""
+        """{ "userName": "foo@bar.de", "password": "SecretP@ssw0rd", "externalId": "1234", "active": true }"""
     );
     private static readonly StringContent CreateRequest3 = StringContent(
         """{ "userName": "max@mail.de", "password": "1K@sekuchen", "externalId": "123" }"""
@@ -25,6 +25,9 @@ public class UserManagement : IntegrationTestsBase
     );
     private static readonly StringContent CreateRequest5 = StringContent(
         """{ "userName": "test@mail.de", "password": "1K@sekuchen", "externalId": "abc" }"""
+    );
+    private static readonly StringContent CreateRequest6 = StringContent(
+        """{ "userName": "foo@bar.de", "password": "SecretP@ssw0rd", "externalId": "1234", "active": true, "urn:ietf:params:scim:schemas:extension:pmp:User": { "departments": ["IT Development"]  } }"""
     );
     private static readonly StringContent UpdateRequest = StringContent(
         """{"Operations":[{"Op":"Replace","Path":"userName","Value":"foo@bar.de"},{"Op":"Replace","Path":"password","Value":"SecretP@ssw0rd"}]}"""
@@ -51,7 +54,7 @@ public class UserManagement : IntegrationTestsBase
             Is.EqualTo("A User can't delete themself.")
         );
 
-        var newUserId = (
+        string? newUserId = (
             await ToJsonElement(client.PostAsync("/Users", CreateRequest), HttpStatusCode.Created)
         )
             .GetProperty("externalId")
@@ -108,17 +111,17 @@ public class UserManagement : IntegrationTestsBase
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
 
         Assert.That(logs.GetArrayLength(), Is.EqualTo(2));
-
         Assert.That(
             logs[1].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
+                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = True, IsScimProvisioned = False"
             )
         );
+
         Assert.That(
             logs[0].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "test added a new user with properties: Email = foo@bar.de, EmployeeId = 1234, IsActive = False, IsScimProvisioned = False"
+                "test added a new user with properties: Email = foo@bar.de, EmployeeId = 1234, IsActive = True, IsScimProvisioned = False"
             )
         );
     }
@@ -174,9 +177,12 @@ public class UserManagement : IntegrationTestsBase
         )
             .GetProperty("externalId")
             .GetString()!;
-        await CreateApiTokenAndAddItToDefaultRequestHeadersOfClient(client);
+        await CreateApiTokenAndAddItToDefaultRequestHeadersOfClient(
+            client,
+            scopes: [Domain.Auth.TokenScopes.SCIM, Domain.Auth.TokenScopes.GET_LOG]
+        );
         var userId2 = (
-            await ToJsonElement(client.PostAsync("/Users", CreateRequest2), HttpStatusCode.Created)
+            await ToJsonElement(client.PostAsync("/Users", CreateRequest6), HttpStatusCode.Created)
         )
             .GetProperty("externalId")
             .GetString()!;
@@ -206,23 +212,30 @@ public class UserManagement : IntegrationTestsBase
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
 
-        Assert.That(logs.GetArrayLength(), Is.EqualTo(3));
-
+        Assert.That(logs.GetArrayLength(), Is.EqualTo(4));
+        Assert.That(
+            logs[3].GetProperty("logMessage").GetString(),
+            Is.EqualTo(
+                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = True, IsScimProvisioned = False"
+            )
+        );
         Assert.That(
             logs[2].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
+                "admin created a new API token with properties: Name = ApiToken, Scopes = SCIM, GET_LOG"
             )
         );
         Assert.That(
             logs[1].GetProperty("logMessage").GetString(),
-            Is.EqualTo("admin created a new API token with properties: Name = ApiToken")
+            Is.EqualTo(
+                "ApiToken added a new department with properties: DepartmentName = IT Development"
+            )
         );
 
         Assert.That(
             logs[0].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "ApiToken added a new user with properties: Email = foo@bar.de, EmployeeId = 1234, IsActive = False, IsScimProvisioned = True"
+                "ApiToken added a new user with properties: Email = foo@bar.de, EmployeeId = 1234, IsActive = True, IsScimProvisioned = True, Departments = IT Development"
             )
         );
     }
@@ -260,7 +273,7 @@ public class UserManagement : IntegrationTestsBase
         Assert.That(
             logs[1].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
+                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = True, IsScimProvisioned = False"
             )
         );
 
@@ -329,15 +342,9 @@ public class UserManagement : IntegrationTestsBase
         Assert.That(logs.GetArrayLength(), Is.EqualTo(4));
 
         Assert.That(
-            logs[3].GetProperty("logMessage").GetString(),
-            Is.EqualTo(
-                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
-            )
-        );
-        Assert.That(
             logs[2].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "test (deleted actor) added a new user with properties: Email = foo@bar.de, EmployeeId = 1234, IsActive = False, IsScimProvisioned = False"
+                "test (deleted actor) added a new user with properties: Email = foo@bar.de, EmployeeId = 1234, IsActive = True, IsScimProvisioned = False"
             )
         );
         Assert.That(
@@ -400,7 +407,7 @@ public class UserManagement : IntegrationTestsBase
         Assert.That(
             logs[3].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = False, IsScimProvisioned = False"
+                "admin added a new user with properties: Email = test@mail.de, EmployeeId = 123, IsActive = True, IsScimProvisioned = False"
             )
         );
         Assert.That(

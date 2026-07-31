@@ -5,7 +5,9 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Companies;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
@@ -19,17 +21,20 @@ public class DeleteCompanyCommandHandlerTest
     private Mock<ICompanyRepository> _mockCompanyRepository;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockCompanyRepository = new Mock<ICompanyRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _handler = new DeleteCompanyCommandHandler(
             companyRepository: _mockCompanyRepository.Object,
             logRepository: _mockLogRepo.Object,
-            unitOfWork: _mockUnitOfWork.Object
+            unitOfWork: _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -43,7 +48,15 @@ public class DeleteCompanyCommandHandlerTest
             CompanyName = "Test_1",
             Projects = [],
         };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Company>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockCompanyRepository
             .Setup(repo => repo.GetCompanyWithProjectsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnCompany);
@@ -77,7 +90,15 @@ public class DeleteCompanyCommandHandlerTest
         _ = _mockCompanyRepository
             .Setup(repo => repo.CheckIfCompanyNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Company>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         var returnCompany = new Company()
         {
             Id = 1,
@@ -105,5 +126,25 @@ public class DeleteCompanyCommandHandlerTest
         );
 
         Assert.That(ex.Message, Does.Contain("111"));
+    }
+
+    [Test]
+    public async Task DeleteCompany_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Company>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+
+        var request = new DeleteCompanyCommand(Id: 1);
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
+        );
     }
 }

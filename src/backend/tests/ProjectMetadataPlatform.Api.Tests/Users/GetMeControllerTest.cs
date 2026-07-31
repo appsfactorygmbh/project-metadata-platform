@@ -43,7 +43,7 @@ public class GetMeControllerTest
                     It.IsAny<System.Threading.CancellationToken>()
                 )
             )
-            .ReturnsAsync(user);
+            .ReturnsAsync((user, []));
         var controller = new UsersController(
             _mediator.Object,
             MockHttpContextAccessor("moonstealer@gruhq.com")
@@ -109,10 +109,10 @@ public class GetMeControllerTest
                     It.IsAny<System.Threading.CancellationToken>()
                 )
             )
-            .ThrowsAsync(new UserUnauthorizedException());
+            .ThrowsAsync(new UserUnauthenticatedException());
         var controller = new UsersController(_mediator.Object, MockHttpContextAccessor(null));
 
-        _ = Assert.ThrowsAsync<UserUnauthorizedException>(() => controller.GetMe());
+        _ = Assert.ThrowsAsync<UserUnauthenticatedException>(() => controller.GetMe());
     }
 
     private static HttpContextAccessor MockHttpContextAccessor(string? email)

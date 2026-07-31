@@ -7,6 +7,7 @@
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
+  import { ResourceActions } from '@/models/utils';
   const token = useThemeToken();
 
   const collapsed = ref<boolean>(false);
@@ -25,14 +26,22 @@
   watch(
     () => routerApiTokenId.value,
     async () => {
-      // if no query is present -> check if data is in store -> if so set the userId query
       if (routerApiTokenId.value == '') {
         if (selectedApiTokenId.value != '') {
           setApiTokenId(selectedApiTokenId.value);
         }
+      } else {
+        try {
+          await apiTokenStore?.fetchApiToken(Number(routerApiTokenId.value));
+          selectedKeys.value = [routerApiTokenId.value];
+        } catch (error) {
+          if ((error as Error).message === 'This action is unauthorized.') {
+            router.push('/403');
+          } else {
+            console.error('Failed to fetch API-Token:', error);
+          }
+        }
       }
-      await apiTokenStore?.fetchApiToken(Number(routerApiTokenId.value));
-      selectedKeys.value = [routerApiTokenId.value];
     },
   );
 
@@ -41,15 +50,21 @@
     setApiTokenId(apiTokenId);
   };
 
-  // when mounted -> look if there is already data loaded into the store -> if so set the tokenId to the one in the store
-  // this is used for when coming back to the API-Token Management tab to have the same user selected as before
   onMounted(async () => {
     if (apiTokenStore.getApiToken?.id != undefined) {
       setApiTokenId(String(apiTokenStore.getApiToken?.id));
     }
     await apiTokenStore?.fetchAll();
     if (routerApiTokenId.value) {
-      await apiTokenStore?.fetchApiToken(Number(routerApiTokenId.value));
+      try {
+        await apiTokenStore?.fetchApiToken(Number(routerApiTokenId.value));
+      } catch (error) {
+        if ((error as Error).message === 'This action is unauthorized.') {
+          router.push('/403');
+        } else {
+          console.error('Failed to fetch API-Token:', error);
+        }
+      }
     }
     selectedKeys.value = [routerApiTokenId.value];
   });
@@ -70,6 +85,7 @@
         class="menuItem"
       >
         <a-menu-item
+          v-if="apiTokenStore.getPermissions.includes(ResourceActions.Create)"
           key="create-token"
           class="create-menu-item"
           @click="router.push('/settings/api-token-management/create')"

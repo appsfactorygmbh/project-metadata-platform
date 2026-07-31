@@ -7,6 +7,7 @@
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
+  import { ResourceActions } from '@/models/utils';
 
   const token = useThemeToken();
 
@@ -34,9 +35,18 @@
           console.log('write ');
           setBusinessUnitId(selectedBusinessUnitId.value);
         }
+      } else {
+        try {
+          await businessUnitStore?.fetch(Number(routerBusinessUnitId.value));
+          selectedKeys.value = [routerBusinessUnitId.value];
+        } catch (error) {
+          if ((error as Error).message === 'This action is unauthorized.') {
+            router.push('/403');
+          } else {
+            console.error('Failed to fetch Business Unit:', error);
+          }
+        }
       }
-      await businessUnitStore?.fetch(Number(routerBusinessUnitId.value));
-      selectedKeys.value = [routerBusinessUnitId.value];
     },
   );
 
@@ -76,9 +86,17 @@
     }
     await businessUnitStore?.fetchAll();
     if (routerBusinessUnitId.value) {
-      await businessUnitStore?.fetch(Number(routerBusinessUnitId.value));
-      selectedKeys.value = [routerBusinessUnitId.value];
-      scrollToSelectedMenuItem();
+      try {
+        await businessUnitStore?.fetch(Number(routerBusinessUnitId.value));
+        selectedKeys.value = [routerBusinessUnitId.value];
+        scrollToSelectedMenuItem();
+      } catch (error) {
+        if ((error as Error).message === 'This action is unauthorized.') {
+          router.push('/403');
+        } else {
+          console.error('Failed to fetch Business Unit:', error);
+        }
+      }
     }
   });
 </script>
@@ -99,6 +117,9 @@
         class="menuItem"
       >
         <a-menu-item
+          v-if="
+            businessUnitStore.getPermissions.includes(ResourceActions.Create)
+          "
           key="create-businessUnit"
           class="create-menu-item"
           @click="router.push('/settings/business-unit-management/create')"

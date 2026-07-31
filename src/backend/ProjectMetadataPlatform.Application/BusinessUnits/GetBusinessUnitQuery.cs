@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using System.Collections.Generic;
+using MediatR;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 
 namespace ProjectMetadataPlatform.Application.BusinessUnits;
@@ -7,4 +9,5 @@ namespace ProjectMetadataPlatform.Application.BusinessUnits;
 /// Query to get a Business Unit by its id.
 /// </summary>
 /// <param name="Id">Id of the Business Unit.</param>
-public record GetBusinessUnitQuery(int Id) : IRequest<BusinessUnit>;
+public record GetBusinessUnitQuery(int Id)
+    : IRequest<(BusinessUnit, IEnumerable<AuthorizationConstants.Actions>)>;

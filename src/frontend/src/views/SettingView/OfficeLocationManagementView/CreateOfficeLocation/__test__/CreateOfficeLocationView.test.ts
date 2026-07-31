@@ -11,6 +11,7 @@ import CreateOfficeLocationView from '../CreateOfficeLocationView.vue';
 import type { OfficeLocationModel } from '@/models/OfficeLocation';
 import { useOfficeLocationStore } from '@/store';
 import { useFormStore } from '@/components/Form';
+import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
 describe('CreateOfficeLocationView.vue', () => {
   setActivePinia(createTestingPinia({ stubActions: false }));
@@ -25,12 +26,14 @@ describe('CreateOfficeLocationView.vue', () => {
   const mockOfficeLocationRoutingService = {
     setOfficeLocationId: vi.fn((id: number) => Promise.resolve()),
   };
-
+  const locationStore = useOfficeLocationStore();
+  // @ts-expect-error: Overriding getter for testing purposes
+  locationStore.getPermissions = [ResourceActions.Create];
   it('renders correctly', () => {
     wrapper = mount(CreateOfficeLocationView, {
       global: {
         provide: {
-          [officeLocationStoreSymbol as symbol]: useOfficeLocationStore(),
+          [officeLocationStoreSymbol as symbol]: locationStore,
           [officeLocationRoutingSymbol as symbol]:
             mockOfficeLocationRoutingService,
         },
@@ -66,7 +69,7 @@ describe('CreateOfficeLocationView.vue', () => {
       ],
       global: {
         provide: {
-          [officeLocationStoreSymbol as symbol]: useOfficeLocationStore(),
+          [officeLocationStoreSymbol as symbol]: locationStore,
           [officeLocationRoutingSymbol as symbol]:
             mockOfficeLocationRoutingService,
         },
@@ -90,6 +93,7 @@ describe('CreateOfficeLocationView.vue', () => {
         officeLocationName: 'Test Name',
       },
     ];
+    locationStore.$patch({ officeLocations: testData });
 
     wrapper = mount(CreateOfficeLocationView, {
       plugins: [
@@ -104,7 +108,7 @@ describe('CreateOfficeLocationView.vue', () => {
       ],
       global: {
         provide: {
-          [officeLocationStoreSymbol as symbol]: useOfficeLocationStore(),
+          [officeLocationStoreSymbol as symbol]: locationStore,
           [officeLocationRoutingSymbol as symbol]:
             mockOfficeLocationRoutingService,
         },
@@ -124,10 +128,9 @@ describe('CreateOfficeLocationView.vue', () => {
   });
 
   it('submits the form correctly', async () => {
-    const officeLocationStore = useOfficeLocationStore();
     const formStore = useFormStore('CreateOfficeLocationForm');
     const createSpy = vi
-      .spyOn(officeLocationStore, 'create')
+      .spyOn(locationStore, 'create')
       .mockImplementation(() => Promise.resolve(1));
 
     wrapper = mount(CreateOfficeLocationView, {
@@ -136,7 +139,7 @@ describe('CreateOfficeLocationView.vue', () => {
           contextHolder: true,
         },
         provide: {
-          [officeLocationStoreSymbol as symbol]: officeLocationStore,
+          [officeLocationStoreSymbol as symbol]: locationStore,
           [officeLocationRoutingSymbol as symbol]:
             mockOfficeLocationRoutingService,
         },

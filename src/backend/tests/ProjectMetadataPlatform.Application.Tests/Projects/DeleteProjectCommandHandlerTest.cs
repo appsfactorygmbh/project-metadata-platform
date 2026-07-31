@@ -6,6 +6,8 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Projects;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Projects;
@@ -20,17 +22,20 @@ public class DeleteProjectCommandHandlerTest
     private Mock<IProjectsRepository> _mockProjectRepo;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockProjectRepo = new Mock<IProjectsRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _handler = new DeleteProjectCommandHandler(
             _mockProjectRepo.Object,
             _mockLogRepo.Object,
-            _mockUnitOfWork.Object
+            _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -46,6 +51,15 @@ public class DeleteProjectCommandHandlerTest
             IsArchived = true,
             CompanyId = 1,
         };
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
         _ = _mockProjectRepo
             .Setup(m => m.DeleteProjectAsync(It.IsAny<Project>()))
@@ -71,6 +85,15 @@ public class DeleteProjectCommandHandlerTest
             IsArchived = false,
             CompanyId = 1,
         };
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
 
         var ex = Assert.ThrowsAsync<ProjectNotArchivedException>(() =>
@@ -85,7 +108,15 @@ public class DeleteProjectCommandHandlerTest
         _ = _mockProjectRepo
             .Setup(m => m.GetProjectAsync(It.IsAny<int>()))
             .ThrowsAsync(new ProjectNotFoundException("Project not found."));
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         var ex = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
             _handler.Handle(new DeleteProjectCommand(1), It.IsAny<CancellationToken>())
         );
@@ -111,7 +142,15 @@ public class DeleteProjectCommandHandlerTest
         _ = _mockProjectRepo
             .Setup(m => m.DeleteProjectAsync(It.IsAny<Project>()))
             .ReturnsAsync(project);
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _handler.Handle(new DeleteProjectCommand(1), It.IsAny<CancellationToken>());
 
         _mockLogRepo.Verify(
@@ -133,6 +172,25 @@ public class DeleteProjectCommandHandlerTest
                     )
                 ),
             Times.Once
+        );
+    }
+
+    public async Task CreateProject_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Project>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+
+        var request = new DeleteProjectCommand(1);
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
 }

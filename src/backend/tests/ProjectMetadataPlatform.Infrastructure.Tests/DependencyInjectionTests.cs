@@ -57,6 +57,8 @@ public class DependencyInjectionTests : TestsWithDatabase
     {
         const string hash = "hash";
         Environment.SetEnvironmentVariable("PMP_ADMIN_PASSWORD", envPassword);
+        var mockTracker = new Mock<IAuthorizationTracker>();
+        mockTracker.Setup(a => a.WasChecked).Returns(true);
         var mockPasswordHasher = new Mock<IPasswordHasher<ApplicationUser>>();
         _ = mockPasswordHasher
             .Setup(m => m.HashPassword(It.IsAny<ApplicationUser>(), expectedPassword))
@@ -75,7 +77,7 @@ public class DependencyInjectionTests : TestsWithDatabase
         );
         var services = new ServiceCollection();
         _ = services.AddScoped<UserManager<ApplicationUser>>(_ => mockUserManager.Object);
-
+        _ = services.AddScoped<IAuthorizationTracker>(provider => mockTracker.Object);
         var mockUnitOfWork = new Mock<IUnitOfWork>();
         _ = services.AddScoped(_ => mockUnitOfWork.Object);
 

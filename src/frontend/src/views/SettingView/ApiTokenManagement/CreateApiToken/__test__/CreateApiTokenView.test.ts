@@ -11,6 +11,7 @@ import CreateApiTokenView from '../CreateApiTokenView.vue';
 import type { ApiTokenModel } from '@/models/ApiToken';
 import { useApiTokenStore } from '@/store';
 import { useFormStore } from '@/components/Form';
+import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
 describe('CreateApiTokenView.vue', () => {
   setActivePinia(createTestingPinia({ stubActions: false }));
@@ -21,6 +22,11 @@ describe('CreateApiTokenView.vue', () => {
       wrapper.unmount();
     }
   });
+  const tokenStore = useApiTokenStore();
+
+  tokenStore.fetchAll = vi.fn();
+  // @ts-expect-error: Overriding getter for testing purposes
+  tokenStore.getPermissions = [ResourceActions.Create];
 
   const mockApiTokenRoutingService = {
     setTeamId: vi.fn((id: number) => Promise.resolve()),
@@ -30,7 +36,7 @@ describe('CreateApiTokenView.vue', () => {
     wrapper = mount(CreateApiTokenView, {
       global: {
         provide: {
-          [apiTokenStoreSymbol as symbol]: useApiTokenStore(),
+          [apiTokenStoreSymbol as symbol]: tokenStore,
           [apiTokenRoutingSymbol as symbol]: mockApiTokenRoutingService,
         },
       },
@@ -69,7 +75,7 @@ describe('CreateApiTokenView.vue', () => {
       ],
       global: {
         provide: {
-          [apiTokenStoreSymbol as symbol]: useApiTokenStore(),
+          [apiTokenStoreSymbol as symbol]: tokenStore,
           [apiTokenRoutingSymbol as symbol]: mockApiTokenRoutingService,
         },
       },
@@ -108,12 +114,12 @@ describe('CreateApiTokenView.vue', () => {
       ],
       global: {
         provide: {
-          [apiTokenStoreSymbol as symbol]: useApiTokenStore(),
+          [apiTokenStoreSymbol as symbol]: tokenStore,
           [apiTokenRoutingSymbol as symbol]: mockApiTokenRoutingService,
         },
       },
     });
-
+    tokenStore.$patch({ apiTokens: testData });
     const tokenNameField = wrapper.findAllComponents(FormItem)[0];
 
     await tokenNameField.find('.ant-input').setValue('Test Name');
@@ -125,7 +131,6 @@ describe('CreateApiTokenView.vue', () => {
   });
 
   it('submits the form correctly', async () => {
-    const tokenStore = useApiTokenStore();
     const formStore = useFormStore('CreateApiTokenForm');
     const createSpy = vi
       .spyOn(tokenStore, 'create')

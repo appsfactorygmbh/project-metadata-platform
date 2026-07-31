@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MockQueryable;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Logs;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Logs;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
@@ -16,12 +19,17 @@ public class GetLogsQueryHandlerTest
 {
     private GetLogsQueryHandler _handler;
     private Mock<ILogRepository> _mockLogsRepo;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockLogsRepo = new Mock<ILogRepository>();
-        _handler = new GetLogsQueryHandler(_mockLogsRepo.Object);
+        _handler = new GetLogsQueryHandler(
+            _mockLogsRepo.Object,
+            authorizationService: _authorizationServiceMock.Object
+        );
     }
 
     [Test]
@@ -65,8 +73,92 @@ public class GetLogsQueryHandlerTest
                 },
             ],
         };
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.TryGetPlanResourceQuery(
+                    It.IsAny<IQueryable<Log>>(),
+                    It.IsAny<Dictionary<string, string>?>()
+                )
+            )
+            .ReturnsAsync((IQueryable<Log> query, Dictionary<string, string>? dict) => query);
+        _ = _mockLogsRepo
+            .Setup(r => r.GetAllLogs())
+            .ReturnsAsync(new List<Log> { log, log2 }.BuildMock());
 
-        _ = _mockLogsRepo.Setup(r => r.GetAllLogs()).ReturnsAsync([log, log2]);
+        var result = await _handler.Handle(new GetLogsQuery(), CancellationToken.None);
+        var logList = result.ToList();
+
+        Assert.That(logList, Has.Count.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(logList[0], Is.EqualTo(log));
+            Assert.That(logList[1], Is.EqualTo(log2));
+        });
+
+        _mockLogsRepo.Verify(r => r.GetAllLogs(), Times.Once);
+    }
+
+    [Test]
+    public async Task GetLogs_ReturnsAllFilteredLogs_Test()
+    {
+        var log = new Log
+        {
+            Id = 1,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "1",
+            AuthorName = "Zitronenfalter",
+            AuthorTokenId = null,
+            ProjectId = 1,
+            Action = Action.UPDATED_PROJECT,
+            Changes =
+            [
+                new LogChange
+                {
+                    Property = "Zitrone",
+                    OldValue = "Ungefaltet",
+                    NewValue = "Gefaltet",
+                },
+            ],
+        };
+        var log2 = new Log
+        {
+            Id = 2,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorTokenId = 2,
+            AuthorId = null,
+            AuthorName = "Halbleiter",
+            ProjectId = 2,
+            Action = Action.UPDATED_PROJECT,
+            Changes =
+            [
+                new LogChange
+                {
+                    Property = "Silizium",
+                    OldValue = "rein",
+                    NewValue = "dotiert",
+                },
+            ],
+        };
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.TryGetPlanResourceQuery(
+                    It.IsAny<IQueryable<Log>>(),
+                    It.IsAny<Dictionary<string, string>?>()
+                )
+            )
+            .ReturnsAsync((IQueryable<Log>?)null);
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Log>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
+        _ = _mockLogsRepo
+            .Setup(r => r.GetAllLogs())
+            .ReturnsAsync(new List<Log> { log, log2 }.BuildMock());
 
         var result = await _handler.Handle(new GetLogsQuery(), CancellationToken.None);
         var logList = result.ToList();
@@ -103,8 +195,17 @@ public class GetLogsQueryHandlerTest
                 },
             ],
         };
-
-        _ = _mockLogsRepo.Setup(r => r.GetLogsForProject(1)).ReturnsAsync([log]);
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.TryGetPlanResourceQuery(
+                    It.IsAny<IQueryable<Log>>(),
+                    It.IsAny<Dictionary<string, string>?>()
+                )
+            )
+            .ReturnsAsync((IQueryable<Log> query, Dictionary<string, string>? dict) => query);
+        _ = _mockLogsRepo
+            .Setup(r => r.GetLogsForProject(1))
+            .ReturnsAsync(new List<Log> { log }.BuildMock());
 
         var result = await _handler.Handle(new GetLogsQuery(1), CancellationToken.None);
         var logList = result.ToList();
@@ -137,8 +238,17 @@ public class GetLogsQueryHandlerTest
                 },
             ],
         };
-
-        _ = _mockLogsRepo.Setup(r => r.GetLogsWithSearch("exp(x)")).ReturnsAsync([log]);
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.TryGetPlanResourceQuery(
+                    It.IsAny<IQueryable<Log>>(),
+                    It.IsAny<Dictionary<string, string>?>()
+                )
+            )
+            .ReturnsAsync((IQueryable<Log> query, Dictionary<string, string>? dict) => query);
+        _ = _mockLogsRepo
+            .Setup(r => r.GetLogsWithSearch("exp(x)"))
+            .ReturnsAsync(new List<Log> { log }.BuildMock());
 
         var result = await _handler.Handle(
             new GetLogsQuery(null, "exp(x)"),
@@ -174,8 +284,17 @@ public class GetLogsQueryHandlerTest
                 },
             ],
         };
-
-        _ = _mockLogsRepo.Setup(r => r.GetLogsForUser("Newton")).ReturnsAsync([log]);
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.TryGetPlanResourceQuery(
+                    It.IsAny<IQueryable<Log>>(),
+                    It.IsAny<Dictionary<string, string>?>()
+                )
+            )
+            .ReturnsAsync((IQueryable<Log> query, Dictionary<string, string>? dict) => query);
+        _ = _mockLogsRepo
+            .Setup(r => r.GetLogsForUser("Newton"))
+            .ReturnsAsync(new List<Log> { log }.BuildMock());
 
         var result = await _handler.Handle(
             new GetLogsQuery(null, null, "Newton"),
@@ -212,8 +331,17 @@ public class GetLogsQueryHandlerTest
                 },
             ],
         };
-
-        _ = _mockLogsRepo.Setup(r => r.GetLogsForGlobalPlugin(42)).ReturnsAsync([log]);
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.TryGetPlanResourceQuery(
+                    It.IsAny<IQueryable<Log>>(),
+                    It.IsAny<Dictionary<string, string>?>()
+                )
+            )
+            .ReturnsAsync((IQueryable<Log> query, Dictionary<string, string>? dict) => query);
+        _ = _mockLogsRepo
+            .Setup(r => r.GetLogsForGlobalPlugin(42))
+            .ReturnsAsync(new List<Log> { log }.BuildMock());
 
         var result = await _handler.Handle(
             new GetLogsQuery(null, null, null, 42),
@@ -233,7 +361,14 @@ public class GetLogsQueryHandlerTest
         _ = _mockLogsRepo
             .Setup(m => m.GetLogsForProject(It.IsAny<int>()))
             .ThrowsAsync(new InvalidOperationException());
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.TryGetPlanResourceQuery(
+                    It.IsAny<IQueryable<Log>>(),
+                    It.IsAny<Dictionary<string, string>?>()
+                )
+            )
+            .ReturnsAsync((IQueryable<Log> query, Dictionary<string, string>? dict) => query);
         var request = new GetLogsQuery(404);
         _ = Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await _handler.Handle(request, It.IsAny<CancellationToken>())

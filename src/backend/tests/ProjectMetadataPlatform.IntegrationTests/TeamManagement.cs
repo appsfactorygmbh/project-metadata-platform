@@ -39,7 +39,7 @@ public class TeamManagement : IntegrationTestsBase
             .GetProperty("id")
             .GetInt32();
 
-        var teams = await ToJsonElement(client.GetAsync("/Teams"));
+        var teams = (await ToJsonElement(client.GetAsync("/Teams"))).GetProperty("resources");
 
         Assert.That(teams.GetArrayLength(), Is.EqualTo(2));
         Assert.That(teams[0].GetProperty("id").GetInt32(), Is.EqualTo(teamId1));
@@ -118,14 +118,16 @@ public class TeamManagement : IntegrationTestsBase
         )
             .GetProperty("id")
             .GetInt32();
-        var teams = await ToJsonElement(client.GetAsync("/Teams"));
+        var teams = (await ToJsonElement(client.GetAsync("/Teams"))).GetProperty("resources");
 
         Assert.That(teams.GetArrayLength(), Is.EqualTo(1));
         Assert.That(teams[0].GetProperty("id").GetInt32(), Is.EqualTo(teamId1));
         Assert.That(teams[0].GetProperty("teamName").GetString(), Is.EqualTo("Team1"));
 
         _ = await ToJsonElement(client.DeleteAsync($"/Teams/{teamId1}"), HttpStatusCode.OK);
-        var teamsAfterDelete = await ToJsonElement(client.GetAsync("/Teams"));
+        var teamsAfterDelete = (await ToJsonElement(client.GetAsync("/Teams"))).GetProperty(
+            "resources"
+        );
 
         Assert.That(teamsAfterDelete.GetArrayLength(), Is.EqualTo(0));
     }

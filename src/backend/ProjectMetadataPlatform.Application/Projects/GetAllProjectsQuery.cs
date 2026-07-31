@@ -1,5 +1,6 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MediatR;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Projects;
 
 namespace ProjectMetadataPlatform.Application.Projects;
@@ -10,4 +11,4 @@ namespace ProjectMetadataPlatform.Application.Projects;
 /// <param name="Search">Search string to filter the projects by.</param>
 /// </summary>
 public record GetAllProjectsQuery(ProjectFilterRequest? Request, string? Search)
-    : IRequest<IEnumerable<Project>>;
+    : IRequest<(IEnumerable<Project>, IEnumerable<AuthorizationConstants.Actions>)>;

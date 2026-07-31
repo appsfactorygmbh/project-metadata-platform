@@ -1,11 +1,15 @@
 import { OfficeLocationsApi } from '@/api/generated';
-import type { OfficeLocationModel } from '@/models/OfficeLocation/OfficeLocationModel';
+import type {
+  OfficeLocationListModel,
+  OfficeLocationModel,
+} from '@/models/OfficeLocation/OfficeLocationModel';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
 import type { CreateOfficeLocationModel } from '@/models/OfficeLocation/CreateOfficeLocationModel';
 import type { OfficeLocationEditModel } from '@/models/OfficeLocation';
 import { type ApiStore, useApiStore } from './ApiStore';
+import type { ResourceActions } from '@/models/utils';
 
 type StoreState = {
   officeLocations: OfficeLocationModel[];
@@ -18,7 +22,7 @@ type StoreState = {
 type StoreGetters = {
   getOfficeLocations: () => OfficeLocationModel[];
   getOfficeLocation: () => OfficeLocationModel | undefined;
-
+  getPermissions: () => ResourceActions[];
   getOfficeLocationNames: () => string[];
   getIsLoadingOfficeLocations: () => boolean;
   getIsLoadingOfficeLocation: () => boolean;
@@ -80,6 +84,9 @@ export const useOfficeLocationStore = (pinia: Pinia = piniaInstance): Store => {
             (officeLocation) => officeLocation.officeLocationName,
           );
         },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
+        },
       },
 
       actions: {
@@ -138,9 +145,10 @@ export const useOfficeLocationStore = (pinia: Pinia = piniaInstance): Store => {
         async fetchAll(): Promise<void> {
           try {
             this.setLoadingOfficeLocations(true);
-            const officeLocationsGet: OfficeLocationModel[] =
+            const officeLocationsGet: OfficeLocationListModel =
               await this.callApi('officeLocationsGet', undefined);
-            this.setOfficeLocations(officeLocationsGet);
+            this.setOfficeLocations(officeLocationsGet.resources);
+            this.setPermissions(officeLocationsGet.permissions);
           } finally {
             this.setLoadingOfficeLocations(false);
           }

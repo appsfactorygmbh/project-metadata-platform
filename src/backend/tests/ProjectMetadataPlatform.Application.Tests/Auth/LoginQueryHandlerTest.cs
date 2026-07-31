@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -15,15 +16,20 @@ public class LoginQueryHandlerTest
 {
     private LoginQueryHandler _handler;
     private Mock<IRefreshTokenRepository> _mockRefreshTokenRepo;
-
+    private Mock<IAuthorizationService> _authorizationServiceMock;
     private Mock<IUsersRepository> _mockUserRepo;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
         _mockUserRepo = new Mock<IUsersRepository>();
-        _handler = new LoginQueryHandler(_mockRefreshTokenRepo.Object, _mockUserRepo.Object);
+        _handler = new LoginQueryHandler(
+            _mockRefreshTokenRepo.Object,
+            _mockUserRepo.Object,
+            _authorizationServiceMock.Object
+        );
     }
 
     [Test]
@@ -45,6 +51,7 @@ public class LoginQueryHandlerTest
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.InstanceOf<JwtTokens>());
+        _authorizationServiceMock.Verify(a => a.BypassAuthorization(), Times.Once);
     }
 
     [Test]
@@ -71,6 +78,7 @@ public class LoginQueryHandlerTest
             m => m.UpdateRefreshToken(It.IsAny<string>(), It.IsAny<string>()),
             Times.Once
         );
+        _authorizationServiceMock.Verify(a => a.BypassAuthorization(), Times.Once);
     }
 
     [Test]
@@ -84,5 +92,6 @@ public class LoginQueryHandlerTest
         _ = Assert.ThrowsAsync<AuthInvalidLoginCredentialsException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
+        _authorizationServiceMock.Verify(a => a.BypassAuthorization(), Times.Once);
     }
 }

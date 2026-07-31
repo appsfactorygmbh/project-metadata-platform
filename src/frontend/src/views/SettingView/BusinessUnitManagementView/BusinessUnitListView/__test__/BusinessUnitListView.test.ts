@@ -8,6 +8,7 @@ import {
 import { useBusinessUnitStore } from '@/store';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { BusinessUnitListView } from '..';
+import { ResourceActions } from '@/models/utils';
 
 vi.mock('vue-router', () => ({
   useRouter: () => ({
@@ -37,7 +38,8 @@ describe('BusinessUnitListView.vue', () => {
     });
 
     const businessUnitStore = useBusinessUnitStore();
-
+    // @ts-expect-error: Overriding getter for testing purposes
+    businessUnitStore.getPermissions = [ResourceActions.Create];
     const mockBusinessUnitRouting = {
       routerBusinessUnitId: ref(''),
       setBusinessUnitId: vi.fn(),

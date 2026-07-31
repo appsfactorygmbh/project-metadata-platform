@@ -5,7 +5,9 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Departments;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Departments;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 
@@ -17,7 +19,7 @@ public class UpdateDepartmentCommandHandlerTest
     private UpdateDepartmentCommandHandler _handler;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
-
+    private Mock<IAuthorizationService> _authorizationServiceMock;
     private Mock<IDepartmentRepository> _mockDepartmentRepository;
 
     [SetUp]
@@ -26,11 +28,12 @@ public class UpdateDepartmentCommandHandlerTest
         _mockDepartmentRepository = new Mock<IDepartmentRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _handler = new UpdateDepartmentCommandHandler(
             departmentRepository: _mockDepartmentRepository.Object,
             logRepository: _mockLogRepo.Object,
-            unitOfWork: _mockUnitOfWork.Object
+            unitOfWork: _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -39,7 +42,15 @@ public class UpdateDepartmentCommandHandlerTest
     {
         // Arrange
         var returnDepartment = new Department() { Id = 1, DepartmentName = "Test_1" };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Department>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
             .ReturnsAsync(returnDepartment);
@@ -94,7 +105,15 @@ public class UpdateDepartmentCommandHandlerTest
     {
         // Arrange
         var returnDepartment = new Department() { Id = 1, DepartmentName = "Test_1" };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Department>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
             .ReturnsAsync(returnDepartment);
@@ -108,7 +127,7 @@ public class UpdateDepartmentCommandHandlerTest
             .ReturnsAsync(false);
 
         // Act
-        var result = await _handler.Handle(
+        _ = await _handler.Handle(
             new UpdateDepartmentCommand(Id: 1, DepartmentName: "Test_1"),
             It.IsAny<CancellationToken>()
         );
@@ -130,7 +149,15 @@ public class UpdateDepartmentCommandHandlerTest
     {
         // Arrange
         var returnDepartment = new Department() { Id = 1, DepartmentName = "Test_1" };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Department>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockDepartmentRepository
             .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
             .ReturnsAsync(returnDepartment);
@@ -152,5 +179,29 @@ public class UpdateDepartmentCommandHandlerTest
         );
 
         Assert.That(ex.Message, Does.Contain("Test_2"));
+    }
+
+    [Test]
+    public async Task EditDepartment_AuthorizationFailsThrowsTest()
+    {
+        var returnDepartment = new Department() { Id = 1, DepartmentName = "Test_1" };
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Department>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+        _ = _mockDepartmentRepository
+            .Setup(repo => repo.GetDepartmentAsync(It.IsAny<int>()))
+            .ReturnsAsync(returnDepartment);
+
+        var request = new UpdateDepartmentCommand(Id: 1, DepartmentName: "Test_2");
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
+        );
     }
 }

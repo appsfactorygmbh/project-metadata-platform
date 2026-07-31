@@ -17,6 +17,8 @@ import {
   GetBusinessUnitResponseFromJSON,
   GetBusinessUnitResponseToJSON,
 } from './GetBusinessUnitResponse';
+import type { Actions } from './Actions';
+import { ActionsFromJSON, ActionsToJSON } from './Actions';
 
 /**
  * The representation of a team in responses.
@@ -48,6 +50,12 @@ export interface GetTeamResponse {
    * @memberof GetTeamResponse
    */
   ptl?: string | null;
+  /**
+   * List of allow Actions on the Team.
+   * @type {Array<Actions>}
+   * @memberof GetTeamResponse
+   */
+  permissions?: Array<Actions> | null;
 }
 
 /**
@@ -79,6 +87,10 @@ export function GetTeamResponseFromJSONTyped(
     teamName: json['teamName'],
     businessUnit: GetBusinessUnitResponseFromJSON(json['businessUnit']),
     ptl: json['ptl'] == null ? undefined : json['ptl'],
+    permissions:
+      json['permissions'] == null
+        ? undefined
+        : (json['permissions'] as Array<any>).map(ActionsFromJSON),
   };
 }
 
@@ -99,5 +111,9 @@ export function GetTeamResponseToJSONTyped(
     teamName: value['teamName'],
     businessUnit: GetBusinessUnitResponseToJSON(value['businessUnit']),
     ptl: value['ptl'],
+    permissions:
+      value['permissions'] == null
+        ? undefined
+        : (value['permissions'] as Array<any>).map(ActionsToJSON),
   };
 }

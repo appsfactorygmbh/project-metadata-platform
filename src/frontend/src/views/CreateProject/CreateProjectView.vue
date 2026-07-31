@@ -16,10 +16,11 @@
   import { useProjectStore, useTeamStore, useCompanyStore } from '@/store';
   import { projectRoutingSymbol } from '@/store/injectionSymbols';
   import { useThemeToken } from '@/utils/hooks';
-  import { message } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
   import { storeToRefs } from 'pinia';
   import type { SelectValue } from 'ant-design-vue/es/select';
-
+  import { ResourceActions } from '@/models/utils';
+  const { notification } = App.useApp();
   const token = useThemeToken();
 
   const open = ref<boolean>(false);
@@ -133,11 +134,17 @@
 
     try {
       await projectStore.create(projectData);
-      message.success('Project created successfully');
+      notification.success({
+        message: 'Success!',
+        description: 'Project created successfully.',
+      });
       resetModal();
       closeModal();
     } catch (error) {
-      message.error((error as Error).message ?? 'An error occurred');
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
       return;
     }
     open.value = false;
@@ -212,7 +219,11 @@
       v-model:open="open"
       width="400px"
       title="Create Project"
-      :ok-button-props="{ disabled: isAdding }"
+      :ok-button-props="{
+        disabled:
+          isAdding ||
+          !projectStore.getPermissions.includes(ResourceActions.Create),
+      }"
       @ok="handleOk"
       @cancel="resetModal"
     >

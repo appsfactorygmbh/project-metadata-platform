@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Plugins.Models;
 using ProjectMetadataPlatform.Api.Projects;
 using ProjectMetadataPlatform.Api.Projects.Models;
@@ -40,7 +41,7 @@ public class ProjectsControllerTest
         // prepare
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllProjectsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync([]);
+            .ReturnsAsync(([], []));
 
         // act
         var result = await _controller.Get(null, null);
@@ -50,11 +51,11 @@ public class ProjectsControllerTest
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult.Value, Is.InstanceOf<IEnumerable<GetProjectsResponse>>());
+        Assert.That(okResult.Value, Is.InstanceOf<GetListResponse<GetProjectResponse>>());
 
         var getProjectsResponseArray = (
-            okResult.Value as IEnumerable<GetProjectsResponse>
-        )?.ToArray();
+            okResult.Value as GetListResponse<GetProjectResponse>
+        )?.Resources.ToArray();
         Assert.That(getProjectsResponseArray, Is.Not.Null);
 
         Assert.That(getProjectsResponseArray, Has.Length.EqualTo(0));
@@ -80,7 +81,7 @@ public class ProjectsControllerTest
         };
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllProjectsQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(projectsResponseContent);
+            .ReturnsAsync((projectsResponseContent, []));
 
         // act
         var result = await _controller.Get(null, null);
@@ -90,11 +91,11 @@ public class ProjectsControllerTest
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult.Value, Is.InstanceOf<IEnumerable<GetProjectsResponse>>());
+        Assert.That(okResult.Value, Is.InstanceOf<GetListResponse<GetProjectResponse>>());
 
         var getProjectsResponseArray = (
-            okResult.Value as IEnumerable<GetProjectsResponse>
-        )?.ToArray();
+            okResult.Value as GetListResponse<GetProjectResponse>
+        )?.Resources.ToArray();
         Assert.That(getProjectsResponseArray, Is.Not.Null);
 
         Assert.That(getProjectsResponseArray, Has.Length.EqualTo(1));
@@ -136,7 +137,7 @@ public class ProjectsControllerTest
                     It.IsAny<CancellationToken>()
                 )
             )
-            .ReturnsAsync(projectsResponseContent);
+            .ReturnsAsync((projectsResponseContent, []));
 
         // act
         var result = await _controller.Get(null, "R");
@@ -146,11 +147,11 @@ public class ProjectsControllerTest
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult.Value, Is.InstanceOf<IEnumerable<GetProjectsResponse>>());
+        Assert.That(okResult.Value, Is.InstanceOf<GetListResponse<GetProjectResponse>>());
 
         var getProjectsResponseArray = (
-            okResult.Value as IEnumerable<GetProjectsResponse>
-        )?.ToArray();
+            okResult.Value as GetListResponse<GetProjectResponse>
+        )?.Resources.ToArray();
         Assert.That(getProjectsResponseArray, Is.Not.Null);
 
         Assert.That(getProjectsResponseArray, Has.Length.EqualTo(1));
@@ -599,21 +600,24 @@ public class ProjectsControllerTest
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllProjectsQuery>(), CancellationToken.None))
             .ReturnsAsync(
-                new List<Project>
-                {
-                    new()
+                (
+                    new List<Project>
                     {
-                        Id = 1,
-                        ProjectName = "Heather",
-                        Slug = "heather",
-                        ClientName = "Metatron",
-                        IsArchived = true,
-                        IsEoC = true,
-                        CompanyId = 1,
-                        Company = new() { CompanyName = "Optimus Prime" },
-                        IsmsLevel = SecurityLevel.HIGH,
+                        new()
+                        {
+                            Id = 1,
+                            ProjectName = "Heather",
+                            Slug = "heather",
+                            ClientName = "Metatron",
+                            IsArchived = true,
+                            IsEoC = true,
+                            CompanyId = 1,
+                            Company = new() { CompanyName = "Optimus Prime" },
+                            IsmsLevel = SecurityLevel.HIGH,
+                        },
                     },
-                }
+                    []
+                )
             );
 
         var result = await _controller.Get(filters, search);
@@ -624,7 +628,7 @@ public class ProjectsControllerTest
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
 
-        var response = (okResult.Value as IEnumerable<GetProjectsResponse>)?.ToList();
+        var response = (okResult.Value as GetListResponse<GetProjectResponse>)?.Resources.ToList();
         Assert.That(response, Is.Not.Null);
 
         Assert.Multiple(() =>
@@ -659,7 +663,7 @@ public class ProjectsControllerTest
 
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllProjectsQuery>(), CancellationToken.None))
-            .ReturnsAsync([]);
+            .ReturnsAsync(([], []));
 
         var result = await _controller.Get(filters, search);
 
@@ -669,7 +673,7 @@ public class ProjectsControllerTest
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
 
-        var response = (okResult.Value as IEnumerable<GetProjectsResponse>)?.ToArray();
+        var response = (okResult.Value as GetListResponse<GetProjectResponse>)?.Resources.ToArray();
         Assert.Multiple(() =>
         {
             Assert.That(response, Is.Not.Null);

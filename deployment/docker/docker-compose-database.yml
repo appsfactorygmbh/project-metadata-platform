@@ -1,4 +1,4 @@
-# Database service for local development
+# Database and Cerbos PDP services for local development
 services:
   db:
     image: postgres:18
@@ -10,5 +10,23 @@ services:
       - 5432:5432
     volumes:
       - db_data:/var/lib/postgresql
+  cerbos:
+    image: ghcr.io/cerbos/cerbos:latest
+    ports:
+      - "3592:3592"
+      - "3593:3593"
+    command:
+      - server
+      - --set=storage.driver=disk
+      - --set=storage.disk.directory=policies
+      - --set=storage.disk.watchForChanges=true
+      - --set=server.adminAPI.enabled=true
+      - --set=server.adminAPI.adminCredentials.username=cerbos_user
+      - --set=server.adminAPI.adminCredentials.passwordHash=JDJ5JDEwJHl2ZjJJRERFS3VES2FTcExZU2xacmU5a1lLZHA0Z2FnL2c4VU8yaTguZnpacUo3emozSk4yCgo=
+    volumes:
+      - type: bind
+        source: ./cerbos/policies
+        target: /policies
+
 volumes:
   db_data:

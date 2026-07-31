@@ -8,6 +8,7 @@ import CreateTeamView from '../CreateTeamView.vue';
 import type { TeamModel } from '@/models/Team';
 import { useTeamStore } from '@/store';
 import { useFormStore } from '@/components/Form';
+import { ResourceActions } from '@/models/utils/ResourceActions.ts';
 
 describe('CreateTeamView.vue', () => {
   setActivePinia(createTestingPinia({ stubActions: false }));
@@ -22,12 +23,15 @@ describe('CreateTeamView.vue', () => {
   const mockTeamRoutingService = {
     setTeamId: vi.fn((id: number) => Promise.resolve()),
   };
+  const teamStore = useTeamStore();
+  // @ts-expect-error: Overriding getter for testing purposes
+  teamStore.getPermissions = [ResourceActions.Create];
 
   it('renders correctly', () => {
     wrapper = mount(CreateTeamView, {
       global: {
         provide: {
-          [teamStoreSymbol as symbol]: useTeamStore(),
+          [teamStoreSymbol as symbol]: teamStore,
           [teamRoutingSymbol as symbol]: mockTeamRoutingService,
         },
       },
@@ -69,7 +73,7 @@ describe('CreateTeamView.vue', () => {
       ],
       global: {
         provide: {
-          [teamStoreSymbol as symbol]: useTeamStore(),
+          [teamStoreSymbol as symbol]: teamStore,
           [teamRoutingSymbol as symbol]: mockTeamRoutingService,
         },
       },
@@ -93,7 +97,7 @@ describe('CreateTeamView.vue', () => {
         businessUnit: { id: 1, businessUnitName: 'Bu Test' },
       },
     ];
-
+    teamStore.$patch({ teams: testData });
     wrapper = mount(CreateTeamView, {
       plugins: [
         createTestingPinia({
@@ -107,7 +111,7 @@ describe('CreateTeamView.vue', () => {
       ],
       global: {
         provide: {
-          [teamStoreSymbol as symbol]: useTeamStore(),
+          [teamStoreSymbol as symbol]: teamStore,
           [teamRoutingSymbol as symbol]: mockTeamRoutingService,
         },
       },
@@ -124,7 +128,6 @@ describe('CreateTeamView.vue', () => {
   });
 
   it('submits the form correctly', async () => {
-    const teamStore = useTeamStore();
     const formStore = useFormStore('CreateTeamForm');
     const createSpy = vi
       .spyOn(teamStore, 'create')

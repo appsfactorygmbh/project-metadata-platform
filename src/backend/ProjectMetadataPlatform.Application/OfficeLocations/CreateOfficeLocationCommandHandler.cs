@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
@@ -17,6 +19,7 @@ public class CreateOfficeLocationCommandHandler : IRequestHandler<CreateOfficeLo
     private readonly IOfficeLocationRepository _officeLocationRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="CreateOfficeLocationCommandHandler" />.
@@ -24,12 +27,14 @@ public class CreateOfficeLocationCommandHandler : IRequestHandler<CreateOfficeLo
     public CreateOfficeLocationCommandHandler(
         IOfficeLocationRepository officeLocationRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _officeLocationRepository = officeLocationRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -44,6 +49,16 @@ public class CreateOfficeLocationCommandHandler : IRequestHandler<CreateOfficeLo
         CancellationToken cancellationToken
     )
     {
+        var officeLocation = new OfficeLocation { OfficeLocationName = request.OfficeLocationName };
+        if (
+            !await _authorizationService.CheckAccess(
+                officeLocation,
+                AuthorizationConstants.Actions.CREATE
+            )
+        )
+        {
+            throw new UnauthorizedException();
+        }
         if (
             await _officeLocationRepository.CheckIfOfficeLocationNameExistsAsync(
                 request.OfficeLocationName
@@ -52,8 +67,6 @@ public class CreateOfficeLocationCommandHandler : IRequestHandler<CreateOfficeLo
         {
             throw new OfficeLocationNameAlreadyExistsException(request.OfficeLocationName);
         }
-
-        var officeLocation = new OfficeLocation { OfficeLocationName = request.OfficeLocationName };
         await AddOfficeLocationLog(officeLocation);
         await _officeLocationRepository.AddOfficeLocationAsync(officeLocation);
         await _unitOfWork.CompleteAsync();

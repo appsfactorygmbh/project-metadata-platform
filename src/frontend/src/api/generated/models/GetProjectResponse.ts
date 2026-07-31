@@ -24,17 +24,15 @@ import {
 } from './GetCompanyResponse';
 import type { SecurityLevel } from './SecurityLevel';
 import { SecurityLevelFromJSON, SecurityLevelToJSON } from './SecurityLevel';
-import type { CompanyState } from './CompanyState';
-import { CompanyStateFromJSON, CompanyStateToJSON } from './CompanyState';
 
 /**
- * Represents a response to the GetProject API call.
+ * Represents a response for the GetProjects API call.
  * @export
  * @interface GetProjectResponse
  */
 export interface GetProjectResponse {
   /**
-   * The identification number for the project.
+   * The id of the project.
    * @type {number}
    * @memberof GetProjectResponse
    */
@@ -46,23 +44,17 @@ export interface GetProjectResponse {
    */
   slug: string;
   /**
-   *
+   * The name of the project.
    * @type {string}
    * @memberof GetProjectResponse
    */
   projectName: string;
   /**
-   *
+   * The name of the client associated with the project.
    * @type {string}
    * @memberof GetProjectResponse
    */
   clientName: string;
-  /**
-   * Internal id of the offer associated with the project.
-   * @type {string}
-   * @memberof GetProjectResponse
-   */
-  offerId?: string | null;
   /**
    *
    * @type {GetCompanyResponse}
@@ -87,12 +79,6 @@ export interface GetProjectResponse {
    * @memberof GetProjectResponse
    */
   team?: GetTeamResponse;
-  /**
-   *
-   * @type {CompanyState}
-   * @memberof GetProjectResponse
-   */
-  companyState: CompanyState;
   /**
    *
    * @type {SecurityLevel}
@@ -123,8 +109,6 @@ export function instanceOfGetProjectResponse(
   if (!('isArchived' in value) || value['isArchived'] === undefined)
     return false;
   if (!('isEoC' in value) || value['isEoC'] === undefined) return false;
-  if (!('companyState' in value) || value['companyState'] === undefined)
-    return false;
   if (!('ismsLevel' in value) || value['ismsLevel'] === undefined) return false;
   if (!('notes' in value) || value['notes'] === undefined) return false;
   return true;
@@ -146,13 +130,11 @@ export function GetProjectResponseFromJSONTyped(
     slug: json['slug'],
     projectName: json['projectName'],
     clientName: json['clientName'],
-    offerId: json['offerId'] == null ? undefined : json['offerId'],
     company: GetCompanyResponseFromJSON(json['company']),
     isArchived: json['isArchived'],
     isEoC: json['isEoC'],
     team:
       json['team'] == null ? undefined : GetTeamResponseFromJSON(json['team']),
-    companyState: CompanyStateFromJSON(json['companyState']),
     ismsLevel: SecurityLevelFromJSON(json['ismsLevel']),
     notes: json['notes'],
   };
@@ -175,12 +157,10 @@ export function GetProjectResponseToJSONTyped(
     slug: value['slug'],
     projectName: value['projectName'],
     clientName: value['clientName'],
-    offerId: value['offerId'],
     company: GetCompanyResponseToJSON(value['company']),
     isArchived: value['isArchived'],
     isEoC: value['isEoC'],
     team: GetTeamResponseToJSON(value['team']),
-    companyState: CompanyStateToJSON(value['companyState']),
     ismsLevel: SecurityLevelToJSON(value['ismsLevel']),
     notes: value['notes'],
   };

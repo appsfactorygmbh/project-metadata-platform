@@ -8,9 +8,13 @@ import { useUserStore } from '@/store';
 import { FormItem, Select } from 'ant-design-vue';
 import { useFormStore } from '@/components/Form';
 import type { UserListModel } from '@/models/User';
+import { ResourceActions } from '@/models/utils';
 
 describe('CreateUserView.vue', () => {
   setActivePinia(createTestingPinia({ stubActions: false }));
+  const userStore = useUserStore();
+  // @ts-expect-error: Overriding getter for testing purposes
+  userStore.getPermissions = [ResourceActions.Create];
 
   let wrapper: VueWrapper;
   afterEach(() => {
@@ -96,7 +100,7 @@ describe('CreateUserView.vue', () => {
       ],
       global: {
         provide: {
-          [userStoreSymbol as symbol]: useUserStore(),
+          [userStoreSymbol as symbol]: userStore,
         },
       },
     });
@@ -129,7 +133,7 @@ describe('CreateUserView.vue', () => {
     wrapper = mount(CreateUserView, {
       global: {
         provide: {
-          [userStoreSymbol as symbol]: useUserStore(),
+          [userStoreSymbol as symbol]: userStore,
         },
       },
     });
@@ -184,7 +188,7 @@ describe('CreateUserView.vue', () => {
     wrapper = mount(CreateUserView, {
       global: {
         provide: {
-          [userStoreSymbol as symbol]: useUserStore(),
+          [userStoreSymbol as symbol]: userStore,
         },
       },
     });
@@ -211,7 +215,6 @@ describe('CreateUserView.vue', () => {
   });
 
   it('submits the form correctly', async () => {
-    const userStore = useUserStore();
     const formStore = useFormStore('createUserForm');
 
     const createSpy = vi

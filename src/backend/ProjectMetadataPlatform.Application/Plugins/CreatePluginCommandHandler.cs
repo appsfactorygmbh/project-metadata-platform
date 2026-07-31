@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Plugins;
@@ -18,6 +20,7 @@ public class CreatePluginCommandHandler : IRequestHandler<CreatePluginCommand, i
     private readonly IPluginRepository _pluginRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of<see cref="GetAllPluginsForProjectIdQueryHandler" />.
@@ -25,15 +28,18 @@ public class CreatePluginCommandHandler : IRequestHandler<CreatePluginCommand, i
     /// <param name="pluginRepository">The repository for managing plugins.</param>
     /// <param name="logRepository">The repository for managing logs.</param>
     /// <param name="unitOfWork">The unit of work for managing transactions.</param>
+    /// <param name="authorizationService"></param>
     public CreatePluginCommandHandler(
         IPluginRepository pluginRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _pluginRepository = pluginRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -45,11 +51,6 @@ public class CreatePluginCommandHandler : IRequestHandler<CreatePluginCommand, i
     /// <exception cref="PluginNameAlreadyExistsException">The Plugin name already exists.</exception>
     public async Task<int> Handle(CreatePluginCommand request, CancellationToken cancellationToken)
     {
-        if (await _pluginRepository.CheckGlobalPluginNameExists(request.Name))
-        {
-            throw new PluginNameAlreadyExistsException(request.Name);
-        }
-
         var plugin = new Plugin
         {
             PluginName = request.Name,
@@ -58,7 +59,15 @@ public class CreatePluginCommandHandler : IRequestHandler<CreatePluginCommand, i
             ProjectPlugins = [],
             BaseUrl = request.BaseUrl,
         };
+        if (!await _authorizationService.CheckAccess(plugin, AuthorizationConstants.Actions.CREATE))
+        {
+            throw new UnauthorizedException();
+        }
 
+        if (await _pluginRepository.CheckGlobalPluginNameExists(request.Name))
+        {
+            throw new PluginNameAlreadyExistsException(request.Name);
+        }
         await AddCreatedPluginLog(plugin, request);
         _ = await _pluginRepository.StorePlugin(plugin);
         await _unitOfWork.CompleteAsync();

@@ -1,6 +1,7 @@
 import type {
   CreateProjectModel,
   DetailedProjectModel,
+  ProjectListModel,
   ProjectModel,
   UpdateProjectModel,
 } from '@/models/Project';
@@ -10,6 +11,7 @@ import { type PiniaStore, useStore } from 'pinia-generic';
 import { type ApiStore, useApiStore } from './ApiStore';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
+import type { ResourceActions } from '@/models/utils';
 
 type StoreState = {
   projects: ProjectModel[];
@@ -25,6 +27,7 @@ type StoreState = {
 type StoreGetters = {
   getProjects: () => ProjectModel[];
   getProject: () => DetailedProjectModel | null;
+  getPermissions: () => ResourceActions[];
   getIsLoading: () => boolean;
   getIsLoadingAdd: () => boolean;
   getIsLoadingUpdate: () => boolean;
@@ -120,6 +123,9 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
         getUpdatedSuccessfully(): boolean {
           return this.updatedSuccessfully;
         },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
+        },
       },
       actions: {
         refreshAuth(): void {
@@ -180,10 +186,14 @@ export const useProjectStore = (pinia: Pinia = piniaInstance): Store => {
         async fetchAll({ setCache = true, search } = {}) {
           try {
             this.setLoadingProjects(true);
-            const projects: ProjectModel[] =
+            const projects: ProjectListModel =
               (await this.callApi('projectsGet', { search })) ?? [];
-            if (setCache) this.setProjects(projects);
-            return projects;
+            if (setCache) {
+              this.setProjects(projects.resources);
+              this.setPermissions(projects.permissions);
+            }
+
+            return projects.resources;
           } finally {
             this.setLoadingProjects(false);
           }

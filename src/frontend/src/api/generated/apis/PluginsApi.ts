@@ -18,6 +18,7 @@ import type {
   CreatePluginResponse,
   DeleteGlobalPluginResponse,
   GetGlobalPluginResponse,
+  GetGlobalPluginResponseGetListResponse,
   PatchGlobalPluginRequest,
 } from '../models/index';
 import {
@@ -25,6 +26,7 @@ import {
   CreatePluginResponseFromJSON,
   DeleteGlobalPluginResponseFromJSON,
   GetGlobalPluginResponseFromJSON,
+  GetGlobalPluginResponseGetListResponseFromJSON,
   PatchGlobalPluginRequestToJSON,
 } from '../models/index';
 
@@ -57,14 +59,14 @@ export interface PluginsApiInterface {
    */
   pluginsGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetGlobalPluginResponse>>>;
+  ): Promise<runtime.ApiResponse<GetGlobalPluginResponseGetListResponse>>;
 
   /**
    * Gets all global plugins.
    */
   pluginsGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetGlobalPluginResponse>>;
+  ): Promise<GetGlobalPluginResponseGetListResponse>;
 
   /**
    *
@@ -140,7 +142,7 @@ export class PluginsApi extends runtime.BaseAPI implements PluginsApiInterface {
    */
   async pluginsGetRaw(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetGlobalPluginResponse>>> {
+  ): Promise<runtime.ApiResponse<GetGlobalPluginResponseGetListResponse>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -164,7 +166,7 @@ export class PluginsApi extends runtime.BaseAPI implements PluginsApiInterface {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(GetGlobalPluginResponseFromJSON),
+      GetGlobalPluginResponseGetListResponseFromJSON(jsonValue),
     );
   }
 
@@ -173,7 +175,7 @@ export class PluginsApi extends runtime.BaseAPI implements PluginsApiInterface {
    */
   async pluginsGet(
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetGlobalPluginResponse>> {
+  ): Promise<GetGlobalPluginResponseGetListResponse> {
     const response = await this.pluginsGetRaw(initOverrides);
     return await response.value();
   }

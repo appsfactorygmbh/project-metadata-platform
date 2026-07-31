@@ -39,7 +39,9 @@ public class OfficeLocationManagement : IntegrationTestsBase
             .GetProperty("id")
             .GetInt32();
 
-        var officeLocations = await ToJsonElement(client.GetAsync("/OfficeLocations"));
+        var officeLocations = (
+            await ToJsonElement(client.GetAsync("/OfficeLocations"))
+        ).GetProperty("resources");
 
         Assert.Multiple(() =>
         {
@@ -117,7 +119,9 @@ public class OfficeLocationManagement : IntegrationTestsBase
         )
             .GetProperty("id")
             .GetInt32();
-        var officeLocations = await ToJsonElement(client.GetAsync("/OfficeLocations"));
+        var officeLocations = (
+            await ToJsonElement(client.GetAsync("/OfficeLocations"))
+        ).GetProperty("resources");
 
         Assert.That(officeLocations.GetArrayLength(), Is.EqualTo(1));
         Assert.That(officeLocations[0].GetProperty("id").GetInt32(), Is.EqualTo(officeLocationId1));
@@ -129,7 +133,9 @@ public class OfficeLocationManagement : IntegrationTestsBase
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
 
-        var officeLocationsAfterDelete = await ToJsonElement(client.GetAsync("/OfficeLocations"));
+        var officeLocationsAfterDelete = (
+            await ToJsonElement(client.GetAsync("/OfficeLocations"))
+        ).GetProperty("resources");
 
         Assert.That(officeLocationsAfterDelete.GetArrayLength(), Is.EqualTo(0));
     }

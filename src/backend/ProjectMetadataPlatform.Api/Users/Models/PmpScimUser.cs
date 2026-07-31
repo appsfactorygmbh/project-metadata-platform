@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using ProjectMetadataPlatform.Domain.Authorization;
 
 namespace ProjectMetadataPlatform.Api.Users.Models;
 
@@ -47,7 +48,7 @@ public record PmpScimUser
     /// List of addresses of the User.
     /// </summary>
     [JsonPropertyName("addresses")]
-    public List<AddressRecord> Addresses { get; set; } = [];
+    public List<AddressRecord>? Addresses { get; set; } = [];
 
     /// <summary>
     /// Contains properties of the enterprise extension.
@@ -154,5 +155,10 @@ public record PmpScimUser
         /// Version of the resource.
         /// </summary>
         public string? Version { get; set; }
+
+        /// <summary>
+        /// Permissions on the User resource.
+        /// </summary>
+        public List<AuthorizationConstants.Actions>? Permissions { get; set; }
     }
 }

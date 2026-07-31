@@ -1,9 +1,12 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Teams;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Teams;
 
 namespace ProjectMetadataPlatform.Application.Tests.Teams;
@@ -13,12 +16,17 @@ public class GetLinkedProjectsQueryHandlerTest
 {
     private GetLinkedProjectsQueryHandler _handler;
     private Mock<ITeamRepository> _mockTeamRepository;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockTeamRepository = new Mock<ITeamRepository>();
-        _handler = new GetLinkedProjectsQueryHandler(teamRepository: _mockTeamRepository.Object);
+        _handler = new GetLinkedProjectsQueryHandler(
+            teamRepository: _mockTeamRepository.Object,
+            authorizationService: _authorizationServiceMock.Object
+        );
     }
 
     [Test]
@@ -56,7 +64,15 @@ public class GetLinkedProjectsQueryHandlerTest
         _ = _mockTeamRepository
             .Setup(repo => repo.GetTeamWithProjectsAsync(It.IsAny<int>()))
             .ReturnsAsync(returnTeam);
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Team>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         // Act
         var result = await _handler.Handle(
             new GetLinkedProjectsQuery(Id: 1),
@@ -73,6 +89,26 @@ public class GetLinkedProjectsQueryHandlerTest
         _mockTeamRepository.Verify(
             m => m.GetTeamWithProjectsAsync(It.Is<int>(id => id == 1)),
             Times.Once
+        );
+    }
+
+    [Test]
+    public async Task GetLinkedProjects_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Team>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+
+        var request = new GetLinkedProjectsQuery(Id: 1);
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
 }

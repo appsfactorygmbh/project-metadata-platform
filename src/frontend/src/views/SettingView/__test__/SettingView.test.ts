@@ -94,7 +94,7 @@ describe('SettingView.vue', () => {
     });
     const vm = wrapper.vm as unknown as SettingViewObject;
     expect(vm.collapsed).toBe(false);
-    expect(vm.tab).toBe('Global Plugins');
+    expect(vm.tab).toBe('User');
   });
 
   it('go to main menu when back click', async () => {

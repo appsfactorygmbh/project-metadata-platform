@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -26,9 +26,9 @@ public class OfficeLocationRepository : RepositoryBase<OfficeLocation>, IOfficeL
     }
 
     /// <inheritdoc/>
-    public async Task<IList<OfficeLocation>> GetOfficeLocationsAsync()
+    public async Task<IQueryable<OfficeLocation>> GetOfficeLocationsAsync()
     {
-        return await _context.OfficeLocations.AsNoTracking().ToListAsync();
+        return _context.OfficeLocations.AsNoTracking();
     }
 
     /// <inheritdoc/>

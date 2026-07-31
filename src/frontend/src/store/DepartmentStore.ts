@@ -1,11 +1,15 @@
 import { DepartmentsApi } from '@/api/generated';
-import type { DepartmentModel } from '@/models/Department/DepartmentModel';
+import type {
+  DepartmentListModel,
+  DepartmentModel,
+} from '@/models/Department/DepartmentModel';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
 import type { CreateDepartmentModel } from '@/models/Department/CreateDepartmentModel';
 import type { DepartmentEditModel } from '@/models/Department';
 import { type ApiStore, useApiStore } from './ApiStore';
+import type { ResourceActions } from '@/models/utils';
 
 type StoreState = {
   departments: DepartmentModel[];
@@ -18,7 +22,7 @@ type StoreState = {
 type StoreGetters = {
   getDepartments: () => DepartmentModel[];
   getDepartment: () => DepartmentModel | undefined;
-
+  getPermissions: () => ResourceActions[];
   getDepartmentNames: () => string[];
   getIsLoadingDepartments: () => boolean;
   getIsLoadingDepartment: () => boolean;
@@ -75,6 +79,9 @@ export const useDepartmentStore = (pinia: Pinia = piniaInstance): Store => {
             (department) => department.departmentName,
           );
         },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
+        },
       },
 
       actions: {
@@ -130,11 +137,12 @@ export const useDepartmentStore = (pinia: Pinia = piniaInstance): Store => {
         async fetchAll(): Promise<void> {
           try {
             this.setLoadingDepartments(true);
-            const departmentsGet: DepartmentModel[] = await this.callApi(
+            const departmentsGet: DepartmentListModel = await this.callApi(
               'departmentsGet',
               undefined,
             );
-            this.setDepartments(departmentsGet);
+            this.setDepartments(departmentsGet.resources);
+            this.setPermissions(departmentsGet.permissions);
           } finally {
             this.setLoadingDepartments(false);
           }

@@ -5,6 +5,7 @@ import { userRoutingSymbol, userStoreSymbol } from '@/store/injectionSymbols';
 import { useUserStore } from '@/store';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { UserListView } from '..';
+import { ResourceActions } from '@/models/utils';
 
 vi.mock('vue-router', () => ({
   useRouter: () => ({
@@ -33,7 +34,8 @@ describe('UserListView.vue', () => {
     });
 
     const userStore = useUserStore();
-
+    // @ts-expect-error: Overriding getter for testing purposes
+    userStore.getPermissions = [ResourceActions.Create];
     const mockUserRouting = {
       routerUserId: ref(''),
       setUserId: vi.fn(),
@@ -76,11 +78,9 @@ describe('UserListView.vue', () => {
     expect(tags[0].text()).toBe('SCIM');
   });
 
-  it('calls fetchMe and fetchAll on mount', () => {
+  it('calls fetchAll on mount', () => {
     generateWrapper();
     const userStore = useUserStore();
-
-    expect(userStore.fetchMe).toHaveBeenCalled();
     expect(userStore.fetchAll).toHaveBeenCalled();
   });
 });

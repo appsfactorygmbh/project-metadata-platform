@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -8,9 +9,16 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Departments;
+using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
+using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
+using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
+using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
+using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Teams;
@@ -26,13 +34,13 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
 {
     private readonly IUsersRepository _usersRepository;
     private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
+
+    private readonly IGetOrCreateHelper _getOrCreateHelper;
+
     private readonly ITeamRepository _teamRepository;
-    private readonly IDepartmentRepository _departmentRepository;
-    private readonly IBusinessUnitRepository _businessUnitRepository;
-    private readonly IOfficeLocationRepository _officeLocationRepository;
-    private readonly ICompanyRepository _companyRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogRepository _logRepository;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PatchUserCommandHandler"/> class.
@@ -40,33 +48,28 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
     /// <param name="usersRepository">The repository for accessing user data.</param>
     /// <param name="passwordHasher">The service for hashing user passwords.</param>
     /// <param name="teamRepository">The repository for accessing team data.</param>
-    /// <param name="departmentRepository">Repository for accessing department data.</param>
-    /// <param name="businessUnitRepository">Repository for accessing bu data.</param>
-    /// <param name="officeLocationRepository">Repository for accessing office location data.</param>
-    /// <param name="companyRepository">Repository for accessing company data.</param>
     /// <param name="unitOfWork">The unit of work for managing transactions.</param>
     /// <param name="logRepository">The repository for logging user actions.</param>
+    /// <param name="authorizationService"></param>
+    /// <param name="getOrCreateHelper"></param>
     public PatchUserCommandHandler(
         IUsersRepository usersRepository,
         IPasswordHasher<ApplicationUser> passwordHasher,
         ITeamRepository teamRepository,
-        IDepartmentRepository departmentRepository,
-        IBusinessUnitRepository businessUnitRepository,
-        IOfficeLocationRepository officeLocationRepository,
-        ICompanyRepository companyRepository,
         IUnitOfWork unitOfWork,
-        ILogRepository logRepository
+        ILogRepository logRepository,
+        IAuthorizationService authorizationService,
+        IGetOrCreateHelper getOrCreateHelper
     )
     {
         _usersRepository = usersRepository;
         _passwordHasher = passwordHasher;
         _teamRepository = teamRepository;
-        _businessUnitRepository = businessUnitRepository;
-        _companyRepository = companyRepository;
-        _officeLocationRepository = officeLocationRepository;
-        _departmentRepository = departmentRepository;
         _unitOfWork = unitOfWork;
         _logRepository = logRepository;
+        _authorizationService = authorizationService;
+
+        _getOrCreateHelper = getOrCreateHelper;
     }
 
     /// <summary>
@@ -83,11 +86,14 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         var user = await _usersRepository.CheckUserExists(request.Id)
             ? await _usersRepository.GetUserByIdAsync(request.Id)
             : await _usersRepository.GetUserByEmailAsync(request.Id);
+
+        var oldUser = await _usersRepository.GetUserByIdNoTrackingAsync(user.EmployeeId);
         var changes = new List<LogChange>();
         await UpdateUser(request, user, changes);
 
         var response = await _usersRepository.StoreUser(user);
 
+        await CheckAuthorization(oldUser, user);
         if (changes.Count > 0)
         {
             await _logRepository.AddUserLogForCurrentActor(user, Action.UPDATED_USER, changes);
@@ -304,7 +310,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
 
         foreach (var department in departmentNames)
         {
-            departments.Add(await GetOrCreateDepartment(department));
+            departments.Add(await _getOrCreateHelper.GetOrCreateDepartment(department));
         }
         user.Departments = departments;
         var oldValueNamesList =
@@ -323,32 +329,6 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
                     Property = nameof(ApplicationUser.Departments),
                 }
             );
-        }
-    }
-
-    private async Task<Department> GetOrCreateDepartment(string departmentName)
-    {
-        if (await _departmentRepository.CheckIfDepartmentNameExistsAsync(departmentName))
-        {
-            return await _departmentRepository.GetDepartmentByNameAsync(departmentName);
-        }
-        else
-        {
-            var department = new Department { DepartmentName = departmentName };
-            await _logRepository.AddDepartmentLogForCurrentActor(
-                department,
-                Domain.Logs.Action.ADDED_DEPARTMENT,
-                [
-                    new LogChange
-                    {
-                        OldValue = "",
-                        NewValue = department.DepartmentName,
-                        Property = nameof(Department.DepartmentName),
-                    },
-                ]
-            );
-            await _departmentRepository.AddDepartmentAsync(department);
-            return department;
         }
     }
 
@@ -378,7 +358,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
 
         foreach (var businessUnit in businessUnitNames)
         {
-            businessUnits.Add(await GetOrCreateBusinessUnit(businessUnit));
+            businessUnits.Add(await _getOrCreateHelper.GetOrCreateBusinessUnit(businessUnit));
         }
         user.BusinessUnits = businessUnits;
         var oldValueNamesList =
@@ -402,32 +382,6 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         }
     }
 
-    private async Task<BusinessUnit> GetOrCreateBusinessUnit(string buName)
-    {
-        if (await _businessUnitRepository.CheckIfBusinessUnitNameExistsAsync(buName))
-        {
-            return await _businessUnitRepository.GetBusinessUnitByNameAsync(buName);
-        }
-        else
-        {
-            var bu = new BusinessUnit { BusinessUnitName = buName };
-            await _logRepository.AddBusinessUnitLogForCurrentActor(
-                bu,
-                Domain.Logs.Action.ADDED_BUSINESS_UNIT,
-                [
-                    new LogChange
-                    {
-                        OldValue = "",
-                        NewValue = bu.BusinessUnitName,
-                        Property = nameof(BusinessUnit.BusinessUnitName),
-                    },
-                ]
-            );
-            await _businessUnitRepository.AddBusinessUnitAsync(bu);
-            return bu;
-        }
-    }
-
     /// <summary>
     /// Updates the user officeLocation.
     /// </summary>
@@ -446,7 +400,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         user.OfficeLocation =
             operation.Operation == PatchOperations.Remove
                 ? null
-                : await GetOrCreateOfficeLocation(
+                : await _getOrCreateHelper.GetOrCreateOfficeLocation(
                     (await JsonElementToPrimitive((JsonElement)operation.Value!)! as string)!
                 );
 
@@ -463,34 +417,6 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
                     Property = nameof(ApplicationUser.OfficeLocation),
                 }
             );
-        }
-    }
-
-    private async Task<OfficeLocation> GetOrCreateOfficeLocation(string officeLocationName)
-    {
-        if (
-            await _officeLocationRepository.CheckIfOfficeLocationNameExistsAsync(officeLocationName)
-        )
-        {
-            return await _officeLocationRepository.GetOfficeLocationByNameAsync(officeLocationName);
-        }
-        else
-        {
-            var officeLocation = new OfficeLocation { OfficeLocationName = officeLocationName };
-            await _logRepository.AddOfficeLocationLogForCurrentActor(
-                officeLocation,
-                Domain.Logs.Action.ADDED_OFFICE_LOCATION,
-                [
-                    new LogChange
-                    {
-                        OldValue = "",
-                        NewValue = officeLocation.OfficeLocationName,
-                        Property = nameof(OfficeLocation.OfficeLocationName),
-                    },
-                ]
-            );
-            await _officeLocationRepository.AddOfficeLocationAsync(officeLocation);
-            return officeLocation;
         }
     }
 
@@ -512,7 +438,7 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
         user.Company =
             operation.Operation == PatchOperations.Remove
                 ? null
-                : await GetOrCreateCompany(
+                : await _getOrCreateHelper.GetOrCreateCompany(
                     (await JsonElementToPrimitive((JsonElement)operation.Value!)! as string)!
                 );
 
@@ -526,32 +452,6 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
                     Property = nameof(ApplicationUser.Company),
                 }
             );
-        }
-    }
-
-    private async Task<Company> GetOrCreateCompany(string companyName)
-    {
-        if (await _companyRepository.CheckIfCompanyNameExistsAsync(companyName))
-        {
-            return await _companyRepository.GetCompanyByNameAsync(companyName);
-        }
-        else
-        {
-            var company = new Company { CompanyName = companyName };
-            await _logRepository.AddCompanyLogForCurrentActor(
-                company,
-                Domain.Logs.Action.ADDED_COMPANY,
-                [
-                    new LogChange
-                    {
-                        OldValue = "",
-                        NewValue = company.CompanyName,
-                        Property = nameof(Company.CompanyName),
-                    },
-                ]
-            );
-            await _companyRepository.AddCompanyAsync(company);
-            return company;
         }
     }
 
@@ -749,6 +649,108 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
                 return await JsonElementToPrimitive(value.GetProperty("value"));
             default:
                 throw new NotSupportedException("Unsupported Value Type");
+        }
+    }
+
+    /// <summary>
+    /// Checks Authorization for a User and its updated Attributes.
+    /// </summary>
+    /// <param name="oldUser">Requested User without updated Attributes.</param>
+    /// <param name="updatedUser">Updated User</param>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedException">Thrown if Update Request is unauthorized</exception>
+    private async Task CheckAuthorization(ApplicationUser oldUser, ApplicationUser updatedUser)
+    {
+        Dictionary<string, object?> updates = [];
+        if (oldUser.EmployeeId != updatedUser.EmployeeId)
+        {
+            updates.Add(nameof(ApplicationUser.EmployeeId), updatedUser.EmployeeId);
+        }
+        if (oldUser.Email != updatedUser.Email)
+        {
+            updates.Add(nameof(ApplicationUser.Email), updatedUser.Email);
+        }
+        if (
+            ((oldUser.Teams ?? []).Count != (updatedUser.Teams ?? []).Count)
+            || !(oldUser.Teams ?? [])
+                .Select(team => team.TeamName)
+                .ToHashSet()
+                .SetEquals((updatedUser.Teams ?? []).Select(team => team.TeamName))
+        )
+        {
+            updates.Add(nameof(ApplicationUser.Teams), updatedUser.Teams);
+        }
+        if (
+            ((oldUser.TeamSupport ?? []).Count != (updatedUser.TeamSupport ?? []).Count)
+            || !(oldUser.TeamSupport ?? [])
+                .Select(team => team.TeamName)
+                .ToHashSet()
+                .SetEquals((updatedUser.TeamSupport ?? []).Select(team => team.TeamName))
+        )
+        {
+            updates.Add(nameof(ApplicationUser.TeamSupport), updatedUser.TeamSupport);
+        }
+        if (oldUser.IsActive != updatedUser.IsActive)
+        {
+            updates.Add(nameof(ApplicationUser.IsActive), updatedUser.IsActive);
+        }
+        if (oldUser.IsScimProvisioned != updatedUser.IsScimProvisioned)
+        {
+            updates.Add(nameof(ApplicationUser.IsScimProvisioned), updatedUser.IsScimProvisioned);
+        }
+
+        if (
+            ((oldUser.BusinessUnits ?? []).Count != (updatedUser.BusinessUnits ?? []).Count)
+            || !(oldUser.BusinessUnits ?? [])
+                .Select(bu => bu.BusinessUnitName)
+                .ToHashSet()
+                .SetEquals((updatedUser.BusinessUnits ?? []).Select(bu => bu.BusinessUnitName))
+        )
+        {
+            updates.Add(nameof(ApplicationUser.BusinessUnits), updatedUser.BusinessUnits);
+        }
+        if (
+            ((oldUser.JobTitles ?? []).Count != (updatedUser.JobTitles ?? []).Count)
+            || !(oldUser.JobTitles ?? []).ToHashSet().SetEquals(updatedUser.JobTitles ?? [])
+        )
+        {
+            updates.Add(nameof(ApplicationUser.JobTitles), updatedUser.JobTitles);
+        }
+        if (
+            ((oldUser.Departments ?? []).Count != (updatedUser.Departments ?? []).Count)
+            || !(oldUser.Departments ?? [])
+                .Select(department => department.DepartmentName)
+                .ToHashSet()
+                .SetEquals(
+                    (updatedUser.Departments ?? []).Select(department => department.DepartmentName)
+                )
+        )
+        {
+            updates.Add(nameof(ApplicationUser.Departments), updatedUser.Departments);
+        }
+        if (oldUser.Company?.CompanyName != updatedUser.Company?.CompanyName)
+        {
+            updates.Add(nameof(ApplicationUser.Company), updatedUser.Company?.CompanyName);
+        }
+        if (
+            oldUser.OfficeLocation?.OfficeLocationName
+            != updatedUser.OfficeLocation?.OfficeLocationName
+        )
+        {
+            updates.Add(
+                nameof(ApplicationUser.OfficeLocation),
+                updatedUser.OfficeLocation?.OfficeLocationName
+            );
+        }
+        if (
+            !await _authorizationService.CheckAccess(
+                oldUser,
+                AuthorizationConstants.Actions.EDIT,
+                updates
+            )
+        )
+        {
+            throw new UnauthorizedException();
         }
     }
 }

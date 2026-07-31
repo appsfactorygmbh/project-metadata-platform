@@ -5,6 +5,8 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.OfficeLocations;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
@@ -17,12 +19,13 @@ public class UpdateOfficeLocationCommandHandlerTest
     private UpdateOfficeLocationCommandHandler _handler;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
-
+    private Mock<IAuthorizationService> _authorizationServiceMock;
     private Mock<IOfficeLocationRepository> _mockOfficeLocationRepository;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockOfficeLocationRepository = new Mock<IOfficeLocationRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
@@ -30,7 +33,8 @@ public class UpdateOfficeLocationCommandHandlerTest
         _handler = new UpdateOfficeLocationCommandHandler(
             officeLocationRepository: _mockOfficeLocationRepository.Object,
             logRepository: _mockLogRepo.Object,
-            unitOfWork: _mockUnitOfWork.Object
+            unitOfWork: _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -39,7 +43,15 @@ public class UpdateOfficeLocationCommandHandlerTest
     {
         // Arrange
         var returnOfficeLocation = new OfficeLocation() { Id = 1, OfficeLocationName = "Test_1" };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<OfficeLocation>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockOfficeLocationRepository
             .Setup(repo => repo.GetOfficeLocationAsync(It.IsAny<int>()))
             .ReturnsAsync(returnOfficeLocation);
@@ -94,7 +106,15 @@ public class UpdateOfficeLocationCommandHandlerTest
     {
         // Arrange
         var returnOfficeLocation = new OfficeLocation() { Id = 1, OfficeLocationName = "Test_1" };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<OfficeLocation>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockOfficeLocationRepository
             .Setup(repo => repo.GetOfficeLocationAsync(It.IsAny<int>()))
             .ReturnsAsync(returnOfficeLocation);
@@ -130,7 +150,15 @@ public class UpdateOfficeLocationCommandHandlerTest
     {
         // Arrange
         var returnOfficeLocation = new OfficeLocation() { Id = 1, OfficeLocationName = "Test_1" };
-
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<OfficeLocation>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockOfficeLocationRepository
             .Setup(repo => repo.GetOfficeLocationAsync(It.IsAny<int>()))
             .ReturnsAsync(returnOfficeLocation);
@@ -152,5 +180,29 @@ public class UpdateOfficeLocationCommandHandlerTest
         );
 
         Assert.That(ex.Message, Does.Contain("Test_2"));
+    }
+
+    [Test]
+    public async Task EditOfficeLocation_AuthorizationFailsThrowsTest()
+    {
+        var returnOfficeLocation = new OfficeLocation() { Id = 1, OfficeLocationName = "Test_1" };
+        _ = _mockOfficeLocationRepository
+            .Setup(repo => repo.GetOfficeLocationAsync(It.IsAny<int>()))
+            .ReturnsAsync(returnOfficeLocation);
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<OfficeLocation>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+
+        var request = new UpdateOfficeLocationCommand(Id: 1, OfficeLocationName: "Test_2");
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
+        );
     }
 }

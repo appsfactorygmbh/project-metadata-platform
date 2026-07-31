@@ -5,6 +5,8 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Teams;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
@@ -22,10 +24,12 @@ public class CreateTeamCommandHandlerTest
     private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockTeamRepository = new Mock<ITeamRepository>();
         _mockBusinessUnitRepository = new Mock<IBusinessUnitRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
@@ -34,7 +38,8 @@ public class CreateTeamCommandHandlerTest
             teamRepository: _mockTeamRepository.Object,
             businessUnitRepository: _mockBusinessUnitRepository.Object,
             logRepository: _mockLogRepo.Object,
-            unitOfWork: _mockUnitOfWork.Object
+            unitOfWork: _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -42,6 +47,15 @@ public class CreateTeamCommandHandlerTest
     public async Task CreateTeam_NameDoesNotAlreadyExists_WorksFine()
     {
         // Arrange
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Team>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockTeamRepository
             .Setup(repo => repo.CheckIfTeamNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
@@ -93,6 +107,15 @@ public class CreateTeamCommandHandlerTest
     public void CreateTeam_NameAlreadyExists_ThrowsTeamNameAlreadyExistsException()
     {
         // Arrange
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Team>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockTeamRepository
             .Setup(repo => repo.CheckIfTeamNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
@@ -118,6 +141,15 @@ public class CreateTeamCommandHandlerTest
     public void CreateTeam_BUDoesntExists_ThrowsException()
     {
         // Arrange
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Team>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockTeamRepository
             .Setup(repo => repo.CheckIfTeamNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
@@ -137,5 +169,29 @@ public class CreateTeamCommandHandlerTest
         );
 
         Assert.That(ex.Message, Does.Contain("The Business Unit with id 1 was not found."));
+    }
+
+    [Test]
+    public async Task CreateTeam_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<Team>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+
+        var request = new CreateTeamCommand(
+            TeamName: "Test Name",
+            BusinessUnitId: 1,
+            PTL: "Max Mustermann"
+        );
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
+        );
     }
 }

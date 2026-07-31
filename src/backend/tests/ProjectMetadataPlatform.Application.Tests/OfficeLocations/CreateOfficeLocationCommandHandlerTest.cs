@@ -5,6 +5,8 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.OfficeLocations;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
@@ -19,18 +21,20 @@ public class CreateOfficeLocationCommandHandlerTest
     private Mock<IOfficeLocationRepository> _mockOfficeLocationRepository;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void Setup()
     {
         _mockOfficeLocationRepository = new Mock<IOfficeLocationRepository>();
-
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _handler = new CreateOfficeLocationCommandHandler(
             officeLocationRepository: _mockOfficeLocationRepository.Object,
             logRepository: _mockLogRepo.Object,
-            unitOfWork: _mockUnitOfWork.Object
+            unitOfWork: _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object
         );
     }
 
@@ -38,6 +42,15 @@ public class CreateOfficeLocationCommandHandlerTest
     public async Task CreateOfficeLocation_NameDoesNotAlreadyExists_WorksFine()
     {
         // Arrange
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<OfficeLocation>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockOfficeLocationRepository
             .Setup(repo => repo.CheckIfOfficeLocationNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
@@ -84,6 +97,15 @@ public class CreateOfficeLocationCommandHandlerTest
     public void CreateOfficeLocation_NameAlreadyExists_ThrowsOfficeLocationNameAlreadyExistsException()
     {
         // Arrange
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<OfficeLocation>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockOfficeLocationRepository
             .Setup(repo => repo.CheckIfOfficeLocationNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
@@ -96,5 +118,25 @@ public class CreateOfficeLocationCommandHandlerTest
         );
 
         Assert.That(ex.Message, Does.Contain("Test Name"));
+    }
+
+    [Test]
+    public async Task CreateOfficeLocation_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<OfficeLocation>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+
+        var request = new CreateOfficeLocationCommand(OfficeLocationName: "Test Name");
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
+        );
     }
 }

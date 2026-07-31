@@ -12,6 +12,8 @@
  * Do not edit the class manually.
  */
 
+import type { Actions } from './Actions';
+import { ActionsFromJSON, ActionsToJSON } from './Actions';
 import type { PmpScimUser } from './PmpScimUser';
 import { PmpScimUserFromJSON, PmpScimUserToJSON } from './PmpScimUser';
 
@@ -39,6 +41,12 @@ export interface GetUsersResponse {
    * @memberof GetUsersResponse
    */
   resources: Array<PmpScimUser>;
+  /**
+   * Permissions on User Resources.
+   * @type {Array<Actions>}
+   * @memberof GetUsersResponse
+   */
+  permissions?: Array<Actions> | null;
 }
 
 /**
@@ -68,6 +76,10 @@ export function GetUsersResponseFromJSONTyped(
     schemas: json['schemas'] == null ? undefined : json['schemas'],
     totalResults: json['totalResults'],
     resources: (json['Resources'] as Array<any>).map(PmpScimUserFromJSON),
+    permissions:
+      json['permissions'] == null
+        ? undefined
+        : (json['permissions'] as Array<any>).map(ActionsFromJSON),
   };
 }
 
@@ -87,5 +99,9 @@ export function GetUsersResponseToJSONTyped(
     schemas: value['schemas'],
     totalResults: value['totalResults'],
     Resources: (value['resources'] as Array<any>).map(PmpScimUserToJSON),
+    permissions:
+      value['permissions'] == null
+        ? undefined
+        : (value['permissions'] as Array<any>).map(ActionsToJSON),
   };
 }

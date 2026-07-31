@@ -7,6 +7,7 @@
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
+  import { ResourceActions } from '@/models/utils';
 
   const token = useThemeToken();
 
@@ -34,9 +35,20 @@
           console.log('write ');
           setOfficeLocationId(selectedOfficeLocationId.value);
         }
+      } else {
+        try {
+          await officeLocationStore?.fetch(
+            Number(routerOfficeLocationId.value),
+          );
+          selectedKeys.value = [routerOfficeLocationId.value];
+        } catch (error) {
+          if ((error as Error).message === 'This action is unauthorized.') {
+            router.push('/403');
+          } else {
+            console.error('Failed to fetch Office Location:', error);
+          }
+        }
       }
-      await officeLocationStore?.fetch(Number(routerOfficeLocationId.value));
-      selectedKeys.value = [routerOfficeLocationId.value];
     },
   );
 
@@ -76,9 +88,17 @@
     }
     await officeLocationStore?.fetchAll();
     if (routerOfficeLocationId.value) {
-      await officeLocationStore?.fetch(Number(routerOfficeLocationId.value));
-      selectedKeys.value = [routerOfficeLocationId.value];
-      scrollToSelectedMenuItem();
+      try {
+        await officeLocationStore?.fetch(Number(routerOfficeLocationId.value));
+        selectedKeys.value = [routerOfficeLocationId.value];
+        scrollToSelectedMenuItem();
+      } catch (error) {
+        if ((error as Error).message === 'This action is unauthorized.') {
+          router.push('/403');
+        } else {
+          console.error('Failed to fetch Office Location:', error);
+        }
+      }
     }
   });
 </script>
@@ -99,6 +119,9 @@
         class="menuItem"
       >
         <a-menu-item
+          v-if="
+            officeLocationStore.getPermissions.includes(ResourceActions.Create)
+          "
           key="create-officeLocation"
           class="create-menu-item"
           @click="router.push('/settings/office-location-management/create')"

@@ -69,7 +69,7 @@ public class GetAllUsersControllerTest
         };
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(users);
+            .ReturnsAsync((users, []));
 
         var result = await _controller.Get();
 
@@ -126,7 +126,7 @@ public class GetAllUsersControllerTest
     {
         _ = _mediator
             .Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<ApplicationUser>());
+            .ReturnsAsync((new List<ApplicationUser>(), []));
 
         var result = await _controller.Get();
 

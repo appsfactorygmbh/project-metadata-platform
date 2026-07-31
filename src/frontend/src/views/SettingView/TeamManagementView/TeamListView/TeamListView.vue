@@ -4,6 +4,7 @@
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
+  import { ResourceActions } from '@/models/utils';
 
   const token = useThemeToken();
 
@@ -25,12 +26,20 @@
     async () => {
       if (routerTeamId.value == '') {
         if (selectedTeamId.value != '') {
-          console.log('write ');
           setTeamId(selectedTeamId.value);
         }
+      } else {
+        try {
+          await teamStore?.fetch(Number(routerTeamId.value));
+          selectedKeys.value = [routerTeamId.value];
+        } catch (error) {
+          if ((error as Error).message === 'This action is unauthorized.') {
+            router.push('/403');
+          } else {
+            console.error('Failed to fetch Team:', error);
+          }
+        }
       }
-      await teamStore?.fetch(Number(routerTeamId.value));
-      selectedKeys.value = [routerTeamId.value];
     },
   );
 
@@ -70,9 +79,17 @@
     }
     await teamStore?.fetchAll();
     if (routerTeamId.value) {
-      await teamStore?.fetch(Number(routerTeamId.value));
-      selectedKeys.value = [routerTeamId.value];
-      scrollToSelectedMenuItem();
+      try {
+        await teamStore?.fetch(Number(routerTeamId.value));
+        selectedKeys.value = [routerTeamId.value];
+        scrollToSelectedMenuItem();
+      } catch (error) {
+        if ((error as Error).message === 'This action is unauthorized.') {
+          router.push('/403');
+        } else {
+          console.error('Failed to fetch Team:', error);
+        }
+      }
     }
   });
 </script>
@@ -93,6 +110,7 @@
         class="menuItem"
       >
         <a-menu-item
+          v-if="teamStore.getPermissions.includes(ResourceActions.Create)"
           key="create-team"
           class="create-menu-item"
           @click="router.push('/settings/team-management/create')"

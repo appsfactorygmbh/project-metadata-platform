@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Plugins;
@@ -19,6 +21,7 @@ public class PatchGlobalPluginCommandHandler : IRequestHandler<PatchGlobalPlugin
     private readonly IPluginRepository _pluginRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PatchGlobalPluginCommandHandler"/> class.
@@ -26,15 +29,18 @@ public class PatchGlobalPluginCommandHandler : IRequestHandler<PatchGlobalPlugin
     /// <param name="pluginRepository">The plugin repository to use for plugin operations.</param>
     /// <param name="logRepository">The log repository to use for logging operations.</param>
     /// <param name="unitOfWork">The unit of work to use for transactional operations.</param>
+    /// <param name="authorizationService"></param>
     public PatchGlobalPluginCommandHandler(
         IPluginRepository pluginRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _pluginRepository = pluginRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -52,6 +58,7 @@ public class PatchGlobalPluginCommandHandler : IRequestHandler<PatchGlobalPlugin
         var plugin =
             await _pluginRepository.GetPluginByIdAsync(request.Id)
             ?? throw new PluginNotFoundException(request.Id);
+        await CheckAuthorization(plugin, request);
         if (
             request.PluginName != null
             && !string.Equals(
@@ -137,6 +144,40 @@ public class PatchGlobalPluginCommandHandler : IRequestHandler<PatchGlobalPlugin
                 Action.UPDATED_GLOBAL_PLUGIN,
                 changes
             );
+        }
+    }
+
+    /// <summary>
+    /// Checks Authorization for a Global Plugin and its update request.
+    /// </summary>
+    /// <param name="plugin">Requested Plugin</param>
+    /// <param name="request">Update Request for the Plugin</param>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedException">Thrown if Update Request is unauthorized</exception>
+    private async Task CheckAuthorization(Plugin plugin, PatchGlobalPluginCommand request)
+    {
+        Dictionary<string, object?> updates = [];
+        if (request.PluginName != plugin.PluginName)
+        {
+            updates.Add(nameof(Plugin.PluginName), request.PluginName);
+        }
+        if (request.IsArchived != plugin.IsArchived)
+        {
+            updates.Add(nameof(Plugin.IsArchived), request.IsArchived);
+        }
+        if (request.BaseUrl != plugin.BaseUrl)
+        {
+            updates.Add(nameof(Plugin.BaseUrl), request.BaseUrl);
+        }
+        if (
+            !await _authorizationService.CheckAccess(
+                plugin,
+                AuthorizationConstants.Actions.EDIT,
+                updates
+            )
+        )
+        {
+            throw new UnauthorizedException();
         }
     }
 }

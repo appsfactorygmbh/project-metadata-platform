@@ -7,6 +7,7 @@
   import { storeToRefs } from 'pinia';
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
+  import { ResourceActions } from '@/models/utils';
 
   const token = useThemeToken();
 
@@ -31,12 +32,20 @@
     async () => {
       if (routerDepartmentId.value == '') {
         if (selectedDepartmentId.value != '') {
-          console.log('write ');
           setDepartmentId(selectedDepartmentId.value);
         }
+      } else {
+        try {
+          await departmentStore?.fetch(Number(routerDepartmentId.value));
+          selectedKeys.value = [routerDepartmentId.value];
+        } catch (error) {
+          if ((error as Error).message === 'This action is unauthorized.') {
+            router.push('/403');
+          } else {
+            console.error('Failed to fetch Department:', error);
+          }
+        }
       }
-      await departmentStore?.fetch(Number(routerDepartmentId.value));
-      selectedKeys.value = [routerDepartmentId.value];
     },
   );
 
@@ -76,9 +85,17 @@
     }
     await departmentStore?.fetchAll();
     if (routerDepartmentId.value) {
-      await departmentStore?.fetch(Number(routerDepartmentId.value));
-      selectedKeys.value = [routerDepartmentId.value];
-      scrollToSelectedMenuItem();
+      try {
+        await departmentStore?.fetch(Number(routerDepartmentId.value));
+        selectedKeys.value = [routerDepartmentId.value];
+        scrollToSelectedMenuItem();
+      } catch (error) {
+        if ((error as Error).message === 'This action is unauthorized.') {
+          router.push('/403');
+        } else {
+          console.error('Failed to fetch Department:', error);
+        }
+      }
     }
   });
 </script>
@@ -99,6 +116,7 @@
         class="menuItem"
       >
         <a-menu-item
+          v-if="departmentStore.getPermissions.includes(ResourceActions.Create)"
           key="create-department"
           class="create-menu-item"
           @click="router.push('/settings/department-management/create')"

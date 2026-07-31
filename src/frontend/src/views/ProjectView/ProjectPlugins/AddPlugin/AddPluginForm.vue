@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { type FormStore, type FormSubmitType } from '@/components/Form';
-  import { notification } from 'ant-design-vue';
+  import { App } from 'ant-design-vue';
   import { projectEditStoreSymbol } from '@/store/injectionSymbols';
   import { inject, onBeforeMount, reactive, ref, toRaw } from 'vue';
-  import type { SelectProps } from 'ant-design-vue';
+  import type { FormInstance, SelectProps } from 'ant-design-vue';
   import type { PluginEditModel, PluginModel } from '@/models/Plugin';
   import type {
     DefaultOptionType,
@@ -20,12 +20,13 @@
     formStore: FormStore;
     initialValues: AddPluginFormData;
   }>();
-
+  const { notification } = App.useApp();
   const globalPluginStore = useGlobalPluginStore();
   const projectEditStore = inject(projectEditStoreSymbol);
   const pluginStore = usePluginStore();
   const options = ref<SelectProps['options']>([]);
   const emit = defineEmits(['addedPlugin']);
+  const formRef = ref<FormInstance>();
 
   onBeforeMount(async () => {
     await globalPluginStore?.fetchAll();
@@ -38,8 +39,6 @@
         };
       });
   });
-
-  const [notificationApi, contextHolder] = notification.useNotification();
 
   function findMatchingGlobalPlugin(url: string): string | null {
     try {
@@ -73,6 +72,10 @@
         return result;
       } else return null;
     } catch (error) {
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
       console.error('Invalid URL provided:', error);
       return null;
     }
@@ -96,8 +99,9 @@
       addPlugin(pluginDef);
       emit('addedPlugin');
     } catch (error) {
-      notificationApi.error({
-        message: 'An error occurred. The plugin could not be created',
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
       });
       console.error('error while creating a new project plugin', error);
     }
@@ -114,13 +118,6 @@
       };
       projectEditStore?.addNewPlugin(newPlugin);
     }
-  };
-
-  const formItemLayoutWithOutLabel = {
-    wrapperCol: {
-      xs: { span: 24, offset: 0 },
-      sm: { span: 20, offset: 4 },
-    },
   };
 
   const dynamicValidateForm = reactive<AddPluginFormData>(initialValues);
@@ -215,20 +212,24 @@
   formStore.setOnSubmit(onSubmit);
   formStore.setModel(dynamicValidateForm);
   formStore.setRules(rulesRef);
+
+  defineExpose({
+    formRef,
+    validate: () => formRef.value?.validate(),
+  });
 </script>
 
 <template>
   <a-form
     ref="formRef"
     :model="dynamicValidateForm"
-    v-bind="formItemLayoutWithOutLabel"
+    :rules="rulesRef"
+    layout="vertical"
   >
     <a-form-item
       name="globalPlugin"
       :rules="[{ required: true, whitespace: true }]"
       class="column"
-      :no-style="true"
-      :whitespace="true"
     >
       <a-select
         id="inputAddPluginPluginSelect"
@@ -241,38 +242,29 @@
         @change="handleChange"
       />
     </a-form-item>
-    <a-form-item
-      name="pluginName"
-      class="column"
-      :no-style="true"
-      :whitespace="true"
-      :rules="rulesRef.pluginName"
-    >
+    <a-form-item name="pluginName" class="column" :rules="rulesRef.pluginName">
       <a-input
         id="inputAddPluginPluginName"
         v-model:value="dynamicValidateForm.pluginName"
         class="inputField"
         placeholder="Plugin Name"
         :disabled="dynamicValidateForm.inputsDisabled"
-        :rules="rulesRef.pluginName"
       />
     </a-form-item>
-    <a-form-item
-      name="pluginUrl"
-      class="column"
-      :no-style="true"
-      :whitespace="true"
-      :rules="rulesRef.pluginUrl"
-    >
+    <a-form-item name="pluginUrl" class="column" :rules="rulesRef.pluginUrl">
       <a-input
         id="inputAddPluginPluginUrl"
         v-model:value="dynamicValidateForm.pluginUrl"
-        :rules="rulesRef.pluginUrl"
         class="inputField"
         placeholder="Plugin URL"
         @change="(e) => handleUrlChange(e.target.value)"
       />
     </a-form-item>
   </a-form>
-  <contextHolder />
 </template>
+
+<style>
+  .column {
+    margin-bottom: 3px; /* Reduce from Ant's default 24px */
+  }
+</style>

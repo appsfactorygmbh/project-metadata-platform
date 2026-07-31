@@ -3,7 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Departments;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 
@@ -17,6 +19,7 @@ public class UpdateDepartmentCommandHandler : IRequestHandler<UpdateDepartmentCo
     private readonly IDepartmentRepository _departmentRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="UpdateDepartmentCommandHandler" />.
@@ -24,12 +27,14 @@ public class UpdateDepartmentCommandHandler : IRequestHandler<UpdateDepartmentCo
     public UpdateDepartmentCommandHandler(
         IDepartmentRepository departmentRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _departmentRepository = departmentRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -45,6 +50,7 @@ public class UpdateDepartmentCommandHandler : IRequestHandler<UpdateDepartmentCo
     )
     {
         var department = await _departmentRepository.GetDepartmentAsync(request.Id);
+        await CheckAuthorization(department, request);
         var logChanges = new List<LogChange> { };
         if (request.DepartmentName != null && request.DepartmentName != department.DepartmentName)
         {
@@ -85,5 +91,31 @@ public class UpdateDepartmentCommandHandler : IRequestHandler<UpdateDepartmentCo
         }
 
         return department;
+    }
+
+    /// <summary>
+    /// Checks Authorization for a Department and its update request.
+    /// </summary>
+    /// <param name="department">Department being updated.</param>
+    /// <param name="request">Update Request for the department</param>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedException">Thrown if Update Request is unauthorized</exception>
+    private async Task CheckAuthorization(Department department, UpdateDepartmentCommand request)
+    {
+        Dictionary<string, object?> updates = [];
+        if (request.DepartmentName != department.DepartmentName)
+        {
+            updates.Add(nameof(Department.DepartmentName), request.DepartmentName);
+        }
+        if (
+            !await _authorizationService.CheckAccess(
+                department,
+                AuthorizationConstants.Actions.EDIT,
+                updates
+            )
+        )
+        {
+            throw new UnauthorizedException();
+        }
     }
 }

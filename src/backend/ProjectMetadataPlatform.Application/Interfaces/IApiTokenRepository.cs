@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
@@ -14,7 +14,7 @@ public interface IApiTokenRepository
     /// Gets a List of all Api Tokens.
     /// </summary>
     /// <returns>List of Api Tokens</returns>
-    Task<IEnumerable<ApiToken>> GetApiTokens();
+    Task<IQueryable<ApiToken>> GetApiTokens();
 
     /// <summary>
     /// Gets a specific Api Token via its id.
@@ -40,10 +40,17 @@ public interface IApiTokenRepository
     Task DeleteApiToken(ApiToken token);
 
     /// <summary>
-    /// Checks if a token with the scope scim exists in the database.
+    /// Checks if a token with the scope SCIM exists in the database.
     /// </summary>
-    /// <returns>boolean representing the existing of a scim token.</returns>
+    /// <returns>boolean representing the existence of a SCIM token.</returns>
     Task<bool> CheckScimTokenExists();
+
+    /// <summary>
+    /// Checks if the token with the given name exists and has the scope SCIM.
+    /// </summary>
+    /// <param name="name">Name of the Token.</param>
+    /// <returns></returns>
+    Task<bool> IsScimToken(string name);
 
     /// <summary>
     /// Creates a new Api Token in the database and hashes its token value.

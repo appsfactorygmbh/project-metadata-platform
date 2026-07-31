@@ -1,11 +1,15 @@
 import { BusinessUnitsApi } from '@/api/generated';
-import type { BusinessUnitModel } from '@/models/BusinessUnit/BusinessUnitModel';
+import type {
+  BusinessUnitListModel,
+  BusinessUnitModel,
+} from '@/models/BusinessUnit/BusinessUnitModel';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
 import type { Pinia } from 'pinia';
 import type { CreateBusinessUnitModel } from '@/models/BusinessUnit/CreateBusinessUnitModel';
 import type { BusinessUnitEditModel } from '@/models/BusinessUnit';
 import { type ApiStore, useApiStore } from './ApiStore';
+import type { ResourceActions } from '@/models/utils';
 
 type StoreState = {
   businessUnits: BusinessUnitModel[];
@@ -21,6 +25,7 @@ type StoreGetters = {
   getBusinessUnit: () => BusinessUnitModel | undefined;
   getLinkedTeams: () => number[];
   getBusinessUnitNames: () => string[];
+  getPermissions: () => ResourceActions[];
   getIsLoadingBusinessUnits: () => boolean;
   getIsLoadingBusinessUnit: () => boolean;
 };
@@ -65,6 +70,9 @@ export const useBusinessUnitStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getBusinessUnit(): BusinessUnitModel | undefined {
           return this.businessUnit;
+        },
+        getPermissions(): ResourceActions[] {
+          return this.permissions;
         },
         getIsLoadingBusinessUnits(): boolean {
           return this.isLoadingBusinessUnits;
@@ -139,11 +147,12 @@ export const useBusinessUnitStore = (pinia: Pinia = piniaInstance): Store => {
         async fetchAll(): Promise<void> {
           try {
             this.setLoadingBusinessUnits(true);
-            const businessUnitsGet: BusinessUnitModel[] = await this.callApi(
+            const businessUnitsGet: BusinessUnitListModel = await this.callApi(
               'businessUnitsGet',
               undefined,
             );
-            this.setBusinessUnits(businessUnitsGet);
+            this.setBusinessUnits(businessUnitsGet.resources);
+            this.setPermissions(businessUnitsGet.permissions);
           } finally {
             this.setLoadingBusinessUnits(false);
           }

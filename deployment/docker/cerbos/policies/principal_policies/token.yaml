@@ -1,0 +1,72 @@
+apiVersion: api.cerbos.dev/v1
+principalPolicy:
+  principal: ApiToken
+  version: default
+  rules:
+    - actions:
+        - action: 'GET'
+          effect: EFFECT_ALLOW
+          condition: 
+            match:
+              any:
+                of:
+                  - expr: "'GET_' + R.kind.upperAscii() in P.attr.Scopes"
+                  - expr: "'SCIM' in P.attr.Scopes && R.kind == 'ApplicationUser'"
+        - action: 'GET'
+          effect: EFFECT_DENY
+          condition:
+            match:
+              none:
+                of:
+                  - expr: "'GET_' + R.kind.upperAscii() in P.attr.Scopes"
+                  - expr: "'SCIM' in P.attr.Scopes && R.kind == 'ApplicationUser'"
+
+        - action: 'CREATE'
+          effect: EFFECT_ALLOW
+          condition: 
+            match:
+              any:
+                of:
+                  - expr: "'CREATE_' + R.kind.upperAscii() in P.attr.Scopes"
+                  - expr: "'SCIM' in P.attr.Scopes && R.kind == 'ApplicationUser'"
+        - action: 'CREATE'
+          effect: EFFECT_DENY
+          condition:
+            match:
+              none:
+                of:
+                  - expr: "'CREATE_' + R.kind.upperAscii() in P.attr.Scopes"
+                  - expr: "'SCIM' in P.attr.Scopes && R.kind == 'ApplicationUser'"
+        - action: 'EDIT'
+          effect: EFFECT_ALLOW
+          condition: 
+            match:
+              any:
+                of:
+                  - expr: "'EDIT_' + R.kind.upperAscii() in P.attr.Scopes"
+                  - expr: "'SCIM' in P.attr.Scopes && R.kind == 'ApplicationUser'"
+        - action: 'EDIT'
+          effect: EFFECT_DENY
+          condition:
+            match:
+              none:
+                of:
+                  - expr: "'EDIT_' + R.kind.upperAscii() in P.attr.Scopes"
+                  - expr: "'SCIM' in P.attr.Scopes && R.kind == 'ApplicationUser'"
+        - action: 'DELETE'
+          effect: EFFECT_ALLOW
+          condition: 
+            match:
+              any:
+                of:
+                  - expr: "'DELETE_' + R.kind.upperAscii() in P.attr.Scopes"
+                  - expr: "'SCIM' in P.attr.Scopes && R.kind == 'ApplicationUser'"
+        - action: 'DELETE'
+          effect: EFFECT_DENY
+          condition:
+            match:
+              none:
+                of:
+                  - expr: "'DELETE_' + R.kind.upperAscii() in P.attr.Scopes"
+                  - expr: "'SCIM' in P.attr.Scopes && R.kind == 'ApplicationUser'"
+      resource: '*'

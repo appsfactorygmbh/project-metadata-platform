@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -39,7 +38,7 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
     /// Asynchronously retrieves all projects from the database.
     /// </summary>
     /// <returns>A task representing the asynchronous operation. When this task completes, it returns a collection of projects.</returns>
-    public async Task<IEnumerable<ApplicationUser>> GetUsersAsync(string filter)
+    public async Task<IQueryable<ApplicationUser>> GetUsersAsync(string filter)
     {
         var filteredQuery = _context.Users.AsQueryable();
         var filterElements = filter.Split(" ");
@@ -59,14 +58,13 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
             }
         }
 
-        return await filteredQuery
+        return filteredQuery
             .Include(p => p.Teams)
             .Include(u => u.TeamSupport)
             .Include(u => u.Company)
             .Include(u => u.BusinessUnits)
             .Include(u => u.Departments)
-            .Include(u => u.OfficeLocation)
-            .ToListAsync();
+            .Include(u => u.OfficeLocation);
     }
 
     /// <summary>
@@ -78,6 +76,25 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
     {
         return await _context
                 .Users.Include(p => p.Teams)
+                .Include(u => u.TeamSupport)
+                .Include(u => u.Company)
+                .Include(u => u.BusinessUnits)
+                .Include(u => u.Departments)
+                .Include(u => u.OfficeLocation)
+                .FirstOrDefaultAsync(u => u.Email == email)
+            ?? throw new UserNotFoundException(email);
+    }
+
+    /// <summary>
+    /// Returns the user with the given email without tracking changes.
+    /// </summary>
+    /// <param name="email">The email of the user to be searched for.</param>
+    /// <returns>The user with the specified email, or null if not found.</returns>
+    public async Task<ApplicationUser> GetUserByEmailNoTrackingAsync(string email)
+    {
+        return await _context
+                .Users.AsNoTracking()
+                .Include(p => p.Teams)
                 .Include(u => u.TeamSupport)
                 .Include(u => u.Company)
                 .Include(u => u.BusinessUnits)
@@ -114,6 +131,25 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
     {
         return await _context
                 .Users.Include(p => p.Teams)
+                .Include(u => u.TeamSupport)
+                .Include(u => u.Company)
+                .Include(u => u.BusinessUnits)
+                .Include(u => u.Departments)
+                .Include(u => u.OfficeLocation)
+                .FirstOrDefaultAsync(u => u.EmployeeId == id)
+            ?? throw new UserNotFoundException(id);
+    }
+
+    /// <summary>
+    /// Retrieves a user by their unique identifier without tracking changes.
+    /// </summary>
+    /// <param name="id">The unique identifier of the user.</param>
+    /// <returns>The user with the specified identifier, or null if not found.</returns>
+    public async Task<ApplicationUser> GetUserByIdNoTrackingAsync(string id)
+    {
+        return await _context
+                .Users.AsNoTracking()
+                .Include(p => p.Teams)
                 .Include(u => u.TeamSupport)
                 .Include(u => u.Company)
                 .Include(u => u.BusinessUnits)

@@ -3,7 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Departments;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 
@@ -17,6 +19,7 @@ public class CreateDepartmentCommandHandler : IRequestHandler<CreateDepartmentCo
     private readonly IDepartmentRepository _departmentRepository;
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
     /// Creates a new instance of <see cref="CreateDepartmentCommandHandler" />.
@@ -24,12 +27,14 @@ public class CreateDepartmentCommandHandler : IRequestHandler<CreateDepartmentCo
     public CreateDepartmentCommandHandler(
         IDepartmentRepository departmentRepository,
         ILogRepository logRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IAuthorizationService authorizationService
     )
     {
         _departmentRepository = departmentRepository;
         _logRepository = logRepository;
         _unitOfWork = unitOfWork;
+        _authorizationService = authorizationService;
     }
 
     /// <summary>
@@ -44,12 +49,20 @@ public class CreateDepartmentCommandHandler : IRequestHandler<CreateDepartmentCo
         CancellationToken cancellationToken
     )
     {
+        var department = new Department { DepartmentName = request.DepartmentName };
+        if (
+            !await _authorizationService.CheckAccess(
+                department,
+                AuthorizationConstants.Actions.CREATE
+            )
+        )
+        {
+            throw new UnauthorizedException();
+        }
         if (await _departmentRepository.CheckIfDepartmentNameExistsAsync(request.DepartmentName))
         {
             throw new DepartmentNameAlreadyExistsException(request.DepartmentName);
         }
-
-        var department = new Department { DepartmentName = request.DepartmentName };
         await AddDepartmentLog(department);
         await _departmentRepository.AddDepartmentAsync(department);
         await _unitOfWork.CompleteAsync();

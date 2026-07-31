@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -26,9 +26,9 @@ public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
     }
 
     /// <inheritdoc/>
-    public async Task<IList<Company>> GetCompaniesAsync()
+    public async Task<IQueryable<Company>> GetCompaniesAsync()
     {
-        return await _context.Companies.AsNoTracking().ToListAsync();
+        return _context.Companies.AsNoTracking();
     }
 
     /// <inheritdoc/>

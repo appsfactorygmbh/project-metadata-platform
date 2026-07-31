@@ -7,7 +7,12 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Companies;
+using ProjectMetadataPlatform.Domain.Departments;
+using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Domain.Users;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
@@ -21,41 +26,41 @@ public class CreateUserCommandHandlerTest
     private Mock<IUsersRepository> _mockUsersRepo;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<ITeamRepository> _mockTeamRepo;
-
-    private Mock<IOfficeLocationRepository> _mockOfficeLocationRepository;
-
-    private Mock<ICompanyRepository> _mockCompanyRepository;
-
-    private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
-    private Mock<IDepartmentRepository> _mockDepartmentRepository;
+    private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IGetOrCreateHelper> _getOrCreateHelperMock;
     private Mock<IUnitOfWork> _mockUnitOfWork;
 
     [SetUp]
     public void Setup()
     {
+        _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockUsersRepo = new Mock<IUsersRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockTeamRepo = new Mock<ITeamRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockBusinessUnitRepository = new Mock<IBusinessUnitRepository>();
-        _mockCompanyRepository = new Mock<ICompanyRepository>();
-        _mockOfficeLocationRepository = new Mock<IOfficeLocationRepository>();
-        _mockDepartmentRepository = new Mock<IDepartmentRepository>();
+        _getOrCreateHelperMock = new Mock<IGetOrCreateHelper>();
         _handler = new CreateUserCommandHandler(
             _mockUsersRepo.Object,
             _mockLogRepo.Object,
             _mockTeamRepo.Object,
-            _mockDepartmentRepository.Object,
-            _mockBusinessUnitRepository.Object,
-            _mockOfficeLocationRepository.Object,
-            _mockCompanyRepository.Object,
-            _mockUnitOfWork.Object
+            _mockUnitOfWork.Object,
+            authorizationService: _authorizationServiceMock.Object,
+            getOrCreateHelper: _getOrCreateHelperMock.Object
         );
     }
 
     [Test]
     public async Task CreateUser_Test()
     {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockTeamRepo
             .SetupSequence(m => m.GetTeamByNameAsync(It.IsAny<string>()))
             .ReturnsAsync(
@@ -74,6 +79,16 @@ public class CreateUserCommandHandlerTest
                     BusinessUnitId = 1,
                 }
             );
+        _getOrCreateHelperMock
+            .Setup(g => g.GetOrCreateDepartment(It.IsAny<string>()))
+            .ReturnsAsync(new Department { DepartmentName = "Design" });
+        _getOrCreateHelperMock
+            .Setup(g => g.GetOrCreateOfficeLocation(It.IsAny<string>()))
+            .ReturnsAsync(new OfficeLocation { OfficeLocationName = "Leipzig" });
+
+        _getOrCreateHelperMock
+            .Setup(g => g.GetOrCreateCompany(It.IsAny<string>()))
+            .ReturnsAsync(new Company { CompanyName = "Appsfactory" });
         _ = _mockUnitOfWork.Setup(m => m.CompleteAsync()).Returns(Task.CompletedTask);
         _ = _mockLogRepo
             .Setup(m =>
@@ -122,6 +137,15 @@ public class CreateUserCommandHandlerTest
     [Test]
     public void CreateUser_ThrowsException_Test()
     {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockUsersRepo
             .Setup(m => m.CreateUserAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ThrowsAsync(new Exception("Error"));
@@ -160,6 +184,15 @@ public class CreateUserCommandHandlerTest
     [Test]
     public async Task CreateUserLog_Test()
     {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(true);
         _ = _mockUsersRepo
             .Setup(m => m.CreateUserAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync("1");
@@ -198,6 +231,39 @@ public class CreateUserCommandHandlerTest
                     )
                 ),
             Times.Once
+        );
+    }
+
+    [Test]
+    public async Task CreateUser_AuthorizationFailsThrowsTest()
+    {
+        _ = _authorizationServiceMock
+            .Setup(a =>
+                a.CheckAccess(
+                    It.IsAny<ApplicationUser>(),
+                    It.IsAny<AuthorizationConstants.Actions>(),
+                    It.IsAny<Dictionary<string, object?>?>()
+                )
+            )
+            .ReturnsAsync(false);
+
+        var request = new CreateUserCommand(
+            "",
+            "thetruestrepairmanwillrepairmen@greendale.edu",
+            null,
+            true,
+            true,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+
+        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+            _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
 }

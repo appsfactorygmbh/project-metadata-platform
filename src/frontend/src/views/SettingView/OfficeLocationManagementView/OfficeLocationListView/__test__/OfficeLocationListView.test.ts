@@ -8,6 +8,7 @@ import {
 import { useOfficeLocationStore } from '@/store';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { OfficeLocationListView } from '..';
+import { ResourceActions } from '@/models/utils';
 
 vi.mock('vue-router', () => ({
   useRouter: () => ({
@@ -37,7 +38,8 @@ describe('OfficeLocationListView.vue', () => {
     });
 
     const officeLocationStore = useOfficeLocationStore();
-
+    // @ts-expect-error: Overriding getter for testing purposes
+    officeLocationStore.getPermissions = [ResourceActions.Create];
     const mockOfficeLocationRouting = {
       routerOfficeLocationId: ref(''),
       setOfficeLocationId: vi.fn(),
