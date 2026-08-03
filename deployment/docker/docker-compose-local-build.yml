@@ -8,6 +8,7 @@ services:
         - BUILD_ENV=localbuild
     depends_on:
       - db
+      - cerbos
     ports:
       - 8090:8080
     environment:
@@ -15,7 +16,10 @@ services:
       - PMP_DB_USER=postgres
       - PMP_DB_PASSWORD=postgres
       - PMP_DB_NAME=pmp_db_local
+      - PMP_CERBOS_URL=http://cerbos:3592
+      - PMP_CERBOS_USER=cerbos_user
       - PMP_DB_PORT=5432
+      - PMP_CERBOS_PASSWORD=changeme
       - PMP_MIGRATE_DB_ON_STARTUP=true
       - JWT_VALID_ISSUER=validIssue
       - JWT_VALID_AUDIENCE=validAudience
@@ -38,6 +42,24 @@ services:
       - db_data:/var/lib/postgresql
     networks:
       - pmp-local
+
+  cerbos:
+    image: ghcr.io/cerbos/cerbos:latest
+    ports:
+      - "3592:3592"
+      - "3593:3593"
+    command:
+      - server
+      - --set=storage.driver=disk
+      - --set=storage.disk.directory=policies
+      - --set=storage.disk.watchForChanges=true
+      - --set=server.adminAPI.enabled=true
+      - --set=server.adminAPI.adminCredentials.username=cerbos_user
+      - --set=server.adminAPI.adminCredentials.passwordHash=JDJ5JDEwJHl2ZjJJRERFS3VES2FTcExZU2xacmU5a1lLZHA0Z2FnL2c4VU8yaTguZnpacUo3emozSk4yCgo=
+    volumes:
+      - type: bind
+        source: ./cerbos/policies
+        target: /policies
 
 volumes:
   db_data:
