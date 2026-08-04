@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +8,10 @@ using ProjectMetadataPlatform.Api.BusinessUnits.Models;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.BusinessUnits;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.BusinessUnits;
 
 namespace ProjectMetadataPlatform.Api.BusinessUnits;
 
@@ -46,7 +48,10 @@ public class BusinessUnitsController : ControllerBase
     public async Task<ActionResult<GetListResponse<GetBusinessUnitResponse>>> Get()
     {
         var query = new GetAllBusinessUnitsQuery();
-        var (businessUnits, permissions) = await _mediator.Send(query);
+        var (businessUnits, permissions) = await _mediator.Send<
+            GetAllBusinessUnitsQuery,
+            (IEnumerable<BusinessUnit>, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
         var buResponse = businessUnits.Select(businessUnit => new GetBusinessUnitResponse(
             Id: businessUnit.Id,
             BusinessUnitName: businessUnit.BusinessUnitName
@@ -72,7 +77,10 @@ public class BusinessUnitsController : ControllerBase
     public async Task<ActionResult<IEnumerable<GetBusinessUnitResponse>>> Get(int id)
     {
         var query = new GetBusinessUnitQuery(id);
-        var (businessUnit, permissions) = await _mediator.Send(query);
+        var (businessUnit, permissions) = await _mediator.Send<
+            GetBusinessUnitQuery,
+            (BusinessUnit, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
         var response = new GetBusinessUnitResponse(
             Id: businessUnit.Id,
             BusinessUnitName: businessUnit.BusinessUnitName,
@@ -105,7 +113,7 @@ public class BusinessUnitsController : ControllerBase
         }
         var command = new CreateBusinessUnitCommand(BusinessUnitName: request.BusinessUnitName);
 
-        var businessUnitId = await _mediator.Send(command);
+        var businessUnitId = await _mediator.Send<CreateBusinessUnitCommand, int>(command);
 
         var response = new CreateBusinessUnitResponse(businessUnitId);
         var uri = "BusinessUnits/" + businessUnitId;
@@ -141,7 +149,7 @@ public class BusinessUnitsController : ControllerBase
             Id: id,
             BusinessUnitName: request.BusinessUnitName
         );
-        var businessUnit = await _mediator.Send(command);
+        var businessUnit = await _mediator.Send<UpdateBusinessUnitCommand, BusinessUnit>(command);
 
         var response = new GetBusinessUnitResponse(
             Id: businessUnit.Id,
@@ -188,7 +196,7 @@ public class BusinessUnitsController : ControllerBase
     {
         var command = new GetLinkedTeamsQuery(id);
 
-        var idList = await _mediator.Send(command);
+        var idList = await _mediator.Send<GetLinkedTeamsQuery, List<int>>(command);
 
         return Ok(new GetLinkedTeamsForBusinessUnitResponse(idList));
     }

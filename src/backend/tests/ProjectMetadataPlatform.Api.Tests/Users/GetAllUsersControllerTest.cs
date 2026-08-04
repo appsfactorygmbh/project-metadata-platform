@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Users;
 using ProjectMetadataPlatform.Api.Users.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Domain.Users;
 
@@ -68,7 +69,12 @@ public class GetAllUsersControllerTest
             },
         };
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<
+                    GetAllUsersQuery,
+                    (IEnumerable<ApplicationUser>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync((users, []));
 
         var result = await _controller.Get();
@@ -125,7 +131,12 @@ public class GetAllUsersControllerTest
     public async Task Get_ReturnsEmptyList()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<
+                    GetAllUsersQuery,
+                    (IEnumerable<ApplicationUser>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync((new List<ApplicationUser>(), []));
 
         var result = await _controller.Get();
@@ -141,7 +152,12 @@ public class GetAllUsersControllerTest
     public void Get_ReturnsMediatorException()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<
+                    GetAllUsersQuery,
+                    (IEnumerable<ApplicationUser>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>())
+            )
             .ThrowsAsync(new InvalidOperationException("Test exception"));
 
         _ = Assert.ThrowsAsync<InvalidOperationException>(() => _controller.Get());

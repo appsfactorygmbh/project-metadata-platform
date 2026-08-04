@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -11,6 +10,8 @@ using ProjectMetadataPlatform.Api.BusinessUnits;
 using ProjectMetadataPlatform.Api.BusinessUnits.Models;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Application.BusinessUnits;
+using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 
 namespace ProjectMetadataPlatform.Api.Tests.BusinessUnits;
@@ -31,7 +32,12 @@ public class BusinessUnitsControllerTest
     public async Task GetBusinessUnits_EmptyResponseTest()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetAllBusinessUnitsQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<
+                    GetAllBusinessUnitsQuery,
+                    (IEnumerable<BusinessUnit>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllBusinessUnitsQuery>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync(([], []));
         var result = await _controller.Get();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
@@ -52,7 +58,12 @@ public class BusinessUnitsControllerTest
     public async Task GetBusinessUnits_ListResponse()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetAllBusinessUnitsQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<
+                    GetAllBusinessUnitsQuery,
+                    (IEnumerable<BusinessUnit>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllBusinessUnitsQuery>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync(
                 (
                     [
@@ -86,7 +97,10 @@ public class BusinessUnitsControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<GetAllBusinessUnitsQuery>(), It.IsAny<CancellationToken>())
+                mediator.Send<
+                    GetAllBusinessUnitsQuery,
+                    (IEnumerable<BusinessUnit>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllBusinessUnitsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
@@ -97,7 +111,10 @@ public class BusinessUnitsControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<GetBusinessUnitQuery>(), It.IsAny<CancellationToken>())
+                mediator.Send<
+                    GetBusinessUnitQuery,
+                    (BusinessUnit, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetBusinessUnitQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
@@ -107,7 +124,12 @@ public class BusinessUnitsControllerTest
     public async Task GetBusinessUnit_ResponseTest()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetBusinessUnitQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<
+                    GetBusinessUnitQuery,
+                    (BusinessUnit, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetBusinessUnitQuery>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync((new BusinessUnit { BusinessUnitName = "BusinessUnit", Id = 1 }, []));
         var result = await _controller.Get(1);
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
@@ -127,7 +149,10 @@ public class BusinessUnitsControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<CreateBusinessUnitCommand>(), It.IsAny<CancellationToken>())
+                mediator.Send<CreateBusinessUnitCommand, int>(
+                    It.IsAny<CreateBusinessUnitCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() =>
@@ -147,7 +172,10 @@ public class BusinessUnitsControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<CreateBusinessUnitCommand>(), It.IsAny<CancellationToken>())
+                mediator.Send<CreateBusinessUnitCommand, int>(
+                    It.IsAny<CreateBusinessUnitCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ReturnsAsync(1);
 
@@ -174,7 +202,10 @@ public class BusinessUnitsControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<GetLinkedTeamsQuery>(), It.IsAny<CancellationToken>())
+                mediator.Send<GetLinkedTeamsQuery, List<int>>(
+                    It.IsAny<GetLinkedTeamsQuery>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetLinkedTeams(1));
@@ -184,7 +215,12 @@ public class BusinessUnitsControllerTest
     public async Task GetLinkedTeams_ResponseTest()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetLinkedTeamsQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<GetLinkedTeamsQuery, List<int>>(
+                    It.IsAny<GetLinkedTeamsQuery>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ReturnsAsync([1, 2, 3]);
         var result = await _controller.GetLinkedTeams(1);
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
@@ -204,7 +240,10 @@ public class BusinessUnitsControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<UpdateBusinessUnitCommand>(), It.IsAny<CancellationToken>())
+                mediator.Send<UpdateBusinessUnitCommand, BusinessUnit>(
+                    It.IsAny<UpdateBusinessUnitCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() =>
@@ -224,7 +263,10 @@ public class BusinessUnitsControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<UpdateBusinessUnitCommand>(), It.IsAny<CancellationToken>())
+                mediator.Send<UpdateBusinessUnitCommand, BusinessUnit>(
+                    It.IsAny<UpdateBusinessUnitCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ReturnsAsync(new BusinessUnit { BusinessUnitName = "BusinessUnit", Id = 1 });
         var result = await _controller.Patch(1, new UpdateBusinessUnitRequest());

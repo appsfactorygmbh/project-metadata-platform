@@ -1,13 +1,15 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Projects;
 using ProjectMetadataPlatform.Api.Projects.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Projects;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Projects;
 
 namespace ProjectMetadataPlatform.Api.Tests.Projects;
@@ -30,7 +32,10 @@ public class GetProjectByIdControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<GetProjectQuery>(), It.IsAny<CancellationToken>())
+                mediator.Send<
+                    GetProjectQuery,
+                    (Project, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetProjectQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(1));
@@ -54,7 +59,10 @@ public class GetProjectByIdControllerTest
         };
         _ = _mediator
             .Setup(m =>
-                m.Send(It.Is<GetProjectQuery>(q => q.Id == 50), It.IsAny<CancellationToken>())
+                m.Send<GetProjectQuery, (Project, IEnumerable<AuthorizationConstants.Actions>)>(
+                    It.Is<GetProjectQuery>(q => q.Id == 50),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ReturnsAsync((projectsResponseContent, []));
 

@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,8 +8,11 @@ using ProjectMetadataPlatform.Api.BusinessUnits.Models;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Teams.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Teams;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Teams;
 
 namespace ProjectMetadataPlatform.Api.Teams;
 
@@ -58,7 +61,7 @@ public class TeamsController : ControllerBase
             PTL: request.PTL
         );
 
-        var teamId = await _mediator.Send(command);
+        var teamId = await _mediator.Send<CreateTeamCommand, int>(command);
 
         var response = new CreateTeamResponse(teamId);
         var uri = "/Teams/" + teamId;
@@ -79,7 +82,10 @@ public class TeamsController : ControllerBase
     public async Task<ActionResult<GetTeamResponse>> Get(int id)
     {
         var query = new GetTeamQuery(id);
-        var (team, permissions) = await _mediator.Send(query);
+        var (team, permissions) = await _mediator.Send<
+            GetTeamQuery,
+            (Team, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
 
         var response = new GetTeamResponse()
         {
@@ -112,7 +118,10 @@ public class TeamsController : ControllerBase
     )
     {
         var query = new GetAllTeamsQuery(FullTextQuery: search, TeamName: teamName);
-        var (teams, permissions) = await _mediator.Send(query);
+        var (teams, permissions) = await _mediator.Send<
+            GetAllTeamsQuery,
+            (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
         var teamResponse = teams.Select(t => new GetTeamResponse()
         {
             Id = t.Id,
@@ -159,7 +168,7 @@ public class TeamsController : ControllerBase
             BusinessUnitId: request.BusinessUnitId
         );
 
-        var team = await _mediator.Send(command);
+        var team = await _mediator.Send<PatchTeamCommand, Team>(command);
 
         var response = new GetTeamResponse()
         {
@@ -224,7 +233,7 @@ public class TeamsController : ControllerBase
         }
         var command = new GetLinkedProjectsQuery(teamId);
 
-        var slugList = await _mediator.Send(command);
+        var slugList = await _mediator.Send<GetLinkedProjectsQuery, List<string>>(command);
 
         return Ok(new GetLinkedProjectsResponse(slugList));
     }

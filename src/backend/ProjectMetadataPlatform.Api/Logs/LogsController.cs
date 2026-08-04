@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Api.Logs.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Logs;
 using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Api.Logs;
 
@@ -67,7 +68,9 @@ public class LogsController : ControllerBase
         if (projectSlug != null && projectId == null)
         {
             var projectIdFromSlugQuery = new GetProjectIdBySlugQuery(projectSlug);
-            projectFromSlugId = await _mediator.Send(projectIdFromSlugQuery);
+            projectFromSlugId = await _mediator.Send<GetProjectIdBySlugQuery, int>(
+                projectIdFromSlugQuery
+            );
         }
 
         var query = new GetLogsQuery(
@@ -77,7 +80,7 @@ public class LogsController : ControllerBase
             globalPluginId
         );
 
-        var logs = await _mediator.Send(query);
+        var logs = await _mediator.Send<GetLogsQuery, IEnumerable<Log>>(query);
 
         return Ok(logs.Select(_converter.BuildLogMessage));
     }

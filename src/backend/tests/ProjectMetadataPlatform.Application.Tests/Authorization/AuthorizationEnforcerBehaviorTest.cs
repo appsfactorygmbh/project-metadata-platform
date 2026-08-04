@@ -1,16 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Moq;
 using NUnit.Framework;
-using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Application.Authorization;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.Auth;
-using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
-using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Tests.Authorization;
 
@@ -24,13 +19,13 @@ public class AuthorizationEnforcerBehaviorTest
         It.IsAnyType
     > _authorizationEnforcerBehavior;
 
-    private Mock<RequestHandlerDelegate<It.IsAnyType>> _next;
+    private Mock<Func<Task<It.IsAnyType>>> _next;
 
     [SetUp]
     public void SetUp()
     {
         _authorizationTrackerMock = new Mock<IAuthorizationTracker>();
-        _next = new Mock<RequestHandlerDelegate<It.IsAnyType>>();
+        _next = new Mock<Func<Task<It.IsAnyType>>>();
         _authorizationEnforcerBehavior = new AuthorizationEnforcerBehavior<
             It.IsAnyType,
             It.IsAnyType

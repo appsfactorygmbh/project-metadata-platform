@@ -2,15 +2,16 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Users;
 using ProjectMetadataPlatform.Api.Users.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
+using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Api.Tests.Users;
 
@@ -35,7 +36,12 @@ public class PutUserControllerTest
     {
         //prepare
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<CreateUserCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<CreateUserCommand, ApplicationUser>(
+                    It.IsAny<CreateUserCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ReturnsAsync(
                 new Domain.Users.ApplicationUser
                 {
@@ -81,13 +87,13 @@ public class PutUserControllerTest
             Assert.That(createdResult.Location, Is.EqualTo("/Users/Id"));
         });
         _mediator.Verify(mediator =>
-            mediator.Send(
+            mediator.Send<CreateUserCommand, ApplicationUser>(
                 It.Is<CreateUserCommand>(command =>
                     command.Email == "dr@core.fr"
                     && command.Password == "SomePassword"
                     && command.EmployeeId == "Id"
-                    && command.IsActive == true
-                    && command.IsScimProvisioned == true
+                    && command.IsActive
+                    && command.IsScimProvisioned
                 ),
                 It.IsAny<CancellationToken>()
             )
@@ -99,7 +105,10 @@ public class PutUserControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<CreateUserCommand>(), It.IsAny<CancellationToken>())
+                mediator.Send<CreateUserCommand, ApplicationUser>(
+                    It.IsAny<CreateUserCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ThrowsAsync(new InvalidOperationException());
         var identity = new ClaimsIdentity(

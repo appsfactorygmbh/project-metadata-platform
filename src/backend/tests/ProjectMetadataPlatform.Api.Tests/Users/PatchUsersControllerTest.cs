@@ -2,7 +2,6 @@
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +9,7 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Users;
 using ProjectMetadataPlatform.Api.Users.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
@@ -46,7 +46,12 @@ public class PatchUsersControllerTest
         };
 
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<PatchUserCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<PatchUserCommand, ApplicationUser>(
+                    It.IsAny<PatchUserCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ReturnsAsync(user);
 
         var identity = new ClaimsIdentity(
@@ -75,7 +80,12 @@ public class PatchUsersControllerTest
     public void PatchUser_NotFound_Test()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<PatchUserCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<PatchUserCommand, ApplicationUser>(
+                    It.IsAny<PatchUserCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ThrowsAsync(new UserNotFoundException("Dr. Dre"));
 
         var identity = new ClaimsIdentity(
@@ -107,7 +117,10 @@ public class PatchUsersControllerTest
         };
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<PatchUserCommand>(), It.IsAny<CancellationToken>())
+                mediator.Send<PatchUserCommand, ApplicationUser>(
+                    It.IsAny<PatchUserCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ThrowsAsync(new UserInvalidPasswordFormatException(IdentityResult.Failed()));
 

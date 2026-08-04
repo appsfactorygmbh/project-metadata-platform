@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using MediatR;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Authorization;
 

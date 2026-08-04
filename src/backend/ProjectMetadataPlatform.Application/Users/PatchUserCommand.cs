@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using MediatR;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Users;

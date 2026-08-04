@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -12,7 +11,9 @@ using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Teams;
 using ProjectMetadataPlatform.Api.Teams.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Teams;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Teams;
 
@@ -37,7 +38,12 @@ public class TeamsControllerTest
         // Arrange
         var expectedTeamId = 42;
         _ = _mediatorMock
-            .Setup(m => m.Send(It.IsAny<CreateTeamCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<CreateTeamCommand, int>(
+                    It.IsAny<CreateTeamCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ReturnsAsync(expectedTeamId);
 
         var request = new CreateTeamRequest(
@@ -67,7 +73,7 @@ public class TeamsControllerTest
 
         _mediatorMock.Verify(
             m =>
-                m.Send(
+                m.Send<CreateTeamCommand, int>(
                     It.Is<CreateTeamCommand>(cmd =>
                         cmd.TeamName == request.TeamName
                         && cmd.BusinessUnitId == request.BusinessUnitId
@@ -84,7 +90,12 @@ public class TeamsControllerTest
     {
         // Arrange
         _ = _mediatorMock
-            .Setup(m => m.Send(It.IsAny<CreateTeamCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<CreateTeamCommand, int>(
+                    It.IsAny<CreateTeamCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ThrowsAsync(new IOException("Disk full"));
 
         var request = new CreateTeamRequest(
@@ -103,7 +114,12 @@ public class TeamsControllerTest
         // Arrange
         var existingTeamName = "Test TeamName";
         _ = _mediatorMock
-            .Setup(m => m.Send(It.IsAny<CreateTeamCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<CreateTeamCommand, int>(
+                    It.IsAny<CreateTeamCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ThrowsAsync(new TeamNameAlreadyExistsException(existingTeamName));
 
         var request = new CreateTeamRequest(
@@ -135,7 +151,11 @@ public class TeamsControllerTest
         var errorResponse = badRequestResult.Value as ErrorResponse;
         Assert.That(errorResponse?.Message, Is.EqualTo("TeamName can't be empty or whitespaces"));
         _mediatorMock.Verify(
-            m => m.Send(It.IsAny<CreateTeamCommand>(), It.IsAny<CancellationToken>()),
+            m =>
+                m.Send<CreateTeamCommand, int>(
+                    It.IsAny<CreateTeamCommand>(),
+                    It.IsAny<CancellationToken>()
+                ),
             Times.Never
         );
     }
@@ -155,7 +175,10 @@ public class TeamsControllerTest
         };
         _ = _mediatorMock
             .Setup(m =>
-                m.Send(It.Is<GetTeamQuery>(q => q.Id == teamId), It.IsAny<CancellationToken>())
+                m.Send<GetTeamQuery, (Team, IEnumerable<AuthorizationConstants.Actions>)>(
+                    It.Is<GetTeamQuery>(q => q.Id == teamId),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ReturnsAsync((team, []));
 
@@ -189,7 +212,10 @@ public class TeamsControllerTest
         var teamId = 1;
         _ = _mediatorMock
             .Setup(m =>
-                m.Send(It.Is<GetTeamQuery>(q => q.Id == teamId), It.IsAny<CancellationToken>())
+                m.Send<GetTeamQuery, (Team, IEnumerable<AuthorizationConstants.Actions>)>(
+                    It.Is<GetTeamQuery>(q => q.Id == teamId),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ThrowsAsync(new TeamNotFoundException(teamId));
 
@@ -221,7 +247,12 @@ public class TeamsControllerTest
             },
         };
         _ = _mediatorMock
-            .Setup(m => m.Send(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<
+                    GetAllTeamsQuery,
+                    (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync((teams, []));
 
         // Act
@@ -249,7 +280,12 @@ public class TeamsControllerTest
     {
         // Arrange
         _ = _mediatorMock
-            .Setup(m => m.Send(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<
+                    GetAllTeamsQuery,
+                    (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync((new List<Team>(), []));
 
         // Act
@@ -270,7 +306,12 @@ public class TeamsControllerTest
         var teamNameFilter = "Alpha";
         var searchQuery = "SearchKeyword";
         _ = _mediatorMock
-            .Setup(m => m.Send(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<
+                    GetAllTeamsQuery,
+                    (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync((new List<Team>(), []));
 
         // Act
@@ -279,7 +320,10 @@ public class TeamsControllerTest
         // Assert
         _mediatorMock.Verify(
             m =>
-                m.Send(
+                m.Send<
+                    GetAllTeamsQuery,
+                    (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)
+                >(
                     It.Is<GetAllTeamsQuery>(q =>
                         q.TeamName == teamNameFilter && q.FullTextQuery == searchQuery
                     ),
@@ -311,7 +355,7 @@ public class TeamsControllerTest
 
         _ = _mediatorMock
             .Setup(m =>
-                m.Send(
+                m.Send<PatchTeamCommand, Team>(
                     It.Is<PatchTeamCommand>(cmd => cmd.Id == teamId),
                     It.IsAny<CancellationToken>()
                 )
@@ -341,7 +385,7 @@ public class TeamsControllerTest
 
         _mediatorMock.Verify(
             m =>
-                m.Send(
+                m.Send<PatchTeamCommand, Team>(
                     It.Is<PatchTeamCommand>(cmd =>
                         cmd.Id == teamId
                         && cmd.TeamName == request.TeamName
@@ -362,7 +406,7 @@ public class TeamsControllerTest
         var request = new PatchTeamRequest { TeamName = "Test" };
         _ = _mediatorMock
             .Setup(m =>
-                m.Send(
+                m.Send<PatchTeamCommand, Team>(
                     It.Is<PatchTeamCommand>(cmd => cmd.Id == teamId),
                     It.IsAny<CancellationToken>()
                 )
@@ -381,7 +425,7 @@ public class TeamsControllerTest
         var existingName = "Test TeamName";
         _ = _mediatorMock
             .Setup(m =>
-                m.Send(
+                m.Send<PatchTeamCommand, Team>(
                     It.Is<PatchTeamCommand>(cmd => cmd.Id == teamId),
                     It.IsAny<CancellationToken>()
                 )
@@ -402,7 +446,10 @@ public class TeamsControllerTest
         // Arrange
         _ = _mediatorMock
             .Setup(mediator =>
-                mediator.Send(It.IsAny<PatchTeamCommand>(), It.IsAny<CancellationToken>())
+                mediator.Send<PatchTeamCommand, Team>(
+                    It.IsAny<PatchTeamCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         var request = new PatchTeamRequest { TeamName = "Testing" };
@@ -533,7 +580,7 @@ public class TeamsControllerTest
         var projectSlugs = new List<string> { "slug_1", "slug_2" };
         _ = _mediatorMock
             .Setup(m =>
-                m.Send(
+                m.Send<GetLinkedProjectsQuery, List<string>>(
                     It.Is<GetLinkedProjectsQuery>(q => q.Id == teamId),
                     It.IsAny<CancellationToken>()
                 )
@@ -559,7 +606,7 @@ public class TeamsControllerTest
         var teamId = 1;
         _ = _mediatorMock
             .Setup(m =>
-                m.Send(
+                m.Send<GetLinkedProjectsQuery, List<string>>(
                     It.Is<GetLinkedProjectsQuery>(q => q.Id == teamId),
                     It.IsAny<CancellationToken>()
                 )
@@ -596,7 +643,11 @@ public class TeamsControllerTest
             Is.EqualTo("TeamId can't be smaller than or equal to 0")
         );
         _mediatorMock.Verify(
-            m => m.Send(It.IsAny<GetLinkedProjectsQuery>(), It.IsAny<CancellationToken>()),
+            m =>
+                m.Send<GetLinkedProjectsQuery, List<string>>(
+                    It.IsAny<GetLinkedProjectsQuery>(),
+                    It.IsAny<CancellationToken>()
+                ),
             Times.Never
         );
     }
@@ -608,7 +659,7 @@ public class TeamsControllerTest
         var teamId = 1;
         _ = _mediatorMock
             .Setup(m =>
-                m.Send(
+                m.Send<GetLinkedProjectsQuery, List<string>>(
                     It.Is<GetLinkedProjectsQuery>(q => q.Id == teamId),
                     It.IsAny<CancellationToken>()
                 )

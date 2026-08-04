@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +8,10 @@ using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Departments.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Departments;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Departments;
 
 namespace ProjectMetadataPlatform.Api.Departments;
 
@@ -43,7 +45,10 @@ public class DepartmentsController : ControllerBase
     public async Task<ActionResult<GetListResponse<GetDepartmentResponse>>> Get()
     {
         var query = new GetAllDepartmentsQuery();
-        var (departments, permissions) = await _mediator.Send(query);
+        var (departments, permissions) = await _mediator.Send<
+            GetAllDepartmentsQuery,
+            (IEnumerable<Department>, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
         var departmentResponse = departments.Select(department => new GetDepartmentResponse(
             Id: department.Id,
             DepartmentName: department.DepartmentName
@@ -69,7 +74,10 @@ public class DepartmentsController : ControllerBase
     public async Task<ActionResult<IEnumerable<GetDepartmentResponse>>> Get(int id)
     {
         var query = new GetDepartmentQuery(id);
-        var (department, permissions) = await _mediator.Send(query);
+        var (department, permissions) = await _mediator.Send<
+            GetDepartmentQuery,
+            (Department, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
         var response = new GetDepartmentResponse(
             Id: department.Id,
             DepartmentName: department.DepartmentName,
@@ -102,7 +110,7 @@ public class DepartmentsController : ControllerBase
         }
         var command = new CreateDepartmentCommand(DepartmentName: request.DepartmentName);
 
-        var departmentId = await _mediator.Send(command);
+        var departmentId = await _mediator.Send<CreateDepartmentCommand, int>(command);
 
         var response = new CreateDepartmentResponse(departmentId);
         var uri = "Departments/" + departmentId;
@@ -135,7 +143,7 @@ public class DepartmentsController : ControllerBase
             return BadRequest(new ErrorResponse("Department Name can't be whitespaces"));
         }
         var command = new UpdateDepartmentCommand(Id: id, DepartmentName: request.DepartmentName);
-        var department = await _mediator.Send(command);
+        var department = await _mediator.Send<UpdateDepartmentCommand, Department>(command);
 
         var response = new GetDepartmentResponse(
             Id: department.Id,

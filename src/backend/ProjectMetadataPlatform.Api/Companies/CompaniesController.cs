@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +8,10 @@ using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Companies.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Companies;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Companies;
 using GetLinkedProjectsForCompanyResponse = ProjectMetadataPlatform.Api.Companies.Models.GetLinkedProjectsForCompanyResponse;
 
 namespace ProjectMetadataPlatform.Api.Companies;
@@ -44,7 +46,10 @@ public class CompaniesController : ControllerBase
     public async Task<ActionResult<GetListResponse<GetCompanyResponse>>> Get()
     {
         var query = new GetAllCompaniesQuery();
-        var (companies, permissions) = await _mediator.Send(query);
+        var (companies, permissions) = await _mediator.Send<
+            GetAllCompaniesQuery,
+            (IEnumerable<Company>, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
         var companyResponse = companies.Select(company => new GetCompanyResponse(
             Id: company.Id,
             CompanyName: company.CompanyName
@@ -70,7 +75,10 @@ public class CompaniesController : ControllerBase
     public async Task<ActionResult<IEnumerable<GetCompanyResponse>>> Get(int id)
     {
         var query = new GetCompanyQuery(id);
-        var (company, permissions) = await _mediator.Send(query);
+        var (company, permissions) = await _mediator.Send<
+            GetCompanyQuery,
+            (Company, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
         var response = new GetCompanyResponse(
             Id: company.Id,
             CompanyName: company.CompanyName,
@@ -103,7 +111,7 @@ public class CompaniesController : ControllerBase
         }
         var command = new CreateCompanyCommand(CompanyName: request.CompanyName);
 
-        var companyId = await _mediator.Send(command);
+        var companyId = await _mediator.Send<CreateCompanyCommand, int>(command);
 
         var response = new CreateCompanyResponse(companyId);
         var uri = "Companies/" + companyId;
@@ -136,7 +144,7 @@ public class CompaniesController : ControllerBase
             return BadRequest(new ErrorResponse("Company Name can't be whitespaces"));
         }
         var command = new UpdateCompanyCommand(Id: id, CompanyName: request.CompanyName);
-        var company = await _mediator.Send(command);
+        var company = await _mediator.Send<UpdateCompanyCommand, Company>(command);
 
         var response = new GetCompanyResponse(Id: company.Id, CompanyName: company.CompanyName);
 
@@ -180,7 +188,7 @@ public class CompaniesController : ControllerBase
     {
         var command = new GetLinkedProjectsQuery(id);
 
-        var slugList = await _mediator.Send(command);
+        var slugList = await _mediator.Send<GetLinkedProjectsQuery, List<string>>(command);
 
         return Ok(new GetLinkedProjectsForCompanyResponse(slugList));
     }

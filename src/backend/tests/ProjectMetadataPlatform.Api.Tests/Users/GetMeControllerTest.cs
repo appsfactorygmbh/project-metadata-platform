@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Users;
 using ProjectMetadataPlatform.Api.Users.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 using ProjectMetadataPlatform.Domain.Users;
 
@@ -38,10 +40,10 @@ public class GetMeControllerTest
 
         _ = _mediator
             .Setup(m =>
-                m.Send(
-                    It.IsAny<GetUserByEmailQuery>(),
-                    It.IsAny<System.Threading.CancellationToken>()
-                )
+                m.Send<
+                    GetUserByEmailQuery,
+                    (ApplicationUser, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetUserByEmailQuery>(), It.IsAny<System.Threading.CancellationToken>())
             )
             .ReturnsAsync((user, []));
         var controller = new UsersController(
@@ -70,10 +72,10 @@ public class GetMeControllerTest
     {
         _ = _mediator
             .Setup(m =>
-                m.Send(
-                    It.IsAny<GetUserByEmailQuery>(),
-                    It.IsAny<System.Threading.CancellationToken>()
-                )
+                m.Send<
+                    GetUserByEmailQuery,
+                    (ApplicationUser, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetUserByEmailQuery>(), It.IsAny<System.Threading.CancellationToken>())
             )
             .ThrowsAsync(new UserNotFoundException("Dr. Dre"));
         var controller = new UsersController(_mediator.Object, MockHttpContextAccessor("Dr. Dre"));
@@ -85,10 +87,10 @@ public class GetMeControllerTest
     {
         _ = _mediator
             .Setup(m =>
-                m.Send(
-                    It.IsAny<GetUserByEmailQuery>(),
-                    It.IsAny<System.Threading.CancellationToken>()
-                )
+                m.Send<
+                    GetUserByEmailQuery,
+                    (ApplicationUser, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetUserByEmailQuery>(), It.IsAny<System.Threading.CancellationToken>())
             )
             .ThrowsAsync(new InvalidOperationException("Internal error"));
         var controller = new UsersController(
@@ -104,10 +106,10 @@ public class GetMeControllerTest
     {
         _ = _mediator
             .Setup(m =>
-                m.Send(
-                    It.IsAny<GetUserByEmailQuery>(),
-                    It.IsAny<System.Threading.CancellationToken>()
-                )
+                m.Send<
+                    GetUserByEmailQuery,
+                    (ApplicationUser, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetUserByEmailQuery>(), It.IsAny<System.Threading.CancellationToken>())
             )
             .ThrowsAsync(new UserUnauthenticatedException());
         var controller = new UsersController(_mediator.Object, MockHttpContextAccessor(null));

@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Linq;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectMetadataPlatform.Application.Authorization;
 using ProjectMetadataPlatform.Application.Helper;
@@ -22,13 +23,44 @@ public static class DependencyInjection
     {
         _ = serviceCollection.AddScoped<ISlugHelper, SlugHelper>();
         _ = serviceCollection.AddScoped<IGetOrCreateHelper, GetOrCreateHelper>();
-        _ = serviceCollection.AddMediatR(configuration =>
-            configuration.RegisterServicesFromAssemblyContaining(typeof(DependencyInjection))
-        );
+
         _ = serviceCollection.AddTransient(
             typeof(IPipelineBehavior<,>),
             typeof(AuthorizationEnforcerBehavior<,>)
         );
+        _ = serviceCollection.AddCustomMediator(typeof(DependencyInjection).Assembly);
         return serviceCollection;
+    }
+
+    private static IServiceCollection AddCustomMediator(
+        this IServiceCollection services,
+        Assembly assembly
+    )
+    {
+        _ = services.AddTransient<IMediator, Mediator>();
+
+        var handlerType = typeof(IRequestHandler<,>);
+
+        var handlers = assembly
+            .GetTypes()
+            .Where(t => t.IsClass && !t.IsAbstract)
+            .Where(t =>
+                t.GetInterfaces()
+                    .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == handlerType)
+            );
+
+        foreach (var handler in handlers)
+        {
+            var implementedInterfaces = handler
+                .GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == handlerType);
+
+            foreach (var interfaceType in implementedInterfaces)
+            {
+                _ = services.AddTransient(interfaceType, handler);
+            }
+        }
+
+        return services;
     }
 }

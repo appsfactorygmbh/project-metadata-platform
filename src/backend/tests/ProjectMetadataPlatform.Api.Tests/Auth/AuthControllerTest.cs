@@ -5,7 +5,6 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -14,7 +13,9 @@ using ProjectMetadataPlatform.Api.Auth.Models;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Auth;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 
 namespace ProjectMetadataPlatform.Api.Tests.Auth;
@@ -35,7 +36,9 @@ public class Tests
     public async Task SuccessfulLoginTest()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<LoginQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<LoginQuery, JwtTokens>(It.IsAny<LoginQuery>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync(
                 new JwtTokens { AccessToken = "accessToken", RefreshToken = "refreshToken" }
             );
@@ -55,7 +58,9 @@ public class Tests
     public void WrongCredentialsLoginTest()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<LoginQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<LoginQuery, JwtTokens>(It.IsAny<LoginQuery>(), It.IsAny<CancellationToken>())
+            )
             .ThrowsAsync(new AuthInvalidLoginCredentialsException());
 
         var request = new LoginRequest("wrong_username", "password");
@@ -69,7 +74,12 @@ public class Tests
     public async Task SuccessfulRefreshTest()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<RefreshTokenQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<RefreshTokenQuery, JwtTokens>(
+                    It.IsAny<RefreshTokenQuery>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ReturnsAsync(
                 new JwtTokens { AccessToken = "accessToken", RefreshToken = "refreshToken" }
             );
@@ -89,7 +99,12 @@ public class Tests
     public void InvalidRefreshTokenTest()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<RefreshTokenQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<RefreshTokenQuery, JwtTokens>(
+                    It.IsAny<RefreshTokenQuery>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ThrowsAsync(new AuthenticationException("Invalid refresh token."));
 
         const string refreshToken = "Refresh invalidRefreshToken";
@@ -114,7 +129,12 @@ public class Tests
     public async Task GetApiTokens_EmptyResponseTest()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<
+                    GetAllApiTokensQuery,
+                    (IEnumerable<ApiToken>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync(([], []));
         var result = await _controller.GetApiTokens();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
@@ -135,7 +155,12 @@ public class Tests
     public async Task GetApiTokens_ListResponse()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<
+                    GetAllApiTokensQuery,
+                    (IEnumerable<ApiToken>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync(
                 (
                     [
@@ -180,7 +205,10 @@ public class Tests
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>())
+                mediator.Send<
+                    GetAllApiTokensQuery,
+                    (IEnumerable<ApiToken>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetApiTokens());
@@ -191,7 +219,10 @@ public class Tests
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<GetApiTokenDetailsQuery>(), It.IsAny<CancellationToken>())
+                mediator.Send<
+                    GetApiTokenDetailsQuery,
+                    (ApiToken, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetApiTokenDetailsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetApiToken(0));
@@ -201,7 +232,12 @@ public class Tests
     public async Task GetApiToken_TokenResponseTest()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetApiTokenDetailsQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<
+                    GetApiTokenDetailsQuery,
+                    (ApiToken, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetApiTokenDetailsQuery>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync(
                 (
                     new ApiToken
@@ -240,7 +276,10 @@ public class Tests
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<CreateApiTokenCommand>(), It.IsAny<CancellationToken>())
+                mediator.Send<CreateApiTokenCommand, ApiToken>(
+                    It.IsAny<CreateApiTokenCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() =>
@@ -253,7 +292,10 @@ public class Tests
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<CreateApiTokenCommand>(), It.IsAny<CancellationToken>())
+                mediator.Send<CreateApiTokenCommand, ApiToken>(
+                    It.IsAny<CreateApiTokenCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ReturnsAsync(
                 new ApiToken
@@ -293,7 +335,10 @@ public class Tests
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<RegenerateApiTokenCommand>(), It.IsAny<CancellationToken>())
+                mediator.Send<RegenerateApiTokenCommand, ApiToken>(
+                    It.IsAny<RegenerateApiTokenCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.RegenerateApiToken(1));
@@ -304,7 +349,10 @@ public class Tests
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<RegenerateApiTokenCommand>(), It.IsAny<CancellationToken>())
+                mediator.Send<RegenerateApiTokenCommand, ApiToken>(
+                    It.IsAny<RegenerateApiTokenCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ReturnsAsync(
                 new ApiToken

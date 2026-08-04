@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +10,13 @@ using ProjectMetadataPlatform.Api.Companies.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Plugins.Models;
 using ProjectMetadataPlatform.Api.Projects.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Plugins;
 using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Plugins;
+using ProjectMetadataPlatform.Domain.Projects;
 
 namespace ProjectMetadataPlatform.Api.Projects;
 
@@ -52,7 +54,10 @@ public class ProjectsController : ControllerBase
     )
     {
         var query = new GetAllProjectsQuery(request, search);
-        var (projects, permissions) = await _mediator.Send(query);
+        var (projects, permissions) = await _mediator.Send<
+            GetAllProjectsQuery,
+            (IEnumerable<Project>, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
         var projectResponse = projects.Select(project => new GetProjectResponse(
             Id: project.Id,
             Slug: project.Slug,
@@ -114,7 +119,10 @@ public class ProjectsController : ControllerBase
     public async Task<ActionResult<GetProjectDetailsResponse>> Get(int id)
     {
         var query = new GetProjectQuery(id);
-        var (project, permissions) = await _mediator.Send(query);
+        var (project, permissions) = await _mediator.Send<
+            GetProjectQuery,
+            (Project, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
 
         var response = new GetProjectDetailsResponse(
             Id: project.Id,
@@ -158,7 +166,10 @@ public class ProjectsController : ControllerBase
     public async Task<ActionResult<IEnumerable<GetPluginResponse>>> GetPlugins(int id)
     {
         var query = new GetAllPluginsForProjectIdQuery(id);
-        var projectPlugins = await _mediator.Send(query);
+        var projectPlugins = await _mediator.Send<
+            GetAllPluginsForProjectIdQuery,
+            List<ProjectPlugins>
+        >(query);
 
         var response = projectPlugins.Select(plugin => new GetPluginResponse(
             plugin.Plugin!.PluginName,
@@ -201,7 +212,10 @@ public class ProjectsController : ControllerBase
     public async Task<ActionResult<IEnumerable<GetPluginResponse>>> GetUnarchivedPlugins(int id)
     {
         var query = new GetAllUnarchivedPluginsForProjectIdQuery(id);
-        var unarchivedProjectPlugins = await _mediator.Send(query);
+        var unarchivedProjectPlugins = await _mediator.Send<
+            GetAllUnarchivedPluginsForProjectIdQuery,
+            List<ProjectPlugins>
+        >(query);
 
         var response = unarchivedProjectPlugins
             .Where(plugin => plugin.Plugin != null)
@@ -286,51 +300,58 @@ public class ProjectsController : ControllerBase
             return BadRequest(new ErrorResponse("ProjectName and ClientName must not be empty."));
         }
 
-        IRequest<int> command =
-            projectId == null
-                ? new CreateProjectCommand(
-                    ProjectName: projectRequest.ProjectName,
-                    ClientName: projectRequest.ClientName,
-                    OfferId: projectRequest.OfferId,
-                    CompanyId: projectRequest.CompanyId,
-                    CompanyState: projectRequest.CompanyState,
-                    TeamId: projectRequest.TeamId,
-                    IsmsLevel: projectRequest.IsmsLevel,
-                    Plugins: (projectRequest.PluginList ?? [])
-                        .Select(p => new ProjectPlugins
-                        {
-                            PluginId = p.Id,
-                            DisplayName = p.DisplayName,
-                            Url = p.Url,
-                        })
-                        .ToList(),
-                    IsEoC: projectRequest.IsEoC,
-                    Notes: projectRequest.Notes
-                )
-                : new UpdateProjectCommand(
-                    Id: projectId.Value,
-                    ProjectName: projectRequest.ProjectName,
-                    ClientName: projectRequest.ClientName,
-                    OfferId: projectRequest.OfferId,
-                    CompanyId: projectRequest.CompanyId,
-                    CompanyState: projectRequest.CompanyState,
-                    TeamId: projectRequest.TeamId,
-                    IsmsLevel: projectRequest.IsmsLevel,
-                    Plugins: (projectRequest.PluginList ?? [])
-                        .Select(p => new ProjectPlugins
-                        {
-                            ProjectId = projectId.Value,
-                            PluginId = p.Id,
-                            DisplayName = p.DisplayName,
-                            Url = p.Url,
-                        })
-                        .ToList(),
-                    IsArchived: projectRequest.IsArchived,
-                    IsEoC: projectRequest.IsEoC,
-                    Notes: projectRequest.Notes
-                );
-
-        var id = await _mediator.Send(command);
+        int id;
+        if (projectId == null)
+        {
+            var command = new CreateProjectCommand(
+                ProjectName: projectRequest.ProjectName,
+                ClientName: projectRequest.ClientName,
+                OfferId: projectRequest.OfferId,
+                CompanyId: projectRequest.CompanyId,
+                CompanyState: projectRequest.CompanyState,
+                TeamId: projectRequest.TeamId,
+                IsmsLevel: projectRequest.IsmsLevel,
+                Plugins:
+                [
+                    .. (projectRequest.PluginList ?? []).Select(p => new ProjectPlugins
+                    {
+                        PluginId = p.Id,
+                        DisplayName = p.DisplayName,
+                        Url = p.Url,
+                    }),
+                ],
+                IsEoC: projectRequest.IsEoC,
+                Notes: projectRequest.Notes
+            );
+            id = await _mediator.Send<CreateProjectCommand, int>(command);
+        }
+        else
+        {
+            var command = new UpdateProjectCommand(
+                Id: projectId.Value,
+                ProjectName: projectRequest.ProjectName,
+                ClientName: projectRequest.ClientName,
+                OfferId: projectRequest.OfferId,
+                CompanyId: projectRequest.CompanyId,
+                CompanyState: projectRequest.CompanyState,
+                TeamId: projectRequest.TeamId,
+                IsmsLevel: projectRequest.IsmsLevel,
+                Plugins:
+                [
+                    .. (projectRequest.PluginList ?? []).Select(p => new ProjectPlugins
+                    {
+                        ProjectId = projectId.Value,
+                        PluginId = p.Id,
+                        DisplayName = p.DisplayName,
+                        Url = p.Url,
+                    }),
+                ],
+                IsArchived: projectRequest.IsArchived,
+                IsEoC: projectRequest.IsEoC,
+                Notes: projectRequest.Notes
+            );
+            id = await _mediator.Send<UpdateProjectCommand, int>(command);
+        }
 
         var response = new PutProjectResponse(id);
         return Created("/Projects/" + id, response);
@@ -371,7 +392,7 @@ public class ProjectsController : ControllerBase
     public async Task<ActionResult> Delete(int id)
     {
         var command = new DeleteProjectCommand(id);
-        _ = await _mediator.Send(command);
+        _ = await _mediator.Send<DeleteProjectCommand, Project?>(command);
         return NoContent();
     }
 
@@ -383,6 +404,6 @@ public class ProjectsController : ControllerBase
     private async Task<int> GetProjectId(string slug)
     {
         var query = new GetProjectIdBySlugQuery(slug);
-        return await _mediator.Send(query);
+        return await _mediator.Send<GetProjectIdBySlugQuery, int>(query);
     }
 }

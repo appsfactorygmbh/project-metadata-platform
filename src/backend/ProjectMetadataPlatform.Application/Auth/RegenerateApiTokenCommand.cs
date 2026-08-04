@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
 
 namespace ProjectMetadataPlatform.Application.Auth;
