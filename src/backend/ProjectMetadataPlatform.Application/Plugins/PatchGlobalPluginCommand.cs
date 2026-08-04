@@ -1,4 +1,4 @@
-using MediatR;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Plugins;
 
 namespace ProjectMetadataPlatform.Application.Plugins;

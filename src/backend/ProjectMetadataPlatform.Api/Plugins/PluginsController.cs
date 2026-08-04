@@ -1,14 +1,17 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Plugins.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Plugins;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Plugins;
 
 namespace ProjectMetadataPlatform.Api.Plugins;
 
@@ -60,7 +63,7 @@ public class PluginsController : ControllerBase
             request.BaseUrl
         );
 
-        var pluginId = await _mediator.Send(command);
+        var pluginId = await _mediator.Send<CreatePluginCommand, int>(command);
 
         var response = new CreatePluginResponse(pluginId);
         var uri = "/Plugins/" + pluginId;
@@ -93,7 +96,7 @@ public class PluginsController : ControllerBase
             request.BaseUrl
         );
 
-        var plugin = await _mediator.Send(command);
+        var plugin = await _mediator.Send<PatchGlobalPluginCommand, Plugin>(command);
 
         var response = new GetGlobalPluginResponse(
             plugin.PluginName,
@@ -119,7 +122,16 @@ public class PluginsController : ControllerBase
     public async Task<ActionResult<GetListResponse<GetGlobalPluginResponse>>> GetGlobal()
     {
         var query = new GetGlobalPluginsQuery();
-        var (plugins, globalPermissions) = await _mediator.Send(query);
+        var (plugins, globalPermissions) = await _mediator.Send<
+            GetGlobalPluginsQuery,
+            (
+                IEnumerable<(
+                    Plugin plugin,
+                    IEnumerable<AuthorizationConstants.Actions> permissions
+                )>,
+                IEnumerable<AuthorizationConstants.Actions>
+            )
+        >(query);
 
         string[] keys = [];
         var pluginResponse = plugins.Select(item => new GetGlobalPluginResponse(
@@ -161,7 +173,7 @@ public class PluginsController : ControllerBase
         }
         var command = new DeleteGlobalPluginCommand(pluginId);
 
-        _ = await _mediator.Send(command);
+        _ = await _mediator.Send<DeleteGlobalPluginCommand, bool>(command);
 
         return Ok(new DeleteGlobalPluginResponse(pluginId));
     }

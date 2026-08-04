@@ -4,12 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Projects;
 using ProjectMetadataPlatform.Api.Projects.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Projects;
@@ -34,7 +34,12 @@ public class PutProjectControllerTest
     {
         //prepare
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<CreateProjectCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<CreateProjectCommand, int>(
+                    It.IsAny<CreateProjectCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ReturnsAsync(1);
 
         var request = new PutProjectRequest(
@@ -65,7 +70,7 @@ public class PutProjectControllerTest
             Assert.That(createdResult.Location, Is.EqualTo("/Projects/1"));
         });
         _mediator.Verify(mediator =>
-            mediator.Send(
+            mediator.Send<CreateProjectCommand, int>(
                 It.Is<CreateProjectCommand>(command =>
                     command.Plugins.Count == 1
                     && command.ProjectName == "Example Project"
@@ -90,7 +95,12 @@ public class PutProjectControllerTest
     {
         //prepare
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<CreateProjectCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<CreateProjectCommand, int>(
+                    It.IsAny<CreateProjectCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ReturnsAsync(1);
         var request = new PutProjectRequest(
             ProjectName: "Example Project",
@@ -106,7 +116,7 @@ public class PutProjectControllerTest
 
         _ = await _controller.Put(request);
         _mediator.Verify(mediator =>
-            mediator.Send(
+            mediator.Send<CreateProjectCommand, int>(
                 It.Is<CreateProjectCommand>(command =>
                     command.Plugins.Count == 0
                     && command.ProjectName == "Example Project"
@@ -128,7 +138,12 @@ public class PutProjectControllerTest
     {
         //prepare
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<UpdateProjectCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<UpdateProjectCommand, int>(
+                    It.IsAny<UpdateProjectCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ReturnsAsync(1);
         var request = new PutProjectRequest(
             ProjectName: "Example Project",
@@ -143,7 +158,7 @@ public class PutProjectControllerTest
         );
         _ = await _controller.Put(request, 1);
         _mediator.Verify(mediator =>
-            mediator.Send(
+            mediator.Send<UpdateProjectCommand, int>(
                 It.Is<UpdateProjectCommand>(command =>
                     command.Plugins.Count == 0
                     && command.ProjectName == "Example Project"
@@ -184,7 +199,10 @@ public class PutProjectControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<CreateProjectCommand>(), It.IsAny<CancellationToken>())
+                mediator.Send<CreateProjectCommand, int>(
+                    It.IsAny<CreateProjectCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ThrowsAsync(new ProjectSlugAlreadyExistsException("example_project"));
 
@@ -208,7 +226,10 @@ public class PutProjectControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<CreateProjectCommand>(), It.IsAny<CancellationToken>())
+                mediator.Send<CreateProjectCommand, int>(
+                    It.IsAny<CreateProjectCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ThrowsAsync(new InvalidOperationException("An error message"));
         var request = new PutProjectRequest(
@@ -231,7 +252,10 @@ public class PutProjectControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<CreateProjectCommand>(), It.IsAny<CancellationToken>())
+                mediator.Send<CreateProjectCommand, int>(
+                    It.IsAny<CreateProjectCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
 
@@ -254,7 +278,12 @@ public class PutProjectControllerTest
     public async Task ChangeProjectDataControllerTest()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<UpdateProjectCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<UpdateProjectCommand, int>(
+                    It.IsAny<UpdateProjectCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ReturnsAsync(1);
         var request = new PutProjectRequest(
             ProjectName: "Example Project",
@@ -286,7 +315,7 @@ public class PutProjectControllerTest
             Assert.That(createdResult.Location, Is.EqualTo("/Projects/1"));
         });
         _mediator.Verify(mediator =>
-            mediator.Send(
+            mediator.Send<UpdateProjectCommand, int>(
                 It.Is<UpdateProjectCommand>(command =>
                     command.Plugins.Count == 1
                     && command.ProjectName == "Example Project"
@@ -310,7 +339,12 @@ public class PutProjectControllerTest
     public async Task UpdateProject_IsArchivedFlag_Test()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<UpdateProjectCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<UpdateProjectCommand, int>(
+                    It.IsAny<UpdateProjectCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ReturnsAsync(1);
         var request = new PutProjectRequest(
             ProjectName: "Example Project",
@@ -342,7 +376,7 @@ public class PutProjectControllerTest
         });
 
         _mediator.Verify(mediator =>
-            mediator.Send(
+            mediator.Send<UpdateProjectCommand, int>(
                 It.Is<UpdateProjectCommand>(command =>
                     command.Plugins.Count == 1
                     && command.ProjectName == "Example Project"
@@ -368,11 +402,21 @@ public class PutProjectControllerTest
     public async Task UpdateProjectWithSlug_Test()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetProjectIdBySlugQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<GetProjectIdBySlugQuery, int>(
+                    It.IsAny<GetProjectIdBySlugQuery>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ReturnsAsync(4);
 
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<UpdateProjectCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<UpdateProjectCommand, int>(
+                    It.IsAny<UpdateProjectCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ReturnsAsync(1);
         var updateRequest = new PutProjectRequest(
             ProjectName: "UpdatedProject",
@@ -402,7 +446,7 @@ public class PutProjectControllerTest
         });
 
         _mediator.Verify(mediator =>
-            mediator.Send(
+            mediator.Send<UpdateProjectCommand, int>(
                 It.Is<UpdateProjectCommand>(command =>
                     command.Plugins.Count == 1
                     && command.ProjectName == "UpdatedProject"
@@ -426,7 +470,12 @@ public class PutProjectControllerTest
     public void UpdateProjectWithSlug_NotFound_Test()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetProjectIdBySlugQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<GetProjectIdBySlugQuery, int>(
+                    It.IsAny<GetProjectIdBySlugQuery>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ThrowsAsync(new ProjectNotFoundException("updatedproject"));
         var updateRequest = new PutProjectRequest(
             ProjectName: "UpdatedProject",
@@ -452,11 +501,21 @@ public class PutProjectControllerTest
     public async Task UpdateProjectWithSlug_IsArchivedFlag_Test()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetProjectIdBySlugQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<GetProjectIdBySlugQuery, int>(
+                    It.IsAny<GetProjectIdBySlugQuery>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ReturnsAsync(4);
 
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<UpdateProjectCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<UpdateProjectCommand, int>(
+                    It.IsAny<UpdateProjectCommand>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
             .ReturnsAsync(1);
         var updateRequest = new PutProjectRequest(
             ProjectName: "UpdatedProject",
@@ -487,7 +546,7 @@ public class PutProjectControllerTest
         });
 
         _mediator.Verify(mediator =>
-            mediator.Send(
+            mediator.Send<UpdateProjectCommand, int>(
                 It.Is<UpdateProjectCommand>(command =>
                     command.Plugins.Count == 1
                     && command.ProjectName == "UpdatedProject"

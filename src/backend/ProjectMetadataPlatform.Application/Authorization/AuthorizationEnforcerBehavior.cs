@@ -1,6 +1,6 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 
@@ -30,17 +30,17 @@ public class AuthorizationEnforcerBehavior<TRequest, TResponse>
     /// Checks if Authorization was checked in the Request and resets it.
     /// </summary>
     /// <param name="request">Request to be handled.</param>
-    /// <param name="next">Next Pipeline Step.</param>
+    /// <param name="nextStep">Next Pipeline Step.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>Response for the Request.</returns>
     /// <exception cref="UnauthorizedException">Thrown if no Authorization check happened.</exception>
     public async Task<TResponse> Handle(
         TRequest request,
-        RequestHandlerDelegate<TResponse> next,
+        Func<Task<TResponse>> nextStep,
         CancellationToken cancellationToken
     )
     {
-        var response = await next(cancellationToken);
+        var response = await nextStep();
         if (_tracker.WasChecked)
         {
             _tracker.RevertCheck();

@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +8,9 @@ using ProjectMetadataPlatform.Api.Auth.Models;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Auth;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
 
 namespace ProjectMetadataPlatform.Api.Auth;
 
@@ -44,7 +46,7 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<LoginResponse>> Post([FromBody] LoginRequest request)
     {
         var query = new LoginQuery(request.Email, request.Password);
-        var tokens = await _mediator.Send(query);
+        var tokens = await _mediator.Send<LoginQuery, JwtTokens>(query);
         return new LoginResponse(tokens.AccessToken!, tokens.RefreshToken!);
     }
 
@@ -69,7 +71,7 @@ public class AuthController : ControllerBase
         }
 
         var query = new RefreshTokenQuery(refreshToken.Replace("Refresh ", ""));
-        var tokens = await _mediator.Send(query);
+        var tokens = await _mediator.Send<RefreshTokenQuery, JwtTokens>(query);
         return new LoginResponse(tokens.AccessToken!, tokens.RefreshToken!);
     }
 
@@ -87,7 +89,10 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<GetListResponse<GetApiTokenDetailsResponse>>> GetApiTokens()
     {
         var query = new GetAllApiTokensQuery();
-        var (tokens, permissions) = await _mediator.Send(query);
+        var (tokens, permissions) = await _mediator.Send<
+            GetAllApiTokensQuery,
+            (IEnumerable<ApiToken>, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
         var tokenResponse = tokens.Select(t => new GetApiTokenDetailsResponse(
             t.Id,
             t.Name,
@@ -115,7 +120,10 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<GetApiTokenDetailsResponse>> GetApiToken(int tokenId)
     {
         var command = new GetApiTokenDetailsQuery(tokenId);
-        var (token, permissions) = await _mediator.Send(command);
+        var (token, permissions) = await _mediator.Send<
+            GetApiTokenDetailsQuery,
+            (ApiToken, IEnumerable<AuthorizationConstants.Actions>)
+        >(command);
         var response = new GetApiTokenDetailsResponse(
             token.Id,
             token.Name,
@@ -146,7 +154,7 @@ public class AuthController : ControllerBase
             return BadRequest(new ErrorResponse("Api Token Name can't be whitespaces"));
         }
         var command = new CreateApiTokenCommand(request.Name!, request.Scopes);
-        var token = await _mediator.Send(command);
+        var token = await _mediator.Send<CreateApiTokenCommand, ApiToken>(command);
         var response = new GetApiTokenDetailsResponse(
             token.Id,
             token.Name,
@@ -172,7 +180,7 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<GetApiTokenDetailsResponse>> RegenerateApiToken(int tokenId)
     {
         var command = new RegenerateApiTokenCommand(tokenId);
-        var token = await _mediator.Send(command);
+        var token = await _mediator.Send<RegenerateApiTokenCommand, ApiToken>(command);
         var response = new GetApiTokenDetailsResponse(
             token.Id,
             token.Name,

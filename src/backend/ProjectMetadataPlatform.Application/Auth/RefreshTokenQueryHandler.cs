@@ -1,7 +1,6 @@
 ﻿using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;

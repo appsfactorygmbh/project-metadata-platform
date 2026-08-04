@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Companies;
 
 namespace ProjectMetadataPlatform.Application.Companies;

@@ -1,15 +1,17 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Users.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 using ProjectMetadataPlatform.Domain.Users;
@@ -82,7 +84,7 @@ public class UsersController : ControllerBase
             OfficeLocation: request.Addresses?.FirstOrDefault()?.Locality,
             Company: request.EnterpriseUser?.Organization
         );
-        var user = await _mediator.Send(command);
+        var user = await _mediator.Send<CreateUserCommand, ApplicationUser>(command);
 
         var response = new PmpScimUser
         {
@@ -132,7 +134,10 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<GetUsersResponse>> Get([FromQuery] string filter = "")
     {
         var query = new GetAllUsersQuery(filter);
-        var (users, permissions) = await _mediator.Send(query);
+        var (users, permissions) = await _mediator.Send<
+            GetAllUsersQuery,
+            (IEnumerable<ApplicationUser>, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
 
         var response = new GetUsersResponse
         {
@@ -192,7 +197,10 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<PmpScimUser>> GetUserById(string userId)
     {
         var query = new GetUserQuery(userId);
-        var (user, permissions) = await _mediator.Send(query);
+        var (user, permissions) = await _mediator.Send<
+            GetUserQuery,
+            (ApplicationUser, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
 
         var response = new PmpScimUser
         {
@@ -280,7 +288,7 @@ public class UsersController : ControllerBase
                 Value = JsonDocument.Parse($"{isScimProvisioned}".ToLower()).RootElement,
             }
         );
-        var user = await _mediator.Send(command);
+        var user = await _mediator.Send<PatchUserCommand, ApplicationUser>(command);
 
         var response = new PmpScimUser
         {
@@ -337,7 +345,10 @@ public class UsersController : ControllerBase
 
         var query = new GetUserByEmailQuery(email);
 
-        var (user, permissions) = await _mediator.Send(query);
+        var (user, permissions) = await _mediator.Send<
+            GetUserByEmailQuery,
+            (ApplicationUser, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
 
         var response = new PmpScimUser
         {
@@ -392,7 +403,7 @@ public class UsersController : ControllerBase
     {
         var command = new DeleteUserCommand(userId);
 
-        _ = await _mediator.Send(command);
+        _ = await _mediator.Send<DeleteUserCommand, ApplicationUser>(command);
 
         return NoContent();
     }

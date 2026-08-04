@@ -1,13 +1,15 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Users;
 using ProjectMetadataPlatform.Api.Users.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Users;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 using ProjectMetadataPlatform.Domain.Users;
 
@@ -37,7 +39,12 @@ public class GetUserControllerTest
             IsScimProvisioned = false,
         };
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetUserQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<
+                    GetUserQuery,
+                    (ApplicationUser, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetUserQuery>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync((user, []));
 
         var result = await _controller.GetUserById("1");
@@ -62,7 +69,10 @@ public class GetUserControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<GetUserQuery>(), It.IsAny<CancellationToken>())
+                mediator.Send<
+                    GetUserQuery,
+                    (ApplicationUser, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetUserQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new UserNotFoundException("1"));
         _ = Assert.ThrowsAsync<UserNotFoundException>(() => _controller.GetUserById("1"));
@@ -73,7 +83,10 @@ public class GetUserControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<GetUserQuery>(), It.IsAny<CancellationToken>())
+                mediator.Send<
+                    GetUserQuery,
+                    (ApplicationUser, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetUserQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetUserById("1"));

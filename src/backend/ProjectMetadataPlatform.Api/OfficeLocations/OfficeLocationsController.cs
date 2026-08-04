@@ -1,15 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.OfficeLocations.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Api.OfficeLocations;
 
@@ -46,7 +48,10 @@ public class OfficeLocationsController : ControllerBase
     public async Task<ActionResult<GetListResponse<GetOfficeLocationResponse>>> Get()
     {
         var query = new GetAllOfficeLocationsQuery();
-        var (locations, permissions) = await _mediator.Send(query);
+        var (locations, permissions) = await _mediator.Send<
+            GetAllOfficeLocationsQuery,
+            (IEnumerable<OfficeLocation>, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
         var locationResponse = locations.Select(location => new GetOfficeLocationResponse(
             Id: location.Id,
             OfficeLocationName: location.OfficeLocationName
@@ -72,7 +77,10 @@ public class OfficeLocationsController : ControllerBase
     public async Task<ActionResult<IEnumerable<GetOfficeLocationResponse>>> Get(int id)
     {
         var query = new GetOfficeLocationQuery(id);
-        var (location, permissions) = await _mediator.Send(query);
+        var (location, permissions) = await _mediator.Send<
+            GetOfficeLocationQuery,
+            (OfficeLocation, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
         var response = new GetOfficeLocationResponse(
             Id: location.Id,
             OfficeLocationName: location.OfficeLocationName,
@@ -109,7 +117,7 @@ public class OfficeLocationsController : ControllerBase
             OfficeLocationName: request.OfficeLocationName
         );
 
-        var locationId = await _mediator.Send(command);
+        var locationId = await _mediator.Send<CreateOfficeLocationCommand, int>(command);
 
         var response = new CreateOfficeLocationResponse(locationId);
         var uri = "OfficeLocations/" + locationId;
@@ -148,7 +156,7 @@ public class OfficeLocationsController : ControllerBase
             Id: id,
             OfficeLocationName: request.OfficeLocationName
         );
-        var location = await _mediator.Send(command);
+        var location = await _mediator.Send<UpdateOfficeLocationCommand, OfficeLocation>(command);
 
         var response = new GetOfficeLocationResponse(
             Id: location.Id,

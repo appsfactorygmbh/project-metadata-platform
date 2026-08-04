@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Api.Logs;
 using ProjectMetadataPlatform.Api.Logs.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Logs;
 using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Domain.Auth;
@@ -65,7 +65,12 @@ public class LogsControllerTest
             ],
         };
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
+            .Setup(m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.IsAny<GetLogsQuery>(),
+                    CancellationToken.None
+                )
+            )
             .ReturnsAsync([log]);
         _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
@@ -85,7 +90,14 @@ public class LogsControllerTest
             Assert.That(logResponses[0].Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
         });
 
-        _mediator.Verify(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None), Times.Once);
+        _mediator.Verify(
+            m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.IsAny<GetLogsQuery>(),
+                    CancellationToken.None
+                ),
+            Times.Once
+        );
         _logConverter.Verify(lc => lc.BuildLogMessage(log), Times.Once);
     }
 
@@ -114,7 +126,12 @@ public class LogsControllerTest
             ],
         };
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
+            .Setup(m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.IsAny<GetLogsQuery>(),
+                    CancellationToken.None
+                )
+            )
             .ReturnsAsync([log]);
         _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
@@ -135,7 +152,11 @@ public class LogsControllerTest
         });
 
         _mediator.Verify(
-            m => m.Send(It.Is<GetLogsQuery>(q => q.ProjectId == 42), CancellationToken.None),
+            m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.Is<GetLogsQuery>(q => q.ProjectId == 42),
+                    CancellationToken.None
+                ),
             Times.Once
         );
         _logConverter.Verify(lc => lc.BuildLogMessage(log), Times.Once);
@@ -172,7 +193,12 @@ public class LogsControllerTest
             ],
         };
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
+            .Setup(m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.IsAny<GetLogsQuery>(),
+                    CancellationToken.None
+                )
+            )
             .ReturnsAsync([log]);
         _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
@@ -193,7 +219,11 @@ public class LogsControllerTest
         });
 
         _mediator.Verify(
-            m => m.Send(It.Is<GetLogsQuery>(q => q.Search == "updated"), CancellationToken.None),
+            m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.Is<GetLogsQuery>(q => q.Search == "updated"),
+                    CancellationToken.None
+                ),
             Times.Once
         );
         _logConverter.Verify(lc => lc.BuildLogMessage(log), Times.Once);
@@ -230,7 +260,12 @@ public class LogsControllerTest
             ],
         };
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
+            .Setup(m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.IsAny<GetLogsQuery>(),
+                    CancellationToken.None
+                )
+            )
             .ReturnsAsync([log]);
         _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
@@ -251,7 +286,11 @@ public class LogsControllerTest
         });
 
         _mediator.Verify(
-            m => m.Send(It.Is<GetLogsQuery>(q => q.UserId == "Newton"), CancellationToken.None),
+            m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.Is<GetLogsQuery>(q => q.UserId == "Newton"),
+                    CancellationToken.None
+                ),
             Times.Once
         );
         _logConverter.Verify(lc => lc.BuildLogMessage(log), Times.Once);
@@ -289,7 +328,12 @@ public class LogsControllerTest
             ],
         };
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
+            .Setup(m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.IsAny<GetLogsQuery>(),
+                    CancellationToken.None
+                )
+            )
             .ReturnsAsync([log]);
         _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
@@ -310,7 +354,11 @@ public class LogsControllerTest
         });
 
         _mediator.Verify(
-            m => m.Send(It.Is<GetLogsQuery>(q => q.GlobalPluginId == 42), CancellationToken.None),
+            m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.Is<GetLogsQuery>(q => q.GlobalPluginId == 42),
+                    CancellationToken.None
+                ),
             Times.Once
         );
         _logConverter.Verify(lc => lc.BuildLogMessage(log), Times.Once);
@@ -347,10 +395,20 @@ public class LogsControllerTest
             ],
         };
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
+            .Setup(m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.IsAny<GetLogsQuery>(),
+                    CancellationToken.None
+                )
+            )
             .ReturnsAsync([log]);
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetProjectIdBySlugQuery>(), CancellationToken.None))
+            .Setup(m =>
+                m.Send<GetProjectIdBySlugQuery, int>(
+                    It.IsAny<GetProjectIdBySlugQuery>(),
+                    CancellationToken.None
+                )
+            )
             .ReturnsAsync(42);
         _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
@@ -371,12 +429,16 @@ public class LogsControllerTest
         });
 
         _mediator.Verify(
-            m => m.Send(It.Is<GetLogsQuery>(q => q.ProjectId == 42), CancellationToken.None),
+            m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.Is<GetLogsQuery>(q => q.ProjectId == 42),
+                    CancellationToken.None
+                ),
             Times.Once
         );
         _mediator.Verify(
             m =>
-                m.Send(
+                m.Send<GetProjectIdBySlugQuery, int>(
                     It.Is<GetProjectIdBySlugQuery>(q => q.Slug == "deepthought"),
                     CancellationToken.None
                 ),
@@ -416,7 +478,12 @@ public class LogsControllerTest
             ],
         };
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
+            .Setup(m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.IsAny<GetLogsQuery>(),
+                    CancellationToken.None
+                )
+            )
             .ReturnsAsync([log]);
         _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
@@ -437,12 +504,16 @@ public class LogsControllerTest
         });
 
         _mediator.Verify(
-            m => m.Send(It.Is<GetLogsQuery>(q => q.ProjectId == 42), CancellationToken.None),
+            m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.Is<GetLogsQuery>(q => q.ProjectId == 42),
+                    CancellationToken.None
+                ),
             Times.Once
         );
         _mediator.Verify(
             m =>
-                m.Send(
+                m.Send<GetProjectIdBySlugQuery, int>(
                     It.Is<GetProjectIdBySlugQuery>(q => q.Slug == "deepthought"),
                     CancellationToken.None
                 ),
@@ -455,7 +526,12 @@ public class LogsControllerTest
     public void GetLogsByProjectSlugNoId_NotFoundThrowsException()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetProjectIdBySlugQuery>(), CancellationToken.None))
+            .Setup(m =>
+                m.Send<GetProjectIdBySlugQuery, int>(
+                    It.IsAny<GetProjectIdBySlugQuery>(),
+                    CancellationToken.None
+                )
+            )
             .ThrowsAsync(new ProjectNotFoundException("answerToLifeTheUniverseAndEverything"));
 
         _ = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
@@ -467,7 +543,12 @@ public class LogsControllerTest
     public void GetLogs_ThrowsException_Test()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetLogsQuery>(), CancellationToken.None))
+            .Setup(m =>
+                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                    It.IsAny<GetLogsQuery>(),
+                    CancellationToken.None
+                )
+            )
             .ThrowsAsync(new FormatException("Something went wrong"));
 
         var exception = Assert.ThrowsAsync<FormatException>(() =>

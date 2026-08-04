@@ -3,14 +3,15 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.OfficeLocations;
 using ProjectMetadataPlatform.Api.OfficeLocations.Models;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.OfficeLocations;
+using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Api.Tests.OfficeLocations;
@@ -32,7 +33,10 @@ public class OfficeLocationsControllerTest
     {
         _ = _mediator
             .Setup(m =>
-                m.Send(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
+                m.Send<
+                    GetAllOfficeLocationsQuery,
+                    (IEnumerable<OfficeLocation>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
             )
             .ReturnsAsync(([], []));
         var result = await _controller.Get();
@@ -55,7 +59,10 @@ public class OfficeLocationsControllerTest
     {
         _ = _mediator
             .Setup(m =>
-                m.Send(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
+                m.Send<
+                    GetAllOfficeLocationsQuery,
+                    (IEnumerable<OfficeLocation>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
             )
             .ReturnsAsync(
                 (
@@ -96,7 +103,10 @@ public class OfficeLocationsControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
+                mediator.Send<
+                    GetAllOfficeLocationsQuery,
+                    (IEnumerable<OfficeLocation>, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
@@ -107,7 +117,10 @@ public class OfficeLocationsControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(It.IsAny<GetOfficeLocationQuery>(), It.IsAny<CancellationToken>())
+                mediator.Send<
+                    GetOfficeLocationQuery,
+                    (OfficeLocation, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetOfficeLocationQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
@@ -117,7 +130,12 @@ public class OfficeLocationsControllerTest
     public async Task GetOfficeLocation_ResponseTest()
     {
         _ = _mediator
-            .Setup(m => m.Send(It.IsAny<GetOfficeLocationQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m =>
+                m.Send<
+                    GetOfficeLocationQuery,
+                    (OfficeLocation, IEnumerable<AuthorizationConstants.Actions>)
+                >(It.IsAny<GetOfficeLocationQuery>(), It.IsAny<CancellationToken>())
+            )
             .ReturnsAsync(
                 (new OfficeLocation { OfficeLocationName = "OfficeLocation", Id = 1 }, [])
             );
@@ -139,7 +157,7 @@ public class OfficeLocationsControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(
+                mediator.Send<CreateOfficeLocationCommand, int>(
                     It.IsAny<CreateOfficeLocationCommand>(),
                     It.IsAny<CancellationToken>()
                 )
@@ -162,7 +180,7 @@ public class OfficeLocationsControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(
+                mediator.Send<CreateOfficeLocationCommand, int>(
                     It.IsAny<CreateOfficeLocationCommand>(),
                     It.IsAny<CancellationToken>()
                 )
@@ -192,7 +210,7 @@ public class OfficeLocationsControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(
+                mediator.Send<UpdateOfficeLocationCommand, OfficeLocation>(
                     It.IsAny<UpdateOfficeLocationCommand>(),
                     It.IsAny<CancellationToken>()
                 )
@@ -215,7 +233,7 @@ public class OfficeLocationsControllerTest
     {
         _ = _mediator
             .Setup(mediator =>
-                mediator.Send(
+                mediator.Send<UpdateOfficeLocationCommand, OfficeLocation>(
                     It.IsAny<UpdateOfficeLocationCommand>(),
                     It.IsAny<CancellationToken>()
                 )
