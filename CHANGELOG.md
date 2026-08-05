@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/appsfactorygmbh/project-metadata-platform/compare/v2.0.0...v2.1.0) (2026-08-05)
+
+
+### Features
+
+* **backend:** replace mediatR with own implementation of Mediator pattern ([b3aff3e](https://github.com/appsfactorygmbh/project-metadata-platform/commit/b3aff3e4e3f52b6d05d91213d5144f8cc8a919b2))
+
 ## [2.0.0](https://github.com/appsfactorygmbh/project-metadata-platform/compare/v1.0.0...v2.0.0) (2026-07-31)
 
 
