@@ -488,7 +488,7 @@ public class PutProjectControllerTest
             IsEoC: false,
             PluginList: new List<UpdateProjectPluginRequest>
             {
-                new UpdateProjectPluginRequest("UpdatedUrl", "UpdatedPluginName", 4),
+                new("UpdatedUrl", "UpdatedPluginName", 4),
             },
             Notes: "Updated Notes"
         );

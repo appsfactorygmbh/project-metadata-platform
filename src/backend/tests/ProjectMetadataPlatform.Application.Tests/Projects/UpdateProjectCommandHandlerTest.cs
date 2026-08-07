@@ -108,7 +108,7 @@ public class UpdateProjectCommandHandlerTest
             .ReturnsAsync(
                 new List<Plugin>
                 {
-                    new Plugin { Id = 100, PluginName = "Example Plugin" },
+                    new() { Id = 100, PluginName = "Example Plugin" },
                 }.BuildMock()
             );
 
@@ -486,9 +486,9 @@ public class UpdateProjectCommandHandlerTest
             .ReturnsAsync(
                 new List<Plugin>
                 {
-                    new Plugin { Id = 1, PluginName = "Plugin1" },
-                    new Plugin { Id = 2, PluginName = "Plugin2" },
-                    new Plugin { Id = 3, PluginName = "Plugin3" },
+                    new() { Id = 1, PluginName = "Plugin1" },
+                    new() { Id = 2, PluginName = "Plugin2" },
+                    new() { Id = 3, PluginName = "Plugin3" },
                 }.BuildMock()
             );
         _ = _mockCompanyRepository
@@ -1158,7 +1158,7 @@ public class UpdateProjectCommandHandlerTest
             .ReturnsAsync(
                 new List<Plugin>
                 {
-                    new Plugin { Id = 1, PluginName = "ExamplePlugin" },
+                    new() { Id = 1, PluginName = "ExamplePlugin" },
                 }.BuildMock()
             );
         _ = _authorizationServiceMock
@@ -1257,7 +1257,7 @@ public class UpdateProjectCommandHandlerTest
             .ReturnsAsync(
                 new List<Plugin>
                 {
-                    new Plugin { Id = 1, PluginName = "ExamplePlugin" },
+                    new() { Id = 1, PluginName = "ExamplePlugin" },
                 }.BuildMock()
             );
 
@@ -1356,7 +1356,7 @@ public class UpdateProjectCommandHandlerTest
             .ReturnsAsync(
                 new List<Plugin>
                 {
-                    new Plugin { Id = 1, PluginName = "Example Plugin" },
+                    new() { Id = 1, PluginName = "Example Plugin" },
                 }.BuildMock()
             );
 
@@ -1444,7 +1444,7 @@ public class UpdateProjectCommandHandlerTest
             .ReturnsAsync(
                 new List<Plugin>
                 {
-                    new Plugin { Id = 1, PluginName = "Example Plugin" },
+                    new() { Id = 1, PluginName = "Example Plugin" },
                 }.BuildMock()
             );
 

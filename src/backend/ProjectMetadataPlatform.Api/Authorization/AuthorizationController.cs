@@ -38,8 +38,8 @@ public class AuthorizationController : ControllerBase
     /// <returns>List of Permissions</returns>
     /// <response code="200">The permissions are returned successfully.</response>
     [HttpGet("{resourceKind}")]
-    [ProducesResponseType(typeof(IEnumerable<ActionPermissionFilter>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<ActionPermissionFilter>>> GetPermissions(
+    [ProducesResponseType(typeof(IEnumerable<GetPermissionResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<GetPermissionResponse>>> GetPermissions(
         string resourceKind
     )
     {
@@ -48,7 +48,7 @@ public class AuthorizationController : ControllerBase
             GetPermissionsQuery,
             Dictionary<AuthorizationConstants.Actions, string>
         >(query);
-        var response = result.Select(permission => new ActionPermissionFilter(
+        var response = result.Select(permission => new GetPermissionResponse(
             permission.Key,
             permission.Value
         ));

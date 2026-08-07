@@ -7,4 +7,4 @@ namespace ProjectMetadataPlatform.Api.Authorization.Models;
 /// </summary>
 /// <param name="Action">Action on the Resource.</param>
 /// <param name="Filter">Human readable filter representing conditions for accessing the resource.</param>
-public record ActionPermissionFilter(AuthorizationConstants.Actions Action, string Filter);
+public record GetPermissionResponse(AuthorizationConstants.Actions Action, string Filter);
