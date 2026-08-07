@@ -20,6 +20,7 @@ using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 
 namespace ProjectMetadataPlatform.Api.Tests.Auth;
 
+[TestFixture]
 public class Tests
 {
     private AuthController _controller;

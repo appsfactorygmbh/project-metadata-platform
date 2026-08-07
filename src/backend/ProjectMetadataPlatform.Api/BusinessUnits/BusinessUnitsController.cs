@@ -74,7 +74,7 @@ public class BusinessUnitsController : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(GetBusinessUnitResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<GetBusinessUnitResponse>>> Get(int id)
+    public async Task<ActionResult<GetBusinessUnitResponse>> Get(int id)
     {
         var query = new GetBusinessUnitQuery(id);
         var (businessUnit, permissions) = await _mediator.Send<

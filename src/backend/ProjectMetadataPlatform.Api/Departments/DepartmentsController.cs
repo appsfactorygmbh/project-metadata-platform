@@ -71,7 +71,7 @@ public class DepartmentsController : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(GetDepartmentResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<GetDepartmentResponse>>> Get(int id)
+    public async Task<ActionResult<GetDepartmentResponse>> Get(int id)
     {
         var query = new GetDepartmentQuery(id);
         var (department, permissions) = await _mediator.Send<

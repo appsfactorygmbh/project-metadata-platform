@@ -74,7 +74,7 @@ public class OfficeLocationsController : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(GetOfficeLocationResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<GetOfficeLocationResponse>>> Get(int id)
+    public async Task<ActionResult<GetOfficeLocationResponse>> Get(int id)
     {
         var query = new GetOfficeLocationQuery(id);
         var (location, permissions) = await _mediator.Send<

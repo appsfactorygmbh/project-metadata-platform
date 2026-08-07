@@ -1,6 +1,7 @@
 /* tslint:disable */
 
 export * from './AuthApi';
+export * from './AuthorizationApi';
 export * from './BusinessUnitsApi';
 export * from './CompaniesApi';
 export * from './DepartmentsApi';

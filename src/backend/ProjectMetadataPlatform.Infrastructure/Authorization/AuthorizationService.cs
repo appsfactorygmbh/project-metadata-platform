@@ -121,7 +121,7 @@ public class AuthorizationService : IAuthorizationService
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<AuthorizationConstants.Actions>> GetPermissions<T>(
+    public async Task<IEnumerable<AuthorizationConstants.Actions>> GetAllowedActions<T>(
         T? resource = null,
         IEnumerable<AuthorizationConstants.Actions>? actions = null
     )
@@ -146,6 +146,35 @@ public class AuthorizationService : IAuthorizationService
             }
         }
         return approvedActions;
+    }
+
+    /// <inheritdoc/>
+    public async Task<Dictionary<AuthorizationConstants.Actions, string>> GetPermissions(
+        string resourceKind
+    )
+    {
+        Dictionary<AuthorizationConstants.Actions, string> permissionsDict = [];
+        var principal = await GetPrincipalFromContext();
+        var resourceObject = Resource
+            .NewInstance(resourceKind, "default")
+            .WithPolicyVersion(AuthorizationConstants.POLICY_VERSION);
+        foreach (var action in Enum.GetValues<AuthorizationConstants.Actions>())
+        {
+            var authorizationResult = await PlanRequest(
+                principal,
+                resourceObject,
+                [action.ToString()]
+            );
+            var filter = authorizationResult.IsConditional()
+                ? authorizationResult.Meta.FilterDebug.Replace(
+                    "request.resource.attr",
+                    resourceKind
+                )
+                : authorizationResult.Filter.Kind.ToString();
+            permissionsDict.Add(action, filter);
+        }
+
+        return permissionsDict;
     }
 
     /// <summary>
@@ -235,7 +264,8 @@ public class AuthorizationService : IAuthorizationService
             .WithRequestId(RequestId.Generate())
             .WithPrincipal(principal)
             .WithResource(resource)
-            .WithActions([.. actions]);
+            .WithActions([.. actions])
+            .WithIncludeMeta(true);
         var result = await _cerbosClient.PlanResourcesAsync(request);
         return result;
     }

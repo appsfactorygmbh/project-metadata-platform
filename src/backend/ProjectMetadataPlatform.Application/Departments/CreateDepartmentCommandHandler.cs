@@ -78,7 +78,7 @@ public class CreateDepartmentCommandHandler : IRequestHandler<CreateDepartmentCo
     {
         var logChanges = new List<LogChange>
         {
-            new LogChange
+            new()
             {
                 Property = nameof(Department.DepartmentName),
                 OldValue = "",

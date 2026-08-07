@@ -35,6 +35,7 @@ export * from './GetLinkedProjectsResponse';
 export * from './GetLinkedTeamsForBusinessUnitResponse';
 export * from './GetOfficeLocationResponse';
 export * from './GetOfficeLocationResponseGetListResponse';
+export * from './GetPermissionResponse';
 export * from './GetPluginResponse';
 export * from './GetProjectDetailsResponse';
 export * from './GetProjectResponse';

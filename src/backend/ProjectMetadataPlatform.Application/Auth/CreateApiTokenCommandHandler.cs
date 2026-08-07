@@ -101,7 +101,7 @@ public class CreateApiTokenCommandHandler : IRequestHandler<CreateApiTokenComman
     {
         var changes = new List<LogChange>
         {
-            new LogChange
+            new()
             {
                 OldValue = "",
                 NewValue = apiToken.Name,
