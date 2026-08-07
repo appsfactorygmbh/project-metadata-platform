@@ -72,7 +72,7 @@ public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand,
     {
         var logChanges = new List<LogChange>
         {
-            new LogChange
+            new()
             {
                 Property = nameof(Company.CompanyName),
                 OldValue = "",

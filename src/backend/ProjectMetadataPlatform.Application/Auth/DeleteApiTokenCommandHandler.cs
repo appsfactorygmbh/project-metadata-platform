@@ -69,7 +69,7 @@ public class DeleteApiTokenCommandHandler : IRequestHandler<DeleteApiTokenComman
     {
         var changes = new List<LogChange>
         {
-            new LogChange
+            new()
             {
                 OldValue = apiToken.Name,
                 NewValue = "",

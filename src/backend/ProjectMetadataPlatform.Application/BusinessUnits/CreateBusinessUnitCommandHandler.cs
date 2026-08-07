@@ -77,7 +77,7 @@ public class CreateBusinessUnitCommandHandler : IRequestHandler<CreateBusinessUn
     {
         var logChanges = new List<LogChange>
         {
-            new LogChange
+            new()
             {
                 Property = nameof(BusinessUnit.BusinessUnitName),
                 OldValue = "",

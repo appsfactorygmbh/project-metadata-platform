@@ -82,7 +82,7 @@ public class CreateOfficeLocationCommandHandler : IRequestHandler<CreateOfficeLo
     {
         var logChanges = new List<LogChange>
         {
-            new LogChange
+            new()
             {
                 Property = nameof(OfficeLocation.OfficeLocationName),
                 OldValue = "",

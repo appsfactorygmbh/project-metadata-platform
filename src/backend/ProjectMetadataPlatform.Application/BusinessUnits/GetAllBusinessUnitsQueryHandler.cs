@@ -48,7 +48,7 @@ public class GetAllBusinessUnitsQueryHandler
         var queriedBusinessUnits = await _authorizationService.TryGetPlanResourceQuery(
             businessUnits
         );
-        var permissions = await _authorizationService.GetPermissions<BusinessUnit>(
+        var permissions = await _authorizationService.GetAllowedActions<BusinessUnit>(
             actions: [AuthorizationConstants.Actions.CREATE]
         );
         if (queriedBusinessUnits == null)

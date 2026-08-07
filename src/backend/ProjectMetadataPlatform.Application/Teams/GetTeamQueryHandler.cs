@@ -38,7 +38,7 @@ public class GetTeamQueryHandler
         {
             throw new UnauthorizedException();
         }
-        var permissions = await _authorizationService.GetPermissions(
+        var permissions = await _authorizationService.GetAllowedActions(
             team,
             [AuthorizationConstants.Actions.EDIT, AuthorizationConstants.Actions.DELETE]
         );

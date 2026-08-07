@@ -80,7 +80,7 @@ public static class DependencyInjection
         _ = serviceCollection.AddScoped<IPasswordHasher<ApiToken>, PasswordHasher<ApiToken>>();
         _ = serviceCollection.AddScoped<ILogRepository, LogRepository>();
         _ = serviceCollection.AddScoped<IAuthorizationService, AuthorizationService>();
-
+        _ = serviceCollection.AddScoped<IAuthorizationAdminService, AuthorizationAdminService>();
         _ = serviceCollection.AddScoped(provider => AddCerbosClient(cerbosUrl ?? ""));
         _ = serviceCollection.AddScoped(provider => AddCerbosAdminClient(cerbosUrl ?? ""));
         return serviceCollection;
