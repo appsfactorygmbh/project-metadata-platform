@@ -268,6 +268,104 @@ themes.forEach((theme) => {
       },
     ];
 
+    let resources = [
+      'ApiToken',
+      'BusinessUnit',
+      'Company',
+      'Department',
+      'OfficeLocation',
+      'Log',
+      'Plugin',
+      'Project',
+      'Team',
+      'ApplicationUser',
+    ];
+
+    let permissions = [
+      {
+        action: 'GET',
+        filter: {
+          value: 'or',
+          children: [
+            {
+              value: 'eq',
+              children: [
+                {
+                  value: 'ApiToken.IsActive',
+                },
+                {
+                  value: 'false',
+                },
+              ],
+            },
+            {
+              value: 'and',
+              children: [
+                {
+                  value: 'eq',
+                  children: [
+                    {
+                      value: 'ApiToken.Name',
+                    },
+                    {
+                      value: '"Abc"',
+                    },
+                  ],
+                },
+                {
+                  value: 'gt',
+                  children: [
+                    {
+                      value: 'ApiToken.Count',
+                    },
+                    {
+                      value: '4',
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              value: 'exists',
+              children: [
+                {
+                  value: 'ApiToken.Scopes',
+                },
+                {
+                  value: 'lambda',
+                  children: [
+                    {
+                      value: 'eq',
+                      children: [
+                        {
+                          value: 'd.ScopeName',
+                        },
+                        {
+                          value: '"Management"',
+                        },
+                      ],
+                    },
+                    {
+                      value: 'd',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      {
+        action: 'CREATE',
+        filter: {
+          value: 'ne',
+          children: [{ value: 'ApiToken.Name' }, { value: 'SCIM' }],
+        },
+      },
+      { action: 'EDIT', filter: { value: 'AlwaysDeny' } },
+      { action: 'DELETE', filter: { value: 'AlwaysAllow' } },
+    ];
+
     beforeEach(() => {
       cy.viewport(1920, 1080);
       //define all mocked API calls
@@ -373,6 +471,15 @@ themes.forEach((theme) => {
         statusCode: 200,
         body: logs,
       }).as('getLogs');
+      cy.intercept('GET', '/Authorization/Resources', {
+        statusCode: 200,
+        body: resources,
+      }).as('getResources');
+
+      cy.intercept('GET', '/Authorization/ApiToken', {
+        statusCode: 200,
+        body: permissions,
+      }).as('getPermissions');
 
       //set theme and fake auth token
       cy.window().then((win) => {
@@ -688,6 +795,18 @@ themes.forEach((theme) => {
       cy.wait(['@getLogs']);
 
       cy.screenshot('global-logs-view-' + theme, {
+        overwrite: true,
+        capture: 'viewport',
+        scale: true,
+      });
+    });
+
+    it('captures the authorization view', () => {
+      cy.visit('/settings/authorization');
+
+      cy.wait(['@getResources', '@getPermissions']);
+      cy.wait(waitTime);
+      cy.screenshot('authorization-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
         scale: true,
