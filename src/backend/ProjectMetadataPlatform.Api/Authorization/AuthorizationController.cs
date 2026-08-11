@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMetadataPlatform.Api.Authorization.Helper;
 using ProjectMetadataPlatform.Api.Authorization.Models;
 using ProjectMetadataPlatform.Application.Authorization;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -46,11 +47,11 @@ public class AuthorizationController : ControllerBase
         var query = new GetPermissionsQuery(resourceKind);
         var result = await _mediator.Send<
             GetPermissionsQuery,
-            Dictionary<AuthorizationConstants.Actions, string>
+            Dictionary<AuthorizationConstants.Actions, FilterTree>
         >(query);
         var response = result.Select(permission => new GetPermissionResponse(
             permission.Key,
-            permission.Value
+            permission.Value.ToFilterResponse()
         ));
 
         return Ok(response);

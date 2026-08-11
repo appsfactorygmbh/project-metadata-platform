@@ -32,12 +32,24 @@ public class AuthorizationManagement : IntegrationTestsBase
         );
         Assert.That(permissions.GetArrayLength(), Is.EqualTo(4));
         Assert.That(permissions[0].GetProperty("action").ToString(), Is.EqualTo("GET"));
-        Assert.That(permissions[0].GetProperty("filter").ToString(), Is.EqualTo("AlwaysAllowed"));
+        Assert.That(
+            permissions[0].GetProperty("filter").GetProperty("value").ToString(),
+            Is.EqualTo("AlwaysAllowed")
+        );
         Assert.That(permissions[1].GetProperty("action").ToString(), Is.EqualTo("CREATE"));
-        Assert.That(permissions[1].GetProperty("filter").ToString(), Is.EqualTo("AlwaysAllowed"));
+        Assert.That(
+            permissions[1].GetProperty("filter").GetProperty("value").ToString(),
+            Is.EqualTo("AlwaysAllowed")
+        );
         Assert.That(permissions[2].GetProperty("action").ToString(), Is.EqualTo("EDIT"));
-        Assert.That(permissions[2].GetProperty("filter").ToString(), Is.EqualTo("AlwaysAllowed"));
+        Assert.That(
+            permissions[2].GetProperty("filter").GetProperty("value").ToString(),
+            Is.EqualTo("AlwaysAllowed")
+        );
         Assert.That(permissions[3].GetProperty("action").ToString(), Is.EqualTo("DELETE"));
-        Assert.That(permissions[3].GetProperty("filter").ToString(), Is.EqualTo("AlwaysAllowed"));
+        Assert.That(
+            permissions[3].GetProperty("filter").GetProperty("value").ToString(),
+            Is.EqualTo("AlwaysAllowed")
+        );
     }
 }

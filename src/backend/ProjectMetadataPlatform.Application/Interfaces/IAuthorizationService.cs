@@ -62,5 +62,7 @@ public interface IAuthorizationService
     /// </summary>
     /// <param name="resourceKind">Type of Resource Permissions should be returned for.</param>
     /// <returns>Dictionary of Actions and their Accessfilter.</returns>
-    Task<Dictionary<AuthorizationConstants.Actions, string>> GetPermissions(string resourceKind);
+    Task<Dictionary<AuthorizationConstants.Actions, FilterTree>> GetPermissions(
+        string resourceKind
+    );
 }

@@ -9,4 +9,4 @@ namespace ProjectMetadataPlatform.Application.Authorization;
 /// </summary>
 /// <param name="ResourceKind">Name of the Resource type.</param>
 public record GetPermissionsQuery(string ResourceKind)
-    : IRequest<Dictionary<AuthorizationConstants.Actions, string>>;
+    : IRequest<Dictionary<AuthorizationConstants.Actions, FilterTree>>;

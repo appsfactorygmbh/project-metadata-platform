@@ -10,7 +10,7 @@ namespace ProjectMetadataPlatform.Application.Authorization;
 /// Handler for <see cref="GetPermissionsQuery"/>
 /// </summary>
 public class GetPermissionsQueryHandler
-    : IRequestHandler<GetPermissionsQuery, Dictionary<AuthorizationConstants.Actions, string>>
+    : IRequestHandler<GetPermissionsQuery, Dictionary<AuthorizationConstants.Actions, FilterTree>>
 {
     private readonly IAuthorizationService _authorizationService;
 
@@ -28,7 +28,7 @@ public class GetPermissionsQueryHandler
     /// <param name="request">Request to be handled.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>Dictionary of Actions with their permission filter.</returns>
-    public async Task<Dictionary<AuthorizationConstants.Actions, string>> Handle(
+    public async Task<Dictionary<AuthorizationConstants.Actions, FilterTree>> Handle(
         GetPermissionsQuery request,
         CancellationToken cancellationToken = default
     )

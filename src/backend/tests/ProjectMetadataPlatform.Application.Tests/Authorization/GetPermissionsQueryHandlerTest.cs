@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Authorization;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Authorization;
-using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 
 namespace ProjectMetadataPlatform.Application.Tests.Authorization;
 
@@ -28,9 +25,12 @@ public class GetPermissionsQueryHandlerTest
     [Test]
     public async Task GetPermissionsQueryHandler_Test()
     {
-        var permissions = new Dictionary<AuthorizationConstants.Actions, string>
+        var permissions = new Dictionary<AuthorizationConstants.Actions, FilterTree>
         {
-            { AuthorizationConstants.Actions.CREATE, "A Filter" },
+            {
+                AuthorizationConstants.Actions.CREATE,
+                new FilterTree { NodeValue = "A Filter", ChildNodes = null }
+            },
         };
         _authorizationService
             .Setup(s => s.GetPermissions(It.IsAny<string>()))

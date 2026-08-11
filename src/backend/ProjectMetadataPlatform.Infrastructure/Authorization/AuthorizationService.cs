@@ -149,11 +149,11 @@ public class AuthorizationService : IAuthorizationService
     }
 
     /// <inheritdoc/>
-    public async Task<Dictionary<AuthorizationConstants.Actions, string>> GetPermissions(
+    public async Task<Dictionary<AuthorizationConstants.Actions, FilterTree>> GetPermissions(
         string resourceKind
     )
     {
-        Dictionary<AuthorizationConstants.Actions, string> permissionsDict = [];
+        Dictionary<AuthorizationConstants.Actions, FilterTree> filterDict = [];
         var principal = await GetPrincipalFromContext();
         var resourceObject = Resource
             .NewInstance(resourceKind, "default")
@@ -165,16 +165,21 @@ public class AuthorizationService : IAuthorizationService
                 resourceObject,
                 [action.ToString()]
             );
-            var filter = authorizationResult.IsConditional()
-                ? authorizationResult.Meta.FilterDebug.Replace(
-                    "request.resource.attr",
-                    resourceKind
+
+            var filterTree = authorizationResult.IsConditional()
+                ? AuthorizationConverter.BuildFilterTree(
+                    resourceKind,
+                    authorizationResult.Filter.Condition
                 )
-                : authorizationResult.Filter.Kind.ToString();
-            permissionsDict.Add(action, filter);
+                : new FilterTree
+                {
+                    NodeValue = authorizationResult.Filter.Kind.ToString(),
+                    ChildNodes = null,
+                };
+            filterDict.Add(action, filterTree);
         }
 
-        return permissionsDict;
+        return filterDict;
     }
 
     /// <summary>

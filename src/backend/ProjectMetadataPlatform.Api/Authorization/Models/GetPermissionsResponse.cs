@@ -6,5 +6,8 @@ namespace ProjectMetadataPlatform.Api.Authorization.Models;
 /// Record representing a Permission.
 /// </summary>
 /// <param name="Action">Action on the Resource.</param>
-/// <param name="Filter">Human readable filter representing conditions for accessing the resource.</param>
-public record GetPermissionResponse(AuthorizationConstants.Actions Action, string Filter);
+/// <param name="Filter"> Tree structure representing the Access Filter.</param>
+public record GetPermissionResponse(
+    AuthorizationConstants.Actions Action,
+    GetFilterResponse Filter
+);

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Authorization;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.Authorization;
-using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 
 namespace ProjectMetadataPlatform.Application.Tests.Authorization;
 

@@ -32,15 +32,18 @@ public class AuthorizationControllerTest
     {
         _ = _mediator
             .Setup(m =>
-                m.Send<GetPermissionsQuery, Dictionary<AuthorizationConstants.Actions, string>>(
+                m.Send<GetPermissionsQuery, Dictionary<AuthorizationConstants.Actions, FilterTree>>(
                     It.IsAny<GetPermissionsQuery>(),
                     It.IsAny<CancellationToken>()
                 )
             )
             .ReturnsAsync(
-                new Dictionary<AuthorizationConstants.Actions, string>
+                new Dictionary<AuthorizationConstants.Actions, FilterTree>
                 {
-                    { AuthorizationConstants.Actions.CREATE, "A Filter" },
+                    {
+                        AuthorizationConstants.Actions.CREATE,
+                        new FilterTree { NodeValue = "A Filter", ChildNodes = null }
+                    },
                 }
             );
         var result = await _controller.GetPermissions("A Resource");
@@ -52,7 +55,7 @@ public class AuthorizationControllerTest
 
         Assert.That(response, Has.Count.EqualTo(1));
         Assert.That(response[0].Action, Is.EqualTo(AuthorizationConstants.Actions.CREATE));
-        Assert.That(response[0].Filter, Is.EqualTo("A Filter"));
+        Assert.That(response[0].Filter.Value, Is.EqualTo("A Filter"));
     }
 
     [Test]
@@ -60,7 +63,7 @@ public class AuthorizationControllerTest
     {
         _ = _mediator
             .Setup(m =>
-                m.Send<GetPermissionsQuery, Dictionary<AuthorizationConstants.Actions, string>>(
+                m.Send<GetPermissionsQuery, Dictionary<AuthorizationConstants.Actions, FilterTree>>(
                     It.IsAny<GetPermissionsQuery>(),
                     It.IsAny<CancellationToken>()
                 )
