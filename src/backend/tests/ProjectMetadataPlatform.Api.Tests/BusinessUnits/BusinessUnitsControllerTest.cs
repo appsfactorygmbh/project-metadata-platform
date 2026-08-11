@@ -16,6 +16,7 @@ using ProjectMetadataPlatform.Domain.BusinessUnits;
 
 namespace ProjectMetadataPlatform.Api.Tests.BusinessUnits;
 
+[TestFixture]
 public class BusinessUnitsControllerTest
 {
     private BusinessUnitsController _controller;

@@ -16,6 +16,7 @@ using ProjectMetadataPlatform.Domain.Departments;
 
 namespace ProjectMetadataPlatform.Api.Tests.Departments;
 
+[TestFixture]
 public class DepartmentsControllerTest
 {
     private DepartmentsController _controller;

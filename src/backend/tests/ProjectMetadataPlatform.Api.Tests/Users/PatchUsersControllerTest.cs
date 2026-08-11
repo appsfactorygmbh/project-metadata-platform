@@ -107,7 +107,7 @@ public class PatchUsersControllerTest
         {
             Operations = new System.Collections.Generic.List<PatchUserRequest.OperationRecord>
             {
-                new PatchUserRequest.OperationRecord
+                new()
                 {
                     Op = PatchOperations.Add,
                     Path = "Password",
@@ -144,7 +144,7 @@ public class PatchUsersControllerTest
         {
             Operations = new System.Collections.Generic.List<PatchUserRequest.OperationRecord>
             {
-                new PatchUserRequest.OperationRecord
+                new()
                 {
                     Op = PatchOperations.Add,
                     Path = "Password",

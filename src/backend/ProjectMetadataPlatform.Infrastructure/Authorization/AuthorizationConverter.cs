@@ -551,4 +551,43 @@ public static class AuthorizationConverter
             return false;
         }
     }
+
+    /// <summary>
+    /// Recursively builds a Filter Tree with string values from a Cerbos AST.
+    /// </summary>
+    /// <param name="resourceKind">Resource the filter is build for. Used to makes Variables better readable.</param>
+    /// <param name="filter">Filter to be converted to filter tree.</param>
+    /// <returns>Filter Tree representing the AST.</returns>
+    /// <exception cref="ArgumentException">Thrown if node type is unsupported.</exception>
+    public static FilterTree BuildFilterTree(
+        string resourceKind,
+        PlanResourcesFilter.Types.Expression.Types.Operand filter
+    )
+    {
+        var value = filter.NodeCase switch
+        {
+            PlanResourcesFilter.Types.Expression.Types.Operand.NodeOneofCase.Value =>
+                filter.Value.ToString(),
+
+            PlanResourcesFilter.Types.Expression.Types.Operand.NodeOneofCase.Expression => filter
+                .Expression
+                .Operator,
+
+            PlanResourcesFilter.Types.Expression.Types.Operand.NodeOneofCase.Variable =>
+                filter.Variable,
+
+            PlanResourcesFilter.Types.Expression.Types.Operand.NodeOneofCase.None or _ =>
+                throw new ArgumentException("Node type cant be built."),
+        };
+        return new FilterTree
+        {
+            NodeValue = value.Replace("request.resource.attr", resourceKind),
+            ChildNodes =
+                filter.Expression != null && filter.Expression.Operands.Any()
+                    ? filter.Expression.Operands.Select(operand =>
+                        BuildFilterTree(resourceKind, operand)
+                    )
+                    : null,
+        };
+    }
 }

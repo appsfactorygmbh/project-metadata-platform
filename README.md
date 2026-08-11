@@ -198,11 +198,11 @@ When changing the domain models or their configurations in the infrastructure la
    pwsh .\dotnet_ef.ps1 database update
    ```
 
-    With bash:
+   With bash:
 
-    ```sh
-    sh ./dotnet_ef.sh database update
-    ```
+   ```sh
+   sh ./dotnet_ef.sh database update
+   ```
 
 4. Make the required changes to the domain models or their configurations.
 5. Run the following command to create a new migration:
@@ -444,6 +444,6 @@ Settings View - Global Logs
 ![Settings View - Global Logs Dark](./screenshots/global-logs-view-dark.png)
 ![Settings View - Global Logs Light](./screenshots/global-logs-view-light.png)
 
-```
-
-```
+Settings View - Permissions
+![Settings View - Permissions Dark](./screenshots/authorization-view-dark.png)
+![Settings View - Permissions Light](./screenshots/authorization-view-light.png)

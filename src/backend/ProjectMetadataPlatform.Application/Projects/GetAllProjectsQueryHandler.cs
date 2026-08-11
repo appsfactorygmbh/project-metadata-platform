@@ -39,7 +39,7 @@ public class GetAllProjectsQueryHandler
     {
         var projects = await _projectRepository.GetProjectsAsync(request);
         var queriedProjects = await _authorizationService.TryGetPlanResourceQuery(projects);
-        var permissions = await _authorizationService.GetPermissions<Project>(
+        var permissions = await _authorizationService.GetAllowedActions<Project>(
             actions: [AuthorizationConstants.Actions.CREATE]
         );
         if (queriedProjects == null)

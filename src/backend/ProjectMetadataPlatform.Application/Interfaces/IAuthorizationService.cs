@@ -51,9 +51,18 @@ public interface IAuthorizationService
     /// <param name="resource"> Optional actual resource to check permissions on.</param>
     /// <param name="actions">Optional: Actions to check. If null checks all Actions.</param>
     /// <returns>List of allowed action.</returns>
-    Task<IEnumerable<AuthorizationConstants.Actions>> GetPermissions<T>(
+    Task<IEnumerable<AuthorizationConstants.Actions>> GetAllowedActions<T>(
         T? resource = null,
         IEnumerable<AuthorizationConstants.Actions>? actions = null
     )
         where T : class;
+
+    /// <summary>
+    /// Method to get Planfilters for all Actions for a Resource.
+    /// </summary>
+    /// <param name="resourceKind">Type of Resource Permissions should be returned for.</param>
+    /// <returns>Dictionary of Actions and their Accessfilter.</returns>
+    Task<Dictionary<AuthorizationConstants.Actions, FilterTree>> GetPermissions(
+        string resourceKind
+    );
 }

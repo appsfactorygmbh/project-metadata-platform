@@ -16,6 +16,7 @@ using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Api.Tests.OfficeLocations;
 
+[TestFixture]
 public class OfficeLocationsControllerTest
 {
     private OfficeLocationsController _controller;

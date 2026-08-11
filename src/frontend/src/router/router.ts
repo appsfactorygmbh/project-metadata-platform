@@ -34,6 +34,7 @@ import { DepartmentInformationView } from '@/views/SettingView/DepartmentsManage
 import { CreateGlobalPluginView } from '@/views/SettingView/GlobalPlugins/CreateGlobalPlugin/index.ts';
 import { GlobalPluginsView } from '@/views/SettingView/GlobalPlugins/index.ts';
 import { EditGlobalPluginView } from '@/views/SettingView/GlobalPlugins/EditGlobalPlugin/index.ts';
+import AuthorizationView from '@/views/SettingView/Authorization/AuthorizationView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -298,6 +299,12 @@ const router = createRouter({
               name: 'global-logs',
               component: GlobalLogsView,
               meta: { title: 'Project Metadata Platform - Global Logs' },
+            },
+            {
+              path: '/settings/authorization',
+              name: 'authorization',
+              component: AuthorizationView,
+              meta: { title: 'Project Metadata Platform - Authorization' },
             },
           ],
         },

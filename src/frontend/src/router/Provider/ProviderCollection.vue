@@ -21,6 +21,7 @@
   import TeamRoutingProvider from './TeamRoutingProvider.vue';
   import ApiTokenRoutingProvider from './ApiTokenRoutingProvider.vue';
   import ApiTokenProvider from './ApiTokenProvider.vue';
+  import AuthorizationProvider from './AuthorizationProvider.vue';
 </script>
 
 <template>
@@ -44,9 +45,11 @@
                                     <OfficeLocationRoutingProvider>
                                       <BusinessUnitRoutingProvider>
                                         <DepartmentRoutingProvider>
-                                          <slot>
-                                            <RouterView />
-                                          </slot>
+                                          <AuthorizationProvider>
+                                            <slot>
+                                              <RouterView />
+                                            </slot>
+                                          </AuthorizationProvider>
                                         </DepartmentRoutingProvider>
                                       </BusinessUnitRoutingProvider>
                                     </OfficeLocationRoutingProvider>

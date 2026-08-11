@@ -1,4 +1,5 @@
 apis/AuthApi.ts
+apis/AuthorizationApi.ts
 apis/BusinessUnitsApi.ts
 apis/CompaniesApi.ts
 apis/DepartmentsApi.ts
@@ -38,6 +39,7 @@ models/GetCompanyResponse.ts
 models/GetCompanyResponseGetListResponse.ts
 models/GetDepartmentResponse.ts
 models/GetDepartmentResponseGetListResponse.ts
+models/GetFilterResponse.ts
 models/GetGlobalPluginResponse.ts
 models/GetGlobalPluginResponseGetListResponse.ts
 models/GetLinkedProjectsForCompanyResponse.ts
@@ -45,6 +47,7 @@ models/GetLinkedProjectsResponse.ts
 models/GetLinkedTeamsForBusinessUnitResponse.ts
 models/GetOfficeLocationResponse.ts
 models/GetOfficeLocationResponseGetListResponse.ts
+models/GetPermissionResponse.ts
 models/GetPluginResponse.ts
 models/GetProjectDetailsResponse.ts
 models/GetProjectResponse.ts

@@ -13,7 +13,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AApp: typeof import('ant-design-vue/es')['App']
-    AAutoComplete: typeof import('ant-design-vue/es')['AutoComplete']
     AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABadge: typeof import('ant-design-vue/es')['Badge']
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
@@ -50,9 +49,12 @@ declare module 'vue' {
     ASpin: typeof import('ant-design-vue/es')['Spin']
     ASwitch: typeof import('ant-design-vue/es')['Switch']
     ATable: typeof import('ant-design-vue/es')['Table']
+    ATabPane: typeof import('ant-design-vue/es')['TabPane']
+    ATabs: typeof import('ant-design-vue/es')['Tabs']
     ATag: typeof import('ant-design-vue/es')['Tag']
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
+    ATree: typeof import('ant-design-vue/es')['Tree']
     ATypographyParagraph: typeof import('ant-design-vue/es')['TypographyParagraph']
     ATypographyText: typeof import('ant-design-vue/es')['TypographyText']
     ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
@@ -95,7 +97,6 @@ declare module 'vue' {
 // For TSX support
 declare global {
   const AApp: typeof import('ant-design-vue/es')['App']
-  const AAutoComplete: typeof import('ant-design-vue/es')['AutoComplete']
   const AAvatar: typeof import('ant-design-vue/es')['Avatar']
   const ABadge: typeof import('ant-design-vue/es')['Badge']
   const ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
@@ -132,9 +133,12 @@ declare global {
   const ASpin: typeof import('ant-design-vue/es')['Spin']
   const ASwitch: typeof import('ant-design-vue/es')['Switch']
   const ATable: typeof import('ant-design-vue/es')['Table']
+  const ATabPane: typeof import('ant-design-vue/es')['TabPane']
+  const ATabs: typeof import('ant-design-vue/es')['Tabs']
   const ATag: typeof import('ant-design-vue/es')['Tag']
   const ATextarea: typeof import('ant-design-vue/es')['Textarea']
   const ATooltip: typeof import('ant-design-vue/es')['Tooltip']
+  const ATree: typeof import('ant-design-vue/es')['Tree']
   const ATypographyParagraph: typeof import('ant-design-vue/es')['TypographyParagraph']
   const ATypographyText: typeof import('ant-design-vue/es')['TypographyText']
   const ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']

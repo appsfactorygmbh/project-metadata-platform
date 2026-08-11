@@ -21,6 +21,7 @@ import type { useCompanyRouting } from '@/utils/hooks/useCompanyRouting.ts';
 import type { useDepartmentRouting } from '@/utils/hooks/useDepartmentRouting.ts';
 import type { useBusinessUnitRouting } from '@/utils/hooks/useBusinessUnitRouting .ts';
 import type { useOfficeLocationRouting } from '@/utils/hooks/useOfficeLocationRouting.ts';
+import type { AuthorizationStore } from './AuthorizationStore.ts';
 
 const projectStoreSymbol = Symbol() as InjectionKey<ProjectStore>;
 
@@ -45,6 +46,8 @@ const departmentStoreSymbol = Symbol() as InjectionKey<DepartmentStore>;
 const businessUnitStoreSymbol = Symbol() as InjectionKey<BusinessUnitStore>;
 
 const officeLocationStoreSymbol = Symbol() as InjectionKey<OfficeLocationStore>;
+
+const authorizationStoreSymbol = Symbol() as InjectionKey<AuthorizationStore>;
 
 const logsStoreSymbol = Symbol() as InjectionKey<
   ReturnType<typeof useLogsStore>
@@ -109,4 +112,5 @@ export {
   departmentRoutingSymbol,
   officeLocationStoreSymbol,
   officeLocationRoutingSymbol,
+  authorizationStoreSymbol,
 };

@@ -16,6 +16,7 @@ using ProjectMetadataPlatform.Domain.Companies;
 
 namespace ProjectMetadataPlatform.Api.Tests.Companies;
 
+[TestFixture]
 public class CompaniesControllerTest
 {
     private CompaniesController _controller;

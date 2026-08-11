@@ -34,7 +34,7 @@ public class GetAllUsersControllerTest
     {
         var users = new List<ApplicationUser>
         {
-            new ApplicationUser
+            new()
             {
                 EmployeeId = "Id",
                 Id = "1",
@@ -42,7 +42,7 @@ public class GetAllUsersControllerTest
                 IsActive = true,
                 IsScimProvisioned = false,
             },
-            new ApplicationUser
+            new()
             {
                 EmployeeId = "3",
                 Id = "2",

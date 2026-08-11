@@ -1,6 +1,8 @@
 import {
   AuthApi,
   type AuthApi as AuthApiType,
+  AuthorizationApi,
+  type AuthorizationApi as AuthorizationApiType,
   BusinessUnitsApi,
   type BusinessUnitsApi as BusinessUnitsApiType,
   CompaniesApi,
@@ -23,6 +25,7 @@ import {
 
 export type ApiTypes =
   | AuthApiType
+  | AuthorizationApiType
   | ProjectsApiType
   | PluginsApiType
   | UsersApiType
@@ -53,4 +56,6 @@ export type ApiInstance<T extends ApiTypes> = T extends AuthApiType
                   ? typeof DepartmentsApi
                   : T extends OfficeLocationsApiType
                     ? typeof OfficeLocationsApi
-                    : never;
+                    : T extends AuthorizationApiType
+                      ? typeof AuthorizationApi
+                      : never;

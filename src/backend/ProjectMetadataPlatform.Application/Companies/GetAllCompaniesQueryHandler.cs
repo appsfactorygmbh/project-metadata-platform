@@ -46,7 +46,7 @@ public class GetAllCompaniesQueryHandler
     {
         var companies = await _companyRepository.GetCompaniesAsync();
         var queriedCompanies = await _authorizationService.TryGetPlanResourceQuery(companies);
-        var permissions = await _authorizationService.GetPermissions<Company>(
+        var permissions = await _authorizationService.GetAllowedActions<Company>(
             actions: [AuthorizationConstants.Actions.CREATE]
         );
         if (queriedCompanies == null)

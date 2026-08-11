@@ -67,7 +67,7 @@ public class PatchUserCommandHandlerTest
             IsScimProvisioned = false,
             Teams = new HashSet<Team>
             {
-                new Team
+                new()
                 {
                     TeamName = "Team1",
                     BusinessUnit = new() { BusinessUnitName = "BU" },

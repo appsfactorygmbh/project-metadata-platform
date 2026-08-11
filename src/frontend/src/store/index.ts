@@ -25,8 +25,13 @@ import {
   type OfficeLocationStore,
   useOfficeLocationStore,
 } from './OfficeLocationStore.ts';
+import {
+  type AuthorizationStore,
+  useAuthorizationStore,
+} from './AuthorizationStore.ts';
 export {
   useAuthStore,
+  useAuthorizationStore,
   useProjectStore,
   usePluginStore,
   useSearchStore,
@@ -58,4 +63,5 @@ export type {
   DepartmentStore,
   BusinessUnitStore,
   OfficeLocationStore,
+  AuthorizationStore,
 };

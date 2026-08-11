@@ -48,7 +48,7 @@ public class GetOfficeLocationQueryHandler
         {
             throw new UnauthorizedException();
         }
-        var permissions = await _authorizationService.GetPermissions(
+        var permissions = await _authorizationService.GetAllowedActions(
             location,
             [AuthorizationConstants.Actions.EDIT, AuthorizationConstants.Actions.DELETE]
         );
