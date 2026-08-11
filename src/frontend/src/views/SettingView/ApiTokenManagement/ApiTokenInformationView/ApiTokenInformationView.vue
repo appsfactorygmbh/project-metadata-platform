@@ -135,7 +135,7 @@
       isRegenerated = true;
 
       await apiTokenStore.fetchApiToken(apiToken.value?.id);
-      isRegenerating.value = true;
+      isRegenerating.value = false;
     } catch (error) {
       notification.error({
         message: 'Error!',

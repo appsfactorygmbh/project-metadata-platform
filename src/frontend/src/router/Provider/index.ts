@@ -19,6 +19,7 @@ import DepartmentProvider from './DepartmentProvider.vue';
 import DepartmentRoutingProvider from './DepartmentRoutingProvider.vue';
 import OfficeLocationProvider from './OfficeLocationProvider.vue';
 import OfficeLocationRoutingProvider from './OfficeLocationRoutingProvider.vue';
+import AuthorizationProvider from './AuthorizationProvider.vue';
 
 export {
   ThemeProvider,
@@ -42,4 +43,5 @@ export {
   DepartmentRoutingProvider,
   BusinessUnitRoutingProvider,
   OfficeLocationRoutingProvider,
+  AuthorizationProvider,
 };

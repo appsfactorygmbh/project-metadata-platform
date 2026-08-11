@@ -16,6 +16,7 @@
     useDepartmentStore,
     useBusinessUnitStore,
     useOfficeLocationStore,
+    useAuthorizationStore,
   } from '@/store';
   import { msalService } from '@/services/msalService';
 
@@ -34,6 +35,7 @@
   const businessUnitStore = useBusinessUnitStore();
   const officeLocationStore = useOfficeLocationStore();
   const apiTokenStore = useApiTokenStore();
+  const authorizationStore = useAuthorizationStore();
 
   provide<typeof authStore>(authStoreSymbol, authStore);
 
@@ -54,6 +56,7 @@
     businessUnitStore.refreshAuth();
     officeLocationStore.refreshAuth();
     apiTokenStore.refreshAuth();
+    authorizationStore.refreshAuth();
   };
   onMounted(async () => {
     try {

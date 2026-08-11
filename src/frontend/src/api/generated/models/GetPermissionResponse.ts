@@ -12,6 +12,11 @@
  * Do not edit the class manually.
  */
 
+import type { GetFilterResponse } from './GetFilterResponse';
+import {
+  GetFilterResponseFromJSON,
+  GetFilterResponseToJSON,
+} from './GetFilterResponse';
 import type { Actions } from './Actions';
 import { ActionsFromJSON, ActionsToJSON } from './Actions';
 
@@ -28,11 +33,11 @@ export interface GetPermissionResponse {
    */
   action: Actions;
   /**
-   * Human readable filter representing conditions for accessing the resource.
-   * @type {string}
+   *
+   * @type {GetFilterResponse}
    * @memberof GetPermissionResponse
    */
-  filter: string;
+  filter: GetFilterResponse;
 }
 
 /**
@@ -61,7 +66,7 @@ export function GetPermissionResponseFromJSONTyped(
   }
   return {
     action: ActionsFromJSON(json['action']),
-    filter: json['filter'],
+    filter: GetFilterResponseFromJSON(json['filter']),
   };
 }
 
@@ -79,6 +84,6 @@ export function GetPermissionResponseToJSONTyped(
 
   return {
     action: ActionsToJSON(value['action']),
-    filter: value['filter'],
+    filter: GetFilterResponseToJSON(value['filter']),
   };
 }

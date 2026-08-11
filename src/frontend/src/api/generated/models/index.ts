@@ -28,6 +28,7 @@ export * from './GetCompanyResponse';
 export * from './GetCompanyResponseGetListResponse';
 export * from './GetDepartmentResponse';
 export * from './GetDepartmentResponseGetListResponse';
+export * from './GetFilterResponse';
 export * from './GetGlobalPluginResponse';
 export * from './GetGlobalPluginResponseGetListResponse';
 export * from './GetLinkedProjectsForCompanyResponse';

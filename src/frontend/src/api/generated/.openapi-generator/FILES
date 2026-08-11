@@ -39,6 +39,7 @@ models/GetCompanyResponse.ts
 models/GetCompanyResponseGetListResponse.ts
 models/GetDepartmentResponse.ts
 models/GetDepartmentResponseGetListResponse.ts
+models/GetFilterResponse.ts
 models/GetGlobalPluginResponse.ts
 models/GetGlobalPluginResponseGetListResponse.ts
 models/GetLinkedProjectsForCompanyResponse.ts

@@ -12,6 +12,7 @@
     GoldOutlined,
     EnvironmentOutlined,
     PicRightOutlined,
+    SafetyCertificateOutlined,
   } from '@ant-design/icons-vue';
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
@@ -82,6 +83,10 @@
         router.push(`/settings/api-token-management`);
         break;
       }
+      case 'Permissions': {
+        router.push(`/settings/authorization`);
+        break;
+      }
       default: {
         router.push(`/settings`);
         break;
@@ -131,6 +136,11 @@
         case '/settings/global-logs': {
           tab.value = 'Global Logs';
           selectedKeys.value = ['9'];
+          break;
+        }
+        case '/settings/authorization': {
+          tab.value = 'Permissions';
+          selectedKeys.value = ['10'];
           break;
         }
         case '/settings/user-management':
@@ -232,6 +242,14 @@
         >
           <BarsOutlined class="icons" />
           <span>Global Logs</span>
+        </a-menu-item>
+        <a-menu-item
+          key="10"
+          class="authorization"
+          @click="clickTab('Permissions')"
+        >
+          <SafetyCertificateOutlined class="icons" />
+          <span>Permissions</span>
         </a-menu-item>
       </a-menu>
       <footer class="app-version">v{{ version }}</footer>

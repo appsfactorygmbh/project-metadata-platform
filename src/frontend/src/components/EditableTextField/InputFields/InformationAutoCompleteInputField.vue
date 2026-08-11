@@ -53,7 +53,7 @@
       :filter-option="filterOption"
       :placeholder="props.placeholder"
       style="width: 100%"
-      @update:value="(val) => emit('update:value', val)"
+      @update:value="(val: any) => emit('update:value', val)"
     />
   </a-form-item>
 </template>
