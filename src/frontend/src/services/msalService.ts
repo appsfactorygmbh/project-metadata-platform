@@ -1,8 +1,4 @@
-import {
-  InteractionRequiredAuthError,
-  LogLevel,
-  PublicClientApplication,
-} from '@azure/msal-browser';
+import { LogLevel, PublicClientApplication } from '@azure/msal-browser';
 export const msalConfig = {
   auth: {
     clientId:
@@ -16,6 +12,8 @@ export const msalConfig = {
     cacheLocation: 'localStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
   },
   system: {
+    iframeHashTimeout: 3500,
+    loadFrameTimeout: 3500,
     loggerOptions: {
       loggerCallback: (
         level: LogLevel,
@@ -105,14 +103,10 @@ export const msalService = {
       const response = await msalInstance.acquireTokenSilent(request);
       return response.accessToken;
     } catch (error) {
-      if (error instanceof InteractionRequiredAuthError) {
-        console.warn(
-          'Silent token acquisition failed. Acquiring token using redirect.',
-        );
-        return null;
-      } else {
-        return null;
-      }
+      console.warn('Token acquisition failed. Clearing dead session.');
+
+      msalInstance.setActiveAccount(null);
+      return null;
     }
   },
   async getAccessTokenSilent() {
@@ -130,7 +124,8 @@ export const msalService = {
       const response = await msalInstance.acquireTokenSilent(request);
       return response.accessToken;
     } catch (error) {
-      console.warn('Silent token acquisition failed.');
+      console.warn('Silent Token acquisition failed. Clearing dead session.');
+      msalInstance.setActiveAccount(null);
       return null;
     }
   },

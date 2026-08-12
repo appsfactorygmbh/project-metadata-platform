@@ -61,24 +61,26 @@
   onMounted(async () => {
     try {
       const jwttoken = auth?.token();
-      const ssotoken = await msalService.getAccessTokenSilent();
+      const hasMsalAccount = msalService.getActiveUser() != null;
+      let ssotoken = null;
 
-      authStore.setAuth(
-        jwttoken ?? ssotoken,
-        jwttoken != null ? 'basic' : ssotoken != null ? 'oidc' : null,
-      );
+      if (hasMsalAccount) {
+        ssotoken = await msalService.getAccessTokenSilent();
+      }
 
-      refreshAllStores();
+      if (jwttoken != null || ssotoken != null) {
+        authStore.setAuth(
+          jwttoken ?? ssotoken,
+          jwttoken != null ? 'basic' : 'oidc',
+        );
 
-      if (authStore._authMethod == 'basic') {
-        await auth?.load();
-        authenticated.value = true;
-      } else {
-        if (ssotoken) {
-          authenticated.value = true;
-        } else {
-          authenticationFailed.value = true;
+        if (jwttoken) {
+          await auth?.load();
         }
+        authenticated.value = true;
+        refreshAllStores();
+      } else {
+        authenticationFailed.value = true;
       }
     } catch (error) {
       console.warn('Auth initialization failed', error);
@@ -107,7 +109,7 @@
 </script>
 
 <template>
-  <template v-if="authInitialized">
+  <template v-if="authInitialized && authenticated && !authenticationFailed">
     <slot />
   </template>
   <template v-else>

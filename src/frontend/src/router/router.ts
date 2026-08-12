@@ -336,10 +336,12 @@ router.beforeEach(async (to) => {
   auth.ready();
 
   const noAuthRequired = to.meta.noAuthRequired;
-  const isAuthenticated =
-    auth.check() || (await msalService.getAccessToken()) != null;
+  if (noAuthRequired) {
+    return true;
+  }
+  const isAuthenticated = auth.check() || msalService.getActiveUser() != null;
 
-  if (!noAuthRequired && !isAuthenticated) {
+  if (!isAuthenticated) {
     if (to.hash.includes('code=') || to.hash.includes('access_token=')) {
       return true;
     }
