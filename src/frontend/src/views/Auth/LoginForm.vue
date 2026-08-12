@@ -3,7 +3,6 @@
   import type { RulesObject } from '@/components/Form/types';
   import { reactive } from 'vue';
   import { LockOutlined, UserOutlined } from '@ant-design/icons-vue';
-  import { useToken } from 'ant-design-vue/es/theme/internal';
 
   const { formStore, feedbackMessage = '' } = defineProps<{
     formStore: FormStore;
@@ -48,10 +47,6 @@
   const submit = async () => {
     formStore.submit().catch(() => {});
   };
-
-  const token = useToken()[1];
-
-  console.log(token);
 </script>
 
 <template>
