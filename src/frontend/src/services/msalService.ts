@@ -1,4 +1,9 @@
-import { LogLevel, PublicClientApplication } from '@azure/msal-browser';
+import {
+  AuthError,
+  InteractionRequiredAuthError,
+  LogLevel,
+  PublicClientApplication,
+} from '@azure/msal-browser';
 export const msalConfig = {
   auth: {
     clientId:
@@ -14,6 +19,7 @@ export const msalConfig = {
   system: {
     iframeHashTimeout: 3500,
     loadFrameTimeout: 3500,
+    windowHashTimeout: 3500,
     loggerOptions: {
       loggerCallback: (
         level: LogLevel,
@@ -66,7 +72,7 @@ export const msalService = {
       }
     } catch (error) {
       console.error('MSAL Initialization/Cache Error:', error);
-
+      msalInstance.setActiveAccount(null);
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   },
@@ -103,12 +109,29 @@ export const msalService = {
       const response = await msalInstance.acquireTokenSilent(request);
       return response.accessToken;
     } catch (error) {
-      console.warn('Token acquisition failed. Clearing dead session.');
-
       msalInstance.setActiveAccount(null);
-      return null;
+
+      if (
+        error instanceof InteractionRequiredAuthError ||
+        (error instanceof AuthError && error.errorCode === 'timed_out') ||
+        (error instanceof AuthError &&
+          error.errorCode === 'interaction_required')
+      ) {
+        console.warn(
+          'Silent refresh failed. Automatically redirecting to Microsoft...',
+        );
+        msalInstance.acquireTokenRedirect(request);
+        return null;
+      } else {
+        console.warn(
+          'Silent token acquisition failed. Clearing dead session.',
+          error,
+        );
+        return null;
+      }
     }
   },
+
   async getAccessTokenSilent() {
     const account = msalInstance.getActiveAccount();
     if (!account) {

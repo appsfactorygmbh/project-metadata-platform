@@ -65,7 +65,7 @@
       let ssotoken = null;
 
       if (hasMsalAccount) {
-        ssotoken = await msalService.getAccessTokenSilent();
+        ssotoken = await msalService.getAccessToken();
       }
 
       if (jwttoken != null || ssotoken != null) {

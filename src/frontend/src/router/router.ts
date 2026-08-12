@@ -342,7 +342,12 @@ router.beforeEach(async (to) => {
   const isAuthenticated = auth.check() || msalService.getActiveUser() != null;
 
   if (!isAuthenticated) {
-    if (to.hash.includes('code=') || to.hash.includes('access_token=')) {
+    if (
+      to.hash.includes('code=') ||
+      to.hash.includes('access_token=') ||
+      to.hash.includes('error=') ||
+      to.hash.includes('state=')
+    ) {
       return true;
     }
     const redirectUrl = to.fullPath; // Get the full path of the route the user tried to access
