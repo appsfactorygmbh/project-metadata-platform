@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.1.0](https://github.com/appsfactorygmbh/project-metadata-platform/compare/v2.0.0...v2.1.0) (2026-08-12)
+
+
+### Features
+
+* **backend:** add api endpoints for getting resource names and human readable permissions ([9231ee2](https://github.com/appsfactorygmbh/project-metadata-platform/commit/9231ee2f00045bf820d9d113abf7bf11ae3d3ba5))
+* **backend:** replace mediatR with own implementation of Mediator pattern ([b3aff3e](https://github.com/appsfactorygmbh/project-metadata-platform/commit/b3aff3e4e3f52b6d05d91213d5144f8cc8a919b2))
+* **frontend:** add authorization view ([08b095c](https://github.com/appsfactorygmbh/project-metadata-platform/commit/08b095cf8ce5884b75dc2df5bb0452e666ff3a9e))
+
+
+### Bug Fixes
+
+* **backend:** fix controller return values ([17fee2f](https://github.com/appsfactorygmbh/project-metadata-platform/commit/17fee2f21b23ecc7ab7c19a7e093285f5f85cc70))
+* **frontend:** make oidc reset more stable ([0a0b03f](https://github.com/appsfactorygmbh/project-metadata-platform/commit/0a0b03f8093585cf36bbd50f3b1d4830f415ec73))
+
 ## [2.0.0](https://github.com/appsfactorygmbh/project-metadata-platform/compare/v1.0.0...v2.0.0) (2026-07-31)
 
 
