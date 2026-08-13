@@ -19,7 +19,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Resilience" Version="10.8.*" />
+        <PackageReference Include="Microsoft.Extensions.Resilience" Version="10.9.*" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.*" />
         <PackageReference
             Include="OpenTelemetry.Instrumentation.EntityFrameworkCore"
