@@ -17,7 +17,6 @@ public class ProjectManagement : IntegrationTestsBase
                 {
                   "projectName": "testProject",
                   "clientName": "testClient",
-                  "offerId": "testId",
                   "companyId":
             """
                 + companyId
@@ -37,7 +36,6 @@ public class ProjectManagement : IntegrationTestsBase
             {
               "projectName": "otherTestProject2",
               "clientName": "testClient2",
-              "offerId": "testId2",
                   "companyId":
             """
                 + companyId
@@ -57,7 +55,6 @@ public class ProjectManagement : IntegrationTestsBase
               "projectName": "testProject",
               "clientName": "testClient",
               "isArchived": true,
-              "offerId": "testId",
                   "companyId":
             """
                 + companyId
@@ -76,7 +73,6 @@ public class ProjectManagement : IntegrationTestsBase
             {
               "projectName": "testProject",
               "clientName": "testClient2",
-              "offerId": "testId2",
                   "companyId":
             """
                 + companyId
@@ -95,7 +91,6 @@ public class ProjectManagement : IntegrationTestsBase
                    {
                      "projectName": "testProject",
                      "clientName": "testClient",
-                     "offerId": "testId",
                   "companyId":
             """
                 + companyId
@@ -132,7 +127,6 @@ public class ProjectManagement : IntegrationTestsBase
                    {
                      "projectName": "testProject",
                      "clientName": "testClient",
-                     "offerId": "testId",
                   "companyId":
             """
                 + companyId
@@ -188,7 +182,6 @@ public class ProjectManagement : IntegrationTestsBase
         var rootElement = getResponseContent!.RootElement;
         Assert.That(rootElement.GetProperty("projectName").GetString(), Is.EqualTo("testProject"));
         Assert.That(rootElement.GetProperty("clientName").GetString(), Is.EqualTo("testClient"));
-        Assert.That(rootElement.GetProperty("offerId").GetString(), Is.EqualTo("testId"));
         Assert.That(
             rootElement.GetProperty("company").GetProperty("companyName").GetString(),
             Is.EqualTo("testCompany")
@@ -288,7 +281,6 @@ public class ProjectManagement : IntegrationTestsBase
 
         Assert.That(rootElement.GetProperty("projectName").GetString(), Is.EqualTo("testProject"));
         Assert.That(rootElement.GetProperty("clientName").GetString(), Is.EqualTo("testClient2"));
-        Assert.That(rootElement.GetProperty("offerId").GetString(), Is.EqualTo("testId2"));
         Assert.That(
             rootElement.GetProperty("company").GetProperty("companyName").GetString(),
             Is.EqualTo("testCompany2")
@@ -304,14 +296,14 @@ public class ProjectManagement : IntegrationTestsBase
         Assert.That(
             logs[2].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, OfferId = testId, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = Example Notes"
+                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = Example Notes"
             )
         );
 
         Assert.That(
             logs[0].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "admin updated project testProject:  set ClientName from testClient to testClient2,  set OfferId from testId to testId2,  set Company from testCompany to testCompany2,  set CompanyState from EXTERNAL to INTERNAL,  set IsmsLevel from NORMAL to HIGH,  set Notes from Example Notes to testNotes2"
+                "admin updated project testProject:  set ClientName from testClient to testClient2,  set Company from testCompany to testCompany2,  set CompanyState from EXTERNAL to INTERNAL,  set IsmsLevel from NORMAL to HIGH,  set Notes from Example Notes to testNotes2"
             )
         );
     }
@@ -364,7 +356,6 @@ public class ProjectManagement : IntegrationTestsBase
 
         Assert.That(project.GetProperty("projectName").GetString(), Is.EqualTo("testProject"));
         Assert.That(project.GetProperty("clientName").GetString(), Is.EqualTo("testClient"));
-        Assert.That(project.GetProperty("offerId").GetString(), Is.EqualTo("testId"));
         Assert.That(
             project.GetProperty("company").GetProperty("companyName").GetString(),
             Is.EqualTo("testCompany")
@@ -405,7 +396,7 @@ public class ProjectManagement : IntegrationTestsBase
         Assert.That(
             logs[5].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, OfferId = testId, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = testNotes"
+                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = testNotes"
             )
         );
 
@@ -517,7 +508,7 @@ public class ProjectManagement : IntegrationTestsBase
         Assert.That(
             logs[2].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, OfferId = testId, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = Example Notes"
+                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = Example Notes"
             )
         );
         Assert.That(

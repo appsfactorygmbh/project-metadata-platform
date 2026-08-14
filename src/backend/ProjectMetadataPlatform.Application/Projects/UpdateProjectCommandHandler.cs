@@ -176,18 +176,6 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
             project.ClientName = request.ClientName;
         }
 
-        if (project.OfferId != request.OfferId)
-        {
-            var change = new LogChange
-            {
-                Property = nameof(Project.OfferId),
-                OldValue = project.OfferId ?? "",
-                NewValue = request.OfferId ?? "",
-            };
-            changes.Add(change);
-            project.OfferId = request.OfferId;
-        }
-
         if (project.CompanyId != request.CompanyId)
         {
             if (!await _companyRepository.CheckIfCompanyExistsAsync(request.CompanyId))
@@ -441,10 +429,6 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
         if (request.ClientName != project.ClientName)
         {
             updates.Add(nameof(Project.ClientName), request.ClientName);
-        }
-        if (request.OfferId != project.OfferId)
-        {
-            updates.Add(nameof(Project.OfferId), request.OfferId);
         }
         if (request.CompanyId != project.CompanyId)
         {

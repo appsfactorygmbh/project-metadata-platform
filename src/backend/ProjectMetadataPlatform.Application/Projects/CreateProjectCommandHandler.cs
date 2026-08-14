@@ -77,7 +77,6 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
             ProjectName = request.ProjectName,
             Slug = projectSlug,
             ClientName = request.ClientName,
-            OfferId = request.OfferId,
             CompanyId = request.CompanyId,
             CompanyState = request.CompanyState,
             IsmsLevel = request.IsmsLevel,
@@ -198,20 +197,6 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
                     OldValue = "",
                     NewValue = project.Notes,
                     Property = "Notes",
-                }
-            );
-        }
-        if (project.OfferId != null)
-        {
-            // handling for order based integration tests
-            // (OfferId log expected at index 3)
-            changes.Insert(
-                3,
-                new()
-                {
-                    OldValue = "",
-                    NewValue = project.OfferId,
-                    Property = nameof(Project.OfferId),
                 }
             );
         }

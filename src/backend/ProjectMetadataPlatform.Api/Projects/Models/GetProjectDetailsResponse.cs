@@ -15,7 +15,6 @@ namespace ProjectMetadataPlatform.Api.Projects.Models;
 /// <param name="Slug">The Slug for the project name.</param>
 /// <param name="IsArchived">If the project is archived or not.</param>
 /// <param name="IsEoC">If the project is an Engineer on Call project.</param>
-/// <param name="OfferId">Internal id of the offer associated with the project.</param>
 /// <param name="Company">The company that is responsible for the project.</param>
 /// <param name="Team">The team working on the project. Optional.</param>
 /// <param name="CompanyState">The state of the company. (INTERNAL or EXTERNAL)</param>
@@ -27,7 +26,6 @@ public record GetProjectDetailsResponse(
     string Slug,
     string ProjectName,
     string ClientName,
-    string? OfferId,
     GetCompanyResponse Company,
     bool IsArchived,
     bool IsEoC,

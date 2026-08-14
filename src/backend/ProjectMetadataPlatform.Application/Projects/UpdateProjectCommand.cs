@@ -10,7 +10,6 @@ namespace ProjectMetadataPlatform.Application.Projects;
 /// </summary>
 /// <param name="ProjectName">Name of the project</param>
 /// <param name="ClientName">Name of the client</param>
-/// <param name="OfferId">Id of the offer associated with project.</param>
 /// <param name="CompanyId">Id of the Company responsible for project.</param>
 /// <param name="CompanyState">State of company.</param>
 /// <param name="TeamId">The id of the team associated with the project.</param>
@@ -24,7 +23,6 @@ public record UpdateProjectCommand(
     int Id,
     string ProjectName,
     string ClientName,
-    string? OfferId,
     int CompanyId,
     CompanyState CompanyState,
     int? TeamId,

@@ -63,8 +63,7 @@ public class UpdateProjectCommandHandlerTest
             Id = 1,
             ProjectName = "Example Project",
             Slug = "example project",
-            ClientName = "Example Client",
-            OfferId = "Example OfferId",
+            ClientName = "example Name",
             Company = new() { CompanyName = "Example Company" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -116,7 +115,6 @@ public class UpdateProjectCommandHandlerTest
             new UpdateProjectCommand(
                 ProjectName: exampleProject.ProjectName,
                 ClientName: exampleProject.ClientName,
-                OfferId: exampleProject.OfferId,
                 CompanyId: exampleProject.CompanyId,
                 CompanyState: exampleProject.CompanyState,
                 IsmsLevel: exampleProject.IsmsLevel,
@@ -141,7 +139,6 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Example Project",
             Slug = "example project",
             ClientName = "Example Client",
-            OfferId = "Example OfferId",
             Company = new() { CompanyName = "Example Company" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -183,7 +180,6 @@ public class UpdateProjectCommandHandlerTest
                 new UpdateProjectCommand(
                     ProjectName: exampleProject.ProjectName,
                     ClientName: exampleProject.ClientName,
-                    OfferId: exampleProject.OfferId,
                     CompanyId: exampleProject.CompanyId,
                     CompanyState: exampleProject.CompanyState,
                     IsmsLevel: exampleProject.IsmsLevel,
@@ -209,7 +205,6 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Example Project",
             Slug = "example project",
             ClientName = "Example Client",
-            OfferId = "Example OfferId",
             Company = new() { CompanyName = "Example Company" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -255,7 +250,6 @@ public class UpdateProjectCommandHandlerTest
                 new UpdateProjectCommand(
                     ProjectName: exampleProject.ProjectName,
                     ClientName: exampleProject.ClientName,
-                    OfferId: exampleProject.OfferId,
                     CompanyId: exampleProject.CompanyId,
                     CompanyState: exampleProject.CompanyState,
                     IsmsLevel: exampleProject.IsmsLevel,
@@ -282,7 +276,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Db App",
             Slug = "db app",
             ClientName = "DB",
-            OfferId = "Offer 1",
+
             Company = new() { CompanyName = "DB" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -294,7 +288,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: "DB App",
             ClientName: "Deutsche Bahn",
-            OfferId: "Offer 2",
             CompanyId: 1,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
@@ -329,7 +322,6 @@ public class UpdateProjectCommandHandlerTest
         {
             Assert.That(project.ClientName, Is.EqualTo("Deutsche Bahn"));
             Assert.That(project.ProjectName, Is.EqualTo("DB App"));
-            Assert.That(project.OfferId, Is.EqualTo("Offer 2"));
             Assert.That(project.Company.CompanyName, Is.EqualTo("DB"));
             Assert.That(project.CompanyState, Is.EqualTo(CompanyState.INTERNAL));
             Assert.That(project.IsmsLevel, Is.EqualTo(SecurityLevel.NORMAL));
@@ -348,7 +340,6 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Db App",
             Slug = "db app",
             ClientName = "DB",
-            OfferId = "Offer 1",
             Company = new() { CompanyName = "DeutscheBahn" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -360,7 +351,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: "DB App",
             ClientName: "Deutsche Bahn",
-            OfferId: "Offer 2",
             CompanyId: 2,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
@@ -405,7 +395,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Db App",
             Slug = "db app",
             ClientName = "DB",
-            OfferId = "Offer 1",
+
             Company = new() { CompanyName = "DeutscheBahn" },
             CompanyId = 1,
 
@@ -446,7 +436,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: "DB App",
             ClientName: "Unit 2",
-            OfferId: "Offer id 2",
             CompanyId: 2,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
@@ -548,7 +537,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Db App",
             Slug = "db app",
             ClientName = "DB",
-            OfferId = "Offer 1",
+
             Company = new() { CompanyName = "DeutscheBahn" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -561,7 +550,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: "DB App",
             ClientName: "Unit 2",
-            OfferId: "Offer 2",
             CompanyId: 2,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
@@ -602,7 +590,6 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Old Project Name",
             Slug = "old project name",
             ClientName = "Old Client",
-            OfferId = "Old Offer",
             Company = new() { CompanyName = "Old Company" },
             CompanyId = 5,
             CompanyState = CompanyState.EXTERNAL,
@@ -616,7 +603,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: "New Project Name",
             ClientName: "New Client",
-            OfferId: "New Offer",
             CompanyId: 1,
             CompanyState: CompanyState.INTERNAL,
             IsmsLevel: SecurityLevel.NORMAL,
@@ -670,11 +656,6 @@ public class UpdateProjectCommandHandlerTest
                             && change.NewValue == "New Client"
                         )
                         && changes.Any(change =>
-                            change.Property == "OfferId"
-                            && change.OldValue == "Old Offer"
-                            && change.NewValue == "New Offer"
-                        )
-                        && changes.Any(change =>
                             change.Property == "Company"
                             && change.OldValue == "Old Company"
                             && change.NewValue == "New Company"
@@ -715,7 +696,6 @@ public class UpdateProjectCommandHandlerTest
             Slug = "no change project",
             ClientName = "Client A",
 
-            OfferId = "Offer A",
             Company = new() { CompanyName = "Company A" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -728,7 +708,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: exampleProject.ProjectName,
             ClientName: exampleProject.ClientName,
-            OfferId: exampleProject.OfferId,
             CompanyId: exampleProject.CompanyId,
             CompanyState: exampleProject.CompanyState,
             IsmsLevel: exampleProject.IsmsLevel,
@@ -773,7 +752,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Partial Update",
             Slug = "partial update",
             ClientName = "Client A",
-            OfferId = "Offer A",
+
             Company = new() { CompanyName = "Company A" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -787,7 +766,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: "Partial Update",
             ClientName: "Updated Client",
-            OfferId: "Updated Offer",
             CompanyId: 1,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.VERY_HIGH,
@@ -825,11 +803,6 @@ public class UpdateProjectCommandHandlerTest
                             && change.OldValue == "Client A"
                             && change.NewValue == "Updated Client"
                         )
-                        && changes.Any(change =>
-                            change.Property == "OfferId"
-                            && change.OldValue == "Offer A"
-                            && change.NewValue == "Updated Offer"
-                        )
                     )
                 ),
             Times.Once
@@ -845,7 +818,6 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Project With Exception",
             Slug = "project with exception",
             ClientName = "Client C",
-            OfferId = "Offer A",
 
             Company = new() { CompanyName = "Company A" },
             CompanyId = 1,
@@ -858,7 +830,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: "New Project Name",
             ClientName: "New Client",
-            OfferId: "Updated Offer",
             CompanyId: 1,
             CompanyState: CompanyState.EXTERNAL,
             IsmsLevel: SecurityLevel.VERY_HIGH,
@@ -917,7 +888,6 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Test Project",
             Slug = "test project",
             ClientName = "Test Client",
-            OfferId = "Offer A",
             Company = new() { CompanyName = "Company A" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -931,7 +901,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
-            OfferId: project.OfferId,
             CompanyId: 1,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
@@ -987,7 +956,6 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Archived Project",
             Slug = "archived project",
             ClientName = "Test Client",
-            OfferId = "Offer A",
             Company = new() { CompanyName = "Company A" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -1000,7 +968,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
-            OfferId: project.OfferId,
             CompanyId: 1,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
@@ -1056,7 +1023,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Test Project",
             Slug = "test project",
             ClientName = "Test Client",
-            OfferId = "Offer A",
+
             Company = new() { CompanyName = "Company A" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -1069,7 +1036,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
-            OfferId: project.OfferId,
             CompanyId: 1,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
@@ -1117,7 +1083,6 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Test Project",
             Slug = "test project",
             ClientName = "Test Client",
-            OfferId = "Offer A",
             Company = new() { CompanyName = "Company A" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -1138,7 +1103,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
-            OfferId: project.OfferId,
             CompanyId: 1,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
@@ -1208,7 +1172,6 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Test Project",
             Slug = "test project",
             ClientName = "Test Client",
-            OfferId = "Offer A",
             Company = new() { CompanyName = "Company A" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -1221,7 +1184,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
-            OfferId: project.OfferId,
             CompanyId: 1,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
@@ -1299,7 +1261,6 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Test Project",
             Slug = "test project",
             ClientName = "Test Client",
-            OfferId = "Offer A",
             Company = new() { CompanyName = "Company A" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -1320,7 +1281,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
-            OfferId: project.OfferId,
             CompanyId: 1,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
@@ -1388,7 +1348,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Test Project",
             Slug = "test project",
             ClientName = "Test Client",
-            OfferId = "Offer A",
+
             Company = new() { CompanyName = "Company A" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -1408,7 +1368,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
-            OfferId: project.OfferId,
             CompanyId: 1,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
@@ -1470,7 +1429,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Example Project",
             Slug = "example project",
             ClientName = "Example Client",
-            OfferId = "Offer A",
+
             Company = new() { CompanyName = "Company A" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -1482,7 +1441,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: "New Project",
             ClientName: project.ClientName,
-            OfferId: project.OfferId,
             CompanyId: project.CompanyId,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
@@ -1517,7 +1475,7 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Example Project",
             Slug = "example project",
             ClientName = "Example Client",
-            OfferId = "Offer A",
+
             Company = new() { CompanyName = "Company A" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -1529,7 +1487,6 @@ public class UpdateProjectCommandHandlerTest
         var updateCommand = new UpdateProjectCommand(
             ProjectName: "New Project",
             ClientName: project.ClientName,
-            OfferId: project.OfferId,
             CompanyId: project.CompanyId,
             CompanyState: project.CompanyState,
             IsmsLevel: project.IsmsLevel,
@@ -1573,7 +1530,6 @@ public class UpdateProjectCommandHandlerTest
             ProjectName = "Example Project",
             Slug = "example project",
             ClientName = "Example Client",
-            OfferId = "Offer A",
             Company = new() { CompanyName = "Company A" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -1595,7 +1551,6 @@ public class UpdateProjectCommandHandlerTest
             Id: 1,
             ProjectName: "Example Project",
             ClientName: "Example Business Unit",
-            OfferId: "1",
             CompanyId: 1,
             IsArchived: true,
             CompanyState: CompanyState.EXTERNAL,

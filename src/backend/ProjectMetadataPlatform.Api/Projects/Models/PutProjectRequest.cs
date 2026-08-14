@@ -8,7 +8,6 @@ namespace ProjectMetadataPlatform.Api.Projects.Models;
 /// </summary>
 /// <param name="ProjectName">The name of the project.</param>
 /// <param name="ClientName">The name of the client for the project.</param>
-/// <param name="OfferId">Id of the offer associated with project.</param>
 /// <param name="CompanyId">Id of the Company responsible for project.</param>
 /// <param name="TeamId">The id of the team that should be assigned to the project.</param>
 /// <param name="CompanyState">State of company.</param>
@@ -20,7 +19,6 @@ namespace ProjectMetadataPlatform.Api.Projects.Models;
 public record PutProjectRequest(
     string ProjectName,
     string ClientName,
-    string? OfferId,
     int CompanyId,
     int? TeamId,
     CompanyState CompanyState,

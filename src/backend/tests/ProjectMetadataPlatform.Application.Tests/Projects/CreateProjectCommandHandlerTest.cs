@@ -91,7 +91,6 @@ public class CreateProjectCommandHandlerTest
             new CreateProjectCommand(
                 ProjectName: "Example Project",
                 ClientName: "Example Business Unit",
-                OfferId: "1",
                 CompanyId: 1, //"Example Company",
                 CompanyState: CompanyState.EXTERNAL,
                 TeamId: null,
@@ -156,7 +155,6 @@ public class CreateProjectCommandHandlerTest
                 new CreateProjectCommand(
                     ProjectName: "Example Project",
                     ClientName: "Example Business Unit",
-                    OfferId: "1",
                     CompanyId: 1,
                     CompanyState: CompanyState.EXTERNAL,
                     TeamId: null,
@@ -220,7 +218,6 @@ public class CreateProjectCommandHandlerTest
                 new CreateProjectCommand(
                     ProjectName: "Example Project",
                     ClientName: "Example Business Unit",
-                    OfferId: "1",
                     CompanyId: 1,
                     CompanyState: CompanyState.EXTERNAL,
                     TeamId: null,
@@ -295,7 +292,6 @@ public class CreateProjectCommandHandlerTest
                 new CreateProjectCommand(
                     ProjectName: "Example Project",
                     ClientName: "Example Business Unit",
-                    OfferId: "1",
                     CompanyId: 1,
                     CompanyState: CompanyState.EXTERNAL,
                     TeamId: null,
@@ -350,7 +346,6 @@ public class CreateProjectCommandHandlerTest
         var request = new CreateProjectCommand(
             ProjectName: "Example Project",
             ClientName: "Example Business Unit",
-            OfferId: "1",
             CompanyId: 1,
             CompanyState: CompanyState.EXTERNAL,
             TeamId: null,

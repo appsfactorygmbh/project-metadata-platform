@@ -45,7 +45,6 @@ public class PutProjectControllerTest
         var request = new PutProjectRequest(
             ProjectName: "Example Project",
             ClientName: "Example Client",
-            OfferId: "Example OfferId",
             CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
@@ -74,7 +73,6 @@ public class PutProjectControllerTest
                 It.Is<CreateProjectCommand>(command =>
                     command.Plugins.Count == 1
                     && command.ProjectName == "Example Project"
-                    && command.OfferId == "Example OfferId"
                     && command.CompanyId == 1
                     && command.ClientName == "Example Client"
                     && command.CompanyState == CompanyState.EXTERNAL
@@ -105,7 +103,6 @@ public class PutProjectControllerTest
         var request = new PutProjectRequest(
             ProjectName: "Example Project",
             ClientName: "Example Client",
-            OfferId: "Example OfferId",
             CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
@@ -121,7 +118,6 @@ public class PutProjectControllerTest
                     command.Plugins.Count == 0
                     && command.ProjectName == "Example Project"
                     && command.ClientName == "Example Client"
-                    && command.OfferId == "Example OfferId"
                     && command.CompanyId == 1
                     && command.CompanyState == CompanyState.EXTERNAL
                     && command.IsmsLevel == SecurityLevel.NORMAL
@@ -148,7 +144,6 @@ public class PutProjectControllerTest
         var request = new PutProjectRequest(
             ProjectName: "Example Project",
             ClientName: "Example Client",
-            OfferId: "Example OfferId",
             CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
@@ -163,7 +158,6 @@ public class PutProjectControllerTest
                     command.Plugins.Count == 0
                     && command.ProjectName == "Example Project"
                     && command.ClientName == "Example Client"
-                    && command.OfferId == "Example OfferId"
                     && command.CompanyId == 1
                     && command.CompanyState == CompanyState.EXTERNAL
                     && command.IsmsLevel == SecurityLevel.NORMAL
@@ -181,7 +175,6 @@ public class PutProjectControllerTest
         var request = new PutProjectRequest(
             ProjectName: "",
             ClientName: " ",
-            OfferId: "1",
             CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
@@ -209,7 +202,6 @@ public class PutProjectControllerTest
         var request = new PutProjectRequest(
             ProjectName: "Tour Eiffel",
             ClientName: "BusinessUnit 9001",
-            OfferId: "42",
             CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
@@ -235,7 +227,6 @@ public class PutProjectControllerTest
         var request = new PutProjectRequest(
             ProjectName: "p",
             ClientName: "b",
-            OfferId: "1",
             CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
@@ -262,7 +253,6 @@ public class PutProjectControllerTest
         var request = new PutProjectRequest(
             ProjectName: "p",
             ClientName: "b",
-            OfferId: "1",
             CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.INTERNAL,
@@ -288,7 +278,6 @@ public class PutProjectControllerTest
         var request = new PutProjectRequest(
             ProjectName: "Example Project",
             ClientName: "Example Client",
-            OfferId: "Example OfferId",
             CompanyId: 1,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
@@ -320,7 +309,6 @@ public class PutProjectControllerTest
                     command.Plugins.Count == 1
                     && command.ProjectName == "Example Project"
                     && command.ClientName == "Example Client"
-                    && command.OfferId == "Example OfferId"
                     && command.CompanyId == 1
                     && command.CompanyState == CompanyState.EXTERNAL
                     && command.IsmsLevel == SecurityLevel.NORMAL
@@ -349,7 +337,6 @@ public class PutProjectControllerTest
         var request = new PutProjectRequest(
             ProjectName: "Example Project",
             ClientName: "Example Client",
-            OfferId: "Example OfferId",
             CompanyId: 2,
             TeamId: null,
             CompanyState: CompanyState.EXTERNAL,
@@ -381,7 +368,6 @@ public class PutProjectControllerTest
                     command.Plugins.Count == 1
                     && command.ProjectName == "Example Project"
                     && command.ClientName == "Example Client"
-                    && command.OfferId == "Example OfferId"
                     && command.CompanyId == 2
                     && command.CompanyState == CompanyState.EXTERNAL
                     && command.IsmsLevel == SecurityLevel.NORMAL
@@ -421,7 +407,6 @@ public class PutProjectControllerTest
         var updateRequest = new PutProjectRequest(
             ProjectName: "UpdatedProject",
             ClientName: "Updated Client",
-            OfferId: "Updated OfferId",
             CompanyId: 1,
             TeamId: 2,
             CompanyState: CompanyState.INTERNAL,
@@ -451,7 +436,6 @@ public class PutProjectControllerTest
                     command.Plugins.Count == 1
                     && command.ProjectName == "UpdatedProject"
                     && command.ClientName == "Updated Client"
-                    && command.OfferId == "Updated OfferId"
                     && command.CompanyId == 1
                     && command.CompanyState == CompanyState.INTERNAL
                     && !command.IsEoC
@@ -480,7 +464,6 @@ public class PutProjectControllerTest
         var updateRequest = new PutProjectRequest(
             ProjectName: "UpdatedProject",
             ClientName: "Updated Business Unit",
-            OfferId: "2",
             CompanyId: 5,
             TeamId: 2,
             CompanyState: CompanyState.INTERNAL,
@@ -520,7 +503,6 @@ public class PutProjectControllerTest
         var updateRequest = new PutProjectRequest(
             ProjectName: "UpdatedProject",
             ClientName: "Updated Client",
-            OfferId: "Updated OfferId",
             CompanyId: 2,
             TeamId: 2,
             CompanyState: CompanyState.INTERNAL,
@@ -551,7 +533,6 @@ public class PutProjectControllerTest
                     command.Plugins.Count == 1
                     && command.ProjectName == "UpdatedProject"
                     && command.ClientName == "Updated Client"
-                    && command.OfferId == "Updated OfferId"
                     && command.CompanyId == 2
                     && command.CompanyState == CompanyState.INTERNAL
                     && command.IsmsLevel == SecurityLevel.HIGH

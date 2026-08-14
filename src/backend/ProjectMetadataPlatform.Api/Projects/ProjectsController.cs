@@ -127,7 +127,6 @@ public class ProjectsController : ControllerBase
         var response = new GetProjectDetailsResponse(
             Id: project.Id,
             Slug: project.Slug,
-            OfferId: project.OfferId,
             CompanyState: project.CompanyState,
             ProjectName: project.ProjectName,
             ClientName: project.ClientName,
@@ -306,7 +305,6 @@ public class ProjectsController : ControllerBase
             var command = new CreateProjectCommand(
                 ProjectName: projectRequest.ProjectName,
                 ClientName: projectRequest.ClientName,
-                OfferId: projectRequest.OfferId,
                 CompanyId: projectRequest.CompanyId,
                 CompanyState: projectRequest.CompanyState,
                 TeamId: projectRequest.TeamId,
@@ -331,7 +329,6 @@ public class ProjectsController : ControllerBase
                 Id: projectId.Value,
                 ProjectName: projectRequest.ProjectName,
                 ClientName: projectRequest.ClientName,
-                OfferId: projectRequest.OfferId,
                 CompanyId: projectRequest.CompanyId,
                 CompanyState: projectRequest.CompanyState,
                 TeamId: projectRequest.TeamId,
