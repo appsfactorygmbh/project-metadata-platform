@@ -1961,10 +1961,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/node20@npm:^20.1.9":
-  version: 20.1.9
-  resolution: "@tsconfig/node20@npm:20.1.9"
-  checksum: 10c0/04e4e515dc6ce9386af74accb565884c3771b355208acc3d3dee32f0ce4c1d12e59319e05200fb2b87a8655ed4d8eb9910e36667a91e4683879feea9938d90d1
+"@tsconfig/node20@npm:^20.1.10":
+  version: 20.1.10
+  resolution: "@tsconfig/node20@npm:20.1.10"
+  checksum: 10c0/8ae050b55fceec0aaf3233f7ac41647ec7fc1af0d919c74323c35393fc3c036da7a961ab2391de929467d734d677d6e066c9206ac8adbf0a0bc314f527ef7b4a
   languageName: node
   linkType: hard
 
@@ -3041,9 +3041,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/language-core@npm:3.3.9":
-  version: 3.3.9
-  resolution: "@vue/language-core@npm:3.3.9"
+"@vue/language-core@npm:3.3.10":
+  version: 3.3.10
+  resolution: "@vue/language-core@npm:3.3.10"
   dependencies:
     "@volar/language-core": "npm:2.4.28"
     "@vue/compiler-dom": "npm:^3.5.0"
@@ -3052,7 +3052,7 @@ __metadata:
     muggle-string: "npm:^0.4.1"
     path-browserify: "npm:^1.0.1"
     picomatch: "npm:^4.0.4"
-  checksum: 10c0/bff339e8ce218d32b8db7a372c1f958db52950e74bbedff527e928b68e52fad30c14e0652dc2626673a579cab15b47d8106eac0deefc7898f370da7889122bba
+  checksum: 10c0/4ce3f64d9c549a7e96023594cbe5a3b5b883e7af0660e8db347c877968a829889aca6a59537192c3b307b2e0e778d66aadd71675d713f750395f24affe78e869
   languageName: node
   linkType: hard
 
@@ -6082,7 +6082,7 @@ __metadata:
     "@pinia/testing": "npm:^2.0.1"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/vue": "npm:^8.1.0"
-    "@tsconfig/node20": "npm:^20.1.9"
+    "@tsconfig/node20": "npm:^20.1.10"
     "@types/eslint-config-prettier": "npm:^6.11.3"
     "@types/eslint__js": "npm:^9.14.0"
     "@types/jest": "npm:^30.0.0"
@@ -6113,7 +6113,7 @@ __metadata:
     eslint-plugin-prettier: "npm:^5.5.6"
     eslint-plugin-unused-imports: "npm:^4.4.1"
     eslint-plugin-vue: "npm:^10.10.0"
-    globals: "npm:^17.9.0"
+    globals: "npm:^17.11.0"
     happy-dom: "npm:^20.11.2"
     jest: "npm:^30.4.2"
     jiti: "npm:^2.7.0"
@@ -6124,7 +6124,7 @@ __metadata:
     lodash-es: "npm:^4.18.1"
     mitt: "npm:^3.0.1"
     nanoid: "npm:^6.0.1"
-    pinia: "npm:^4.0.2"
+    pinia: "npm:^4.0.3"
     pinia-generic: "npm:^0.2.3"
     prettier: "npm:^3.9.6"
     sass: "npm:^1.102.0"
@@ -6141,7 +6141,7 @@ __metadata:
     vue-auth3: "npm:^1.1.2"
     vue-eslint-parser: "npm:^10.4.1"
     vue-router: "npm:^5.2.0"
-    vue-tsc: "npm:^3.3.9"
+    vue-tsc: "npm:^3.3.10"
     yarn-run-all: "npm:^3.1.1"
   languageName: unknown
   linkType: soft
@@ -6439,10 +6439,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^17.9.0":
-  version: 17.9.0
-  resolution: "globals@npm:17.9.0"
-  checksum: 10c0/776116bffb916e462d548c26a44c9a5d8f4e551935a883991e9f5d68cbcb21b63e4c688e36bbc564f97d3025e304d8b2bb0a611ecf944825aeee164898dcfbdd
+"globals@npm:^17.11.0":
+  version: 17.11.0
+  resolution: "globals@npm:17.11.0"
+  checksum: 10c0/5e1be3d816e04d4d0d01b1cdd40e46b5fb6b5e9f15aece9a5919b060e0fb1b3f1b9e7327dce97ef19e05513a6d65872e0834999ddea251557556dddd0f5fde30
   languageName: node
   linkType: hard
 
@@ -9310,9 +9310,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pinia@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "pinia@npm:4.0.2"
+"pinia@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "pinia@npm:4.0.3"
   dependencies:
     nostics: "npm:^1.1.4"
   peerDependencies:
@@ -9324,7 +9324,7 @@ __metadata:
       optional: false
     typescript:
       optional: true
-  checksum: 10c0/210f76c147cadf379437abc0150763add506e0328204f4f42adb14e74967bd60f3036eae5e06b572ee6666047bbfb9158db2f0cf9b9016c1f94c724eba4b30d4
+  checksum: 10c0/6c06c872dd555cb8095a7a9cf3271449b8e88a9908d2cbc9ec6df328ace0d3256848e523c5d30653f7eff2eba7c91dd16f4a9f1cd0a78ff881c7a9dc11096464
   languageName: node
   linkType: hard
 
@@ -11857,17 +11857,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-tsc@npm:^3.3.9":
-  version: 3.3.9
-  resolution: "vue-tsc@npm:3.3.9"
+"vue-tsc@npm:^3.3.10":
+  version: 3.3.10
+  resolution: "vue-tsc@npm:3.3.10"
   dependencies:
     "@volar/typescript": "npm:2.4.28"
-    "@vue/language-core": "npm:3.3.9"
+    "@vue/language-core": "npm:3.3.10"
   peerDependencies:
     typescript: ">=5.0.0"
   bin:
     vue-tsc: bin/vue-tsc.js
-  checksum: 10c0/582ab81a0c5bb53a589e7f0ff2710cfaf32df1c180acaac5f65cbdfec8bd52a647aea0926a9fbef664799260d2df08a9f15cc9405759a6365169c73be16066c4
+  checksum: 10c0/313136a9866b2b3ae14a0871343632f933c9dbb45acc96c9916c31e498babf5a831b791cf69fe5aadae9aebad33f492c0946d384d849187d01ab0b4860aec259
   languageName: node
   linkType: hard
 
