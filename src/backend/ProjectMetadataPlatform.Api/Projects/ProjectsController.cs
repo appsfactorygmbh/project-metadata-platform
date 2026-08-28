@@ -8,14 +8,11 @@ using ProjectMetadataPlatform.Api.BusinessUnits.Models;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Companies.Models;
 using ProjectMetadataPlatform.Api.Errors;
-using ProjectMetadataPlatform.Api.Plugins.Models;
 using ProjectMetadataPlatform.Api.Projects.Models;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Application.Plugins;
 using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Authorization;
-using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 
 namespace ProjectMetadataPlatform.Api.Projects;
@@ -154,100 +151,6 @@ public class ProjectsController : ControllerBase
     }
 
     /// <summary>
-    /// Gets all the plugins of the project with the given id.
-    /// </summary>
-    /// <param name="id">The id of the project.</param>
-    /// <returns>The plugins of the project.</returns>
-    /// <response code="200">All Plugins of the project are returned successfully.</response>
-    /// <response code="500">An internal error occurred.</response>
-    [HttpGet("{id:int}/plugins")]
-    [ProducesResponseType(typeof(IEnumerable<GetPluginResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<GetPluginResponse>>> GetPlugins(int id)
-    {
-        var query = new GetAllPluginsForProjectIdQuery(id);
-        var projectPlugins = await _mediator.Send<
-            GetAllPluginsForProjectIdQuery,
-            List<ProjectPlugins>
-        >(query);
-
-        var response = projectPlugins.Select(plugin => new GetPluginResponse(
-            plugin.Plugin!.PluginName,
-            plugin.Url,
-            plugin.DisplayName ?? plugin.Plugin.PluginName,
-            plugin.Plugin.Id
-        ));
-
-        return Ok(response);
-    }
-
-    /// <summary>
-    /// Gets all the plugins of the project with the given id.
-    /// </summary>
-    /// <param name="slug">The slug of the project.</param>
-    /// <returns>The plugins of the project.</returns>
-    /// <response code="200">All Plugins of the project are returned successfully.</response>
-    /// <response code="404">No project with the given Slug could be found.</response>
-    /// <response code="500">An internal error occurred.</response>
-    [HttpGet("{slug}/plugins")]
-    [ProducesResponseType(typeof(IEnumerable<GetPluginResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<GetPluginResponse>>> GetPluginsBySlug(string slug)
-    {
-        var projectId = await GetProjectId(slug);
-        return await GetPlugins(projectId);
-    }
-
-    /// <summary>
-    ///     Gets all the unarchived plugins of the project with the given id.
-    /// </summary>
-    /// <param name="id">The id of the project.</param>
-    /// <returns>The unarchived plugins of the project.</returns>
-    /// <response code="200">Returns the list of unarchived plugins for the project</response>
-    /// <response code="404">If the project with the specified ID is not found</response>
-    /// <response code="500">If there was an internal server error while processing the request</response>
-    [HttpGet("{id:int}/unarchivedPlugins")]
-    [ProducesResponseType(typeof(IEnumerable<GetPluginResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<GetPluginResponse>>> GetUnarchivedPlugins(int id)
-    {
-        var query = new GetAllUnarchivedPluginsForProjectIdQuery(id);
-        var unarchivedProjectPlugins = await _mediator.Send<
-            GetAllUnarchivedPluginsForProjectIdQuery,
-            List<ProjectPlugins>
-        >(query);
-
-        var response = unarchivedProjectPlugins
-            .Where(plugin => plugin.Plugin != null)
-            .Select(plugin => new GetPluginResponse(
-                plugin.Plugin!.PluginName,
-                plugin.Url,
-                plugin.DisplayName ?? plugin.Plugin.PluginName,
-                plugin.Plugin.Id
-            ));
-
-        return Ok(response);
-    }
-
-    /// <summary>
-    /// Gets all the unarchived plugins of the project with the given slug.
-    /// </summary>
-    /// <param name="slug">The slug of the project.</param>
-    /// <returns>The unarchived plugins of the project.</returns>
-    /// <response code="200">All unarchived plugins of the project are returned successfully.</response>
-    /// <response code="404">No project with the given slug could be found.</response>
-    /// <response code="500">An internal error occurred.</response>
-    [HttpGet("{slug}/unarchivedPlugins")]
-    [ProducesResponseType(typeof(IEnumerable<GetPluginResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<GetPluginResponse>>> GetUnarchivedPluginsBySlug(
-        string slug
-    )
-    {
-        var projectId = await GetProjectId(slug);
-        return await GetUnarchivedPlugins(projectId);
-    }
-
-    /// <summary>
     /// Creates a new project or updates the one with given slug.
     /// </summary>
     /// <param name="project">The data of the new project.</param>
@@ -309,15 +212,6 @@ public class ProjectsController : ControllerBase
                 CompanyState: projectRequest.CompanyState,
                 TeamId: projectRequest.TeamId,
                 IsmsLevel: projectRequest.IsmsLevel,
-                Plugins:
-                [
-                    .. (projectRequest.PluginList ?? []).Select(p => new ProjectPlugins
-                    {
-                        PluginId = p.Id,
-                        DisplayName = p.DisplayName,
-                        Url = p.Url,
-                    }),
-                ],
                 IsEoC: projectRequest.IsEoC,
                 Notes: projectRequest.Notes
             );
@@ -333,16 +227,6 @@ public class ProjectsController : ControllerBase
                 CompanyState: projectRequest.CompanyState,
                 TeamId: projectRequest.TeamId,
                 IsmsLevel: projectRequest.IsmsLevel,
-                Plugins:
-                [
-                    .. (projectRequest.PluginList ?? []).Select(p => new ProjectPlugins
-                    {
-                        ProjectId = projectId.Value,
-                        PluginId = p.Id,
-                        DisplayName = p.DisplayName,
-                        Url = p.Url,
-                    }),
-                ],
                 IsArchived: projectRequest.IsArchived,
                 IsEoC: projectRequest.IsEoC,
                 Notes: projectRequest.Notes

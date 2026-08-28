@@ -6,11 +6,9 @@ using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
-using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
-using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 
 namespace ProjectMetadataPlatform.Application.Projects;
@@ -21,7 +19,6 @@ namespace ProjectMetadataPlatform.Application.Projects;
 public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, int>
 {
     private readonly IProjectsRepository _projectsRepository;
-    private readonly IPluginRepository _pluginRepository;
     private readonly ITeamRepository _teamRepository;
 
     private readonly ICompanyRepository _companyRepository;
@@ -34,7 +31,6 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
     /// Creates a new instance of <see cref="CreateProjectCommandHandler" />.
     /// </summary>
     /// <param name="projectsRepository">Repository for Projects</param>
-    /// <param name="pluginRepository">Repository for Plugins</param>
     /// <param name="teamRepository">Repository for Team</param>
     /// <param name="companyRepository">Repository for Company.</param>
     /// <param name="logRepository">Repository for Logs</param>
@@ -43,7 +39,6 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
     /// <param name="authorizationService"></param>
     public CreateProjectCommandHandler(
         IProjectsRepository projectsRepository,
-        IPluginRepository pluginRepository,
         ITeamRepository teamRepository,
         ICompanyRepository companyRepository,
         ILogRepository logRepository,
@@ -53,7 +48,6 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
     )
     {
         _projectsRepository = projectsRepository;
-        _pluginRepository = pluginRepository;
         _teamRepository = teamRepository;
         _companyRepository = companyRepository;
         _logRepository = logRepository;
@@ -80,7 +74,6 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
             CompanyId = request.CompanyId,
             CompanyState = request.CompanyState,
             IsmsLevel = request.IsmsLevel,
-            ProjectPlugins = request.Plugins,
             TeamId = request.TeamId,
             IsEoC = request.IsEoC,
             Notes = request.Notes,
@@ -91,13 +84,6 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
         )
         {
             throw new UnauthorizedException();
-        }
-        foreach (var plugin in request.Plugins)
-        {
-            if (!await _pluginRepository.CheckPluginExists(plugin.PluginId))
-            {
-                throw new PluginNotFoundException(plugin.PluginId);
-            }
         }
 
         // TODO add handling for team exists
@@ -201,37 +187,5 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
             );
         }
         await _logRepository.AddProjectLogForCurrentActor(project, Action.ADDED_PROJECT, changes);
-        if (project.ProjectPlugins != null)
-        {
-            foreach (var plugin in project.ProjectPlugins)
-            {
-                var pluginChanges = new List<LogChange>
-                {
-                    new()
-                    {
-                        OldValue = "",
-                        NewValue = plugin.Url,
-                        Property = nameof(ProjectPlugins.Url),
-                    },
-                };
-                if (plugin.DisplayName != null)
-                {
-                    pluginChanges.Add(
-                        new LogChange
-                        {
-                            OldValue = "",
-                            NewValue = plugin.DisplayName,
-                            Property = nameof(ProjectPlugins.DisplayName),
-                        }
-                    );
-                }
-
-                await _logRepository.AddProjectLogForCurrentActor(
-                    project,
-                    Action.ADDED_PROJECT_PLUGIN,
-                    pluginChanges
-                );
-            }
-        }
     }
 }

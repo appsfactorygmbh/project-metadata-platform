@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using ProjectMetadataPlatform.Application.Interfaces;
+﻿using ProjectMetadataPlatform.Application.Interfaces;
 
 namespace ProjectMetadataPlatform.Application.Plugins;
 
@@ -8,7 +7,5 @@ namespace ProjectMetadataPlatform.Application.Plugins;
 /// </summary>
 /// <param name="Name">The name of the new plugin</param>
 /// <param name="IsArchived">A boolean indicating if a plugin is archived/deleted.</param>
-/// <param name="Keys">The keys of the new plugin.</param>
 /// <param name="BaseUrl">The Base Url of the new plugin.</param>
-public record CreatePluginCommand(string Name, bool IsArchived, List<string> Keys, string BaseUrl)
-    : IRequest<int>;
+public record CreatePluginCommand(string Name, bool IsArchived, string BaseUrl) : IRequest<int>;

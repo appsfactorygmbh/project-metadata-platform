@@ -1,3 +1,4 @@
+﻿using ProjectMetadataPlatform.Domain.Billing;
 using ProjectMetadataPlatform.Domain.Projects;
 
 namespace ProjectMetadataPlatform.Domain.Plugins;
@@ -5,8 +6,13 @@ namespace ProjectMetadataPlatform.Domain.Plugins;
 /// <summary>
 /// The representation of a relation between a Project and a Plugin in the Database.
 /// </summary>
-public class ProjectPlugins
+public class ProjectPlugin
 {
+    /// <summary>
+    /// Project specific Id of the plugin.
+    /// </summary>
+    public int Id { get; set; }
+
     /// <summary>
     /// The project stored in the relation.
     /// </summary>
@@ -18,7 +24,7 @@ public class ProjectPlugins
     public Plugin? Plugin { get; set; }
 
     /// <summary>
-    /// The id for a plugin used as a foreign key for the plugin.
+    /// The id for a plugin.
     /// </summary>
     public required int PluginId { get; set; }
 
@@ -36,4 +42,14 @@ public class ProjectPlugins
     /// Url for the plugin.
     /// </summary>
     public required string Url { get; set; }
+
+    /// <summary>
+    /// Id of plugin specific billing information.
+    /// </summary>
+    public int? BillingId { get; set; }
+
+    /// <summary>
+    /// The billing information stored in the relation.
+    /// </summary>
+    public PluginBilling? PluginBilling { get; set; }
 }

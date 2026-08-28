@@ -46,7 +46,7 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
                 || (
                     project.Team != null
                     && EF.Functions.Like(
-                        project.Team.BusinessUnit.BusinessUnitName.ToLower(),
+                        project.Team.BusinessUnit!.BusinessUnitName.ToLower(),
                         $"%{lowerTextSearch}%"
                     )
                 )
@@ -146,26 +146,12 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
             .ToListAsync();
     }
 
-    /// <summary>
-    /// Asynchronously retrieves a project from the database by its identifier.
-    /// </summary>
-    /// <param name="id">Identification number for a project.</param>
-    /// <returns>A task representing the asynchronous operation. When this task completes, it returns one project.</returns>
+    /// <inheritdoc />
     public async Task<Project> GetProjectAsync(int id)
     {
         return await GetIf(p => p.Id == id)
-                .Include(proj => proj.Team)
-                    .ThenInclude(t => t!.BusinessUnit)
-                .Include(p => p.Company)
-                .FirstOrDefaultAsync()
-            ?? throw new ProjectNotFoundException(id);
-    }
-
-    /// <inheritdoc />
-    public async Task<Project> GetProjectWithPluginsAsync(int id)
-    {
-        return await GetIf(p => p.Id == id)
-                .Include(p => p.ProjectPlugins)
+                .Include(p => p.ProjectPlugins!)
+                    .ThenInclude(pp => pp.PluginBilling)
                 .Include(p => p.Team)
                     .ThenInclude(t => t!.BusinessUnit)
                 .Include(p => p.Company)

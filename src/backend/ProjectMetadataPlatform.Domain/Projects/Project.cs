@@ -34,7 +34,7 @@ public class Project
     /// <summary>
     /// Is used for the many-to-many relation in EF core.
     /// </summary>
-    public ICollection<ProjectPlugins>? ProjectPlugins { get; set; }
+    public ICollection<ProjectPlugin>? ProjectPlugins { get; set; }
 
     /// <summary>
     /// Includes the logs for the project. Used for one to many relationship.

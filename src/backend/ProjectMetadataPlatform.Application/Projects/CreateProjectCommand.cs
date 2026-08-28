@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.Plugins;
+﻿using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Projects;
 
 namespace ProjectMetadataPlatform.Application.Projects;
@@ -14,7 +12,6 @@ namespace ProjectMetadataPlatform.Application.Projects;
 /// <param name="CompanyState">State of company.</param>
 /// <param name="TeamId">The id of the team associated with the project.</param>
 /// <param name="IsmsLevel">Security Level of project.</param>
-/// <param name="Plugins">The List of the projects plugins.</param>
 /// <param name="IsEoC">If the project is an Engineer on Call project.</param>
 /// <param name="Notes">Additonal Project Notes</param>
 public record CreateProjectCommand(
@@ -24,7 +21,6 @@ public record CreateProjectCommand(
     CompanyState CompanyState,
     int? TeamId,
     SecurityLevel IsmsLevel,
-    List<ProjectPlugins> Plugins,
     bool IsEoC,
     string Notes
 ) : IRequest<int>;

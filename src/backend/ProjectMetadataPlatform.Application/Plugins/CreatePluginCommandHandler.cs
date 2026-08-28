@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -22,7 +21,7 @@ public class CreatePluginCommandHandler : IRequestHandler<CreatePluginCommand, i
     private readonly IAuthorizationService _authorizationService;
 
     /// <summary>
-    /// Creates a new instance of<see cref="GetAllPluginsForProjectIdQueryHandler" />.
+    /// Creates a new instance of<see cref="CreatePluginCommandHandler" />.
     /// </summary>
     /// <param name="pluginRepository">The repository for managing plugins.</param>
     /// <param name="logRepository">The repository for managing logs.</param>
@@ -54,7 +53,6 @@ public class CreatePluginCommandHandler : IRequestHandler<CreatePluginCommand, i
         {
             PluginName = request.Name,
             IsArchived = request.IsArchived,
-            //keys are not used in the current implementation
             ProjectPlugins = [],
             BaseUrl = request.BaseUrl,
         };
@@ -97,18 +95,6 @@ public class CreatePluginCommandHandler : IRequestHandler<CreatePluginCommand, i
                 NewValue = request.BaseUrl,
             },
         };
-        logChanges.AddRange(
-            request.Keys.Select(
-                (t, i) =>
-                    new LogChange
-                    {
-                        Property = "Keys[" + i + "]",
-                        OldValue = "",
-                        NewValue = t,
-                    }
-            )
-        );
-
         await _logRepository.AddGlobalPluginLogForCurrentActor(
             plugin,
             Action.ADDED_GLOBAL_PLUGIN,
