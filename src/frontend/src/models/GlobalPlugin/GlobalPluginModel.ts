@@ -6,9 +6,3 @@ import type {
 export type GlobalPluginModel = GetGlobalPluginResponse;
 
 export type GlobalPluginListModel = GetGlobalPluginResponseGetListResponse;
-
-export type GlobalPluginKey = {
-  value: string;
-  key: number;
-  archived: boolean;
-};

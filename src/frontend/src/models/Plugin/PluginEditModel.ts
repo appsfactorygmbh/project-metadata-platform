@@ -1,6 +1,3 @@
-import type { PluginModel } from './PluginModel';
+import type { UpdateProjectPluginRequest } from '@/api/generated';
 
-export type PluginEditModel = PluginModel & {
-  editKey: number;
-  isDeleted: boolean;
-};
+export type PluginEditModel = UpdateProjectPluginRequest;
