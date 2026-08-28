@@ -86,7 +86,6 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
             throw new UnauthorizedException();
         }
 
-        // TODO add handling for team exists
         if (
             request.TeamId != null
             && !await _teamRepository.CheckIfTeamExistsAsync(request.TeamId.Value)
