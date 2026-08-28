@@ -77,9 +77,10 @@ public class GetAllPluginsForProjectIdQueryHandler
             return (plugins, globalPermissions);
         }
 
-var queriedPluginList = await queriedPlugins.ToListAsync(cancellationToken);
+        var queriedPluginList = await queriedPlugins.ToListAsync(cancellationToken);
 
-    foreach (var plugin in queriedPluginList){
+        foreach (var plugin in queriedPluginList)
+        {
             plugins.Add(await BuildPPPM(plugin));
         }
         return (plugins, globalPermissions);
