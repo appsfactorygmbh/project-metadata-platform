@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Billing;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Departments;
@@ -116,6 +117,19 @@ public interface ILogRepository
     /// <returns></returns>
     Task AddApiTokenLogForCurrentActor(
         ApiToken affectedToken,
+        Action action,
+        List<LogChange> changes
+    );
+
+    /// <summary>
+    /// Adds Logs for changes made to global billing information. Sets the current User or Token as the Author.
+    /// </summary>
+    /// <param name="globalBilling"> The billing object changes were made to.</param>
+    /// <param name="action">The type of change that was made.</param>
+    /// <param name="changes">A list of the changed properties.</param>
+    /// <returns></returns>
+    Task AddGlobalBillingLogForCurrentActor(
+        GlobalBilling globalBilling,
         Action action,
         List<LogChange> changes
     );

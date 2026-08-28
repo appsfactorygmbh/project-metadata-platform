@@ -178,4 +178,34 @@ public enum Action
     /// Represents the action of removing a office location.
     /// </summary>
     REMOVED_OFFICE_LOCATION,
+
+    /// <summary>
+    /// Represents the action of adding global billing information.
+    /// </summary>
+    ADDED_GLOBAL_BILLING,
+
+    /// <summary>
+    /// Represents the action of updating lobal billing information.
+    /// </summary>
+    UPDATED_GLOBAL_BILLING,
+
+    /// <summary>
+    /// Represents the action of removing global billing information.
+    /// </summary>
+    REMOVED_GLOBAL_BILLING,
+
+    /// <summary>
+    /// Represents the action of adding billing information to a project plugin.
+    /// </summary>
+    ADDED_PROJECT_PLUGIN_BILLING,
+
+    /// <summary>
+    /// Represents the action of updating billing information of a project plugin.
+    /// </summary>
+    UPDATED_PROJECT_PLUGIN_BILLING,
+
+    /// <summary>
+    /// Represents the action of removing billing information from a project plugin.
+    /// </summary>
+    REMOVED_PROJECT_PLUGIN_BILLING,
 }

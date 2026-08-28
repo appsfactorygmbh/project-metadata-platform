@@ -104,6 +104,23 @@ public class LogConverter : ILogConverter
                 Action.REMOVED_DEPARTMENT => BuildRemovedDepartmentMessage(
                     log.DepartmentName ?? "<Unknown Department>"
                 ),
+                Action.ADDED_GLOBAL_BILLING => BuildAddedBillingMessage(log.Changes),
+                Action.UPDATED_GLOBAL_BILLING => BuildUpdatedBillingMessage(log),
+                Action.REMOVED_GLOBAL_BILLING => BuildRemovedBillingMessage(
+                    log.GlobalBillingKind ?? "<Unknown Billing>"
+                ),
+                Action.ADDED_PROJECT_PLUGIN_BILLING => BuildAddedPluginBillingMessage(
+                    log.ProjectName,
+                    log.Changes
+                ),
+                Action.UPDATED_PROJECT_PLUGIN_BILLING => BuildUpdatedPluginBillingMessage(
+                    log.ProjectName,
+                    log.Changes
+                ),
+                Action.REMOVED_PROJECT_PLUGIN_BILLING => BuildRemovedPluginBillingMessage(
+                    log.ProjectName,
+                    log.Changes
+                ),
                 _ => "",
             };
 
@@ -675,6 +692,129 @@ public class LogConverter : ILogConverter
     private static string BuildRemovedBusinessUnitMessage(string businessUnitName)
     {
         return "removed business unit " + businessUnitName;
+    }
+
+    /// <summary>
+    /// Builds a message for added billing information.
+    /// </summary>
+    /// <param name="changes">The list of changes.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildAddedBillingMessage(List<LogChange>? changes)
+    {
+        var message = "added new global billing information";
+        if (changes == null)
+        {
+            return message;
+        }
+        message += " with properties: ";
+        message += string.Join(
+            ", ",
+            changes.Select(change => $"{change.Property} = {change.NewValue}")
+        );
+        return message;
+    }
+
+    /// <summary>
+    /// Builds a message for an updated billing.
+    /// </summary>
+    /// <param name="log">The log entry.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildUpdatedBillingMessage(Log log)
+    {
+        var message = $"updated global billing information {log.GlobalBillingKind}: ";
+        message += string.Join(
+            ", ",
+            log.Changes!.Select(change =>
+                $"set {change.Property} from {change.OldValue} to {change.NewValue}"
+            )
+        );
+        return message;
+    }
+
+    /// <summary>
+    /// Builds a message for a removed billing.
+    /// </summary>
+    /// <param name="billingKind">The billing name of the removed billing.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildRemovedBillingMessage(string billingKind)
+    {
+        return "removed global billing information " + billingKind;
+    }
+
+    /// <summary>
+    /// Builds a message for added plugin billing information.
+    /// </summary>
+    /// <param name="projectName">The name of the project.</param>
+    /// <param name="changes">The list of changes.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildAddedPluginBillingMessage(
+        string? projectName,
+        List<LogChange>? changes
+    )
+    {
+        var message =
+            "added new billing information to project " + (projectName ?? "<Unknown Project>");
+        if (changes == null)
+        {
+            return message;
+        }
+        message += " with properties: ";
+        message += string.Join(
+            ", ",
+            changes.Select(change => $"{change.Property} = {change.NewValue}")
+        );
+        return message;
+    }
+
+    /// <summary>
+    /// Builds a message for updated billing information.
+    /// </summary>
+    /// <param name="projectName">The name of the project.</param>
+    /// <param name="changes">The list of changes.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildUpdatedPluginBillingMessage(
+        string? projectName,
+        List<LogChange>? changes
+    )
+    {
+        var message =
+            "updated billing information in project " + (projectName ?? "<Unknown Project>") + ": ";
+        if (changes == null)
+        {
+            return message;
+        }
+        message += string.Join(
+            ", ",
+            changes.Select(change =>
+                $"set {change.Property} from {change.OldValue} to {change.NewValue}"
+            )
+        );
+        return message;
+    }
+
+    /// <summary>
+    /// Builds a message for removed plugin billing.
+    /// </summary>
+    /// <param name="projectName">The name of the project.</param>
+    /// <param name="changes">The list of changes.</param>
+    /// <returns>The constructed message.</returns>
+    private static string BuildRemovedPluginBillingMessage(
+        string? projectName,
+        List<LogChange>? changes
+    )
+    {
+        var message =
+            "removed billing information from project " + (projectName ?? "<Unknown Project>");
+        if (changes == null || changes.Count == 0)
+        {
+            return message;
+        }
+        message += " with properties: ";
+        message += string.Join(
+            ", ",
+            changes.Select(change => $"{change.Property} = {change.OldValue}")
+        );
+        return message;
     }
 
     /// <summary>

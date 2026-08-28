@@ -87,5 +87,11 @@ public class LogModelConfig : IEntityTypeConfiguration<Log>
             .WithMany()
             .HasForeignKey(e => e.OfficeLocationId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        _ = builder
+            .HasOne(e => e.GlobalBilling)
+            .WithMany()
+            .HasForeignKey(e => e.GlobalBillingId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

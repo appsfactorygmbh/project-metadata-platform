@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Billing;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Departments;
@@ -27,7 +28,7 @@ public sealed class ProjectMetadataPlatformDbContext
     /// <summary>
     /// Represents the table for the relation between Project and Plugin entities.
     /// </summary>
-    public DbSet<ProjectPlugins> ProjectPluginsRelation { get; set; }
+    public DbSet<ProjectPlugin> ProjectPluginsRelation { get; set; }
 
     /// <summary>
     /// Represents the table for plugin entities.
@@ -73,6 +74,16 @@ public sealed class ProjectMetadataPlatformDbContext
     /// Represents the table for api tokens.
     /// </summary>
     public DbSet<ApiToken> ApiTokens { get; set; }
+
+    /// <summary>
+    /// Represents the table for global billing information.
+    /// </summary>
+    public DbSet<GlobalBilling> GlobalBilling { get; set; }
+
+    /// <summary>
+    /// Represents the Table for project plugin billing indormation.
+    /// </summary>
+    public DbSet<PluginBilling> PluginBillingRelation { get; set; }
 
     /// <inheritdoc />
     public ProjectMetadataPlatformDbContext() { }
@@ -153,83 +164,92 @@ public sealed class ProjectMetadataPlatformDbContext
         _ = modelBuilder.Entity<Plugin>().HasData(plugin1, plugin2, plugin3);
 
         _ = modelBuilder
-            .Entity<ProjectPlugins>()
+            .Entity<ProjectPlugin>()
             .HasData(
-                new ProjectPlugins
+                new ProjectPlugin
                 {
                     ProjectId = project1.Id,
+                    Id = 1,
                     PluginId = plugin1.Id,
                     Url = "https://http.cat/status/100",
                     DisplayName = "Gitlab",
                     Project = null!,
                     Plugin = null!,
                 },
-                new ProjectPlugins
+                new ProjectPlugin
                 {
                     ProjectId = project1.Id,
+                    Id = 2,
                     PluginId = plugin2.Id,
                     Url = "https://http.cat/status/102",
                     DisplayName = "SonarQube",
                     Project = null!,
                     Plugin = null!,
                 },
-                new ProjectPlugins
+                new ProjectPlugin
                 {
                     ProjectId = project1.Id,
+                    Id = 3,
                     PluginId = plugin3.Id,
                     Url = "https://http.cat/status/200",
                     DisplayName = "Jira",
                     Project = null!,
                     Plugin = null!,
                 },
-                new ProjectPlugins
+                new ProjectPlugin
                 {
                     ProjectId = project2.Id,
+                    Id = 1,
                     PluginId = plugin1.Id,
                     Url = "https://http.cat/status/204",
                     DisplayName = "Gitlab",
                     Project = null!,
                     Plugin = null!,
                 },
-                new ProjectPlugins
+                new ProjectPlugin
                 {
                     ProjectId = project2.Id,
+                    Id = 2,
                     PluginId = plugin2.Id,
                     Url = "https://http.cat/status/401",
                     DisplayName = "SonarQube",
                     Project = null!,
                     Plugin = null!,
                 },
-                new ProjectPlugins
+                new ProjectPlugin
                 {
                     ProjectId = project2.Id,
+                    Id = 3,
                     PluginId = plugin3.Id,
                     Url = "https://http.cat/status/404",
                     DisplayName = "Jira",
                     Project = null!,
                     Plugin = null!,
                 },
-                new ProjectPlugins
+                new ProjectPlugin
                 {
                     ProjectId = project3.Id,
+                    Id = 1,
                     PluginId = plugin1.Id,
                     Url = "https://http.cat/status/406",
                     DisplayName = "Gitlab",
                     Project = null!,
                     Plugin = null!,
                 },
-                new ProjectPlugins
+                new ProjectPlugin
                 {
                     ProjectId = project3.Id,
+                    Id = 2,
                     PluginId = plugin2.Id,
                     Url = "https://http.cat/status/411",
                     DisplayName = "SonarQube",
                     Project = null!,
                     Plugin = null!,
                 },
-                new ProjectPlugins
+                new ProjectPlugin
                 {
                     ProjectId = project3.Id,
+                    Id = 3,
                     PluginId = plugin3.Id,
                     Url = "https://http.cat/status/414",
                     DisplayName = "Jira",
