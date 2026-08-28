@@ -17,6 +17,7 @@ using ProjectMetadataPlatform.Api.Auth.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
+using Testcontainers.PostgreSql;
 
 namespace ProjectMetadataPlatform.IntegrationTests.Utilities;
 
@@ -24,6 +25,8 @@ public class IntegrationTestsBase : IDisposable
 {
     private readonly PmpWebApplicationFactory _factory = new();
     private IContainer? _cerbosContainer;
+
+    private PostgreSqlContainer? _postgresContainer;
 
     protected HttpClient CreateClient() => _factory.CreateClient();
 
@@ -61,34 +64,43 @@ public class IntegrationTestsBase : IDisposable
             )
             .Build();
 
-        await _cerbosContainer.StartAsync();
+        _postgresContainer = new PostgreSqlBuilder("postgres:16-alpine")
+            .WithDatabase("pmp_integration_tests")
+            .WithUsername("postgres")
+            .WithPassword("postgres_password")
+            .Build();
+
+        await Task.WhenAll(_cerbosContainer.StartAsync(), _postgresContainer.StartAsync());
 
         var cerbosHttpPort = _cerbosContainer.GetMappedPublicPort(3593);
 
         Environment.SetEnvironmentVariable("PMP_CERBOS_URL", $"http://localhost:{cerbosHttpPort}");
         Environment.SetEnvironmentVariable("PMP_CERBOS_USER", "cerbos_user");
         Environment.SetEnvironmentVariable("PMP_CERBOS_PASSWORD", "changeme");
+
+        Environment.SetEnvironmentVariable("PMP_DB_URL", _postgresContainer.Hostname);
+        Environment.SetEnvironmentVariable(
+            "PMP_DB_PORT",
+            _postgresContainer.GetMappedPublicPort(5432).ToString()
+        );
+        Environment.SetEnvironmentVariable("PMP_DB_USER", "postgres");
+        Environment.SetEnvironmentVariable("PMP_DB_PASSWORD", "postgres_password");
+        Environment.SetEnvironmentVariable("PMP_DB_NAME", "pmp_integration_tests");
+        Environment.SetEnvironmentVariable("PMP_MIGRATE_DB_ON_STARTUP", "true");
     }
 
     [OneTimeTearDown]
     public async Task CleanUpAsync()
     {
-        SqliteConnection.ClearAllPools();
-        File.Delete("unittest-db.db");
         if (_cerbosContainer is not null)
-        {
             await _cerbosContainer.DisposeAsync();
-        }
+        if (_postgresContainer is not null)
+            await _postgresContainer.DisposeAsync();
     }
 
     [SetUp]
     public async Task BaseSetup()
     {
-        Environment.SetEnvironmentVariable("PMP_DB_URL", " ");
-        Environment.SetEnvironmentVariable("PMP_DB_PORT", " ");
-        Environment.SetEnvironmentVariable("PMP_DB_USER", " ");
-        Environment.SetEnvironmentVariable("PMP_DB_PASSWORD", " ");
-        Environment.SetEnvironmentVariable("PMP_DB_NAME", " ");
         Environment.SetEnvironmentVariable("JWT_VALID_ISSUER", "validIssue");
         Environment.SetEnvironmentVariable("JWT_VALID_AUDIENCE", "validAudience");
         Environment.SetEnvironmentVariable(
@@ -98,7 +110,7 @@ public class IntegrationTestsBase : IDisposable
         Environment.SetEnvironmentVariable("REFRESH_TOKEN_EXPIRATION_HOURS", "6");
         Environment.SetEnvironmentVariable("ACCESS_TOKEN_EXPIRATION_MINUTES", "15");
         Environment.SetEnvironmentVariable("PMP_JWT_CLOCK_SKEW_SECONDS", "0");
-        Environment.SetEnvironmentVariable("PMP_MIGRATE_DB_ON_STARTUP", "true");
+
         Environment.SetEnvironmentVariable("AZURE_AUTHORITY", "https://placeholder.placeholder");
         Environment.SetEnvironmentVariable("AZURE_BACKEND_CLIENT_ID", "Placeholder");
         Environment.SetEnvironmentVariable("AZURE_FRONTEND_CLIENT_ID", "Placeholder");
@@ -106,6 +118,7 @@ public class IntegrationTestsBase : IDisposable
 
         var platformDbContext =
             _factory.Services.GetRequiredService<ProjectMetadataPlatformDbContext>();
+
         var allEntitiesPlugins = platformDbContext.Plugins.ToList();
         var allEntitiesProjects = platformDbContext.Projects.ToList();
         var allEntitiesProjectsPlugins = platformDbContext.ProjectPluginsRelation.ToList();
@@ -120,6 +133,8 @@ public class IntegrationTestsBase : IDisposable
         var allEntitiesDepartments = platformDbContext.Departments.ToList();
         var allEntitiesBusinessUnits = platformDbContext.BusinessUnits.ToList();
         var allEntitiesOfficeLocations = platformDbContext.OfficeLocations.ToList();
+        var allEntitiesBilling = platformDbContext.GlobalBilling.ToList();
+        var allEntitiesPluginBilling = platformDbContext.PluginBillingRelation.ToList();
 
         platformDbContext.Plugins.RemoveRange(allEntitiesPlugins);
         platformDbContext.Projects.RemoveRange(allEntitiesProjects);
@@ -133,7 +148,8 @@ public class IntegrationTestsBase : IDisposable
         platformDbContext.Departments.RemoveRange(allEntitiesDepartments);
         platformDbContext.BusinessUnits.RemoveRange(allEntitiesBusinessUnits);
         platformDbContext.OfficeLocations.RemoveRange(allEntitiesOfficeLocations);
-
+        platformDbContext.GlobalBilling.RemoveRange(allEntitiesBilling);
+        platformDbContext.PluginBillingRelation.RemoveRange(allEntitiesPluginBilling);
         _ = await platformDbContext.SaveChangesAsync();
     }
 
