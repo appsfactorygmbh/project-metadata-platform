@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "roslynator.dotnet.cli": {
-      "version": "0.13.0",
+      "version": "1.0.0",
       "commands": [
         "roslynator"
       ],
@@ -24,7 +24,7 @@
       "rollForward": false
     },
     "dotnet-coverage": {
-      "version": "18.9.0",
+      "version": "18.10.0",
       "commands": [
         "dotnet-coverage"
       ],
