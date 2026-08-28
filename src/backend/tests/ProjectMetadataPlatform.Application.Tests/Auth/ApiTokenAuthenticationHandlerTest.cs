@@ -101,7 +101,7 @@ public class ApiTokenAuthenticationHandlerTest
                 new ApiToken
                 {
                     Name = "Token",
-                    ExpirationDate = new System.DateTimeOffset(),
+                    ExpirationDate = new DateTimeOffset(),
                     Token = "tokenHash",
                 }
             );

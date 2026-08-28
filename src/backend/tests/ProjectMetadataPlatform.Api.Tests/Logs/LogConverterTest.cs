@@ -122,11 +122,7 @@ public class LogConverterTest
             AuthorId = null,
             AuthorName = "Infinite Improbability Drive",
             Author = null,
-            AuthorToken = new Domain.Auth.ApiToken
-            {
-                Name = "Infinite Improbability Drive",
-                Token = "A Token",
-            },
+            AuthorToken = new ApiToken { Name = "Infinite Improbability Drive", Token = "A Token" },
             AuthorTokenId = 3,
             ProjectId = 45,
             Project = new Project
@@ -226,11 +222,7 @@ public class LogConverterTest
             AuthorId = null,
             AuthorName = "Prostetnic Vogon Jeltz",
             Author = null,
-            AuthorToken = new Domain.Auth.ApiToken
-            {
-                Name = "Prostetnic Vogon Jeltz",
-                Token = "Another Token",
-            },
+            AuthorToken = new ApiToken { Name = "Prostetnic Vogon Jeltz", Token = "Another Token" },
             AuthorTokenId = 3,
             ProjectId = 47,
             Project = new Project

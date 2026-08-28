@@ -244,7 +244,7 @@ public class DepartmentsControllerTest
         Assert.Multiple(() =>
         {
             Assert.That(updateDepartmentResponse, Is.Not.Null);
-            Assert.That(updateDepartmentResponse.DepartmentName, Is.EqualTo("Department"));
+            Assert.That(updateDepartmentResponse!.DepartmentName, Is.EqualTo("Department"));
             Assert.That(updateDepartmentResponse.Id, Is.EqualTo(1));
         });
     }

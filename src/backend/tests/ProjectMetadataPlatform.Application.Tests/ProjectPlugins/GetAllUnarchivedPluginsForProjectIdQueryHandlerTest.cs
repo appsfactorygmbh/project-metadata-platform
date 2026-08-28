@@ -3,33 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MockQueryable;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Application.Plugins;
+using ProjectMetadataPlatform.Application.ProjectPlugins;
 using ProjectMetadataPlatform.Domain.Authorization;
-using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Plugins;
-using ProjectMetadataPlatform.Domain.Projects;
 
-namespace ProjectMetadataPlatform.Application.Tests.Plugins;
+namespace ProjectMetadataPlatform.Application.Tests.ProjectPlugins;
 
 public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
 {
     private GetAllUnarchivedPluginsForProjectIdQueryHandler _handler;
     private Mock<IPluginRepository> _pluginRepositoryMock;
-    private Mock<IProjectsRepository> _mockProjectRepo;
+    private Mock<IBillingRepository> _mockBillingRepo;
     private Mock<IAuthorizationService> _authorizationServiceMock;
 
     [SetUp]
     public void SetUp()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
-        _mockProjectRepo = new Mock<IProjectsRepository>();
+        _mockBillingRepo = new Mock<IBillingRepository>();
         _pluginRepositoryMock = new Mock<IPluginRepository>();
         _handler = new GetAllUnarchivedPluginsForProjectIdQueryHandler(
             _pluginRepositoryMock.Object,
-            _mockProjectRepo.Object,
+            billingRepository: _mockBillingRepo.Object,
             authorizationService: _authorizationServiceMock.Object
         );
     }
@@ -37,7 +36,7 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
     [Test]
     public async Task Handle_WhenUnarchivedPluginsExist_ReturnsPlugins()
     {
-        var plugins = new List<ProjectPlugins>
+        var plugins = new List<ProjectPlugin>
         {
             new()
             {
@@ -69,27 +68,28 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
 
         _ = _pluginRepositoryMock
             .Setup(r => r.GetAllUnarchivedPluginsForProjectIdAsync(1))
-            .ReturnsAsync(plugins);
+            .ReturnsAsync(plugins.BuildMock());
         _ = _authorizationServiceMock
             .Setup(a =>
-                a.CheckAccess(
-                    It.IsAny<Project>(),
-                    It.IsAny<AuthorizationConstants.Actions>(),
-                    It.IsAny<Dictionary<string, object?>?>()
+                a.TryGetPlanResourceQuery(
+                    It.IsAny<IQueryable<ProjectPlugin>>(),
+                    It.IsAny<Dictionary<string, string>?>()
                 )
             )
-            .ReturnsAsync(true);
+            .ReturnsAsync(
+                (IQueryable<ProjectPlugin> query, Dictionary<string, string>? dict) => query
+            );
         var query = new GetAllUnarchivedPluginsForProjectIdQuery(1);
-        var result = await _handler.Handle(query, It.IsAny<CancellationToken>());
+        var result = (await _handler.Handle(query, It.IsAny<CancellationToken>())).Item1.ToList();
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Has.Count.EqualTo(2)); // Expecting two unarchived plugins
         Assert.Multiple(() =>
         {
-            Assert.That(result[0].Plugin?.PluginName, Is.EqualTo("Plugin 1"));
-            Assert.That(result[0].Url, Is.EqualTo("Plugin1.com"));
-            Assert.That(result[1].Plugin?.PluginName, Is.EqualTo("Plugin 2"));
-            Assert.That(result[1].Url, Is.EqualTo("Plugin2.com"));
+            Assert.That(result[0].Plugin.Plugin?.PluginName, Is.EqualTo("Plugin 1"));
+            Assert.That(result[0].Plugin.Url, Is.EqualTo("Plugin1.com"));
+            Assert.That(result[1].Plugin.Plugin?.PluginName, Is.EqualTo("Plugin 2"));
+            Assert.That(result[1].Plugin.Url, Is.EqualTo("Plugin2.com"));
         });
     }
 
@@ -98,52 +98,24 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
     {
         _ = _authorizationServiceMock
             .Setup(a =>
-                a.CheckAccess(
-                    It.IsAny<Project>(),
-                    It.IsAny<AuthorizationConstants.Actions>(),
-                    It.IsAny<Dictionary<string, object?>?>()
+                a.TryGetPlanResourceQuery(
+                    It.IsAny<IQueryable<ProjectPlugin>>(),
+                    It.IsAny<Dictionary<string, string>?>()
                 )
             )
-            .ReturnsAsync(true);
-        var plugins = new List<ProjectPlugins>(); // No plugins found
+            .ReturnsAsync(
+                (IQueryable<ProjectPlugin> query, Dictionary<string, string>? dict) => query
+            );
+        var plugins = new List<ProjectPlugin>(); // No plugins found
         _ = _pluginRepositoryMock
             .Setup(r => r.GetAllUnarchivedPluginsForProjectIdAsync(1))
-            .ReturnsAsync(plugins);
+            .ReturnsAsync(plugins.BuildMock());
 
         var query = new GetAllUnarchivedPluginsForProjectIdQuery(1);
-        var result = await _handler.Handle(query, It.IsAny<CancellationToken>());
+        var result = (await _handler.Handle(query, It.IsAny<CancellationToken>())).Item1.ToList();
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Has.Count.EqualTo(0)); // Expecting an empty list
-    }
-
-    [Test]
-    public async Task Handle_WhenCancellationTokenIsTriggered_AbortsOperation()
-    {
-        _ = _authorizationServiceMock
-            .Setup(a =>
-                a.CheckAccess(
-                    It.IsAny<Project>(),
-                    It.IsAny<AuthorizationConstants.Actions>(),
-                    It.IsAny<Dictionary<string, object?>?>()
-                )
-            )
-            .ReturnsAsync(true);
-        var cancellationTokenSource = new CancellationTokenSource();
-        await cancellationTokenSource.CancelAsync(); // Trigger cancellation immediately
-
-        var query = new GetAllUnarchivedPluginsForProjectIdQuery(1);
-
-        _ = _pluginRepositoryMock
-            .Setup(r => r.GetAllUnarchivedPluginsForProjectIdAsync(1))
-            .ReturnsAsync(new List<ProjectPlugins>());
-
-        var ex = Assert.ThrowsAsync<OperationCanceledException>(async () =>
-        {
-            _ = await _handler.Handle(query, cancellationTokenSource.Token);
-        });
-
-        Assert.That(ex, Is.InstanceOf<OperationCanceledException>());
     }
 
     [Test]
@@ -151,14 +123,15 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
     {
         _ = _authorizationServiceMock
             .Setup(a =>
-                a.CheckAccess(
-                    It.IsAny<Project>(),
-                    It.IsAny<AuthorizationConstants.Actions>(),
-                    It.IsAny<Dictionary<string, object?>?>()
+                a.TryGetPlanResourceQuery(
+                    It.IsAny<IQueryable<ProjectPlugin>>(),
+                    It.IsAny<Dictionary<string, string>?>()
                 )
             )
-            .ReturnsAsync(true);
-        var plugins = new List<ProjectPlugins>
+            .ReturnsAsync(
+                (IQueryable<ProjectPlugin> query, Dictionary<string, string>? dict) => query
+            );
+        var plugins = new List<ProjectPlugin>
         {
             new()
             {
@@ -190,13 +163,13 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
 
         _ = _pluginRepositoryMock
             .Setup(r => r.GetAllUnarchivedPluginsForProjectIdAsync(1))
-            .ReturnsAsync(plugins.Where(p => !p.Plugin!.IsArchived).ToList());
+            .ReturnsAsync(plugins.Where(p => !p.Plugin!.IsArchived).ToList().BuildMock());
 
         var query = new GetAllUnarchivedPluginsForProjectIdQuery(1);
-        var result = await _handler.Handle(query, It.IsAny<CancellationToken>());
+        var result = (await _handler.Handle(query, It.IsAny<CancellationToken>())).Item1.ToList();
 
         Assert.That(result, Has.Count.EqualTo(1)); // Only one unarchived plugin should be returned
-        Assert.That(result[0].Plugin?.PluginName, Is.EqualTo("Plugin 1")); // Assert the unarchived plugin is "Plugin 1"
+        Assert.That(result[0].Plugin.Plugin?.PluginName, Is.EqualTo("Plugin 1")); // Assert the unarchived plugin is "Plugin 1"
     }
 
     [Test]
@@ -205,7 +178,7 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
         _ = _authorizationServiceMock
             .Setup(a =>
                 a.CheckAccess(
-                    It.IsAny<Project>(),
+                    It.IsAny<ProjectPlugin>(),
                     It.IsAny<AuthorizationConstants.Actions>(),
                     It.IsAny<Dictionary<string, object?>?>()
                 )
@@ -223,25 +196,5 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
         });
 
         Assert.That(ex.Message, Is.EqualTo("Project with Id 999 does not exist."));
-    }
-
-    [Test]
-    public async Task HandleGetAllUnarchivedPluginsForProjectIdQueryHandler_AuthorizationFailsThrowsTest()
-    {
-        _ = _authorizationServiceMock
-            .Setup(a =>
-                a.CheckAccess(
-                    It.IsAny<Project>(),
-                    It.IsAny<AuthorizationConstants.Actions>(),
-                    It.IsAny<Dictionary<string, object?>?>()
-                )
-            )
-            .ReturnsAsync(false);
-
-        var request = new GetAllUnarchivedPluginsForProjectIdQuery(0);
-
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
-            _handler.Handle(request, It.IsAny<CancellationToken>())
-        );
     }
 }

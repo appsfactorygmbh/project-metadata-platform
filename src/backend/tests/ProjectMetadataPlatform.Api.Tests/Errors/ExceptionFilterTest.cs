@@ -12,6 +12,7 @@ using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BasicExceptions;
+using ProjectMetadataPlatform.Domain.Errors.BillingExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
@@ -40,6 +41,7 @@ public class ExceptionFilterTest
     private Mock<IExceptionHandler<BusinessUnitException>> _businessUnitExceptionHandler;
     private Mock<IExceptionHandler<CompanyException>> _companyExceptionHandler;
 
+    private Mock<IExceptionHandler<BillingException>> _billingExceptionHandler;
     private Mock<IExceptionHandler<AuthorizationException>> _authorizationExceptionHandler;
     private Mock<ExceptionContext> _context;
 
@@ -58,7 +60,7 @@ public class ExceptionFilterTest
         _businessUnitExceptionHandler = new Mock<IExceptionHandler<BusinessUnitException>>();
         _companyExceptionHandler = new Mock<IExceptionHandler<CompanyException>>();
         _authorizationExceptionHandler = new Mock<IExceptionHandler<AuthorizationException>>();
-
+        _billingExceptionHandler = new Mock<IExceptionHandler<BillingException>>();
         _context = SetupExceptionContext();
         _filter = new ExceptionFilter(
             basicExceptionHandler: _basicExceptionHandler.Object,
@@ -72,7 +74,8 @@ public class ExceptionFilterTest
             businessUnitExceptionHandler: _businessUnitExceptionHandler.Object,
             officeLocationExceptionHandler: _officeLocationExceptionHandler.Object,
             departmentExceptionHandler: _departmentExceptionHandler.Object,
-            authorizationExceptionHandler: _authorizationExceptionHandler.Object
+            authorizationExceptionHandler: _authorizationExceptionHandler.Object,
+            billingExceptionHandler: _billingExceptionHandler.Object
         );
     }
 
