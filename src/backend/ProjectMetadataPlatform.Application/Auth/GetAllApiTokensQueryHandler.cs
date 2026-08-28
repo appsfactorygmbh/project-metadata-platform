@@ -54,8 +54,9 @@ public class GetAllApiTokensQueryHandler
         );
         if (queriedTokens == null)
         {
+            var tokenList = await tokens.ToListAsync(cancellationToken: cancellationToken);
             List<ApiToken> apiTokens = [];
-            foreach (var token in tokens)
+            foreach (var token in tokenList)
             {
                 if (
                     await _authorizationService.CheckAccess(

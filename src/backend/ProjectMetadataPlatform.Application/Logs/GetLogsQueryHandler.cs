@@ -58,8 +58,9 @@ public class GetLogsQueryHandler : IRequestHandler<GetLogsQuery, IEnumerable<Log
         var queriedLogs = await _authorizationService.TryGetPlanResourceQuery(logs);
         if (queriedLogs == null)
         {
+            var logList = await logs.ToListAsync(cancellationToken: cancellationToken);
             List<Log> filteredLogs = [];
-            foreach (var log in logs)
+            foreach (var log in logList)
             {
                 if (
                     await _authorizationService.CheckAccess(log, AuthorizationConstants.Actions.GET)
