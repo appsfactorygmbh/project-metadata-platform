@@ -48,6 +48,18 @@ export const TokenScopes = {
   EditOfficelocation: 'EDIT_OFFICELOCATION',
   DeleteOfficelocation: 'DELETE_OFFICELOCATION',
   GetLog: 'GET_LOG',
+  GetProjectplugin: 'GET_PROJECTPLUGIN',
+  CreateProjectplugin: 'CREATE_PROJECTPLUGIN',
+  EditProjectplugin: 'EDIT_PROJECTPLUGIN',
+  DeleteProjectplugin: 'DELETE_PROJECTPLUGIN',
+  GetGlobalbilling: 'GET_GLOBALBILLING',
+  CreateGlobalbilling: 'CREATE_GLOBALBILLING',
+  EditGlobalbilling: 'EDIT_GLOBALBILLING',
+  DeleteGlobalbilling: 'DELETE_GLOBALBILLING',
+  GetPluginbilling: 'GET_PLUGINBILLING',
+  CreatePluginbilling: 'CREATE_PLUGINBILLING',
+  EditPluginbilling: 'EDIT_PLUGINBILLING',
+  DeletePluginbilling: 'DELETE_PLUGINBILLING',
 } as const;
 export type TokenScopes = (typeof TokenScopes)[keyof typeof TokenScopes];
 

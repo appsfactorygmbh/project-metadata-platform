@@ -13,64 +13,72 @@
  */
 
 /**
- * Response model representing a Plugin of a project.
+ * Request for adding a Plugin to a Project
  * @export
- * @interface UpdateProjectPluginRequest
+ * @interface AddProjectPluginRequest
  */
-export interface UpdateProjectPluginRequest {
+export interface AddProjectPluginRequest {
   /**
    * The URL of this plugin instance in the project.
    * @type {string}
-   * @memberof UpdateProjectPluginRequest
+   * @memberof AddProjectPluginRequest
    */
   url: string;
   /**
    * The name of this plugin instance in the project.
    * @type {string}
-   * @memberof UpdateProjectPluginRequest
+   * @memberof AddProjectPluginRequest
    */
   displayName: string;
+  /**
+   * The global id of the plugin instance in the project.
+   * @type {number}
+   * @memberof AddProjectPluginRequest
+   */
+  pluginId: number;
 }
 
 /**
- * Check if a given object implements the UpdateProjectPluginRequest interface.
+ * Check if a given object implements the AddProjectPluginRequest interface.
  */
-export function instanceOfUpdateProjectPluginRequest(
+export function instanceOfAddProjectPluginRequest(
   value: object,
-): value is UpdateProjectPluginRequest {
+): value is AddProjectPluginRequest {
   if (!('url' in value) || value['url'] === undefined) return false;
   if (!('displayName' in value) || value['displayName'] === undefined)
     return false;
+  if (!('pluginId' in value) || value['pluginId'] === undefined) return false;
   return true;
 }
 
-export function UpdateProjectPluginRequestFromJSON(
+export function AddProjectPluginRequestFromJSON(
   json: any,
-): UpdateProjectPluginRequest {
-  return UpdateProjectPluginRequestFromJSONTyped(json, false);
+): AddProjectPluginRequest {
+  return AddProjectPluginRequestFromJSONTyped(json, false);
 }
 
-export function UpdateProjectPluginRequestFromJSONTyped(
+export function AddProjectPluginRequestFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): UpdateProjectPluginRequest {
+): AddProjectPluginRequest {
   if (json == null) {
     return json;
   }
   return {
     url: json['url'],
     displayName: json['displayName'],
+    pluginId: json['pluginId'],
   };
 }
 
-export function UpdateProjectPluginRequestToJSON(
+export function AddProjectPluginRequestToJSON(
   json: any,
-): UpdateProjectPluginRequest {
-  return UpdateProjectPluginRequestToJSONTyped(json, false);
+): AddProjectPluginRequest {
+  return AddProjectPluginRequestToJSONTyped(json, false);
 }
 
-export function UpdateProjectPluginRequestToJSONTyped(
-  value?: UpdateProjectPluginRequest | null,
+export function AddProjectPluginRequestToJSONTyped(
+  value?: AddProjectPluginRequest | null,
   ignoreDiscriminator: boolean = false,
 ): any {
   if (value == null) {
@@ -80,5 +88,6 @@ export function UpdateProjectPluginRequestToJSONTyped(
   return {
     url: value['url'],
     displayName: value['displayName'],
+    pluginId: value['pluginId'],
   };
 }

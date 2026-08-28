@@ -40,12 +40,6 @@ export interface GetGlobalPluginResponse {
    */
   isArchived: boolean;
   /**
-   * empty array keys
-   * @type {Array<string>}
-   * @memberof GetGlobalPluginResponse
-   */
-  keys: Array<string>;
-  /**
    * Base URL of the plugin
    * @type {string}
    * @memberof GetGlobalPluginResponse
@@ -70,7 +64,6 @@ export function instanceOfGetGlobalPluginResponse(
   if (!('id' in value) || value['id'] === undefined) return false;
   if (!('isArchived' in value) || value['isArchived'] === undefined)
     return false;
-  if (!('keys' in value) || value['keys'] === undefined) return false;
   return true;
 }
 
@@ -91,7 +84,6 @@ export function GetGlobalPluginResponseFromJSONTyped(
     pluginName: json['pluginName'],
     id: json['id'],
     isArchived: json['isArchived'],
-    keys: json['keys'],
     baseUrl: json['baseUrl'] == null ? undefined : json['baseUrl'],
     permissions:
       json['permissions'] == null
@@ -118,7 +110,6 @@ export function GetGlobalPluginResponseToJSONTyped(
     pluginName: value['pluginName'],
     id: value['id'],
     isArchived: value['isArchived'],
-    keys: value['keys'],
     baseUrl: value['baseUrl'],
     permissions:
       value['permissions'] == null
