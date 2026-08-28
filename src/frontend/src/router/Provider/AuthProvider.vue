@@ -17,6 +17,8 @@
     useBusinessUnitStore,
     useOfficeLocationStore,
     useAuthorizationStore,
+    useGlobalBillingStore,
+    useBillingStore,
   } from '@/store';
   import { msalService } from '@/services/msalService';
 
@@ -26,6 +28,8 @@
   const projectStore = useProjectStore();
   const pluginStore = usePluginStore();
   const globalPluginStore = useGlobalPluginStore();
+  const globalBillingStore = useGlobalBillingStore();
+  const billingStore = useBillingStore();
   const localLogStore = useLocalLogStore();
   const logsStore = useLogsStore();
   const userStore = useUserStore();
@@ -45,6 +49,8 @@
   const authenticated = ref(false);
   const refreshAllStores = () => {
     globalPluginStore.refreshAuth();
+    globalBillingStore.refreshAuth();
+    billingStore.refreshAuth();
     projectStore.refreshAuth();
     pluginStore.refreshAuth();
     localLogStore.refreshAuth();

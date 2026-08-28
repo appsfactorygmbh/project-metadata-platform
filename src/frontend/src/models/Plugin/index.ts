@@ -1,5 +1,10 @@
-import type { PluginModel } from './PluginModel';
+import type { PluginListModel, PluginModel } from './PluginModel';
 import type { PluginEditModel } from './PluginEditModel';
 import type { CreatePluginModel } from './CreatePluginModel';
 
-export type { PluginModel, PluginEditModel, CreatePluginModel };
+export type {
+  PluginModel,
+  PluginListModel,
+  PluginEditModel,
+  CreatePluginModel,
+};
