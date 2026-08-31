@@ -16,7 +16,7 @@
       default: '',
     },
     value: {
-      type: [String, Number] as PropType<string | number | undefined>,
+      type: [String, Number] as PropType<string | number | null | undefined>,
       required: true,
     },
     rules: {
@@ -41,7 +41,7 @@
     :has-feedback="!!(props.rules && props.rules.length > 0)"
   >
     <a-select
-      :value="props.value"
+      :value="props.value === null ? undefined : props.value"
       show-search
       :placeholder="props.placeholder"
       :options="props.options"

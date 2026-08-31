@@ -35,6 +35,9 @@ import { CreateGlobalPluginView } from '@/views/SettingView/GlobalPlugins/Create
 import { GlobalPluginsView } from '@/views/SettingView/GlobalPlugins/index.ts';
 import { EditGlobalPluginView } from '@/views/SettingView/GlobalPlugins/EditGlobalPlugin/index.ts';
 import AuthorizationView from '@/views/SettingView/Authorization/AuthorizationView.vue';
+import { GlobalBillingListView } from '@/views/SettingView/GlobalBillingManagementView/GlobalBillingListView/index.ts';
+import { GlobalBillingInformationView } from '@/views/SettingView/GlobalBillingManagementView/GlobalBillingInformationView/index.ts';
+import { CreateGlobalBillingView } from '@/views/SettingView/GlobalBillingManagementView/CreateGlobalBilling/index.ts';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -291,6 +294,36 @@ const router = createRouter({
                   name: 'EditGlobalPlugin',
                   component: EditGlobalPluginView,
                   meta: { title: 'Project Metadata Platform - Edit Plugin' },
+                },
+              ],
+            },
+            {
+              path: '/settings/global-billing-management',
+              name: 'globalBillingList',
+              component: GlobalBillingListView,
+              meta: {
+                title: 'Project Metadata Platform - Global Billing Management',
+              },
+              children: [
+                {
+                  path: '/settings/global-billing-management',
+                  name: 'globalBillingsInformation',
+                  component: GlobalBillingInformationView,
+                  meta: {
+                    title:
+                      'Project Metadata Platform - Global Billing Information',
+                  },
+                  children: [
+                    {
+                      path: '/settings/global-billing-management/create',
+                      name: 'createGlobalBillings',
+                      component: CreateGlobalBillingView,
+                      meta: {
+                        title:
+                          'Project Metadata Platform - Global Billing Creation',
+                      },
+                    },
+                  ],
                 },
               ],
             },

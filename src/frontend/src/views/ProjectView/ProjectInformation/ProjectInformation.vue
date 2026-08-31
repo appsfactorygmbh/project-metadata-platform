@@ -129,7 +129,7 @@
     clientName: ref<string>(''),
     offerId: ref<string>(''),
     companyName: ref<DetailedProjectModel['company']['companyName']>(''),
-    companyState: ref<DetailedProjectModel['companyState']>('EXTERNAL'), //check if implementation matches with backend
+    companyState: ref<DetailedProjectModel['companyState']>('EXTERNAL'),
     ismsLevel: ref<DetailedProjectModel['ismsLevel']>('NORMAL'),
     isEoC: ref<boolean>(false),
     isArchived: ref<boolean>(false),

@@ -13,6 +13,7 @@
     EnvironmentOutlined,
     PicRightOutlined,
     SafetyCertificateOutlined,
+    EuroCircleOutlined,
   } from '@ant-design/icons-vue';
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
@@ -53,6 +54,10 @@
       }
       case 'Global Plugins': {
         router.push(`/settings/global-plugins`);
+        break;
+      }
+      case 'Global Billing': {
+        router.push(`/settings/global-billing-management`);
         break;
       }
       case 'Team': {
@@ -123,14 +128,14 @@
           selectedKeys.value = ['6'];
           break;
         }
-        case '/settings/api-token-management': {
-          tab.value = 'API-Token';
-          selectedKeys.value = ['7'];
-          break;
-        }
         case '/settings/global-plugins': {
           tab.value = 'Global Plugins';
           selectedKeys.value = ['8'];
+          break;
+        }
+        case '/settings/api-token-management': {
+          tab.value = 'API-Token';
+          selectedKeys.value = ['7'];
           break;
         }
         case '/settings/global-logs': {
@@ -141,6 +146,11 @@
         case '/settings/authorization': {
           tab.value = 'Permissions';
           selectedKeys.value = ['10'];
+          break;
+        }
+        case '/settings/global-billing-management': {
+          tab.value = 'Global Billing';
+          selectedKeys.value = ['11'];
           break;
         }
         case '/settings/user-management':
@@ -234,7 +244,14 @@
           <AppstoreAddOutlined class="icons" />
           <span>Global Plugins</span>
         </a-menu-item>
-
+        <a-menu-item
+          key="11"
+          class="globalBillingManagement"
+          @click="clickTab('Global Billing')"
+        >
+          <EuroCircleOutlined class="icons" />
+          <span>Billing Management</span>
+        </a-menu-item>
         <a-menu-item
           key="9"
           class="globalLogs"

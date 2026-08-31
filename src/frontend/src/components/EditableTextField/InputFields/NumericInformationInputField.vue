@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-  import InputField from './InputField.vue';
   import type { Rule } from 'ant-design-vue/es/form';
   const props = defineProps({
     attributeName: {
@@ -7,7 +6,7 @@
       required: true,
     },
     value: {
-      type: [String] as PropType<string | null | undefined>,
+      type: [String, Number] as PropType<string | number | null | undefined>,
       required: true,
     },
     placeholder: {
@@ -18,6 +17,10 @@
       type: Array as PropType<Rule[]>,
       default: () => [],
       required: false,
+    },
+    precision: {
+      type: Number,
+      default: undefined,
     },
   });
 
@@ -31,11 +34,12 @@
     :has-feedback="rules.length > 0"
     :rules="rules"
   >
-    <InputField
+    <NumericInputField
       :value="props.value"
       :placeholder="props.placeholder"
-      :default="props.value ?? ''"
-      @update:value="(val: string | null) => emit('update:value', val)"
+      :default="props.value?.toString() ?? ''"
+      :precision="props.precision"
+      @update:value="(val: string | number | null) => emit('update:value', val)"
     />
   </a-form-item>
 </template>

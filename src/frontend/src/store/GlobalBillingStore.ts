@@ -160,7 +160,7 @@ export const useGlobalBillingStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingGlobalBilling(true);
             await this.callApi('billingBillingIdPatch', {
               billingId: billingId,
-              updateGlobalBillingRequest: payload,
+              updateBillingRequest: payload,
             });
             this.fetchAll();
             this.fetch(billingId);
