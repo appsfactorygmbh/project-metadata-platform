@@ -3,7 +3,6 @@
   import {
     FontColorsOutlined,
     PlusOutlined,
-    NumberOutlined,
     UserOutlined,
     SafetyCertificateOutlined,
     TrademarkOutlined,
@@ -62,17 +61,6 @@
     notes: '',
   });
 
-  // needed for mapping type null -> undefined in form input
-  const displayOfferId = computed({
-    get() {
-      return formState.offerId === null ? undefined : formState.offerId;
-    },
-    set(newValue: string | undefined) {
-      formState.offerId =
-        newValue === undefined || newValue === '' ? null : newValue;
-    },
-  });
-
   const validateMessages = {
     required: 'Please enter valid input.',
     whitespace: 'Please enter valid input.',
@@ -124,7 +112,6 @@
       teamId: formState.teamId!,
       clientName: formState.clientName,
       isArchived: false,
-      offerId: formState.offerId,
       companyId: formState.companyId,
       companyState: formState.companyState,
       ismsLevel: formState.ismsLevel,
@@ -259,13 +246,6 @@
           >
             <template #suffix>
               <UserOutlined class="icon" />
-            </template>
-          </a-input>
-        </a-form-item>
-        <a-form-item name="offerId" :no-style="true">
-          <a-input v-model:value="displayOfferId" placeholder="Offer ID">
-            <template #suffix>
-              <NumberOutlined class="icon" />
             </template>
           </a-input>
         </a-form-item>

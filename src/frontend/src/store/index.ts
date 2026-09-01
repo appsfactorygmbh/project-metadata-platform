@@ -1,8 +1,5 @@
 import { type PluginStore, usePluginStore } from './PluginStore';
-import {
-  type ProjectEditStore,
-  useProjectEditStore,
-} from './ProjectEditStore/ProjectEditStore.ts';
+
 import { type ProjectStore, useProjectStore } from './ProjectStore.ts';
 import { type SearchStore, useSearchStore } from './SearchStore';
 import {
@@ -42,7 +39,6 @@ export {
   useSearchStore,
   useGlobalPluginStore,
   useGlobalBillingStore,
-  useProjectEditStore,
   useUserStore,
   useLocalLogStore,
   useLogsStore,
@@ -59,7 +55,6 @@ export type {
   ProjectStore,
   SearchStore,
   GlobalPluginStore,
-  ProjectEditStore,
   UserStore,
   AuthStore,
   LocalLogStore,

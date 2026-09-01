@@ -1,12 +1,17 @@
 <script lang="ts" setup>
   // Import ref for reactive variables and utility functions for URL handling.
-  import { inject, ref, watch } from 'vue';
+  import { ref, computed, type PropType } from 'vue';
   import { createFaviconURL, cutAfterTLD } from './editURL';
-  import { DeleteOutlined } from '@ant-design/icons-vue';
-  import { projectEditStoreSymbol } from '@/store/injectionSymbols';
+  import { DeleteOutlined, EditOutlined } from '@ant-design/icons-vue';
   import { useThemeToken } from '@/utils/hooks';
-
+  import { usePluginStore, useProjectStore } from '@/store';
+  import { App } from 'ant-design-vue';
+  import { ResourceActions } from '@/models/utils';
+  import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
   const token = useThemeToken();
+  const pluginStore = usePluginStore();
+  const projectStore = useProjectStore();
+  const { notification } = App.useApp();
 
   // Define the component's props with pluginName and url as required strings.
   const props = defineProps({
@@ -31,184 +36,184 @@
       type: Boolean,
       required: false,
     },
-    isEditing: {
-      type: Boolean,
-      required: true,
-    },
-    editKey: {
-      type: Number,
-      required: true,
-    },
-    isDeleted: {
-      type: Boolean,
-      required: false,
-    },
+
     showFavicon: {
       type: Boolean,
       default: true,
     },
+    permissions: {
+      type: Array as PropType<ResourceActions[]>,
+      default: () => [],
+    },
   });
-
-  const initDisplayName = props.displayName;
-  const initUrl = props.url;
-
-  const projectEditStore = inject(projectEditStoreSymbol);
-  const urlStatusRef = ref<'' | 'error' | 'warning' | undefined>('');
-  const displayNameStatusRef = ref<'' | 'error' | 'warning' | undefined>('');
-
+  const localIsEditing = ref(false);
+  const isSaving = ref(false);
+  const isDeleteModalOpen = ref(false);
   const displayNameInput = ref<string>(props.displayName);
   const urlInput = ref<string>(props.url);
 
-  const toggleSkeleton = ref<boolean>(props.isLoading);
+  const faviconUrl = computed(() => createFaviconURL(cutAfterTLD(props.url)));
 
-  watch(
-    () => props.isEditing,
-    (newVal) => {
-      if (!newVal) {
-        displayNameInput.value = initDisplayName;
-        urlInput.value = initUrl;
-        hide.value = false;
-        urlStatusRef.value = '';
-        displayNameStatusRef.value = '';
-      }
-    },
+  const canEditPlugin = computed(() =>
+    props.permissions.includes(ResourceActions.Edit),
+  );
+  const canDeletePlugin = computed(() =>
+    props.permissions.includes(ResourceActions.Delete),
   );
 
-  watch(
-    () => props.isLoading,
-    (newVal) => {
-      toggleSkeleton.value = newVal;
-    },
-  );
+  const toggleEdit = () => {
+    displayNameInput.value = props.displayName;
+    urlInput.value = props.url;
+    localIsEditing.value = true;
+  };
 
-  watch(
-    () => projectEditStore?.getPluginsWithUrlConflicts,
-    (newVal) => {
-      if (props.editKey !== undefined && newVal?.includes(props.editKey)) {
-        urlStatusRef.value = 'error';
-      } else if (urlInput.value === '') {
-        urlStatusRef.value = 'error';
-      } else {
-        urlStatusRef.value = '';
-      }
-    },
-  );
+  const cancelEdit = () => {
+    localIsEditing.value = false;
+  };
 
-  // Create a reactive variable for the favicon URL based on the given URL.
-  const faviconUrl = ref(createFaviconURL(cutAfterTLD(props.url)));
+  const savePlugin = async () => {
+    if (!urlInput.value || !displayNameInput.value) {
+      notification.error({
+        message: 'Error',
+        description: 'Fields cannot be empty.',
+      });
+      return;
+    }
+    const projectId = projectStore.getProject?.id;
+    if (!projectId) return;
 
-  // Hides the plugin card if set to true
-  const hide = ref<boolean>(false);
-  const hidePlugin = () => {
-    hide.value = true;
-    if (props.editKey !== undefined) {
-      projectEditStore?.deletePlugin(props.editKey);
+    try {
+      isSaving.value = true;
+      await pluginStore.update(projectId, props.id, {
+        displayName: displayNameInput.value,
+        url: urlInput.value,
+      });
+      isSaving.value = false;
+      localIsEditing.value = false;
+      notification.success({
+        message: 'Success',
+        description: 'Plugin updated.',
+      });
+    } catch (error) {
+      console.error('Validation or API error:', error);
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+    } finally {
+      isSaving.value = false;
     }
   };
 
-  // Run on every key press in the input fields to update the plugin data
-  const updatePluginData = (): void => {
-    if (urlInput.value === '') {
-      urlStatusRef.value = 'error';
-      if (props.editKey !== undefined) {
-        projectEditStore?.addEmptyUrlField(props.editKey);
-      }
-    } else if (props.editKey !== undefined) {
-      projectEditStore?.removeEmptyUrlField(props.editKey);
-      urlStatusRef.value = '';
+  const handleDelete = () => {
+    isDeleteModalOpen.value = true;
+  };
+
+  const confirmDelete = async () => {
+    const projectId = projectStore.getProject?.id;
+    if (!projectId) {
+      isDeleteModalOpen.value = false;
+      return;
     }
 
-    if (displayNameInput.value === '') {
-      displayNameStatusRef.value = 'error';
-      if (props.editKey !== undefined) {
-        projectEditStore?.addEmptyDisplaynameField(props.editKey);
-      }
-    } else if (props.editKey !== undefined) {
-      projectEditStore?.removeEmptyDisplaynameField(props.editKey);
-      displayNameStatusRef.value = '';
-    }
-
-    if (props.editKey !== undefined) {
-      projectEditStore?.updatePluginChanges(props.editKey, {
-        pluginName: props.pluginName,
-        displayName: displayNameInput.value,
-        url: urlInput.value,
-        id: props.id,
-        editKey: props.editKey,
-        isDeleted: false,
+    try {
+      isSaving.value = true;
+      await pluginStore.remove(projectId, props.id);
+      notification.success({
+        message: 'Success',
+        description: 'Plugin Removed.',
       });
+    } catch (error) {
+      console.error('Validation or API error:', error);
+      notification.error({
+        message: 'Error!',
+        description: (error as Error).message ?? 'An error occurred.',
+      });
+    } finally {
+      isSaving.value = false;
+      isDeleteModalOpen.value = false;
     }
   };
 </script>
 
 <template>
-  <template v-if="isEditing">
-    <a-card
-      class="cardNoHover"
-      :loading="toggleSkeleton"
-      :bordered="false"
-      toggle="true"
-      :style="hide ? 'display: none' : ''"
-    >
-      <!-- Container for plugin name and URL text. -->
-      <div class="textContainerInput">
-        <h3 style="text-align: center">
-          {{ pluginName }}
-        </h3>
-        <a-input
-          v-model:value="displayNameInput"
-          :status="displayNameStatusRef"
-          class="inputField"
-          @input="updatePluginData"
-        />
-        <a-input
-          v-model:value="urlInput"
-          :status="urlStatusRef"
-          class="inputField"
-          @input="updatePluginData"
-        />
-      </div>
-      <DeleteOutlined class="circleBackground" @click="hidePlugin" />
-    </a-card>
-  </template>
+  <div class="plugin-wrapper">
 
-  <template v-else>
-    <!-- Define the card component, styled as a clickable link. -->
-    <a
-      :href="
-        props.url.startsWith('http://') || props.url.startsWith('https://')
-          ? props.url
-          : 'https://' + props.url
-      "
-      target="_blank"
-    >
-      <a-card
-        class="card"
-        :loading="toggleSkeleton"
-        :bordered="false"
-        toggle="true"
-        :body-style="{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          padding: '15px',
-        }"
-      >
-        <!-- Display the favicon image. -->
-        <a-avatar
-          v-if="showFavicon"
-          shape="square"
-          :src="faviconUrl"
-          class="avatar"
-        />
-        <!-- Container for plugin name and URL text. -->
-        <div class="textContainer">
-          <h3>{{ pluginName }}</h3>
-          <p>{{ displayName }}</p>
+    <template v-if="localIsEditing">
+      <a-card class="cardNoHover" :loading="isSaving" :bordered="false">
+        <div class="textContainerInput">
+          <h3 style="text-align: center">{{ pluginName }}</h3>
+          <a-input
+            v-model:value="displayNameInput"
+            placeholder="Display Name"
+          />
+          <a-input v-model:value="urlInput" placeholder="URL" />
+        </div>
+>
+        <div class="edit-actions">
+          <a-button @click.stop="cancelEdit">Cancel</a-button>
+          <a-button type="primary" @click.stop="savePlugin">Save</a-button>
         </div>
       </a-card>
-    </a>
-  </template>
+    </template>
+
+
+    <template v-else>
+      <div class="card-container">
+        <a
+          :href="
+            props.url.startsWith('http') ? props.url : 'https://' + props.url
+          "
+          target="_blank"
+        >
+          <a-card
+            class="card"
+            :loading="props.isLoading || isSaving"
+            :bordered="false"
+            :body-style="{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              padding: '15px',
+            }"
+          >
+            <a-avatar
+              v-if="showFavicon"
+              shape="square"
+              :src="faviconUrl"
+              class="avatar"
+            />
+            <div class="textContainer">
+              <h3>{{ pluginName }}</h3>
+              <p>{{ displayName }}</p>
+            </div>
+          </a-card>
+        </a>
+        <a-tooltip title="Click here to edit this plugin">
+          <EditOutlined
+            v-if="canEditPlugin && !isSaving && !props.isLoading"
+            class="action-badge edit-badge"
+            @click.prevent.stop="toggleEdit"
+          />
+        </a-tooltip>
+        <a-tooltip title="Click here to remove this plugin">
+          <DeleteOutlined
+            v-if="canDeletePlugin && !isSaving && !props.isLoading"
+            class="action-badge delete-badge"
+            @click.prevent.stop="handleDelete"
+          />
+        </a-tooltip>
+      </div>
+    </template>
+    <ConfirmAction
+      :is-open="isDeleteModalOpen"
+      title="Delete Plugin"
+      message="Are you sure you want to remove this plugin?"
+      @confirm="confirmDelete"
+      @cancel="isDeleteModalOpen = false"
+      @update:is-open="(value) => (isDeleteModalOpen = value)"
+    />
+  </div>
 </template>
 
 <style scoped lang="scss">
@@ -218,22 +223,62 @@
     src: url('/fonts/manrope/Manrope-VariableFont_wght.woff2') format('woff');
   }
 
-  // Style for the card container.
+  .plugin-wrapper {
+    position: relative;
+    display: inline-block;
+  }
 
-  .circleBackground {
-    padding: 3.5%;
-    border-radius: 100%;
+  .card-container {
+    position: relative;
+    display: inline-block;
+
+
+    &:hover .action-badge {
+      opacity: 1;
+    }
+  }
+
+
+  .action-badge {
     position: absolute;
-    top: -3%;
-    right: -3%;
+    top: -8px;
+    z-index: 10;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
     box-shadow: v-bind('token.boxShadowSecondary');
     color: white;
-    background-color: color-mix(in srgb, #6d6e6f, #ff002e 60%) !important;
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s ease-in-out;
+
     &:hover {
-      transition: 0.1s ease-in-out;
-      cursor: pointer;
       transform: scale(1.1);
     }
+  }
+
+  .edit-badge {
+    left: -8px;
+    background-color: #8c8c8c;
+  }
+
+
+  .delete-badge {
+    right: -8px;
+    background-color: color-mix(in srgb, #6d6e6f, #ff002e 60%);
+  }
+
+
+  .edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 15px;
+    padding: 0 10px; 
   }
 
   .cardNoHover {
@@ -248,12 +293,11 @@
   .card {
     width: max-content;
     max-width: 300px;
-
+    min-width: 200px;
     box-shadow: v-bind('token.boxShadowSecondary');
     display: flex;
     flex-direction: column;
     transition: 0.1s ease-in-out;
-
     background-color: v-bind('token.colorBgElevated');
 
     &:hover {
@@ -262,27 +306,7 @@
     }
   }
 
-  .textContainerInput {
-    font-family: Manrope, serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: 10px;
-    white-space: nowrap;
-    overflow: hidden;
-
-    & > * {
-      margin: 5px 0 5px 0;
-    }
-
-    & p {
-      color: #6d6e6f;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-
-  // Style for the text container.
+  .textContainerInput,
   .textContainer {
     font-family: Manrope, serif;
     display: flex;
@@ -293,17 +317,17 @@
     overflow: hidden;
 
     & > * {
-      margin: 0;
+      margin: 5px 0;
     }
 
     & p {
       color: #6d6e6f;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin: 0;
     }
   }
 
-  // Style for the avatar image.
   .avatar {
     margin: 10px;
     width: 40px;

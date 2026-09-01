@@ -2,7 +2,6 @@
   import { computed, inject, onMounted, ref, toRaw } from 'vue';
   import {
     localLogStoreSymbol,
-    projectEditStoreSymbol,
     projectRoutingSymbol,
   } from '@/store/injectionSymbols';
   import { storeToRefs } from 'pinia';
@@ -17,13 +16,7 @@
     UndoOutlined,
   } from '@ant-design/icons-vue';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import {
-    useCompanyStore,
-    usePluginStore,
-    useProjectStore,
-    useTeamStore,
-  } from '@/store';
-  import type { EditProjectModel } from '@/models/Project/EditProjectModel';
+  import { useCompanyStore, useProjectStore, useTeamStore } from '@/store';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
   import IconButton from '@/components/Button/IconButton.vue';
   import _ from 'lodash';
@@ -40,13 +33,12 @@
   const { notification } = App.useApp();
   const localLogStore = inject(localLogStoreSymbol);
   const projectStore = useProjectStore();
-  const projectEditStore = inject(projectEditStoreSymbol)!;
-  const pluginStore = usePluginStore();
   const teamStore = useTeamStore();
   const companyStore = useCompanyStore();
   const projectRouting = inject(projectRoutingSymbol)!;
   const token = useThemeToken();
 
+  const projectEdits = inject('projectEdits') as Ref<UpdateProjectModel | null>;
   const teamOptions = computed(() => ['No Team', ...teamStore.getTeamNames]);
 
   const editingClass = computed(() => ({
@@ -91,12 +83,10 @@
     () => isEditing.value,
     (newVal) => {
       if (!newVal) {
-        projectEditStore.resetPluginChanges();
         BUInputStatus.value = '';
         teamNumberInputStatus.value = '';
         PtlInputStatus.value = '';
         clientNameInputStatus.value = '';
-        offerIdInputStatus.value = '';
         companyNameInputStatus.value = '';
         companyStateInputState.value = '';
         ismsLevelInputState.value = '';
@@ -127,7 +117,6 @@
     teamName: ref<string>(''),
     ptl: ref<string>(''),
     clientName: ref<string>(''),
-    offerId: ref<string>(''),
     companyName: ref<DetailedProjectModel['company']['companyName']>(''),
     companyState: ref<DetailedProjectModel['companyState']>('EXTERNAL'),
     ismsLevel: ref<DetailedProjectModel['ismsLevel']>('NORMAL'),
@@ -143,7 +132,6 @@
   const teamNumberInputStatus = ref<Status>('');
   const PtlInputStatus = ref<Status>('');
   const clientNameInputStatus = ref<Status>('');
-  const offerIdInputStatus = ref<Status>('');
   const companyNameInputStatus = ref<Status>('');
   const companyStateInputState = ref<Status>('');
   const ismsLevelInputState = ref<Status>('');
@@ -153,7 +141,6 @@
 
   const clientNameInput = ref(projectData.clientName);
   const teamNameInput = ref(projectData.teamName);
-  const offerIdInput = ref(projectData.offerId);
   const companyNameInput = ref(projectData.companyName);
   const companyStateInput = ref(projectData.companyState);
   const ismsLevelInput = ref(projectData.ismsLevel);
@@ -189,13 +176,6 @@
       value: clientNameInput,
       status: clientNameInputStatus,
       requiredValue: true,
-    },
-    {
-      label: 'Offer\xa0ID',
-      name: 'offerId',
-      value: offerIdInput,
-      status: offerIdInputStatus,
-      requiredValue: false,
     },
     {
       label: 'Company',
@@ -245,24 +225,22 @@
         ? undefined
         : teamStore.getIdToName(teamNameInput.value);
     const mappedCompanyId = companyStore.getIdToName(companyNameInput.value);
-    const updatedProject: EditProjectModel = {
+    projectEdits.value = {
+      ...projectEdits.value,
       projectName: projectNameInput.value,
       clientName: clientNameInput.value,
-      offerId: offerIdInput.value,
       companyId: mappedCompanyId ?? 0,
       companyState: companyStateInput.value,
       ismsLevel: ismsLevelInput.value,
       isEoC: isEoCInput.value,
       teamId: mappedTeamId,
       notes: notesInput.value,
+      isArchived: projectEdits.value?.isArchived ?? false,
     };
-    projectEditStore.updateProjectInformationChanges(updatedProject);
   }
 
   //Function to load the data from projectViewService to projectView
   function addData(loadedData: DetailedProjectModel) {
-    if (projectStore.getProject)
-      projectEditStore.setProjectInformation(projectStore.getProject);
     projectData.id.value = loadedData.id;
     projectData.slug.value = loadedData.slug;
     projectData.businessUnit.value =
@@ -275,7 +253,6 @@
       loadedData.team?.ptl == undefined ? '' : loadedData.team.ptl;
     projectData.projectName.value = loadedData.projectName;
     projectData.clientName.value = loadedData.clientName;
-    projectData.offerId.value = loadedData.offerId ?? '';
     projectData.companyName.value = loadedData.company.companyName;
     projectData.companyState.value = loadedData.companyState;
     projectData.ismsLevel.value = loadedData.ismsLevel;
@@ -333,24 +310,7 @@
         throw new Error('No project found to update');
       }
 
-      const currentProject: UpdateProjectModel = {
-        projectName: detailedProject.projectName,
-        clientName: detailedProject.clientName,
-        offerId: detailedProject.offerId,
-
-        companyId: detailedProject.company.id,
-        teamId: detailedProject.team ? detailedProject.team.id : null,
-
-        companyState: detailedProject.companyState,
-        ismsLevel: detailedProject.ismsLevel,
-        isEoC: detailedProject.isEoC,
-        notes: detailedProject.notes,
-        isArchived: detailedProject.isArchived,
-
-        pluginList: null,
-      };
       const projectId = projectStore.getProject?.id;
-      currentProject.pluginList = pluginStore.getPlugins;
 
       await projectStore.unarchive(projectId);
       await localLogStore?.fetch(projectId);
@@ -440,11 +400,9 @@
       </div>
       <div v-else class="projectNameInput">
         <ProjectInformationInputField
-          :column-name="'projectName'"
           class="editField projectName"
           :input-value="projectData.projectName.value"
           :input-status="projectNameInputStatus"
-          :edit-store="projectEditStore"
           :is-editing="true"
           :required-value="true"
           @updated="
@@ -490,10 +448,8 @@
           <ProjectInformationSearchSelectField
             v-if="field.inputType === 'select'"
             class="editField"
-            :column-name="field.name"
             :input-value="field.value"
             :input-status="field.status"
-            :edit-store="projectEditStore"
             :options="
               typeof field.options === 'function'
                 ? field.options()
@@ -514,10 +470,8 @@
           <ProjectInformationInputField
             v-else
             class="editField"
-            :column-name="field.name"
             :input-value="field.value"
             :input-status="field.status"
-            :edit-store="projectEditStore"
             :required-value="field.requiredValue"
             @updated="
               (newValue: string | number) => {
@@ -537,7 +491,6 @@
           class="infoCard"
           :class="[editingClass, nonEditingClass]"
           :input-value="isEoCInput"
-          :edit-store="projectEditStore"
           :is-editing="isEditing"
           :required-value="true"
           @updated="
@@ -578,7 +531,6 @@
             :input-value="teamNameInput"
             :input-status="'error'"
             :options="teamOptions"
-            :edit-store="projectEditStore"
             :is-editing="isEditing"
             @updated="
               (newValue) => {
@@ -635,7 +587,6 @@
           class="editArea"
           :input-value="projectData.notes.value"
           :input-status="projectNotesInputStatus"
-          :edit-store="projectEditStore"
           :is-editing="true"
           :required-value="false"
           @updated="

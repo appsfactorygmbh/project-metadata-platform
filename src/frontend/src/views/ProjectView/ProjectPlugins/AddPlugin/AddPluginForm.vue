@@ -1,10 +1,9 @@
 <script setup lang="ts">
   import { type FormStore, type FormSubmitType } from '@/components/Form';
   import { App } from 'ant-design-vue';
-  import { projectEditStoreSymbol } from '@/store/injectionSymbols';
-  import { inject, onBeforeMount, reactive, ref, toRaw } from 'vue';
+  import { onBeforeMount, reactive, ref, toRaw } from 'vue';
   import type { FormInstance, SelectProps } from 'ant-design-vue';
-  import type { PluginEditModel, PluginModel } from '@/models/Plugin';
+  import type { CreatePluginModel, PluginModel } from '@/models/Plugin';
   import type {
     DefaultOptionType,
     SelectValue,
@@ -12,7 +11,7 @@
   import type { RulesObject } from '@/components/Form/types';
   import type { AddPluginFormData } from './AddPluginFormData.ts';
   import { useGlobalPluginStore } from '@/store/GlobalPluginStore.ts';
-  import { usePluginStore } from '@/store';
+  import { usePluginStore, useProjectStore } from '@/store';
   import { isUniqueUrl } from '@/utils/form/userValidation.ts';
   import type { GlobalPluginModel } from '@/models/GlobalPlugin';
 
@@ -22,8 +21,8 @@
   }>();
   const { notification } = App.useApp();
   const globalPluginStore = useGlobalPluginStore();
-  const projectEditStore = inject(projectEditStoreSymbol);
   const pluginStore = usePluginStore();
+  const projectStore = useProjectStore();
   const options = ref<SelectProps['options']>([]);
   const emit = defineEmits(['addedPlugin']);
   const formRef = ref<FormInstance>();
@@ -81,7 +80,7 @@
     }
   }
 
-  const onSubmit: FormSubmitType = (fields) => {
+  const onSubmit: FormSubmitType = async (fields) => {
     try {
       const pluginNumber: number | undefined =
         globalPluginStore?.getGlobalPlugins.find(
@@ -90,36 +89,25 @@
       if (pluginNumber === undefined) {
         return;
       }
-      const pluginDef: PluginModel = {
-        id: pluginNumber,
-        pluginName: toRaw(fields).globalPlugin,
+      const projectId = projectStore.getProject?.id;
+      if (!projectId) {
+        throw new Error('No active project found.');
+      }
+      const pluginDef: CreatePluginModel = {
+        pluginId: pluginNumber,
         displayName: toRaw(fields).pluginName,
         url: toRaw(fields).pluginUrl,
       };
-      addPlugin(pluginDef);
+      await pluginStore.add(projectId, pluginDef);
       emit('addedPlugin');
     } catch (error) {
       notification.error({
         message: 'Error!',
         description: (error as Error).message ?? 'An error occurred.',
       });
-      console.error('error while creating a new project plugin', error);
+      console.error('error while adding a new project plugin', error);
     }
   };
-
-  const addPlugin = (pluginDef: PluginModel) => {
-    const index = projectEditStore?.initialAdd(pluginDef);
-
-    if (index !== undefined) {
-      const newPlugin: PluginEditModel = {
-        ...pluginDef,
-        editKey: index,
-        isDeleted: false,
-      };
-      projectEditStore?.addNewPlugin(newPlugin);
-    }
-  };
-
   const dynamicValidateForm = reactive<AddPluginFormData>(initialValues);
 
   const rulesRef = reactive<RulesObject<AddPluginFormData>>({
@@ -167,19 +155,8 @@
   };
 
   const isGlobalPluginAlreadyUsed = (globalPlugin: string) => {
-    // All plugin names already use in the project
-    const projectPluginNames = pluginStore.getPlugins.map(
-      (plugin: PluginModel) => plugin.pluginName,
-    );
-
-    // All currently new added plugin names
-    const addedPluginNames = (projectEditStore?.getAddedPlugins ?? []).map(
-      (plugin: PluginEditModel) => plugin.pluginName,
-    );
-
-    // returns true if the global plugin is already used in the project
-    return [...projectPluginNames, ...addedPluginNames].some(
-      (pluginName: string) => pluginName === globalPlugin,
+    return pluginStore.getPlugins.some(
+      (plugin: PluginModel) => plugin.pluginName === globalPlugin,
     );
   };
 

@@ -6,15 +6,13 @@
         <div class="plugin-grid">
           <PluginComponent
             v-for="plugin in selectedGroup.plugins"
-            :id="plugin.id"
+            :id="Number(plugin.id)"
             :key="plugin.id"
             :display-name="plugin.displayName"
             :url="plugin.url"
             :is-loading="loading"
-            :is-editing="isEditing"
-            :edit-key="plugin.editKey"
-            :is-deleted="false"
             :show-favicon="false"
+            :permissions="plugin.pluginPermissions"
           />
         </div>
         <a-button style="margin-top: 15px" @click="closePopup">
@@ -28,16 +26,12 @@
 <script setup lang="ts">
   import { PluginComponent } from '@/components/Plugin';
 
-  const { selectedGroup, loading, isEditing } = defineProps({
+  const { selectedGroup, loading } = defineProps({
     selectedGroup: {
       type: Object,
       required: true,
     },
     loading: {
-      type: Boolean,
-      default: false,
-    },
-    isEditing: {
       type: Boolean,
       default: false,
     },
