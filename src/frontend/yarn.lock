@@ -76,19 +76,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:^5.19.0":
-  version: 5.19.0
-  resolution: "@azure/msal-browser@npm:5.19.0"
+"@azure/msal-browser@npm:^5.20.0":
+  version: 5.20.0
+  resolution: "@azure/msal-browser@npm:5.20.0"
   dependencies:
-    "@azure/msal-common": "npm:16.13.0"
-  checksum: 10c0/993a775cd51784a6729d8e58f5067454a539255334fac6f9c9bad8123d0ee04b05ef714b62b0d1d1c5bbdadcc9c3d846139ef9403d32a62f3c0b871039669e09
+    "@azure/msal-common": "npm:16.14.0"
+  checksum: 10c0/68a8afa8cdd5bff4335f3fc1f3cf03ff1890e3684186af9da07119ef7b91313778dc97f78e7ddfdaf0c93235adfdf7794d74ad4193ad1e2ce8984c09fa9e94d1
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:16.13.0":
-  version: 16.13.0
-  resolution: "@azure/msal-common@npm:16.13.0"
-  checksum: 10c0/cc2857f24bae5ac9693760a9b23c5c6f19a86ae5df16d236e85616a545e6bb15a8b7a587df9c024b43a5386485a84b662574c42cffafef9746e56135f61f654c
+"@azure/msal-common@npm:16.14.0":
+  version: 16.14.0
+  resolution: "@azure/msal-common@npm:16.14.0"
+  checksum: 10c0/72f9786b23f727e730d24afc57fa69998be89464ed734153c36ccd0893eef4945b840a0ed0b325295fd497b633625217cebe60392b42f0bad7ad183f8bfa6bfe
   languageName: node
   linkType: hard
 
@@ -6354,7 +6354,7 @@ __metadata:
   resolution: "frontend@workspace:."
   dependencies:
     "@ant-design/icons-vue": "npm:^7.0.1"
-    "@azure/msal-browser": "npm:^5.19.0"
+    "@azure/msal-browser": "npm:^5.20.0"
     "@eslint/eslintrc": "npm:^3.3.6"
     "@eslint/js": "npm:^10.0.1"
     "@heroicons/vue": "npm:^2.2.0"
@@ -6394,7 +6394,7 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^4.4.1"
     eslint-plugin-vue: "npm:^10.10.0"
     globals: "npm:^17.11.0"
-    happy-dom: "npm:^20.11.12"
+    happy-dom: "npm:^20.12.0"
     jest: "npm:^30.5.0"
     jiti: "npm:^2.7.0"
     js-cookie: "npm:^3.0.8"
@@ -6764,9 +6764,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"happy-dom@npm:^20.11.12":
-  version: 20.11.12
-  resolution: "happy-dom@npm:20.11.12"
+"happy-dom@npm:^20.12.0":
+  version: 20.12.0
+  resolution: "happy-dom@npm:20.12.0"
   dependencies:
     "@types/node": "npm:>=20.0.0"
     "@types/whatwg-mimetype": "npm:^3.0.2"
@@ -6775,7 +6775,7 @@ __metadata:
     entities: "npm:^7.0.1"
     whatwg-mimetype: "npm:^3.0.0"
     ws: "npm:^8.21.0"
-  checksum: 10c0/8436f43b7da55c8c16a812c1d46dc17abef9ace313f15610c060e8d46a23a61134e2dfe4ed895b0c180b0192727c43ab15c80bb66692af24155f8b42178e1b32
+  checksum: 10c0/5937db4ba0b4897743f995565980a4444d6dd8445abf31228b0dd2658819fca1e09ae8da36ba4abf69c38248a3de82c9597d17ed0c5b2083c2de9cdfc4f8056e
   languageName: node
   linkType: hard
 
