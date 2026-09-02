@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
-    "@azure/msal-browser": "^5.19.0",
+    "@azure/msal-browser": "^5.20.0",
     "@heroicons/vue": "^2.2.0",
     "@vueuse/core": "^14.4.0",
     "ant-design-vue": "^4.2.6",
@@ -81,7 +81,7 @@
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-unused-imports": "^4.4.1",
     "eslint-plugin-vue": "^10.10.0",
-    "happy-dom": "^20.11.12",
+    "happy-dom": "^20.12.0",
     "jiti": "^2.7.0",
     "jsdom": "^30.0.1",
     "lint-staged": "^17.4.1",
