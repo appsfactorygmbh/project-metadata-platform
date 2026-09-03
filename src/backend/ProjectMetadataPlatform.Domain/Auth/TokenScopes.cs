@@ -138,27 +138,87 @@ public enum TokenScopes
     DELETE_BUSINESSUNIT,
 
     /// <summary>
-    /// Scopes for reading Office Locations.
+    /// Scope for reading Office Locations.
     /// </summary>
     GET_OFFICELOCATION,
 
     /// <summary>
-    /// Scopes for creating Office Locations.
+    /// Scope for creating Office Locations.
     /// </summary>
     CREATE_OFFICELOCATION,
 
     /// <summary>
-    /// Scopes for updating Office Locations.
+    /// Scope for updating Office Locations.
     /// </summary>
     EDIT_OFFICELOCATION,
 
     /// <summary>
-    /// Scopes for deleting Office Locations.
+    /// Scope for deleting Office Locations.
     /// </summary>
     DELETE_OFFICELOCATION,
 
     /// <summary>
-    /// Scopes for reading Logs.
+    /// Scope for reading Logs.
     /// </summary>
     GET_LOG,
+
+    /// <summary>
+    /// Scope for reading plugins of a project.
+    /// </summary>
+    GET_PROJECTPLUGIN,
+
+    /// <summary>
+    /// Scope for adding plugins to a project.
+    /// </summary>
+    CREATE_PROJECTPLUGIN,
+
+    /// <summary>
+    /// Scope for editing a plugin of a project.
+    /// </summary>
+    EDIT_PROJECTPLUGIN,
+
+    /// <summary>
+    /// Scope for removing a plugin from a project.
+    /// </summary>
+    DELETE_PROJECTPLUGIN,
+
+    /// <summary>
+    /// Scope for reading global billing objects.
+    /// </summary>
+    GET_GLOBALBILLING,
+
+    /// <summary>
+    /// Scope for creating a global billing object.
+    /// </summary>
+    CREATE_GLOBALBILLING,
+
+    /// <summary>
+    /// Scope for editing a global billing object.
+    /// </summary>
+    EDIT_GLOBALBILLING,
+
+    /// <summary>
+    /// Scope for deleting a global billing object.
+    /// </summary>
+    DELETE_GLOBALBILLING,
+
+    /// <summary>
+    /// Scope for reading billing information of a plugin of a project.
+    /// </summary>
+    GET_PLUGINBILLING,
+
+    /// <summary>
+    /// Scope for adding billing information to a plugin of a project.
+    /// </summary>
+    CREATE_PLUGINBILLING,
+
+    /// <summary>
+    /// Scope for editing billing information of a plugin of a project.
+    /// </summary>
+    EDIT_PLUGINBILLING,
+
+    /// <summary>
+    /// Scope for removing billing information from a plugin of a project.
+    /// </summary>
+    DELETE_PLUGINBILLING,
 }

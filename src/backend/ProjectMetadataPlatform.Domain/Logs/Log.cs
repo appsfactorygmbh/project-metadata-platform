@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Billing;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Departments;
@@ -186,6 +187,21 @@ public class Log
     /// The Office Location name of the related Office Location.
     /// </summary>
     public string? OfficeLocationName { get; set; }
+
+    /// <summary>
+    /// The global billing information, on which the action was taken.
+    /// </summary>
+    public GlobalBilling? GlobalBilling { get; set; }
+
+    /// <summary>
+    /// The global billing id of the related billing information.
+    /// </summary>
+    public int? GlobalBillingId { get; set; }
+
+    /// <summary>
+    /// The global billing kind of the related billing information.
+    /// </summary>
+    public string? GlobalBillingKind { get; set; }
 
     /// <summary>
     /// The taken action

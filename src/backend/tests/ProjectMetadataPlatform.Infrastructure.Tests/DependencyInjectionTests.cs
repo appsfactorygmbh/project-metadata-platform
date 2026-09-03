@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -53,7 +54,7 @@ public class DependencyInjectionTests : TestsWithDatabase
     [Test]
     [TestCase("test_password", "test_password")]
     [TestCase(null, "admin")]
-    public void AdminUserIsAddedCorrectly(string? envPassword, string expectedPassword)
+    public async Task AdminUserIsAddedCorrectly(string? envPassword, string expectedPassword)
     {
         const string hash = "hash";
         Environment.SetEnvironmentVariable("PMP_ADMIN_PASSWORD", envPassword);
@@ -76,8 +77,8 @@ public class DependencyInjectionTests : TestsWithDatabase
             null!
         );
         var services = new ServiceCollection();
-        _ = services.AddScoped<UserManager<ApplicationUser>>(_ => mockUserManager.Object);
-        _ = services.AddScoped<IAuthorizationTracker>(provider => mockTracker.Object);
+        _ = services.AddScoped(_ => mockUserManager.Object);
+        _ = services.AddScoped(provider => mockTracker.Object);
         var mockUnitOfWork = new Mock<IUnitOfWork>();
         _ = services.AddScoped(_ => mockUnitOfWork.Object);
 
@@ -85,7 +86,7 @@ public class DependencyInjectionTests : TestsWithDatabase
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Success);
 
-        services.BuildServiceProvider().AddAdminUser();
+        await services.BuildServiceProvider().AddAdminUserAsync();
 
         mockPasswordHasher.Verify(
             m =>

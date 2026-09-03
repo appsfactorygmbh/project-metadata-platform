@@ -24,7 +24,7 @@ public interface IRequestHandler<in TRequest, TResult>
 /// Represents a Handler for a Request without a Response.
 /// </summary>
 /// <typeparam name="TRequest">Type of the Request.</typeparam>
-public interface IRequestHandler<in TRequest> : IRequestHandler<TRequest, Unit>
+public interface IRequestHandler<in TRequest> : IRequestHandler<TRequest, Mediator.Unit>
     where TRequest : IRequest
 {
     /// <summary>
@@ -35,12 +35,12 @@ public interface IRequestHandler<in TRequest> : IRequestHandler<TRequest, Unit>
     /// <returns></returns>
     new Task Handle(TRequest request, CancellationToken cancellationToken = default);
 
-    async Task<Unit> IRequestHandler<TRequest, Unit>.Handle(
+    async Task<Mediator.Unit> IRequestHandler<TRequest, Mediator.Unit>.Handle(
         TRequest request,
         CancellationToken cancellationToken
     )
     {
         await Handle(request, cancellationToken);
-        return Unit.Value;
+        return Mediator.Unit.Value;
     }
 }

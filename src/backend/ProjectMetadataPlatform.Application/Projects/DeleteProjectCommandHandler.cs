@@ -67,6 +67,8 @@ public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand,
                 throw new ProjectNotFoundException(request.Id);
             case { IsArchived: false }:
                 throw new ProjectNotArchivedException(project);
+            default:
+                break;
         }
 
         var deletedProject = await _projectsRepository.DeleteProjectAsync(project);

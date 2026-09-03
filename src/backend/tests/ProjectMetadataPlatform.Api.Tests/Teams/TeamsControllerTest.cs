@@ -296,7 +296,7 @@ public class TeamsControllerTest
         var okResult = actionResult.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         var response = okResult.Value as GetListResponse<GetTeamResponse>;
-        Assert.That(response.Resources, Is.Not.Null.And.Empty);
+        Assert.That(response!.Resources, Is.Not.Null.And.Empty);
     }
 
     [Test]

@@ -59,7 +59,6 @@ public class PluginsController : ControllerBase
         var command = new CreatePluginCommand(
             request.PluginName,
             request.IsArchived,
-            request.Keys,
             request.BaseUrl
         );
 
@@ -102,7 +101,6 @@ public class PluginsController : ControllerBase
             plugin.PluginName,
             plugin.Id,
             plugin.IsArchived,
-            [],
             plugin.BaseUrl
         );
         return Ok(response);
@@ -133,12 +131,10 @@ public class PluginsController : ControllerBase
             )
         >(query);
 
-        string[] keys = [];
         var pluginResponse = plugins.Select(item => new GetGlobalPluginResponse(
             item.plugin.PluginName,
             item.plugin.Id,
             item.plugin.IsArchived,
-            keys,
             item.plugin.BaseUrl,
             [.. item.permissions]
         ));

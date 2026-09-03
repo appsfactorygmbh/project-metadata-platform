@@ -21,10 +21,14 @@ public class RequireNonNullablePropertiesSchemaFilter : ISchemaFilter
     public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
         if (schema is not OpenApiSchema openApiSchema)
+        {
             return;
+        }
 
         if (openApiSchema.Properties is not { Count: > 0 })
+        {
             return;
+        }
 
         openApiSchema.Required ??= new HashSet<string>();
 
@@ -39,7 +43,7 @@ public class RequireNonNullablePropertiesSchemaFilter : ISchemaFilter
 
         foreach (var propKey in additionalRequiredProps)
         {
-            openApiSchema.Required.Add(propKey);
+            _ = openApiSchema.Required.Add(propKey);
         }
     }
 

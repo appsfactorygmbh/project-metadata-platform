@@ -57,7 +57,7 @@ public class CreatePluginCommandHandlerTest
             )
             .ReturnsAsync(true);
         var result = await _handler.Handle(
-            new CreatePluginCommand("Airlock", true, [], "https://airlock.com"),
+            new CreatePluginCommand("Airlock", true, "https://airlock.com"),
             It.IsAny<CancellationToken>()
         );
         Assert.Multiple(() =>
@@ -111,7 +111,7 @@ public class CreatePluginCommandHandlerTest
 
         _ = Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() =>
             _handler.Handle(
-                new CreatePluginCommand("Airlock", true, [], "https://airlock.com"),
+                new CreatePluginCommand("Airlock", true, "https://airlock.com"),
                 It.IsAny<CancellationToken>()
             )
         );
@@ -131,7 +131,7 @@ public class CreatePluginCommandHandlerTest
             )
             .ReturnsAsync(false);
 
-        var request = new CreatePluginCommand("Airlock", true, [], "https://airlock.com");
+        var request = new CreatePluginCommand("Airlock", true, "https://airlock.com");
 
         _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())

@@ -51,8 +51,11 @@ public class GetAllDepartmentsQueryHandler
         );
         if (queriedDepartments == null)
         {
+            var departmentList = await departments.ToListAsync(
+                cancellationToken: cancellationToken
+            );
             List<Department> filteredDepartments = [];
-            foreach (var department in departments)
+            foreach (var department in departmentList)
             {
                 if (
                     await _authorizationService.CheckAccess(

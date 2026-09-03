@@ -18,7 +18,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.10")
+                .HasAnnotation("ProductVersion", "10.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -35,7 +35,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("ApplicationUserBusinessUnit", (string)null);
+                    b.ToTable("ApplicationUserBusinessUnit");
                 });
 
             modelBuilder.Entity("ApplicationUserDepartment", b =>
@@ -50,7 +50,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("ApplicationUserDepartment", (string)null);
+                    b.ToTable("ApplicationUserDepartment");
                 });
 
             modelBuilder.Entity("ApplicationUserTeam", b =>
@@ -65,7 +65,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("ApplicationUserTeam", (string)null);
+                    b.ToTable("ApplicationUserTeam");
                 });
 
             modelBuilder.Entity("ApplicationUserTeam1", b =>
@@ -80,7 +80,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TeamSupportUsersId");
 
-                    b.ToTable("ApplicationUserTeam1", (string)null);
+                    b.ToTable("ApplicationUserTeam1");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -230,7 +230,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int[]>("Scopes")
+                    b.PrimitiveCollection<int[]>("Scopes")
                         .HasColumnType("integer[]");
 
                     b.Property<string>("Token")
@@ -242,7 +242,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("ApiTokens", (string)null);
+                    b.ToTable("ApiTokens");
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Auth.RefreshToken", b =>
@@ -266,7 +266,85 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshToken", (string)null);
+                    b.ToTable("RefreshToken");
+                });
+
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Billing.GlobalBilling", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BillingKind")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("BudgetLimit")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Currency")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("HostingFee")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("TargetMargin")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TimeFrame")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BillingKind")
+                        .IsUnique();
+
+                    b.ToTable("GlobalBilling");
+                });
+
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Billing.PluginBilling", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PluginId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BillingId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("BudgetLimit")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("HostingFee")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<int>("TargetMargin")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TimeFrame")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ProjectId", "PluginId");
+
+                    b.HasIndex("BillingId");
+
+                    b.ToTable("PluginBillingRelation");
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.BusinessUnits.BusinessUnit", b =>
@@ -286,7 +364,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("BusinessUnitName")
                         .IsUnique();
 
-                    b.ToTable("BusinessUnits", (string)null);
+                    b.ToTable("BusinessUnits");
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Companies.Company", b =>
@@ -306,7 +384,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("CompanyName")
                         .IsUnique();
 
-                    b.ToTable("Companies", (string)null);
+                    b.ToTable("Companies");
 
                     b.HasData(
                         new
@@ -338,7 +416,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("DepartmentName")
                         .IsUnique();
 
-                    b.ToTable("Departments", (string)null);
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Logs.Log", b =>
@@ -391,6 +469,12 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Property<string>("DepartmentName")
                         .HasColumnType("text");
 
+                    b.Property<int?>("GlobalBillingId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("GlobalBillingKind")
+                        .HasColumnType("text");
+
                     b.Property<int?>("GlobalPluginId")
                         .HasColumnType("integer");
 
@@ -434,6 +518,8 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("DepartmentId");
 
+                    b.HasIndex("GlobalBillingId");
+
                     b.HasIndex("GlobalPluginId");
 
                     b.HasIndex("OfficeLocationId");
@@ -442,7 +528,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Logs", (string)null);
+                    b.ToTable("Logs");
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Logs.LogChange", b =>
@@ -472,7 +558,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("LogId");
 
-                    b.ToTable("LogChange", (string)null);
+                    b.ToTable("LogChange");
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.OfficeLocations.OfficeLocation", b =>
@@ -492,7 +578,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("OfficeLocationName")
                         .IsUnique();
 
-                    b.ToTable("OfficeLocations", (string)null);
+                    b.ToTable("OfficeLocations");
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Plugins.Plugin", b =>
@@ -518,7 +604,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("PluginName")
                         .IsUnique();
 
-                    b.ToTable("Plugins", (string)null);
+                    b.ToTable("Plugins");
 
                     b.HasData(
                         new
@@ -541,89 +627,106 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Plugins.ProjectPlugins", b =>
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Plugins.ProjectPlugin", b =>
                 {
-                    b.Property<int>("PluginId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("ProjectId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Url")
-                        .HasColumnType("text");
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("BillingId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("DisplayName")
                         .HasColumnType("text");
 
-                    b.HasKey("PluginId", "ProjectId", "Url");
+                    b.Property<int>("PluginId")
+                        .HasColumnType("integer");
 
-                    b.HasIndex("ProjectId");
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.ToTable("ProjectPluginsRelation", (string)null);
+                    b.HasKey("ProjectId", "Id");
+
+                    b.HasIndex("PluginId", "ProjectId", "Url")
+                        .IsUnique();
+
+                    b.ToTable("ProjectPluginsRelation");
 
                     b.HasData(
                         new
                         {
-                            PluginId = 100,
                             ProjectId = 100,
-                            Url = "https://http.cat/status/100",
-                            DisplayName = "Gitlab"
-                        },
-                        new
-                        {
-                            PluginId = 200,
-                            ProjectId = 100,
-                            Url = "https://http.cat/status/102",
-                            DisplayName = "SonarQube"
-                        },
-                        new
-                        {
-                            PluginId = 300,
-                            ProjectId = 100,
-                            Url = "https://http.cat/status/200",
-                            DisplayName = "Jira"
-                        },
-                        new
-                        {
+                            Id = 1,
+                            DisplayName = "Gitlab",
                             PluginId = 100,
-                            ProjectId = 200,
-                            Url = "https://http.cat/status/204",
-                            DisplayName = "Gitlab"
+                            Url = "https://http.cat/status/100"
                         },
                         new
                         {
+                            ProjectId = 100,
+                            Id = 2,
+                            DisplayName = "SonarQube",
                             PluginId = 200,
-                            ProjectId = 200,
-                            Url = "https://http.cat/status/401",
-                            DisplayName = "SonarQube"
+                            Url = "https://http.cat/status/102"
                         },
                         new
                         {
+                            ProjectId = 100,
+                            Id = 3,
+                            DisplayName = "Jira",
                             PluginId = 300,
-                            ProjectId = 200,
-                            Url = "https://http.cat/status/404",
-                            DisplayName = "Jira"
+                            Url = "https://http.cat/status/200"
                         },
                         new
                         {
+                            ProjectId = 200,
+                            Id = 1,
+                            DisplayName = "Gitlab",
                             PluginId = 100,
-                            ProjectId = 300,
-                            Url = "https://http.cat/status/406",
-                            DisplayName = "Gitlab"
+                            Url = "https://http.cat/status/204"
                         },
                         new
                         {
+                            ProjectId = 200,
+                            Id = 2,
+                            DisplayName = "SonarQube",
                             PluginId = 200,
-                            ProjectId = 300,
-                            Url = "https://http.cat/status/411",
-                            DisplayName = "SonarQube"
+                            Url = "https://http.cat/status/401"
                         },
                         new
                         {
+                            ProjectId = 200,
+                            Id = 3,
+                            DisplayName = "Jira",
                             PluginId = 300,
+                            Url = "https://http.cat/status/404"
+                        },
+                        new
+                        {
                             ProjectId = 300,
-                            Url = "https://http.cat/status/414",
-                            DisplayName = "Jira"
+                            Id = 1,
+                            DisplayName = "Gitlab",
+                            PluginId = 100,
+                            Url = "https://http.cat/status/406"
+                        },
+                        new
+                        {
+                            ProjectId = 300,
+                            Id = 2,
+                            DisplayName = "SonarQube",
+                            PluginId = 200,
+                            Url = "https://http.cat/status/411"
+                        },
+                        new
+                        {
+                            ProjectId = 300,
+                            Id = 3,
+                            DisplayName = "Jira",
+                            PluginId = 300,
+                            Url = "https://http.cat/status/414"
                         });
                 });
 
@@ -658,9 +761,6 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("OfferId")
-                        .HasColumnType("text");
-
                     b.Property<string>("ProjectName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -681,7 +781,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
 
                     b.HasData(
                         new
@@ -694,7 +794,6 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                             IsEoC = false,
                             IsmsLevel = 0,
                             Notes = "",
-                            OfferId = "Offer1",
                             ProjectName = "DB App",
                             Slug = "db_app"
                         },
@@ -708,7 +807,6 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                             IsEoC = false,
                             IsmsLevel = 1,
                             Notes = "",
-                            OfferId = "Offer2",
                             ProjectName = "Tagesschau App",
                             Slug = "tagesschau_app"
                         },
@@ -722,7 +820,6 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                             IsEoC = false,
                             IsmsLevel = 2,
                             Notes = "",
-                            OfferId = "Offer3",
                             ProjectName = "AOK Bonus App",
                             Slug = "aok_bonus_app"
                         });
@@ -753,7 +850,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("TeamName")
                         .IsUnique();
 
-                    b.ToTable("Teams", (string)null);
+                    b.ToTable("Teams");
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Users.ApplicationUser", b =>
@@ -788,7 +885,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Property<bool>("IsScimProvisioned")
                         .HasColumnType("boolean");
 
-                    b.Property<List<string>>("JobTitles")
+                    b.PrimitiveCollection<List<string>>("JobTitles")
                         .HasColumnType("text[]");
 
                     b.Property<bool>("LockoutEnabled")
@@ -966,6 +1063,25 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Billing.PluginBilling", b =>
+                {
+                    b.HasOne("ProjectMetadataPlatform.Domain.Billing.GlobalBilling", "GlobalBilling")
+                        .WithMany("PluginBilling")
+                        .HasForeignKey("BillingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectMetadataPlatform.Domain.Plugins.ProjectPlugin", "ProjectPlugin")
+                        .WithOne("PluginBilling")
+                        .HasForeignKey("ProjectMetadataPlatform.Domain.Billing.PluginBilling", "ProjectId", "PluginId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GlobalBilling");
+
+                    b.Navigation("ProjectPlugin");
+                });
+
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Logs.Log", b =>
                 {
                     b.HasOne("ProjectMetadataPlatform.Domain.Auth.ApiToken", "AffectedToken")
@@ -1003,6 +1119,11 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("ProjectMetadataPlatform.Domain.Billing.GlobalBilling", "GlobalBilling")
+                        .WithMany()
+                        .HasForeignKey("GlobalBillingId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("ProjectMetadataPlatform.Domain.Plugins.Plugin", "GlobalPlugin")
                         .WithMany()
                         .HasForeignKey("GlobalPluginId")
@@ -1037,6 +1158,8 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.Navigation("Department");
 
+                    b.Navigation("GlobalBilling");
+
                     b.Navigation("GlobalPlugin");
 
                     b.Navigation("OfficeLocation");
@@ -1057,7 +1180,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Navigation("Log");
                 });
 
-            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Plugins.ProjectPlugins", b =>
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Plugins.ProjectPlugin", b =>
                 {
                     b.HasOne("ProjectMetadataPlatform.Domain.Plugins.Plugin", "Plugin")
                         .WithMany("ProjectPlugins")
@@ -1122,6 +1245,11 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Navigation("OfficeLocation");
                 });
 
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Billing.GlobalBilling", b =>
+                {
+                    b.Navigation("PluginBilling");
+                });
+
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.BusinessUnits.BusinessUnit", b =>
                 {
                     b.Navigation("Teams");
@@ -1147,6 +1275,11 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Plugins.Plugin", b =>
                 {
                     b.Navigation("ProjectPlugins");
+                });
+
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Plugins.ProjectPlugin", b =>
+                {
+                    b.Navigation("PluginBilling");
                 });
 
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Projects.Project", b =>

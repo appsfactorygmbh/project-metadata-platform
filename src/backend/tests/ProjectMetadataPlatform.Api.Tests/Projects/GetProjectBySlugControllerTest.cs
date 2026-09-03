@@ -51,7 +51,7 @@ public class GetProjectBySlugControllerTest
             ProjectName = "MetaDataPlatform",
             Slug = "metadataplatform",
             ClientName = "Appsfactory",
-            OfferId = "1023",
+
             Company = new() { CompanyName = "Charlies Schokoladenfabrik" },
             CompanyId = 1,
             CompanyState = CompanyState.EXTERNAL,
@@ -93,7 +93,6 @@ public class GetProjectBySlugControllerTest
             Assert.That(project.ProjectName, Is.EqualTo("MetaDataPlatform"));
             Assert.That(project.Slug, Is.EqualTo("metadataplatform"));
             Assert.That(project.ClientName, Is.EqualTo("Appsfactory"));
-            Assert.That(project.OfferId, Is.EqualTo("1023"));
             Assert.That(project.Company.CompanyName, Is.EqualTo("Charlies Schokoladenfabrik"));
             Assert.That(project.CompanyState, Is.EqualTo(CompanyState.EXTERNAL));
             Assert.That(project.IsmsLevel, Is.EqualTo(SecurityLevel.VERY_HIGH));

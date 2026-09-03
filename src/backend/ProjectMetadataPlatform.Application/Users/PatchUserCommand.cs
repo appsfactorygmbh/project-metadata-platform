@@ -17,7 +17,7 @@ public record PatchUserCommand : IRequest<ApplicationUser>
     /// <summary>
     /// List of update operations.
     /// </summary>
-    public List<OperationRecord> Operations { get; init; } = new List<OperationRecord>();
+    public List<OperationRecord> Operations { get; init; } = [];
 
     /// <summary>
     /// Record representing one Update Operation.

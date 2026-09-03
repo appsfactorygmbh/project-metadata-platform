@@ -24,6 +24,7 @@ using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.Auth;
 using ProjectMetadataPlatform.Infrastructure.Authorization;
+using ProjectMetadataPlatform.Infrastructure.Billing;
 using ProjectMetadataPlatform.Infrastructure.BusinessUnits;
 using ProjectMetadataPlatform.Infrastructure.Companies;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -73,6 +74,7 @@ public static class DependencyInjection
         _ = serviceCollection.AddScoped<IDepartmentRepository, DepartmentRepository>();
         _ = serviceCollection.AddScoped<ICompanyRepository, CompanyRepository>();
         _ = serviceCollection.AddScoped<IOfficeLocationRepository, OfficeLocationRepository>();
+        _ = serviceCollection.AddScoped<IBillingRepository, BillingRepository>();
         _ = serviceCollection.AddScoped<
             IPasswordHasher<ApplicationUser>,
             PasswordHasher<ApplicationUser>
@@ -232,7 +234,7 @@ public static class DependencyInjection
     /// Adds the admin user to the database.
     /// </summary>
     /// <param name="serviceProvider"></param>
-    public static void AddAdminUser(this IServiceProvider serviceProvider)
+    public static async Task AddAdminUserAsync(this IServiceProvider serviceProvider)
     {
         string password;
         try
@@ -262,7 +264,7 @@ public static class DependencyInjection
             IsScimProvisioned = false,
         };
         user.PasswordHash = userManager.PasswordHasher.HashPassword(user, password);
-        var identityResult = userManager.CreateAsync(user).Result;
+        var identityResult = await userManager.CreateAsync(user);
 
         if (!identityResult.Succeeded)
         {
@@ -275,7 +277,7 @@ public static class DependencyInjection
         tracker.MarkAsChecked();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-        _ = unitOfWork.CompleteAsync();
+        await unitOfWork.CompleteAsync();
     }
 
     /// <summary>

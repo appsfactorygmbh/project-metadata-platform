@@ -11,7 +11,6 @@ using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
-using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
@@ -22,7 +21,6 @@ public class CreateProjectCommandHandlerTest
 {
     private CreateProjectCommandHandler _handler;
     private Mock<IProjectsRepository> _mockProjectRepo;
-    private Mock<IPluginRepository> _mockPluginRepo;
     private Mock<ITeamRepository> _teamRepository;
     private Mock<ICompanyRepository> _companyRepository;
     private Mock<ILogRepository> _mockLogRepo;
@@ -34,7 +32,6 @@ public class CreateProjectCommandHandlerTest
     public void Setup()
     {
         _mockProjectRepo = new Mock<IProjectsRepository>();
-        _mockPluginRepo = new Mock<IPluginRepository>();
         _teamRepository = new Mock<ITeamRepository>();
         _companyRepository = new Mock<ICompanyRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
@@ -43,7 +40,6 @@ public class CreateProjectCommandHandlerTest
         _authorizationServiceMock = new Mock<IAuthorizationService>();
         _handler = new CreateProjectCommandHandler(
             _mockProjectRepo.Object,
-            _mockPluginRepo.Object,
             _teamRepository.Object,
             _companyRepository.Object,
             _mockLogRepo.Object,
@@ -57,15 +53,12 @@ public class CreateProjectCommandHandlerTest
     public async Task CreateProject_Test()
     {
         // prepare
-        var plugins = new List<ProjectPlugins>();
-        plugins.Add(new ProjectPlugins { Url = "https://example.com", PluginId = 200 });
         _ = _mockProjectRepo
             .Setup(m => m.AddProjectAsync(It.IsAny<Project>()))
             .Callback<Project>(p => p.Id = 1);
         _ = _companyRepository
             .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(true);
-        _ = _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
         _ = _mockSlugHelper
             .Setup(m => m.GenerateSlug(It.IsAny<string>()))
             .Returns("example_project");
@@ -91,13 +84,11 @@ public class CreateProjectCommandHandlerTest
             new CreateProjectCommand(
                 ProjectName: "Example Project",
                 ClientName: "Example Business Unit",
-                OfferId: "1",
                 CompanyId: 1, //"Example Company",
                 CompanyState: CompanyState.EXTERNAL,
                 TeamId: null,
                 IsmsLevel: SecurityLevel.HIGH,
                 IsEoC: false,
-                Plugins: plugins,
                 Notes: "Example Notes"
             ),
             It.IsAny<CancellationToken>()
@@ -113,23 +104,11 @@ public class CreateProjectCommandHandlerTest
                 ),
             Times.Once
         );
-        _mockLogRepo.Verify(
-            m =>
-                m.AddProjectLogForCurrentActor(
-                    It.IsAny<Project>(),
-                    Action.ADDED_PROJECT_PLUGIN,
-                    It.IsAny<List<LogChange>>()
-                ),
-            Times.Once
-        );
     }
 
     [Test]
     public void CreateProject_Test_ThrowsExceptionWhenSlugAlreadyExists()
     {
-        var plugins = new List<ProjectPlugins>();
-        plugins.Add(new ProjectPlugins { Url = "https://example.com", PluginId = 200 });
-
         _ = _authorizationServiceMock
             .Setup(a =>
                 a.CheckAccess(
@@ -139,7 +118,6 @@ public class CreateProjectCommandHandlerTest
                 )
             )
             .ReturnsAsync(true);
-        _ = _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
         _ = _mockSlugHelper
             .Setup(m => m.GenerateSlug(It.IsAny<string>()))
             .Returns("example_project");
@@ -156,13 +134,11 @@ public class CreateProjectCommandHandlerTest
                 new CreateProjectCommand(
                     ProjectName: "Example Project",
                     ClientName: "Example Business Unit",
-                    OfferId: "1",
                     CompanyId: 1,
                     CompanyState: CompanyState.EXTERNAL,
                     TeamId: null,
                     IsmsLevel: SecurityLevel.HIGH,
                     IsEoC: false,
-                    Plugins: plugins,
                     Notes: "Example Notes"
                 ),
                 It.IsAny<CancellationToken>()
@@ -183,24 +159,12 @@ public class CreateProjectCommandHandlerTest
                 ),
             Times.Never
         );
-        _mockLogRepo.Verify(
-            m =>
-                m.AddProjectLogForCurrentActor(
-                    It.IsAny<Project>(),
-                    Action.ADDED_PROJECT_PLUGIN,
-                    It.IsAny<List<LogChange>>()
-                ),
-            Times.Never
-        );
         _mockProjectRepo.Verify(m => m.AddProjectAsync(It.IsAny<Project>()), Times.Never);
     }
 
     [Test]
     public void CreateProject_Test_ThrowsExceptionWhenCompanyDoesntExistExists()
     {
-        var plugins = new List<ProjectPlugins>();
-        plugins.Add(new ProjectPlugins { Url = "https://example.com", PluginId = 200 });
-
         _ = _authorizationServiceMock
             .Setup(a =>
                 a.CheckAccess(
@@ -210,7 +174,6 @@ public class CreateProjectCommandHandlerTest
                 )
             )
             .ReturnsAsync(true);
-        _ = _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
         _ = _companyRepository
             .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(false);
@@ -220,13 +183,11 @@ public class CreateProjectCommandHandlerTest
                 new CreateProjectCommand(
                     ProjectName: "Example Project",
                     ClientName: "Example Business Unit",
-                    OfferId: "1",
                     CompanyId: 1,
                     CompanyState: CompanyState.EXTERNAL,
                     TeamId: null,
                     IsmsLevel: SecurityLevel.HIGH,
                     IsEoC: false,
-                    Plugins: plugins,
                     Notes: "Example Notes"
                 ),
                 It.IsAny<CancellationToken>()
@@ -259,9 +220,6 @@ public class CreateProjectCommandHandlerTest
     [Test]
     public void CreateProject_Test_ThrowsExceptionWhenNotesTooLong()
     {
-        var plugins = new List<ProjectPlugins>();
-        plugins.Add(new ProjectPlugins { Url = "https://example.com", PluginId = 200 });
-
         _ = _authorizationServiceMock
             .Setup(a =>
                 a.CheckAccess(
@@ -271,7 +229,6 @@ public class CreateProjectCommandHandlerTest
                 )
             )
             .ReturnsAsync(true);
-        _ = _mockPluginRepo.Setup(m => m.CheckPluginExists(It.IsAny<int>())).ReturnsAsync(true);
         _ = _mockSlugHelper
             .Setup(m => m.GenerateSlug(It.IsAny<string>()))
             .Returns("example_project");
@@ -295,13 +252,11 @@ public class CreateProjectCommandHandlerTest
                 new CreateProjectCommand(
                     ProjectName: "Example Project",
                     ClientName: "Example Business Unit",
-                    OfferId: "1",
                     CompanyId: 1,
                     CompanyState: CompanyState.EXTERNAL,
                     TeamId: null,
                     IsmsLevel: SecurityLevel.HIGH,
                     IsEoC: false,
-                    Plugins: plugins,
                     Notes: new string('a', 501)
                 ),
                 It.IsAny<CancellationToken>()
@@ -322,15 +277,7 @@ public class CreateProjectCommandHandlerTest
                 ),
             Times.Never
         );
-        _mockLogRepo.Verify(
-            m =>
-                m.AddProjectLogForCurrentActor(
-                    It.IsAny<Project>(),
-                    Action.ADDED_PROJECT_PLUGIN,
-                    It.IsAny<List<LogChange>>()
-                ),
-            Times.Never
-        );
+
         _mockProjectRepo.Verify(m => m.AddProjectAsync(It.IsAny<Project>()), Times.Never);
     }
 
@@ -350,13 +297,11 @@ public class CreateProjectCommandHandlerTest
         var request = new CreateProjectCommand(
             ProjectName: "Example Project",
             ClientName: "Example Business Unit",
-            OfferId: "1",
             CompanyId: 1,
             CompanyState: CompanyState.EXTERNAL,
             TeamId: null,
             IsmsLevel: SecurityLevel.HIGH,
             IsEoC: false,
-            Plugins: [],
             Notes: new string('a', 501)
         );
 

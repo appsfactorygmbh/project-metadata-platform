@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System;
+using System.Data.Common;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -15,22 +16,26 @@ public class PmpWebApplicationFactory : WebApplicationFactory<Program>
     {
         _ = builder.ConfigureServices(services =>
         {
-            // 1. THE .NET 10 FIX: Remove the new internal configuration interface
             services.RemoveAll<IDbContextOptionsConfiguration<ProjectMetadataPlatformDbContext>>();
-
-            // 2. Remove standard options and context
             services.RemoveAll<DbContextOptions<ProjectMetadataPlatformDbContext>>();
             services.RemoveAll<DbContextOptions>();
             services.RemoveAll<ProjectMetadataPlatformDbContext>();
-
-            // 3. Remove connections and data sources (Crucial for modern Npgsql)
             services.RemoveAll<DbConnection>();
             services.RemoveAll<DbDataSource>();
-
-            // 4. Inject SQLite context
             _ = services.AddDbContext<ProjectMetadataPlatformDbContext>(options =>
+            {
+                // Retrieve the connection details from the environment variables we set in OneTimeSetUp
+                var host = Environment.GetEnvironmentVariable("PMP_DB_URL");
+                var port = Environment.GetEnvironmentVariable("PMP_DB_PORT");
+                var db = Environment.GetEnvironmentVariable("PMP_DB_NAME");
+                var user = Environment.GetEnvironmentVariable("PMP_DB_USER");
+                var pass = Environment.GetEnvironmentVariable("PMP_DB_PASSWORD");
+
+                var connectionString =
+                    $"Host={host};Port={port};Database={db};Username={user};Password={pass}";
+
                 options
-                    .UseSqlite("Datasource=unittest-db.db")
+                    .UseNpgsql(connectionString)
                     .ConfigureWarnings(warnings =>
                         warnings.Ignore(
                             Microsoft
@@ -39,8 +44,8 @@ public class PmpWebApplicationFactory : WebApplicationFactory<Program>
                                 .RelationalEventId
                                 .PendingModelChangesWarning
                         )
-                    )
-            );
+                    );
+            });
         });
 
         _ = builder.UseEnvironment("Production");

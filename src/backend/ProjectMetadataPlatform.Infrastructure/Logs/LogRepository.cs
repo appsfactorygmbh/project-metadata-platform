@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Billing;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Departments;
@@ -71,6 +72,24 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
         { Action.ADDED_OFFICE_LOCATION, "created a new office location with properties: ," },
         { Action.UPDATED_OFFICE_LOCATION, "updated office location properties: set from to," },
         { Action.REMOVED_OFFICE_LOCATION, "removed office location" },
+        { Action.ADDED_GLOBAL_BILLING, "added new global billing information with properties: ," },
+        {
+            Action.UPDATED_GLOBAL_BILLING,
+            "updated global billing information properties: set from to,"
+        },
+        { Action.REMOVED_GLOBAL_BILLING, "removed global billing information" },
+        {
+            Action.ADDED_PROJECT_PLUGIN_BILLING,
+            "added billing information to project with properties: = ,"
+        },
+        {
+            Action.UPDATED_PROJECT_PLUGIN_BILLING,
+            "updated billing information plugin in project: set from to , "
+        },
+        {
+            Action.REMOVED_PROJECT_PLUGIN_BILLING,
+            "removed billing information from project with properties: = ,"
+        },
     };
 
     /// <summary>
@@ -111,6 +130,9 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
             Action.ARCHIVED_PROJECT,
             Action.UNARCHIVED_PROJECT,
             Action.REMOVED_PROJECT,
+            Action.ADDED_PROJECT_PLUGIN_BILLING,
+            Action.UPDATED_PROJECT_PLUGIN_BILLING,
+            Action.REMOVED_PROJECT_PLUGIN_BILLING,
         };
 
         if (!actionWhiteList.Contains(action))
@@ -322,6 +344,33 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
         log.OfficeLocation = officeLocation;
         log.OfficeLocationId = officeLocation.Id;
         log.OfficeLocationName = officeLocation.OfficeLocationName;
+        _ = _context.Logs.Add(log);
+    }
+
+    ///  <inheritdoc />
+    public async Task AddGlobalBillingLogForCurrentActor(
+        GlobalBilling globalBilling,
+        Action action,
+        List<LogChange> changes
+    )
+    {
+        var actionWhiteList = new List<Action>
+        {
+            Action.ADDED_GLOBAL_BILLING,
+            Action.UPDATED_GLOBAL_BILLING,
+            Action.REMOVED_GLOBAL_BILLING,
+        };
+
+        if (!actionWhiteList.Contains(action))
+        {
+            throw new LogActionNotSupportedException(action, nameof(globalBilling));
+        }
+
+        var log = await PrepareGenericLogForCurrentActor(action, changes);
+
+        log.GlobalBilling = globalBilling;
+        log.GlobalBillingId = globalBilling.Id;
+        log.GlobalBillingKind = globalBilling.BillingKind;
         _ = _context.Logs.Add(log);
     }
 

@@ -16,11 +16,6 @@ import type { SecurityLevel } from './SecurityLevel';
 import { SecurityLevelFromJSON, SecurityLevelToJSON } from './SecurityLevel';
 import type { CompanyState } from './CompanyState';
 import { CompanyStateFromJSON, CompanyStateToJSON } from './CompanyState';
-import type { UpdateProjectPluginRequest } from './UpdateProjectPluginRequest';
-import {
-  UpdateProjectPluginRequestFromJSON,
-  UpdateProjectPluginRequestToJSON,
-} from './UpdateProjectPluginRequest';
 
 /**
  * Represents a request to create a new / update an existing project.
@@ -40,12 +35,6 @@ export interface PutProjectRequest {
    * @memberof PutProjectRequest
    */
   clientName: string;
-  /**
-   * Id of the offer associated with project.
-   * @type {string}
-   * @memberof PutProjectRequest
-   */
-  offerId?: string | null;
   /**
    * Id of the Company responsible for project.
    * @type {number}
@@ -82,12 +71,6 @@ export interface PutProjectRequest {
    * @memberof PutProjectRequest
    */
   notes: string;
-  /**
-   * An optional list of plugins associated to the project.
-   * @type {Array<UpdateProjectPluginRequest>}
-   * @memberof PutProjectRequest
-   */
-  pluginList?: Array<UpdateProjectPluginRequest> | null;
   /**
    * Indicates if the project is archived.
    * @type {boolean}
@@ -131,19 +114,12 @@ export function PutProjectRequestFromJSONTyped(
   return {
     projectName: json['projectName'],
     clientName: json['clientName'],
-    offerId: json['offerId'] == null ? undefined : json['offerId'],
     companyId: json['companyId'],
     teamId: json['teamId'] == null ? undefined : json['teamId'],
     companyState: CompanyStateFromJSON(json['companyState']),
     ismsLevel: SecurityLevelFromJSON(json['ismsLevel']),
     isEoC: json['isEoC'],
     notes: json['notes'],
-    pluginList:
-      json['pluginList'] == null
-        ? undefined
-        : (json['pluginList'] as Array<any>).map(
-            UpdateProjectPluginRequestFromJSON,
-          ),
     isArchived: json['isArchived'],
   };
 }
@@ -163,19 +139,12 @@ export function PutProjectRequestToJSONTyped(
   return {
     projectName: value['projectName'],
     clientName: value['clientName'],
-    offerId: value['offerId'],
     companyId: value['companyId'],
     teamId: value['teamId'],
     companyState: CompanyStateToJSON(value['companyState']),
     ismsLevel: SecurityLevelToJSON(value['ismsLevel']),
     isEoC: value['isEoC'],
     notes: value['notes'],
-    pluginList:
-      value['pluginList'] == null
-        ? undefined
-        : (value['pluginList'] as Array<any>).map(
-            UpdateProjectPluginRequestToJSON,
-          ),
     isArchived: value['isArchived'],
   };
 }

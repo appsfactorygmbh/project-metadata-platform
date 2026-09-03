@@ -1,6 +1,5 @@
 import { type ProjectStore } from './ProjectStore.ts';
 import { type PluginStore } from './PluginStore';
-import { type ProjectEditStore } from './ProjectEditStore/ProjectEditStore.ts';
 import { type UserStore } from './UserStore';
 import { useLogsStore } from './LogsStore';
 import { useProjectRouting } from '@/utils/hooks/useProjectRouting.ts';
@@ -22,12 +21,12 @@ import type { useDepartmentRouting } from '@/utils/hooks/useDepartmentRouting.ts
 import type { useBusinessUnitRouting } from '@/utils/hooks/useBusinessUnitRouting .ts';
 import type { useOfficeLocationRouting } from '@/utils/hooks/useOfficeLocationRouting.ts';
 import type { AuthorizationStore } from './AuthorizationStore.ts';
+import type { GlobalBillingStore } from './GlobalBillingStore.ts';
+import type { useGlobalBillingRouting } from '@/utils/hooks/useGlobalBillingRouting.ts';
 
 const projectStoreSymbol = Symbol() as InjectionKey<ProjectStore>;
 
 const pluginStoreSymbol = Symbol() as InjectionKey<PluginStore>;
-
-const projectEditStoreSymbol = Symbol() as InjectionKey<ProjectEditStore>;
 
 const userStoreSymbol = Symbol() as InjectionKey<UserStore>;
 
@@ -48,6 +47,8 @@ const businessUnitStoreSymbol = Symbol() as InjectionKey<BusinessUnitStore>;
 const officeLocationStoreSymbol = Symbol() as InjectionKey<OfficeLocationStore>;
 
 const authorizationStoreSymbol = Symbol() as InjectionKey<AuthorizationStore>;
+
+const globalBillingStoreSymbol = Symbol() as InjectionKey<GlobalBillingStore>;
 
 const logsStoreSymbol = Symbol() as InjectionKey<
   ReturnType<typeof useLogsStore>
@@ -88,12 +89,13 @@ const businessUnitRoutingSymbol = Symbol() as InjectionKey<
 const officeLocationRoutingSymbol = Symbol() as InjectionKey<
   ReturnType<typeof useOfficeLocationRouting>
 >;
-
+const globalBillingRoutingSymbol = Symbol() as InjectionKey<
+  ReturnType<typeof useGlobalBillingRouting>
+>;
 export {
   projectStoreSymbol,
   pluginStoreSymbol,
   globalPluginStoreSymbol,
-  projectEditStoreSymbol,
   userStoreSymbol,
   authStoreSymbol,
   logsStoreSymbol,
@@ -113,4 +115,6 @@ export {
   officeLocationStoreSymbol,
   officeLocationRoutingSymbol,
   authorizationStoreSymbol,
+  globalBillingStoreSymbol,
+  globalBillingRoutingSymbol,
 };

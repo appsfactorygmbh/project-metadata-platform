@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.Plugins;
+﻿using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Projects;
 
 namespace ProjectMetadataPlatform.Application.Projects;
@@ -10,13 +8,11 @@ namespace ProjectMetadataPlatform.Application.Projects;
 /// </summary>
 /// <param name="ProjectName">Name of the project</param>
 /// <param name="ClientName">Name of the client</param>
-/// <param name="OfferId">Id of the offer associated with project.</param>
 /// <param name="CompanyId">Id of the Company responsible for project.</param>
 /// <param name="CompanyState">State of company.</param>
 /// <param name="TeamId">The id of the team associated with the project.</param>
 /// <param name="IsmsLevel">Security Level of project.</param>
 /// <param name="Id">Id of the project</param>
-/// <param name="Plugins">List of plugins associated with the project</param>
 /// <param name="IsArchived">Indicates if the project is archived</param>
 /// <param name="IsEoC">If the project is an Engineer on Call project.</param>
 /// <param name="Notes">Additional Project Notes</param>
@@ -24,12 +20,10 @@ public record UpdateProjectCommand(
     int Id,
     string ProjectName,
     string ClientName,
-    string? OfferId,
     int CompanyId,
     CompanyState CompanyState,
     int? TeamId,
     SecurityLevel IsmsLevel,
-    List<ProjectPlugins> Plugins,
     bool IsArchived,
     bool IsEoC,
     string Notes

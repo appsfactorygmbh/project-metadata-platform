@@ -1,4 +1,4 @@
-﻿namespace ProjectMetadataPlatform.Application;
+﻿namespace ProjectMetadataPlatform.Application.Mediator;
 
 /// <summary>
 /// Returntype for a Request Handler without Response.

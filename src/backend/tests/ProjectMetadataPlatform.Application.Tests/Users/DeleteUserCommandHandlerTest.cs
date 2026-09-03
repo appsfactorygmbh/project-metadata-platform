@@ -52,7 +52,7 @@ public class DeleteUserCommandHandlerTest
             authorizationService: _authorizationServiceMock.Object
         );
         _ = httpContextAccessorMock
-            .Setup(contextAccessor => contextAccessor.HttpContext.User)
+            .Setup(contextAccessor => contextAccessor.HttpContext!.User)
             .Returns(contextUser);
     }
 

@@ -27,7 +27,7 @@ public class GetMeControllerTest
     }
 
     [Test]
-    public async Task getMe_Test()
+    public async Task GetMe_Test()
     {
         var user = new ApplicationUser
         {
@@ -68,7 +68,7 @@ public class GetMeControllerTest
     }
 
     [Test]
-    public void getMe_Test_NotFound()
+    public void GetMe_Test_NotFound()
     {
         _ = _mediator
             .Setup(m =>
@@ -83,7 +83,7 @@ public class GetMeControllerTest
     }
 
     [Test]
-    public void getMe_Test_InternalError()
+    public void GetMe_Test_InternalError()
     {
         _ = _mediator
             .Setup(m =>
@@ -102,7 +102,7 @@ public class GetMeControllerTest
     }
 
     [Test]
-    public void getMe_Test_Unauthorized()
+    public void GetMe_Test_Unauthorized()
     {
         _ = _mediator
             .Setup(m =>
@@ -123,7 +123,7 @@ public class GetMeControllerTest
         {
             return new HttpContextAccessor { HttpContext = null };
         }
-        var claims = new System.Collections.Generic.List<Claim> { new(ClaimTypes.Email, email) };
+        var claims = new List<Claim> { new(ClaimTypes.Email, email) };
         var identity = new ClaimsIdentity(claims, "TestAuthType");
         var claimsPrincipal = new ClaimsPrincipal(identity);
 

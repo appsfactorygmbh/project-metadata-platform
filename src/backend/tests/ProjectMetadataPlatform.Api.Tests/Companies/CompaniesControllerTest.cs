@@ -282,7 +282,7 @@ public class CompaniesControllerTest
         Assert.Multiple(() =>
         {
             Assert.That(updateCompanyResponse, Is.Not.Null);
-            Assert.That(updateCompanyResponse.CompanyName, Is.EqualTo("Company"));
+            Assert.That(updateCompanyResponse!.CompanyName, Is.EqualTo("Company"));
             Assert.That(updateCompanyResponse.Id, Is.EqualTo(1));
         });
     }

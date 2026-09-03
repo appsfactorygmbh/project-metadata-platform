@@ -1,8 +1,5 @@
 import { type PluginStore, usePluginStore } from './PluginStore';
-import {
-  type ProjectEditStore,
-  useProjectEditStore,
-} from './ProjectEditStore/ProjectEditStore.ts';
+
 import { type ProjectStore, useProjectStore } from './ProjectStore.ts';
 import { type SearchStore, useSearchStore } from './SearchStore';
 import {
@@ -29,6 +26,11 @@ import {
   type AuthorizationStore,
   useAuthorizationStore,
 } from './AuthorizationStore.ts';
+import {
+  type GlobalBillingStore,
+  useGlobalBillingStore,
+} from './GlobalBillingStore.ts';
+import { type BillingStore, useBillingStore } from './BillingStore.ts';
 export {
   useAuthStore,
   useAuthorizationStore,
@@ -36,7 +38,7 @@ export {
   usePluginStore,
   useSearchStore,
   useGlobalPluginStore,
-  useProjectEditStore,
+  useGlobalBillingStore,
   useUserStore,
   useLocalLogStore,
   useLogsStore,
@@ -46,13 +48,13 @@ export {
   useDepartmentStore,
   useBusinessUnitStore,
   useOfficeLocationStore,
+  useBillingStore,
 };
 export type {
   PluginStore,
   ProjectStore,
   SearchStore,
   GlobalPluginStore,
-  ProjectEditStore,
   UserStore,
   AuthStore,
   LocalLogStore,
@@ -64,4 +66,6 @@ export type {
   BusinessUnitStore,
   OfficeLocationStore,
   AuthorizationStore,
+  GlobalBillingStore,
+  BillingStore,
 };
