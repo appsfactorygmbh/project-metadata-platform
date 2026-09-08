@@ -9,7 +9,12 @@
           :display-name="plugin.displayName"
           :url="plugin.url"
           :is-loading="loading"
-          :permissions="plugin.permissions"
+          :plugin-permissions="plugin.pluginPermissions"
+          :billing-permissions="plugin.billingPermissions"
+          :is-add-billing-modal-open="
+            isBillingModalOpen && activePluginId === plugin.id
+          "
+          @open-create-billing="openBillingModal"
         />
 
         <GroupedCard
@@ -42,21 +47,33 @@
     >
       <a-skeleton active />
     </a-card>
-
+    <AddBillingModal
+      v-if="activePluginId !== null"
+      :is-open="isBillingModalOpen"
+      :plugin-name="getActivePluginName()"
+      :plugin-id="activePluginId"
+      :project-id="projectStore.getProject?.id ?? 0"
+      @update:is-open="isBillingModalOpen = $event"
+      @added-billing="handleBillingCreated"
+      @cancel="handleBillingCancel"
+    />
     <transition name="fade-popup">
       <Popup
         v-if="selectedGroup"
         :selected-group="selectedGroup"
         :loading="loading"
         :is-editing="isEditing"
+        :is-billing-modal-open="isBillingModalOpen"
+        :active-plugin-id="activePluginId"
         @close="closeGroupPopup"
+        @open-create-billing="openBillingModal"
       />
     </transition>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { computed, ref } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import { PluginComponent } from '@/components/Plugin';
   import { AddPluginCard } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
   import { useEditing } from '@/utils/hooks/useEditing';
@@ -82,6 +99,31 @@
   const loading = computed(
     () => pluginStore.getIsLoading || projectStore.getIsLoading,
   );
+  const isBillingModalOpen = ref(false);
+  const activePluginId = ref<number | null>(null);
+
+  const openBillingModal = (pluginId: number) => {
+    activePluginId.value = pluginId;
+    isBillingModalOpen.value = true;
+  };
+  const handleBillingCancel = () => {
+    isBillingModalOpen.value = false;
+    activePluginId.value = null;
+  };
+  const handleBillingCreated = async () => {
+    isBillingModalOpen.value = false;
+    activePluginId.value = null;
+    pluginStore.fetch(projectStore.getProject?.id ?? 0);
+    pluginStore.fetchUnarchived(projectStore.getProject?.id ?? 0);
+  };
+
+  const getActivePluginName = () => {
+    const plugin = plugins.value.find(
+      (plugin) => plugin.id == activePluginId.value,
+    )!;
+
+    return plugin?.displayName ?? plugin?.url;
+  };
 
   interface GroupedPlugin {
     id: string | number;
@@ -91,7 +133,8 @@
     isGroup: boolean;
     faviconUrl: string;
     url: string;
-    permissions?: ResourceActions[];
+    pluginPermissions?: ResourceActions[];
+    billingPermissions?: ResourceActions[];
   }
 
   // groups plugin of same kind when they are more than 3
@@ -130,7 +173,8 @@
             isGroup: false,
             faviconUrl: '',
             url: plugin.url,
-            permissions: plugin.pluginPermissions ?? [],
+            pluginPermissions: plugin.pluginPermissions ?? [],
+            billingPermissions: plugin.billingPermissions ?? [],
           })),
         );
       }
@@ -171,6 +215,9 @@
   }
 
   function handleOutsideClick(event: Event) {
+    if (isBillingModalOpen.value) {
+      return;
+    }
     const popupElement = document.querySelector('.popup');
     const path = event.composedPath();
     if (popupElement && !path.includes(popupElement)) {

@@ -2,12 +2,18 @@
   // Import ref for reactive variables and utility functions for URL handling.
   import { ref, computed, type PropType } from 'vue';
   import { createFaviconURL, cutAfterTLD } from './editURL';
-  import { DeleteOutlined, EditOutlined } from '@ant-design/icons-vue';
-  import { useThemeToken } from '@/utils/hooks';
+  import {
+    DeleteOutlined,
+    EditOutlined,
+    PlusOutlined,
+  } from '@ant-design/icons-vue';
+  import { useEditing, useThemeToken } from '@/utils/hooks';
   import { usePluginStore, useProjectStore } from '@/store';
   import { App } from 'ant-design-vue';
   import { ResourceActions } from '@/models/utils';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
+  import { BillingComponent } from '@/components/Billing/index.ts';
+  const { isEditing } = useEditing();
   const token = useThemeToken();
   const pluginStore = usePluginStore();
   const projectStore = useProjectStore();
@@ -41,11 +47,21 @@
       type: Boolean,
       default: true,
     },
-    permissions: {
+    pluginPermissions: {
       type: Array as PropType<ResourceActions[]>,
       default: () => [],
     },
+    billingPermissions: {
+      type: Array as PropType<ResourceActions[]>,
+      default: () => [],
+    },
+    isAddBillingModalOpen: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   });
+  const emit = defineEmits(['openCreateBilling']);
   const localIsEditing = ref(false);
   const isSaving = ref(false);
   const isDeleteModalOpen = ref(false);
@@ -53,13 +69,6 @@
   const urlInput = ref<string>(props.url);
 
   const faviconUrl = computed(() => createFaviconURL(cutAfterTLD(props.url)));
-
-  const canEditPlugin = computed(() =>
-    props.permissions.includes(ResourceActions.Edit),
-  );
-  const canDeletePlugin = computed(() =>
-    props.permissions.includes(ResourceActions.Delete),
-  );
 
   const toggleEdit = () => {
     displayNameInput.value = props.displayName;
@@ -70,6 +79,15 @@
   const cancelEdit = () => {
     localIsEditing.value = false;
   };
+
+  watch(
+    () => isEditing.value,
+    (newVal) => {
+      if (newVal) {
+        localIsEditing.value = false;
+      }
+    },
+  );
 
   const savePlugin = async () => {
     if (!urlInput.value || !displayNameInput.value) {
@@ -138,7 +156,6 @@
 
 <template>
   <div class="plugin-wrapper">
-
     <template v-if="localIsEditing">
       <a-card class="cardNoHover" :loading="isSaving" :bordered="false">
         <div class="textContainerInput">
@@ -149,7 +166,6 @@
           />
           <a-input v-model:value="urlInput" placeholder="URL" />
         </div>
->
         <div class="edit-actions">
           <a-button @click.stop="cancelEdit">Cancel</a-button>
           <a-button type="primary" @click.stop="savePlugin">Save</a-button>
@@ -157,14 +173,17 @@
       </a-card>
     </template>
 
-
     <template v-else>
       <div class="card-container">
         <a
           :href="
-            props.url.startsWith('http') ? props.url : 'https://' + props.url
+            isEditing
+              ? undefined
+              : props.url.startsWith('http')
+                ? props.url
+                : 'https://' + props.url
           "
-          target="_blank"
+          :target="isEditing ? undefined : '_blank'"
         >
           <a-card
             class="card"
@@ -191,16 +210,63 @@
         </a>
         <a-tooltip title="Click here to edit this plugin">
           <EditOutlined
-            v-if="canEditPlugin && !isSaving && !props.isLoading"
+            v-if="
+              props.pluginPermissions.includes(ResourceActions.Edit) &&
+              !isSaving &&
+              !props.isLoading &&
+              !isEditing
+            "
             class="action-badge edit-badge"
             @click.prevent.stop="toggleEdit"
           />
         </a-tooltip>
         <a-tooltip title="Click here to remove this plugin">
           <DeleteOutlined
-            v-if="canDeletePlugin && !isSaving && !props.isLoading"
+            v-if="
+              props.pluginPermissions.includes(ResourceActions.Delete) &&
+              !isSaving &&
+              !props.isLoading &&
+              !isEditing
+            "
             class="action-badge delete-badge"
+            :class="{ 'force-visible': isDeleteModalOpen }"
             @click.prevent.stop="handleDelete"
+          />
+        </a-tooltip>
+        <a-tooltip
+          title="Click here to view billing information for this plugin"
+        >
+          <BillingComponent
+            v-if="
+              props.billingPermissions.includes(ResourceActions.Get) &&
+              !isSaving &&
+              !props.isLoading &&
+              projectStore.getProject &&
+              !isEditing
+            "
+            :project-id="projectStore.getProject.id"
+            :plugin-id="props.id"
+            @billing-state-updated="
+              () => {
+                pluginStore.fetch(projectStore.getProject?.id!);
+                pluginStore.fetchUnarchived(projectStore.getProject?.id!);
+              }
+            "
+          />
+        </a-tooltip>
+        <a-tooltip
+          title="Click here to add new billing information to this plugin"
+        >
+          <PlusOutlined
+            v-if="
+              props.billingPermissions.includes(ResourceActions.Create) &&
+              !isSaving &&
+              !props.isLoading &&
+              !isEditing
+            "
+            class="action-badge add-billing-badge"
+            :class="{ 'force-visible': isAddBillingModalOpen }"
+            @click.prevent.stop="() => emit('openCreateBilling', props.id)"
           />
         </a-tooltip>
       </div>
@@ -232,12 +298,11 @@
     position: relative;
     display: inline-block;
 
-
-    &:hover .action-badge {
-      opacity: 1;
+    &:hover .action-badge,
+    &:hover :deep(.action-badge) {
+      opacity: 1 !important;
     }
   }
-
 
   .action-badge {
     position: absolute;
@@ -255,7 +320,9 @@
     cursor: pointer;
     opacity: 0;
     transition: all 0.2s ease-in-out;
-
+    &.force-visible {
+      opacity: 1 !important;
+    }
     &:hover {
       transform: scale(1.1);
     }
@@ -266,19 +333,30 @@
     background-color: #8c8c8c;
   }
 
-
   .delete-badge {
     right: -8px;
     background-color: color-mix(in srgb, #6d6e6f, #ff002e 60%);
   }
 
+  .add-billing-badge {
+    top: auto;
 
+    bottom: -8px;
+    left: 8px;
+    transform: translateX(-50%);
+
+    background-color: v-bind('token.colorSuccess');
+
+    &:hover {
+      transform: translateX(-50%) scale(1.1);
+    }
+  }
   .edit-actions {
     display: flex;
     justify-content: flex-end;
     gap: 8px;
     margin-top: 15px;
-    padding: 0 10px; 
+    padding: 0 10px;
   }
 
   .cardNoHover {

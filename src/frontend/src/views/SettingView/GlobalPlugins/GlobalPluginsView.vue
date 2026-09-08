@@ -77,11 +77,16 @@
   <ConfirmationDialog
     :is-open="isDialogOpen"
     title="Delete confirm"
-    message="Are you sure you want to delete this Plugin?"
     @confirm="handleDelete"
     @cancel="handleCancel"
     @update:is-open="isDialogOpen = $event"
-  />
+  >
+    <p>Are you sure you want to delete this global plugin?</p>
+    <span style="color: red; font-weight: bold"
+      >This will delete all connected project plugins and their billing
+      information!
+    </span>
+  </ConfirmationDialog>
 </template>
 
 <script lang="ts" setup>

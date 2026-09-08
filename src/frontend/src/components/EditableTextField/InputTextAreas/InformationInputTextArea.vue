@@ -6,29 +6,27 @@
       required: true,
     },
     value: {
-      type: [String, Number] as PropType<string | number | null | undefined>,
+      type: [String] as PropType<string | null | undefined>,
       required: true,
     },
     placeholder: {
       type: String,
       default: '',
     },
+    maxLength: {
+      type: Number,
+      required: false,
+      default: 280,
+    },
+    maxRows: {
+      type: Number,
+      required: false,
+      default: 3,
+    },
     rules: {
       type: Array as PropType<Rule[]>,
       default: () => [],
       required: false,
-    },
-    precision: {
-      type: Number,
-      default: undefined,
-    },
-    max: {
-      type: Number,
-      default: undefined,
-    },
-    min: {
-      type: Number,
-      default: undefined,
     },
   });
 
@@ -42,14 +40,14 @@
     :has-feedback="rules.length > 0"
     :rules="rules"
   >
-    <NumericInputField
+    <TextArea
       :value="props.value"
       :placeholder="props.placeholder"
-      :default="props.value?.toString() ?? ''"
-      :precision="props.precision"
-      :max="max"
-      :min="min"
-      @update:value="(val: string | number | null) => emit('update:value', val)"
+      :default="props.value ?? ''"
+      :auto-size="{ minRows: 3, maxRows: props.maxRows }"
+      :show-count="true"
+      :maxlength="props.maxLength"
+      @update:value="(val: string | null) => emit('update:value', val)"
     />
   </a-form-item>
 </template>

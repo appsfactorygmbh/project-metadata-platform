@@ -47,11 +47,16 @@ type StoreActions = {
   getNameToId: (id: number) => string | undefined;
 };
 
-type Store = PiniaStore<'billing', StoreState, StoreGetters, StoreActions>;
+type Store = PiniaStore<
+  'globalBilling',
+  StoreState,
+  StoreGetters,
+  StoreActions
+>;
 
 export const useGlobalBillingStore = (pinia: Pinia = piniaInstance): Store => {
   return useStore<Store, ApiStore<BillingApi>>(
-    'billing',
+    'globalBilling',
     {
       state: {
         billingList: [],

@@ -36,6 +36,7 @@ models/CreatePluginRequest.ts
 models/CreatePluginResponse.ts
 models/CreateTeamRequest.ts
 models/CreateTeamResponse.ts
+models/Currencies.ts
 models/DeleteGlobalPluginResponse.ts
 models/DeleteTeamResponse.ts
 models/EnterpriseUserExtension.ts

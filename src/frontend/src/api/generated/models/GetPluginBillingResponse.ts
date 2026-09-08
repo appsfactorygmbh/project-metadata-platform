@@ -16,6 +16,8 @@ import type { TimeFrame } from './TimeFrame';
 import { TimeFrameFromJSON, TimeFrameToJSON } from './TimeFrame';
 import type { Actions } from './Actions';
 import { ActionsFromJSON, ActionsToJSON } from './Actions';
+import type { Currencies } from './Currencies';
+import { CurrenciesFromJSON, CurrenciesToJSON } from './Currencies';
 
 /**
  * Response for returning billing information for a plugin.
@@ -42,17 +44,17 @@ export interface GetPluginBillingResponse {
    */
   billingId: number;
   /**
-   * Display name.
-   * @type {string}
+   *
+   * @type {Array<string>}
    * @memberof GetPluginBillingResponse
    */
-  displayName?: string | null;
+  contractIds: Array<string>;
   /**
-   * Currency Format.
-   * @type {string}
+   *
+   * @type {Currencies}
    * @memberof GetPluginBillingResponse
    */
-  currency: string;
+  currency: Currencies;
   /**
    * Budget Limit.
    * @type {number}
@@ -106,6 +108,8 @@ export function instanceOfGetPluginBillingResponse(
   if (!('projectId' in value) || value['projectId'] === undefined) return false;
   if (!('pluginId' in value) || value['pluginId'] === undefined) return false;
   if (!('billingId' in value) || value['billingId'] === undefined) return false;
+  if (!('contractIds' in value) || value['contractIds'] === undefined)
+    return false;
   if (!('currency' in value) || value['currency'] === undefined) return false;
   if (!('budgetLimit' in value) || value['budgetLimit'] === undefined)
     return false;
@@ -134,8 +138,8 @@ export function GetPluginBillingResponseFromJSONTyped(
     projectId: json['projectId'],
     pluginId: json['pluginId'],
     billingId: json['billingId'],
-    displayName: json['displayName'] == null ? undefined : json['displayName'],
-    currency: json['currency'],
+    contractIds: json['contractIds'],
+    currency: CurrenciesFromJSON(json['currency']),
     budgetLimit: json['budgetLimit'],
     hostingFee: json['hostingFee'],
     targetMargin: json['targetMargin'],
@@ -167,8 +171,8 @@ export function GetPluginBillingResponseToJSONTyped(
     projectId: value['projectId'],
     pluginId: value['pluginId'],
     billingId: value['billingId'],
-    displayName: value['displayName'],
-    currency: value['currency'],
+    contractIds: value['contractIds'],
+    currency: CurrenciesToJSON(value['currency']),
     budgetLimit: value['budgetLimit'],
     hostingFee: value['hostingFee'],
     targetMargin: value['targetMargin'],

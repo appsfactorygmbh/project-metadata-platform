@@ -21,7 +21,7 @@
   import type { GlobalBillingModel } from '@/models/GlobalBilling';
   import { App } from 'ant-design-vue';
   import router from '@/router';
-  import { TimeFrame } from '@/api/generated';
+  import { Currencies, TimeFrame } from '@/api/generated';
   import type { SelectOption } from '@/components/EditableTextField/InputFields/InformationSearchSelectField.vue';
 
   const token = useThemeToken();
@@ -53,11 +53,10 @@
 
   const formData = reactive({
     billingKind: '',
-    currency: null as string | null,
-    budgetLimit: null as number | null,
-    hostingFee: null as number | null,
-    targetMargin: null as number | null,
-    timeFrame: null as TimeFrame | null,
+    currency: undefined as Currencies | undefined,
+
+    targetMargin: undefined as number | undefined,
+    timeFrame: undefined as TimeFrame | undefined,
   });
 
   watch(
@@ -65,11 +64,9 @@
     (newGlobalBilling) => {
       if (!newGlobalBilling) return;
       formData.billingKind = newGlobalBilling.billingKind ?? '';
-      formData.currency = newGlobalBilling.currency ?? null;
-      formData.budgetLimit = newGlobalBilling.budgetLimit ?? null;
-      formData.hostingFee = newGlobalBilling.hostingFee ?? null;
-      formData.targetMargin = newGlobalBilling.targetMargin ?? null;
-      formData.timeFrame = newGlobalBilling.timeFrame ?? null;
+      formData.currency = newGlobalBilling.currency;
+      formData.targetMargin = newGlobalBilling.targetMargin ?? undefined;
+      formData.timeFrame = newGlobalBilling.timeFrame;
     },
   );
 
@@ -77,11 +74,10 @@
     const newGlobalBilling = globalBilling.value;
     if (!newGlobalBilling) return;
     formData.billingKind = newGlobalBilling.billingKind ?? '';
-    formData.currency = newGlobalBilling.currency ?? null;
-    formData.budgetLimit = newGlobalBilling.budgetLimit ?? null;
-    formData.hostingFee = newGlobalBilling.hostingFee ?? null;
-    formData.targetMargin = newGlobalBilling.targetMargin ?? null;
-    formData.timeFrame = newGlobalBilling.timeFrame ?? null;
+    formData.currency = newGlobalBilling.currency ?? undefined;
+
+    formData.targetMargin = newGlobalBilling.targetMargin ?? undefined;
+    formData.timeFrame = newGlobalBilling.timeFrame ?? undefined;
   };
 
   watch(
@@ -106,9 +102,7 @@
 
       const updateRequest = {
         billingKind: formData.billingKind,
-        currency: formData.currency,
-        budgetLimit: formData.budgetLimit,
-        hostingFee: formData.hostingFee,
+        currency: formData.currency ?? undefined,
         targetMargin: formData.targetMargin,
         timeFrame: formData.timeFrame ?? undefined,
       };
@@ -289,16 +283,52 @@
       name: 'None',
     });
   });
+  const getCurrencyName = (currencyCode: string) => {
+    try {
+      return (
+        new Intl.DisplayNames([], { type: 'currency' }).of(currencyCode) ||
+        currencyCode
+      );
+    } catch {
+      return currencyCode;
+    }
+  };
+
+  const currencyOptions = computed(() => {
+    const options: SelectOption[] = Object.entries(Currencies).map(
+      ([value]) => ({
+        id: value,
+        name: getCurrencyName(value),
+      }),
+    );
+    return options.concat({
+      id: null,
+      name: 'None',
+    });
+  });
+
+  const getTimeFrameName = (value: TimeFrame | null | undefined) => {
+    if (!value) return '';
+    const key = Object.keys(TimeFrame).find(
+      (key) => TimeFrame[key as keyof typeof TimeFrame] === value,
+    );
+
+    return key || value;
+  };
 </script>
 <template>
   <ConfirmationDialog
     :is-open="isConfirmModalOpen"
     title="Delete confirm"
-    message="Are you sure you want to delete this billing information?"
     @confirm="deleteGlobalBilling"
     @cancel="closeModal"
     @update:is-open="isConfirmModalOpen = $event"
-  />
+  >
+    <p>Are you sure you want to delete this billing information?</p>
+    <span style="color: red; font-weight: bold"
+      >This will delete all connected plugin billing objects!
+    </span>
+  </ConfirmationDialog>
   <ConfirmAction
     :is-open="isCancelModalOpen"
     title="Cancel Editing"
@@ -330,46 +360,27 @@
             :rules="billingKindRules"
           />
         </EditableTextField>
-        <EditableTextField
-          class="textField budgetlimit"
-          :value="globalBilling?.budgetLimit ?? ''"
-          :is-loading="isLoading"
-          :label="'Budget limit'"
-          :is-editing-key="'isEditing'"
-          :has-edit-keys="false"
-        >
-          <NumericInformationInputField
-            v-model:value="formData.budgetLimit"
-            attribute-name="budgetLimit"
-            :placeholder="globalBilling?.budgetLimit?.toString() ?? ''"
-          />
-        </EditableTextField>
-        <EditableTextField
-          class="textField hostingFee"
-          :value="globalBilling?.hostingFee ?? ''"
-          :is-loading="isLoading"
-          :label="'Hosting Fee'"
-          :is-editing-key="'isEditing'"
-          :has-edit-keys="false"
-        >
-          <NumericInformationInputField
-            v-model:value="formData.hostingFee"
-            attribute-name="hostingFee"
-            :placeholder="globalBilling?.hostingFee?.toString() ?? ''"
-          />
-        </EditableTextField>
+
         <EditableTextField
           class="textField currency"
-          :value="globalBilling?.currency ?? ''"
+          :value="
+            globalBilling.currency == undefined
+              ? ''
+              : getCurrencyName(globalBilling.currency) +
+                ' (' +
+                globalBilling.currency +
+                ')'
+          "
           :is-loading="isLoading"
           :label="'Currency'"
           :is-editing-key="'isEditing'"
           :has-edit-keys="false"
         >
-          <InformationInputField
+          <InformationSearchSelectField
             v-model:value="formData.currency"
-            attribute-name="currency"
-            :placeholder="globalBilling?.currency ?? ''"
+            :attribute-name="'currency'"
+            :placeholder="globalBilling.currency ?? ''"
+            :options="currencyOptions"
           />
         </EditableTextField>
         <EditableTextField
@@ -389,11 +400,13 @@
             attribute-name="targetMargin"
             :placeholder="globalBilling?.targetMargin?.toString() ?? ''"
             :precision="0"
+            :max="100"
+            :min="0"
           />
         </EditableTextField>
         <EditableTextField
           class="textField timeFrame"
-          :value="globalBilling?.timeFrame ?? ''"
+          :value="getTimeFrameName(globalBilling?.timeFrame)"
           :is-loading="isLoading"
           :label="'Time Frame'"
           :is-editing-key="'isEditing'"
@@ -428,10 +441,14 @@
 <style scoped>
   .panel {
     position: relative;
-    /* Make sure the panel is a positioning context */
     min-width: 150px;
     max-height: 100vh;
     overflow-y: auto;
+  }
+  .textField :deep(.ant-input),
+  .textField :deep(.ant-input-number),
+  .textField :deep(.ant-select) {
+    width: 100% !important;
   }
 
   .ant-float-btn-group {

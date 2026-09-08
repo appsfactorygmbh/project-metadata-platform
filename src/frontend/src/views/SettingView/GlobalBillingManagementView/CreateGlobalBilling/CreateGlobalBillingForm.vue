@@ -7,7 +7,7 @@
   import { CreateIsUniqueGlobalBillingKind } from '@/utils/form/userValidation.ts';
   import type { CreateGlobalBillingModel } from '@/models/GlobalBilling/CreateGlobalBillingModel.ts';
   import type { GlobalBillingStore } from '@/store/GlobalBillingStore.ts';
-  import { TimeFrame } from '@/api/generated/index.ts';
+  import { Currencies, TimeFrame } from '@/api/generated/index.ts';
 
   const { formStore, initialValues, globalBillingStore } = defineProps<{
     formStore: FormStore;
@@ -21,8 +21,6 @@
       const globalBillingDef: CreateGlobalBillingModel = {
         billingKind: toRaw(fields).billingKind,
         currency: toRaw(fields).currency,
-        budgetLimit: toRaw(fields).budgetlimit,
-        hostingFee: toRaw(fields).hostingFee,
         targetMargin: toRaw(fields).targetMargin,
         timeFrame: toRaw(fields).timeFrame,
       };
@@ -48,6 +46,16 @@
       xs: { span: 24, offset: 0 },
       sm: { span: 20, offset: 4 },
     },
+  };
+  const getCurrencyName = (currencyCode: string) => {
+    try {
+      return (
+        new Intl.DisplayNames([], { type: 'currency' }).of(currencyCode) ||
+        currencyCode
+      );
+    } catch {
+      return currencyCode;
+    }
   };
 
   const dynamicValidateForm =
@@ -100,42 +108,30 @@
     </a-form-item>
     <a-form-item
       has-feedback
-      name="budgetLimit"
+      name="Currency"
       class="column"
-      :whitespace="true"
+      :whitespace="false"
+      :rules="[{ required: false }]"
     >
-      <a-input-number
-        id="inputCreateGlobalBillingBudgetLimit"
-        v-model:value="dynamicValidateForm.budgetLimit"
-        class="inputField"
-        placeholder="Budget Limit"
-        :disabled="dynamicValidateForm.inputsDisabled"
-        :controls="false"
-      />
-    </a-form-item>
-    <a-form-item
-      has-feedback
-      name="hostingFee"
-      class="column"
-      :whitespace="true"
-    >
-      <a-input-number
-        id="inputCreateGlobalBillingHostingFee"
-        v-model:value="dynamicValidateForm.hostingFee"
-        class="inputField"
-        placeholder="Hosting Fee"
-        :disabled="dynamicValidateForm.inputsDisabled"
-        :controls="false"
-      />
-    </a-form-item>
-    <a-form-item has-feedback name="currency" class="column" :whitespace="true">
-      <a-input
+      <a-select
         id="inputCreateGlobalBillingCurrency"
         v-model:value="dynamicValidateForm.currency"
+        show-search
+        option-filter-prop="label"
         class="inputField"
         placeholder="Currency"
         :disabled="dynamicValidateForm.inputsDisabled"
-      />
+      >
+        <a-select-option
+          v-for="[key, value] in Object.entries(Currencies)"
+          :key="value"
+          :value="value"
+          :label="getCurrencyName(key)"
+        >
+          {{ getCurrencyName(key) }}
+        </a-select-option>
+        <a-select-option :value="undefined">{{ 'None' }}</a-select-option>
+      </a-select>
     </a-form-item>
     <a-form-item
       has-feedback
@@ -146,11 +142,13 @@
       <a-input-number
         id="inputCreateGlobalBillingTargetMargin"
         v-model:value="dynamicValidateForm.targetMargin"
-        class="inputField"
+        style="width: 100%"
         placeholder="Target Margin"
         :disabled="dynamicValidateForm.inputsDisabled"
         :controls="false"
         :precision="0"
+        :max="100"
+        :min="0"
       />
     </a-form-item>
     <a-form-item

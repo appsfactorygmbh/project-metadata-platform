@@ -31,8 +31,6 @@
   const initialFormValues: CreateGlobalBillingFormData = {
     billingKind: '',
     currency: undefined,
-    budgetLimit: undefined,
-    hostingFee: undefined,
     targetMargin: undefined,
     timeFrame: undefined,
     inputsDisabled: false,

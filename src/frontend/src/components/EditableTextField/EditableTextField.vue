@@ -22,6 +22,11 @@
       required: false,
       default: undefined,
     },
+    isEditingLocal: {
+      type: Boolean,
+      required: false,
+      default: undefined,
+    },
     formStore: {
       type: Object as PropType<FormStore>,
       required: false,
@@ -43,7 +48,10 @@
 
   const emit = defineEmits(['savedChanges']);
 
-  const { isEditing } = useEditing(props.isEditingKey);
+  const { isEditing: isEditingQuery } = useEditing(props.isEditingKey);
+  const isEditing = computed(() => {
+    return props.isEditingLocal ?? isEditingQuery.value;
+  });
 </script>
 
 <template>

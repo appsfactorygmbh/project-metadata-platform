@@ -14,6 +14,8 @@
 
 import type { TimeFrame } from './TimeFrame';
 import { TimeFrameFromJSON, TimeFrameToJSON } from './TimeFrame';
+import type { Currencies } from './Currencies';
+import { CurrenciesFromJSON, CurrenciesToJSON } from './Currencies';
 
 /**
  * Request for updating billing information of a project plugin.
@@ -22,17 +24,17 @@ import { TimeFrameFromJSON, TimeFrameToJSON } from './TimeFrame';
  */
 export interface UpdatePluginBillingRequest {
   /**
-   * Optional: Display name of the billing information.
-   * @type {string}
+   *
+   * @type {Array<string>}
    * @memberof UpdatePluginBillingRequest
    */
-  displayName?: string | null;
+  contractIds: Array<string>;
   /**
-   * Currency format
-   * @type {string}
+   *
+   * @type {Currencies}
    * @memberof UpdatePluginBillingRequest
    */
-  currency: string;
+  currency: Currencies;
   /**
    * Budget Limit
    * @type {number}
@@ -77,6 +79,8 @@ export interface UpdatePluginBillingRequest {
 export function instanceOfUpdatePluginBillingRequest(
   value: object,
 ): value is UpdatePluginBillingRequest {
+  if (!('contractIds' in value) || value['contractIds'] === undefined)
+    return false;
   if (!('currency' in value) || value['currency'] === undefined) return false;
   if (!('budgetLimit' in value) || value['budgetLimit'] === undefined)
     return false;
@@ -102,8 +106,8 @@ export function UpdatePluginBillingRequestFromJSONTyped(
     return json;
   }
   return {
-    displayName: json['displayName'] == null ? undefined : json['displayName'],
-    currency: json['currency'],
+    contractIds: json['contractIds'],
+    currency: CurrenciesFromJSON(json['currency']),
     budgetLimit: json['budgetLimit'],
     hostingFee: json['hostingFee'],
     targetMargin: json['targetMargin'],
@@ -128,8 +132,8 @@ export function UpdatePluginBillingRequestToJSONTyped(
   }
 
   return {
-    displayName: value['displayName'],
-    currency: value['currency'],
+    contractIds: value['contractIds'],
+    currency: CurrenciesToJSON(value['currency']),
     budgetLimit: value['budgetLimit'],
     hostingFee: value['hostingFee'],
     targetMargin: value['targetMargin'],

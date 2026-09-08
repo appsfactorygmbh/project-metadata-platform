@@ -14,6 +14,8 @@
 
 import type { TimeFrame } from './TimeFrame';
 import { TimeFrameFromJSON, TimeFrameToJSON } from './TimeFrame';
+import type { Currencies } from './Currencies';
+import { CurrenciesFromJSON, CurrenciesToJSON } from './Currencies';
 
 /**
  * Request for creating global billing Information.
@@ -28,23 +30,11 @@ export interface CreateBillingRequest {
    */
   billingKind: string;
   /**
-   * Default Currency format.
-   * @type {string}
+   *
+   * @type {Currencies}
    * @memberof CreateBillingRequest
    */
-  currency?: string | null;
-  /**
-   * Default Budget Limit.
-   * @type {number}
-   * @memberof CreateBillingRequest
-   */
-  budgetLimit?: number | null;
-  /**
-   * Default Hosting Fee.
-   * @type {number}
-   * @memberof CreateBillingRequest
-   */
-  hostingFee?: number | null;
+  currency?: Currencies;
   /**
    * Default Target Margin.
    * @type {number}
@@ -83,9 +73,10 @@ export function CreateBillingRequestFromJSONTyped(
   }
   return {
     billingKind: json['billingKind'],
-    currency: json['currency'] == null ? undefined : json['currency'],
-    budgetLimit: json['budgetLimit'] == null ? undefined : json['budgetLimit'],
-    hostingFee: json['hostingFee'] == null ? undefined : json['hostingFee'],
+    currency:
+      json['currency'] == null
+        ? undefined
+        : CurrenciesFromJSON(json['currency']),
     targetMargin:
       json['targetMargin'] == null ? undefined : json['targetMargin'],
     timeFrame:
@@ -109,9 +100,7 @@ export function CreateBillingRequestToJSONTyped(
 
   return {
     billingKind: value['billingKind'],
-    currency: value['currency'],
-    budgetLimit: value['budgetLimit'],
-    hostingFee: value['hostingFee'],
+    currency: CurrenciesToJSON(value['currency']),
     targetMargin: value['targetMargin'],
     timeFrame: TimeFrameToJSON(value['timeFrame']),
   };

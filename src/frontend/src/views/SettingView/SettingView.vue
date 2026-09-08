@@ -13,7 +13,7 @@
     EnvironmentOutlined,
     PicRightOutlined,
     SafetyCertificateOutlined,
-    EuroCircleOutlined,
+    CreditCardOutlined,
   } from '@ant-design/icons-vue';
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
@@ -249,7 +249,7 @@
           class="globalBillingManagement"
           @click="clickTab('Global Billing')"
         >
-          <EuroCircleOutlined class="icons" />
+          <CreditCardOutlined class="icons" />
           <span>Billing Management</span>
         </a-menu-item>
         <a-menu-item

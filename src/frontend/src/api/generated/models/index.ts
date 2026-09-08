@@ -22,6 +22,7 @@ export * from './CreatePluginRequest';
 export * from './CreatePluginResponse';
 export * from './CreateTeamRequest';
 export * from './CreateTeamResponse';
+export * from './Currencies';
 export * from './DeleteGlobalPluginResponse';
 export * from './DeleteTeamResponse';
 export * from './EnterpriseUserExtension';
