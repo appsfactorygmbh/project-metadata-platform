@@ -59,8 +59,6 @@ public class BillingController : ControllerBase
         var command = new CreateBillingCommand(
             request.BillingKind,
             request.Currency,
-            request.BudgetLimit,
-            request.HostingFee,
             request.TargetMargin,
             request.TimeFrame
         );
@@ -99,8 +97,6 @@ public class BillingController : ControllerBase
             billingId,
             request.BillingKind,
             request.Currency,
-            request.BudgetLimit,
-            request.HostingFee,
             request.TargetMargin,
             request.TimeFrame
         );
@@ -109,8 +105,6 @@ public class BillingController : ControllerBase
             billingId,
             billing.BillingKind,
             billing.Currency,
-            billing.BudgetLimit,
-            billing.HostingFee,
             billing.TargetMargin,
             billing.TimeFrame
         );
@@ -141,8 +135,6 @@ public class BillingController : ControllerBase
             billing.Id,
             billing.BillingKind,
             billing.Currency,
-            billing.BudgetLimit,
-            billing.HostingFee,
             billing.TargetMargin,
             billing.TimeFrame,
             [.. permissions]
@@ -171,8 +163,6 @@ public class BillingController : ControllerBase
             billing.Id,
             billing.BillingKind,
             billing.Currency,
-            billing.BudgetLimit,
-            billing.HostingFee,
             billing.TargetMargin,
             billing.TimeFrame
         ));

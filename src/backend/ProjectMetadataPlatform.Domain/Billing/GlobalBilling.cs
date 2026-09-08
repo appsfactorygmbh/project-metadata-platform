@@ -18,19 +18,9 @@ public class GlobalBilling
     public required string BillingKind { get; set; }
 
     /// <summary>
-    /// String representing a default Currency format .
+    ///  default Currency format .
     /// </summary>
-    public string? Currency { get; set; }
-
-    /// <summary>
-    /// Default budget limit.
-    /// </summary>
-    public decimal? BudgetLimit { get; set; }
-
-    /// <summary>
-    /// Default hosting fee.
-    /// </summary>
-    public decimal? HostingFee { get; set; }
+    public Currencies? Currency { get; set; }
 
     /// <summary>
     /// Default target margin percentage.

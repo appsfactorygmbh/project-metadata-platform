@@ -85,37 +85,11 @@ public class UpdateBillingCommandHandler : IRequestHandler<UpdateBillingCommand,
                 new LogChange
                 {
                     Property = nameof(GlobalBilling.Currency),
-                    OldValue = billing.Currency ?? "null",
-                    NewValue = request.Currency ?? "null",
+                    OldValue = billing.Currency.ToString() ?? "null",
+                    NewValue = request.Currency.ToString() ?? "null",
                 }
             );
             billing.Currency = request.Currency;
-        }
-        if (request.BudgetLimit != billing.BudgetLimit)
-        {
-            changes.Add(
-                new LogChange
-                {
-                    Property = nameof(GlobalBilling.BudgetLimit),
-                    OldValue =
-                        billing.BudgetLimit?.ToString(CultureInfo.InvariantCulture) ?? "null",
-                    NewValue =
-                        request.BudgetLimit?.ToString(CultureInfo.InvariantCulture) ?? "null",
-                }
-            );
-            billing.BudgetLimit = request.BudgetLimit;
-        }
-        if (request.HostingFee != billing.HostingFee)
-        {
-            changes.Add(
-                new LogChange
-                {
-                    Property = nameof(GlobalBilling.HostingFee),
-                    OldValue = billing.HostingFee?.ToString(CultureInfo.InvariantCulture) ?? "null",
-                    NewValue = request.HostingFee?.ToString(CultureInfo.InvariantCulture) ?? "null",
-                }
-            );
-            billing.HostingFee = request.HostingFee;
         }
         if (request.TargetMargin != billing.TargetMargin)
         {
@@ -168,14 +142,6 @@ public class UpdateBillingCommandHandler : IRequestHandler<UpdateBillingCommand,
         if (request.Currency != billing.Currency)
         {
             updates.Add(nameof(GlobalBilling.Currency), request.Currency);
-        }
-        if (request.BudgetLimit != billing.BudgetLimit)
-        {
-            updates.Add(nameof(GlobalBilling.BudgetLimit), request.BudgetLimit);
-        }
-        if (request.HostingFee != billing.HostingFee)
-        {
-            updates.Add(nameof(GlobalBilling.HostingFee), request.HostingFee);
         }
         if (request.TargetMargin != billing.TargetMargin)
         {

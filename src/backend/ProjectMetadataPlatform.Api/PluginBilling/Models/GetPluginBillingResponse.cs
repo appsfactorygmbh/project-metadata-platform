@@ -11,7 +11,7 @@ namespace ProjectMetadataPlatform.Api.PluginBilling.Models;
 /// <param name="ProjectId">Id of the project the plugin belongs to.</param>
 /// <param name="PluginId">Id of the plugin the billing information belongs to.</param>
 /// <param name="BillingId">Id of the global billing object.</param>
-/// <param name="DisplayName">Display name.</param>
+/// <param name="ContractIds">List of Contract Ids</param>
 /// <param name="Currency">Currency Format.</param>
 /// <param name="BudgetLimit">Budget Limit.</param>
 /// <param name="HostingFee">Hosting Fee.</param>
@@ -24,8 +24,8 @@ public record GetPluginBillingResponse(
     int ProjectId,
     int PluginId,
     int BillingId,
-    string? DisplayName,
-    string Currency,
+    List<string> ContractIds,
+    Currencies Currency,
     decimal BudgetLimit,
     decimal HostingFee,
     int TargetMargin,

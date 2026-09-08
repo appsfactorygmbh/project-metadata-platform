@@ -8,15 +8,11 @@ namespace ProjectMetadataPlatform.Application.Billing;
 /// </summary>
 /// <param name="BillingKind">Billing kind.</param>
 /// <param name="Currency">Currency format.</param>
-/// <param name="BudgetLimit">Budget Limit.</param>
-/// <param name="HostingFee">Hosting Fee.</param>
 /// <param name="TargetMargin">Target Margin.</param>
 /// <param name="TimeFrame">Billing Time frame.</param>
 public record CreateBillingCommand(
     string BillingKind,
-    string? Currency,
-    decimal? BudgetLimit,
-    decimal? HostingFee,
+    Currencies? Currency,
     int? TargetMargin,
     TimeFrame? TimeFrame
 ) : IRequest<int>;

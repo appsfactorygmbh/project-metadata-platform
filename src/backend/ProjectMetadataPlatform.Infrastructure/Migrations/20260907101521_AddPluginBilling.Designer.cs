@@ -13,7 +13,7 @@ using ProjectMetadataPlatform.Infrastructure.DataAccess;
 namespace ProjectMetadataPlatform.Infrastructure.Migrations
 {
     [DbContext(typeof(ProjectMetadataPlatformDbContext))]
-    [Migration("20260827072441_AddPluginBilling")]
+    [Migration("20260907101521_AddPluginBilling")]
     partial class AddPluginBilling
     {
         /// <inheritdoc />
@@ -284,14 +284,8 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal?>("BudgetLimit")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("Currency")
-                        .HasColumnType("text");
-
-                    b.Property<decimal?>("HostingFee")
-                        .HasColumnType("numeric");
+                    b.Property<int?>("Currency")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("TargetMargin")
                         .HasColumnType("integer");
@@ -321,15 +315,15 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Property<decimal>("BudgetLimit")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("Currency")
+                    b.PrimitiveCollection<List<string>>("ContractIds")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text[]");
+
+                    b.Property<int>("Currency")
+                        .HasColumnType("integer");
 
                     b.Property<DateTimeOffset?>("Date")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("DisplayName")
-                        .HasColumnType("text");
 
                     b.Property<decimal>("HostingFee")
                         .HasColumnType("numeric");

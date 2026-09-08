@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -34,10 +35,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                 defaultValue: 0
             );
 
-            if (
-                migrationBuilder.ActiveProvider == "Npgsql.EntityFrameworkCore.PostgreSQL"
-                || migrationBuilder.ActiveProvider == "Npgsql.EntityFrameworkCore.Sqlite"
-            )
+            if (migrationBuilder.ActiveProvider == "Npgsql.EntityFrameworkCore.PostgreSQL")
             {
                 migrationBuilder.Sql(
                     @"UPDATE ""ProjectPluginsRelation""
@@ -91,9 +89,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                             NpgsqlValueGenerationStrategy.IdentityByDefaultColumn
                         ),
                     BillingKind = table.Column<string>(type: "text", nullable: false),
-                    Currency = table.Column<string>(type: "text", nullable: true),
-                    BudgetLimit = table.Column<decimal>(type: "numeric", nullable: true),
-                    HostingFee = table.Column<decimal>(type: "numeric", nullable: true),
+                    Currency = table.Column<int>(type: "integer", nullable: true),
                     TargetMargin = table.Column<int>(type: "integer", nullable: true),
                     TimeFrame = table.Column<int>(type: "integer", nullable: true),
                 },
@@ -110,8 +106,8 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     PluginId = table.Column<int>(type: "integer", nullable: false),
                     ProjectId = table.Column<int>(type: "integer", nullable: false),
                     BillingId = table.Column<int>(type: "integer", nullable: false),
-                    DisplayName = table.Column<string>(type: "text", nullable: true),
-                    Currency = table.Column<string>(type: "text", nullable: false),
+                    ContractIds = table.Column<List<string>>(type: "text[]", nullable: false),
+                    Currency = table.Column<int>(type: "integer", nullable: false),
                     BudgetLimit = table.Column<decimal>(type: "numeric", nullable: false),
                     HostingFee = table.Column<decimal>(type: "numeric", nullable: false),
                     TargetMargin = table.Column<int>(type: "integer", nullable: false),

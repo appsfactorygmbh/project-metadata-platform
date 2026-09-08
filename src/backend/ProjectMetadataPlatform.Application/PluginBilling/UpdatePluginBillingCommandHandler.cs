@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -73,17 +74,17 @@ public class UpdatePluginBillingCommandHandler
             throw new PluginBillingNotesSizeException(notesInfo.LengthInTextElements);
         }
         var changes = new List<LogChange>();
-        if (request.DisplayName != billing.DisplayName)
+        if (!request.ContractIds.SequenceEqual(billing.ContractIds))
         {
             changes.Add(
                 new()
                 {
-                    OldValue = billing.DisplayName ?? "null",
-                    NewValue = request.DisplayName ?? "null",
-                    Property = nameof(Domain.Billing.PluginBilling.DisplayName),
+                    OldValue = "[ " + string.Join("", billing.ContractIds) + " ]",
+                    NewValue = "[ " + string.Join("", request.ContractIds) + " ]",
+                    Property = nameof(Domain.Billing.PluginBilling.ContractIds),
                 }
             );
-            billing.DisplayName = request.DisplayName;
+            billing.ContractIds = request.ContractIds;
         }
         if (request.BudgetLimit != billing.BudgetLimit)
         {
@@ -115,8 +116,8 @@ public class UpdatePluginBillingCommandHandler
             changes.Add(
                 new()
                 {
-                    OldValue = billing.Currency,
-                    NewValue = request.Currency,
+                    OldValue = billing.Currency.ToString(),
+                    NewValue = request.Currency.ToString(),
                     Property = nameof(Domain.Billing.PluginBilling.Currency),
                 }
             );
@@ -141,11 +142,11 @@ public class UpdatePluginBillingCommandHandler
                 {
                     OldValue =
                         billing.TimeFrame == Domain.Billing.TimeFrame.DATE
-                            ? billing.Date?.Date.ToString(new CultureInfo("de-DE"))!
+                            ? billing.Date?.Date.ToString("d", CultureInfo.InvariantCulture)!
                             : billing.TimeFrame.ToString(),
                     NewValue =
                         request.TimeFrame == Domain.Billing.TimeFrame.DATE
-                            ? request.Date?.Date.ToString(new CultureInfo("de-DE"))!
+                            ? request.Date?.Date.ToString("d", CultureInfo.InvariantCulture)!
                             : request.TimeFrame.ToString(),
                     Property = nameof(Domain.Billing.PluginBilling.TimeFrame),
                 }
@@ -188,9 +189,9 @@ public class UpdatePluginBillingCommandHandler
     )
     {
         Dictionary<string, object?> updates = [];
-        if (request.DisplayName != billing.DisplayName)
+        if (!request.ContractIds.SequenceEqual(billing.ContractIds))
         {
-            updates.Add(nameof(Domain.Billing.PluginBilling.DisplayName), request.DisplayName);
+            updates.Add(nameof(Domain.Billing.PluginBilling.ContractIds), request.ContractIds);
         }
         if (request.Currency != billing.Currency)
         {

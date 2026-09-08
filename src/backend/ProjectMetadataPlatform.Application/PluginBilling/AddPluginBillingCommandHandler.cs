@@ -74,7 +74,7 @@ public class AddPluginBillingCommandHandler : IRequestHandler<AddPluginBillingCo
             ProjectId = request.ProjectId,
             PluginId = request.PluginId,
             BillingId = request.BillingId,
-            DisplayName = request.DisplayName,
+            ContractIds = request.ContractIds,
             Currency = request.Currency,
             BudgetLimit = request.BudgetLimit,
             HostingFee = request.HostingFee,
@@ -141,6 +141,12 @@ public class AddPluginBillingCommandHandler : IRequestHandler<AddPluginBillingCo
             new()
             {
                 OldValue = "",
+                NewValue = "[ " + string.Join("", billing.ContractIds) + " ]",
+                Property = nameof(Domain.Billing.PluginBilling.ContractIds),
+            },
+            new()
+            {
+                OldValue = "",
                 NewValue = billing.BudgetLimit.ToString(CultureInfo.InvariantCulture),
                 Property = nameof(Domain.Billing.PluginBilling.BudgetLimit),
             },
@@ -153,7 +159,7 @@ public class AddPluginBillingCommandHandler : IRequestHandler<AddPluginBillingCo
             new()
             {
                 OldValue = "",
-                NewValue = billing.Currency,
+                NewValue = billing.Currency.ToString(),
                 Property = nameof(Domain.Billing.PluginBilling.Currency),
             },
             new()
@@ -167,7 +173,7 @@ public class AddPluginBillingCommandHandler : IRequestHandler<AddPluginBillingCo
                 OldValue = "",
                 NewValue =
                     billing.TimeFrame == Domain.Billing.TimeFrame.DATE
-                        ? billing.Date?.Date.ToString(new CultureInfo("de-DE"))!
+                        ? billing.Date?.Date.ToString("d", CultureInfo.InvariantCulture)!
                         : billing.TimeFrame.ToString(),
                 Property = nameof(Domain.Billing.PluginBilling.TimeFrame),
             },
@@ -178,19 +184,6 @@ public class AddPluginBillingCommandHandler : IRequestHandler<AddPluginBillingCo
                 Property = nameof(Domain.Billing.PluginBilling.Notes),
             },
         };
-
-        if (billing.DisplayName != null)
-        {
-            billingChanges.Insert(
-                1,
-                new()
-                {
-                    OldValue = "",
-                    NewValue = billing.DisplayName,
-                    Property = nameof(Domain.Billing.PluginBilling.DisplayName),
-                }
-            );
-        }
 
         await _logRepository.AddProjectLogForCurrentActor(
             plugin.Project!,

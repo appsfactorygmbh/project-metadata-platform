@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Billing;
 
@@ -9,7 +10,7 @@ namespace ProjectMetadataPlatform.Application.PluginBilling;
 /// </summary>
 /// <param name="ProjectId">Id of the Project.</param>
 /// <param name="PluginId">Id of the Project Plugin.</param>
-/// <param name="DisplayName">Displayname for the Billing Object.</param>
+/// <param name="ContractIds">List of Contract Ids</param>
 /// <param name="Currency">Currency format for the billing information.</param>
 /// <param name="BudgetLimit">Budget Limit.</param>
 /// <param name="HostingFee">Hosting Fee.</param>
@@ -20,8 +21,8 @@ namespace ProjectMetadataPlatform.Application.PluginBilling;
 public record UpdatePluginBillingCommand(
     int ProjectId,
     int PluginId,
-    string? DisplayName,
-    string Currency,
+    List<string> ContractIds,
+    Currencies Currency,
     decimal BudgetLimit,
     decimal HostingFee,
     int TargetMargin,

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ProjectMetadataPlatform.Domain.Plugins;
 
 namespace ProjectMetadataPlatform.Domain.Billing;
@@ -34,14 +35,14 @@ public class PluginBilling
     public ProjectPlugin? ProjectPlugin { get; set; }
 
     /// <summary>
-    /// Optional Display Name
+    /// A List of Id of Contracts related to this billing information.
     /// </summary>
-    public string? DisplayName { get; set; }
+    public required List<string> ContractIds { get; set; } = [];
 
     /// <summary>
-    /// String representing a Currency used in billing.
+    /// Currency used in billing.
     /// </summary>
-    public required string Currency { get; set; }
+    public required Currencies Currency { get; set; }
 
     /// <summary>
     /// Budget Limit for the plugin.

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ProjectMetadataPlatform.Domain.Billing;
 
 namespace ProjectMetadataPlatform.Api.PluginBilling.Models;
@@ -7,7 +8,7 @@ namespace ProjectMetadataPlatform.Api.PluginBilling.Models;
 /// Request for adding billing information to a plugin.
 /// </summary>
 /// <param name="BillingId">Id of the global billing object.</param>
-/// <param name="DisplayName">Optional Displayname.</param>
+/// <param name="ContractIds">Array of Contract Ids</param>
 /// <param name="Currency">Currency Format.</param>
 /// <param name="BudgetLimit">Budget Limit.</param>
 /// <param name="HostingFee">Hosting Fee.</param>
@@ -17,8 +18,8 @@ namespace ProjectMetadataPlatform.Api.PluginBilling.Models;
 /// <param name="Notes">Optional Notes</param>
 public record AddPluginBillingRequest(
     int BillingId,
-    string? DisplayName,
-    string Currency,
+    List<string> ContractIds,
+    Currencies Currency,
     decimal BudgetLimit,
     decimal HostingFee,
     int TargetMargin,

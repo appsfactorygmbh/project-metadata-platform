@@ -58,8 +58,6 @@ public class CreateBillingCommandHandler : IRequestHandler<CreateBillingCommand,
         {
             BillingKind = request.BillingKind,
             Currency = request.Currency,
-            BudgetLimit = request.BudgetLimit,
-            HostingFee = request.HostingFee,
             TargetMargin = request.TargetMargin,
             TimeFrame = request.TimeFrame,
         };
@@ -101,29 +99,7 @@ public class CreateBillingCommandHandler : IRequestHandler<CreateBillingCommand,
                 {
                     Property = nameof(GlobalBilling.Currency),
                     OldValue = "",
-                    NewValue = request.Currency,
-                }
-            );
-        }
-        if (request.BudgetLimit.HasValue)
-        {
-            logChanges.Add(
-                new()
-                {
-                    Property = nameof(GlobalBilling.BudgetLimit),
-                    OldValue = "",
-                    NewValue = request.BudgetLimit.Value.ToString(CultureInfo.InvariantCulture),
-                }
-            );
-        }
-        if (request.HostingFee.HasValue)
-        {
-            logChanges.Add(
-                new()
-                {
-                    Property = nameof(GlobalBilling.HostingFee),
-                    OldValue = "",
-                    NewValue = request.HostingFee.Value.ToString(CultureInfo.InvariantCulture),
+                    NewValue = request.Currency.ToString() ?? "null",
                 }
             );
         }
