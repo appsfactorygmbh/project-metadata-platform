@@ -28,6 +28,7 @@
       <AddPluginCard
         v-if="
           !isEditing &&
+          !isProjectArchived &&
           pluginStore.getPermissions.includes(ResourceActions.Create)
         "
       />
@@ -88,7 +89,6 @@
 
   const pluginStore = usePluginStore();
   const projectStore = useProjectStore();
-
   const emit = defineEmits(['setBlur']);
 
   const plugins = computed<PluginModel[]>(() =>
@@ -98,6 +98,9 @@
   );
   const loading = computed(
     () => pluginStore.getIsLoading || projectStore.getIsLoading,
+  );
+  const isProjectArchived = computed(
+    () => projectStore.getProject?.isArchived ?? false,
   );
   const isBillingModalOpen = ref(false);
   const activePluginId = ref<number | null>(null);

@@ -8,7 +8,7 @@
     PlusOutlined,
   } from '@ant-design/icons-vue';
   import { useEditing, useThemeToken } from '@/utils/hooks';
-  import { usePluginStore, useProjectStore } from '@/store';
+  import { useLocalLogStore, usePluginStore, useProjectStore } from '@/store';
   import { App } from 'ant-design-vue';
   import { ResourceActions } from '@/models/utils';
   import ConfirmAction from '@/components/Modal/ConfirmAction.vue';
@@ -17,6 +17,7 @@
   const token = useThemeToken();
   const pluginStore = usePluginStore();
   const projectStore = useProjectStore();
+  const logStore = useLocalLogStore();
   const { notification } = App.useApp();
 
   // Define the component's props with pluginName and url as required strings.
@@ -42,7 +43,6 @@
       type: Boolean,
       required: false,
     },
-
     showFavicon: {
       type: Boolean,
       default: true,
@@ -67,7 +67,9 @@
   const isDeleteModalOpen = ref(false);
   const displayNameInput = ref<string>(props.displayName);
   const urlInput = ref<string>(props.url);
-
+  const isProjectArchived = computed(
+    () => projectStore.getProject?.isArchived ?? false,
+  );
   const faviconUrl = computed(() => createFaviconURL(cutAfterTLD(props.url)));
 
   const toggleEdit = () => {
@@ -108,6 +110,7 @@
       });
       isSaving.value = false;
       localIsEditing.value = false;
+      logStore.fetch(projectId);
       notification.success({
         message: 'Success',
         description: 'Plugin updated.',
@@ -137,6 +140,7 @@
     try {
       isSaving.value = true;
       await pluginStore.remove(projectId, props.id);
+      logStore.fetch(projectId);
       notification.success({
         message: 'Success',
         description: 'Plugin Removed.',
@@ -214,7 +218,8 @@
               props.pluginPermissions.includes(ResourceActions.Edit) &&
               !isSaving &&
               !props.isLoading &&
-              !isEditing
+              !isEditing &&
+              !isProjectArchived
             "
             class="action-badge edit-badge"
             @click.prevent.stop="toggleEdit"
@@ -226,7 +231,8 @@
               props.pluginPermissions.includes(ResourceActions.Delete) &&
               !isSaving &&
               !props.isLoading &&
-              !isEditing
+              !isEditing &&
+              !isProjectArchived
             "
             class="action-badge delete-badge"
             :class="{ 'force-visible': isDeleteModalOpen }"
@@ -246,6 +252,7 @@
             "
             :project-id="projectStore.getProject.id"
             :plugin-id="props.id"
+            :is-archived="isProjectArchived"
             @billing-state-updated="
               () => {
                 pluginStore.fetch(projectStore.getProject?.id!);
@@ -262,7 +269,8 @@
               props.billingPermissions.includes(ResourceActions.Create) &&
               !isSaving &&
               !props.isLoading &&
-              !isEditing
+              !isEditing &&
+              !isProjectArchived
             "
             class="action-badge add-billing-badge"
             :class="{ 'force-visible': isAddBillingModalOpen }"

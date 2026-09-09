@@ -18,7 +18,7 @@
   import type { RulesObject } from '@/components/Form/types';
   import type { AddBillingFormData } from './AddBillingFormData.ts';
   import { useGlobalBillingStore } from '@/store/GlobalBillingStore.ts';
-  import { useBillingStore } from '@/store';
+  import { useBillingStore, useLocalLogStore } from '@/store';
   import type { GlobalBillingModel } from '@/models/GlobalBilling';
   import { TimeFrame } from '@/api/generated/models/TimeFrame.ts';
   import { Currencies } from '@/api/generated/index.ts';
@@ -33,6 +33,7 @@
   const { notification } = App.useApp();
   const globalBillingStore = useGlobalBillingStore();
   const billingStore = useBillingStore();
+  const logStore = useLocalLogStore();
   const options = ref<SelectProps['options']>([]);
   const emit = defineEmits(['addedBilling']);
   const formRef = ref<FormInstance>();
@@ -74,6 +75,7 @@
         notes: toRaw(fields).notes,
       };
       await billingStore.add(projectId, pluginId, billingDef);
+      logStore.fetch(projectId);
       emit('addedBilling');
       notification.success({
         message: 'Success!',

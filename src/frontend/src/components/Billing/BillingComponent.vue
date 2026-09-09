@@ -12,11 +12,13 @@
   import ConfirmationDialog from '@/components/Modal/ConfirmAction.vue';
   import { Currencies, TimeFrame } from '@/api/generated';
   import type { Rule } from 'ant-design-vue/es/form';
+  import { useLocalLogStore } from '@/store';
 
   const token = useThemeToken();
   const { notification } = App.useApp();
   const formRef = ref();
   const billingStore = useBillingStore();
+  const logStore = useLocalLogStore();
   export interface SelectOption {
     id: number | string | null;
     name: string;
@@ -24,6 +26,10 @@
   const props = defineProps({
     projectId: { type: Number, required: true },
     pluginId: { type: Number, required: true },
+    isArchived: {
+      type: Boolean,
+      required: false,
+    },
   });
 
   const emit = defineEmits(['billingStateUpdated']);
@@ -61,7 +67,7 @@
     formData.targetMargin = newBilling.targetMargin ?? 0;
     formData.timeFrame = newBilling.timeFrame ?? TimeFrame.Never;
     formData.date = newBilling.date ?? undefined;
-    formData.notes = newBilling.notes ?? '';
+    formData.notes = newBilling.notes ?? undefined;
   };
 
   const getPopupContainer = (triggerNode: HTMLElement): HTMLElement => {
@@ -99,7 +105,7 @@
         targetMargin: formData.targetMargin,
         timeFrame: formData.timeFrame,
         date: formData.date,
-        notes: formData.notes,
+        notes: formData.notes?.trim(),
       };
 
       await billingStore.update(
@@ -108,7 +114,7 @@
         updateRequest,
       );
       await toggleEdit();
-
+      logStore.fetch(billingData.value?.projectId);
       notification.success({
         message: 'Success!',
         description: 'GlobalBilling updated successfully.',
@@ -169,6 +175,7 @@
         description: 'Billing Information removed successfully.',
       });
       isOpen.value = false;
+      logStore.fetch(props.projectId);
     } catch (error) {
       notification.error({
         message: 'Error!',
@@ -279,7 +286,10 @@
           style="display: flex; gap: 8px; margin-left: 20px"
         >
           <a-button
-            v-if="billingData?.permissions?.includes(ResourceActions.Edit)"
+            v-if="
+              billingData?.permissions?.includes(ResourceActions.Edit) &&
+              !isArchived
+            "
             size="small"
             :type="localIsEditing ? 'default' : 'primary'"
             @click.stop="toggleEdit"
@@ -293,7 +303,8 @@
           <a-button
             v-if="
               !localIsEditing &&
-              billingData?.permissions?.includes(ResourceActions.Delete)
+              billingData?.permissions?.includes(ResourceActions.Delete) &&
+              !isArchived
             "
             size="small"
             danger

@@ -11,7 +11,7 @@
   import type { RulesObject } from '@/components/Form/types';
   import type { AddPluginFormData } from './AddPluginFormData.ts';
   import { useGlobalPluginStore } from '@/store/GlobalPluginStore.ts';
-  import { usePluginStore, useProjectStore } from '@/store';
+  import { useLocalLogStore, usePluginStore, useProjectStore } from '@/store';
   import { isUniqueUrl } from '@/utils/form/userValidation.ts';
   import type { GlobalPluginModel } from '@/models/GlobalPlugin';
 
@@ -23,6 +23,7 @@
   const globalPluginStore = useGlobalPluginStore();
   const pluginStore = usePluginStore();
   const projectStore = useProjectStore();
+  const logStore = useLocalLogStore();
   const options = ref<SelectProps['options']>([]);
   const emit = defineEmits(['addedPlugin']);
   const formRef = ref<FormInstance>();
@@ -99,6 +100,7 @@
         url: toRaw(fields).pluginUrl,
       };
       await pluginStore.add(projectId, pluginDef);
+      logStore.fetch(projectId);
       emit('addedPlugin');
     } catch (error) {
       notification.error({
