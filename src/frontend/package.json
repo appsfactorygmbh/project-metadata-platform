@@ -73,7 +73,7 @@
     "@vue/test-utils": "^2.5.0",
     "@vue/tsconfig": "^0.9.1",
     "antdv-component-resolver": "^1.0.8",
-    "cypress": "^15.21.1",
+    "cypress": "^16.0.0",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-formatter-gitlab": "^7.2.0",
