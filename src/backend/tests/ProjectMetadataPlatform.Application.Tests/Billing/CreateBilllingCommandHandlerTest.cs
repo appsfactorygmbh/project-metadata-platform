@@ -141,13 +141,7 @@ public class CreateBillingCommandHandlerTest
             )
             .ReturnsAsync(false);
 
-        var request = new CreateBillingCommand(
-            BillingKind: "Test Name",
-
-            null,
-            null,
-            null
-        );
+        var request = new CreateBillingCommand(BillingKind: "Test Name", null, null, null);
         _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );

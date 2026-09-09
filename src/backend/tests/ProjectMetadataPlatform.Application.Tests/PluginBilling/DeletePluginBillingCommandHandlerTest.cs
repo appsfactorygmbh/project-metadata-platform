@@ -46,7 +46,7 @@ public class DeletePluginBillingCommandHandlerTest
         {
             PluginId = 1,
             ProjectId = 1,
-            ContractIds= ["a"],
+            ContractIds = ["a"],
             Currency = Currencies.USD,
             BudgetLimit = 1,
             HostingFee = 1,

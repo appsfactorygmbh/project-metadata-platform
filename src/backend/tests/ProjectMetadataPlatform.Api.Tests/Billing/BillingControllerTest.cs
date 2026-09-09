@@ -157,16 +157,14 @@ public class BillingControllerTest
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() =>
-            _controller.Put(new CreateBillingRequest("a",   null, null, null))
+            _controller.Put(new CreateBillingRequest("a", null, null, null))
         );
     }
 
     [Test]
     public async Task PutBilling_WhiteSpaceKind_BadRequestTest()
     {
-        var result = await _controller.Put(
-            new CreateBillingRequest("", null, null, null)
-        );
+        var result = await _controller.Put(new CreateBillingRequest("", null, null, null));
         Assert.That(result.Result, Is.InstanceOf<BadRequestObjectResult>());
     }
 
@@ -219,10 +217,7 @@ public class BillingControllerTest
     [Test]
     public async Task UpdateBilling_WhiteSpaceKind_BadRequestTest()
     {
-        var result = await _controller.Update(
-            1,
-            new UpdateBillingRequest("", null, null, null)
-        );
+        var result = await _controller.Update(1, new UpdateBillingRequest("", null, null, null));
         Assert.That(result.Result, Is.InstanceOf<BadRequestObjectResult>());
     }
 
@@ -239,7 +234,7 @@ public class BillingControllerTest
             .ReturnsAsync(new GlobalBilling { BillingKind = "Billing", Id = 1 });
         var result = await _controller.Update(
             1,
-            new UpdateBillingRequest("Billing",  null, null, null)
+            new UpdateBillingRequest("Billing", null, null, null)
         );
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 

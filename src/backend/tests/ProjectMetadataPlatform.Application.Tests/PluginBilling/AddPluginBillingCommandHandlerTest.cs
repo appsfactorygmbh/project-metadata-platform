@@ -279,7 +279,7 @@ public class AddPluginBillingCommandHandlerTest
             1,
             1,
             1,
-              [],
+            [],
             Currencies.USD,
             1,
             1,
