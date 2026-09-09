@@ -11,8 +11,6 @@ interface PluginComponentInstance {
   displayName: string;
   id: number;
   isLoading: boolean;
-  isEditing: boolean;
-  hide?: boolean;
 }
 
 const generateWrapper = (
@@ -20,27 +18,23 @@ const generateWrapper = (
   url: string,
   displayName: string,
   isLoading: boolean,
-  isEditing: boolean,
   id: number,
-  editKey = -1,
 ): VueWrapper<ComponentPublicInstance<PluginComponentInstance>> => {
   return mount(PluginComponent, {
-    plugins: [
-      createTestingPinia({
-        stubActions: false,
-      }),
-    ],
     props: {
       pluginName: name,
       url: url,
       displayName: displayName,
       isLoading: isLoading,
-      isEditing: isEditing,
       id: id,
-      editKey,
     },
     global: {
-      plugins: [router],
+      plugins: [
+        router,
+        createTestingPinia({
+          stubActions: false,
+        }),
+      ],
     },
   }) as VueWrapper<ComponentPublicInstance<PluginComponentInstance>>;
 };
@@ -51,7 +45,6 @@ describe('Plugin.vue', () => {
       'Test Plugin',
       'https://example.com/examplePath',
       'test instance',
-      false,
       false,
       100,
     );
@@ -71,9 +64,10 @@ describe('Plugin.vue', () => {
         url: 'https://test.com',
         displayName: 'Test',
         isLoading: true,
-        isEditing: false,
         id: 100,
-        editKey: -2,
+      },
+      global: {
+        plugins: [router, createTestingPinia({ stubActions: false })],
       },
     });
     const skeleton = wrapper.find('.ant-skeleton-content');
@@ -87,9 +81,10 @@ describe('Plugin.vue', () => {
         url: 'https://test.com',
         displayName: 'Test',
         isLoading: true,
-        isEditing: false,
         id: 100,
-        editKey: -1,
+      },
+      global: {
+        plugins: [router, createTestingPinia({ stubActions: false })],
       },
     });
     expect(wrapper.find('.ant-skeleton-content').exists()).toBe(true);
@@ -98,7 +93,6 @@ describe('Plugin.vue', () => {
       url: 'https://test.com',
       displayName: 'Test',
       isLoading: false,
-      isEditing: false,
       id: 100,
     });
     expect(wrapper.find('.ant-skeleton-content').exists()).toBe(false);
@@ -140,7 +134,6 @@ describe('Plugin.vue', () => {
       'https://example.com/examplePath',
       'Test Plugin Instance 1',
       false,
-      false,
       100,
     );
     const link = wrapper.find('a');
@@ -154,7 +147,6 @@ describe('Plugin.vue', () => {
       'Test Plugin',
       'example.com',
       'Test Plugin Instance 1',
-      false,
       false,
       100,
     );

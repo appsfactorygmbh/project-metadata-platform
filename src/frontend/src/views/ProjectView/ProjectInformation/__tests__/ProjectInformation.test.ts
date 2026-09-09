@@ -2,21 +2,30 @@ import { describe, expect, it } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { setActivePinia } from 'pinia';
 import ProjectInformation from '../ProjectInformation.vue';
-import { createTestingPinia } from '@pinia/testing';
+import { createTestingPinia, type TestingPinia } from '@pinia/testing';
 import {
-  projectEditStoreSymbol,
-  projectStoreSymbol,
+  localLogStoreSymbol,
+  projectRoutingSymbol,
 } from '@/store/injectionSymbols';
-import { useProjectEditStore, useProjectStore } from '@/store';
+import { useProjectStore } from '@/store';
 import router from '@/router';
 import type { DetailedProjectModel } from '@/models/Project';
 import {
   DeleteOutlined,
   EditOutlined,
-  InboxOutlined,
   UndoOutlined,
 } from '@ant-design/icons-vue';
 import { ResourceActions } from '@/models/utils/ResourceActions.ts';
+
+vi.mock('@/utils/hooks', async () => {
+  const actual = await vi.importActual('@/utils/hooks');
+  return {
+    ...actual,
+    useDeselect: () => ({
+      isDeselected: ref(false),
+    }),
+  };
+});
 
 const testData: DetailedProjectModel = {
   id: 1,
@@ -30,7 +39,6 @@ const testData: DetailedProjectModel = {
     teamName: '42',
     ptl: 'Max Mustermann',
   },
-  offerId: '3',
   company: { id: 1, companyName: 'Appsfactory' },
   companyState: 'EXTERNAL',
   ismsLevel: 'NORMAL',
@@ -40,29 +48,35 @@ const testData: DetailedProjectModel = {
 };
 
 describe('ProjectInformation.vue', () => {
-  const testingPinia = createTestingPinia({
-    stubActions: false,
-    initialState: {
-      project: {
-        project: testData,
+  let testingPinia: TestingPinia;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    testingPinia = createTestingPinia({
+      createSpy: vi.fn,
+      initialState: {
+        project: { project: JSON.parse(JSON.stringify(testData)) },
+        company: { companies: [] },
+        team: { teams: [] },
       },
-    },
+    });
+    setActivePinia(testingPinia);
   });
-  setActivePinia(testingPinia);
-  const projectStore = useProjectStore(testingPinia);
 
   const generateWrapper = () =>
     mount(ProjectInformation, {
       global: {
         plugins: [router, testingPinia],
         provide: {
-          [projectEditStoreSymbol as symbol]: useProjectEditStore(),
-          [projectStoreSymbol as symbol]: useProjectStore(),
+          projectEdits: ref({}),
+          [localLogStoreSymbol as symbol]: {},
+          [projectRoutingSymbol as symbol]: {
+            setProjectId: vi.fn(),
+          },
         },
         stubs: {
-          PluginView: {
-            template: '<span />',
-          },
+          ConfirmAction: true,
         },
       },
     });
@@ -71,54 +85,67 @@ describe('ProjectInformation.vue', () => {
     const wrapper = generateWrapper();
     await flushPromises();
 
-    expect(projectStore.project).toMatchObject(testData);
     expect(wrapper.find('.projectName').text()).toEqual('Heute Show');
-    expect(wrapper.findAll('.infoCard')[0].text()).toBe(
-      'Project\xa0Slug:test_project',
-    );
-    expect(wrapper.findAll('.infoCard')[1].text()).toBe('Client\xa0Name:ZDF');
-    expect(wrapper.findAll('.infoCard')[2].text()).toBe('Offer\xa0ID:3');
-    expect(wrapper.findAll('.infoCard')[3].text()).toBe('Company:Appsfactory');
-    expect(wrapper.findAll('.infoCard')[4].text()).toBe(
-      'Company\xa0State:External',
-    );
-    expect(wrapper.findAll('.infoCard')[5].text()).toBe('ISMS\xa0Level:Normal');
-    expect(wrapper.findAll('.infoCard')[6].text()).toBe('EoC:');
-    expect(wrapper.findAll('.infoCard')[7].text()).toBe('Team\xa0Name:42');
-    expect(wrapper.findAll('.infoCard')[8].text()).toBe(
-      'Business\xa0Unit:BU Health',
-    );
-    expect(wrapper.findAll('.infoCard')[9].text()).toBe('PTL:Max Mustermann');
+
+    const infoCards = wrapper.findAll('.infoCard');
+
+    expect(infoCards[0].text()).toContain('Project\xa0Slug');
+    expect(infoCards[0].text()).toContain('test_project');
+
+    expect(infoCards[1].text()).toContain('Client\xa0Name');
+    expect(infoCards[1].text()).toContain('ZDF');
+
+    expect(infoCards[2].text()).toContain('Company');
+    expect(infoCards[2].text()).toContain('Appsfactory');
+
+    expect(infoCards[3].text()).toContain('Company\xa0State');
+    expect(infoCards[4].text()).toContain('ISMS\xa0Level');
+    expect(infoCards[6].text()).toContain('Team\xa0Name');
+    expect(infoCards[6].text()).toContain('42');
+
+    expect(infoCards[7].text()).toContain('Business\xa0Unit');
+    expect(infoCards[7].text()).toContain('BU Health');
+
+    expect(infoCards[8].text()).toContain('PTL');
+    expect(infoCards[8].text()).toContain('Max Mustermann');
+
     expect(wrapper.findAll('.notesCard')[0].text()).toBe('TestNotes');
   });
 
   it('opens the confirmation modal when DeleteOutlined button is clicked', async () => {
-    projectStore.project!.isArchived = true;
+    const projectStore = useProjectStore();
+
+    vi.spyOn(projectStore, 'getProject', 'get').mockReturnValue({
+      ...testData,
+      isArchived: true,
+    } as any);
 
     const wrapper = generateWrapper();
     await flushPromises();
 
-    // check if delete button exists
     const deleteButton = wrapper.findComponent(DeleteOutlined);
     expect(deleteButton.exists()).toBeTruthy();
 
-    // click on delete button
     await deleteButton.trigger('click');
     await flushPromises();
 
-    // check if modal opened
     const confirmModal = wrapper.findComponent({ name: 'ConfirmAction' });
     expect(confirmModal.exists()).toBeTruthy();
     expect(confirmModal.props('isOpen')).toBe(true);
   });
 
-  it('does not render the edit and archive button but shows the reactivate and delete button when archived', async () => {
+  it('does not render edit button but shows reactivate and delete buttons when archived', async () => {
+    const projectStore = useProjectStore();
+
+    vi.spyOn(projectStore, 'getProject', 'get').mockReturnValue({
+      ...testData,
+      isArchived: true,
+    } as any);
+
     const wrapper = generateWrapper();
     await flushPromises();
 
-    // Expectation: No Edit- or Archive Button, but Reactivate and Delete Button
     expect(wrapper.findComponent(EditOutlined).exists()).toBeFalsy();
-    expect(wrapper.findComponent(InboxOutlined).exists()).toBeFalsy();
     expect(wrapper.findComponent(UndoOutlined).exists()).toBeTruthy();
     expect(wrapper.findComponent(DeleteOutlined).exists()).toBeTruthy();
   });

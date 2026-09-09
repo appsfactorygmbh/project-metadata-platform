@@ -2,24 +2,13 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import { ProjectView } from '..';
 import router from '@/router';
-import { EditOutlined } from '@ant-design/icons-vue';
 import {
   localLogStoreSymbol,
-  projectEditStoreSymbol,
   projectRoutingSymbol,
-  projectStoreSymbol,
-  teamStoreSymbol,
 } from '@/store/injectionSymbols';
-import {
-  useLocalLogStore,
-  useProjectEditStore,
-  useProjectStore,
-  useTeamStore,
-} from '@/store';
-import { createTestingPinia } from '@pinia/testing';
-import type { PluginModel } from '@/models/Plugin';
-import type { DetailedProjectModel } from '@/models/Project';
+import { useProjectStore } from '@/store';
 import { ResourceActions } from '@/models/utils';
+import { type TestingPinia, createTestingPinia } from '@pinia/testing';
 
 vi.mock('vue-auth3', () => ({
   useAuth: () => ({
@@ -28,125 +17,105 @@ vi.mock('vue-auth3', () => ({
   }),
 }));
 
-const testPlugins: PluginModel[] = [
-  {
-    id: 1,
-    pluginName: 'Test Plugin',
-    displayName: 'Test Plugin',
-    url: 'https://test.com',
-  },
-  {
-    id: 2,
-    pluginName: 'Test Plugin 2',
-    displayName: 'Test Plugin 2',
-    url: 'https://test2.com',
-  },
-];
-
-const testUnarchivedPlugins: PluginModel[] = [
-  {
-    id: 1,
-    pluginName: 'Test Plugin',
-    displayName: 'Test Plugin',
-    url: 'https://test.com',
-  },
-];
-
-const testProject: DetailedProjectModel = {
-  id: 1,
-  projectName: 'Test Project',
-  clientName: 'Test Client',
-  team: {
-    businessUnit: { id: 2, businessUnitName: 'Test Business Unit' },
-    id: 1,
-    teamName: '1',
-    ptl: 'Max Mustermann',
-  },
-  isArchived: false,
-  slug: 'test_project',
-  offerId: '1',
-  company: { id: 2, companyName: 'Appsfactory' },
-  companyState: 'EXTERNAL',
-  ismsLevel: 'HIGH',
-  isEoC: false,
-  notes: 'Test Notes',
-  permissions: [ResourceActions.Edit],
-};
-
-const pinia = createTestingPinia({
-  stubActions: false,
-  initialState: {
-    project: { project: testProject },
-    plugin: {
-      plugins: testPlugins,
-      unarchivedPlugins: testUnarchivedPlugins,
-    },
-    team: {
-      teams: [
-        {
-          businessUnit: 'Test Business Unit',
-          id: 1,
-          teamName: '1',
-        },
-      ],
-    },
-  },
-});
+const mockIsEditing = ref(false);
+const mockStopEditing = vi.fn();
+vi.mock('@/utils/hooks/useEditing', () => ({
+  useEditing: () => ({
+    isEditing: mockIsEditing,
+    stopEditing: mockStopEditing,
+    startEditing: vi.fn(),
+  }),
+}));
 
 describe('ProjectView.vue', () => {
-  const generateWrapper = () => {
-    const mockRouterProjectId = computed(() => {
-      const id = router.currentRoute.value.query.projectId;
-      return id ? Number(id) : undefined;
+  let pinia: TestingPinia;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockIsEditing.value = false;
+
+    pinia = createTestingPinia({
+      createSpy: vi.fn,
+      initialState: {
+        project: {
+          project: {
+            id: 300,
+            projectName: 'Test Project',
+            clientName: 'Test Client',
+            company: { id: 2 },
+            team: { id: 1 },
+            isArchived: false,
+            permissions: [ResourceActions.Edit],
+          },
+          projects: [{ id: 300, isArchived: false }],
+        },
+      },
     });
+  });
+
+  const generateWrapper = () => {
     return mount(ProjectView, {
       global: {
+        plugins: [router, pinia],
         provide: {
-          [localLogStoreSymbol as symbol]: useLocalLogStore(),
-          [projectEditStoreSymbol as symbol]: useProjectEditStore(),
-          [teamStoreSymbol as symbol]: useTeamStore(),
-          [projectStoreSymbol as symbol]: useProjectStore(),
+          [localLogStoreSymbol as symbol]: { fetch: vi.fn() },
           [projectRoutingSymbol as symbol]: {
-            routerProjectId: mockRouterProjectId,
-            routerProjectSlug: computed(
-              () => router.currentRoute.value.params.projectSlug || undefined,
-            ),
+            routerProjectId: computed(() => 300),
             setProjectId: vi.fn(),
           },
         },
-        plugins: [router, pinia],
+        stubs: {
+          ProjectInformation: true,
+          ProjectPlugins: true,
+          LocalLogView: true,
+          AddPluginView: true,
+          ProjectEditButtons: true,
+          ConfirmAction: true,
+        },
       },
     });
   };
 
-  it('hides the project slug + team fields when editing', async () => {
+  it('renders the main project layout when an active project exists', async () => {
     const wrapper = generateWrapper();
+
+    expect(wrapper.find('.empty-state-container').exists()).toBe(false);
+
+    expect(wrapper.findComponent({ name: 'ProjectInformation' }).exists()).toBe(
+      true,
+    );
+    expect(wrapper.findComponent({ name: 'ProjectPlugins' }).exists()).toBe(
+      true,
+    );
+  });
+
+  it('shows ProjectEditButtons and preps projectEdits payload when editing starts', async () => {
+    const wrapper = generateWrapper();
+
+    expect(wrapper.findComponent({ name: 'ProjectEditButtons' }).exists()).toBe(
+      false,
+    );
+    mockIsEditing.value = true;
     await flushPromises();
-    await router.push({
-      path: '/',
-      query: { projectId: '300' },
-    });
 
-    // check if fields are visible
-    expect(wrapper.find('.label').text()).toBe('Project\xa0Slug:');
-    expect(wrapper.find('.teamNameField').exists()).toBe(true);
-    expect(wrapper.find('.buField').exists()).toBe(true);
-    expect(wrapper.find('.ptlField').exists()).toBe(true);
-    expect(wrapper.find('.projectName').exists()).toBe(true);
+    expect(wrapper.findComponent({ name: 'ProjectEditButtons' }).exists()).toBe(
+      true,
+    );
+  });
 
-    // click on edit button
-    const editButton = wrapper.findComponent(EditOutlined);
-    await editButton.trigger('click');
+  it('calls update on the project store when save is triggered', async () => {
+    const wrapper = generateWrapper();
+    const projectStore = useProjectStore();
+
+    mockIsEditing.value = true;
     await flushPromises();
 
-    // check if fields are hidden
-    expect(wrapper.find('.label').text()).not.toBe('Project\xa0Slug:');
-    expect(wrapper.find('.teamNameField').exists()).toBe(false);
-    expect(wrapper.find('.buField').exists()).toBe(false);
-    expect(wrapper.find('.ptlField').exists()).toBe(false);
-    expect(wrapper.find('.projectNameContainer').exists()).toBe(false);
+    const editButtons = wrapper.findComponent({ name: 'ProjectEditButtons' });
+    await editButtons.vm.$emit('save');
 
-    // check if project name input is visible
-    expect(wrapper.find('.projectNameInput').exists()).toBe(true);
+    expect(projectStore.update).toHaveBeenCalledWith(
+      300,
+      expect.objectContaining({ projectName: 'Test Project' }),
+    );
   });
 });
