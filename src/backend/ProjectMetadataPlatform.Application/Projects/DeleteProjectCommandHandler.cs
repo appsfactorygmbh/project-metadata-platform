@@ -6,6 +6,7 @@ using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
@@ -110,5 +111,37 @@ public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand,
         }
 
         await _logRepository.AddProjectLogForCurrentActor(project, Action.REMOVED_PROJECT, changes);
+        foreach (var plugin in project.ProjectPlugins ?? [])
+        {
+            var removedPluginChanges = new List<LogChange>()
+            {
+                new()
+                {
+                    Property = nameof(ProjectPlugin.Plugin),
+                    OldValue = plugin.Plugin!.PluginName,
+                    NewValue = string.Empty,
+                },
+                new()
+                {
+                    Property = nameof(ProjectPlugin.DisplayName),
+                    OldValue = plugin.DisplayName ?? string.Empty,
+                    NewValue = string.Empty,
+                },
+                new()
+                {
+                    Property = nameof(ProjectPlugin.Url),
+                    OldValue = plugin.Url,
+                    NewValue = string.Empty,
+                },
+            };
+
+            await _logRepository.AddProjectLogForCurrentActor(
+                project,
+                plugin.PluginBilling == null
+                    ? Action.DELETED_PROJECT_PLUGIN
+                    : Action.DELETED_PROJECT_PLUGIN_WITH_BILLING,
+                removedPluginChanges
+            );
+        }
     }
 }

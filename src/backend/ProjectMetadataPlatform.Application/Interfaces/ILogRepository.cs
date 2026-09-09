@@ -26,8 +26,18 @@ public interface ILogRepository
     /// <param name="project">The Project changes were made to.</param>
     /// <param name="action">The type of change that was made.</param>
     /// <param name="changes">A list of the changed properties.</param>
+    /// <param name="plugin">Optional ProjectPlugin if the action concerns plugin billing.</param>
+    /// <param name="globalPlugin">Optional Global Plugin if a global plugin caused the action.</param>
+    /// <param name="globalBilling">Optional Global Billing if a global billing object caused the action.</param>
     /// <returns></returns>
-    Task AddProjectLogForCurrentActor(Project project, Action action, List<LogChange> changes);
+    Task AddProjectLogForCurrentActor(
+        Project project,
+        Action action,
+        List<LogChange> changes,
+        ProjectPlugin? plugin = null,
+        Plugin? globalPlugin = null,
+        GlobalBilling? globalBilling = null
+    );
 
     /// <summary>
     /// Adds Logs for changes made to a User. Sets the current User or Token as the Author.

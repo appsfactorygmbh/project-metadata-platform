@@ -52,12 +52,6 @@ public class LogModelConfig : IEntityTypeConfiguration<Log>
             .WithMany()
             .HasForeignKey(e => e.GlobalPluginId)
             .OnDelete(DeleteBehavior.SetNull);
-
-        _ = builder
-            .HasOne(e => e.GlobalPlugin)
-            .WithMany()
-            .HasForeignKey(e => e.GlobalPluginId)
-            .OnDelete(DeleteBehavior.SetNull);
         _ = builder
             .HasOne(e => e.AffectedToken)
             .WithMany()

@@ -13,7 +13,7 @@ using ProjectMetadataPlatform.Infrastructure.DataAccess;
 namespace ProjectMetadataPlatform.Infrastructure.Migrations
 {
     [DbContext(typeof(ProjectMetadataPlatformDbContext))]
-    [Migration("20260907101521_AddPluginBilling")]
+    [Migration("20260908135022_AddPluginBilling")]
     partial class AddPluginBilling
     {
         /// <inheritdoc />
@@ -482,6 +482,9 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("OfficeLocationName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PluginName")
                         .HasColumnType("text");
 
                     b.Property<int?>("ProjectId")

@@ -50,7 +50,6 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
         AND ""ProjectPluginsRelation"".""Url"" = sub.""Url"";"
                 );
             }
-
             migrationBuilder.AddColumn<int>(
                 name: "BillingId",
                 table: "ProjectPluginsRelation",
@@ -67,6 +66,13 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
             migrationBuilder.AddColumn<string>(
                 name: "GlobalBillingKind",
+                table: "Logs",
+                type: "text",
+                nullable: true
+            );
+
+            migrationBuilder.AddColumn<string>(
+                name: "PluginName",
                 table: "Logs",
                 type: "text",
                 nullable: true
@@ -208,6 +214,8 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
             migrationBuilder.DropColumn(name: "GlobalBillingId", table: "Logs");
 
             migrationBuilder.DropColumn(name: "GlobalBillingKind", table: "Logs");
+
+            migrationBuilder.DropColumn(name: "PluginName", table: "Logs");
 
             migrationBuilder.AddColumn<string>(
                 name: "OfferId",

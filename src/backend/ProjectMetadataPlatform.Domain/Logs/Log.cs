@@ -49,7 +49,7 @@ public class Log
     public required string? AuthorName { get; set; }
 
     /// <summary>
-    /// The TImeStamp when the action was taken
+    /// The TimeStamp when the action was taken
     /// </summary>
     public DateTimeOffset TimeStamp { get; set; }
 
@@ -202,6 +202,11 @@ public class Log
     /// The global billing kind of the related billing information.
     /// </summary>
     public string? GlobalBillingKind { get; set; }
+
+    /// <summary>
+    /// DisplayName of a ProjectPlugin used to better identify a plugin billing object.
+    /// </summary>
+    public string? PluginName { get; set; }
 
     /// <summary>
     /// The taken action

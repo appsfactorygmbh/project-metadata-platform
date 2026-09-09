@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
+using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Billing;
 
@@ -58,6 +59,16 @@ public class DeleteBillingCommandHandler : IRequestHandler<DeleteBillingCommand>
             Domain.Logs.Action.REMOVED_GLOBAL_BILLING,
             []
         );
+        foreach (var pluginBilling in billing.PluginBilling ?? [])
+        {
+            await _logRepository.AddProjectLogForCurrentActor(
+                pluginBilling.ProjectPlugin?.Project!,
+                Action.REMOVED_PROJECT_PLUGIN_BILLING,
+                [],
+                plugin: pluginBilling.ProjectPlugin,
+                globalBilling: billing
+            );
+        }
         await _unitOfWork.CompleteAsync();
     }
 }

@@ -3,6 +3,7 @@
 /// <summary>
 /// Time frame on which a plugin is billed.
 /// </summary>
+///! Stored as Integers so make sure not to change values without migration steps.
 public enum TimeFrame
 {
     /// <summary>

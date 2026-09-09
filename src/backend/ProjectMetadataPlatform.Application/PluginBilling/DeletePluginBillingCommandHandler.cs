@@ -13,7 +13,6 @@ namespace ProjectMetadataPlatform.Application.PluginBilling;
 public class DeletePluginBillingCommandHandler : IRequestHandler<DeletePluginBillingCommand>
 {
     private readonly IBillingRepository _billingRepository;
-
     private readonly ILogRepository _logRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IAuthorizationService _authorizationService;
@@ -68,7 +67,8 @@ public class DeletePluginBillingCommandHandler : IRequestHandler<DeletePluginBil
         await _logRepository.AddProjectLogForCurrentActor(
             billing.ProjectPlugin?.Project!,
             Action.REMOVED_PROJECT_PLUGIN_BILLING,
-            []
+            [],
+            billing.ProjectPlugin
         );
         await _unitOfWork.CompleteAsync();
     }

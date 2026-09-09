@@ -94,7 +94,9 @@ public class DeleteProjectPluginCommandHandler : IRequestHandler<DeleteProjectPl
 
         await _logRepository.AddProjectLogForCurrentActor(
             plugin.Project!,
-            Action.REMOVED_PROJECT_PLUGIN,
+            plugin.PluginBilling == null
+                ? Action.REMOVED_PROJECT_PLUGIN
+                : Action.REMOVED_PROJECT_PLUGIN_WITH_BILLING,
             removedPluginChanges
         );
 

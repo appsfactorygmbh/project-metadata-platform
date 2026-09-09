@@ -8,6 +8,7 @@ public enum Action
     // TODO keep in sync with:
     // - LogRepository in the Infrastructure project (ActionMessages and ActionWhiteLists)
     // - the LogConverter in the Api project
+    //! Stored as Integers so make sure not to change values without migration steps.
 
     /// <summary>
     /// Represents the action of adding a project.
@@ -208,4 +209,19 @@ public enum Action
     /// Represents the action of removing billing information from a project plugin.
     /// </summary>
     REMOVED_PROJECT_PLUGIN_BILLING,
+
+    /// <summary>
+    /// Represents the action of deleting a project plugin by deleting a project.
+    /// </summary>
+    DELETED_PROJECT_PLUGIN,
+
+    /// <summary>
+    /// Represents the action of removing a project plugin that has billing information.
+    /// </summary>
+    REMOVED_PROJECT_PLUGIN_WITH_BILLING,
+
+    /// <summary>
+    /// Represents the action of deleting a project plugin with billing information by deleting a project.
+    /// </summary>
+    DELETED_PROJECT_PLUGIN_WITH_BILLING,
 }

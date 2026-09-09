@@ -118,7 +118,13 @@ public class PluginRepository : RepositoryBase<Plugin>, IPluginRepository
     /// <returns>A task that represents the asynchronous operation. The task result contains the Plugin that matches the provided id.</returns>
     public async Task<Plugin?> GetPluginByIdAsync(int id)
     {
-        return await GetIf(p => p.Id == id).FirstOrDefaultAsync()
+        return await _context
+                .Plugins.Where(p => p.Id == id)
+                .Include(p => p.ProjectPlugins!)
+                    .ThenInclude(pp => pp.Project)
+                .Include(p => p.ProjectPlugins!)
+                    .ThenInclude(pp => pp.PluginBilling)
+                .FirstOrDefaultAsync()
             ?? throw new PluginNotFoundException(id);
     }
 
@@ -128,6 +134,7 @@ public class PluginRepository : RepositoryBase<Plugin>, IPluginRepository
         return await _context
                 .ProjectPluginsRelation.Include(p => p.Project)
                 .Include(p => p.Plugin)
+                .Include(pp => pp.PluginBilling)
                 .Where(p => p.Id == id && p.ProjectId == projectId)
                 .FirstOrDefaultAsync()
             ?? throw new ProjectPluginNotFoundException(projectId, id);

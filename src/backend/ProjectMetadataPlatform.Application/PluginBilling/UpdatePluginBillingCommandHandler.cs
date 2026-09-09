@@ -154,7 +154,7 @@ public class UpdatePluginBillingCommandHandler
             billing.TimeFrame = request.TimeFrame;
             billing.Date = request.TimeFrame == Domain.Billing.TimeFrame.DATE ? request.Date : null;
         }
-        if (request.Notes != billing.Notes)
+        if (request.Notes?.Trim() != billing.Notes?.Trim())
         {
             changes.Add(
                 new()
@@ -175,7 +175,8 @@ public class UpdatePluginBillingCommandHandler
             await _logRepository.AddProjectLogForCurrentActor(
                 billing.ProjectPlugin?.Project!,
                 Action.UPDATED_PROJECT_PLUGIN_BILLING,
-                changes
+                changes,
+                billing.ProjectPlugin
             );
         }
         await _billingRepository.UpdatePluginBilling(billing);

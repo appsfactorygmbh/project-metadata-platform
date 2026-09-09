@@ -481,6 +481,9 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.Property<string>("OfficeLocationName")
                         .HasColumnType("text");
 
+                    b.Property<string>("PluginName")
+                        .HasColumnType("text");
+
                     b.Property<int?>("ProjectId")
                         .HasColumnType("integer");
 

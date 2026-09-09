@@ -152,6 +152,8 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
         return await GetIf(p => p.Id == id)
                 .Include(p => p.ProjectPlugins!)
                     .ThenInclude(pp => pp.PluginBilling)
+                .Include(p => p.ProjectPlugins!)
+                    .ThenInclude(pp => pp.Plugin)
                 .Include(p => p.Team)
                     .ThenInclude(t => t!.BusinessUnit)
                 .Include(p => p.Company)

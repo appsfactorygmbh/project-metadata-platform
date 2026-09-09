@@ -62,7 +62,12 @@ public class BillingRepository : RepositoryBase<GlobalBilling>, IBillingReposito
     /// <inheritdoc />
     public async Task<GlobalBilling> GetBillingByIdAsync(int id)
     {
-        return await GetIf(gb => gb.Id == id).FirstOrDefaultAsync()
+        return await _context
+                .GlobalBilling.Where(gb => gb.Id == id)
+                .Include(gb => gb.PluginBilling!)
+                    .ThenInclude(pb => pb.ProjectPlugin!)
+                        .ThenInclude(pp => pp.Project)
+                .FirstOrDefaultAsync()
             ?? throw new BillingInformationNotFoundException(id);
     }
 
@@ -76,6 +81,8 @@ public class BillingRepository : RepositoryBase<GlobalBilling>, IBillingReposito
                 .Include(pb => pb.GlobalBilling)
                 .Include(pb => pb.ProjectPlugin!)
                     .ThenInclude(pp => pp.Project)
+                .Include(pb => pb.ProjectPlugin!)
+                    .ThenInclude(pp => pp.Plugin)
                 .FirstOrDefaultAsync()
             ?? throw new PluginBillingInformationNotFoundException(projectId, pluginId);
     }
