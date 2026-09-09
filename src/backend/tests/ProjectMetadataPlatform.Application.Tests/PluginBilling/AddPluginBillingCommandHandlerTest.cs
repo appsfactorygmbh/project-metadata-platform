@@ -79,7 +79,19 @@ public class AddPluginBillingCommandHandlerTest
 
         // Act
         var result = await _handler.Handle(
-            new AddPluginBillingCommand(1, 1, 1, null, "", 1, 1, 1, TimeFrame.NEVER, null, null),
+            new AddPluginBillingCommand(
+                1,
+                1,
+                1,
+                [],
+                Currencies.EUR,
+                1,
+                1,
+                1,
+                TimeFrame.NEVER,
+                null,
+                null
+            ),
             It.IsAny<CancellationToken>()
         );
 
@@ -136,8 +148,8 @@ public class AddPluginBillingCommandHandlerTest
                     1,
                     1,
                     1,
-                    null,
-                    "",
+                    [],
+                    Currencies.EUR,
                     1,
                     1,
                     1,
@@ -182,7 +194,19 @@ public class AddPluginBillingCommandHandlerTest
         // Act + Assert
         var ex = Assert.ThrowsAsync<PluginBillingDateMissingException>(async () =>
             await _handler.Handle(
-                new AddPluginBillingCommand(1, 1, 1, null, "", 1, 1, 1, TimeFrame.DATE, null, null),
+                new AddPluginBillingCommand(
+                    1,
+                    1,
+                    1,
+                    [],
+                    Currencies.EUR,
+                    1,
+                    1,
+                    1,
+                    TimeFrame.DATE,
+                    null,
+                    null
+                ),
                 It.IsAny<CancellationToken>()
             )
         );
@@ -224,8 +248,8 @@ public class AddPluginBillingCommandHandlerTest
                     1,
                     1,
                     1,
-                    null,
-                    "",
+                    [],
+                    Currencies.USD,
                     1,
                     1,
                     1,
@@ -255,8 +279,8 @@ public class AddPluginBillingCommandHandlerTest
             1,
             1,
             1,
-            null,
-            "",
+              [],
+            Currencies.USD,
             1,
             1,
             1,

@@ -69,8 +69,8 @@ public class PluginBillingControllerTest
                         ProjectId = 1,
                         PluginId = 1,
                         BillingId = 1,
-                        DisplayName = "PluginBilling",
-                        Currency = "",
+                        ContractIds = ["123"],
+                        Currency = Currencies.USD,
                         BudgetLimit = 1,
                         HostingFee = 1,
                         TargetMargin = 0,
@@ -91,7 +91,7 @@ public class PluginBillingControllerTest
         var getPluginBillingResponse = okResult.Value as GetPluginBillingResponse;
         Assert.That(getPluginBillingResponse, Is.Not.Null);
 
-        Assert.That(getPluginBillingResponse.DisplayName, Is.EqualTo("PluginBilling"));
+        Assert.That(getPluginBillingResponse.ContractIds[0], Is.EqualTo("123"));
         Assert.That(getPluginBillingResponse.ProjectId, Is.EqualTo(1));
         Assert.That(getPluginBillingResponse.PluginId, Is.EqualTo(1));
         Assert.That(getPluginBillingResponse.TimeFrame, Is.EqualTo(TimeFrame.NEVER));
@@ -130,8 +130,8 @@ public class PluginBillingControllerTest
                         ProjectId = 1,
                         PluginId = 1,
                         BillingId = 1,
-                        DisplayName = "PluginBilling",
-                        Currency = "",
+                        ContractIds = [],
+                        Currency = Currencies.EUR,
                         BudgetLimit = 1,
                         HostingFee = 1,
                         TargetMargin = 0,
@@ -152,7 +152,7 @@ public class PluginBillingControllerTest
         var getPluginBillingResponse = okResult.Value as GetPluginBillingResponse;
         Assert.That(getPluginBillingResponse, Is.Not.Null);
 
-        Assert.That(getPluginBillingResponse.DisplayName, Is.EqualTo("PluginBilling"));
+        Assert.That(getPluginBillingResponse.ContractIds, Has.Count.EqualTo(0));
         Assert.That(getPluginBillingResponse.ProjectId, Is.EqualTo(1));
         Assert.That(getPluginBillingResponse.PluginId, Is.EqualTo(1));
         Assert.That(getPluginBillingResponse.TimeFrame, Is.EqualTo(TimeFrame.NEVER));
@@ -171,7 +171,17 @@ public class PluginBillingControllerTest
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.AddPluginBilling(
-                new AddPluginBillingRequest(1, null, "", 1, 1, 1, TimeFrame.NEVER, null, null),
+                new AddPluginBillingRequest(
+                    1,
+                    [],
+                    Currencies.EUR,
+                    1,
+                    1,
+                    1,
+                    TimeFrame.NEVER,
+                    null,
+                    null
+                ),
                 1,
                 1
             )
@@ -191,7 +201,17 @@ public class PluginBillingControllerTest
             .ReturnsAsync((1, 1));
 
         var result = await _controller.AddPluginBilling(
-            new AddPluginBillingRequest(1, null, "", 1, 1, 1, TimeFrame.NEVER, null, null),
+            new AddPluginBillingRequest(
+                1,
+                ["123"],
+                Currencies.USD,
+                1,
+                1,
+                1,
+                TimeFrame.NEVER,
+                null,
+                null
+            ),
             1,
             1
         );
@@ -225,7 +245,17 @@ public class PluginBillingControllerTest
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.AddPluginBillingBySlug(
-                new AddPluginBillingRequest(1, null, "", 1, 1, 1, TimeFrame.NEVER, null, null),
+                new AddPluginBillingRequest(
+                    1,
+                    [],
+                    Currencies.EUR,
+                    1,
+                    1,
+                    1,
+                    TimeFrame.NEVER,
+                    null,
+                    null
+                ),
                 "Slug",
                 1
             )
@@ -245,7 +275,17 @@ public class PluginBillingControllerTest
             .ReturnsAsync((1, 1));
 
         var result = await _controller.AddPluginBillingBySlug(
-            new AddPluginBillingRequest(1, null, "", 1, 1, 1, TimeFrame.NEVER, null, null),
+            new AddPluginBillingRequest(
+                1,
+                [],
+                Currencies.USD,
+                1,
+                1,
+                1,
+                TimeFrame.NEVER,
+                null,
+                null
+            ),
             "Slug",
             1
         );
@@ -279,7 +319,16 @@ public class PluginBillingControllerTest
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.UpdatePluginBilling(
-                new UpdatePluginBillingRequest(null, "", 1, 1, 1, TimeFrame.NEVER, null, null),
+                new UpdatePluginBillingRequest(
+                    [],
+                    Currencies.USD,
+                    1,
+                    1,
+                    1,
+                    TimeFrame.NEVER,
+                    null,
+                    null
+                ),
                 1,
                 1
             )
@@ -299,21 +348,30 @@ public class PluginBillingControllerTest
             .ReturnsAsync(
                 new Domain.Billing.PluginBilling
                 {
-                    Currency = "",
+                    Currency = Currencies.USD,
                     BudgetLimit = 1,
                     HostingFee = 1,
                     TargetMargin = 0,
                     TimeFrame = TimeFrame.NEVER,
                     BillingId = 1,
                     Date = null,
-                    DisplayName = "PluginBilling",
+                    ContractIds = [],
                     PluginId = 1,
                     ProjectId = 1,
                     Notes = null,
                 }
             );
         var result = await _controller.UpdatePluginBilling(
-            new UpdatePluginBillingRequest(null, "", 1, 1, 1, TimeFrame.NEVER, null, null),
+            new UpdatePluginBillingRequest(
+                [],
+                Currencies.USD,
+                1,
+                1,
+                1,
+                TimeFrame.NEVER,
+                null,
+                null
+            ),
             1,
             1
         );
@@ -328,7 +386,7 @@ public class PluginBillingControllerTest
         Assert.Multiple(() =>
         {
             Assert.That(updatePluginBillingResponse, Is.Not.Null);
-            Assert.That(updatePluginBillingResponse!.DisplayName, Is.EqualTo("PluginBilling"));
+            Assert.That(updatePluginBillingResponse!.ContractIds, Has.Count.EqualTo(0));
             Assert.That(updatePluginBillingResponse.ProjectId, Is.EqualTo(1));
             Assert.That(updatePluginBillingResponse.PluginId, Is.EqualTo(1));
             Assert.That(updatePluginBillingResponse.TimeFrame, Is.EqualTo(TimeFrame.NEVER));
@@ -348,7 +406,16 @@ public class PluginBillingControllerTest
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.UpdatePluginBillingBySlug(
-                new UpdatePluginBillingRequest(null, "", 1, 1, 1, TimeFrame.NEVER, null, null),
+                new UpdatePluginBillingRequest(
+                    [],
+                    Currencies.USD,
+                    1,
+                    1,
+                    1,
+                    TimeFrame.NEVER,
+                    null,
+                    null
+                ),
                 "Slug",
                 1
             )
@@ -368,21 +435,30 @@ public class PluginBillingControllerTest
             .ReturnsAsync(
                 new Domain.Billing.PluginBilling
                 {
-                    Currency = "",
+                    Currency = Currencies.EUR,
                     BudgetLimit = 1,
                     HostingFee = 1,
                     TargetMargin = 0,
                     TimeFrame = TimeFrame.NEVER,
                     BillingId = 1,
                     Date = null,
-                    DisplayName = "PluginBilling",
+                    ContractIds = [],
                     PluginId = 1,
                     ProjectId = 1,
                     Notes = null,
                 }
             );
         var result = await _controller.UpdatePluginBillingBySlug(
-            new UpdatePluginBillingRequest(null, "", 1, 1, 1, TimeFrame.NEVER, null, null),
+            new UpdatePluginBillingRequest(
+                [],
+                Currencies.USD,
+                1,
+                1,
+                1,
+                TimeFrame.NEVER,
+                null,
+                null
+            ),
             "Slug",
             1
         );
@@ -397,7 +473,7 @@ public class PluginBillingControllerTest
         Assert.Multiple(() =>
         {
             Assert.That(updatePluginBillingResponse, Is.Not.Null);
-            Assert.That(updatePluginBillingResponse!.DisplayName, Is.EqualTo("PluginBilling"));
+            Assert.That(updatePluginBillingResponse!.ContractIds, Has.Count.EqualTo(0));
             Assert.That(updatePluginBillingResponse.ProjectId, Is.EqualTo(1));
             Assert.That(updatePluginBillingResponse.PluginId, Is.EqualTo(1));
             Assert.That(updatePluginBillingResponse.TimeFrame, Is.EqualTo(TimeFrame.NEVER));

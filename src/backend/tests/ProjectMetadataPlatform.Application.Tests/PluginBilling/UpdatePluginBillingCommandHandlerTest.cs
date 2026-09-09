@@ -6,9 +6,11 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.PluginBilling;
 using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Billing;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BillingExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 
 namespace ProjectMetadataPlatform.Application.Tests.PluginBilling;
@@ -45,7 +47,8 @@ public class UpdatePluginBillingCommandHandlerTest
         {
             PluginId = 1,
             ProjectId = 1,
-            Currency = "",
+            ContractIds = ["a"],
+            Currency = Currencies.USD,
             BudgetLimit = 1,
             HostingFee = 1,
             TargetMargin = 0,
@@ -70,11 +73,11 @@ public class UpdatePluginBillingCommandHandlerTest
             new UpdatePluginBillingCommand(
                 1,
                 1,
-                "A",
-                "",
+                [],
+                Currencies.USD,
                 1,
                 1,
-                1,
+                0,
                 Domain.Billing.TimeFrame.NEVER,
                 null,
                 null
@@ -104,10 +107,11 @@ public class UpdatePluginBillingCommandHandlerTest
                     It.IsAny<Project>(),
                     Action.UPDATED_PROJECT_PLUGIN_BILLING,
                     It.Is<List<LogChange>>(changes =>
-                        changes[0].Property == "DisplayName"
-                        && changes[0].NewValue == "A"
-                        && changes[0].OldValue == "null"
-                    )
+                        changes[0].Property == "ContractIds"
+                        && changes[0].NewValue == "[]"
+                        && changes[0].OldValue == "[a]"
+                    ),
+                    It.IsAny<ProjectPlugin?>()
                 ),
             Times.Once
         );
@@ -121,7 +125,8 @@ public class UpdatePluginBillingCommandHandlerTest
         {
             PluginId = 1,
             ProjectId = 1,
-            Currency = "",
+            ContractIds = [],
+            Currency = Currencies.USD,
             BudgetLimit = 1,
             HostingFee = 1,
             TargetMargin = 0,
@@ -145,8 +150,8 @@ public class UpdatePluginBillingCommandHandlerTest
             new UpdatePluginBillingCommand(
                 1,
                 1,
-                null,
-                "",
+                [],
+                Currencies.USD,
                 1,
                 1,
                 0,
@@ -176,7 +181,8 @@ public class UpdatePluginBillingCommandHandlerTest
         {
             PluginId = 1,
             ProjectId = 1,
-            Currency = "",
+            ContractIds = [],
+            Currency = Currencies.USD,
             BudgetLimit = 1,
             HostingFee = 1,
             TargetMargin = 0,
@@ -198,8 +204,8 @@ public class UpdatePluginBillingCommandHandlerTest
         var request = new UpdatePluginBillingCommand(
             1,
             1,
-            null,
-            "",
+            [],
+            Currencies.USD,
             1,
             1,
             1,
@@ -220,7 +226,8 @@ public class UpdatePluginBillingCommandHandlerTest
         {
             PluginId = 1,
             ProjectId = 1,
-            Currency = "",
+            ContractIds = [],
+            Currency = Currencies.USD,
             BudgetLimit = 1,
             HostingFee = 1,
             TargetMargin = 0,
@@ -242,8 +249,8 @@ public class UpdatePluginBillingCommandHandlerTest
         var request = new UpdatePluginBillingCommand(
             1,
             1,
-            null,
-            "",
+            [],
+            Currencies.EUR,
             1,
             1,
             1,
@@ -264,7 +271,8 @@ public class UpdatePluginBillingCommandHandlerTest
         {
             PluginId = 1,
             ProjectId = 1,
-            Currency = "",
+            ContractIds = [],
+            Currency = Currencies.USD,
             BudgetLimit = 1,
             HostingFee = 1,
             TargetMargin = 0,
@@ -286,8 +294,8 @@ public class UpdatePluginBillingCommandHandlerTest
         var request = new UpdatePluginBillingCommand(
             1,
             1,
-            null,
-            "",
+            [],
+            Currencies.EUR,
             1,
             1,
             1,

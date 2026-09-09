@@ -1,9 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Azure;
-using Microsoft.Identity.Client.Extensibility;
 using NUnit.Framework;
 using ProjectMetadataPlatform.IntegrationTests.Utilities;
 

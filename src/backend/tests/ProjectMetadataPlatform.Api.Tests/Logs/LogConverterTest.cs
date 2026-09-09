@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Logs;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Billing;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Departments;
@@ -253,6 +254,147 @@ public class LogConverterTest
                 logResponse.LogMessage,
                 Is.EqualTo(
                     "Prostetnic Vogon Jeltz removed a plugin from project Solarsystem with properties: Earth = intact"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToRemovedProjectPluginWithBillingLog_Test()
+    {
+        var log = new Log
+        {
+            Id = 45,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = null,
+            AuthorName = "Prostetnic Vogon Jeltz",
+            Author = null,
+            AuthorToken = new ApiToken { Name = "Prostetnic Vogon Jeltz", Token = "Another Token" },
+            AuthorTokenId = 3,
+            ProjectId = 47,
+            Project = new Project
+            {
+                ProjectName = "Solarsystem",
+                Slug = "solarsystem",
+                ClientName = "Mice",
+                CompanyId = 1,
+            },
+            ProjectName = "Solarsystem",
+            Action = Action.REMOVED_PROJECT_PLUGIN_WITH_BILLING,
+            Changes =
+            [
+                new LogChange
+                {
+                    Property = "Earth",
+                    OldValue = "intact",
+                    NewValue = "",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Prostetnic Vogon Jeltz removed a plugin with its billing information from project Solarsystem with properties: Earth = intact"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToDeletedProjectPluginLog_Test()
+    {
+        var log = new Log
+        {
+            Id = 45,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = null,
+            AuthorName = "Prostetnic Vogon Jeltz",
+            Author = null,
+            AuthorToken = new ApiToken { Name = "Prostetnic Vogon Jeltz", Token = "Another Token" },
+            AuthorTokenId = 3,
+            ProjectId = 47,
+            Project = new Project
+            {
+                ProjectName = "Solarsystem",
+                Slug = "solarsystem",
+                ClientName = "Mice",
+                CompanyId = 1,
+            },
+            ProjectName = "Solarsystem",
+            Action = Action.DELETED_PROJECT_PLUGIN,
+            Changes =
+            [
+                new LogChange
+                {
+                    Property = "Earth",
+                    OldValue = "intact",
+                    NewValue = "",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Prostetnic Vogon Jeltz deleted the plugin with properties: Earth = intact by deleting the project Solarsystem"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToDeletedProjectPluginWithBillingLog_Test()
+    {
+        var log = new Log
+        {
+            Id = 45,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = null,
+            AuthorName = "Prostetnic Vogon Jeltz",
+            Author = null,
+            AuthorToken = new ApiToken { Name = "Prostetnic Vogon Jeltz", Token = "Another Token" },
+            AuthorTokenId = 3,
+            ProjectId = 47,
+            Project = new Project
+            {
+                ProjectName = "Solarsystem",
+                Slug = "solarsystem",
+                ClientName = "Mice",
+                CompanyId = 1,
+            },
+            ProjectName = "Solarsystem",
+            Action = Action.DELETED_PROJECT_PLUGIN_WITH_BILLING,
+            Changes =
+            [
+                new LogChange
+                {
+                    Property = "Earth",
+                    OldValue = "intact",
+                    NewValue = "",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Prostetnic Vogon Jeltz deleted the plugin with its billing information with properties: Earth = intact by deleting the project Solarsystem"
                 )
             );
             Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
@@ -1499,6 +1641,294 @@ public class LogConverterTest
             Assert.That(
                 logResponse.LogMessage,
                 Is.EqualTo("Recursively removed company New_Company_Name")
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogAddedBilling_Test()
+    {
+        var createdBilling = new GlobalBilling() { BillingKind = "root" };
+
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "helloworld",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.ADDED_GLOBAL_BILLING,
+            GlobalBillingKind = "root",
+            Changes =
+            [
+                new()
+                {
+                    Property = "BillingKind",
+                    OldValue = "",
+                    NewValue = "root",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Recursively added new global billing information with properties: BillingKind = root"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogUpdatedBilling_Test()
+    {
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "id",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.UPDATED_GLOBAL_BILLING,
+            GlobalBillingKind = "root",
+            Changes =
+            [
+                new()
+                {
+                    Property = "BillingKind",
+                    OldValue = "root",
+                    NewValue = "New_Billing_Kind",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Recursively updated global billing information root: set BillingKind from root to New_Billing_Kind"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogDeletedBilling_Test()
+    {
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.REMOVED_GLOBAL_BILLING,
+            GlobalBillingKind = "New_Billing_Kind",
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo("Recursively removed global billing information New_Billing_Kind")
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogAddedPluginBilling_Test()
+    {
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "helloworld",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.ADDED_PROJECT_PLUGIN_BILLING,
+            Changes =
+            [
+                new()
+                {
+                    Property = "PluginBillingName",
+                    OldValue = "",
+                    NewValue = "root",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Recursively added new billing information to project <Unknown Project> with properties: PluginBillingName = root"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogUpdatedPluginBilling_Test()
+    {
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "id",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.UPDATED_PROJECT_PLUGIN_BILLING,
+            PluginName = "root",
+            Changes =
+            [
+                new()
+                {
+                    Property = "TargetMargin",
+                    OldValue = "0",
+                    NewValue = "2",
+                },
+            ],
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Recursively updated billing information from plugin root in project <Unknown Project>: set TargetMargin from 0 to 2"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogDeletedPluginBilling_Test()
+    {
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            ProjectName = "Project",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            Action = Action.REMOVED_PROJECT_PLUGIN_BILLING,
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Recursively removed billing information from plugin <Unknown Plugin> from project Project"
+                )
+            );
+            Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
+        });
+    }
+
+    [Test]
+    public void ConvertToLogDeletedPluginBillingByGlobalBilling_Test()
+    {
+        var log = new Log
+        {
+            Id = 42,
+            TimeStamp = new DateTimeOffset(new DateTime(1970, 1, 1), TimeSpan.FromHours(1)),
+            AuthorId = "42",
+            AuthorName = "Recursively",
+            Author = new ApplicationUser
+            {
+                EmployeeId = "",
+                Email = "Recursively",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            AuthorTokenId = null,
+            AuthorToken = null,
+            GlobalBillingKind = "Billing",
+            PluginName = "Plugin",
+            Action = Action.REMOVED_PROJECT_PLUGIN_BILLING,
+        };
+
+        var logResponse = _logConverter.BuildLogMessage(log);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                logResponse.LogMessage,
+                Is.EqualTo(
+                    "Recursively removed billing information from plugin Plugin from project <Unknown Project> by deleting global billing information Billing"
+                )
             );
             Assert.That(logResponse.Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
         });

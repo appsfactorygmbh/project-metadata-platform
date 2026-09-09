@@ -65,7 +65,7 @@ public class UpdateBillingCommandHandlerTest
 
         // Act
         var result = await _handler.Handle(
-            new UpdateBillingCommand(1, BillingKind: "Test_2", null, null, null, null, null),
+            new UpdateBillingCommand(1, BillingKind: "Test_2", null, null, null),
             It.IsAny<CancellationToken>()
         );
 
@@ -128,7 +128,7 @@ public class UpdateBillingCommandHandlerTest
 
         // Act
         _ = await _handler.Handle(
-            new UpdateBillingCommand(1, BillingKind: "Test_1", null, null, null, null, null),
+            new UpdateBillingCommand(1, BillingKind: "Test_1", null, null, null),
             It.IsAny<CancellationToken>()
         );
 
@@ -173,7 +173,7 @@ public class UpdateBillingCommandHandlerTest
         // Act + Assert
         var ex = Assert.ThrowsAsync<BillingKindAlreadyExistsException>(async () =>
             await _handler.Handle(
-                new UpdateBillingCommand(1, BillingKind: "Test_2", null, null, null, null, null),
+                new UpdateBillingCommand(1, BillingKind: "Test_2", null, null, null),
                 It.IsAny<CancellationToken>()
             )
         );
@@ -201,9 +201,7 @@ public class UpdateBillingCommandHandlerTest
         var request = new UpdateBillingCommand(
             1,
             BillingKind: "Test_2",
-            "null",
-            1,
-            1,
+            Currencies.EUR,
             1,
             TimeFrame.YEARLY
         );

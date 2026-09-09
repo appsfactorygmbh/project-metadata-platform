@@ -10,7 +10,6 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Auth.Models;

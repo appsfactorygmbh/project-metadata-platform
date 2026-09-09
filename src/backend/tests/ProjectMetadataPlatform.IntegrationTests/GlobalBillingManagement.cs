@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Azure;
 using NUnit.Framework;
 using ProjectMetadataPlatform.IntegrationTests.Utilities;
 
@@ -11,7 +10,7 @@ namespace ProjectMetadataPlatform.IntegrationTests;
 public class GlobalBillingManagement : IntegrationTestsBase
 {
     private static readonly StringContent CreateRequest = StringContent(
-        """{ "billingKind": "gitLab", "currency": "de-de", "budgetLimit": 500, "hostingFee": 300, "targetMargin": 30, "timeFrame": "NEVER" }"""
+        """{ "billingKind": "gitLab", "currency": "EUR", "targetMargin": 30, "timeFrame": "NEVER" }"""
     );
     private static readonly StringContent CreateRequest2 = StringContent(
         """{ "billingKind": "devOps" }"""
@@ -44,9 +43,8 @@ public class GlobalBillingManagement : IntegrationTestsBase
             Assert.That(billing.GetArrayLength(), Is.EqualTo(2));
             Assert.That(billing[0].GetProperty("id").GetInt32(), Is.EqualTo(billingId1));
             Assert.That(billing[0].GetProperty("billingKind").GetString(), Is.EqualTo("gitLab"));
-            Assert.That(billing[0].GetProperty("currency").GetString(), Is.EqualTo("de-de"));
-            Assert.That(billing[0].GetProperty("budgetLimit").GetDecimal(), Is.EqualTo(500));
-            Assert.That(billing[0].GetProperty("hostingFee").GetDecimal(), Is.EqualTo(300));
+            Assert.That(billing[0].GetProperty("currency").GetString(), Is.EqualTo("EUR"));
+
             Assert.That(billing[0].GetProperty("targetMargin").GetInt32(), Is.EqualTo(30));
             Assert.That(billing[0].GetProperty("timeFrame").GetString(), Is.EqualTo("NEVER"));
 
@@ -62,7 +60,7 @@ public class GlobalBillingManagement : IntegrationTestsBase
             Assert.That(
                 logs[1].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin added new global billing information with properties: BillingKind = gitLab, Currency = de-de, BudgetLimit = 500, HostingFee = 300, TargetMargin = 30, TimeFrame = NEVER"
+                    "admin added new global billing information with properties: BillingKind = gitLab, Currency = EUR, TargetMargin = 30, TimeFrame = NEVER"
                 )
             );
             Assert.That(
@@ -115,13 +113,13 @@ public class GlobalBillingManagement : IntegrationTestsBase
             Assert.That(
                 logs[1].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin added new global billing information with properties: BillingKind = gitLab, Currency = de-de, BudgetLimit = 500, HostingFee = 300, TargetMargin = 30, TimeFrame = NEVER"
+                    "admin added new global billing information with properties: BillingKind = gitLab, Currency = EUR, TargetMargin = 30, TimeFrame = NEVER"
                 )
             );
             Assert.That(
                 logs[0].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin updated global billing information devOps: set BillingKind from gitLab to devOps, set Currency from de-de to null, set BudgetLimit from 500 to null, set HostingFee from 300 to null, set TargetMargin from 30 to null, set TimeFrame from NEVER to null"
+                    "admin updated global billing information devOps: set BillingKind from gitLab to devOps, set Currency from EUR to null, set TargetMargin from 30 to null, set TimeFrame from NEVER to null"
                 )
             );
         });
@@ -154,7 +152,7 @@ public class GlobalBillingManagement : IntegrationTestsBase
             Assert.That(
                 logs[1].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin added new global billing information with properties: BillingKind = gitLab, Currency = de-de, BudgetLimit = 500, HostingFee = 300, TargetMargin = 30, TimeFrame = NEVER"
+                    "admin added new global billing information with properties: BillingKind = gitLab, Currency = EUR, TargetMargin = 30, TimeFrame = NEVER"
                 )
             );
             Assert.That(

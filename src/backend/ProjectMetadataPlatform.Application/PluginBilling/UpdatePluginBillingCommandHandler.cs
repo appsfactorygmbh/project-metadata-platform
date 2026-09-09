@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -79,8 +80,8 @@ public class UpdatePluginBillingCommandHandler
             changes.Add(
                 new()
                 {
-                    OldValue = "[ " + string.Join("", billing.ContractIds) + " ]",
-                    NewValue = "[ " + string.Join("", request.ContractIds) + " ]",
+                    OldValue = "[" + string.Join(", ", billing.ContractIds) + "]",
+                    NewValue = "[" + string.Join(", ", request.ContractIds) + "]",
                     Property = nameof(Domain.Billing.PluginBilling.ContractIds),
                 }
             );
@@ -174,11 +175,12 @@ public class UpdatePluginBillingCommandHandler
         {
             await _logRepository.AddProjectLogForCurrentActor(
                 billing.ProjectPlugin?.Project!,
-                Action.UPDATED_PROJECT_PLUGIN_BILLING,
+                Domain.Logs.Action.UPDATED_PROJECT_PLUGIN_BILLING,
                 changes,
                 billing.ProjectPlugin
             );
         }
+
         await _billingRepository.UpdatePluginBilling(billing);
         await _unitOfWork.CompleteAsync();
         return billing;

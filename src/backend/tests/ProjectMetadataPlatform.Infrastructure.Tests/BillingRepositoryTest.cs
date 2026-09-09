@@ -119,8 +119,9 @@ public class BillingRepositoryTest : TestsWithDatabase
             ProjectId = 1,
             PluginId = 1,
             BillingId = billing.Id,
-            DisplayName = "Name",
-            Currency = "",
+            ContractIds = ["Contract"],
+            Currency = Currencies.USD,
+
             BudgetLimit = 0,
             HostingFee = 0,
             TargetMargin = 0,
@@ -129,7 +130,7 @@ public class BillingRepositoryTest : TestsWithDatabase
         await _billingRepository.AddPluginBilling(pluginBilling);
         await _context.SaveChangesAsync();
         var result = _context.PluginBillingRelation.First();
-        Assert.That(result.DisplayName, Is.EqualTo(pluginBilling.DisplayName));
+        Assert.That(result.ContractIds, Is.EqualTo(pluginBilling.ContractIds));
     }
 
     [Test]
@@ -145,8 +146,8 @@ public class BillingRepositoryTest : TestsWithDatabase
             ProjectId = 1,
             PluginId = 1,
             BillingId = billing.Id,
-            DisplayName = "Name",
-            Currency = "",
+            ContractIds = ["Contract"],
+            Currency = Currencies.USD,
             BudgetLimit = 0,
             HostingFee = 0,
             TargetMargin = 0,
@@ -155,11 +156,11 @@ public class BillingRepositoryTest : TestsWithDatabase
         await _context.PluginBillingRelation.AddAsync(pluginBilling);
         await _context.SaveChangesAsync();
         Assert.That(_context.PluginBillingRelation.Any(), Is.True);
-        pluginBilling.DisplayName = "Other Name";
+        pluginBilling.ContractIds = ["Other Contract"];
         await _billingRepository.UpdatePluginBilling(pluginBilling);
         await _context.SaveChangesAsync();
         var result = _context.PluginBillingRelation.First();
-        Assert.That(result.DisplayName, Is.EqualTo(pluginBilling.DisplayName));
+        Assert.That(result.ContractIds, Is.EqualTo(pluginBilling.ContractIds));
     }
 
     [Test]
@@ -217,8 +218,8 @@ public class BillingRepositoryTest : TestsWithDatabase
             ProjectId = 1,
             PluginId = 1,
             BillingId = billing.Id,
-            DisplayName = "Name",
-            Currency = "",
+            ContractIds = ["Contract"],
+            Currency = Currencies.USD,
             BudgetLimit = 0,
             HostingFee = 0,
             TargetMargin = 0,
@@ -279,8 +280,8 @@ public class BillingRepositoryTest : TestsWithDatabase
             ProjectId = 1,
             PluginId = 1,
             BillingId = billing.Id,
-            DisplayName = "Name",
-            Currency = "",
+            ContractIds = ["Contract"],
+            Currency = Currencies.USD,
             BudgetLimit = 0,
             HostingFee = 0,
             TargetMargin = 0,
@@ -308,8 +309,8 @@ public class BillingRepositoryTest : TestsWithDatabase
             ProjectId = 1,
             PluginId = 1,
             BillingId = billing.Id,
-            DisplayName = "Name",
-            Currency = "",
+            ContractIds = ["Contract"],
+            Currency = Currencies.USD,
             BudgetLimit = 0,
             HostingFee = 0,
             TargetMargin = 0,
@@ -335,8 +336,8 @@ public class BillingRepositoryTest : TestsWithDatabase
             ProjectId = 1,
             PluginId = 1,
             BillingId = billing.Id,
-            DisplayName = "Name",
-            Currency = "",
+            ContractIds = ["Contract"],
+            Currency = Currencies.USD,
             BudgetLimit = 0,
             HostingFee = 0,
             TargetMargin = 0,

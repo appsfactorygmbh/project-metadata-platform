@@ -141,7 +141,7 @@ public class AddPluginBillingCommandHandler : IRequestHandler<AddPluginBillingCo
             new()
             {
                 OldValue = "",
-                NewValue = "[ " + string.Join("", billing.ContractIds) + " ]",
+                NewValue = "[" + string.Join(", ", billing.ContractIds) + "]",
                 Property = nameof(Domain.Billing.PluginBilling.ContractIds),
             },
             new()

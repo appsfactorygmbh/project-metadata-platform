@@ -1,9 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Azure;
-using Microsoft.Identity.Client.Extensibility;
 using NUnit.Framework;
 using ProjectMetadataPlatform.IntegrationTests.Utilities;
 
@@ -18,28 +15,28 @@ public class PluginBillingManagement : IntegrationTestsBase
 
     private static StringContent CreateRequest(int billingId) =>
         StringContent(
-            """{ "displayName": "gitLab", "currency": "de-de", "budgetLimit": 500, "hostingFee": 300, "targetMargin": 30, "timeFrame": "NEVER", "billingId": """
+            """{ "contractIds": ["Contract1","Contract2"], "currency": "EUR", "budgetLimit": 500, "hostingFee": 300, "targetMargin": 30, "timeFrame": "NEVER", "billingId": """
                 + billingId.ToString()
                 + """  }"""
         );
 
     private static StringContent CreateRequest2(int billingId) =>
         StringContent(
-            """{ "displayName": "devOps", "currency": "de-at", "budgetLimit": 501, "hostingFee": 301, "targetMargin": 0, "timeFrame": "DATE", "date": "2012-04-21T18:25:43-00:00", "billingId": """
+            """{ "contractIds": [], "currency": "USD", "budgetLimit": 501, "hostingFee": 301, "targetMargin": 0, "timeFrame": "DATE", "date": "2012-04-21T18:25:43-00:00", "billingId": """
                 + billingId.ToString()
                 + """  }"""
         );
 
     private static StringContent InvalidRequest1(int billingId) =>
         StringContent(
-            """{ "displayName": "devOps", "currency": "de-at", "budgetLimit": 501, "hostingFee": 301, "targetMargin": 0, "timeFrame": "DATE", "billingId": """
+            """{ "contractIds": [], "currency": "USD", "budgetLimit": 501, "hostingFee": 301, "targetMargin": 0, "timeFrame": "DATE", "billingId": """
                 + billingId.ToString()
                 + """  }"""
         );
 
     private static StringContent InvalidRequest2(int billingId) =>
         StringContent(
-            """{ "displayName": "gitLab", "currency": "de-de", "budgetLimit": 500, "hostingFee": 300, "targetMargin": 30, "timeFrame": "NEVER", "notes": " """
+            """{ "contractIds": [], "currency": "EUR", "budgetLimit": 500, "hostingFee": 300, "targetMargin": 30, "timeFrame": "NEVER", "notes": " """
                 + new string('a', 291)
                 + """ ", "billingId": """
                 + billingId.ToString()
@@ -80,8 +77,10 @@ public class PluginBillingManagement : IntegrationTestsBase
 
         Assert.Multiple(() =>
         {
-            Assert.That(billing.GetProperty("displayName").GetString(), Is.EqualTo("gitLab"));
-            Assert.That(billing.GetProperty("currency").GetString(), Is.EqualTo("de-de"));
+            Assert.That(billing.GetProperty("contractIds").GetArrayLength(), Is.EqualTo(2));
+            Assert.That(billing.GetProperty("contractIds")[0].GetString(), Is.EqualTo("Contract1"));
+            Assert.That(billing.GetProperty("contractIds")[1].GetString(), Is.EqualTo("Contract2"));
+            Assert.That(billing.GetProperty("currency").GetString(), Is.EqualTo("EUR"));
             Assert.That(billing.GetProperty("budgetLimit").GetDecimal(), Is.EqualTo(500));
             Assert.That(billing.GetProperty("hostingFee").GetDecimal(), Is.EqualTo(300));
             Assert.That(billing.GetProperty("targetMargin").GetInt32(), Is.EqualTo(30));
@@ -97,7 +96,7 @@ public class PluginBillingManagement : IntegrationTestsBase
             Assert.That(
                 logs[0].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin added new billing information to project testProject with properties: ProjectPlugin = Plugin, DisplayName = gitLab, GlobalBilling = devOps, BudgetLimit = 500, HostingFee = 300, Currency = de-de, TargetMargin = 30, TimeFrame = NEVER, Notes = null"
+                    "admin added new billing information to project testProject with properties: ProjectPlugin = Plugin, GlobalBilling = devOps, ContractIds = [Contract1, Contract2], BudgetLimit = 500, HostingFee = 300, Currency = EUR, TargetMargin = 30, TimeFrame = NEVER, Notes = null"
                 )
             );
         });
@@ -131,12 +130,12 @@ public class PluginBillingManagement : IntegrationTestsBase
             Assert.Multiple(() =>
             {
                 Assert.That(
-                    updatedPluginBilling.GetProperty("displayName").GetString(),
-                    Is.EqualTo("devOps")
+                    updatedPluginBilling.GetProperty("contractIds").GetArrayLength(),
+                    Is.EqualTo(0)
                 );
                 Assert.That(
                     updatedPluginBilling.GetProperty("currency").GetString(),
-                    Is.EqualTo("de-at")
+                    Is.EqualTo("USD")
                 );
                 Assert.That(
                     updatedPluginBilling.GetProperty("budgetLimit").GetDecimal(),
@@ -169,12 +168,12 @@ public class PluginBillingManagement : IntegrationTestsBase
         Assert.Multiple(() =>
         {
             Assert.That(
-                updatedPluginBilling.GetProperty("displayName").GetString(),
-                Is.EqualTo("devOps")
+                updatedPluginBilling.GetProperty("contractIds").GetArrayLength(),
+                Is.EqualTo(0)
             );
             Assert.That(
                 updatedPluginBilling.GetProperty("currency").GetString(),
-                Is.EqualTo("de-at")
+                Is.EqualTo("USD")
             );
             Assert.That(
                 updatedPluginBilling.GetProperty("budgetLimit").GetDecimal(),
@@ -202,13 +201,13 @@ public class PluginBillingManagement : IntegrationTestsBase
             Assert.That(
                 logs[1].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin added new billing information to project testProject with properties: ProjectPlugin = Plugin, DisplayName = gitLab, GlobalBilling = devOps, BudgetLimit = 500, HostingFee = 300, Currency = de-de, TargetMargin = 30, TimeFrame = NEVER, Notes = null"
+                    "admin added new billing information to project testProject with properties: ProjectPlugin = Plugin, GlobalBilling = devOps, ContractIds = [Contract1, Contract2], BudgetLimit = 500, HostingFee = 300, Currency = EUR, TargetMargin = 30, TimeFrame = NEVER, Notes = null"
                 )
             );
             Assert.That(
                 logs[0].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin updated billing information in project testProject: set DisplayName from gitLab to devOps, set BudgetLimit from 500 to 501, set HostingFee from 300 to 301, set Currency from de-de to de-at, set TargetMargin from 30 to 0, set TimeFrame from NEVER to 21.04.2012 00:00:00"
+                    "admin updated billing information from plugin Plugin in project testProject: set ContractIds from [Contract1, Contract2] to [], set BudgetLimit from 500 to 501, set HostingFee from 300 to 301, set Currency from EUR to USD, set TargetMargin from 30 to 0, set TimeFrame from NEVER to 04/21/2012"
                 )
             );
         });
@@ -247,12 +246,14 @@ public class PluginBillingManagement : IntegrationTestsBase
             Assert.That(
                 logs[1].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin added new billing information to project testProject with properties: ProjectPlugin = Plugin, DisplayName = gitLab, GlobalBilling = devOps, BudgetLimit = 500, HostingFee = 300, Currency = de-de, TargetMargin = 30, TimeFrame = NEVER, Notes = null"
+                    "admin added new billing information to project testProject with properties: ProjectPlugin = Plugin, GlobalBilling = devOps, ContractIds = [Contract1, Contract2], BudgetLimit = 500, HostingFee = 300, Currency = EUR, TargetMargin = 30, TimeFrame = NEVER, Notes = null"
                 )
             );
             Assert.That(
                 logs[0].GetProperty("logMessage").GetString(),
-                Is.EqualTo("admin removed billing information from project testProject")
+                Is.EqualTo(
+                    "admin removed billing information from plugin Plugin from project testProject"
+                )
             );
         });
     }

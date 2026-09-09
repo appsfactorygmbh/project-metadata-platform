@@ -6,6 +6,7 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.PluginBilling;
 using ProjectMetadataPlatform.Domain.Authorization;
+using ProjectMetadataPlatform.Domain.Billing;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
 using ProjectMetadataPlatform.Domain.Projects;
@@ -45,7 +46,8 @@ public class DeletePluginBillingCommandHandlerTest
         {
             PluginId = 1,
             ProjectId = 1,
-            Currency = "",
+            ContractIds= ["a"],
+            Currency = Currencies.USD,
             BudgetLimit = 1,
             HostingFee = 1,
             TargetMargin = 0,

@@ -72,7 +72,12 @@ public class CreateBillingCommandHandlerTest
 
         // Act
         var result = await _handler.Handle(
-            new CreateBillingCommand(BillingKind: "Test Name", "", 1, 1, 1, TimeFrame.MONTHLY),
+            new CreateBillingCommand(
+                BillingKind: "Test Name",
+                Currencies.EUR,
+                1,
+                TimeFrame.MONTHLY
+            ),
             It.IsAny<CancellationToken>()
         );
 
@@ -115,7 +120,7 @@ public class CreateBillingCommandHandlerTest
         // Act + Assert
         var ex = Assert.ThrowsAsync<BillingKindAlreadyExistsException>(async () =>
             await _handler.Handle(
-                new CreateBillingCommand(BillingKind: "Test Name", null, null, null, null, null),
+                new CreateBillingCommand(BillingKind: "Test Name", null, null, null),
                 It.IsAny<CancellationToken>()
             )
         );
@@ -138,8 +143,7 @@ public class CreateBillingCommandHandlerTest
 
         var request = new CreateBillingCommand(
             BillingKind: "Test Name",
-            null,
-            null,
+
             null,
             null,
             null

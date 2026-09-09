@@ -321,7 +321,7 @@ public class LogConverter : ILogConverter
         var message = "";
 
         message +=
-            "removed a plugin "
+            "removed a plugin"
             + (hadBilling ? " with its billing information" : "")
             + " from project "
             + (projectName ?? "<Unknown Project>");

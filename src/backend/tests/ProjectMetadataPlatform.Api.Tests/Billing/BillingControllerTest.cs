@@ -157,7 +157,7 @@ public class BillingControllerTest
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() =>
-            _controller.Put(new CreateBillingRequest("a", null, null, null, null, null))
+            _controller.Put(new CreateBillingRequest("a",   null, null, null))
         );
     }
 
@@ -165,7 +165,7 @@ public class BillingControllerTest
     public async Task PutBilling_WhiteSpaceKind_BadRequestTest()
     {
         var result = await _controller.Put(
-            new CreateBillingRequest("", null, null, null, null, null)
+            new CreateBillingRequest("", null, null, null)
         );
         Assert.That(result.Result, Is.InstanceOf<BadRequestObjectResult>());
     }
@@ -182,7 +182,7 @@ public class BillingControllerTest
             )
             .ReturnsAsync(1);
 
-        var request = new CreateBillingRequest("Billing", null, null, null, null, null);
+        var request = new CreateBillingRequest("Billing", null, null, null);
         var result = await _controller.Put(request);
         Assert.That(result.Result, Is.InstanceOf<CreatedResult>());
 
@@ -212,7 +212,7 @@ public class BillingControllerTest
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
         _ = Assert.ThrowsAsync<InvalidDataException>(() =>
-            _controller.Update(1, new UpdateBillingRequest("Billing", null, null, null, null, null))
+            _controller.Update(1, new UpdateBillingRequest("Billing", null, null, null))
         );
     }
 
@@ -221,7 +221,7 @@ public class BillingControllerTest
     {
         var result = await _controller.Update(
             1,
-            new UpdateBillingRequest("", null, null, null, null, null)
+            new UpdateBillingRequest("", null, null, null)
         );
         Assert.That(result.Result, Is.InstanceOf<BadRequestObjectResult>());
     }
@@ -239,7 +239,7 @@ public class BillingControllerTest
             .ReturnsAsync(new GlobalBilling { BillingKind = "Billing", Id = 1 });
         var result = await _controller.Update(
             1,
-            new UpdateBillingRequest("Billing", null, null, null, null, null)
+            new UpdateBillingRequest("Billing",  null, null, null)
         );
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 

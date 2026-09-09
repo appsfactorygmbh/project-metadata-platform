@@ -85,8 +85,8 @@ public class UpdateBillingCommandHandler : IRequestHandler<UpdateBillingCommand,
                 new LogChange
                 {
                     Property = nameof(GlobalBilling.Currency),
-                    OldValue = billing.Currency.ToString() ?? "null",
-                    NewValue = request.Currency.ToString() ?? "null",
+                    OldValue = billing.Currency?.ToString() ?? "null",
+                    NewValue = request.Currency?.ToString() ?? "null",
                 }
             );
             billing.Currency = request.Currency;
@@ -128,7 +128,6 @@ public class UpdateBillingCommandHandler : IRequestHandler<UpdateBillingCommand,
             );
         }
         await _unitOfWork.CompleteAsync();
-
         return updatedBilling;
     }
 
