@@ -39,7 +39,7 @@
 
 <template>
   <FormModal
-    title="Create GlobalBilling"
+    title="Create Global Billing Information"
     :form-store="formStore"
     :disabled="
       !globalBillingStore.getPermissions.includes(ResourceActions.Create)
