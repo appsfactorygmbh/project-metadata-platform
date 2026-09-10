@@ -68,7 +68,7 @@
     "@vitejs/plugin-vue": "^6.0.8",
     "@vitejs/plugin-vue-jsx": "^5.1.6",
     "@vitest/coverage-v8": "^4.1.11",
-    "@vitest/ui": "^4.1.11",
+    "@vitest/ui": "^5.0.0",
     "@vue/cli-plugin-typescript": "^5.0.9",
     "@vue/test-utils": "^2.5.0",
     "@vue/tsconfig": "^0.9.1",
