@@ -82,20 +82,18 @@ vi.mock('@azure/msal-browser', async (importOriginal) => {
   };
 });
 
-beforeAll(() => {
-  vi.mock('@/store/ApiStore', async (importOriginal) => ({
-    ...(await importOriginal<typeof import('@/store/ApiStore')>()),
-    useApiStore: vi.fn(() => {
-      return defineGenericStore({
-        actions: {
-          callApi: vi.fn().mockResolvedValue([]),
-          initApi: vi.fn(),
-          setPermissions: vi.fn(),
-        },
-      });
-    }),
-  }));
-});
+vi.mock('@/store/ApiStore', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/store/ApiStore')>()),
+  useApiStore: vi.fn(() => {
+    return defineGenericStore({
+      actions: {
+        callApi: vi.fn().mockResolvedValue([]),
+        initApi: vi.fn(),
+        setPermissions: vi.fn(),
+      },
+    });
+  }),
+}));
 
 // runs a cleanup after each test case (e.g. clearing jsdom)
 afterEach(() => {

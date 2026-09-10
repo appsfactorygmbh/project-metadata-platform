@@ -131,7 +131,7 @@ describe('AddPluginForm.vue', () => {
       },
     });
 
-    expect(formStore2.validate()).rejects.toMatchObject({
+    await expect(formStore2.validate()).rejects.toMatchObject({
       errorFields: [
         {
           errors: ['Please insert the plugin name.'],
