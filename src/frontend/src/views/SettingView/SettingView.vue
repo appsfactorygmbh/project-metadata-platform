@@ -229,12 +229,12 @@
           <span>Company Management</span>
         </a-menu-item>
         <a-menu-item
-          key="7"
-          class="apiTokenManagement"
-          @click="clickTab('API-Token')"
+          key="11"
+          class="globalBillingManagement"
+          @click="clickTab('Global Billing')"
         >
-          <RobotOutlined class="icons" />
-          <span>API-Token Management</span>
+          <CreditCardOutlined class="icons" />
+          <span>Billing Management</span>
         </a-menu-item>
         <a-menu-item
           key="8"
@@ -245,12 +245,12 @@
           <span>Global Plugins</span>
         </a-menu-item>
         <a-menu-item
-          key="11"
-          class="globalBillingManagement"
-          @click="clickTab('Global Billing')"
+          key="7"
+          class="apiTokenManagement"
+          @click="clickTab('API-Token')"
         >
-          <CreditCardOutlined class="icons" />
-          <span>Billing Management</span>
+          <RobotOutlined class="icons" />
+          <span>API-Token Management</span>
         </a-menu-item>
         <a-menu-item
           key="9"
