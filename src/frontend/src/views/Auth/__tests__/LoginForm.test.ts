@@ -67,7 +67,7 @@ describe('LoginForm.vue', () => {
     await password.setValue('');
     await remember.setValue('');
 
-    expect(formStore.validate()).rejects.toThrow();
+    await expect(formStore.validate()).rejects.toThrow();
 
     const loginButton = wrapper.find('button');
 
@@ -92,7 +92,7 @@ describe('LoginForm.vue', () => {
     await password.setValue(testData.password);
     await remember.setValue(testData.remember);
 
-    expect(formStore.validate()).resolves.toStrictEqual(
+    await expect(formStore.validate()).resolves.toStrictEqual(
       _.omit(testData, 'remember'),
     );
 
