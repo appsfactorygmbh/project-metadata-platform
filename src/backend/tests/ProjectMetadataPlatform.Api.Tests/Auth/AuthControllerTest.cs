@@ -323,7 +323,7 @@ public class Tests
         Assert.Multiple(() =>
         {
             Assert.That(createTokenResponse, Is.Not.Null);
-            Assert.That(createTokenResponse.Name, Is.EqualTo("Token"));
+            Assert.That(createTokenResponse!.Name, Is.EqualTo("Token"));
             Assert.That(createTokenResponse.Id, Is.EqualTo(1));
             Assert.That(createTokenResponse.Scopes, Is.EqualTo(new List<TokenScopes> { }));
             Assert.That(createTokenResponse.ExpirationDate, Is.EqualTo(new DateTimeOffset()));
@@ -377,7 +377,7 @@ public class Tests
         Assert.Multiple(() =>
         {
             Assert.That(createTokenResponse, Is.Not.Null);
-            Assert.That(createTokenResponse.Name, Is.EqualTo("Token"));
+            Assert.That(createTokenResponse!.Name, Is.EqualTo("Token"));
             Assert.That(createTokenResponse.Id, Is.EqualTo(1));
             Assert.That(createTokenResponse.Scopes, Is.EqualTo(new List<TokenScopes> { }));
             Assert.That(createTokenResponse.ExpirationDate, Is.EqualTo(new DateTimeOffset()));

@@ -1,3 +1,8 @@
-import type { GetPluginResponse } from '@/api/generated';
+import type {
+  GetProjectPluginResponse,
+  GetProjectPluginResponseGetListResponse,
+} from '@/api/generated';
 
-export type PluginModel = GetPluginResponse;
+export type PluginModel = GetProjectPluginResponse;
+
+export type PluginListModel = GetProjectPluginResponseGetListResponse;

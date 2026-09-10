@@ -5,6 +5,7 @@ import {
   type BusinessUnitStore,
   type CompanyStore,
   type DepartmentStore,
+  type GlobalBillingStore,
   type OfficeLocationStore,
   type TeamStore,
   usePluginStore,
@@ -162,6 +163,20 @@ export const CreateIsUniqueDepartmentName = (
     if (departments != undefined) {
       return Promise.reject(
         new Error('This Department Name is already in use.'),
+      );
+    }
+    return Promise.resolve();
+  };
+};
+
+export const CreateIsUniqueGlobalBillingKind = (
+  globalBillingStore: GlobalBillingStore,
+) => {
+  return (_rule: Rule, value: string) => {
+    const globalBillings = globalBillingStore.getIdToKind(value);
+    if (globalBillings != undefined) {
+      return Promise.reject(
+        new Error('This Global Billing Kind is already in use.'),
       );
     }
     return Promise.resolve();

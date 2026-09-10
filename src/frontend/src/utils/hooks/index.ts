@@ -9,6 +9,7 @@ import { useCompanyRouting } from './useCompanyRouting';
 import { useBusinessUnitRouting } from './useBusinessUnitRouting ';
 import { useDepartmentRouting } from './useDepartmentRouting';
 import { useOfficeLocationRouting } from './useOfficeLocationRouting';
+import { useGlobalBillingRouting } from './useGlobalBillingRouting';
 
 export {
   useProjectRouting,
@@ -23,4 +24,5 @@ export {
   useBusinessUnitRouting,
   useDepartmentRouting,
   useOfficeLocationRouting,
+  useGlobalBillingRouting,
 };

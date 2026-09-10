@@ -17,7 +17,6 @@ public class ProjectManagement : IntegrationTestsBase
                 {
                   "projectName": "testProject",
                   "clientName": "testClient",
-                  "offerId": "testId",
                   "companyId":
             """
                 + companyId
@@ -37,7 +36,6 @@ public class ProjectManagement : IntegrationTestsBase
             {
               "projectName": "otherTestProject2",
               "clientName": "testClient2",
-              "offerId": "testId2",
                   "companyId":
             """
                 + companyId
@@ -57,7 +55,6 @@ public class ProjectManagement : IntegrationTestsBase
               "projectName": "testProject",
               "clientName": "testClient",
               "isArchived": true,
-              "offerId": "testId",
                   "companyId":
             """
                 + companyId
@@ -76,7 +73,6 @@ public class ProjectManagement : IntegrationTestsBase
             {
               "projectName": "testProject",
               "clientName": "testClient2",
-              "offerId": "testId2",
                   "companyId":
             """
                 + companyId
@@ -85,80 +81,6 @@ public class ProjectManagement : IntegrationTestsBase
                   "companyState": "INTERNAL",
                   "ismsLevel": "HIGH",
                   "notes": "testNotes2"
-                }
-                """
-        );
-
-    private static StringContent RequestWithPlugins(int companyId, int pluginId1, int pluginId2) =>
-        StringContent(
-            """
-                   {
-                     "projectName": "testProject",
-                     "clientName": "testClient",
-                     "offerId": "testId",
-                  "companyId":
-            """
-                + companyId
-                + """
-                      ,
-                         "companyState": "EXTERNAL",
-                         "ismsLevel": "NORMAL",
-                         "notes": "testNotes",
-                         "pluginList": [
-                           {
-                             "url": "www.appsfactory.gitlab.com",
-                             "displayName": "GitLab",
-                             "id":
-                """
-                + pluginId1
-                + """
-            },
-            {
-              "url": "www.jira.com",
-              "displayName": "Jira",
-              "id":
-"""
-                + pluginId2
-                + """
-                    }
-                  ]
-                }
-                """
-        );
-
-    private static StringContent RequestWithPlugins2(int companyId, int pluginId1, int pluginId2) =>
-        StringContent(
-            """
-                   {
-                     "projectName": "testProject",
-                     "clientName": "testClient",
-                     "offerId": "testId",
-                  "companyId":
-            """
-                + companyId
-                + """
-                      ,
-                         "companyState": "EXTERNAL",
-                         "ismsLevel": "NORMAL",
-                         "notes": "testNotes",
-                         "pluginList": [
-                           {
-                             "url": "www.appsfactory.gitlab.com",
-                             "displayName": "Appsfactory GitLab",
-                             "id":
-                """
-                + pluginId1
-                + """
-            },
-            {
-              "url": "www.appsfactory.confluence.com",
-              "displayName": "Confluence",
-              "id":
-"""
-                + pluginId2
-                + """
-                    }
-                  ]
                 }
                 """
         );
@@ -188,7 +110,6 @@ public class ProjectManagement : IntegrationTestsBase
         var rootElement = getResponseContent!.RootElement;
         Assert.That(rootElement.GetProperty("projectName").GetString(), Is.EqualTo("testProject"));
         Assert.That(rootElement.GetProperty("clientName").GetString(), Is.EqualTo("testClient"));
-        Assert.That(rootElement.GetProperty("offerId").GetString(), Is.EqualTo("testId"));
         Assert.That(
             rootElement.GetProperty("company").GetProperty("companyName").GetString(),
             Is.EqualTo("testCompany")
@@ -288,7 +209,6 @@ public class ProjectManagement : IntegrationTestsBase
 
         Assert.That(rootElement.GetProperty("projectName").GetString(), Is.EqualTo("testProject"));
         Assert.That(rootElement.GetProperty("clientName").GetString(), Is.EqualTo("testClient2"));
-        Assert.That(rootElement.GetProperty("offerId").GetString(), Is.EqualTo("testId2"));
         Assert.That(
             rootElement.GetProperty("company").GetProperty("companyName").GetString(),
             Is.EqualTo("testCompany2")
@@ -304,143 +224,14 @@ public class ProjectManagement : IntegrationTestsBase
         Assert.That(
             logs[2].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, OfferId = testId, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = Example Notes"
+                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = Example Notes"
             )
         );
 
         Assert.That(
             logs[0].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "admin updated project testProject:  set ClientName from testClient to testClient2,  set OfferId from testId to testId2,  set Company from testCompany to testCompany2,  set CompanyState from EXTERNAL to INTERNAL,  set IsmsLevel from NORMAL to HIGH,  set Notes from Example Notes to testNotes2"
-            )
-        );
-    }
-
-    [Test]
-    public async Task ProjectWithPlugins()
-    {
-        // Arrange
-        var client = CreateClient();
-        await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
-
-        var pluginId1 = await CreatePlugin(client, "GitLab");
-        var pluginId2 = await CreatePlugin(client, "Jira");
-        var pluginId3 = await CreatePlugin(client, "Confluence");
-        var companyId = await CreateCompany(client, "testCompany");
-        // Act
-        // Assert
-        var projectId = (
-            await ToJsonElement(
-                client.PutAsync("/Projects", RequestWithPlugins(companyId, pluginId1, pluginId2)),
-                HttpStatusCode.Created
-            )
-        )
-            .GetProperty("id")
-            .GetInt32();
-
-        var projectPlugins = (
-            await ToJsonElement(client.GetAsync($"/Projects/{projectId}/Plugins"))
-        );
-
-        Assert.That(projectPlugins.GetArrayLength(), Is.EqualTo(2));
-        Assert.That(
-            projectPlugins[0].GetProperty("url").GetString(),
-            Is.EqualTo("www.appsfactory.gitlab.com")
-        );
-        Assert.That(projectPlugins[0].GetProperty("displayName").GetString(), Is.EqualTo("GitLab"));
-        Assert.That(projectPlugins[0].GetProperty("pluginName").GetString(), Is.EqualTo("GitLab"));
-        Assert.That(projectPlugins[1].GetProperty("url").GetString(), Is.EqualTo("www.jira.com"));
-        Assert.That(projectPlugins[1].GetProperty("displayName").GetString(), Is.EqualTo("Jira"));
-        Assert.That(projectPlugins[1].GetProperty("pluginName").GetString(), Is.EqualTo("Jira"));
-
-        var updateResponse = await client.PutAsync(
-            "/Projects?projectId=" + projectId,
-            RequestWithPlugins2(companyId, pluginId1, pluginId3)
-        );
-        Assert.That(updateResponse.StatusCode, Is.EqualTo(HttpStatusCode.Created));
-        Assert.That(updateResponse.Headers.Location, Is.Not.Null);
-
-        var project = await ToJsonElement(client.GetAsync(updateResponse.Headers.Location));
-
-        Assert.That(project.GetProperty("projectName").GetString(), Is.EqualTo("testProject"));
-        Assert.That(project.GetProperty("clientName").GetString(), Is.EqualTo("testClient"));
-        Assert.That(project.GetProperty("offerId").GetString(), Is.EqualTo("testId"));
-        Assert.That(
-            project.GetProperty("company").GetProperty("companyName").GetString(),
-            Is.EqualTo("testCompany")
-        );
-        Assert.That(project.GetProperty("companyState").GetString(), Is.EqualTo("EXTERNAL"));
-        Assert.That(project.GetProperty("ismsLevel").GetString(), Is.EqualTo("NORMAL"));
-        Assert.That(project.GetProperty("notes").GetString(), Is.EqualTo("testNotes"));
-        Assert.That(project.GetProperty("id").GetInt32(), Is.GreaterThan(0));
-
-        projectPlugins = (await ToJsonElement(client.GetAsync($"/Projects/{projectId}/Plugins")));
-
-        Assert.That(projectPlugins.GetArrayLength(), Is.EqualTo(2));
-        Assert.That(
-            projectPlugins[0].GetProperty("url").GetString(),
-            Is.EqualTo("www.appsfactory.gitlab.com")
-        );
-        Assert.That(
-            projectPlugins[0].GetProperty("displayName").GetString(),
-            Is.EqualTo("Appsfactory GitLab")
-        );
-        Assert.That(projectPlugins[0].GetProperty("pluginName").GetString(), Is.EqualTo("GitLab"));
-        Assert.That(
-            projectPlugins[1].GetProperty("url").GetString(),
-            Is.EqualTo("www.appsfactory.confluence.com")
-        );
-        Assert.That(
-            projectPlugins[1].GetProperty("displayName").GetString(),
-            Is.EqualTo("Confluence")
-        );
-        Assert.That(
-            projectPlugins[1].GetProperty("pluginName").GetString(),
-            Is.EqualTo("Confluence")
-        );
-
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
-        Assert.That(logs.GetArrayLength(), Is.EqualTo(10));
-
-        Assert.That(
-            logs[5].GetProperty("logMessage").GetString(),
-            Is.EqualTo(
-                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, OfferId = testId, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = testNotes"
-            )
-        );
-
-        Assert.That(
-            logs[4].GetProperty("logMessage").GetString(),
-            Is.EqualTo(
-                "admin added a new plugin to project testProject with properties: Url = www.appsfactory.gitlab.com, DisplayName = GitLab"
-            )
-        );
-
-        Assert.That(
-            logs[3].GetProperty("logMessage").GetString(),
-            Is.EqualTo(
-                "admin added a new plugin to project testProject with properties: Url = www.jira.com, DisplayName = Jira"
-            )
-        );
-
-        Assert.That(
-            logs[2].GetProperty("logMessage").GetString(),
-            Is.EqualTo(
-                "admin added a new plugin to project testProject with properties: Plugin = Confluence, DisplayName = Confluence, Url = www.appsfactory.confluence.com"
-            )
-        );
-
-        Assert.That(
-            logs[1].GetProperty("logMessage").GetString(),
-            Is.EqualTo(
-                "admin removed a plugin from project testProject with properties: Plugin = Jira, DisplayName = Jira, Url = www.jira.com"
-            )
-        );
-
-        Assert.That(
-            logs[0].GetProperty("logMessage").GetString(),
-            Is.EqualTo(
-                "admin updated plugin properties in project testProject:  set DisplayName from GitLab to Appsfactory GitLab"
+                "admin updated project testProject:  set ClientName from testClient to testClient2,  set Company from testCompany to testCompany2,  set CompanyState from EXTERNAL to INTERNAL,  set IsmsLevel from NORMAL to HIGH,  set Notes from Example Notes to testNotes2"
             )
         );
     }
@@ -450,23 +241,6 @@ public class ProjectManagement : IntegrationTestsBase
         return (
             await ToJsonElement(
                 client.PutAsync("/Companies", StringContent($"{{ \"companyName\": \"{name}\"}}")),
-                HttpStatusCode.Created
-            )
-        )
-            .GetProperty("id")
-            .GetInt32();
-    }
-
-    private static async Task<int> CreatePlugin(HttpClient client, string name)
-    {
-        return (
-            await ToJsonElement(
-                client.PutAsync(
-                    "/Plugins",
-                    StringContent(
-                        $"{{ \"baseUrl\": \"www.{name}.com\", \"isArchived\": false, \"keys\": [], \"pluginName\": \"{name}\"}}"
-                    )
-                ),
                 HttpStatusCode.Created
             )
         )
@@ -517,7 +291,7 @@ public class ProjectManagement : IntegrationTestsBase
         Assert.That(
             logs[2].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, OfferId = testId, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = Example Notes"
+                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = Example Notes"
             )
         );
         Assert.That(
@@ -527,38 +301,6 @@ public class ProjectManagement : IntegrationTestsBase
         Assert.That(
             logs[0].GetProperty("logMessage").GetString(),
             Is.EqualTo("admin removed project testProject")
-        );
-    }
-
-    [Test]
-    public async Task GlobalPluginIdsMustExist()
-    {
-        // Arrange
-        var client = CreateClient();
-        await GetAuthTokenAndAddItToDefaultRequestHeadersOfClient(client);
-        var companyId = await CreateCompany(client, "Test Company");
-        // Act
-        var projectId = (
-            await ToJsonElement(
-                client.PutAsync("/Projects", CreateRequest(companyId)),
-                HttpStatusCode.Created
-            )
-        )
-            .GetProperty("id")
-            .GetInt32();
-
-        var errorResponse = await ToErrorResponse(
-            client.PutAsync(
-                $"/Projects?projectId=" + projectId,
-                RequestWithPlugins(companyId, 1, 2)
-            ),
-            HttpStatusCode.NotFound
-        );
-
-        // Assert
-        Assert.That(
-            errorResponse.Message,
-            Is.EqualTo("The Plugins with these ids do not exist: 1, 2")
         );
     }
 

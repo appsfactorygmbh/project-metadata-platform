@@ -9,4 +9,4 @@ public interface IRequest<TResult> { }
 /// <summary>
 /// Represents a Request without Response.
 /// </summary>
-public interface IRequest : IRequest<Unit> { }
+public interface IRequest : IRequest<Mediator.Unit> { }

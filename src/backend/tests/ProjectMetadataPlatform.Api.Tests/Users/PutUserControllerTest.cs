@@ -43,7 +43,7 @@ public class PutUserControllerTest
                 )
             )
             .ReturnsAsync(
-                new Domain.Users.ApplicationUser
+                new ApplicationUser
                 {
                     EmployeeId = "Id",
                     Id = "1",

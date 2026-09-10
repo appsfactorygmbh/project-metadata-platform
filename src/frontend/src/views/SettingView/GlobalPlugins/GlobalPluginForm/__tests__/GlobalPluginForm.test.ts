@@ -7,23 +7,6 @@ import { createPinia, setActivePinia } from 'pinia';
 
 const testForm: GlobalPluginFormData = {
   pluginName: 'testPlugin',
-  keys: [
-    {
-      key: 1721034372425,
-      value: 'testValue',
-      archived: false,
-    },
-    {
-      key: 1721034372428,
-      value: 'testValue2',
-      archived: false,
-    },
-    {
-      key: 1721034372429,
-      value: 'testValue3',
-      archived: false,
-    },
-  ],
   baseUrl: 'testplugin.de',
 };
 

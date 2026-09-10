@@ -3,7 +3,6 @@
     AuthProvider,
     GlobalPluginProvider,
     LocalLogProvider,
-    ProjectEditProvider,
     UserProvider,
     TeamProvider,
     BusinessUnitRoutingProvider,
@@ -22,6 +21,8 @@
   import ApiTokenRoutingProvider from './ApiTokenRoutingProvider.vue';
   import ApiTokenProvider from './ApiTokenProvider.vue';
   import AuthorizationProvider from './AuthorizationProvider.vue';
+  import GlobalBillingProvider from './GlobalBillingProvider.vue';
+  import GlobalBillingRoutingProvider from './GlobalBillingRoutingProvider.vue';
 </script>
 
 <template>
@@ -37,27 +38,29 @@
                     <UserProvider>
                       <LogsProvider>
                         <LocalLogProvider>
-                          <ProjectEditProvider>
+                          <GlobalBillingProvider>
                             <GlobalPluginProvider>
                               <TeamRoutingProvider>
-                                <ApiTokenRoutingProvider>
-                                  <CompanyRoutingProvider>
-                                    <OfficeLocationRoutingProvider>
-                                      <BusinessUnitRoutingProvider>
-                                        <DepartmentRoutingProvider>
-                                          <AuthorizationProvider>
-                                            <slot>
-                                              <RouterView />
-                                            </slot>
-                                          </AuthorizationProvider>
-                                        </DepartmentRoutingProvider>
-                                      </BusinessUnitRoutingProvider>
-                                    </OfficeLocationRoutingProvider>
-                                  </CompanyRoutingProvider>
-                                </ApiTokenRoutingProvider>
+                                <GlobalBillingRoutingProvider>
+                                  <ApiTokenRoutingProvider>
+                                    <CompanyRoutingProvider>
+                                      <OfficeLocationRoutingProvider>
+                                        <BusinessUnitRoutingProvider>
+                                          <DepartmentRoutingProvider>
+                                            <AuthorizationProvider>
+                                              <slot>
+                                                <RouterView />
+                                              </slot>
+                                            </AuthorizationProvider>
+                                          </DepartmentRoutingProvider>
+                                        </BusinessUnitRoutingProvider>
+                                      </OfficeLocationRoutingProvider>
+                                    </CompanyRoutingProvider>
+                                  </ApiTokenRoutingProvider>
+                                </GlobalBillingRoutingProvider>
                               </TeamRoutingProvider>
                             </GlobalPluginProvider>
-                          </ProjectEditProvider>
+                          </GlobalBillingProvider>
                         </LocalLogProvider>
                       </LogsProvider>
                     </UserProvider>

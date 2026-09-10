@@ -42,6 +42,8 @@ describe('ProjectPlugins', () => {
     const pluginStore = usePluginStore();
     const mockPlugins: PluginModel[] = [
       {
+        pluginId: 1,
+        projectId: 1,
         pluginName: 'testPlugin',
         displayName: 'Test Plugin',
         url: 'http://example.com/',
@@ -77,12 +79,12 @@ describe('ProjectPlugins', () => {
       },
       isArchived: false,
       slug: 'test-project',
-      offerId: '1',
       company: { id: 1, companyName: 'AppsFactory' },
       companyState: 'EXTERNAL',
       ismsLevel: 'HIGH',
       isEoC: false,
       notes: 'Test Notes',
+      permissions: [],
     };
 
     const mockArchivedProject: DetailedProjectModel = {
@@ -96,12 +98,12 @@ describe('ProjectPlugins', () => {
       },
       isArchived: true,
       slug: 'test-project',
-      offerId: '1',
       company: { id: 1, companyName: 'AppsFactory' },
       companyState: 'EXTERNAL',
       ismsLevel: 'HIGH',
       isEoC: false,
       notes: 'Test Notes',
+      permissions: [],
     };
 
     const unarchivedPluginsSpy = vi
@@ -110,7 +112,9 @@ describe('ProjectPlugins', () => {
     const pluginsSpy = vi
       .spyOn(pluginStore, 'getPlugins', 'get')
       .mockReturnValue([]);
-
+    const permissionsSpy = vi
+      .spyOn(pluginStore, 'getPermissions', 'get')
+      .mockReturnValue([]);
     // Test for active project
     projectStore.setProject(mockActiveProject);
 
@@ -140,5 +144,7 @@ describe('ProjectPlugins', () => {
     });
 
     expect(pluginsSpy).toHaveBeenCalled();
+
+    expect(permissionsSpy).toHaveBeenCalled();
   });
 });

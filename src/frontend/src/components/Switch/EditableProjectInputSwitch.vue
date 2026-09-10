@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-  import { ref, watch, computed, type PropType } from 'vue';
-  import type { ProjectEditStore } from '@/store/ProjectEditStore/ProjectEditStore';
+  import { ref, watch, computed } from 'vue';
 
   const props = defineProps({
     columnName: {
@@ -11,10 +10,7 @@
       type: Boolean,
       required: true,
     },
-    editStore: {
-      type: Object as PropType<ProjectEditStore>,
-      required: true,
-    },
+
     isEditing: {
       type: Boolean,
       required: true,
@@ -44,7 +40,6 @@
 
     emit('updated', isChecked);
     emit('success');
-    props.editStore?.removeEmptyProjectInformationField(props.columnName);
   };
 </script>
 

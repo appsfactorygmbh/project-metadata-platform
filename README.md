@@ -364,9 +364,26 @@ Project View
 Project Information View
 ![Project Information View Dark](./screenshots/project-information-view-dark.png)
 ![Project Information View Light](./screenshots/project-information-view-light.png)
-Project Information Edit View
+
+Project Edit View
 ![Project Information Edit View Dark](./screenshots/project-information-edit-view-dark.png)
 ![Project Information Edit View Light](./screenshots/project-information-edit-view-light.png)
+
+Project Plugin Edit View
+![Project Information Plugin Edit View Dark](./screenshots/edit-plugin-card-view-dark.png)
+![Project Information Plugin Edit View Light](./screenshots/edit-plugin-card-view-light.png)
+
+Add Plugin to Project View
+![Project Information Add Plugin View Dark](./screenshots/add-plugin-modal-view-dark.png)
+![Project Information Add Plugin View Light](./screenshots/add-plugin-modal-view-light.png)
+
+Project Plugin Billing View
+![Project Information Plugin Billing View Dark](./screenshots/plugin-billing-popover-view-dark.png)
+![Project Information Plugin Billing View Light](./screenshots/plugin-billing-popover-view-light.png)
+
+Add Billing to Project Plugin View
+![Project Information Plugin Billing View Dark](./screenshots/add-billing-modal-view-dark.png)
+![Project Information Plugin Billing View Light](./screenshots/add-billing-modal-view-light.png)
 
 Create Project View
 ![Create Project View Dark](./screenshots/create-project-view-dark.png)
@@ -439,6 +456,18 @@ Settings View - Global Plugins Creation
 Settings View - Global Plugins Edit
 ![Settings View - Global Plugins Edit Dark](./screenshots/global-plugin-edit-view-dark.png)
 ![Settings View - Global Plugins Edit Light](./screenshots/global-plugin-edit-view-light.png)
+
+Settings View - Global Billing Management
+![Settings View - Global Billing Management Dark](./screenshots/global-billing-management-view-dark.png)
+![Settings View - Global Billing Management Light](./screenshots/global-billing-management-view-light.png)
+
+Settings View - Global Billing Creation
+![Settings View - Global Billing Creation Dark](./screenshots/global-billing-management-creation-view-dark.png)
+![Settings View - Global Billing Creation Light](./screenshots/global-billing-management-creation-view-light.png)
+
+Settings View - Global Billing Edit
+![Settings View - Global Billing Edit Dark](./screenshots/global-billing-management-edit-view-dark.png)
+![Settings View - Global Billing Edit Light](./screenshots/global-billing-management-edit-view-light.png)
 
 Settings View - Global Logs
 ![Settings View - Global Logs Dark](./screenshots/global-logs-view-dark.png)

@@ -16,8 +16,11 @@
       default: '',
     },
     value: {
-      type: [String, Number] as PropType<string | number | undefined>,
-      required: true,
+      type: [String, Number, Object] as PropType<
+        string | number | null | undefined
+      >,
+      required: false,
+      default: undefined,
     },
     rules: {
       type: Array as PropType<Rule[]>,
@@ -41,7 +44,8 @@
     :has-feedback="!!(props.rules && props.rules.length > 0)"
   >
     <a-select
-      :value="props.value"
+      :value="props.value === null ? undefined : props.value"
+      v-bind="$attrs"
       show-search
       :placeholder="props.placeholder"
       :options="props.options"

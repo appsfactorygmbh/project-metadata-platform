@@ -6,6 +6,7 @@ using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
+using ProjectMetadataPlatform.Domain.Errors.BillingExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
@@ -39,6 +40,8 @@ public class ExceptionFilter : IExceptionFilter
     private readonly IExceptionHandler<AuthException> _authExceptionHandler;
     private readonly IExceptionHandler<AuthorizationException> _authorizationExceptionHandler;
 
+    private readonly IExceptionHandler<BillingException> _billingExceptionHandler;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ExceptionFilter"/> class.
     /// </summary>
@@ -54,6 +57,7 @@ public class ExceptionFilter : IExceptionFilter
     /// <param name="businessUnitExceptionHandler">The handler for business unit exceptions. </param>
     /// <param name="companyExceptionHandler">The handler for company exceptions. </param>
     /// <param name="authorizationExceptionHandler">The handler for authorization exceptions.</param>
+    /// <param name="billingExceptionHandler">The handler for billing exceptions.</param>
     public ExceptionFilter(
         IExceptionHandler<PmpException> basicExceptionHandler,
         IExceptionHandler<ProjectException> projectExceptionHandler,
@@ -66,7 +70,8 @@ public class ExceptionFilter : IExceptionFilter
         IExceptionHandler<DepartmentException> departmentExceptionHandler,
         IExceptionHandler<BusinessUnitException> businessUnitExceptionHandler,
         IExceptionHandler<CompanyException> companyExceptionHandler,
-        IExceptionHandler<AuthorizationException> authorizationExceptionHandler
+        IExceptionHandler<AuthorizationException> authorizationExceptionHandler,
+        IExceptionHandler<BillingException> billingExceptionHandler
     )
     {
         _basicExceptionHandler = basicExceptionHandler;
@@ -81,6 +86,7 @@ public class ExceptionFilter : IExceptionFilter
         _businessUnitExceptionHandler = businessUnitExceptionHandler;
         _companyExceptionHandler = companyExceptionHandler;
         _authorizationExceptionHandler = authorizationExceptionHandler;
+        _billingExceptionHandler = billingExceptionHandler;
     }
 
     /// <summary>
@@ -108,6 +114,7 @@ public class ExceptionFilter : IExceptionFilter
                 businessUnitEx
             ),
             CompanyException companyEx => _companyExceptionHandler.Handle(companyEx),
+            BillingException billingEx => _billingExceptionHandler.Handle(billingEx),
             AuthorizationException authEx => _authorizationExceptionHandler.Handle(authEx),
             PmpException basicEx => _basicExceptionHandler.Handle(basicEx),
             _ => HandleUnknownError(exception),

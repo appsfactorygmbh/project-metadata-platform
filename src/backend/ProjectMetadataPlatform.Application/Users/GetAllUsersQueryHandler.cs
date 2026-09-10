@@ -47,8 +47,9 @@ public class GetAllUsersQueryHandler
         );
         if (queriedUsers == null)
         {
+            var userList = await users.ToListAsync(cancellationToken: cancellationToken);
             List<ApplicationUser> filteredUsers = [];
-            foreach (var user in users)
+            foreach (var user in userList)
             {
                 if (
                     await _authorizationService.CheckAccess(

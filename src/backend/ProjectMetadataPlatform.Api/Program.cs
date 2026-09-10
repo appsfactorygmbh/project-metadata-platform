@@ -64,7 +64,7 @@ builder.Services.AddSwaggerGen(options =>
     var jwtSecurityScheme = new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Description = "Enter your Bearer token like this: Bearer {your token}",
+        Description = "Enter your Bearer token:",
         Scheme = JwtBearerDefaults.AuthenticationScheme,
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
@@ -131,7 +131,7 @@ var app = builder.Build();
 await app.Services.CheckDbConnection();
 
 app.Services.MigrateDatabase();
-app.Services.AddAdminUser();
+await app.Services.AddAdminUserAsync();
 await app.Services.CheckPdpConnection();
 
 app.UseCors();

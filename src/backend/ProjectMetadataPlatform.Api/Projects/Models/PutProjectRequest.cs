@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ProjectMetadataPlatform.Domain.Projects;
+﻿using ProjectMetadataPlatform.Domain.Projects;
 
 namespace ProjectMetadataPlatform.Api.Projects.Models;
 
@@ -8,25 +7,21 @@ namespace ProjectMetadataPlatform.Api.Projects.Models;
 /// </summary>
 /// <param name="ProjectName">The name of the project.</param>
 /// <param name="ClientName">The name of the client for the project.</param>
-/// <param name="OfferId">Id of the offer associated with project.</param>
 /// <param name="CompanyId">Id of the Company responsible for project.</param>
 /// <param name="TeamId">The id of the team that should be assigned to the project.</param>
 /// <param name="CompanyState">State of company.</param>
 /// <param name="IsmsLevel">Security Level of project.</param>
 /// <param name="IsEoC">If the project is an Engineer on Call project.</param>
 /// <param name="Notes">Additonal Notes on the project</param>
-/// <param name="PluginList">An optional list of plugins associated to the project.</param>
 /// <param name="IsArchived">Indicates if the project is archived.</param>
 public record PutProjectRequest(
     string ProjectName,
     string ClientName,
-    string? OfferId,
     int CompanyId,
     int? TeamId,
     CompanyState CompanyState,
     SecurityLevel IsmsLevel,
     bool IsEoC,
     string Notes,
-    List<UpdateProjectPluginRequest>? PluginList = null,
     bool IsArchived = false
 );

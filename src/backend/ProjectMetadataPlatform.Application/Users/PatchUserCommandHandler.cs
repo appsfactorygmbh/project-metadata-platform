@@ -569,7 +569,6 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
     /// <exception cref="NotSupportedException">Thrown if the given AttributeName has no equivalent in the ApplicationUser class,</exception>
     private static async Task<string> ScimAttributeNameToTypeAttributeName(string attributeName)
     {
-        //TODO: Add OfficeLocation after scim changes
         return attributeName switch
         {
             "id" or "externalId" => nameof(ApplicationUser.EmployeeId),
