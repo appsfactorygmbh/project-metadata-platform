@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
+using ProjectMetadataPlatform.Domain.Billing;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Departments;
@@ -44,6 +45,10 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
         { Action.ADDED_PROJECT_PLUGIN, "added a plugin to project with properties: = ," },
         { Action.UPDATED_PROJECT_PLUGIN, "updated a plugin in project: set from to , " },
         { Action.REMOVED_PROJECT_PLUGIN, "removed a plugin from project with properties: = ," },
+        {
+            Action.REMOVED_PROJECT_PLUGIN_WITH_BILLING,
+            "removed a plugin with its billing information from project with properties: = ,"
+        },
         { Action.ADDED_USER, "added a new user with properties: = ," },
         { Action.UPDATED_USER, "updated user properties: set from to , " },
         { Action.REMOVED_USER, "removed user" },
@@ -71,6 +76,32 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
         { Action.ADDED_OFFICE_LOCATION, "created a new office location with properties: ," },
         { Action.UPDATED_OFFICE_LOCATION, "updated office location properties: set from to," },
         { Action.REMOVED_OFFICE_LOCATION, "removed office location" },
+        { Action.ADDED_GLOBAL_BILLING, "added new global billing information with properties: ," },
+        {
+            Action.UPDATED_GLOBAL_BILLING,
+            "updated global billing information properties: set from to,"
+        },
+        { Action.REMOVED_GLOBAL_BILLING, "removed global billing information" },
+        {
+            Action.ADDED_PROJECT_PLUGIN_BILLING,
+            "added billing information to project with properties: = ,"
+        },
+        {
+            Action.UPDATED_PROJECT_PLUGIN_BILLING,
+            "updated billing information plugin in project: set from to , "
+        },
+        {
+            Action.REMOVED_PROJECT_PLUGIN_BILLING,
+            "removed billing information from project with properties: = ,"
+        },
+        {
+            Action.DELETED_PROJECT_PLUGIN,
+            "deleted the project and therefore deleted the plugin with properties: = ,"
+        },
+        {
+            Action.DELETED_PROJECT_PLUGIN_WITH_BILLING,
+            "deleted the project and therefore deleted the plugin with its billing information with properties: = ,"
+        },
     };
 
     /// <summary>
@@ -98,7 +129,10 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
     public async Task AddProjectLogForCurrentActor(
         Project project,
         Action action,
-        List<LogChange> changes
+        List<LogChange> changes,
+        ProjectPlugin? plugin = null,
+        Plugin? globalPlugin = null,
+        GlobalBilling? globalBilling = null
     )
     {
         var actionWhiteList = new List<Action>
@@ -108,9 +142,15 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
             Action.UPDATED_PROJECT,
             Action.UPDATED_PROJECT_PLUGIN,
             Action.REMOVED_PROJECT_PLUGIN,
+            Action.DELETED_PROJECT_PLUGIN,
+            Action.REMOVED_PROJECT_PLUGIN_WITH_BILLING,
+            Action.DELETED_PROJECT_PLUGIN_WITH_BILLING,
             Action.ARCHIVED_PROJECT,
             Action.UNARCHIVED_PROJECT,
             Action.REMOVED_PROJECT,
+            Action.ADDED_PROJECT_PLUGIN_BILLING,
+            Action.UPDATED_PROJECT_PLUGIN_BILLING,
+            Action.REMOVED_PROJECT_PLUGIN_BILLING,
         };
 
         if (!actionWhiteList.Contains(action))
@@ -126,7 +166,20 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
             .Entry(project)
             .Property<string>(nameof(Project.ProjectName))
             .OriginalValue;
-
+        log.PluginName =
+            plugin?.DisplayName ?? plugin?.Plugin?.PluginName ?? globalPlugin?.PluginName;
+        log.GlobalPlugin = globalPlugin;
+        log.GlobalPluginId = globalPlugin?.Id;
+        log.GlobalPluginName =
+            globalPlugin != null
+                ? _context
+                    .Entry(globalPlugin)
+                    .Property<string>(nameof(Plugin.PluginName))
+                    .OriginalValue
+                : null;
+        log.GlobalBilling = globalBilling;
+        log.GlobalBillingId = globalBilling?.Id;
+        log.GlobalBillingKind = globalBilling?.BillingKind;
         _ = _context.Logs.Add(log);
     }
 
@@ -322,6 +375,33 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
         log.OfficeLocation = officeLocation;
         log.OfficeLocationId = officeLocation.Id;
         log.OfficeLocationName = officeLocation.OfficeLocationName;
+        _ = _context.Logs.Add(log);
+    }
+
+    ///  <inheritdoc />
+    public async Task AddGlobalBillingLogForCurrentActor(
+        GlobalBilling globalBilling,
+        Action action,
+        List<LogChange> changes
+    )
+    {
+        var actionWhiteList = new List<Action>
+        {
+            Action.ADDED_GLOBAL_BILLING,
+            Action.UPDATED_GLOBAL_BILLING,
+            Action.REMOVED_GLOBAL_BILLING,
+        };
+
+        if (!actionWhiteList.Contains(action))
+        {
+            throw new LogActionNotSupportedException(action, nameof(globalBilling));
+        }
+
+        var log = await PrepareGenericLogForCurrentActor(action, changes);
+
+        log.GlobalBilling = globalBilling;
+        log.GlobalBillingId = globalBilling.Id;
+        log.GlobalBillingKind = globalBilling.BillingKind;
         _ = _context.Logs.Add(log);
     }
 

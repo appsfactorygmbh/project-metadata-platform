@@ -37,7 +37,7 @@ public static class DependencyInjection
         Assembly assembly
     )
     {
-        _ = services.AddTransient<IMediator, Mediator>();
+        _ = services.AddTransient<IMediator, Mediator.Mediator>();
 
         var handlerType = typeof(IRequestHandler<,>);
 

@@ -51,8 +51,9 @@ public class GetAllCompaniesQueryHandler
         );
         if (queriedCompanies == null)
         {
+            var companyList = await companies.ToListAsync(cancellationToken: cancellationToken);
             List<Company> filteredCompanies = [];
-            foreach (var company in companies)
+            foreach (var company in companyList)
             {
                 if (
                     await _authorizationService.CheckAccess(

@@ -331,10 +331,12 @@ public static class AuthorizationConverter
             case PlanResourcesFilter.Types.Expression.Types.Operand.NodeOneofCase.Variable:
                 var path = operand.Variable;
 
-                var mappedProp = attributeMap.ContainsKey(path)
-                    ? attributeMap[path]
-                    : path.Replace("request.resource.attr.", "")
+                if (!attributeMap.TryGetValue(path, out var mappedProp))
+                {
+                    mappedProp = path.Replace("request.resource.attr.", "")
                         .Replace("request.principal.attr.", "");
+                }
+
                 return GetMemberExpression(param, mappedProp);
 
             case PlanResourcesFilter.Types.Expression.Types.Operand.NodeOneofCase.Expression:

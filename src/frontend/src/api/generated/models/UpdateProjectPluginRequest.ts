@@ -30,12 +30,6 @@ export interface UpdateProjectPluginRequest {
    * @memberof UpdateProjectPluginRequest
    */
   displayName: string;
-  /**
-   * The global id of the plugin instance in the project.
-   * @type {number}
-   * @memberof UpdateProjectPluginRequest
-   */
-  id: number;
 }
 
 /**
@@ -47,7 +41,6 @@ export function instanceOfUpdateProjectPluginRequest(
   if (!('url' in value) || value['url'] === undefined) return false;
   if (!('displayName' in value) || value['displayName'] === undefined)
     return false;
-  if (!('id' in value) || value['id'] === undefined) return false;
   return true;
 }
 
@@ -67,7 +60,6 @@ export function UpdateProjectPluginRequestFromJSONTyped(
   return {
     url: json['url'],
     displayName: json['displayName'],
-    id: json['id'],
   };
 }
 
@@ -88,6 +80,5 @@ export function UpdateProjectPluginRequestToJSONTyped(
   return {
     url: value['url'],
     displayName: value['displayName'],
-    id: value['id'],
   };
 }

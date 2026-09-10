@@ -34,7 +34,7 @@ public class Project
     /// <summary>
     /// Is used for the many-to-many relation in EF core.
     /// </summary>
-    public ICollection<ProjectPlugins>? ProjectPlugins { get; set; }
+    public ICollection<ProjectPlugin>? ProjectPlugins { get; set; }
 
     /// <summary>
     /// Includes the logs for the project. Used for one to many relationship.
@@ -55,11 +55,6 @@ public class Project
     /// A boolean indicating if a plugin is archived/deleted.
     /// </summary>
     public bool IsArchived { get; set; }
-
-    /// <summary>
-    /// Internal id of the offer associated with the project.
-    /// </summary>
-    public string? OfferId { get; set; }
 
     /// <summary>
     /// The company that is responsible for the project.

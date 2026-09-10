@@ -14,7 +14,6 @@
 
 import * as runtime from '../runtime';
 import type {
-  GetPluginResponse,
   GetProjectDetailsResponse,
   GetProjectResponseGetListResponse,
   PutProjectRequest,
@@ -22,7 +21,6 @@ import type {
   SecurityLevel,
 } from '../models/index';
 import {
-  GetPluginResponseFromJSON,
   GetProjectDetailsResponseFromJSON,
   GetProjectResponseGetListResponseFromJSON,
   PutProjectRequestToJSON,
@@ -49,14 +47,6 @@ export interface ProjectsIdGetRequest {
   id: number;
 }
 
-export interface ProjectsIdPluginsGetRequest {
-  id: number;
-}
-
-export interface ProjectsIdUnarchivedPluginsGetRequest {
-  id: number;
-}
-
 export interface ProjectsPutRequest {
   projectId?: number;
   putProjectRequest?: PutProjectRequest;
@@ -70,17 +60,9 @@ export interface ProjectsSlugGetRequest {
   slug: string;
 }
 
-export interface ProjectsSlugPluginsGetRequest {
-  slug: string;
-}
-
 export interface ProjectsSlugPutRequest {
   slug: string;
   putProjectRequest?: PutProjectRequest;
-}
-
-export interface ProjectsSlugUnarchivedPluginsGetRequest {
-  slug: string;
 }
 
 /**
@@ -163,48 +145,6 @@ export interface ProjectsApiInterface {
 
   /**
    *
-   * @summary Gets all the plugins of the project with the given id.
-   * @param {number} id The id of the project.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof ProjectsApiInterface
-   */
-  projectsIdPluginsGetRaw(
-    requestParameters: ProjectsIdPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetPluginResponse>>>;
-
-  /**
-   * Gets all the plugins of the project with the given id.
-   */
-  projectsIdPluginsGet(
-    requestParameters: ProjectsIdPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetPluginResponse>>;
-
-  /**
-   *
-   * @summary Gets all the unarchived plugins of the project with the given id.
-   * @param {number} id The id of the project.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof ProjectsApiInterface
-   */
-  projectsIdUnarchivedPluginsGetRaw(
-    requestParameters: ProjectsIdUnarchivedPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetPluginResponse>>>;
-
-  /**
-   * Gets all the unarchived plugins of the project with the given id.
-   */
-  projectsIdUnarchivedPluginsGet(
-    requestParameters: ProjectsIdUnarchivedPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetPluginResponse>>;
-
-  /**
-   *
    * @summary Creates a new project or updates the one with given id.
    * @param {number} [projectId] The id, if an existing project should be overwritten.
    * @param {PutProjectRequest} [putProjectRequest] The data of the new project.
@@ -269,27 +209,6 @@ export interface ProjectsApiInterface {
 
   /**
    *
-   * @summary Gets all the plugins of the project with the given id.
-   * @param {string} slug The slug of the project.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof ProjectsApiInterface
-   */
-  projectsSlugPluginsGetRaw(
-    requestParameters: ProjectsSlugPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetPluginResponse>>>;
-
-  /**
-   * Gets all the plugins of the project with the given id.
-   */
-  projectsSlugPluginsGet(
-    requestParameters: ProjectsSlugPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetPluginResponse>>;
-
-  /**
-   *
    * @summary Creates a new project or updates the one with given slug.
    * @param {string} slug The slug, if an existing project should be overwritten.
    * @param {PutProjectRequest} [putProjectRequest] The data of the new project.
@@ -309,27 +228,6 @@ export interface ProjectsApiInterface {
     requestParameters: ProjectsSlugPutRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<PutProjectResponse>;
-
-  /**
-   *
-   * @summary Gets all the unarchived plugins of the project with the given slug.
-   * @param {string} slug The slug of the project.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof ProjectsApiInterface
-   */
-  projectsSlugUnarchivedPluginsGetRaw(
-    requestParameters: ProjectsSlugUnarchivedPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetPluginResponse>>>;
-
-  /**
-   * Gets all the unarchived plugins of the project with the given slug.
-   */
-  projectsSlugUnarchivedPluginsGet(
-    requestParameters: ProjectsSlugUnarchivedPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetPluginResponse>>;
 }
 
 /**
@@ -534,122 +432,6 @@ export class ProjectsApi
   }
 
   /**
-   * Gets all the plugins of the project with the given id.
-   */
-  async projectsIdPluginsGetRaw(
-    requestParameters: ProjectsIdPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetPluginResponse>>> {
-    if (requestParameters['id'] == null) {
-      throw new runtime.RequiredError(
-        'id',
-        'Required parameter "id" was null or undefined when calling projectsIdPluginsGet().',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    if (this.configuration && this.configuration.accessToken) {
-      const token = this.configuration.accessToken;
-      const tokenString = await token('Bearer', []);
-
-      if (tokenString) {
-        headerParameters['Authorization'] = `Bearer ${tokenString}`;
-      }
-    }
-    const response = await this.request(
-      {
-        path: `/Projects/{id}/plugins`.replace(
-          `{${'id'}}`,
-          encodeURIComponent(String(requestParameters['id'])),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(GetPluginResponseFromJSON),
-    );
-  }
-
-  /**
-   * Gets all the plugins of the project with the given id.
-   */
-  async projectsIdPluginsGet(
-    requestParameters: ProjectsIdPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetPluginResponse>> {
-    const response = await this.projectsIdPluginsGetRaw(
-      requestParameters,
-      initOverrides,
-    );
-    return await response.value();
-  }
-
-  /**
-   * Gets all the unarchived plugins of the project with the given id.
-   */
-  async projectsIdUnarchivedPluginsGetRaw(
-    requestParameters: ProjectsIdUnarchivedPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetPluginResponse>>> {
-    if (requestParameters['id'] == null) {
-      throw new runtime.RequiredError(
-        'id',
-        'Required parameter "id" was null or undefined when calling projectsIdUnarchivedPluginsGet().',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    if (this.configuration && this.configuration.accessToken) {
-      const token = this.configuration.accessToken;
-      const tokenString = await token('Bearer', []);
-
-      if (tokenString) {
-        headerParameters['Authorization'] = `Bearer ${tokenString}`;
-      }
-    }
-    const response = await this.request(
-      {
-        path: `/Projects/{id}/unarchivedPlugins`.replace(
-          `{${'id'}}`,
-          encodeURIComponent(String(requestParameters['id'])),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(GetPluginResponseFromJSON),
-    );
-  }
-
-  /**
-   * Gets all the unarchived plugins of the project with the given id.
-   */
-  async projectsIdUnarchivedPluginsGet(
-    requestParameters: ProjectsIdUnarchivedPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetPluginResponse>> {
-    const response = await this.projectsIdUnarchivedPluginsGetRaw(
-      requestParameters,
-      initOverrides,
-    );
-    return await response.value();
-  }
-
-  /**
    * Creates a new project or updates the one with given id.
    */
   async projectsPutRaw(
@@ -815,64 +597,6 @@ export class ProjectsApi
   }
 
   /**
-   * Gets all the plugins of the project with the given id.
-   */
-  async projectsSlugPluginsGetRaw(
-    requestParameters: ProjectsSlugPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetPluginResponse>>> {
-    if (requestParameters['slug'] == null) {
-      throw new runtime.RequiredError(
-        'slug',
-        'Required parameter "slug" was null or undefined when calling projectsSlugPluginsGet().',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    if (this.configuration && this.configuration.accessToken) {
-      const token = this.configuration.accessToken;
-      const tokenString = await token('Bearer', []);
-
-      if (tokenString) {
-        headerParameters['Authorization'] = `Bearer ${tokenString}`;
-      }
-    }
-    const response = await this.request(
-      {
-        path: `/Projects/{slug}/plugins`.replace(
-          `{${'slug'}}`,
-          encodeURIComponent(String(requestParameters['slug'])),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(GetPluginResponseFromJSON),
-    );
-  }
-
-  /**
-   * Gets all the plugins of the project with the given id.
-   */
-  async projectsSlugPluginsGet(
-    requestParameters: ProjectsSlugPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetPluginResponse>> {
-    const response = await this.projectsSlugPluginsGetRaw(
-      requestParameters,
-      initOverrides,
-    );
-    return await response.value();
-  }
-
-  /**
    * Creates a new project or updates the one with given slug.
    */
   async projectsSlugPutRaw(
@@ -927,64 +651,6 @@ export class ProjectsApi
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<PutProjectResponse> {
     const response = await this.projectsSlugPutRaw(
-      requestParameters,
-      initOverrides,
-    );
-    return await response.value();
-  }
-
-  /**
-   * Gets all the unarchived plugins of the project with the given slug.
-   */
-  async projectsSlugUnarchivedPluginsGetRaw(
-    requestParameters: ProjectsSlugUnarchivedPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<GetPluginResponse>>> {
-    if (requestParameters['slug'] == null) {
-      throw new runtime.RequiredError(
-        'slug',
-        'Required parameter "slug" was null or undefined when calling projectsSlugUnarchivedPluginsGet().',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    if (this.configuration && this.configuration.accessToken) {
-      const token = this.configuration.accessToken;
-      const tokenString = await token('Bearer', []);
-
-      if (tokenString) {
-        headerParameters['Authorization'] = `Bearer ${tokenString}`;
-      }
-    }
-    const response = await this.request(
-      {
-        path: `/Projects/{slug}/unarchivedPlugins`.replace(
-          `{${'slug'}}`,
-          encodeURIComponent(String(requestParameters['slug'])),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(GetPluginResponseFromJSON),
-    );
-  }
-
-  /**
-   * Gets all the unarchived plugins of the project with the given slug.
-   */
-  async projectsSlugUnarchivedPluginsGet(
-    requestParameters: ProjectsSlugUnarchivedPluginsGetRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<GetPluginResponse>> {
-    const response = await this.projectsSlugUnarchivedPluginsGetRaw(
       requestParameters,
       initOverrides,
     );

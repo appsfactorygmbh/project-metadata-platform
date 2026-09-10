@@ -3,6 +3,8 @@ import {
   type AuthApi as AuthApiType,
   AuthorizationApi,
   type AuthorizationApi as AuthorizationApiType,
+  BillingApi,
+  type BillingApi as BillingApiType,
   BusinessUnitsApi,
   type BusinessUnitsApi as BusinessUnitsApiType,
   CompaniesApi,
@@ -13,8 +15,12 @@ import {
   type LogsApi as LogsApiType,
   OfficeLocationsApi,
   type OfficeLocationsApi as OfficeLocationsApiType,
+  PluginBillingApi,
+  type PluginBillingApi as PluginBillingApiType,
   PluginsApi,
   type PluginsApi as PluginsApiType,
+  ProjectPluginsApi,
+  type ProjectPluginsApi as ProjectPluginsApiType,
   ProjectsApi,
   type ProjectsApi as ProjectsApiType,
   TeamsApi,
@@ -28,13 +34,16 @@ export type ApiTypes =
   | AuthorizationApiType
   | ProjectsApiType
   | PluginsApiType
+  | ProjectPluginsApiType
   | UsersApiType
   | LogsApiType
   | TeamsApiType
   | CompaniesApiType
   | DepartmentsApiType
   | OfficeLocationsApiType
-  | BusinessUnitsApiType;
+  | BusinessUnitsApiType
+  | BillingApiType
+  | PluginBillingApiType;
 
 export type ApiInstance<T extends ApiTypes> = T extends AuthApiType
   ? typeof AuthApi
@@ -42,20 +51,26 @@ export type ApiInstance<T extends ApiTypes> = T extends AuthApiType
     ? typeof ProjectsApi
     : T extends PluginsApiType
       ? typeof PluginsApi
-      : T extends UsersApiType
-        ? typeof UsersApi
-        : T extends LogsApiType
-          ? typeof LogsApi
-          : T extends TeamsApiType
-            ? typeof TeamsApi
-            : T extends BusinessUnitsApiType
-              ? typeof BusinessUnitsApi
-              : T extends CompaniesApiType
-                ? typeof CompaniesApi
-                : T extends DepartmentsApiType
-                  ? typeof DepartmentsApi
-                  : T extends OfficeLocationsApiType
-                    ? typeof OfficeLocationsApi
-                    : T extends AuthorizationApiType
-                      ? typeof AuthorizationApi
-                      : never;
+      : T extends ProjectPluginsApiType
+        ? typeof ProjectPluginsApi
+        : T extends UsersApiType
+          ? typeof UsersApi
+          : T extends LogsApiType
+            ? typeof LogsApi
+            : T extends TeamsApiType
+              ? typeof TeamsApi
+              : T extends BusinessUnitsApiType
+                ? typeof BusinessUnitsApi
+                : T extends CompaniesApiType
+                  ? typeof CompaniesApi
+                  : T extends DepartmentsApiType
+                    ? typeof DepartmentsApi
+                    : T extends OfficeLocationsApiType
+                      ? typeof OfficeLocationsApi
+                      : T extends AuthorizationApiType
+                        ? typeof AuthorizationApi
+                        : T extends BillingApiType
+                          ? typeof BillingApi
+                          : T extends PluginBillingApiType
+                            ? typeof PluginBillingApi
+                            : never;

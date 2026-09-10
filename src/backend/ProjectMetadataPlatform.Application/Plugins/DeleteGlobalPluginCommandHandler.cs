@@ -6,6 +6,7 @@ using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.Plugins;
 
 namespace ProjectMetadataPlatform.Application.Plugins;
 
@@ -69,6 +70,39 @@ public class DeleteGlobalPluginCommandHandler : IRequestHandler<DeleteGlobalPlug
                 Action.REMOVED_GLOBAL_PLUGIN,
                 changes
             );
+            foreach (var projectPlugin in plugin.ProjectPlugins ?? [])
+            {
+                var removedPluginChanges = new List<LogChange>()
+                {
+                    new()
+                    {
+                        Property = nameof(ProjectPlugin.Plugin),
+                        OldValue = plugin.PluginName,
+                        NewValue = string.Empty,
+                    },
+                    new()
+                    {
+                        Property = nameof(ProjectPlugin.DisplayName),
+                        OldValue = projectPlugin.DisplayName ?? string.Empty,
+                        NewValue = string.Empty,
+                    },
+                    new()
+                    {
+                        Property = nameof(ProjectPlugin.Url),
+                        OldValue = projectPlugin.Url,
+                        NewValue = string.Empty,
+                    },
+                };
+
+                await _logRepository.AddProjectLogForCurrentActor(
+                    projectPlugin.Project!,
+                    projectPlugin.PluginBilling == null
+                        ? Action.REMOVED_PROJECT_PLUGIN
+                        : Action.REMOVED_PROJECT_PLUGIN_WITH_BILLING,
+                    removedPluginChanges,
+                    globalPlugin: plugin
+                );
+            }
             await _unitOfWork.CompleteAsync();
             return true;
         }

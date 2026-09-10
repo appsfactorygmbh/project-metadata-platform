@@ -9,9 +9,12 @@
           :display-name="plugin.displayName"
           :url="plugin.url"
           :is-loading="loading"
-          :is-editing="isEditing"
-          :edit-key="plugin.editKey"
-          :is-deleted="false"
+          :plugin-permissions="plugin.pluginPermissions"
+          :billing-permissions="plugin.billingPermissions"
+          :is-add-billing-modal-open="
+            isBillingModalOpen && activePluginId === plugin.id
+          "
+          @open-create-billing="openBillingModal"
         />
 
         <GroupedCard
@@ -22,7 +25,13 @@
           @open="openGroupPopup(plugin)"
         />
       </div>
-      <AddPluginCard v-if="isEditing" />
+      <AddPluginCard
+        v-if="
+          !isEditing &&
+          !isProjectArchived &&
+          pluginStore.getPermissions.includes(ResourceActions.Create)
+        "
+      />
     </div>
 
     <!-- Placeholder for loading skeleton -->
@@ -39,61 +48,103 @@
     >
       <a-skeleton active />
     </a-card>
-
+    <AddBillingModal
+      v-if="activePluginId !== null"
+      :is-open="isBillingModalOpen"
+      :plugin-name="getActivePluginName()"
+      :plugin-id="activePluginId"
+      :project-id="projectStore.getProject?.id ?? 0"
+      @update:is-open="isBillingModalOpen = $event"
+      @added-billing="handleBillingCreated"
+      @cancel="handleBillingCancel"
+    />
     <transition name="fade-popup">
       <Popup
         v-if="selectedGroup"
         :selected-group="selectedGroup"
         :loading="loading"
         :is-editing="isEditing"
+        :is-billing-modal-open="isBillingModalOpen"
+        :active-plugin-id="activePluginId"
         @close="closeGroupPopup"
+        @open-create-billing="openBillingModal"
       />
     </transition>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { computed, inject, onMounted, ref, toRaw, watch } from 'vue';
-  import type { ComputedRef } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import { PluginComponent } from '@/components/Plugin';
   import { AddPluginCard } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
-  import { projectEditStoreSymbol } from '@/store/injectionSymbols';
   import { useEditing } from '@/utils/hooks/useEditing';
-  import type { PluginEditModel, PluginModel } from '@/models/Plugin';
+  import type { PluginModel } from '@/models/Plugin';
   import { usePluginStore, useProjectStore } from '@/store';
   import { createFaviconURL, cutAfterTLD } from '@/components/Plugin/editURL';
   import GroupedCard from '@/components/GroupedCard/GroupedCard.vue';
   import Popup from '@/components/Popup/PopupComponent.vue';
+  import { ResourceActions } from '@/models/utils';
 
   const { isEditing } = useEditing();
 
   const pluginStore = usePluginStore();
   const projectStore = useProjectStore();
-  const projectEditStore = inject(projectEditStoreSymbol);
-
   const emit = defineEmits(['setBlur']);
 
-  const plugins = ref<PluginEditModel[]>([]);
+  const plugins = computed<PluginModel[]>(() =>
+    projectStore?.getProject?.isArchived
+      ? pluginStore.getPlugins
+      : pluginStore.getUnarchivedPlugins,
+  );
   const loading = computed(
     () => pluginStore.getIsLoading || projectStore.getIsLoading,
   );
+  const isProjectArchived = computed(
+    () => projectStore.getProject?.isArchived ?? false,
+  );
+  const isBillingModalOpen = ref(false);
+  const activePluginId = ref<number | null>(null);
+
+  const openBillingModal = (pluginId: number) => {
+    activePluginId.value = pluginId;
+    isBillingModalOpen.value = true;
+  };
+  const handleBillingCancel = () => {
+    isBillingModalOpen.value = false;
+    activePluginId.value = null;
+  };
+  const handleBillingCreated = async () => {
+    isBillingModalOpen.value = false;
+    activePluginId.value = null;
+    pluginStore.fetch(projectStore.getProject?.id ?? 0);
+    pluginStore.fetchUnarchived(projectStore.getProject?.id ?? 0);
+  };
+
+  const getActivePluginName = () => {
+    const plugin = plugins.value.find(
+      (plugin) => plugin.id == activePluginId.value,
+    )!;
+
+    return plugin?.displayName ?? plugin?.url;
+  };
 
   interface GroupedPlugin {
     id: string | number;
     pluginName: string;
     displayName: string;
-    plugins: PluginEditModel[];
+    plugins: PluginModel[];
     isGroup: boolean;
     faviconUrl: string;
     url: string;
-    editKey: number;
+    pluginPermissions?: ResourceActions[];
+    billingPermissions?: ResourceActions[];
   }
 
   // groups plugin of same kind when they are more than 3
   const groupThreshold = parseInt(import.meta.env.VITE_GROUP_THRESHOLD) || 3; // limit for grouping
   const groupedPlugins = computed(() => {
-    const groups: Record<string, PluginEditModel[]> = {};
-    plugins.value.forEach((plugin: PluginEditModel) => {
+    const groups: Record<string, PluginModel[]> = {};
+    plugins.value.forEach((plugin: PluginModel) => {
       const pluginName = plugin.pluginName;
       if (!groups[pluginName]) {
         groups[pluginName] = [];
@@ -125,7 +176,8 @@
             isGroup: false,
             faviconUrl: '',
             url: plugin.url,
-            editKey: plugin.editKey,
+            pluginPermissions: plugin.pluginPermissions ?? [],
+            billingPermissions: plugin.billingPermissions ?? [],
           })),
         );
       }
@@ -133,101 +185,48 @@
     return result;
   });
 
-  // selected group for popup
-  const selectedGroup = ref<GroupedPlugin | null>(null);
+  // selected group id for popup
+  const selectedGroupId = ref<string | number | null>(null);
 
+  const selectedGroup = computed(() => {
+    if (!selectedGroupId.value) return null;
+    return (
+      groupedPlugins.value.find((g) => g.id === selectedGroupId.value) || null
+    );
+  });
+
+  watch(
+    () => selectedGroup.value,
+    (newGroup) => {
+      if (!newGroup && selectedGroupId.value !== null) {
+        closeGroupPopup();
+      }
+    },
+  );
   function openGroupPopup(pluginGroup: GroupedPlugin) {
-    selectedGroup.value = pluginGroup;
-
-    // emits event to turn on blur in the background
+    selectedGroupId.value = pluginGroup.id;
     emit('setBlur', true);
-
-    // Delay adding the event listener to prevent immediate closing due to initial click
     setTimeout(() => {
       document.addEventListener('click', handleOutsideClick);
     }, 0);
   }
 
   function closeGroupPopup() {
-    selectedGroup.value = null;
-
-    // emits event to turn off blur in the background
+    selectedGroupId.value = null;
     emit('setBlur', false);
-
     document.removeEventListener('click', handleOutsideClick);
   }
 
   function handleOutsideClick(event: Event) {
+    if (isBillingModalOpen.value) {
+      return;
+    }
     const popupElement = document.querySelector('.popup');
-    if (
-      popupElement &&
-      !popupElement.contains(event.target as HTMLInputElement)
-    ) {
+    const path = event.composedPath();
+    if (popupElement && !path.includes(popupElement)) {
       closeGroupPopup();
     }
   }
-
-  const syncEditStore = (normalPlugins: PluginModel[]) => {
-    if (!normalPlugins?.length) return;
-    for (let i = 0; i < normalPlugins.length; i++) {
-      const index = projectEditStore?.initialAdd(normalPlugins[i]);
-      if (index !== undefined) {
-        plugins.value[i] = {
-          ...normalPlugins[i],
-          editKey: index,
-          isDeleted: false,
-        };
-      }
-    }
-  };
-
-  function setPlugins(newPlugins: PluginModel[]) {
-    const normalPlugins = toRaw(newPlugins);
-    projectEditStore?.resetPluginChanges();
-    plugins.value = [];
-    syncEditStore(normalPlugins);
-  }
-
-  watch(
-    () => projectEditStore?.getAddedPlugins.length,
-    (newVal) => {
-      if (newVal && newVal > 0) {
-        const newPlugin = projectEditStore?.getLastAddedPlugin;
-        if (newPlugin) {
-          plugins.value = [...plugins.value, newPlugin];
-        }
-      }
-    },
-  );
-
-  watch(
-    () => isEditing.value,
-    (newVal) => {
-      if (!newVal) {
-        projectEditStore?.resetPluginChanges();
-      } else {
-        plugins.value = [];
-        projectEditStore?.resetPluginChanges();
-        syncEditStore(pluginStore.getUnarchivedPlugins);
-      }
-    },
-  );
-
-  onMounted(async () => {
-    const data: ComputedRef<PluginModel[]> = computed(() =>
-      projectStore?.getProject?.isArchived
-        ? pluginStore.getPlugins
-        : pluginStore.getUnarchivedPlugins,
-    );
-    setPlugins(data.value);
-
-    watch(
-      () => data.value,
-      (newProject) => {
-        setPlugins(newProject);
-      },
-    );
-  });
 </script>
 
 <style scoped lang="css">

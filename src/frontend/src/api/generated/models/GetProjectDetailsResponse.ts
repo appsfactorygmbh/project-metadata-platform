@@ -60,12 +60,6 @@ export interface GetProjectDetailsResponse {
    */
   clientName: string;
   /**
-   * Internal id of the offer associated with the project.
-   * @type {string}
-   * @memberof GetProjectDetailsResponse
-   */
-  offerId?: string | null;
-  /**
    *
    * @type {GetCompanyResponse}
    * @memberof GetProjectDetailsResponse
@@ -156,7 +150,6 @@ export function GetProjectDetailsResponseFromJSONTyped(
     slug: json['slug'],
     projectName: json['projectName'],
     clientName: json['clientName'],
-    offerId: json['offerId'] == null ? undefined : json['offerId'],
     company: GetCompanyResponseFromJSON(json['company']),
     isArchived: json['isArchived'],
     isEoC: json['isEoC'],
@@ -191,7 +184,6 @@ export function GetProjectDetailsResponseToJSONTyped(
     slug: value['slug'],
     projectName: value['projectName'],
     clientName: value['clientName'],
-    offerId: value['offerId'],
     company: GetCompanyResponseToJSON(value['company']),
     isArchived: value['isArchived'],
     isEoC: value['isEoC'],

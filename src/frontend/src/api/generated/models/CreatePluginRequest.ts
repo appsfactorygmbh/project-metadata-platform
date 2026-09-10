@@ -31,12 +31,6 @@ export interface CreatePluginRequest {
    */
   isArchived: boolean;
   /**
-   * The keys of the new plugin.
-   * @type {Array<string>}
-   * @memberof CreatePluginRequest
-   */
-  keys: Array<string>;
-  /**
    * Base Url of the new plugin.
    * @type {string}
    * @memberof CreatePluginRequest
@@ -54,7 +48,6 @@ export function instanceOfCreatePluginRequest(
     return false;
   if (!('isArchived' in value) || value['isArchived'] === undefined)
     return false;
-  if (!('keys' in value) || value['keys'] === undefined) return false;
   if (!('baseUrl' in value) || value['baseUrl'] === undefined) return false;
   return true;
 }
@@ -73,7 +66,6 @@ export function CreatePluginRequestFromJSONTyped(
   return {
     pluginName: json['pluginName'],
     isArchived: json['isArchived'],
-    keys: json['keys'],
     baseUrl: json['baseUrl'],
   };
 }
@@ -93,7 +85,6 @@ export function CreatePluginRequestToJSONTyped(
   return {
     pluginName: value['pluginName'],
     isArchived: value['isArchived'],
-    keys: value['keys'],
     baseUrl: value['baseUrl'],
   };
 }

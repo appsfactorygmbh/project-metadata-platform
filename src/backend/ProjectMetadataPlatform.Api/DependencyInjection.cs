@@ -11,6 +11,7 @@ using ProjectMetadataPlatform.Api.Logs;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
+using ProjectMetadataPlatform.Domain.Errors.BillingExceptions;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
@@ -68,6 +69,10 @@ public static class DependencyInjection
         _ = serviceCollection.AddScoped<
             IExceptionHandler<CompanyException>,
             CompaniesExceptionHandler
+        >();
+        _ = serviceCollection.AddScoped<
+            IExceptionHandler<BillingException>,
+            BillingsExceptionHandler
         >();
         _ = serviceCollection
             .AddControllers(options =>

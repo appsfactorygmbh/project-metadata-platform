@@ -53,8 +53,11 @@ public class GetAllBusinessUnitsQueryHandler
         );
         if (queriedBusinessUnits == null)
         {
+            var businessUnitList = await businessUnits.ToListAsync(
+                cancellationToken: cancellationToken
+            );
             List<BusinessUnit> filteredBusinessUnits = [];
-            foreach (var businessUnit in businessUnits)
+            foreach (var businessUnit in businessUnitList)
             {
                 if (
                     await _authorizationService.CheckAccess(

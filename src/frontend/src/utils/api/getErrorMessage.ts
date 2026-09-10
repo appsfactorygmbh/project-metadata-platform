@@ -2,7 +2,7 @@ import { ResponseError } from '@/api/generated';
 
 export const getFetchErrorMessage = async (
   error: unknown,
-  defaultMessage: string | undefined = 'Unbekannter Fehler',
+  defaultMessage: string | undefined = 'Unknown Error',
 ): Promise<string> => {
   if (error instanceof ResponseError) {
     return await error.response

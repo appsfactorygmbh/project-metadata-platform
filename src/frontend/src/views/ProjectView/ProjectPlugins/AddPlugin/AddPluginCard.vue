@@ -20,21 +20,22 @@
 
 <template>
   <!-- Placeholder for adding new Plugin -->
-  <a-card
-    class="card"
-    :bordered="false"
-    :body-style="{
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '15px',
-    }"
-    @click="handleClick"
-  >
-    <h1 class="plusSymbol">+</h1>
-  </a-card>
-
+  <a-tooltip title="Click here to add a new plugin">
+    <a-card
+      class="card"
+      :bordered="false"
+      :body-style="{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '15px',
+      }"
+      @click="handleClick"
+    >
+      <h1 class="plusSymbol">+</h1>
+    </a-card>
+  </a-tooltip>
   <!-- Opens modal for adding new Plugin when openModal has value "true" -->
   <AddPluginView v-if="openModal" :show-modal="openModal" @close="closeModal" />
 </template>

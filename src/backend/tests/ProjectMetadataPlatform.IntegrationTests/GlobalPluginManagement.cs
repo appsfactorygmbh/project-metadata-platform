@@ -9,10 +9,10 @@ namespace ProjectMetadataPlatform.IntegrationTests;
 public class GlobalPluginManagement : IntegrationTestsBase
 {
     private static readonly StringContent CreateRequest = StringContent(
-        """{ "pluginName": "GitLab", "isArchived": false, "keys": [ "key1" ], "baseUrl": "https://gitlab.com" }"""
+        """{ "pluginName": "GitLab", "isArchived": false, "baseUrl": "https://gitlab.com" }"""
     );
     private static readonly StringContent CreateRequest2 = StringContent(
-        """{ "pluginName": "Jira", "isArchived": false, "keys": [ "key2" ], "baseUrl": "https://jira.com" }"""
+        """{ "pluginName": "Jira", "isArchived": false, "baseUrl": "https://jira.com" }"""
     );
 
     [Test]
@@ -42,7 +42,6 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(plugins[0].GetProperty("id").GetInt32(), Is.EqualTo(pluginId1));
             Assert.That(plugins[0].GetProperty("pluginName").GetString(), Is.EqualTo("GitLab"));
             Assert.That(plugins[0].GetProperty("isArchived").GetBoolean(), Is.False);
-            Assert.That(plugins[0].GetProperty("keys").EnumerateArray(), Is.Empty);
             Assert.That(
                 plugins[0].GetProperty("baseUrl").GetString(),
                 Is.EqualTo("https://gitlab.com")
@@ -50,7 +49,6 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(plugins[1].GetProperty("id").GetInt32(), Is.EqualTo(pluginId2));
             Assert.That(plugins[1].GetProperty("pluginName").GetString(), Is.EqualTo("Jira"));
             Assert.That(plugins[1].GetProperty("isArchived").GetBoolean(), Is.False);
-            Assert.That(plugins[1].GetProperty("keys").EnumerateArray(), Is.Empty);
             Assert.That(
                 plugins[1].GetProperty("baseUrl").GetString(),
                 Is.EqualTo("https://jira.com")
@@ -65,13 +63,13 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(
                 logs[1].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com, Keys[0] = key1"
+                    "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com"
                 )
             );
             Assert.That(
                 logs[0].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin added a new global plugin with properties: PluginName = Jira, IsArchived = False, BaseUrl = https://jira.com, Keys[0] = key2"
+                    "admin added a new global plugin with properties: PluginName = Jira, IsArchived = False, BaseUrl = https://jira.com"
                 )
             );
         });
@@ -100,7 +98,6 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(updatedPlugin.GetProperty("id").GetInt32(), Is.EqualTo(pluginId));
             Assert.That(updatedPlugin.GetProperty("pluginName").GetString(), Is.EqualTo("Jira"));
             Assert.That(updatedPlugin.GetProperty("isArchived").GetBoolean(), Is.False);
-            Assert.That(updatedPlugin.GetProperty("keys").EnumerateArray(), Is.Empty);
         });
 
         var plugins = (await ToJsonElement(client.GetAsync("/Plugins"))).GetProperty("resources");
@@ -110,7 +107,6 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(plugins[0].GetProperty("id").GetInt32(), Is.EqualTo(pluginId));
             Assert.That(plugins[0].GetProperty("pluginName").GetString(), Is.EqualTo("Jira"));
             Assert.That(plugins[0].GetProperty("isArchived").GetBoolean(), Is.False);
-            Assert.That(plugins[0].GetProperty("keys").EnumerateArray(), Is.Empty);
         });
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
@@ -120,7 +116,7 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(
                 logs[1].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com, Keys[0] = key1"
+                    "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com"
                 )
             );
             Assert.That(
@@ -156,7 +152,6 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(updatedPlugin.GetProperty("id").GetInt32(), Is.EqualTo(pluginId));
             Assert.That(updatedPlugin.GetProperty("pluginName").GetString(), Is.EqualTo("GitLab"));
             Assert.That(updatedPlugin.GetProperty("isArchived").GetBoolean(), Is.True);
-            Assert.That(updatedPlugin.GetProperty("keys").EnumerateArray(), Is.Empty);
         });
         var plugins = (await ToJsonElement(client.GetAsync("/Plugins"))).GetProperty("resources");
         Assert.Multiple(() =>
@@ -165,7 +160,6 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(plugins[0].GetProperty("id").GetInt32(), Is.EqualTo(pluginId));
             Assert.That(plugins[0].GetProperty("pluginName").GetString(), Is.EqualTo("GitLab"));
             Assert.That(plugins[0].GetProperty("isArchived").GetBoolean(), Is.True);
-            Assert.That(plugins[0].GetProperty("keys").EnumerateArray(), Is.Empty);
         });
         updatedPlugin = await ToJsonElement(
             client.PatchAsync($"/Plugins/{pluginId}", StringContent("""{ "isArchived": false }"""))
@@ -176,7 +170,6 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(updatedPlugin.GetProperty("id").GetInt32(), Is.EqualTo(pluginId));
             Assert.That(updatedPlugin.GetProperty("pluginName").GetString(), Is.EqualTo("GitLab"));
             Assert.That(updatedPlugin.GetProperty("isArchived").GetBoolean(), Is.False);
-            Assert.That(updatedPlugin.GetProperty("keys").EnumerateArray(), Is.Empty);
         });
         plugins = (await ToJsonElement(client.GetAsync("/Plugins"))).GetProperty("resources");
 
@@ -186,7 +179,6 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(plugins[0].GetProperty("id").GetInt32(), Is.EqualTo(pluginId));
             Assert.That(plugins[0].GetProperty("pluginName").GetString(), Is.EqualTo("GitLab"));
             Assert.That(plugins[0].GetProperty("isArchived").GetBoolean(), Is.False);
-            Assert.That(plugins[0].GetProperty("keys").EnumerateArray(), Is.Empty);
         });
 
         var logs = await ToJsonElement(client.GetAsync("/Logs"));
@@ -197,7 +189,7 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(
                 logs[2].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com, Keys[0] = key1"
+                    "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com"
                 )
             );
             Assert.That(
@@ -244,7 +236,7 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(
                 logs[2].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com, Keys[0] = key1"
+                    "admin added a new global plugin with properties: PluginName = GitLab, IsArchived = False, BaseUrl = https://gitlab.com"
                 )
             );
             Assert.That(
@@ -318,6 +310,6 @@ public class GlobalPluginManagement : IntegrationTestsBase
         );
 
         // Assert
-        Assert.That(errorResponse.Message, Is.EqualTo("The plugin 1 is not archived."));
+        Assert.That(errorResponse.Message, Is.EqualTo("The plugin 305 is not archived."));
     }
 }

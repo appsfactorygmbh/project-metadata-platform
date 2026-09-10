@@ -253,7 +253,7 @@ public class OfficeLocationsControllerTest
         {
             Assert.That(updateOfficeLocationResponse, Is.Not.Null);
             Assert.That(
-                updateOfficeLocationResponse.OfficeLocationName,
+                updateOfficeLocationResponse!.OfficeLocationName,
                 Is.EqualTo("OfficeLocation")
             );
             Assert.That(updateOfficeLocationResponse.Id, Is.EqualTo(1));
