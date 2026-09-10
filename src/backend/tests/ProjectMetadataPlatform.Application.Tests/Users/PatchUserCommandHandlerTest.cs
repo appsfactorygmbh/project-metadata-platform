@@ -30,7 +30,6 @@ public class PatchUserCommandHandlerTest
     private Mock<IUnitOfWork> _mockUnitOfWork;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<ITeamRepository> _mockTeamRepo;
-    private Mock<IOfficeLocationRepository> _mockOfficeLocationRepository;
     private Mock<IAuthorizationService> _authorizationServiceMock;
     private Mock<IGetOrCreateHelper> _getOrCreateHelperMock;
 

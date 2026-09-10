@@ -40,7 +40,6 @@
 
   const initialValues = reactive<GlobalPluginFormData>({
     pluginName: '',
-    keys: [],
     baseUrl: '',
   });
 
@@ -57,13 +56,6 @@
           return;
         }
         initialValues.pluginName = globalPluginData.pluginName;
-        initialValues.keys =
-          globalPluginData.keys?.map((keyObj, index) => ({
-            // TODO: adapt when feature to archive keys is implemented
-            key: index, //keyObj.key,
-            value: keyObj, //keyObj.value,
-            archived: false, //keyObj.archived,
-          })) ?? [];
         initialValues.baseUrl = globalPluginData.baseUrl ?? '';
       }
     }

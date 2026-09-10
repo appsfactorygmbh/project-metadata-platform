@@ -7,7 +7,7 @@
       required: true,
     },
     value: {
-      type: String,
+      type: [String] as PropType<string | null | undefined>,
       required: true,
     },
     placeholder: {
@@ -15,8 +15,8 @@
       default: '',
     },
     rules: {
-      type: Array<Rule>,
-      default: [],
+      type: Array as PropType<Rule[]>,
+      default: () => [],
       required: false,
     },
   });
@@ -34,8 +34,8 @@
     <InputField
       :value="props.value"
       :placeholder="props.placeholder"
-      :default="props.value"
-      @update:value="(val: string) => emit('update:value', val)"
+      :default="props.value ?? ''"
+      @update:value="(val: string | null) => emit('update:value', val)"
     />
   </a-form-item>
 </template>

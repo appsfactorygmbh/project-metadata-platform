@@ -44,8 +44,9 @@ public class GetAllProjectsQueryHandler
         );
         if (queriedProjects == null)
         {
+            var projectList = await projects.ToListAsync(cancellationToken: cancellationToken);
             List<Project> filteredProjects = [];
-            foreach (var project in projects)
+            foreach (var project in projectList)
             {
                 if (
                     await _authorizationService.CheckAccess(

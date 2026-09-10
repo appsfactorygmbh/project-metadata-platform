@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ProjectMetadataPlatform.Domain.Plugins;
 
@@ -7,20 +7,24 @@ namespace ProjectMetadataPlatform.Infrastructure.DataAccess.ModelConfigs;
 /// <summary>
 /// Data Base Configuration for the relation between Project and Plugin.
 /// </summary>
-public class ProjectPluginRelationConfig : IEntityTypeConfiguration<ProjectPlugins>
+public class ProjectPluginRelationConfig : IEntityTypeConfiguration<ProjectPlugin>
 {
     /// <summary>
     /// Configures the ProjectPlugins entity.
     /// </summary>
     /// <param name="builder"></param>
-    public void Configure(EntityTypeBuilder<ProjectPlugins> builder)
+    public void Configure(EntityTypeBuilder<ProjectPlugin> builder)
     {
-        _ = builder.HasKey(pp => new
-        {
-            pp.PluginId,
-            pp.ProjectId,
-            pp.Url,
-        });
+        _ = builder.HasKey(pp => new { pp.ProjectId, pp.Id });
+
+        _ = builder
+            .HasIndex(pp => new
+            {
+                pp.PluginId,
+                pp.ProjectId,
+                pp.Url,
+            })
+            .IsUnique();
 
         _ = builder
             .HasOne(pp => pp.Project)

@@ -29,14 +29,8 @@ public interface IProjectsRepository
     /// Returns a project.
     /// </summary>
     /// <returns>One project or null.</returns>
-    Task<Project> GetProjectAsync(int id);
-
-    /// <summary>
-    /// Returns a project.
-    /// </summary>
-    /// <returns>One project or null.</returns>
     /// <exception cref="ProjectNotFoundException">Thrown when the project is not found.</exception>
-    Task<Project> GetProjectWithPluginsAsync(int id);
+    Task<Project> GetProjectAsync(int id);
 
     /// <summary>
     /// Saves a project to the database.

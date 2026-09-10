@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectMetadataPlatform.Application.Interfaces;
 
-namespace ProjectMetadataPlatform.Application;
+namespace ProjectMetadataPlatform.Application.Mediator;
 
 /// <summary>
 /// Implementation of <see cref="IMediator" />

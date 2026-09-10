@@ -29,6 +29,11 @@ describe('Popup.vue', () => {
         loading: false,
         isEditing: false,
       },
+      global: {
+        stubs: {
+          PluginComponent: true,
+        },
+      },
     });
 
     // Checking if `h3` exists
@@ -45,6 +50,11 @@ describe('Popup.vue', () => {
     const wrapper = mount(Popup, {
       props: {
         selectedGroup: selectedGroupMock,
+      },
+      global: {
+        stubs: {
+          PluginComponent: true,
+        },
       },
     });
 

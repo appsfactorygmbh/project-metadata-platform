@@ -8,7 +8,9 @@
     @ok="onConfirm"
     @cancel="onCancel"
   >
-    <p>{{ message }}</p>
+    <p>
+      <slot>{{ message }}</slot>
+    </p>
   </a-modal>
 </template>
 
@@ -26,7 +28,8 @@
     },
     message: {
       type: String,
-      required: true,
+      required: false,
+      default: '',
     },
   });
 

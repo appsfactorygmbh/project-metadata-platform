@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -43,12 +42,7 @@ public class Tests
             )
             .ReturnsAsync(42);
 
-        var request = new CreatePluginRequest(
-            "Solid Rocket Booster",
-            true,
-            new List<string>(),
-            "https://booster.de"
-        );
+        var request = new CreatePluginRequest("Solid Rocket Booster", true, "https://booster.de");
 
         var result = await _controller.Put(request);
 
@@ -79,7 +73,7 @@ public class Tests
             )
             .Throws(new IOException());
 
-        var request = new CreatePluginRequest("Drogue chute", false, [], "https://chute.de");
+        var request = new CreatePluginRequest("Drogue chute", false, "https://chute.de");
 
         _ = Assert.ThrowsAsync<IOException>(() => _controller.Put(request));
     }
@@ -96,7 +90,7 @@ public class Tests
             )
             .Throws(new PluginNameAlreadyExistsException("Drogue chute"));
 
-        var request = new CreatePluginRequest("Drogue chute", false, [], "https://chute.de");
+        var request = new CreatePluginRequest("Drogue chute", false, "https://chute.de");
 
         _ = Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() => _controller.Put(request));
     }
@@ -104,7 +98,7 @@ public class Tests
     [Test]
     public async Task CreatePlugin_EmptyName_Test()
     {
-        var request = new CreatePluginRequest("", false, new List<string>(), "https://empty.de");
+        var request = new CreatePluginRequest("", false, "https://empty.de");
 
         var result = await _controller.Put(request);
 
@@ -190,12 +184,7 @@ public class Tests
     [Test]
     public async Task CreatePlugin_WhiteSpacesName_Test()
     {
-        var request = new CreatePluginRequest(
-            "         ",
-            false,
-            new List<string>(),
-            "https://whitespace.de"
-        );
+        var request = new CreatePluginRequest("         ", false, "https://whitespace.de");
 
         var result = await _controller.Put(request);
 
@@ -340,7 +329,6 @@ public class Tests
             Assert.That(resultObj.PluginName, Is.EqualTo("plugin 1"));
             Assert.That(resultObj.Id, Is.EqualTo(1));
             Assert.That(resultObj.IsArchived, Is.False);
-            Assert.That(resultObj.Keys, Is.EqualTo(Array.Empty<string>()));
             Assert.That(resultObj.BaseUrl, Is.EqualTo("https://plugin1.com"));
         });
     }

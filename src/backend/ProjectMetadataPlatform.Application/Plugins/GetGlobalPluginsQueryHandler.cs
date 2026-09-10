@@ -48,7 +48,8 @@ public class GetGlobalPluginsQueryHandler
         List<(Plugin, IEnumerable<AuthorizationConstants.Actions>)> plugins = [];
         if (queriedPlugins == null)
         {
-            foreach (var plugin in pluginQuery)
+            var pluginList = await pluginQuery.ToListAsync(cancellationToken: cancellationToken);
+            foreach (var plugin in pluginList)
             {
                 if (
                     await _authorizationService.CheckAccess(

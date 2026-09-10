@@ -20,11 +20,11 @@ public class UnauthorizedResponseOperationFilter : IOperationFilter
             is true
         )
         {
-            _ = operation.Responses.Remove("401");
+            _ = operation.Responses!.Remove("401");
             return;
         }
 
-        if (operation.Responses.TryGetValue("401", out var value))
+        if (operation.Responses!.TryGetValue("401", out var value))
         {
             value.Description =
                 "The user is not logged in or does not have the necessary permissions to perform this action.";

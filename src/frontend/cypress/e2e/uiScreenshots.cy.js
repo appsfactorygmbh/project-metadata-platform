@@ -19,6 +19,34 @@ themes.forEach((theme) => {
         permissions: ['EDIT', 'DELETE'],
       },
     ];
+    let globalBillingList = [
+      {
+        id: 1,
+        billingKind: 'Standard Client Project',
+        currency: 'USD',
+        targetMargin: 50,
+        timeFrame: 'DATE',
+        permissions: ['EDIT', 'DELETE'],
+      },
+      {
+        id: 2,
+        billingKind: 'Internal Billing',
+      },
+    ];
+    let pluginBilling = {
+      projectId: 301,
+      pluginId: 303,
+      billingId: 1,
+      contractIds: ['c1234F4G', 'c7hG34B'],
+      budgetLimit: 1200,
+      hostingFee: 800.67,
+      currency: 'EUR',
+      targetMargin: 50,
+      timeFrame: 'DATE',
+      date: '2026-09-10T07:46:10.215Z',
+      notes: 'This is note',
+      permissions: ['EDIT', 'DELETE'],
+    };
     let businessUnits = [
       {
         id: 1,
@@ -88,13 +116,21 @@ themes.forEach((theme) => {
         pluginName: 'Repository',
         url: 'https://info.cern.ch/hypertext/WWW/TheProject.html',
         displayName: 'Repository',
-        id: 303,
+        pluginId: 304,
+        projectId: 301,
+        id: 1,
+        pluginPermissions: ['EDIT', 'DELETE'],
+        billingPermissions: ['GET'],
       },
       {
         pluginName: 'Design',
         url: 'https://info.cern.ch/hypertext/WWW/TheProject.html',
         displayName: 'A Plugin',
-        id: 301,
+        pluginId: 304,
+        projectId: 301,
+        id: 1,
+        pluginPermissions: ['EDIT', 'DELETE'],
+        billingPermissions: ['CREATE'],
       },
     ];
     let globalPlugins = [
@@ -102,7 +138,6 @@ themes.forEach((theme) => {
         pluginName: 'Appstorage',
         id: 304,
         isArchived: false,
-        keys: [],
         baseUrl: 'https://info.cern.ch/hypertext/WWW/TheProject.html',
         permissions: ['EDIT', 'DELETE'],
       },
@@ -110,7 +145,6 @@ themes.forEach((theme) => {
         pluginName: 'Repository',
         id: 305,
         isArchived: false,
-        keys: [],
         baseUrl: 'https://info.cern.ch/hypertext/WWW/TheProject.html',
         permissions: ['EDIT', 'DELETE'],
       },
@@ -279,6 +313,9 @@ themes.forEach((theme) => {
       'Project',
       'Team',
       'ApplicationUser',
+      'GlobalBilling',
+      'PluginBilling',
+      'ProjectPlugin',
     ];
 
     let permissions = [
@@ -377,6 +414,11 @@ themes.forEach((theme) => {
         },
       }).as('refreshToken');
 
+      cy.intercept('GET', '/Logs?projectId=*', {
+        statusCode: 200,
+        body: [],
+      }).as('projectLogs');
+
       cy.intercept('GET', '/Users/**', { statusCode: 200, body: users[1] }).as(
         'getUser',
       );
@@ -446,6 +488,15 @@ themes.forEach((theme) => {
         'getTeam',
       );
 
+      cy.intercept('GET', '/Billing', {
+        statusCode: 200,
+        body: { resources: globalBillingList, permissions: ['CREATE'] },
+      }).as('getBillingList');
+      cy.intercept('GET', '/Billing/**', {
+        statusCode: 200,
+        body: globalBillingList[0],
+      }).as('getBilling');
+
       cy.intercept('GET', '/Plugins', {
         statusCode: 200,
         body: { resources: globalPlugins, permissions: ['CREATE'] },
@@ -461,11 +512,15 @@ themes.forEach((theme) => {
       }).as('getProject');
       cy.intercept('GET', '/Projects/**/plugins', {
         statusCode: 200,
-        body: projectPlugins,
+        body: { resources: projectPlugins, permissions: ['CREATE'] },
       }).as('getProjectPlugins');
+      cy.intercept('GET', '/Projects/**/plugins/**/billing', {
+        statusCode: 200,
+        body: pluginBilling,
+      }).as('getPluginBilling');
       cy.intercept('GET', '/Projects/**/unarchivedPlugins', {
         statusCode: 200,
-        body: projectPlugins,
+        body: { resources: projectPlugins, permissions: ['CREATE'] },
       }).as('getUnarchivedProjectPlugins');
       cy.intercept('GET', '/Logs', {
         statusCode: 200,
@@ -480,6 +535,13 @@ themes.forEach((theme) => {
         statusCode: 200,
         body: permissions,
       }).as('getPermissions');
+
+      cy.on('window:load', (win) => {
+        const style = win.document.createElement('style');
+        style.innerHTML =
+          '.ant-tooltip { display: none !important; opacity: 0 !important; visibility: hidden !important; }';
+        win.document.head.appendChild(style);
+      });
 
       //set theme and fake auth token
       cy.window().then((win) => {
@@ -527,6 +589,11 @@ themes.forEach((theme) => {
         '@getCompanies',
       ]);
       cy.wait(waitTime);
+      cy.get('.plugins')
+        .first()
+        .within(() => {
+          cy.get('.action-badge').invoke('css', 'opacity', '1');
+        });
       cy.screenshot('project-information-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
@@ -565,6 +632,128 @@ themes.forEach((theme) => {
       cy.wait(waitTime);
 
       cy.screenshot('create-project-view-' + theme, {
+        overwrite: true,
+        capture: 'viewport',
+        scale: true,
+      });
+    });
+
+    it('captures the add plugin modal', () => {
+      cy.visit(
+        '/' + projects[0].slug + '?isEditing=false&projectId=' + projects[0].id,
+      );
+
+      cy.wait([
+        '@getProject',
+        '@getProjectPlugins',
+        '@getUnarchivedProjectPlugins',
+        '@getTeams',
+        '@getCompanies',
+      ]);
+      cy.wait(waitTime);
+
+      cy.get('.container').children().last().click({ force: true });
+
+      cy.wait(waitTime);
+      cy.contains('Add Plugin').should('be.visible').click();
+
+      cy.screenshot('add-plugin-modal-view-' + theme, {
+        overwrite: true,
+        capture: 'viewport',
+        scale: true,
+      });
+    });
+
+    it('captures the edit plugin card', () => {
+      cy.visit(
+        '/' + projects[0].slug + '?isEditing=false&projectId=' + projects[0].id,
+      );
+
+      cy.wait([
+        '@getProject',
+        '@getProjectPlugins',
+        '@getUnarchivedProjectPlugins',
+        '@getTeams',
+        '@getCompanies',
+      ]);
+      cy.wait(waitTime);
+
+      cy.get('.plugins')
+        .first()
+        .within(() => {
+          cy.get('.edit-badge')
+            .invoke('css', 'opacity', '1')
+            .click({ force: true });
+        });
+      cy.wait(waitTime);
+
+      cy.screenshot('edit-plugin-card-view-' + theme, {
+        overwrite: true,
+        capture: 'viewport',
+        scale: true,
+      });
+    });
+
+    it('captures the plugin billing information popover', () => {
+      cy.visit(
+        '/' + projects[0].slug + '?isEditing=false&projectId=' + projects[0].id,
+      );
+
+      cy.wait([
+        '@getProject',
+        '@getProjectPlugins',
+        '@getUnarchivedProjectPlugins',
+        '@getTeams',
+        '@getCompanies',
+      ]);
+      cy.wait(waitTime);
+
+      cy.get('.plugins')
+        .first()
+        .within(() => {
+          cy.get('.billing-badge')
+            .invoke('css', 'opacity', '1')
+            .click({ force: true });
+        });
+
+      cy.wait('@getPluginBilling');
+      cy.wait(waitTime);
+      cy.contains('Billing Information').should('be.visible').click();
+
+      cy.screenshot('plugin-billing-popover-view-' + theme, {
+        overwrite: true,
+        capture: 'viewport',
+        scale: true,
+      });
+    });
+
+    it('captures the add billing modal', () => {
+      cy.visit(
+        '/' + projects[0].slug + '?isEditing=false&projectId=' + projects[0].id,
+      );
+
+      cy.wait([
+        '@getProject',
+        '@getProjectPlugins',
+        '@getUnarchivedProjectPlugins',
+        '@getTeams',
+        '@getCompanies',
+      ]);
+      cy.wait(waitTime);
+
+      cy.get('.plugins')
+        .last()
+        .within(() => {
+          cy.get('.add-billing-badge')
+            .invoke('css', 'opacity', '1')
+            .click({ force: true });
+        });
+
+      cy.wait('@getBillingList');
+      cy.wait(waitTime);
+      cy.contains('Add Billing to Plugin:').should('be.visible').click();
+
+      cy.screenshot('add-billing-modal-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
         scale: true,
@@ -723,6 +912,36 @@ themes.forEach((theme) => {
       cy.wait(waitTime);
 
       cy.screenshot('office-location-creation-view-' + theme, {
+        overwrite: true,
+        capture: 'viewport',
+        scale: true,
+      });
+    });
+
+    it('captures the global billing settings view', () => {
+      cy.visit(
+        '/settings/global-billing-management?billingId=' +
+          globalBillingList[0].id,
+      );
+      cy.wait(['@getBillingList', '@getBilling']);
+      cy.wait(waitTime);
+      cy.screenshot('global-billing-management-view-' + theme, {
+        overwrite: true,
+        capture: 'viewport',
+        scale: true,
+      });
+    });
+
+    it('captures the global billing creation view', () => {
+      cy.visit('//settings/global-billing-management/create');
+      cy.wait(['@getBillingList']);
+      cy.contains(
+        '.ant-modal-title',
+        'Create Global Billing Information',
+      ).click();
+      cy.wait(waitTime);
+
+      cy.screenshot('global-billing-creation-view-' + theme, {
         overwrite: true,
         capture: 'viewport',
         scale: true,

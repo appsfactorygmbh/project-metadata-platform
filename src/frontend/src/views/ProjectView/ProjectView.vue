@@ -6,15 +6,12 @@
   import ProjectEditButtons from '@/components/ProjectEditButtons/ProjectEditButtons.vue';
   import { useEditing } from '@/utils/hooks/useEditing';
   import {
-    projectEditStoreSymbol,
     localLogStoreSymbol,
     projectRoutingSymbol,
   } from '@/store/injectionSymbols';
   import { inject, ref, watch } from 'vue';
   import { App } from 'ant-design-vue';
   import { usePluginStore, useProjectStore } from '@/store';
-  import type { PluginModel } from '@/models/Plugin';
-  import _ from 'lodash';
   import { AddPluginView } from '@/views/ProjectView/ProjectPlugins/AddPlugin';
   import { useThemeToken } from '@/utils/hooks';
   import { ResourceActions } from '@/models/utils';
@@ -24,7 +21,6 @@
   const token = useThemeToken();
 
   const localLogStore = inject(localLogStoreSymbol);
-  const projectEditStore = inject(projectEditStoreSymbol);
 
   const projectRouting = inject(projectRoutingSymbol)!;
 
@@ -42,26 +38,31 @@
   };
   const { isEditing, stopEditing } = useEditing();
 
-  const reloadEditStore = () => {
-    if (pluginStore) {
-      pluginStore.getPlugins.forEach((plugin) => {
-        projectEditStore?.initialAdd(plugin);
-      });
-    }
-  };
+  const projectEdits = ref<UpdateProjectModel | null>(null);
 
-  watch(
-    () => isEditing.value,
-    (newVal) => {
-      if (newVal) {
-        projectEditStore?.resetPluginChanges();
-      }
-    },
-  );
+  provide('projectEdits', projectEdits);
+
+  watch(isEditing, (newVal) => {
+    const currentProject = projectStore.getProject;
+
+    if (newVal && currentProject) {
+      projectEdits.value = {
+        projectName: currentProject.projectName,
+        clientName: currentProject.clientName,
+        companyId: currentProject.company.id,
+        teamId: currentProject.team?.id ?? null,
+        companyState: currentProject.companyState,
+        ismsLevel: currentProject.ismsLevel,
+        isEoC: currentProject.isEoC,
+        notes: currentProject.notes,
+        isArchived: currentProject.isArchived,
+      };
+    } else {
+      projectEdits.value = null;
+    }
+  });
 
   const cancelEdit = () => {
-    projectEditStore?.resetPluginChanges();
-    reloadEditStore();
     stopEditing();
     rerenderPlugins.value++;
   };
@@ -88,7 +89,6 @@
   watch(isAdding, (newVal) => {
     if (!newVal) {
       if (projectStore.getUpdatedSuccessfully) {
-        projectEditStore?.resetPluginChanges();
         projectStore.fetch(projectStore.getProject?.id ?? 0);
         stopEditing();
       }
@@ -96,77 +96,10 @@
   });
 
   const saveEdit = async () => {
-    // Check for empty fields and duplicates
-    projectEditStore?.checkForConflicts();
-
-    // If error occurred, display message and return
-    if (!projectEditStore?.getCanBeAdded) {
-      notification.error({
-        message: 'Error!',
-        description:
-          'Could not update Project. There are empty fields or duplicated plugins.',
-      });
-      return;
-    }
-
-    if (!projectStore.getProject) {
-      console.error(
-        'Error when trying to get ProjectInformation. getProject is undefined',
-      );
-      return;
-    }
-
-    const updateProjectInformation =
-      projectEditStore.getProjectInformationChanges;
-
-    // Puts the unarchived plugins and the archived plugins together
-    const updatedPluginList = computed(() => {
-      const tempPluginList: PluginModel[] = [];
-      projectEditStore.getPluginChanges.forEach((plugin) => {
-        tempPluginList.push({
-          id: plugin.id,
-          pluginName: plugin.pluginName,
-          displayName: plugin.displayName,
-          url: plugin.url,
-        });
-      });
-
-      const archivedPlugins = _.differenceBy(
-        pluginStore.getPlugins,
-        pluginStore.getUnarchivedPlugins,
-        'id',
-      );
-
-      archivedPlugins.forEach((plugin) => {
-        tempPluginList.push({
-          id: plugin.id,
-          pluginName: plugin.pluginName,
-          displayName: plugin.displayName,
-          url: plugin.url,
-        });
-      });
-      return tempPluginList;
-    });
-
-    const updatedProject: UpdateProjectModel = {
-      projectName: updateProjectInformation?.projectName,
-      teamId: updateProjectInformation?.teamId,
-      clientName: updateProjectInformation?.clientName,
-      pluginList: updatedPluginList.value,
-      isArchived: projectStore.getProject.isArchived,
-      offerId: updateProjectInformation?.offerId,
-      companyId: updateProjectInformation?.companyId,
-      companyState: updateProjectInformation?.companyState,
-      ismsLevel: updateProjectInformation?.ismsLevel,
-      isEoC: updateProjectInformation?.isEoC,
-      notes: updateProjectInformation?.notes,
-    };
-    console.log(updatedProject);
-
     const projectID = computed(() => projectStore.getProject?.id);
-    if (projectID.value) {
+    if (projectID.value && projectEdits.value) {
       try {
-        await projectStore.update(projectID.value, updatedProject);
+        await projectStore.update(projectID.value, projectEdits.value);
         notification.success({
           message: 'Success!',
           description: 'Project edited successfully.',
@@ -190,14 +123,13 @@
           router.push('/403');
         }
       }
+      stopEditing();
       await projectStore.fetchAll();
       await projectStore.fetch(projectID.value);
       await pluginStore.fetchUnarchived(projectID.value);
       await pluginStore.fetch(projectID.value);
       await localLogStore?.fetch(projectID.value);
     }
-
-    closeAddPluginModal();
   };
 
   // Blur effect
@@ -208,10 +140,6 @@
   }
 
   const openAddPluginModal = ref<boolean>(false);
-
-  const closeAddPluginModal = () => {
-    openAddPluginModal.value = false;
-  };
 
   const getNextActiveProjectId = (currentid?: number): number | undefined => {
     const projects = projectStore.getProjects;
@@ -234,24 +162,6 @@
       throw new Error('No project found to update');
     }
 
-    const projectData: UpdateProjectModel = {
-      projectName: detailedProject.projectName,
-      clientName: detailedProject.clientName,
-      offerId: detailedProject.offerId,
-
-      companyId: detailedProject.company.id,
-      teamId: detailedProject.team ? detailedProject.team.id : null,
-
-      companyState: detailedProject.companyState,
-      ismsLevel: detailedProject.ismsLevel,
-      isEoC: detailedProject.isEoC,
-      notes: detailedProject.notes,
-      isArchived: detailedProject.isArchived,
-
-      pluginList: null,
-    };
-    projectData.pluginList = pluginStore?.getPlugins;
-
     if (projectID) {
       try {
         await projectStore.archive(projectID);
@@ -271,7 +181,6 @@
       } finally {
         isArchiveModalOpen.value = false;
         isModalOpen.value = false;
-        projectEditStore?.resetPluginChanges();
         await localLogStore?.fetch(projectID);
       }
     }
@@ -290,16 +199,8 @@
       @save="saveEdit"
     />
     <ProjectInformation />
-    <ProjectPlugins
-      :key="rerenderPlugins"
-      class="pluginView"
-      @set-blur="setBlur"
-    />
-    <AddPluginView
-      v-if="openAddPluginModal"
-      :show-modal="openAddPluginModal"
-      @added-plugin="async () => await saveEdit()"
-    />
+    <ProjectPlugins class="pluginView" @set-blur="setBlur" />
+    <AddPluginView v-if="openAddPluginModal" :show-modal="openAddPluginModal" />
     <LocalLogView class="LocalLog" :class="{ blur: isBlurred }" />
     <ConfirmAction
       :is-open="isModalOpen"

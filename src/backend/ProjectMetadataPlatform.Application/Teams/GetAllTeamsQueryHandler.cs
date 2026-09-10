@@ -48,8 +48,9 @@ public class GetAllTeamsQueryHandler
         );
         if (queriedteams == null)
         {
+            var teamList = await teams.ToListAsync(cancellationToken: cancellationToken);
             List<Team> filteredteams = [];
-            foreach (var team in teams)
+            foreach (var team in teamList)
             {
                 if (
                     await _authorizationService.CheckAccess(

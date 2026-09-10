@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ProjectMetadataPlatform.Domain.Plugins;
 
@@ -30,5 +30,5 @@ public class Plugin
     /// <summary>
     /// Holds the relation between Projects and Plugins.
     /// </summary>
-    public ICollection<ProjectPlugins>? ProjectPlugins { get; set; }
+    public ICollection<ProjectPlugin>? ProjectPlugins { get; set; }
 }

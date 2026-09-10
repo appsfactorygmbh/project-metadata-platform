@@ -1,20 +1,23 @@
 <template>
   <transition name="fade-popup">
-    <div v-if="selectedGroup" class="popup">
+    <div v-if="props.selectedGroup" class="popup">
       <a-card class="group-popup">
-        <h3>Plugins in {{ selectedGroup.pluginName }}</h3>
+        <h3>Plugins in {{ props.selectedGroup.pluginName }}</h3>
         <div class="plugin-grid">
           <PluginComponent
-            v-for="plugin in selectedGroup.plugins"
-            :id="plugin.id"
+            v-for="plugin in props.selectedGroup.plugins"
+            :id="Number(plugin.id)"
             :key="plugin.id"
             :display-name="plugin.displayName"
             :url="plugin.url"
-            :is-loading="loading"
-            :is-editing="isEditing"
-            :edit-key="plugin.editKey"
-            :is-deleted="false"
+            :is-loading="props.loading"
             :show-favicon="false"
+            :plugin-permissions="plugin.pluginPermissions"
+            :billing-permissions="plugin.billingPermissions"
+            :is-add-billing-modal-open="
+              props.isBillingModalOpen && props.activePluginId == plugin.id
+            "
+            @open-create-billing="$emit('openCreateBilling', $event)"
           />
         </div>
         <a-button style="margin-top: 15px" @click="closePopup">
@@ -27,8 +30,8 @@
 
 <script setup lang="ts">
   import { PluginComponent } from '@/components/Plugin';
-
-  const { selectedGroup, loading, isEditing } = defineProps({
+  import type { PropType } from 'vue';
+  const props = defineProps({
     selectedGroup: {
       type: Object,
       required: true,
@@ -37,13 +40,17 @@
       type: Boolean,
       default: false,
     },
-    isEditing: {
+    isBillingModalOpen: {
       type: Boolean,
       default: false,
     },
+    activePluginId: {
+      type: Number as PropType<number | null>,
+      default: null,
+    },
   });
 
-  const emit = defineEmits(['close']);
+  const emit = defineEmits(['close', 'openCreateBilling']);
 
   function closePopup() {
     emit('close');

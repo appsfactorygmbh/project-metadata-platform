@@ -31,12 +31,6 @@ export interface PatchGlobalPluginRequest {
    */
   isArchived?: boolean | null;
   /**
-   * An array of keys associated with the plugin.
-   * @type {Array<string>}
-   * @memberof PatchGlobalPluginRequest
-   */
-  keys?: Array<string> | null;
-  /**
    * The base url of the plugin.
    * @type {string}
    * @memberof PatchGlobalPluginRequest
@@ -69,7 +63,6 @@ export function PatchGlobalPluginRequestFromJSONTyped(
   return {
     pluginName: json['pluginName'] == null ? undefined : json['pluginName'],
     isArchived: json['isArchived'] == null ? undefined : json['isArchived'],
-    keys: json['keys'] == null ? undefined : json['keys'],
     baseUrl: json['baseUrl'] == null ? undefined : json['baseUrl'],
   };
 }
@@ -91,7 +84,6 @@ export function PatchGlobalPluginRequestToJSONTyped(
   return {
     pluginName: value['pluginName'],
     isArchived: value['isArchived'],
-    keys: value['keys'],
     baseUrl: value['baseUrl'],
   };
 }
