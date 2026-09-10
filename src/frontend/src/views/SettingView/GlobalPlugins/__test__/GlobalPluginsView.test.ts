@@ -87,48 +87,47 @@ const piniaOptions: Parameters<typeof createTestingPinia>[0] = {
     },
   },
 };
+
+vi.mock('@/store/GlobalPluginStore', async (importOriginal) => {
+  return {
+    ...(await importOriginal<typeof import('@/store/GlobalPluginStore')>()),
+    useGlobalPluginStore: (pinia = testingPinia) => {
+      return useStore<GlobalPluginStore>('globalPlugin', {
+        state: {
+          globalPlugins: testData,
+        },
+        getters: {
+          getGlobalPlugins() {
+            return this.globalPlugins;
+          },
+          getPermissions() {
+            return [ResourceActions.Create];
+          },
+        },
+        actions: {
+          fetch: vi.fn(),
+          fetchAll: vi.fn(),
+          refreshAuth: vi.fn(),
+          setGlobalPlugins(plugins) {
+            this.globalPlugins = plugins;
+          },
+          async archive(id) {
+            this.globalPlugins = testDataArchive;
+          },
+          async unarchive(id) {
+            this.globalPlugins = testDataReactivate;
+          },
+          delete: vi.fn().mockImplementation(() => {}),
+        },
+      })(getActivePinia());
+    },
+  };
+});
+
 const testingPinia = createTestingPinia(piniaOptions);
 
 describe('GlobalPluginsView.vue', () => {
   setActivePinia(testingPinia);
-
-  beforeAll(() => {
-    vi.mock('@/store/GlobalPluginStore', async (importOriginal) => {
-      return {
-        ...(await importOriginal<typeof import('@/store/GlobalPluginStore')>()),
-        useGlobalPluginStore: (pinia = testingPinia) => {
-          return useStore<GlobalPluginStore>('globalPlugin', {
-            state: {
-              globalPlugins: testData,
-            },
-            getters: {
-              getGlobalPlugins() {
-                return this.globalPlugins;
-              },
-              getPermissions() {
-                return [ResourceActions.Create];
-              },
-            },
-            actions: {
-              fetch: vi.fn(),
-              fetchAll: vi.fn(),
-              refreshAuth: vi.fn(),
-              setGlobalPlugins(plugins) {
-                this.globalPlugins = plugins;
-              },
-              async archive(id) {
-                this.globalPlugins = testDataArchive;
-              },
-              async unarchive(id) {
-                this.globalPlugins = testDataReactivate;
-              },
-              delete: vi.fn().mockImplementation(() => {}),
-            },
-          })(getActivePinia());
-        },
-      };
-    });
-  });
 
   const globalPluginStore = useGlobalPluginStore(testingPinia);
 

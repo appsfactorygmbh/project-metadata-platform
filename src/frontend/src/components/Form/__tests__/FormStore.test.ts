@@ -131,9 +131,9 @@ describe('FormStore', () => {
 
     flushPromises().then(() => {
       validateSpy();
-      flushPromises().then(() => {
+      flushPromises().then(async () => {
         expect(validateSpy).toHaveResolved();
-        expect(validateSpy()).resolves.toStrictEqual(testForm);
+        await expect(validateSpy()).resolves.toStrictEqual(testForm);
       });
     });
   });
@@ -152,9 +152,9 @@ describe('FormStore', () => {
 
     flushPromises().then(() => {
       validateSpy();
-      flushPromises().then(() => {
+      flushPromises().then(async () => {
         expect(validateSpy).not.toHaveResolved();
-        expect(validateSpy).rejects.toStrictEqual({
+        await expect(validateSpy).rejects.toStrictEqual({
           errorFields: [
             {
               errors: ['Name is required'],
@@ -187,8 +187,8 @@ describe('FormStore', () => {
     expect(onSubmit).not.toHaveBeenCalled();
 
     submitSpy();
-    expect(submitSpy).not.toThrowError();
-    expect(submitSpy).toReturnWith(Promise.resolve());
+    expect(submitSpy).not.toThrow();
+    expect(submitSpy).toHaveReturnedWith(Promise.resolve());
 
     await flushPromises();
 
