@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.0.0](https://github.com/appsfactorygmbh/project-metadata-platform/compare/v2.1.0...v3.0.0) (2026-09-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **backend:** rework projectplugin api
+* **backend:** remove offerId property from projects
+
+### Features
+
+* **backend:** Add Global and Plugin Billing Information ([3dfc331](https://github.com/appsfactorygmbh/project-metadata-platform/commit/3dfc331ca0bf0288cdd77b74c7c5d2b3eb13d60c))
+* **backend:** add new logs when deletes cascade to related objects ([2498dba](https://github.com/appsfactorygmbh/project-metadata-platform/commit/2498dbaba03c941456ad16f9c6176701523550bc))
+* **backend:** remove offerId property from projects ([b125c2f](https://github.com/appsfactorygmbh/project-metadata-platform/commit/b125c2f29d648855653f720eaf742baad69f3dc0))
+* **backend:** rework projectplugin api ([b53a6d1](https://github.com/appsfactorygmbh/project-metadata-platform/commit/b53a6d1f9f83f2a4038b54205e0495decb7637ac))
+* **frontend:** add global billing management views ([da88b59](https://github.com/appsfactorygmbh/project-metadata-platform/commit/da88b5952687a31db1ad01ae4c549fdb36f7bafb))
+* **frontend:** add Plugin Billing Components ([2583832](https://github.com/appsfactorygmbh/project-metadata-platform/commit/2583832bc964c6d044dc9cc81e3202e0cbd07ea3))
+* **frontend:** implement seperated project plugin management ([d7a08d2](https://github.com/appsfactorygmbh/project-metadata-platform/commit/d7a08d2f49848b031fdddf0ec9a4ffb039d011b3))
+
 ## [2.1.0](https://github.com/appsfactorygmbh/project-metadata-platform/compare/v2.0.0...v2.1.0) (2026-08-12)
 
 
