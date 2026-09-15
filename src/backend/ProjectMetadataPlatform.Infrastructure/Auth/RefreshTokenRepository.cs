@@ -68,7 +68,7 @@ public class RefreshTokenRepository : RepositoryBase<RefreshToken>, IRefreshToke
     public async Task UpdateRefreshToken(string email, string refreshToken)
     {
         var user = await _userManager.FindByEmailAsync(email);
-        var token = GetIf(rt => user != null && rt.UserId == user.Id).FirstOrDefaultAsync().Result;
+        var token = await GetIf(rt => user != null && rt.UserId == user.Id).FirstOrDefaultAsync();
         var expirationTime = int.Parse(
             EnvironmentUtils.GetEnvVarOrLoadFromFile("REFRESH_TOKEN_EXPIRATION_HOURS"),
             CultureInfo.InvariantCulture
@@ -90,7 +90,9 @@ public class RefreshTokenRepository : RepositoryBase<RefreshToken>, IRefreshToke
     /// <returns>True if a token exists; False if no token exists</returns>
     public async Task<bool> CheckRefreshTokenExists(string email)
     {
-        return await GetIf(rt => rt.User != null && rt.User.Email == email).AnyAsync();
+        var user = await _userManager.FindByEmailAsync(email);
+        return await GetIf(rt => rt.User != null && user != null && rt.User.Id == user.Id)
+            .AnyAsync();
     }
 
     /// <summary>
