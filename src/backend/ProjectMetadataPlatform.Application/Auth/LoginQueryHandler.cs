@@ -17,21 +17,26 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, JwtTokens>
     private readonly IUsersRepository _userRepository;
     private readonly IAuthorizationService _authorizationService;
 
+    private readonly IUnitOfWork _unitOfWork;
+
     /// <summary>
     /// Creates a new instance of<see cref="LoginQueryHandler" />.
     /// </summary>
     /// <param name="refreshTokenRepository"></param>
     /// <param name="usersRepository"></param>
     /// <param name="authorizationService"></param>
+    /// <param name="unitOfWork"></param>
     public LoginQueryHandler(
         IRefreshTokenRepository refreshTokenRepository,
         IUsersRepository usersRepository,
-        IAuthorizationService authorizationService
+        IAuthorizationService authorizationService,
+        IUnitOfWork unitOfWork
     )
     {
         _refreshTokenRepository = refreshTokenRepository;
         _userRepository = usersRepository;
         _authorizationService = authorizationService;
+        _unitOfWork = unitOfWork;
     }
 
     /// <summary>
@@ -57,6 +62,7 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, JwtTokens>
         {
             await _refreshTokenRepository.StoreRefreshToken(request.Email, refreshToken);
         }
+        await _unitOfWork.CompleteAsync();
         return new JwtTokens { AccessToken = stringToken, RefreshToken = refreshToken };
     }
 }

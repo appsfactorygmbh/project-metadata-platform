@@ -21,6 +21,7 @@ using ProjectMetadataPlatform.Api.Swagger;
 using ProjectMetadataPlatform.Api.Telemetry;
 using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Infrastructure;
+using Quartz.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,27 +30,29 @@ var otlpEndpoint = new Uri("http://alloy:4317");
 
 builder.Logging.AddProvider(new ActivityErrorLoggerProvider());
 
-builder
-    .Services.AddOpenTelemetry()
-    .ConfigureResource(resource => resource.AddService(serviceName))
-    .WithLogging(logging =>
-        logging.AddConsoleExporter().AddOtlpExporter(options => options.Endpoint = otlpEndpoint)
-    )
-    .WithTracing(tracing =>
-        tracing
-            .SetErrorStatusOnException()
-            .AddAspNetCoreInstrumentation(options => options.RecordException = true)
-            .AddHttpClientInstrumentation()
-            .AddEntityFrameworkCoreInstrumentation()
-            .AddConsoleExporter()
-            .AddOtlpExporter(options => options.Endpoint = otlpEndpoint)
-    )
-    .WithMetrics(metrics =>
-        metrics
-            .AddAspNetCoreInstrumentation()
-            .AddConsoleExporter()
-            .AddOtlpExporter(options => options.Endpoint = otlpEndpoint)
-    );
+    builder
+        .Services.AddOpenTelemetry()
+        .ConfigureResource(resource => resource.AddService(serviceName))
+        .WithLogging(logging =>
+            logging.AddConsoleExporter().AddOtlpExporter(options => options.Endpoint = otlpEndpoint)
+        )
+        .WithTracing(tracing =>
+            tracing
+                .SetErrorStatusOnException()
+                .AddAspNetCoreInstrumentation(options => options.RecordException = true)
+                .AddHttpClientInstrumentation()
+                .AddEntityFrameworkCoreInstrumentation()
+                .AddSource(QuartzInstrumentation.ActivitySourceName)
+                .AddConsoleExporter()
+                .AddOtlpExporter(options => options.Endpoint = otlpEndpoint)
+        )
+        .WithMetrics(metrics =>
+            metrics
+                .AddAspNetCoreInstrumentation()
+                .AddConsoleExporter()
+                .AddMeter(QuartzInstrumentation.MeterName)
+                .AddOtlpExporter(options => options.Endpoint = otlpEndpoint)
+        );
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>

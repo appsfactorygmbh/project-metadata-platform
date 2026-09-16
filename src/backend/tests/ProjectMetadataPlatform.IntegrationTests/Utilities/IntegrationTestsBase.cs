@@ -20,7 +20,7 @@ using Testcontainers.PostgreSql;
 
 namespace ProjectMetadataPlatform.IntegrationTests.Utilities;
 
-public class IntegrationTestsBase : IDisposable
+public abstract class IntegrationTestsBase : IDisposable
 {
     private readonly PmpWebApplicationFactory _factory = new();
     private IContainer? _cerbosContainer;

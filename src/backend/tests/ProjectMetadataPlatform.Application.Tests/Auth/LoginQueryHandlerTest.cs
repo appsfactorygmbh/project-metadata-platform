@@ -18,16 +18,20 @@ public class LoginQueryHandlerTest
     private Mock<IAuthorizationService> _authorizationServiceMock;
     private Mock<IUsersRepository> _mockUserRepo;
 
+    private Mock<IUnitOfWork> _unitOfWorkMock;
+
     [SetUp]
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
         _mockUserRepo = new Mock<IUsersRepository>();
+        _unitOfWorkMock = new Mock<IUnitOfWork>();
         _handler = new LoginQueryHandler(
             _mockRefreshTokenRepo.Object,
             _mockUserRepo.Object,
-            _authorizationServiceMock.Object
+            _authorizationServiceMock.Object,
+            _unitOfWorkMock.Object
         );
     }
 

@@ -264,8 +264,8 @@ public class BillingRepositoryTest : TestsWithDatabase
 
         Assert.That(result, Is.Not.Empty);
         Assert.That(result, Has.Count.EqualTo(2));
-        Assert.That(result.First().BillingKind, Is.EqualTo(billing1.BillingKind));
-        Assert.That(result.Last().BillingKind, Is.EqualTo(billing2.BillingKind));
+        Assert.That(result.First().BillingKind, Is.EqualTo(billing2.BillingKind));
+        Assert.That(result.Last().BillingKind, Is.EqualTo(billing1.BillingKind));
     }
 
     [Test]

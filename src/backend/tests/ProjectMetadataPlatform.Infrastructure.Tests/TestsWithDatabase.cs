@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -6,7 +7,7 @@ using ProjectMetadataPlatform.Infrastructure.DataAccess;
 namespace ProjectMetadataPlatform.Infrastructure.Tests;
 
 [TestFixture]
-public class TestsWithDatabase
+public abstract class TestsWithDatabase
 {
     [SetUp]
     public void BaseSetUp()
@@ -28,7 +29,7 @@ public class TestsWithDatabase
     {
         return new ProjectMetadataPlatformDbContext(
             new DbContextOptionsBuilder<ProjectMetadataPlatformDbContext>()
-                .UseSqlite("Datasource=unittest-db.db")
+                .UseInMemoryDatabase(databaseName: "unittest-db")
                 .Options
         );
     }

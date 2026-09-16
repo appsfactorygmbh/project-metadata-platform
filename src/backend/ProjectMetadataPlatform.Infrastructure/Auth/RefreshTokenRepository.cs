@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -8,20 +9,18 @@ using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
-using ProjectMetadataPlatform.Infrastructure.Projects;
 
 namespace ProjectMetadataPlatform.Infrastructure.Auth;
 
 /// <summary>
-/// Handles User Management using the UserManager provided by AspNetCore Identity.
+/// Handles Refresh Token Management.
 /// </summary>
 public class RefreshTokenRepository : RepositoryBase<RefreshToken>, IRefreshTokenRepository
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly ProjectMetadataPlatformDbContext _context;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ProjectsRepository" /> class.
+    /// Initializes a new instance of the <see cref="RefreshTokenRepository" /> class.
     /// </summary>
     /// <param name="dbContext"></param>
     /// <param name="userManager"></param>
@@ -32,7 +31,6 @@ public class RefreshTokenRepository : RepositoryBase<RefreshToken>, IRefreshToke
         : base(dbContext)
     {
         _userManager = userManager;
-        _context = dbContext;
     }
 
     /// <summary>
@@ -56,7 +54,6 @@ public class RefreshTokenRepository : RepositoryBase<RefreshToken>, IRefreshToke
             ExpirationDate = DateTime.UtcNow.AddHours(expirationTime),
         };
         Create(token);
-        _ = await _context.SaveChangesAsync();
     }
 
     /// <summary>
@@ -79,8 +76,6 @@ public class RefreshTokenRepository : RepositoryBase<RefreshToken>, IRefreshToke
             token.ExpirationDate = DateTime.UtcNow.AddHours(expirationTime);
             Update(token);
         }
-
-        _ = await _context.SaveChangesAsync();
     }
 
     /// <summary>
@@ -124,5 +119,17 @@ public class RefreshTokenRepository : RepositoryBase<RefreshToken>, IRefreshToke
         );
 
         return user?.Email;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IEnumerable<RefreshToken>> GetExpiredTokens()
+    {
+        return await GetIf(rt => rt.ExpirationDate <= DateTimeOffset.UtcNow).ToListAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task DeleteRefreshTokens(IEnumerable<RefreshToken> refreshTokens)
+    {
+        DeleteRange([.. refreshTokens]);
     }
 }
