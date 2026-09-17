@@ -30,12 +30,14 @@ using ProjectMetadataPlatform.Infrastructure.Companies;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 using ProjectMetadataPlatform.Infrastructure.DataAccess.Interceptors;
 using ProjectMetadataPlatform.Infrastructure.Departments;
+using ProjectMetadataPlatform.Infrastructure.Jobs;
 using ProjectMetadataPlatform.Infrastructure.Logs;
 using ProjectMetadataPlatform.Infrastructure.OfficeLocations;
 using ProjectMetadataPlatform.Infrastructure.Plugins;
 using ProjectMetadataPlatform.Infrastructure.Projects;
 using ProjectMetadataPlatform.Infrastructure.Teams;
 using ProjectMetadataPlatform.Infrastructure.Users;
+using Quartz;
 using static Cerbos.Sdk.Response.HealthCheckResponse.Types;
 
 namespace ProjectMetadataPlatform.Infrastructure;
@@ -85,6 +87,7 @@ public static class DependencyInjection
         _ = serviceCollection.AddScoped<IAuthorizationAdminService, AuthorizationAdminService>();
         _ = serviceCollection.AddScoped(provider => AddCerbosClient(cerbosUrl ?? ""));
         _ = serviceCollection.AddScoped(provider => AddCerbosAdminClient(cerbosUrl ?? ""));
+        serviceCollection.AddBackgroundJobs();
         return serviceCollection;
     }
 
@@ -371,5 +374,23 @@ public static class DependencyInjection
         var user = EnvironmentUtils.GetEnvVarOrLoadFromFile("PMP_CERBOS_USER");
         var password = EnvironmentUtils.GetEnvVarOrLoadFromFile("PMP_CERBOS_PASSWORD");
         return CerbosClientBuilder.ForTarget(url).WithPlaintext().BuildAdminClient(user, password);
+    }
+
+    private static void AddBackgroundJobs(this IServiceCollection serviceCollection)
+    {
+        _ = serviceCollection.AddQuartz(q =>
+        {
+            var jobKey = new JobKey("RefreshTokenCleanUpJob");
+
+            _ = q.AddJob<RefreshTokenCleanUpJob>(opts => opts.WithIdentity(jobKey));
+
+            _ = q.AddTrigger(opts =>
+                opts.ForJob(jobKey)
+                    .WithIdentity("RefreshTokenCleanUpTrigger")
+                    .WithCronSchedule("0 0 6 1 * ?")
+            );
+        });
+
+        _ = serviceCollection.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
     }
 }

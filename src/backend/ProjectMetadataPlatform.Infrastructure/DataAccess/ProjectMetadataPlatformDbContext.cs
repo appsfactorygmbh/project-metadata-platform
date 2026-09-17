@@ -81,9 +81,14 @@ public sealed class ProjectMetadataPlatformDbContext
     public DbSet<GlobalBilling> GlobalBilling { get; set; }
 
     /// <summary>
-    /// Represents the Table for project plugin billing indormation.
+    /// Represents the Table for project plugin billing information.
     /// </summary>
     public DbSet<PluginBilling> PluginBillingRelation { get; set; }
+
+    /// <summary>
+    ///  Represents the table for basic auth refresh tokens
+    /// </summary>
+    public DbSet<RefreshToken> RefreshToken { get; set; }
 
     /// <inheritdoc />
     public ProjectMetadataPlatformDbContext() { }

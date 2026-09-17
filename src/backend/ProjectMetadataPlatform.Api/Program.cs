@@ -21,6 +21,7 @@ using ProjectMetadataPlatform.Api.Swagger;
 using ProjectMetadataPlatform.Api.Telemetry;
 using ProjectMetadataPlatform.Application;
 using ProjectMetadataPlatform.Infrastructure;
+using Quartz.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,7 @@ builder
             .AddAspNetCoreInstrumentation(options => options.RecordException = true)
             .AddHttpClientInstrumentation()
             .AddEntityFrameworkCoreInstrumentation()
+            .AddSource(QuartzInstrumentation.ActivitySourceName)
             .AddConsoleExporter()
             .AddOtlpExporter(options => options.Endpoint = otlpEndpoint)
     )
@@ -48,6 +50,7 @@ builder
         metrics
             .AddAspNetCoreInstrumentation()
             .AddConsoleExporter()
+            .AddMeter(QuartzInstrumentation.MeterName)
             .AddOtlpExporter(options => options.Endpoint = otlpEndpoint)
     );
 

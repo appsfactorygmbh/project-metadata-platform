@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Logging;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
@@ -22,7 +23,7 @@ namespace ProjectMetadataPlatform.Api.Errors;
 /// <summary>
 /// A filter that handles exceptions in the Project Metadata Platform API.
 /// </summary>
-public class ExceptionFilter : IExceptionFilter
+public partial class ExceptionFilter : IExceptionFilter
 {
     /// <summary>
     /// Handler for basic exceptions.
@@ -42,6 +43,8 @@ public class ExceptionFilter : IExceptionFilter
 
     private readonly IExceptionHandler<BillingException> _billingExceptionHandler;
 
+    private readonly ILogger<ExceptionFilter> _logger;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ExceptionFilter"/> class.
     /// </summary>
@@ -58,6 +61,7 @@ public class ExceptionFilter : IExceptionFilter
     /// <param name="companyExceptionHandler">The handler for company exceptions. </param>
     /// <param name="authorizationExceptionHandler">The handler for authorization exceptions.</param>
     /// <param name="billingExceptionHandler">The handler for billing exceptions.</param>
+    /// <param name="logger"></param>
     public ExceptionFilter(
         IExceptionHandler<PmpException> basicExceptionHandler,
         IExceptionHandler<ProjectException> projectExceptionHandler,
@@ -71,7 +75,8 @@ public class ExceptionFilter : IExceptionFilter
         IExceptionHandler<BusinessUnitException> businessUnitExceptionHandler,
         IExceptionHandler<CompanyException> companyExceptionHandler,
         IExceptionHandler<AuthorizationException> authorizationExceptionHandler,
-        IExceptionHandler<BillingException> billingExceptionHandler
+        IExceptionHandler<BillingException> billingExceptionHandler,
+        ILogger<ExceptionFilter> logger
     )
     {
         _basicExceptionHandler = basicExceptionHandler;
@@ -87,6 +92,7 @@ public class ExceptionFilter : IExceptionFilter
         _companyExceptionHandler = companyExceptionHandler;
         _authorizationExceptionHandler = authorizationExceptionHandler;
         _billingExceptionHandler = billingExceptionHandler;
+        _logger = logger;
     }
 
     /// <summary>
@@ -117,21 +123,29 @@ public class ExceptionFilter : IExceptionFilter
             BillingException billingEx => _billingExceptionHandler.Handle(billingEx),
             AuthorizationException authEx => _authorizationExceptionHandler.Handle(authEx),
             PmpException basicEx => _basicExceptionHandler.Handle(basicEx),
-            _ => HandleUnknownError(exception),
+            _ => HandleUnknownError(exception, _logger),
         };
 
-        context.Result = response ?? HandleUnknownError(exception);
+        context.Result = response ?? HandleUnknownError(exception, _logger);
     }
+
+    [LoggerMessage(
+        EventId = 1,
+        Level = LogLevel.Error,
+        Message = "An unknown error occurred while handling the request."
+    )]
+    private static partial void LogUnknownError(ILogger logger, Exception exception);
 
     /// <summary>
     /// Handles unknown errors and returns a 500 Internal Server Error status.
     /// </summary>
     /// <param name="exception">The exception to handle.</param>
+    /// <param name="logger"></param>
     /// <returns>An IActionResult representing the result of handling the unknown error.</returns>
-    private static ObjectResult HandleUnknownError(Exception exception)
+    private static ObjectResult HandleUnknownError(Exception exception, ILogger logger)
     {
-        Console.WriteLine(exception.Message);
-        Console.WriteLine(exception.StackTrace);
+        LogUnknownError(logger, exception);
+
         return new ObjectResult(new ErrorResponse("An unknown error occurred."))
         {
             StatusCode = StatusCodes.Status500InternalServerError,

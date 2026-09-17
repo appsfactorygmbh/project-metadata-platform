@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
@@ -71,5 +71,14 @@ public abstract class RepositoryBase<T>
     public void Delete(T entity)
     {
         _ = ProjectMetadataPlatformDbContext.Set<T>().Remove(entity);
+    }
+
+    /// <summary>
+    /// Deletes an array of existing entities of type <typeparamref name="T" /> from the database.
+    /// </summary>
+    /// <param name="entities">The entities to delete.</param>
+    public void DeleteRange(T[] entities)
+    {
+        ProjectMetadataPlatformDbContext.Set<T>().RemoveRange(entities);
     }
 }

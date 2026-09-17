@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Errors.ExceptionHandlers;
 using ProjectMetadataPlatform.Domain.Errors.LogExceptions;
@@ -9,11 +11,13 @@ namespace ProjectMetadataPlatform.Api.Tests.Errors.ExceptionHandlers;
 public class LogsExceptionHandlerTest
 {
     private LogsExceptionHandler _logsExceptionHandler;
+    private Mock<ILogger<LogsExceptionHandler>> _logger;
 
     [SetUp]
     public void SetUp()
     {
-        _logsExceptionHandler = new LogsExceptionHandler();
+        _logger = new Mock<ILogger<LogsExceptionHandler>>();
+        _logsExceptionHandler = new LogsExceptionHandler(_logger.Object);
     }
 
     [TestCase(Action.ADDED_PROJECT, "Project")]

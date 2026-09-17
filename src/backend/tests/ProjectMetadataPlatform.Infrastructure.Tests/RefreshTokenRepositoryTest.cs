@@ -2,8 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.Auth;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -64,6 +66,7 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
             );
 
         await _repository.StoreRefreshToken(email, token);
+        await _context.SaveChangesAsync();
         var result = _repository.GetIf(rt => rt.User!.Email == email).FirstOrDefault();
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Token, Is.EqualTo(token));
@@ -88,11 +91,12 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
                 }
             );
         await _repository.StoreRefreshToken(email, "oldToken");
+        await _context.SaveChangesAsync();
         var count = _repository.GetEverything().Count();
         _context.ChangeTracker.Clear();
 
         await _repository.UpdateRefreshToken(email, token);
-
+        await _context.SaveChangesAsync();
         var result = _repository.GetIf(rt => rt.User!.Email == email).FirstOrDefault();
         Assert.That(result, Is.Not.Null);
         Assert.Multiple(() =>
@@ -120,6 +124,7 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
                 }
             );
         await _repository.StoreRefreshToken(email, token);
+        await _context.SaveChangesAsync();
         var result = await _repository.CheckRefreshTokenExists(email);
         Assert.That(result, Is.True);
     }
@@ -156,6 +161,7 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
 
         _ = _mockUserManager.Setup(m => m.Users).Returns(_context.Users);
         await _repository.StoreRefreshToken(email, token);
+        await _context.SaveChangesAsync();
         var result = await _repository.CheckRefreshTokenRequest(token);
         Assert.That(result, Is.True);
     }
@@ -234,7 +240,75 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
                 }
             );
         await _repository.StoreRefreshToken(email, token);
+        await _context.SaveChangesAsync();
         var result = await _repository.GetEmailByRefreshToken(token);
         Assert.That(result, Is.EqualTo(email));
+    }
+
+    [Test]
+    public async Task GetExpiredTokens_NoTokens_Test()
+    {
+        var tokens = await _repository.GetExpiredTokens();
+        Assert.That(tokens.Any(), Is.False);
+    }
+
+    [Test]
+    public async Task GetExpiredTokens_NoExpiredTokens_Test()
+    {
+        RefreshToken[] tokensList =
+        [
+            new RefreshToken { ExpirationDate = DateTimeOffset.UtcNow.AddHours(1) },
+            new RefreshToken { ExpirationDate = DateTimeOffset.UtcNow.AddHours(500) },
+        ];
+        _context.RefreshToken.AddRange(tokensList);
+        await _context.SaveChangesAsync();
+        var tokens = await _repository.GetExpiredTokens();
+        Assert.That(tokens.Any(), Is.False);
+    }
+
+    [Test]
+    public async Task GetExpiredTokens_ReturnsExpiredTokens_Test()
+    {
+        RefreshToken[] tokensList =
+        [
+            new RefreshToken { ExpirationDate = DateTimeOffset.UtcNow.AddHours(-1) },
+            new RefreshToken { ExpirationDate = DateTimeOffset.UtcNow.AddHours(-500) },
+        ];
+        _context.RefreshToken.AddRange(tokensList);
+        await _context.SaveChangesAsync();
+        RefreshToken[] tokens = [.. await _repository.GetExpiredTokens()];
+        Assert.That(tokens, Is.EqualTo(tokensList));
+    }
+
+    [Test]
+    public async Task DeleteRefreshTokens_DeleteNothing_Test()
+    {
+        RefreshToken[] tokensList =
+        [
+            new RefreshToken { ExpirationDate = DateTimeOffset.UtcNow.AddHours(-500) },
+            new RefreshToken { ExpirationDate = DateTimeOffset.UtcNow.AddHours(-1) },
+        ];
+        _context.RefreshToken.AddRange(tokensList);
+        await _context.SaveChangesAsync();
+        await _repository.DeleteRefreshTokens([]);
+        await _context.SaveChangesAsync();
+        var count = (await _repository.GetEverything().ToListAsync()).Count();
+        Assert.That(count, Is.EqualTo(2));
+    }
+
+    [Test]
+    public async Task DeleteRefreshTokens_DeletesTokens_Test()
+    {
+        RefreshToken[] tokensList =
+        [
+            new RefreshToken { ExpirationDate = DateTimeOffset.UtcNow.AddHours(-500) },
+            new RefreshToken { ExpirationDate = DateTimeOffset.UtcNow.AddHours(-1) },
+        ];
+        _context.RefreshToken.AddRange(tokensList);
+        await _context.SaveChangesAsync();
+        await _repository.DeleteRefreshTokens(tokensList);
+        await _context.SaveChangesAsync();
+        var count = (await _repository.GetEverything().ToListAsync()).Count();
+        Assert.That(count, Is.Zero);
     }
 }

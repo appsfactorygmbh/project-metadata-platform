@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using ProjectMetadataPlatform.Domain.Auth;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
 
@@ -43,4 +45,17 @@ public interface IRefreshTokenRepository
     /// <param name="refreshToken">a refresh Token</param>
     /// <returns>a email</returns>
     Task<string?> GetEmailByRefreshToken(string refreshToken);
+
+    /// <summary>
+    /// Gets a List of all refreshToken that have reached their expiration date.
+    /// </summary>
+    /// <returns>List of tokens</returns>
+    Task<IEnumerable<RefreshToken>> GetExpiredTokens();
+
+    /// <summary>
+    /// Deletes a List of refreshTokens
+    /// </summary>
+    /// <param name="refreshTokens">Refresh Tokens to be deleted.</param>
+    /// <returns></returns>
+    Task DeleteRefreshTokens(IEnumerable<RefreshToken> refreshTokens);
 }
