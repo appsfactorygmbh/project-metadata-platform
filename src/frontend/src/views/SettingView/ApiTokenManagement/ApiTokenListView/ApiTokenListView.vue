@@ -173,15 +173,6 @@
     min-width: 0;
   }
 
-  .scim-tag {
-    flex-shrink: 0;
-    margin-left: 8px;
-    margin-right: 0;
-    font-size: 10px;
-    line-height: 16px;
-    height: 18px;
-  }
-
   :deep(.ant-menu-title-content) {
     display: flex;
     overflow: hidden;

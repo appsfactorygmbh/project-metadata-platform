@@ -127,6 +127,7 @@
         <a-menu-item
           v-for="company in companyData"
           :key="String(company.id)"
+          :title="company.companyName"
           @click="clickTab(String(company.id))"
         >
           <span>{{ company.companyName }}</span>
