@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Errors;
@@ -43,6 +44,7 @@ public class ExceptionFilterTest
 
     private Mock<IExceptionHandler<BillingException>> _billingExceptionHandler;
     private Mock<IExceptionHandler<AuthorizationException>> _authorizationExceptionHandler;
+    private Mock<ILogger<ExceptionFilter>> _logger;
     private Mock<ExceptionContext> _context;
 
     [SetUp]
@@ -61,6 +63,7 @@ public class ExceptionFilterTest
         _companyExceptionHandler = new Mock<IExceptionHandler<CompanyException>>();
         _authorizationExceptionHandler = new Mock<IExceptionHandler<AuthorizationException>>();
         _billingExceptionHandler = new Mock<IExceptionHandler<BillingException>>();
+        _logger = new Mock<ILogger<ExceptionFilter>>();
         _context = SetupExceptionContext();
         _filter = new ExceptionFilter(
             basicExceptionHandler: _basicExceptionHandler.Object,
@@ -75,7 +78,8 @@ public class ExceptionFilterTest
             officeLocationExceptionHandler: _officeLocationExceptionHandler.Object,
             departmentExceptionHandler: _departmentExceptionHandler.Object,
             authorizationExceptionHandler: _authorizationExceptionHandler.Object,
-            billingExceptionHandler: _billingExceptionHandler.Object
+            billingExceptionHandler: _billingExceptionHandler.Object,
+            logger: _logger.Object
         );
     }
 

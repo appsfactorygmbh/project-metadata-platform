@@ -9,6 +9,7 @@ using Cerbos.Sdk;
 using Cerbos.Sdk.Builder;
 using Cerbos.Sdk.Utility;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
@@ -20,7 +21,7 @@ namespace ProjectMetadataPlatform.Infrastructure.Authorization;
 /// <summary>
 /// Implements <see cref="IAuthorizationService"/>
 /// </summary>
-public class AuthorizationService : IAuthorizationService
+public partial class AuthorizationService : IAuthorizationService
 {
     private readonly ICerbosClient _cerbosClient;
 
@@ -30,6 +31,7 @@ public class AuthorizationService : IAuthorizationService
     private readonly IUsersRepository _usersRepository;
 
     private readonly IApiTokenRepository _apiTokenRepository;
+    private readonly ILogger<AuthorizationService> _logger;
 
     /// <summary>
     /// Constructor for <see cref="AuthorizationService"/>
@@ -39,12 +41,14 @@ public class AuthorizationService : IAuthorizationService
     /// <param name="httpContextAccessor">Http Context Accessor for getting Principles from Tokens.</param>
     /// <param name="usersRepository">Repo for User access.</param>
     /// <param name="apiTokenRepository">Repo for ApiToken access.</param>
+    /// <param name="logger">Exceptions Logger</param>
     public AuthorizationService(
         ICerbosClient cerbosClient,
         IAuthorizationTracker tracker,
         IHttpContextAccessor httpContextAccessor,
         IUsersRepository usersRepository,
-        IApiTokenRepository apiTokenRepository
+        IApiTokenRepository apiTokenRepository,
+        ILogger<AuthorizationService> logger
     )
     {
         _cerbosClient = cerbosClient;
@@ -52,7 +56,7 @@ public class AuthorizationService : IAuthorizationService
         _httpContextAccessor = httpContextAccessor;
         _usersRepository = usersRepository;
         _apiTokenRepository = apiTokenRepository;
-
+        _logger = logger;
         var options = new JsonSerializerOptions
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles,
@@ -88,6 +92,13 @@ public class AuthorizationService : IAuthorizationService
         return result.IsAllowed(action.ToString());
     }
 
+    [LoggerMessage(
+        EventId = 1,
+        Level = LogLevel.Error,
+        Message = "TryGetPlanResourceQuery failed."
+    )]
+    private static partial void LogPlanResourceQueryFailed(ILogger logger, Exception exception);
+
     /// <inheritdoc/>
     public async Task<IQueryable<T>?> TryGetPlanResourceQuery<T>(
         IQueryable<T> query,
@@ -115,7 +126,7 @@ public class AuthorizationService : IAuthorizationService
         }
         catch (Exception e)
         {
-            Console.WriteLine($"{nameof(this.TryGetPlanResourceQuery)} failed: {e.Message}");
+            LogPlanResourceQueryFailed(_logger, e);
             return null;
         }
     }

@@ -15,9 +15,18 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Cerbos.Sdk" Version="1.11.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.*" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.*" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.*" />
+        <PackageReference
+            Include="Microsoft.AspNetCore.Authentication.JwtBearer"
+            Version="10.0.*"
+        />
+        <PackageReference
+            Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"
+            Version="10.0.*"
+        />
+        <PackageReference
+            Include="Microsoft.Extensions.DependencyInjection.Abstractions"
+            Version="10.0.*"
+        />
         <PackageReference Include="Microsoft.Extensions.Resilience" Version="10.10.*" />
         <PackageReference Include="Microsoft.Identity.Web" Version="4.14.*" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.*" />

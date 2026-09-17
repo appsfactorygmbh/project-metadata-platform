@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Auth;
@@ -16,18 +17,20 @@ public class CleanUpRefreshTokensCommandHandlerTest
     private Mock<IRefreshTokenRepository> _mockRefreshTokenRepo;
     private Mock<IAuthorizationService> _authorizationServiceMock;
     private Mock<IUnitOfWork> _unitOfWorkMock;
+    private Mock<ILogger<CleanUpRefreshTokensCommandHandler>> _logger;
 
     [SetUp]
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
         _mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
-
+        _logger = new Mock<ILogger<CleanUpRefreshTokensCommandHandler>>();
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _handler = new CleanUpRefreshTokensCommandHandler(
             _mockRefreshTokenRepo.Object,
             _unitOfWorkMock.Object,
-            _authorizationServiceMock.Object
+            _authorizationServiceMock.Object,
+            _logger.Object
         );
     }
 

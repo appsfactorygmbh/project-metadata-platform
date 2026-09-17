@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Domain.Errors;
 using ProjectMetadataPlatform.Domain.Errors.BasicExceptions;
@@ -10,8 +11,19 @@ namespace ProjectMetadataPlatform.Api.Errors.ExceptionHandlers;
 /// <summary>
 /// Handles exceptions that are not use case specific for the Project Metadata Platform API.
 /// </summary>
-public class BasicExceptionHandler : ControllerBase, IExceptionHandler<PmpException>
+public partial class BasicExceptionHandler : ControllerBase, IExceptionHandler<PmpException>
 {
+    private readonly ILogger<BasicExceptionHandler> _logger;
+
+    /// <summary>
+    /// Constructor for <see cref="BasicExceptionHandler"/>
+    /// </summary>
+    /// <param name="logger"></param>
+    public BasicExceptionHandler(ILogger<BasicExceptionHandler> logger)
+    {
+        _logger = logger;
+    }
+
     /// <summary>
     /// Handles the specified basic exception and returns an appropriate IActionResult.
     /// </summary>
@@ -32,6 +44,13 @@ public class BasicExceptionHandler : ControllerBase, IExceptionHandler<PmpExcept
         };
     }
 
+    [LoggerMessage(
+        EventId = 1,
+        Level = LogLevel.Error,
+        Message = "An error occurred while accessing the database."
+    )]
+    private static partial void LogDatabaseError(ILogger logger, Exception exception);
+
     /// <summary>
     /// Handles database exceptions and returns a 502 status.
     /// </summary>
@@ -39,8 +58,7 @@ public class BasicExceptionHandler : ControllerBase, IExceptionHandler<PmpExcept
     /// <returns>A StatusCodeResult representing the result of handling the database exception.</returns>
     private ObjectResult HandleDatabaseException(DatabaseException databaseException)
     {
-        Console.WriteLine(databaseException.Message);
-        Console.WriteLine(databaseException.StackTrace);
+        LogDatabaseError(_logger, databaseException);
         return StatusCode(
             StatusCodes.Status502BadGateway,
             new ErrorResponse("An error occurred while accessing the database.")

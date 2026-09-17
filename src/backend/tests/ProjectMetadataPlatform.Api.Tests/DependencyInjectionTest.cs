@@ -1,4 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Domain.Errors;
@@ -15,7 +15,7 @@ public class DependencyInjectionTests
     public void RequestHandlersAreRegistered()
     {
         var serviceCollection = new ServiceCollection() as IServiceCollection;
-
+        serviceCollection.AddLogging();
         _ = serviceCollection.AddApiDependencies();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();

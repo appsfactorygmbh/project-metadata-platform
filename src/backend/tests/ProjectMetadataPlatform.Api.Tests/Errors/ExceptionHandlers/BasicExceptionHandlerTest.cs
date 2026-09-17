@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Errors;
@@ -13,10 +14,13 @@ public class BasicExceptionHandlerTest
 {
     private BasicExceptionHandler _basicExceptionHandler;
 
+    private Mock<ILogger<BasicExceptionHandler>> _logger;
+
     [SetUp]
     public void SetUp()
     {
-        _basicExceptionHandler = new BasicExceptionHandler();
+        _logger = new Mock<ILogger<BasicExceptionHandler>>();
+        _basicExceptionHandler = new BasicExceptionHandler(_logger.Object);
     }
 
     [Test]

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Auth;
@@ -17,13 +18,16 @@ public class RefreshTokenCleanUpJobTest
     private Mock<IMediator> _mediator;
 
     private Mock<IJobExecutionContext> _context;
+    private Mock<ILogger<RefreshTokenCleanUpJob>> _logger;
 
     [SetUp]
     public void Setup()
     {
         _mediator = new Mock<IMediator>();
         _context = new Mock<IJobExecutionContext>();
-        _job = new RefreshTokenCleanUpJob(_mediator.Object);
+        _logger = new Mock<ILogger<RefreshTokenCleanUpJob>>();
+
+        _job = new RefreshTokenCleanUpJob(_mediator.Object, _logger.Object);
     }
 
     [Test]
