@@ -385,7 +385,9 @@ public static class DependencyInjection
             _ = q.AddJob<RefreshTokenCleanUpJob>(opts => opts.WithIdentity(jobKey));
 
             _ = q.AddTrigger(opts =>
-                opts.ForJob(jobKey).WithIdentity("RefreshTokenCleanUpTrigger").StartNow()
+                opts.ForJob(jobKey)
+                    .WithIdentity("RefreshTokenCleanUpTrigger")
+                    .WithCronSchedule("0 0 6 1 * ?")
             );
         });
 
