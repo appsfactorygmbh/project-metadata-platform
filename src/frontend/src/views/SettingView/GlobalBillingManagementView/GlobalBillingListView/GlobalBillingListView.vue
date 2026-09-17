@@ -131,6 +131,7 @@
         <a-menu-item
           v-for="globalBilling in globalBillingData"
           :key="String(globalBilling.id)"
+          :title="globalBilling.billingKind"
           @click="clickTab(String(globalBilling.id))"
         >
           <span>{{ globalBilling.billingKind }}</span>

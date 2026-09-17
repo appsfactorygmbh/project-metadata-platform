@@ -134,6 +134,7 @@
         <a-menu-item
           v-for="officeLocation in officeLocationData"
           :key="String(officeLocation.id)"
+          :title="officeLocation.officeLocationName"
           @click="clickTab(String(officeLocation.id))"
         >
           <span>{{ officeLocation.officeLocationName }}</span>

@@ -129,6 +129,7 @@
         <a-menu-item
           v-for="department in departmentData"
           :key="String(department.id)"
+          :title="department.departmentName"
           @click="clickTab(String(department.id))"
         >
           <span>{{ department.departmentName }}</span>

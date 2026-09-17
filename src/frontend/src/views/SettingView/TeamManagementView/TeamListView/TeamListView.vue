@@ -123,6 +123,7 @@
         <a-menu-item
           v-for="team in teamData"
           :key="String(team.id)"
+          :title="team.teamName"
           @click="clickTab(String(team.id))"
         >
           <span>{{ team.teamName }}</span>
