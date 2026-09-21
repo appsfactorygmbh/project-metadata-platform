@@ -8,6 +8,7 @@
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { ResourceActions } from '@/models/utils';
+  import { Empty } from 'ant-design-vue';
 
   const token = useThemeToken();
 
@@ -109,34 +110,43 @@
       collapsible
       :width="250"
     >
-      <a-menu
-        v-if="!isLoading"
-        v-model:selected-keys="selectedKeys"
-        mode="inline"
-        class="menuItem"
-      >
-        <a-menu-item
+      <template v-if="!isLoading">
+        <a-empty
           v-if="
-            globalBillingStore.getPermissions.includes(ResourceActions.Create)
+            globalBillingData.length == 0 &&
+            !globalBillingStore.getPermissions.includes(ResourceActions.Create)
           "
-          key="create-globalBilling"
-          class="create-menu-item"
-          @click="router.push('/settings/global-billing-management/create')"
+          :image="Empty.PRESENTED_IMAGE_SIMPLE"
+          class="empty-state"
+        />
+        <a-menu
+          v-model:selected-keys="selectedKeys"
+          mode="inline"
+          class="menuItem"
         >
-          <template #icon>
-            <PlusOutlined />
-          </template>
-          <span>Create GlobalBilling</span>
-        </a-menu-item>
-        <a-menu-item
-          v-for="globalBilling in globalBillingData"
-          :key="String(globalBilling.id)"
-          :title="globalBilling.billingKind"
-          @click="clickTab(String(globalBilling.id))"
-        >
-          <span>{{ globalBilling.billingKind }}</span>
-        </a-menu-item>
-      </a-menu>
+          <a-menu-item
+            v-if="
+              globalBillingStore.getPermissions.includes(ResourceActions.Create)
+            "
+            key="create-globalBilling"
+            class="create-menu-item"
+            @click="router.push('/settings/global-billing-management/create')"
+          >
+            <template #icon>
+              <PlusOutlined />
+            </template>
+            <span>Create GlobalBilling</span>
+          </a-menu-item>
+          <a-menu-item
+            v-for="globalBilling in globalBillingData"
+            :key="String(globalBilling.id)"
+            :title="globalBilling.billingKind"
+            @click="clickTab(String(globalBilling.id))"
+          >
+            <span>{{ globalBilling.billingKind }}</span>
+          </a-menu-item>
+        </a-menu>
+      </template>
       <a-skeleton
         v-else
         active

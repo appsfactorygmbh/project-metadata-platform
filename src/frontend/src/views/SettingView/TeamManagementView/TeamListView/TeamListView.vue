@@ -5,6 +5,7 @@
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { ResourceActions } from '@/models/utils';
+  import { Empty } from 'ant-design-vue';
 
   const token = useThemeToken();
 
@@ -103,32 +104,41 @@
       collapsible
       :width="250"
     >
-      <a-menu
-        v-if="!isLoading"
-        v-model:selected-keys="selectedKeys"
-        mode="inline"
-        class="menuItem"
-      >
-        <a-menu-item
-          v-if="teamStore.getPermissions.includes(ResourceActions.Create)"
-          key="create-team"
-          class="create-menu-item"
-          @click="router.push('/settings/team-management/create')"
+      <template v-if="!isLoading">
+        <a-empty
+          v-if="
+            teamData.length == 0 &&
+            !teamStore.getPermissions.includes(ResourceActions.Create)
+          "
+          :image="Empty.PRESENTED_IMAGE_SIMPLE"
+          class="empty-state"
+        />
+        <a-menu
+          v-model:selected-keys="selectedKeys"
+          mode="inline"
+          class="menuItem"
         >
-          <template #icon>
-            <PlusOutlined />
-          </template>
-          <span>Create Team</span>
-        </a-menu-item>
-        <a-menu-item
-          v-for="team in teamData"
-          :key="String(team.id)"
-          :title="team.teamName"
-          @click="clickTab(String(team.id))"
-        >
-          <span>{{ team.teamName }}</span>
-        </a-menu-item>
-      </a-menu>
+          <a-menu-item
+            v-if="teamStore.getPermissions.includes(ResourceActions.Create)"
+            key="create-team"
+            class="create-menu-item"
+            @click="router.push('/settings/team-management/create')"
+          >
+            <template #icon>
+              <PlusOutlined />
+            </template>
+            <span>Create Team</span>
+          </a-menu-item>
+          <a-menu-item
+            v-for="team in teamData"
+            :key="String(team.id)"
+            :title="team.teamName"
+            @click="clickTab(String(team.id))"
+          >
+            <span>{{ team.teamName }}</span>
+          </a-menu-item>
+        </a-menu>
+      </template>
       <a-skeleton
         v-else
         active
