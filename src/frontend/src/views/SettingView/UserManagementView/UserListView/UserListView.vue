@@ -5,6 +5,7 @@
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { ResourceActions } from '@/models/utils';
+  import { Empty } from 'ant-design-vue';
   const token = useThemeToken();
 
   const collapsed = ref<boolean>(false);
@@ -77,38 +78,53 @@
       collapsible
       :width="250"
     >
-      <a-menu
-        v-if="!isLoading"
-        v-model:selected-keys="selectedKeys"
-        mode="inline"
-        class="menuItem"
-      >
-        <a-menu-item
-          v-if="userStore.getPermissions.includes(ResourceActions.Create)"
-          key="create-user"
-          class="create-menu-item"
-          @click="router.push('/settings/user-management/create')"
+      <template v-if="!isLoading">
+        <a-empty
+          v-if="
+            usersData.length == 0 &&
+            !userStore.getPermissions.includes(ResourceActions.Create)
+          "
+          :image="Empty.PRESENTED_IMAGE_SIMPLE"
+          class="empty-state"
+        />
+        <a-menu
+          v-model:selected-keys="selectedKeys"
+          mode="inline"
+          class="menuItem"
         >
-          <template #icon>
-            <PlusOutlined />
-          </template>
-          <span>Create User</span>
-        </a-menu-item>
-        <a-menu-item
-          v-for="user in usersData"
-          :key="user.externalId"
-          :title="getNameFromEmail(user.userName)"
-          @click="clickTab(user.externalId)"
-        >
-          <div class="menu-item-content">
-            <span class="user-name">{{ getNameFromEmail(user.userName) }}</span>
+          <a-menu-item
+            v-if="userStore.getPermissions.includes(ResourceActions.Create)"
+            key="create-user"
+            class="create-menu-item"
+            @click="router.push('/settings/user-management/create')"
+          >
+            <template #icon>
+              <PlusOutlined />
+            </template>
+            <span>Create User</span>
+          </a-menu-item>
+          <a-menu-item
+            v-for="user in usersData"
+            :key="user.externalId"
+            :title="getNameFromEmail(user.userName)"
+            @click="clickTab(user.externalId)"
+          >
+            <div class="menu-item-content">
+              <span class="user-name">{{
+                getNameFromEmail(user.userName)
+              }}</span>
 
-            <a-tag v-if="user.isScimProvisioned" color="blue" class="scim-tag">
-              SCIM
-            </a-tag>
-          </div>
-        </a-menu-item>
-      </a-menu>
+              <a-tag
+                v-if="user.isScimProvisioned"
+                color="blue"
+                class="scim-tag"
+              >
+                SCIM
+              </a-tag>
+            </div>
+          </a-menu-item>
+        </a-menu>
+      </template>
       <a-skeleton
         v-else
         active
