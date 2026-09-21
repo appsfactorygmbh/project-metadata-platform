@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { reactive, ref } from 'vue';
+  import { reactive, ref, type PropType } from 'vue';
   import { useElementSize } from '@vueuse/core';
   import { useThemeToken } from '@/utils/hooks';
 
@@ -7,8 +7,9 @@
 
   const props = defineProps({
     timeStamp: {
-      type: String,
-      required: true,
+      type: String as PropType<string | undefined>,
+      required: false,
+      default: undefined,
     },
     logMessage: {
       type: String,
@@ -31,7 +32,9 @@
 <template>
   <div ref="timeStampSize" class="container">
     <div class="text timeStamp" :style="{ minWidth }">
-      {{ new Date(props.timeStamp).toLocaleString('de-DE') }}
+      {{
+        props.timeStamp ? new Date(props.timeStamp).toLocaleString('de-DE') : ''
+      }}
     </div>
     <div class="line-container">
       <div class="circle" />
