@@ -8,6 +8,7 @@
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { ResourceActions } from '@/models/utils';
+  import { Empty } from 'ant-design-vue';
   const token = useThemeToken();
 
   const collapsed = ref<boolean>(false);
@@ -78,34 +79,43 @@
       collapsible
       :width="250"
     >
-      <a-menu
-        v-if="!isLoading"
-        v-model:selected-keys="selectedKeys"
-        mode="inline"
-        class="menuItem"
-      >
-        <a-menu-item
-          v-if="apiTokenStore.getPermissions.includes(ResourceActions.Create)"
-          key="create-token"
-          class="create-menu-item"
-          @click="router.push('/settings/api-token-management/create')"
+      <template v-if="!isLoading">
+        <a-empty
+          v-if="
+            tokensData.length == 0 &&
+            !apiTokenStore.getPermissions.includes(ResourceActions.Create)
+          "
+          :image="Empty.PRESENTED_IMAGE_SIMPLE"
+          class="empty-state"
+        />
+        <a-menu
+          v-model:selected-keys="selectedKeys"
+          mode="inline"
+          class="menuItem"
         >
-          <template #icon>
-            <PlusOutlined />
-          </template>
-          <span>Create API-Token</span>
-        </a-menu-item>
-        <a-menu-item
-          v-for="ApiToken in tokensData"
-          :key="ApiToken.id"
-          :title="ApiToken.name"
-          @click="clickTab(String(ApiToken.id))"
-        >
-          <div class="menu-item-content">
-            <span class="user-name">{{ ApiToken.name }}</span>
-          </div>
-        </a-menu-item>
-      </a-menu>
+          <a-menu-item
+            v-if="apiTokenStore.getPermissions.includes(ResourceActions.Create)"
+            key="create-token"
+            class="create-menu-item"
+            @click="router.push('/settings/api-token-management/create')"
+          >
+            <template #icon>
+              <PlusOutlined />
+            </template>
+            <span>Create API-Token</span>
+          </a-menu-item>
+          <a-menu-item
+            v-for="ApiToken in tokensData"
+            :key="ApiToken.id"
+            :title="ApiToken.name"
+            @click="clickTab(String(ApiToken.id))"
+          >
+            <div class="menu-item-content">
+              <span class="user-name">{{ ApiToken.name }}</span>
+            </div>
+          </a-menu-item>
+        </a-menu>
+      </template>
       <a-skeleton
         v-else
         active
@@ -171,15 +181,6 @@
     text-overflow: ellipsis;
     flex: 1;
     min-width: 0;
-  }
-
-  .scim-tag {
-    flex-shrink: 0;
-    margin-left: 8px;
-    margin-right: 0;
-    font-size: 10px;
-    line-height: 16px;
-    height: 18px;
   }
 
   :deep(.ant-menu-title-content) {

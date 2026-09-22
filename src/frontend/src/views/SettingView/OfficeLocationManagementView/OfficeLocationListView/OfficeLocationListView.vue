@@ -8,6 +8,7 @@
   import { useThemeToken } from '@/utils/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { ResourceActions } from '@/models/utils';
+  import { Empty } from 'ant-design-vue';
 
   const token = useThemeToken();
 
@@ -112,33 +113,45 @@
       collapsible
       :width="250"
     >
-      <a-menu
-        v-if="!isLoading"
-        v-model:selected-keys="selectedKeys"
-        mode="inline"
-        class="menuItem"
-      >
-        <a-menu-item
+      <template v-if="!isLoading">
+        <a-empty
           v-if="
-            officeLocationStore.getPermissions.includes(ResourceActions.Create)
+            officeLocationData.length == 0 &&
+            !officeLocationStore.getPermissions.includes(ResourceActions.Create)
           "
-          key="create-officeLocation"
-          class="create-menu-item"
-          @click="router.push('/settings/office-location-management/create')"
+          :image="Empty.PRESENTED_IMAGE_SIMPLE"
+          class="empty-state"
+        />
+        <a-menu
+          v-model:selected-keys="selectedKeys"
+          mode="inline"
+          class="menuItem"
         >
-          <template #icon>
-            <PlusOutlined />
-          </template>
-          <span>Create Office Location</span>
-        </a-menu-item>
-        <a-menu-item
-          v-for="officeLocation in officeLocationData"
-          :key="String(officeLocation.id)"
-          @click="clickTab(String(officeLocation.id))"
-        >
-          <span>{{ officeLocation.officeLocationName }}</span>
-        </a-menu-item>
-      </a-menu>
+          <a-menu-item
+            v-if="
+              officeLocationStore.getPermissions.includes(
+                ResourceActions.Create,
+              )
+            "
+            key="create-officeLocation"
+            class="create-menu-item"
+            @click="router.push('/settings/office-location-management/create')"
+          >
+            <template #icon>
+              <PlusOutlined />
+            </template>
+            <span>Create Office Location</span>
+          </a-menu-item>
+          <a-menu-item
+            v-for="officeLocation in officeLocationData"
+            :key="String(officeLocation.id)"
+            :title="officeLocation.officeLocationName"
+            @click="clickTab(String(officeLocation.id))"
+          >
+            <span>{{ officeLocation.officeLocationName }}</span>
+          </a-menu-item>
+        </a-menu>
+      </template>
       <a-skeleton
         v-else
         active
