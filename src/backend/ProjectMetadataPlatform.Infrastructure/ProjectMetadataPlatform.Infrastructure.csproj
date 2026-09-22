@@ -28,13 +28,13 @@
             Version="10.0.*"
         />
         <PackageReference Include="Microsoft.Extensions.Resilience" Version="10.10.*" />
-        <PackageReference Include="Microsoft.Identity.Web" Version="4.14.*" />
+        <PackageReference Include="Microsoft.Identity.Web" Version="4.15.*" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.*" />
-        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.22.*" />
-        <PackageReference Include="Quartz" Version="4.1.0" />
-        <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="4.1.0" />
-        <PackageReference Include="Quartz.Extensions.Hosting" Version="4.1.0" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.22.*" />
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.23.*" />
+        <PackageReference Include="Quartz" Version="4.1.1" />
+        <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="4.1.1" />
+        <PackageReference Include="Quartz.Extensions.Hosting" Version="4.1.1" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.23.*" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\ProjectMetadataPlatform.Application\ProjectMetadataPlatform.Application.csproj" />
