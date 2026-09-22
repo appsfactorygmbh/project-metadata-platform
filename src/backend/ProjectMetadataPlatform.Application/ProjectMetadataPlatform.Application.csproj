@@ -22,8 +22,8 @@
             Include="Microsoft.Extensions.DependencyInjection.Abstractions"
             Version="10.0.*"
         />
-        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.22.*" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.22.*" />
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.23.*" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.23.*" />
         <PackageReference Include="System.Linq.Async" Version="7.0.*" />
     </ItemGroup>
     <ItemGroup>
