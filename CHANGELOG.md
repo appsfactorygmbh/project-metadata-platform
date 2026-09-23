@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.1.0](https://github.com/appsfactorygmbh/project-metadata-platform/compare/v3.0.0...v3.1.0) (2026-09-23)
+
+
+### Features
+
+* **backend:** Add Refresh Token CleanupJob ([ec89b83](https://github.com/appsfactorygmbh/project-metadata-platform/commit/ec89b83c2f7a052073059b1be1b3d708a663d44d))
+* **frontend:** hide date for multiple logs produced at the same time ([0328acc](https://github.com/appsfactorygmbh/project-metadata-platform/commit/0328acc37f96a167fb639584141b52d19e162e37))
+
+
+### Bug Fixes
+
+* **backend:** fix checkrefreshTokenExists method ([2f192b7](https://github.com/appsfactorygmbh/project-metadata-platform/commit/2f192b77f29684aefa923e98bdf72dacc787fd6f))
+* **backend:** replace legacy logs with LogMessages ([4c2c211](https://github.com/appsfactorygmbh/project-metadata-platform/commit/4c2c21186620a2075a4ac279360ac5a1d837e9fd))
+
 ## [3.0.0](https://github.com/appsfactorygmbh/project-metadata-platform/compare/v2.1.0...v3.0.0) (2026-09-10)
 
 
