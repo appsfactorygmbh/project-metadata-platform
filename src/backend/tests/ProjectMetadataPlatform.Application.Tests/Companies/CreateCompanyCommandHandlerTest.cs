@@ -89,7 +89,7 @@ public class CreateCompanyCommandHandlerTest
     }
 
     [Test]
-    public void CreateCompany_NameAlreadyExists_ThrowsCompanyNameAlreadyExistsException()
+    public async Task CreateCompany_NameAlreadyExists_ThrowsCompanyNameAlreadyExistsExceptionAsync()
     {
         // Arrange
         _ = _authorizationServiceMock
@@ -105,7 +105,7 @@ public class CreateCompanyCommandHandlerTest
             .Setup(repo => repo.CheckIfCompanyNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<CompanyNameAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<CompanyNameAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new CreateCompanyCommand(CompanyName: "Test Name"),
                 It.IsAny<CancellationToken>()
@@ -130,7 +130,7 @@ public class CreateCompanyCommandHandlerTest
 
         var request = new CreateCompanyCommand(CompanyName: "Test Name");
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

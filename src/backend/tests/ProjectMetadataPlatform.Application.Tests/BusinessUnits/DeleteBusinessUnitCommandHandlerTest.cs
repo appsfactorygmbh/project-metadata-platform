@@ -94,7 +94,7 @@ public class DeleteBusinessUnitCommandHandlerTest
     }
 
     [Test]
-    public void DeleteBusinessUnit_StillLinkedTeams_ThrowsBusinessUnitStillLinkedToTeamsException()
+    public async Task DeleteBusinessUnit_StillLinkedTeams_ThrowsBusinessUnitStillLinkedToTeamsExceptionAsync()
     {
         // Arrange
         _ = _mockBusinessUnitRepository
@@ -129,7 +129,7 @@ public class DeleteBusinessUnitCommandHandlerTest
             .ReturnsAsync(returnBusinessUnit);
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<BusinessUnitStillLinkedToTeamsException>(async () =>
+        var ex = await Assert.ThrowsAsync<BusinessUnitStillLinkedToTeamsException>(async () =>
             await _handler.Handle(
                 new DeleteBusinessUnitCommand(Id: 1),
                 It.IsAny<CancellationToken>()

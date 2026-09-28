@@ -145,7 +145,7 @@ public class UpdateBusinessUnitCommandHandlerTest
     }
 
     [Test]
-    public void UpdateBusinessUnit_ThrowsBusinessUnitNameAlreadyExistsException_IfNewBusinessUnitNameAlreadyExists()
+    public async Task UpdateBusinessUnit_ThrowsBusinessUnitNameAlreadyExistsException_IfNewBusinessUnitNameAlreadyExistsAsync()
     {
         // Arrange
         var returnBusinessUnit = new BusinessUnit() { Id = 1, BusinessUnitName = "Test_1" };
@@ -171,7 +171,7 @@ public class UpdateBusinessUnitCommandHandlerTest
             .ReturnsAsync(true);
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<BusinessUnitNameAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<BusinessUnitNameAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new UpdateBusinessUnitCommand(Id: 1, BusinessUnitName: "Test_2"),
                 It.IsAny<CancellationToken>()
@@ -199,7 +199,7 @@ public class UpdateBusinessUnitCommandHandlerTest
             .ReturnsAsync(returnBusinessUnit);
         var request = new UpdateBusinessUnitCommand(Id: 1, BusinessUnitName: "Test_2");
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

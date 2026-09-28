@@ -92,7 +92,7 @@ public class CreateDepartmentCommandHandlerTest
     }
 
     [Test]
-    public void CreateDepartment_NameAlreadyExists_ThrowsDepartmentNameAlreadyExistsException()
+    public async Task CreateDepartment_NameAlreadyExists_ThrowsDepartmentNameAlreadyExistsExceptionAsync()
     {
         // Arrange
         _ = _authorizationServiceMock
@@ -108,7 +108,7 @@ public class CreateDepartmentCommandHandlerTest
             .Setup(repo => repo.CheckIfDepartmentNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<DepartmentNameAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<DepartmentNameAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new CreateDepartmentCommand(DepartmentName: "Test Name"),
                 It.IsAny<CancellationToken>()
@@ -133,7 +133,7 @@ public class CreateDepartmentCommandHandlerTest
 
         var request = new CreateDepartmentCommand(DepartmentName: "Test Name");
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

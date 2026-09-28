@@ -134,7 +134,7 @@ public class CompaniesRepositoryTests : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
             await _repository.GetCompanyAsync(1)
         );
         Assert.That(ex.Message, Does.Contain("1"));
@@ -270,13 +270,13 @@ public class CompaniesRepositoryTests : TestsWithDatabase
     }
 
     [Test]
-    public void UpdateCompanyAsync_NonExistingCompany_ShouldThrowCompanyNotFoundException()
+    public async Task UpdateCompanyAsync_NonExistingCompany_ShouldThrowCompanyNotFoundExceptionAsync()
     {
         // Arrange
         var nonExistentCompany = new Company { Id = 999, CompanyName = "Ghost Company" };
 
         // Act & Assert
-        var ex = Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
             await _repository.UpdateCompanyAsync(nonExistentCompany)
         );
         Assert.That(ex.Message, Does.Contain(nonExistentCompany.Id.ToString()));

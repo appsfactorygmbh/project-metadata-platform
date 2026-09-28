@@ -62,7 +62,7 @@ public class Tests
     }
 
     [Test]
-    public void CreatePlugin_WithError_Test()
+    public async Task CreatePlugin_WithError_TestAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -75,11 +75,11 @@ public class Tests
 
         var request = new CreatePluginRequest("Drogue chute", false, "https://chute.de");
 
-        _ = Assert.ThrowsAsync<IOException>(() => _controller.Put(request));
+        _ = await Assert.ThrowsAsync<IOException>(() => _controller.Put(request));
     }
 
     [Test]
-    public void CreatePlugin_WithNameConflict_Test()
+    public async Task CreatePlugin_WithNameConflict_TestAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -92,7 +92,9 @@ public class Tests
 
         var request = new CreatePluginRequest("Drogue chute", false, "https://chute.de");
 
-        _ = Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() => _controller.Put(request));
+        _ = await Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() =>
+            _controller.Put(request)
+        );
     }
 
     [Test]
@@ -111,7 +113,7 @@ public class Tests
     }
 
     [Test]
-    public void DeletePlugin_MediatorThrowsExceptionTest()
+    public async Task DeletePlugin_MediatorThrowsExceptionTestAsync()
     {
         _ = _mediator
             .Setup(mediator =>
@@ -121,11 +123,11 @@ public class Tests
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
     }
 
     [Test]
-    public void PatchPlugin_MediatorThrowsExceptionTest()
+    public async Task PatchPlugin_MediatorThrowsExceptionTest()
     {
         _ = _mediator
             .Setup(mediator =>
@@ -135,14 +137,14 @@ public class Tests
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        var exception = Assert.ThrowsAsync<InvalidDataException>(() =>
+        var exception = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Patch(1, new PatchGlobalPluginRequest())
         );
-        Assert.That(exception.Message, Is.EqualTo("An error message"));
+        Assert.That(exception?.Message, Is.EqualTo("An error message"));
     }
 
     [Test]
-    public void PatchPlugin_WithNameConflictThrowsException_Test()
+    public async Task PatchPlugin_WithNameConflictThrowsException_Test()
     {
         _ = _mediator
             .Setup(mediator =>
@@ -152,17 +154,17 @@ public class Tests
                 )
             )
             .ThrowsAsync(new PluginNameAlreadyExistsException("Ariane 4"));
-        var exception = Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() =>
+        var exception = await Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() =>
             _controller.Patch(1, new PatchGlobalPluginRequest("Ariane 4"))
         );
         Assert.That(
-            exception.Message,
+            exception?.Message,
             Is.EqualTo("A global Plugin with the name Ariane 4 already exists.")
         );
     }
 
     [Test]
-    public void GetGlobalPlugins_MediatorThrowsExceptionTest()
+    public async Task GetGlobalPlugins_MediatorThrowsExceptionTestAsync()
     {
         _ = _mediator
             .Setup(mediator =>
@@ -178,7 +180,7 @@ public class Tests
                 >(It.IsAny<GetGlobalPluginsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetGlobal());
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetGlobal());
     }
 
     [Test]
@@ -232,7 +234,7 @@ public class Tests
     }
 
     [Test]
-    public void Patch_PluginNotFound_ThrowsNotFound()
+    public async Task Patch_PluginNotFound_ThrowsNotFoundAsync()
     {
         // Arrange
         const int pluginId = 1;
@@ -248,7 +250,9 @@ public class Tests
             .ThrowsAsync(new PluginNotFoundException(1));
 
         // Act
-        _ = Assert.ThrowsAsync<PluginNotFoundException>(() => _controller.Patch(pluginId, request));
+        _ = await Assert.ThrowsAsync<PluginNotFoundException>(() =>
+            _controller.Patch(pluginId, request)
+        );
     }
 
     [Test]
@@ -358,7 +362,7 @@ public class Tests
     }
 
     [Test]
-    public void DeleteGlobalPlugin_PluginNotFound_Test()
+    public async Task DeleteGlobalPlugin_PluginNotFound_TestAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -369,7 +373,7 @@ public class Tests
             )
             .ThrowsAsync(new PluginNotFoundException(1));
 
-        _ = Assert.ThrowsAsync<PluginNotFoundException>(() => _controller.Delete(1));
+        _ = await Assert.ThrowsAsync<PluginNotFoundException>(() => _controller.Delete(1));
     }
 
     [Test]

@@ -91,7 +91,7 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<OfficeLocationNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<OfficeLocationNotFoundException>(async () =>
             await _repository.GetOfficeLocationAsync(1)
         );
         Assert.That(ex.Message, Does.Contain("1"));
@@ -253,7 +253,7 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
     }
 
     [Test]
-    public void UpdateOfficeLocationAsync_NonExistingOfficeLocation_ShouldThrowOfficeLocationNotFoundException()
+    public async Task UpdateOfficeLocationAsync_NonExistingOfficeLocation_ShouldThrowOfficeLocationNotFoundExceptionAsync()
     {
         // Arrange
         var nonExistentOfficeLocation = new OfficeLocation
@@ -263,7 +263,7 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
         };
 
         // Act & Assert
-        var ex = Assert.ThrowsAsync<OfficeLocationNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<OfficeLocationNotFoundException>(async () =>
             await _repository.UpdateOfficeLocationAsync(nonExistentOfficeLocation)
         );
         Assert.That(ex.Message, Does.Contain(nonExistentOfficeLocation.Id.ToString()));

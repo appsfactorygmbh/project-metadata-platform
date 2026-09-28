@@ -69,7 +69,7 @@ public class AuthorizationControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.GetPermissions("A Resource")
         );
     }
@@ -108,6 +108,6 @@ public class AuthorizationControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetResources());
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetResources());
     }
 }

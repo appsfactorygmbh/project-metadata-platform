@@ -94,7 +94,7 @@ public class CreateOfficeLocationCommandHandlerTest
     }
 
     [Test]
-    public void CreateOfficeLocation_NameAlreadyExists_ThrowsOfficeLocationNameAlreadyExistsException()
+    public async Task CreateOfficeLocation_NameAlreadyExists_ThrowsOfficeLocationNameAlreadyExistsExceptionAsync()
     {
         // Arrange
         _ = _authorizationServiceMock
@@ -110,7 +110,7 @@ public class CreateOfficeLocationCommandHandlerTest
             .Setup(repo => repo.CheckIfOfficeLocationNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<OfficeLocationNameAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<OfficeLocationNameAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new CreateOfficeLocationCommand(OfficeLocationName: "Test Name"),
                 It.IsAny<CancellationToken>()
@@ -135,7 +135,7 @@ public class CreateOfficeLocationCommandHandlerTest
 
         var request = new CreateOfficeLocationCommand(OfficeLocationName: "Test Name");
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

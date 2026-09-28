@@ -265,7 +265,7 @@ public class PatchUserCommandHandlerTest
     }
 
     [Test]
-    public void PatchUser_NotFound_Test()
+    public async Task PatchUser_NotFound_TestAsync()
     {
         _ = _mockUsersRepo.Setup(m => m.CheckUserExists(It.IsAny<string>())).ReturnsAsync(true);
         _ = _mockUsersRepo
@@ -280,7 +280,7 @@ public class PatchUserCommandHandlerTest
                 )
             )
             .ReturnsAsync(true);
-        _ = Assert.ThrowsAsync<UserNotFoundException>(() =>
+        _ = await Assert.ThrowsAsync<UserNotFoundException>(() =>
             _handler.Handle(new PatchUserCommand { Id = "42" }, It.IsAny<CancellationToken>())
         );
     }
@@ -461,7 +461,7 @@ public class PatchUserCommandHandlerTest
             ],
         };
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

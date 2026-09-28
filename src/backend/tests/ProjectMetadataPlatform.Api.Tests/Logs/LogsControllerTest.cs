@@ -523,7 +523,7 @@ public class LogsControllerTest
     }
 
     [Test]
-    public void GetLogsByProjectSlugNoId_NotFoundThrowsException()
+    public async Task GetLogsByProjectSlugNoId_NotFoundThrowsExceptionAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -534,13 +534,13 @@ public class LogsControllerTest
             )
             .ThrowsAsync(new ProjectNotFoundException("answerToLifeTheUniverseAndEverything"));
 
-        _ = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
+        _ = await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
             _controller.Get(null, null, null, null, "answerToLifeTheUniverseAndEverything")
         );
     }
 
     [Test]
-    public void GetLogs_ThrowsException_Test()
+    public async Task GetLogs_ThrowsException_Test()
     {
         _ = _mediator
             .Setup(m =>
@@ -551,9 +551,9 @@ public class LogsControllerTest
             )
             .ThrowsAsync(new FormatException("Something went wrong"));
 
-        var exception = Assert.ThrowsAsync<FormatException>(() =>
+        var exception = await Assert.ThrowsAsync<FormatException>(() =>
             _controller.Get(null, null, null, null, null)
         );
-        Assert.That(exception.Message, Is.EqualTo("Something went wrong"));
+        Assert.That(exception?.Message, Is.EqualTo("Something went wrong"));
     }
 }

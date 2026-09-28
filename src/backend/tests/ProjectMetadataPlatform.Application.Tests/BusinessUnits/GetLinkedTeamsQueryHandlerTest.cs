@@ -102,7 +102,7 @@ public class GetLinkedTeamsQueryHandlerTest
 
         var request = new GetLinkedTeamsQuery(Id: 1);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

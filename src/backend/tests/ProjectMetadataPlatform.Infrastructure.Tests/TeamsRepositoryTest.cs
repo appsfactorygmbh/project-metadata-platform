@@ -349,7 +349,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<TeamNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<TeamNotFoundException>(async () =>
             await _repository.GetTeamAsync(1)
         );
         Assert.That(ex.Message, Does.Contain("1"));
@@ -554,7 +554,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
     }
 
     [Test]
-    public void UpdateTeamAsync_NonExistingTeam_ShouldThrowTeamNotFoundException()
+    public async Task UpdateTeamAsync_NonExistingTeam_ShouldThrowTeamNotFoundExceptionAsync()
     {
         // Arrange
         var nonExistentTeam = new Team
@@ -568,7 +568,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
         };
 
         // Act & Assert
-        var ex = Assert.ThrowsAsync<TeamNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<TeamNotFoundException>(async () =>
             await _repository.UpdateTeamAsync(nonExistentTeam)
         );
         Assert.That(ex.Message, Does.Contain(nonExistentTeam.Id.ToString()));

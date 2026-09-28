@@ -69,7 +69,7 @@ public class GetBusinessUnitQueryHandlerTest
     }
 
     [Test]
-    public void GetBusinessUnit_ThrowBusinessUnitNotFoundException_IfBusinessUnitNotFound()
+    public async Task GetBusinessUnit_ThrowBusinessUnitNotFoundException_IfBusinessUnitNotFoundAsync()
     {
         // Arrange
         _ = _mockBusinessUnitRepository
@@ -85,7 +85,7 @@ public class GetBusinessUnitQueryHandlerTest
             )
             .ReturnsAsync(true);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<BusinessUnitNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<BusinessUnitNotFoundException>(async () =>
             await _handler.Handle(new GetBusinessUnitQuery(Id: 1), It.IsAny<CancellationToken>())
         );
 
@@ -107,7 +107,7 @@ public class GetBusinessUnitQueryHandlerTest
 
         var request = new GetBusinessUnitQuery(Id: 1);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

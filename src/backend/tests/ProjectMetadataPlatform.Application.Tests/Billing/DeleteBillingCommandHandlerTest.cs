@@ -94,7 +94,7 @@ public class DeleteBillingCommandHandlerTest
 
         var request = new DeleteBillingCommand(Id: 1);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

@@ -64,7 +64,7 @@ public class GetOfficeLocationQueryHandlerTest
     }
 
     [Test]
-    public void GetOfficeLocation_ThrowOfficeLocationNotFoundException_IfOfficeLocationNotFound()
+    public async Task GetOfficeLocation_ThrowOfficeLocationNotFoundException_IfOfficeLocationNotFoundAsync()
     {
         // Arrange
         _ = _authorizationServiceMock
@@ -81,7 +81,7 @@ public class GetOfficeLocationQueryHandlerTest
             .ThrowsAsync(new OfficeLocationNotFoundException(1));
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<OfficeLocationNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<OfficeLocationNotFoundException>(async () =>
             await _handler.Handle(new GetOfficeLocationQuery(Id: 1), It.IsAny<CancellationToken>())
         );
 
@@ -103,7 +103,7 @@ public class GetOfficeLocationQueryHandlerTest
 
         var request = new GetOfficeLocationQuery(Id: 1);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

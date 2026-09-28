@@ -107,7 +107,7 @@ public class CreateProjectCommandHandlerTest
     }
 
     [Test]
-    public void CreateProject_Test_ThrowsExceptionWhenSlugAlreadyExists()
+    public async Task CreateProject_Test_ThrowsExceptionWhenSlugAlreadyExistsAsync()
     {
         _ = _authorizationServiceMock
             .Setup(a =>
@@ -128,7 +128,7 @@ public class CreateProjectCommandHandlerTest
         _ = _companyRepository
             .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(true);
-        var ex = Assert.ThrowsAsync<ProjectSlugAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<ProjectSlugAlreadyExistsException>(async () =>
         {
             _ = await _handler.Handle(
                 new CreateProjectCommand(
@@ -163,7 +163,7 @@ public class CreateProjectCommandHandlerTest
     }
 
     [Test]
-    public void CreateProject_Test_ThrowsExceptionWhenCompanyDoesntExistExists()
+    public async Task CreateProject_Test_ThrowsExceptionWhenCompanyDoesntExistExistsAsync()
     {
         _ = _authorizationServiceMock
             .Setup(a =>
@@ -177,7 +177,7 @@ public class CreateProjectCommandHandlerTest
         _ = _companyRepository
             .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(false);
-        var ex = Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
         {
             _ = await _handler.Handle(
                 new CreateProjectCommand(
@@ -218,7 +218,7 @@ public class CreateProjectCommandHandlerTest
     }
 
     [Test]
-    public void CreateProject_Test_ThrowsExceptionWhenNotesTooLong()
+    public async Task CreateProject_Test_ThrowsExceptionWhenNotesTooLongAsync()
     {
         _ = _authorizationServiceMock
             .Setup(a =>
@@ -246,7 +246,7 @@ public class CreateProjectCommandHandlerTest
             .Setup(m => m.CheckProjectSlugExists("example_project"))
             .ReturnsAsync(false);
 
-        var ex = Assert.ThrowsAsync<ProjectNotesSizeException>(async () =>
+        var ex = await Assert.ThrowsAsync<ProjectNotesSizeException>(async () =>
         {
             _ = await _handler.Handle(
                 new CreateProjectCommand(
@@ -305,7 +305,7 @@ public class CreateProjectCommandHandlerTest
             Notes: new string('a', 501)
         );
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

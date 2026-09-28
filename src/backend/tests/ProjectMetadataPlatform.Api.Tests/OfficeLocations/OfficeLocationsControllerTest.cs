@@ -110,7 +110,7 @@ public class OfficeLocationsControllerTest
                 >(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
     }
 
     [Test]
@@ -124,7 +124,7 @@ public class OfficeLocationsControllerTest
                 >(It.IsAny<GetOfficeLocationQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
     }
 
     [Test]
@@ -164,7 +164,7 @@ public class OfficeLocationsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Put(new CreateOfficeLocationRequest("a"))
         );
     }
@@ -217,7 +217,7 @@ public class OfficeLocationsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Patch(1, new UpdateOfficeLocationRequest())
         );
     }
@@ -271,7 +271,7 @@ public class OfficeLocationsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
     }
 
     [Test]

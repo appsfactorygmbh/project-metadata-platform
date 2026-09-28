@@ -64,7 +64,7 @@ public class GetDepartmentQueryHandlerTest
     }
 
     [Test]
-    public void GetDepartment_ThrowDepartmentNotFoundException_IfDepartmentNotFound()
+    public async Task GetDepartment_ThrowDepartmentNotFoundException_IfDepartmentNotFoundAsync()
     {
         // Arrange
         _ = _mockDepartmentRepository
@@ -80,7 +80,7 @@ public class GetDepartmentQueryHandlerTest
             )
             .ReturnsAsync(true);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<DepartmentNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<DepartmentNotFoundException>(async () =>
             await _handler.Handle(new GetDepartmentQuery(Id: 1), It.IsAny<CancellationToken>())
         );
 
@@ -102,7 +102,7 @@ public class GetDepartmentQueryHandlerTest
 
         var request = new GetDepartmentQuery(Id: 1);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

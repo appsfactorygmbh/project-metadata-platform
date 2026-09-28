@@ -94,7 +94,7 @@ public class DeleteDepartmentCommandHandlerTest
 
         var request = new DeleteDepartmentCommand(Id: 1);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

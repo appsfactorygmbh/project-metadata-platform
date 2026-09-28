@@ -102,7 +102,7 @@ public class CreateBusinessUnitCommandHandlerTest
     }
 
     [Test]
-    public void CreateBusinessUnit_NameAlreadyExists_ThrowsBusinessUnitNameAlreadyExistsException()
+    public async Task CreateBusinessUnit_NameAlreadyExists_ThrowsBusinessUnitNameAlreadyExistsExceptionAsync()
     {
         // Arrange
         _ = _authorizationServiceMock
@@ -118,7 +118,7 @@ public class CreateBusinessUnitCommandHandlerTest
             .Setup(repo => repo.CheckIfBusinessUnitNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(true);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<BusinessUnitNameAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<BusinessUnitNameAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new CreateBusinessUnitCommand(BusinessUnitName: "Test Name"),
                 It.IsAny<CancellationToken>()
@@ -143,7 +143,7 @@ public class CreateBusinessUnitCommandHandlerTest
 
         var request = new CreateBusinessUnitCommand(BusinessUnitName: "Test Name");
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

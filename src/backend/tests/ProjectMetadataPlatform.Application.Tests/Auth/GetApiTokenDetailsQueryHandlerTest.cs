@@ -72,7 +72,7 @@ public class GetApiTokenDetailsQueryHandlerTest
 
         var request = new GetApiTokenDetailsQuery(1);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

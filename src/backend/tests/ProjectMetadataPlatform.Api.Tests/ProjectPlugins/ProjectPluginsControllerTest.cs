@@ -147,7 +147,7 @@ public class ProjectPluginsControllerTest
                 >(It.IsAny<GetAllPluginsForProjectIdQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetPlugins(1));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetPlugins(1));
     }
 
     [Test]
@@ -267,7 +267,9 @@ public class ProjectPluginsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetUnarchivedPlugins(1));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
+            _controller.GetUnarchivedPlugins(1)
+        );
     }
 
     [Test]
@@ -378,7 +380,9 @@ public class ProjectPluginsControllerTest
                 >(It.IsAny<GetAllPluginsForProjectIdQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetPluginsBySlug("Slug"));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
+            _controller.GetPluginsBySlug("Slug")
+        );
     }
 
     [Test]
@@ -498,7 +502,7 @@ public class ProjectPluginsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.GetUnarchivedPluginsBySlug("Slug")
         );
     }
@@ -514,7 +518,7 @@ public class ProjectPluginsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.AddProjectPlugin(new AddProjectPluginRequest("a", "Displayname", 1), 1)
         );
     }
@@ -572,7 +576,7 @@ public class ProjectPluginsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.AddProjectPluginBySlug(
                 new AddProjectPluginRequest("a", "Displayname", 1),
                 "Slug"
@@ -633,7 +637,7 @@ public class ProjectPluginsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.UpdateProjectPlugin(new UpdateProjectPluginRequest("A", "A"), 1, 1)
         );
     }
@@ -649,7 +653,7 @@ public class ProjectPluginsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.UpdateProjectPluginBySlug(
                 new UpdateProjectPluginRequest("B", "B"),
                 "Slug",
@@ -773,7 +777,9 @@ public class ProjectPluginsControllerTest
                 mediator.Send(It.IsAny<DeleteProjectPluginCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.DeleteProjectPlugin(1, 1));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
+            _controller.DeleteProjectPlugin(1, 1)
+        );
     }
 
     [Test]
@@ -791,7 +797,7 @@ public class ProjectPluginsControllerTest
                 mediator.Send(It.IsAny<DeleteProjectPluginCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.DeleteProjectPluginBySlug("Project", 1)
         );
     }

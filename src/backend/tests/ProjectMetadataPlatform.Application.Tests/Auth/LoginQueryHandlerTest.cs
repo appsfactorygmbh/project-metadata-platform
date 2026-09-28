@@ -85,14 +85,14 @@ public class LoginQueryHandlerTest
     }
 
     [Test]
-    public void HandleLoginQueryHandler_InvalidLogin_Test()
+    public async Task HandleLoginQueryHandler_InvalidLogin_TestAsync()
     {
         _ = _mockUserRepo
             .Setup(m => m.CheckLogin(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(false);
         var request = new LoginQuery("wrong_username", "password");
 
-        _ = Assert.ThrowsAsync<AuthInvalidLoginCredentialsException>(() =>
+        _ = await Assert.ThrowsAsync<AuthInvalidLoginCredentialsException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
         _authorizationServiceMock.Verify(a => a.BypassAuthorization(), Times.Once);

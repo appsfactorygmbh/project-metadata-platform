@@ -95,7 +95,7 @@ public class GetOrCreateHelperTest
             .Setup(m => m.CheckIfDepartmentNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
-        Assert.ThrowsAsync<DepartmentNotFoundException>(() =>
+        await Assert.ThrowsAsync<DepartmentNotFoundException>(() =>
             _getOrCreateHelper.GetOrCreateDepartment(name)
         );
 
@@ -179,7 +179,7 @@ public class GetOrCreateHelperTest
             .Setup(m => m.CheckIfCompanyNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
-        Assert.ThrowsAsync<CompanyNotFoundException>(() =>
+        await Assert.ThrowsAsync<CompanyNotFoundException>(() =>
             _getOrCreateHelper.GetOrCreateCompany(name)
         );
 
@@ -263,7 +263,7 @@ public class GetOrCreateHelperTest
             .Setup(m => m.CheckIfOfficeLocationNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
-        Assert.ThrowsAsync<OfficeLocationNotFoundException>(() =>
+        await Assert.ThrowsAsync<OfficeLocationNotFoundException>(() =>
             _getOrCreateHelper.GetOrCreateOfficeLocation(name)
         );
 
@@ -347,7 +347,7 @@ public class GetOrCreateHelperTest
             .Setup(m => m.CheckIfBusinessUnitNameExistsAsync(It.IsAny<string>()))
             .ReturnsAsync(false);
 
-        Assert.ThrowsAsync<BusinessUnitNotFoundException>(() =>
+        await Assert.ThrowsAsync<BusinessUnitNotFoundException>(() =>
             _getOrCreateHelper.GetOrCreateBusinessUnit(name)
         );
 

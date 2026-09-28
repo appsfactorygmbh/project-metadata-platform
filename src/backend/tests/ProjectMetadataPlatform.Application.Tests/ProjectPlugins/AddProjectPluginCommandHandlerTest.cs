@@ -103,7 +103,7 @@ public class AddProjectPluginCommandHandlerTest
     }
 
     [Test]
-    public void AddProjectPlugin_UrlAlreadyExists_ProjectPluginAlreadyExistsException()
+    public async Task AddProjectPlugin_UrlAlreadyExists_ProjectPluginAlreadyExistsExceptionAsync()
     {
         // Arrange
         _ = _authorizationServiceMock
@@ -121,7 +121,7 @@ public class AddProjectPluginCommandHandlerTest
             )
             .ReturnsAsync(true);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<ProjectPluginAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<ProjectPluginAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new AddProjectPluginCommand(1, 1, "Test Name", "Test Url"),
                 It.IsAny<CancellationToken>()
@@ -146,7 +146,7 @@ public class AddProjectPluginCommandHandlerTest
 
         var request = new AddProjectPluginCommand(1, 1, "Test Name", "Test Url");
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

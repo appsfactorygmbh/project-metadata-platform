@@ -146,7 +146,7 @@ public class UpdateOfficeLocationCommandHandlerTest
     }
 
     [Test]
-    public void UpdateOfficeLocation_ThrowsOfficeLocationNameAlreadyExistsException_IfNewOfficeLocationNameAlreadyExists()
+    public async Task UpdateOfficeLocation_ThrowsOfficeLocationNameAlreadyExistsException_IfNewOfficeLocationNameAlreadyExistsAsync()
     {
         // Arrange
         var returnOfficeLocation = new OfficeLocation() { Id = 1, OfficeLocationName = "Test_1" };
@@ -172,7 +172,7 @@ public class UpdateOfficeLocationCommandHandlerTest
             .ReturnsAsync(true);
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<OfficeLocationNameAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<OfficeLocationNameAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new UpdateOfficeLocationCommand(Id: 1, OfficeLocationName: "Test_2"),
                 It.IsAny<CancellationToken>()
@@ -201,7 +201,7 @@ public class UpdateOfficeLocationCommandHandlerTest
 
         var request = new UpdateOfficeLocationCommand(Id: 1, OfficeLocationName: "Test_2");
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

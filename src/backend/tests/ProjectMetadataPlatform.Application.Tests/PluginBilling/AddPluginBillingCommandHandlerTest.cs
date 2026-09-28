@@ -113,7 +113,7 @@ public class AddPluginBillingCommandHandlerTest
     }
 
     [Test]
-    public void AddPluginBilling_AlreadyExists_ThrowsBillingAlreadyExistsException()
+    public async Task AddPluginBilling_AlreadyExists_ThrowsBillingAlreadyExistsExceptionAsync()
     {
         // Arrange
         _ = _authorizationServiceMock
@@ -142,7 +142,7 @@ public class AddPluginBillingCommandHandlerTest
             .Setup(repo => repo.CheckPluginBillingExists(It.IsAny<int>(), It.IsAny<int>()))
             .ReturnsAsync(true);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<PluginBillingAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<PluginBillingAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new AddPluginBillingCommand(
                     1,
@@ -163,7 +163,7 @@ public class AddPluginBillingCommandHandlerTest
     }
 
     [Test]
-    public void AddPluginBilling_DateMissing_ThrowsDateMissingException()
+    public async Task AddPluginBilling_DateMissing_ThrowsDateMissingExceptionAsync()
     {
         // Arrange
         _ = _authorizationServiceMock
@@ -192,7 +192,7 @@ public class AddPluginBillingCommandHandlerTest
             .Setup(repo => repo.CheckPluginBillingExists(It.IsAny<int>(), It.IsAny<int>()))
             .ReturnsAsync(false);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<PluginBillingDateMissingException>(async () =>
+        var ex = await Assert.ThrowsAsync<PluginBillingDateMissingException>(async () =>
             await _handler.Handle(
                 new AddPluginBillingCommand(
                     1,
@@ -213,7 +213,7 @@ public class AddPluginBillingCommandHandlerTest
     }
 
     [Test]
-    public void AddPluginBilling_NotesMoreThan280Chars_ThrowsNotesSizeException()
+    public async Task AddPluginBilling_NotesMoreThan280Chars_ThrowsNotesSizeExceptionAsync()
     {
         // Arrange
         _ = _authorizationServiceMock
@@ -242,7 +242,7 @@ public class AddPluginBillingCommandHandlerTest
             .Setup(repo => repo.CheckPluginBillingExists(It.IsAny<int>(), It.IsAny<int>()))
             .ReturnsAsync(false);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<PluginBillingNotesSizeException>(async () =>
+        var ex = await Assert.ThrowsAsync<PluginBillingNotesSizeException>(async () =>
             await _handler.Handle(
                 new AddPluginBillingCommand(
                     1,
@@ -289,7 +289,7 @@ public class AddPluginBillingCommandHandlerTest
             null
         );
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

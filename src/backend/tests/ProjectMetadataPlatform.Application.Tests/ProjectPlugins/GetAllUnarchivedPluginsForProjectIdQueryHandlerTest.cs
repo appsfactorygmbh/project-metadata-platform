@@ -173,7 +173,7 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
     }
 
     [Test]
-    public void Handle_WhenProjectDoesNotExist_ThrowsArgumentException()
+    public async Task Handle_WhenProjectDoesNotExist_ThrowsArgumentExceptionAsync()
     {
         _ = _authorizationServiceMock
             .Setup(a =>
@@ -190,7 +190,7 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
 
         var query = new GetAllUnarchivedPluginsForProjectIdQuery(999); // Non-existent project ID
 
-        var ex = Assert.ThrowsAsync<ArgumentException>(async () =>
+        var ex = await Assert.ThrowsAsync<ArgumentException>(async () =>
         {
             _ = await _handler.Handle(query, It.IsAny<CancellationToken>());
         });

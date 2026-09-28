@@ -28,7 +28,7 @@ public class GetProjectBySlugControllerTest
     }
 
     [Test]
-    public void MediatorThrowsExceptionTest()
+    public async Task MediatorThrowsExceptionTestAsync()
     {
         _ = _mediator
             .Setup(mediator =>
@@ -38,7 +38,7 @@ public class GetProjectBySlugControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get("test"));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get("test"));
     }
 
     [Test]
