@@ -27,9 +27,11 @@ public class ProjectByIdRepositoryTest : TestsWithDatabase
     }
 
     [Test]
-    public void GetProjectByIDAsync_NonexistentProject()
+    public async Task GetProjectByIDAsync_NonexistentProjectAsync()
     {
-        _ = Assert.ThrowsAsync<ProjectNotFoundException>(() => _repository.GetProjectAsync(1));
+        _ = await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
+            _repository.GetProjectAsync(1)
+        );
     }
 
     [Test]

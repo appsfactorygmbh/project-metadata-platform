@@ -103,7 +103,7 @@ public class DeleteUserCommandHandlerTest
     }
 
     [Test]
-    public void DeleteUser_InvalidUser_Test()
+    public async Task DeleteUser_InvalidUser_TestAsync()
     {
         _ = _authorizationServiceMock
             .Setup(a =>
@@ -118,13 +118,13 @@ public class DeleteUserCommandHandlerTest
             .Setup(m => m.GetUserByIdAsync("1"))
             .ThrowsAsync(new UserNotFoundException("1"));
 
-        _ = Assert.ThrowsAsync<UserNotFoundException>(() =>
+        _ = await Assert.ThrowsAsync<UserNotFoundException>(() =>
             _handler.Handle(new DeleteUserCommand("1"), CancellationToken.None)
         );
     }
 
     [Test]
-    public void DeleteUser_SelfDeletionAttempt_Test()
+    public async Task DeleteUser_SelfDeletionAttempt_TestAsync()
     {
         var user = new ApplicationUser
         {
@@ -146,7 +146,7 @@ public class DeleteUserCommandHandlerTest
         _ = _mockUsersRepo.Setup(m => m.GetUserByIdAsync("200")).ReturnsAsync(user);
         _ = _mockUsersRepo.Setup(m => m.GetUserByEmailAsync("camo")).ReturnsAsync(user);
 
-        _ = Assert.ThrowsAsync<UserCantDeleteThemselfException>(() =>
+        _ = await Assert.ThrowsAsync<UserCantDeleteThemselfException>(() =>
             _handler.Handle(new DeleteUserCommand("200"), CancellationToken.None)
         );
     }
@@ -166,7 +166,7 @@ public class DeleteUserCommandHandlerTest
 
         var request = new DeleteUserCommand("200");
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

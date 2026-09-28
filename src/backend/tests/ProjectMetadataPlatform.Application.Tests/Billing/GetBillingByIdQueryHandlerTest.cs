@@ -64,7 +64,7 @@ public class GetBillingByIdQueryHandlerTest
     }
 
     [Test]
-    public void GetBilling_ThrowBillingNotFoundException_IfBillingNotFound()
+    public async Task GetBilling_ThrowBillingNotFoundException_IfBillingNotFoundAsync()
     {
         // Arrange
         _ = _mockBillingRepository
@@ -80,7 +80,7 @@ public class GetBillingByIdQueryHandlerTest
             )
             .ReturnsAsync(true);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<BillingInformationNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<BillingInformationNotFoundException>(async () =>
             await _handler.Handle(new GetBillingByIdQuery(Id: 1), It.IsAny<CancellationToken>())
         );
 
@@ -102,7 +102,7 @@ public class GetBillingByIdQueryHandlerTest
 
         var request = new GetBillingByIdQuery(Id: 1);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

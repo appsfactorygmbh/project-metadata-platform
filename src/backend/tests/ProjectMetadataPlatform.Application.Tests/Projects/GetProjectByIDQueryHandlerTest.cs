@@ -91,7 +91,7 @@ public class GetProjectByIdQueryHandlerTest
 
         var request = new GetProjectQuery(2);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

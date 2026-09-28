@@ -74,7 +74,7 @@ public class DeleteProjectCommandHandlerTest
     }
 
     [Test]
-    public void DeleteProject_ThrowsArgumentException_Test()
+    public async Task DeleteProject_ThrowsArgumentException_TestAsync()
     {
         var project = new Project
         {
@@ -96,14 +96,14 @@ public class DeleteProjectCommandHandlerTest
             .ReturnsAsync(true);
         _ = _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
 
-        var ex = Assert.ThrowsAsync<ProjectNotArchivedException>(() =>
+        var ex = await Assert.ThrowsAsync<ProjectNotArchivedException>(() =>
             _handler.Handle(new DeleteProjectCommand(1), It.IsAny<CancellationToken>())
         );
         Assert.That(ex.Message, Is.EqualTo("The project 1 is not archived."));
     }
 
     [Test]
-    public void DeleteProject_NotFound_Test()
+    public async Task DeleteProject_NotFound_TestAsync()
     {
         _ = _mockProjectRepo
             .Setup(m => m.GetProjectAsync(It.IsAny<int>()))
@@ -117,7 +117,7 @@ public class DeleteProjectCommandHandlerTest
                 )
             )
             .ReturnsAsync(true);
-        var ex = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
+        var ex = await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
             _handler.Handle(new DeleteProjectCommand(1), It.IsAny<CancellationToken>())
         );
         Assert.That(
@@ -189,7 +189,7 @@ public class DeleteProjectCommandHandlerTest
 
         var request = new DeleteProjectCommand(1);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

@@ -64,7 +64,7 @@ public class GetCompanyQueryHandlerTest
     }
 
     [Test]
-    public void GetCompany_ThrowCompanyNotFoundException_IfCompanyNotFound()
+    public async Task GetCompany_ThrowCompanyNotFoundException_IfCompanyNotFoundAsync()
     {
         // Arrange
         var returnCompany = new Company() { Id = 1, CompanyName = "Test_1" };
@@ -82,7 +82,7 @@ public class GetCompanyQueryHandlerTest
             .ThrowsAsync(new CompanyNotFoundException(1));
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
             await _handler.Handle(new GetCompanyQuery(Id: 1), It.IsAny<CancellationToken>())
         );
 
@@ -104,7 +104,7 @@ public class GetCompanyQueryHandlerTest
 
         var request = new GetCompanyQuery(Id: 1);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

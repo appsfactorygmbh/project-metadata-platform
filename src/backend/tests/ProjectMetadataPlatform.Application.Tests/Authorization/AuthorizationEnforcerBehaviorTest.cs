@@ -52,7 +52,7 @@ public class AuthorizationEnforcerBehaviorTest
     {
         _authorizationTrackerMock.Setup(a => a.WasChecked).Returns(false);
 
-        Assert.ThrowsAsync<UnauthorizedException>(async () =>
+        await Assert.ThrowsAsync<UnauthorizedException>(async () =>
             await _authorizationEnforcerBehavior.Handle(
                 It.IsAny<It.IsAnyType>(),
                 _next.Object,

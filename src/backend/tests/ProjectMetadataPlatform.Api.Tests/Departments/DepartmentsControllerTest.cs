@@ -104,7 +104,7 @@ public class DepartmentsControllerTest
                 >(It.IsAny<GetAllDepartmentsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
     }
 
     [Test]
@@ -118,7 +118,7 @@ public class DepartmentsControllerTest
                 >(It.IsAny<GetDepartmentQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
     }
 
     [Test]
@@ -156,7 +156,7 @@ public class DepartmentsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Put(new CreateDepartmentRequest("a"))
         );
     }
@@ -209,7 +209,7 @@ public class DepartmentsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Patch(1, new UpdateDepartmentRequest())
         );
     }
@@ -257,7 +257,7 @@ public class DepartmentsControllerTest
                 mediator.Send(It.IsAny<DeleteDepartmentCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
     }
 
     [Test]

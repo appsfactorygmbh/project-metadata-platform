@@ -179,7 +179,7 @@ public class BillingRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetBillingByIdAsync_ThrowsIfNotFoundTest()
     {
-        Assert.ThrowsAsync<BillingInformationNotFoundException>(() =>
+        await Assert.ThrowsAsync<BillingInformationNotFoundException>(() =>
             _billingRepository.GetBillingByIdAsync(1)
         );
     }
@@ -201,7 +201,7 @@ public class BillingRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetBillingByIdAsNoTrackingAsync_ThrowsIfNotFoundTest()
     {
-        Assert.ThrowsAsync<BillingInformationNotFoundException>(() =>
+        await Assert.ThrowsAsync<BillingInformationNotFoundException>(() =>
             _billingRepository.GetBillingByIdAsNoTrackingAsync(1)
         );
     }
@@ -235,7 +235,7 @@ public class BillingRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetPluginBillingByIdAsync_ThrowsIfNotFoundTest()
     {
-        Assert.ThrowsAsync<PluginBillingInformationNotFoundException>(() =>
+        await Assert.ThrowsAsync<PluginBillingInformationNotFoundException>(() =>
             _billingRepository.GetPluginBillingByIdAsync(1, 1)
         );
     }

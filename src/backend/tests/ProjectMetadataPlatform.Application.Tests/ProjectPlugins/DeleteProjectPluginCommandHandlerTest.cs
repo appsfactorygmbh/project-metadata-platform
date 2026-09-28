@@ -112,7 +112,7 @@ public class DeleteProjectPluginCommandHandlerTest
 
         var request = new DeleteProjectPluginCommand(1, 1);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
@@ -126,7 +126,7 @@ public class DeleteProjectPluginCommandHandlerTest
 
         var request = new DeleteProjectPluginCommand(1, 1);
 
-        _ = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
+        _ = await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

@@ -145,7 +145,7 @@ public class UpdateDepartmentCommandHandlerTest
     }
 
     [Test]
-    public void UpdateDepartment_ThrowsDepartmentNameAlreadyExistsException_IfNewDepartmentNameAlreadyExists()
+    public async Task UpdateDepartment_ThrowsDepartmentNameAlreadyExistsException_IfNewDepartmentNameAlreadyExistsAsync()
     {
         // Arrange
         var returnDepartment = new Department() { Id = 1, DepartmentName = "Test_1" };
@@ -171,7 +171,7 @@ public class UpdateDepartmentCommandHandlerTest
             .ReturnsAsync(true);
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<DepartmentNameAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<DepartmentNameAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new UpdateDepartmentCommand(Id: 1, DepartmentName: "Test_2"),
                 It.IsAny<CancellationToken>()
@@ -200,7 +200,7 @@ public class UpdateDepartmentCommandHandlerTest
 
         var request = new UpdateDepartmentCommand(Id: 1, DepartmentName: "Test_2");
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

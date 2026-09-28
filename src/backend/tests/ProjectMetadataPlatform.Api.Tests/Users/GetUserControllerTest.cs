@@ -65,7 +65,7 @@ public class GetUserControllerTest
     }
 
     [Test]
-    public void GetUserById_NonexistentUser_Test()
+    public async Task GetUserById_NonexistentUser_TestAsync()
     {
         _ = _mediator
             .Setup(mediator =>
@@ -75,11 +75,11 @@ public class GetUserControllerTest
                 >(It.IsAny<GetUserQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new UserNotFoundException("1"));
-        _ = Assert.ThrowsAsync<UserNotFoundException>(() => _controller.GetUserById("1"));
+        _ = await Assert.ThrowsAsync<UserNotFoundException>(() => _controller.GetUserById("1"));
     }
 
     [Test]
-    public void MediatorThrowsExceptionTest()
+    public async Task MediatorThrowsExceptionTestAsync()
     {
         _ = _mediator
             .Setup(mediator =>
@@ -89,6 +89,6 @@ public class GetUserControllerTest
                 >(It.IsAny<GetUserQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetUserById("1"));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetUserById("1"));
     }
 }

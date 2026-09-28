@@ -91,7 +91,7 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<DepartmentNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<DepartmentNotFoundException>(async () =>
             await _repository.GetDepartmentAsync(1)
         );
         Assert.That(ex.Message, Does.Contain("1"));
@@ -229,7 +229,7 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
     }
 
     [Test]
-    public void UpdateDepartmentAsync_NonExistingDepartment_ShouldThrowDepartmentNotFoundException()
+    public async Task UpdateDepartmentAsync_NonExistingDepartment_ShouldThrowDepartmentNotFoundExceptionAsync()
     {
         // Arrange
         var nonExistentDepartment = new Department
@@ -239,7 +239,7 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
         };
 
         // Act & Assert
-        var ex = Assert.ThrowsAsync<DepartmentNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<DepartmentNotFoundException>(async () =>
             await _repository.UpdateDepartmentAsync(nonExistentDepartment)
         );
         Assert.That(ex.Message, Does.Contain(nonExistentDepartment.Id.ToString()));

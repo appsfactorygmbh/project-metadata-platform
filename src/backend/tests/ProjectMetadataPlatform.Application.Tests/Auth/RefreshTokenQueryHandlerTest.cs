@@ -54,14 +54,14 @@ public class RefreshTokenQueryHandlerTest
     }
 
     [Test]
-    public void HandleRefreshTokenQueryHandler_InvalidToken_Test()
+    public async Task HandleRefreshTokenQueryHandler_InvalidToken_TestAsync()
     {
         _ = _mockRefreshTokenRepo
             .Setup(m => m.CheckRefreshTokenRequest(It.IsAny<string>()))
             .ReturnsAsync(false);
         var request = new RefreshTokenQuery("invalidRefreshToken");
 
-        _ = Assert.ThrowsAsync<AuthInvalidRefreshTokenException>(() =>
+        _ = await Assert.ThrowsAsync<AuthInvalidRefreshTokenException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
         _authorizationServiceMock.Verify(a => a.BypassAuthorization(), Times.Once);

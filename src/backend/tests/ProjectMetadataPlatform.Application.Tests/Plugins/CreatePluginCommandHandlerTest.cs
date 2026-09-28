@@ -96,7 +96,7 @@ public class CreatePluginCommandHandlerTest
     }
 
     [Test]
-    public void CreatePlugin_NameConflict_Test()
+    public async Task CreatePlugin_NameConflict_TestAsync()
     {
         _ = _authorizationServiceMock
             .Setup(a =>
@@ -109,7 +109,7 @@ public class CreatePluginCommandHandlerTest
             .ReturnsAsync(true);
         _ = _mockPluginRepo.Setup(m => m.CheckGlobalPluginNameExists("Airlock")).ReturnsAsync(true);
 
-        _ = Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() =>
+        _ = await Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() =>
             _handler.Handle(
                 new CreatePluginCommand("Airlock", true, "https://airlock.com"),
                 It.IsAny<CancellationToken>()
@@ -133,7 +133,7 @@ public class CreatePluginCommandHandlerTest
 
         var request = new CreatePluginCommand("Airlock", true, "https://airlock.com");
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

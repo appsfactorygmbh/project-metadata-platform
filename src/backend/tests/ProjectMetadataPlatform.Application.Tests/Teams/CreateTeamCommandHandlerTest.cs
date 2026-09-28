@@ -104,7 +104,7 @@ public class CreateTeamCommandHandlerTest
     }
 
     [Test]
-    public void CreateTeam_NameAlreadyExists_ThrowsTeamNameAlreadyExistsException()
+    public async Task CreateTeam_NameAlreadyExists_ThrowsTeamNameAlreadyExistsExceptionAsync()
     {
         // Arrange
         _ = _authorizationServiceMock
@@ -123,7 +123,7 @@ public class CreateTeamCommandHandlerTest
             .Setup(repo => repo.CheckIfBusinessUnitExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(true);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<TeamNameAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<TeamNameAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new CreateTeamCommand(
                     TeamName: "Test Name",
@@ -138,7 +138,7 @@ public class CreateTeamCommandHandlerTest
     }
 
     [Test]
-    public void CreateTeam_BUDoesntExists_ThrowsException()
+    public async Task CreateTeam_BUDoesntExists_ThrowsExceptionAsync()
     {
         // Arrange
         _ = _authorizationServiceMock
@@ -157,7 +157,7 @@ public class CreateTeamCommandHandlerTest
             .Setup(repo => repo.CheckIfBusinessUnitExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(false);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<BusinessUnitNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<BusinessUnitNotFoundException>(async () =>
             await _handler.Handle(
                 new CreateTeamCommand(
                     TeamName: "Test Name",
@@ -190,7 +190,7 @@ public class CreateTeamCommandHandlerTest
             PTL: "Max Mustermann"
         );
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
