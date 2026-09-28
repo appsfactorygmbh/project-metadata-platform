@@ -101,7 +101,7 @@ public class PutUserControllerTest
     }
 
     [Test]
-    public void CreateUser_MediatorThrowsExceptionTest()
+    public async Task CreateUser_MediatorThrowsExceptionTestAsync()
     {
         _ = _mediator
             .Setup(mediator =>
@@ -128,11 +128,11 @@ public class PutUserControllerTest
             Active = true,
         };
 
-        _ = Assert.ThrowsAsync<InvalidOperationException>(() => _controller.Post(request));
+        _ = await Assert.ThrowsAsync<InvalidOperationException>(() => _controller.Post(request));
     }
 
     [Test]
-    public void CreateUser_ThrowsUnknownAuthExceptionTest()
+    public async Task CreateUser_ThrowsUnknownAuthExceptionTestAsync()
     {
         var identity = new ClaimsIdentity(
             new[] { new Claim(ClaimTypes.AuthenticationMethod, " Token") },
@@ -151,7 +151,7 @@ public class PutUserControllerTest
             Active = true,
         };
 
-        _ = Assert.ThrowsAsync<UnknownAuthentificationMethodException>(() =>
+        _ = await Assert.ThrowsAsync<UnknownAuthentificationMethodException>(() =>
             _controller.Post(request)
         );
     }

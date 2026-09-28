@@ -105,7 +105,7 @@ public class UpdateProjectCommandHandlerTest
     }
 
     [Test]
-    public void UpdateProjectNotFound_Test()
+    public async Task UpdateProjectNotFound_TestAsync()
     {
         var exampleProject = new Project
         {
@@ -138,7 +138,7 @@ public class UpdateProjectCommandHandlerTest
             .ReturnsAsync(true);
         _ = _mockProjectRepo.Setup(m => m.CheckProjectExists(1)).ReturnsAsync(false);
 
-        var exception = Assert.ThrowsAsync<ProjectNotFoundException>(async () =>
+        var exception = await Assert.ThrowsAsync<ProjectNotFoundException>(async () =>
             await _handler.Handle(
                 new UpdateProjectCommand(
                     ProjectName: exampleProject.ProjectName,
@@ -267,7 +267,7 @@ public class UpdateProjectCommandHandlerTest
             .Setup(m => m.CheckIfCompanyExistsAsync(It.IsAny<int>()))
             .ReturnsAsync(false);
 
-        var ex = Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
         {
             _ = await _handler.Handle(updateCommand, CancellationToken.None);
         });
@@ -549,7 +549,7 @@ public class UpdateProjectCommandHandlerTest
     }
 
     [Test]
-    public void LogsChanges_HandlesLogRepositoryException()
+    public async Task LogsChanges_HandlesLogRepositoryExceptionAsync()
     {
         var project = new Project
         {
@@ -598,7 +598,7 @@ public class UpdateProjectCommandHandlerTest
             )
             .Throws(new Exception("Logging error"));
 
-        var exception = Assert.ThrowsAsync<Exception>(async () =>
+        var exception = await Assert.ThrowsAsync<Exception>(async () =>
             await _handler.Handle(updateCommand, CancellationToken.None)
         );
         Assert.That(exception.Message, Is.EqualTo("Logging error"));
@@ -846,7 +846,7 @@ public class UpdateProjectCommandHandlerTest
     }
 
     [Test]
-    public void ProjectNotesToLong_Test()
+    public async Task ProjectNotesToLong_TestAsync()
     {
         var project = new Project
         {
@@ -888,7 +888,7 @@ public class UpdateProjectCommandHandlerTest
         _ = _mockSlugHelper.Setup(m => m.GenerateSlug(It.IsAny<string>())).Returns("new project");
         _ = _mockSlugHelper.Setup(m => m.CheckProjectSlugExists("new project")).ReturnsAsync(false);
 
-        var ex = Assert.ThrowsAsync<ProjectNotesSizeException>(async () =>
+        var ex = await Assert.ThrowsAsync<ProjectNotesSizeException>(async () =>
         {
             _ = await _handler.Handle(updateCommand, CancellationToken.None);
         });
@@ -938,7 +938,7 @@ public class UpdateProjectCommandHandlerTest
             Notes: new string('a', 501)
         );
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

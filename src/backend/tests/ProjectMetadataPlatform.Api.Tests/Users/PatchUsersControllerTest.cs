@@ -77,7 +77,7 @@ public class PatchUsersControllerTest
     }
 
     [Test]
-    public void PatchUser_NotFound_Test()
+    public async Task PatchUser_NotFound_TestAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -97,11 +97,13 @@ public class PatchUsersControllerTest
         _ = _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
 
         var request = new PatchUserRequest();
-        _ = Assert.ThrowsAsync<UserNotFoundException>(() => _controller.Patch("Dr. Dre", request));
+        _ = await Assert.ThrowsAsync<UserNotFoundException>(() =>
+            _controller.Patch("Dr. Dre", request)
+        );
     }
 
     [Test]
-    public void PatchUser_InvalidPassword_Test()
+    public async Task PatchUser_InvalidPassword_TestAsync()
     {
         var request = new PatchUserRequest
         {
@@ -132,13 +134,13 @@ public class PatchUsersControllerTest
         var httpContext = new DefaultHttpContext { User = contextUser };
         _ = _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
 
-        _ = Assert.ThrowsAsync<UserInvalidPasswordFormatException>(() =>
+        _ = await Assert.ThrowsAsync<UserInvalidPasswordFormatException>(() =>
             _controller.Patch("13", request)
         );
     }
 
     [Test]
-    public void PatchUser_UnknownAuthMethod_Test()
+    public async Task PatchUser_UnknownAuthMethod_TestAsync()
     {
         var request = new PatchUserRequest
         {
@@ -161,7 +163,7 @@ public class PatchUsersControllerTest
         var httpContext = new DefaultHttpContext { User = contextUser };
         _ = _context.Setup(accessor => accessor.HttpContext).Returns(httpContext);
 
-        _ = Assert.ThrowsAsync<UnknownAuthentificationMethodException>(() =>
+        _ = await Assert.ThrowsAsync<UnknownAuthentificationMethodException>(() =>
             _controller.Patch("13", request)
         );
     }

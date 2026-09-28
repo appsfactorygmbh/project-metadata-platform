@@ -162,7 +162,7 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<BusinessUnitNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<BusinessUnitNotFoundException>(async () =>
             await _repository.GetBusinessUnitAsync(1)
         );
         Assert.That(ex.Message, Does.Contain("1"));
@@ -336,7 +336,7 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
     }
 
     [Test]
-    public void UpdateBusinessUnitAsync_NonExistingBusinessUnit_ShouldThrowBusinessUnitNotFoundException()
+    public async Task UpdateBusinessUnitAsync_NonExistingBusinessUnit_ShouldThrowBusinessUnitNotFoundExceptionAsync()
     {
         // Arrange
         var nonExistentBusinessUnit = new BusinessUnit
@@ -346,7 +346,7 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
         };
 
         // Act & Assert
-        var ex = Assert.ThrowsAsync<BusinessUnitNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<BusinessUnitNotFoundException>(async () =>
             await _repository.UpdateBusinessUnitAsync(nonExistentBusinessUnit)
         );
         Assert.That(ex.Message, Does.Contain(nonExistentBusinessUnit.Id.ToString()));

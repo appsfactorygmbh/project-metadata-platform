@@ -57,7 +57,7 @@ public class Tests
     }
 
     [Test]
-    public void WrongCredentialsLoginTest()
+    public async Task WrongCredentialsLoginTestAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -67,7 +67,7 @@ public class Tests
 
         var request = new LoginRequest("wrong_username", "password");
 
-        _ = Assert.ThrowsAsync<AuthInvalidLoginCredentialsException>(() =>
+        _ = await Assert.ThrowsAsync<AuthInvalidLoginCredentialsException>(() =>
             _controller.Post(request)
         );
     }
@@ -98,7 +98,7 @@ public class Tests
     }
 
     [Test]
-    public void InvalidRefreshTokenTest()
+    public async Task InvalidRefreshTokenTestAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -111,7 +111,7 @@ public class Tests
 
         const string refreshToken = "Refresh invalidRefreshToken";
 
-        _ = Assert.ThrowsAsync<AuthenticationException>(() => _controller.Get(refreshToken));
+        _ = await Assert.ThrowsAsync<AuthenticationException>(() => _controller.Get(refreshToken));
     }
 
     [Test]
@@ -233,7 +233,7 @@ public class Tests
                 >(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetApiTokens());
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetApiTokens());
     }
 
     [Test]
@@ -247,7 +247,7 @@ public class Tests
                 >(It.IsAny<GetApiTokenDetailsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetApiToken(0));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetApiToken(0));
     }
 
     [Test]
@@ -304,7 +304,7 @@ public class Tests
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.PostApiToken(new CreateApiTokenRequest("A", []))
         );
     }
@@ -363,7 +363,7 @@ public class Tests
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.RegenerateApiToken(1));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.RegenerateApiToken(1));
     }
 
     [Test]
@@ -414,7 +414,7 @@ public class Tests
                 mediator.Send(It.IsAny<DeleteApiTokenCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.DeleteApiToken(1));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.DeleteApiToken(1));
     }
 
     [Test]

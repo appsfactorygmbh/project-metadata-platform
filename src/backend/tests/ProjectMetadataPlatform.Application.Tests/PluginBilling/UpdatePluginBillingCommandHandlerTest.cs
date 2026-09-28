@@ -216,7 +216,7 @@ public class UpdatePluginBillingCommandHandlerTest
             null
         );
 
-        _ = Assert.ThrowsAsync<PluginBillingDateMissingException>(() =>
+        _ = await Assert.ThrowsAsync<PluginBillingDateMissingException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
@@ -261,7 +261,7 @@ public class UpdatePluginBillingCommandHandlerTest
             new string('a', 281)
         );
 
-        _ = Assert.ThrowsAsync<PluginBillingNotesSizeException>(() =>
+        _ = await Assert.ThrowsAsync<PluginBillingNotesSizeException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
@@ -306,7 +306,7 @@ public class UpdatePluginBillingCommandHandlerTest
             null
         );
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

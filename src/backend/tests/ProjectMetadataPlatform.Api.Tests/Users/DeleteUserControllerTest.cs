@@ -54,7 +54,7 @@ public class DeleteUserControllerTest
     }
 
     [Test]
-    public void DeleteUser_NotFound_Test()
+    public async Task DeleteUser_NotFound_TestAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -64,11 +64,11 @@ public class DeleteUserControllerTest
                 )
             )
             .ThrowsAsync(new UserNotFoundException("Mike"));
-        _ = Assert.ThrowsAsync<UserNotFoundException>(() => _controller.Delete("Mike"));
+        _ = await Assert.ThrowsAsync<UserNotFoundException>(() => _controller.Delete("Mike"));
     }
 
     [Test]
-    public void DeleteUser_InternalError_Test()
+    public async Task DeleteUser_InternalError_TestAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -78,11 +78,11 @@ public class DeleteUserControllerTest
                 )
             )
             .ThrowsAsync(new UserNotFoundException("Mike"));
-        _ = Assert.ThrowsAsync<UserNotFoundException>(() => _controller.Delete("Mike"));
+        _ = await Assert.ThrowsAsync<UserNotFoundException>(() => _controller.Delete("Mike"));
     }
 
     [Test]
-    public void DeleteUser_UserSelfDeletionAttempt_Test()
+    public async Task DeleteUser_UserSelfDeletionAttempt_TestAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -93,6 +93,8 @@ public class DeleteUserControllerTest
             )
             .ThrowsAsync(new UserCantDeleteThemselfException());
 
-        _ = Assert.ThrowsAsync<UserCantDeleteThemselfException>(() => _controller.Delete("1"));
+        _ = await Assert.ThrowsAsync<UserCantDeleteThemselfException>(() =>
+            _controller.Delete("1")
+        );
     }
 }

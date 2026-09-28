@@ -443,7 +443,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = await Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddProjectLogForCurrentActor(exampleProject, action, logChanges)
         );
     }
@@ -495,7 +495,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = await Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddUserLogForCurrentActor(affectedUser, action, logChanges)
         );
     }
@@ -538,7 +538,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = await Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddGlobalPluginLogForCurrentActor(globalPlugin, action, logChanges)
         );
     }
@@ -581,7 +581,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = await Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddApiTokenLogForCurrentActor(apiToken, action, logChanges)
         );
     }
@@ -624,7 +624,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = await Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddCompanyLogForCurrentActor(company, action, logChanges)
         );
     }
@@ -667,7 +667,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = await Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddDepartmentLogForCurrentActor(department, action, logChanges)
         );
     }
@@ -710,7 +710,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = await Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddOfficeLocationLogForCurrentActor(
                 officeLocation,
                 action,
@@ -757,7 +757,7 @@ public class LogRepositoryTest : TestsWithDatabase
             },
         };
 
-        _ = Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
+        _ = await Assert.ThrowsAsync<LogActionNotSupportedException>(() =>
             _loggingRepository.AddBusinessUnitLogForCurrentActor(businessUnit, action, logChanges)
         );
     }

@@ -28,7 +28,7 @@ public class GetProjectByIdControllerTest
     private Mock<IMediator> _mediator;
 
     [Test]
-    public void MediatorThrowsExceptionTest()
+    public async Task MediatorThrowsExceptionTestAsync()
     {
         _ = _mediator
             .Setup(mediator =>
@@ -38,7 +38,7 @@ public class GetProjectByIdControllerTest
                 >(It.IsAny<GetProjectQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(1));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(1));
     }
 
     [Test]

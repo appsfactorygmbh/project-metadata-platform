@@ -87,7 +87,7 @@ public class TeamsControllerTest
     }
 
     [Test]
-    public void CreateTeam_MediatorThrowsIOException_ThrowsIOException()
+    public async Task CreateTeam_MediatorThrowsIOException_ThrowsIOExceptionAsync()
     {
         // Arrange
         _ = _mediatorMock
@@ -106,11 +106,11 @@ public class TeamsControllerTest
         );
 
         // Act & Assert
-        _ = Assert.ThrowsAsync<IOException>(() => _controller.Put(request));
+        _ = await Assert.ThrowsAsync<IOException>(() => _controller.Put(request));
     }
 
     [Test]
-    public void CreateTeam_TeamNameAlreadyExists_ThrowsTeamNameAlreadyExistsException()
+    public async Task CreateTeam_TeamNameAlreadyExists_ThrowsTeamNameAlreadyExistsExceptionAsync()
     {
         // Arrange
         var existingTeamName = "Test TeamName";
@@ -130,7 +130,9 @@ public class TeamsControllerTest
         );
 
         // Act & Assert
-        _ = Assert.ThrowsAsync<TeamNameAlreadyExistsException>(() => _controller.Put(request));
+        _ = await Assert.ThrowsAsync<TeamNameAlreadyExistsException>(() =>
+            _controller.Put(request)
+        );
     }
 
     [Test]
@@ -207,7 +209,7 @@ public class TeamsControllerTest
     }
 
     [Test]
-    public void GetTeamById_NotFound_ThrowsTeamNotFoundException()
+    public async Task GetTeamById_NotFound_ThrowsTeamNotFoundExceptionAsync()
     {
         // Arrange
         var teamId = 1;
@@ -221,7 +223,7 @@ public class TeamsControllerTest
             .ThrowsAsync(new TeamNotFoundException(teamId));
 
         // Act & Assert
-        _ = Assert.ThrowsAsync<TeamNotFoundException>(() => _controller.Get(teamId));
+        _ = await Assert.ThrowsAsync<TeamNotFoundException>(() => _controller.Get(teamId));
     }
 
     [Test]
@@ -408,7 +410,7 @@ public class TeamsControllerTest
     }
 
     [Test]
-    public void PatchTeam_TeamNotFound_ThrowsTeamNotFoundException()
+    public async Task PatchTeam_TeamNotFound_ThrowsTeamNotFoundExceptionAsync()
     {
         // Arrange
         var teamId = 1;
@@ -423,11 +425,13 @@ public class TeamsControllerTest
             .ThrowsAsync(new TeamNotFoundException(teamId));
 
         // Act & Assert
-        _ = Assert.ThrowsAsync<TeamNotFoundException>(() => _controller.Patch(teamId, request));
+        _ = await Assert.ThrowsAsync<TeamNotFoundException>(() =>
+            _controller.Patch(teamId, request)
+        );
     }
 
     [Test]
-    public void PatchTeam_TeamNameAlreadyExists_ThrowsTeamNameAlreadyExistsException()
+    public async Task PatchTeam_TeamNameAlreadyExists_ThrowsTeamNameAlreadyExistsExceptionAsync()
     {
         // Arrange
         var teamId = 1;
@@ -444,13 +448,13 @@ public class TeamsControllerTest
         var request = new PatchTeamRequest { TeamName = existingName };
 
         // Act & Assert
-        _ = Assert.ThrowsAsync<TeamNameAlreadyExistsException>(() =>
+        _ = await Assert.ThrowsAsync<TeamNameAlreadyExistsException>(() =>
             _controller.Patch(teamId, request)
         );
     }
 
     [Test]
-    public void PatchTeam_MediatorThrowsGenericException_ThrowsGenericException()
+    public async Task PatchTeam_MediatorThrowsGenericException_ThrowsGenericExceptionAsync()
     {
         // Arrange
         _ = _mediatorMock
@@ -464,7 +468,7 @@ public class TeamsControllerTest
         var request = new PatchTeamRequest { TeamName = "Testing" };
 
         // Act & Assert
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Patch(1, request));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Patch(1, request));
     }
 
     [Test]
@@ -519,7 +523,7 @@ public class TeamsControllerTest
     }
 
     [Test]
-    public void DeleteTeam_TeamNotFound_ThrowsTeamNotFoundException()
+    public async Task DeleteTeam_TeamNotFound_ThrowsTeamNotFoundExceptionAsync()
     {
         // Arrange
         var teamId = 1;
@@ -533,11 +537,11 @@ public class TeamsControllerTest
             .ThrowsAsync(new TeamNotFoundException(teamId));
 
         // Act & Assert
-        _ = Assert.ThrowsAsync<TeamNotFoundException>(() => _controller.Delete(teamId));
+        _ = await Assert.ThrowsAsync<TeamNotFoundException>(() => _controller.Delete(teamId));
     }
 
     [Test]
-    public void DeleteTeam_ProjectsStillLinked_ThrowsTeamStillLinkedToProjectsException()
+    public async Task DeleteTeam_ProjectsStillLinked_ThrowsTeamStillLinkedToProjectsExceptionAsync()
     {
         // Arrange
         var teamId = 1;
@@ -558,13 +562,13 @@ public class TeamsControllerTest
             .ThrowsAsync(new TeamStillLinkedToProjectsException(projectIds: [1, 2, 3], team: team));
 
         // Act & Assert
-        _ = Assert.ThrowsAsync<TeamStillLinkedToProjectsException>(() =>
+        _ = await Assert.ThrowsAsync<TeamStillLinkedToProjectsException>(() =>
             _controller.Delete(teamId)
         );
     }
 
     [Test]
-    public void DeleteTeam_MediatorThrowsGenericException_ThrowsGenericException()
+    public async Task DeleteTeam_MediatorThrowsGenericException_ThrowsGenericExceptionAsync()
     {
         // Arrange
         var teamId = 1;
@@ -578,7 +582,7 @@ public class TeamsControllerTest
             .ThrowsAsync(new InvalidDataException("An error message"));
 
         // Act & Assert
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(teamId));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(teamId));
     }
 
     [Test]
@@ -662,7 +666,7 @@ public class TeamsControllerTest
     }
 
     [Test]
-    public void GetLinkedProjects_TeamNotFound_ThrowsTeamNotFoundException()
+    public async Task GetLinkedProjects_TeamNotFound_ThrowsTeamNotFoundExceptionAsync()
     {
         // Arrange
         var teamId = 1;
@@ -676,6 +680,8 @@ public class TeamsControllerTest
             .ThrowsAsync(new TeamNotFoundException(teamId));
 
         // Act & Assert
-        _ = Assert.ThrowsAsync<TeamNotFoundException>(() => _controller.GetLinkedProjects(teamId));
+        _ = await Assert.ThrowsAsync<TeamNotFoundException>(() =>
+            _controller.GetLinkedProjects(teamId)
+        );
     }
 }

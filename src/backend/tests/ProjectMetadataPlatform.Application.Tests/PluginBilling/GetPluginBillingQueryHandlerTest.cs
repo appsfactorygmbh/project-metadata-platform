@@ -76,7 +76,7 @@ public class GetPluginBillingQueryHandlerTest
     }
 
     [Test]
-    public void GetPluginBilling_ThrowPluginBillingNotFoundException_IfPluginBillingNotFound()
+    public async Task GetPluginBilling_ThrowPluginBillingNotFoundException_IfPluginBillingNotFoundAsync()
     {
         // Arrange
         _ = _mockPluginBillingRepository
@@ -92,7 +92,7 @@ public class GetPluginBillingQueryHandlerTest
             )
             .ReturnsAsync(true);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<PluginBillingInformationNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<PluginBillingInformationNotFoundException>(async () =>
             await _handler.Handle(new GetPluginBillingQuery(1, 1), It.IsAny<CancellationToken>())
         );
 
@@ -114,7 +114,7 @@ public class GetPluginBillingQueryHandlerTest
 
         var request = new GetPluginBillingQuery(1, 1);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

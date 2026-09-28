@@ -169,7 +169,7 @@ public class UpdateProjectPluginCommandHandlerTest
     }
 
     [Test]
-    public void UpdateProjectPlugin_ThrowsDisplayNameAlreadyExistsException_IfNewDisplayNameAlreadyExists()
+    public async Task UpdateProjectPlugin_ThrowsDisplayNameAlreadyExistsException_IfNewDisplayNameAlreadyExistsAsync()
     {
         _mockProjectsRepository
             .Setup(repo => repo.CheckProjectExists(It.IsAny<int>()))
@@ -207,7 +207,7 @@ public class UpdateProjectPluginCommandHandlerTest
             .ReturnsAsync(true);
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<ProjectPluginAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<ProjectPluginAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new UpdateProjectPluginCommand(1, 1, "Test_2", "Url_3"),
                 It.IsAny<CancellationToken>()
@@ -251,7 +251,7 @@ public class UpdateProjectPluginCommandHandlerTest
             Url: "Url_2"
         );
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
@@ -270,7 +270,7 @@ public class UpdateProjectPluginCommandHandlerTest
             Url: "Url_2"
         );
 
-        _ = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
+        _ = await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

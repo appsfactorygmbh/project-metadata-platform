@@ -95,7 +95,7 @@ public class DeleteTeamCommandHandlerTest
     }
 
     [Test]
-    public void DeleteTeam_StillLinkedProjects_ThrowsTeamStillLinkedToProjectsException()
+    public async Task DeleteTeam_StillLinkedProjects_ThrowsTeamStillLinkedToProjectsExceptionAsync()
     {
         // Arrange
         _ = _mockTeamRepository
@@ -135,7 +135,7 @@ public class DeleteTeamCommandHandlerTest
             .ReturnsAsync(returnTeam);
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<TeamStillLinkedToProjectsException>(async () =>
+        var ex = await Assert.ThrowsAsync<TeamStillLinkedToProjectsException>(async () =>
             await _handler.Handle(new DeleteTeamCommand(Id: 1), It.IsAny<CancellationToken>())
         );
 
@@ -155,7 +155,7 @@ public class DeleteTeamCommandHandlerTest
             )
             .ReturnsAsync(false);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(new DeleteTeamCommand(Id: 1), It.IsAny<CancellationToken>())
         );
     }

@@ -266,9 +266,11 @@ public class PluginsRepositoryTest : TestsWithDatabase
     }
 
     [Test]
-    public void GetGlobalPluginById_NotFound_Test()
+    public async Task GetGlobalPluginById_NotFound_TestAsync()
     {
-        _ = Assert.ThrowsAsync<PluginNotFoundException>(() => _repository.GetPluginByIdAsync(42));
+        _ = await Assert.ThrowsAsync<PluginNotFoundException>(() =>
+            _repository.GetPluginByIdAsync(42)
+        );
     }
 
     [Test]
@@ -317,9 +319,9 @@ public class PluginsRepositoryTest : TestsWithDatabase
     }
 
     [Test]
-    public void GetProjectPluginById_NotFound_Test()
+    public async Task GetProjectPluginById_NotFound_TestAsync()
     {
-        _ = Assert.ThrowsAsync<ProjectPluginNotFoundException>(() =>
+        _ = await Assert.ThrowsAsync<ProjectPluginNotFoundException>(() =>
             _repository.GetProjectPluginAsync(42, 3)
         );
     }
@@ -664,11 +666,11 @@ public class PluginsRepositoryTest : TestsWithDatabase
     }
 
     [Test]
-    public void TestGetPluginsForNonExistentProjectThrowsException()
+    public async Task TestGetPluginsForNonExistentProjectThrowsExceptionAsync()
     {
         const int nonExistentProjectId = 999;
 
-        var ex = Assert.ThrowsAsync<ProjectNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<ProjectNotFoundException>(async () =>
         {
             _ = await _repository.GetAllUnarchivedPluginsForProjectIdAsync(nonExistentProjectId);
         });

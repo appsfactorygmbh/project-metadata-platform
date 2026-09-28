@@ -49,7 +49,9 @@ public class PluginBillingControllerTest
                 >(It.IsAny<GetPluginBillingQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetPluginBilling(0, 0));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
+            _controller.GetPluginBilling(0, 0)
+        );
     }
 
     [Test]
@@ -108,7 +110,7 @@ public class PluginBillingControllerTest
                 >(It.IsAny<GetPluginBillingQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.GetPluginBillingBySlug("", 0)
         );
     }
@@ -169,7 +171,7 @@ public class PluginBillingControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.AddPluginBilling(
                 new AddPluginBillingRequest(
                     1,
@@ -243,7 +245,7 @@ public class PluginBillingControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.AddPluginBillingBySlug(
                 new AddPluginBillingRequest(
                     1,
@@ -317,7 +319,7 @@ public class PluginBillingControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.UpdatePluginBilling(
                 new UpdatePluginBillingRequest(
                     [],
@@ -404,7 +406,7 @@ public class PluginBillingControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.UpdatePluginBillingBySlug(
                 new UpdatePluginBillingRequest(
                     [],
@@ -488,7 +490,9 @@ public class PluginBillingControllerTest
                 mediator.Send(It.IsAny<DeletePluginBillingCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.DeletePluginBilling(1, 1));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
+            _controller.DeletePluginBilling(1, 1)
+        );
     }
 
     [Test]
@@ -506,7 +510,7 @@ public class PluginBillingControllerTest
                 mediator.Send(It.IsAny<DeletePluginBillingCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.DeletePluginBillingBySlug("Slug", 1)
         );
     }

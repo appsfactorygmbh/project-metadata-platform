@@ -168,7 +168,7 @@ public class PatchTeamCommandHandlerTest
     }
 
     [Test]
-    public void PatchTeam_ThrowsTeamNameAlreadyExistsException_IfNewTeamNameAlreadyExists()
+    public async Task PatchTeam_ThrowsTeamNameAlreadyExistsException_IfNewTeamNameAlreadyExistsAsync()
     {
         // Arrange
         var returnTeam = new Team()
@@ -201,7 +201,7 @@ public class PatchTeamCommandHandlerTest
             .ReturnsAsync(true);
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<TeamNameAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<TeamNameAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new PatchTeamCommand(Id: 1, TeamName: "Test_2", PTL: "Max Mustermann"),
                 It.IsAny<CancellationToken>()
@@ -236,7 +236,7 @@ public class PatchTeamCommandHandlerTest
             .ReturnsAsync(returnTeam);
         var request = new PatchTeamCommand(Id: 1, TeamName: "Test_2", PTL: "Max Mustermann");
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

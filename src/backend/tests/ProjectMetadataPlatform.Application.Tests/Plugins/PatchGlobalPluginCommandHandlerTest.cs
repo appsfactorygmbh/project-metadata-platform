@@ -328,7 +328,7 @@ public class PatchGlobalPluginCommandHandlerTest
     }
 
     [Test]
-    public void PatchGlobalPlugin_NotFound_Test()
+    public async Task PatchGlobalPlugin_NotFound_TestAsync()
     {
         // Arrange
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync((Plugin?)null);
@@ -342,7 +342,7 @@ public class PatchGlobalPluginCommandHandlerTest
             )
             .ReturnsAsync(true);
         // Assert
-        _ = Assert.ThrowsAsync<PluginNotFoundException>(() =>
+        _ = await Assert.ThrowsAsync<PluginNotFoundException>(() =>
             _handler.Handle(new PatchGlobalPluginCommand(42), It.IsAny<CancellationToken>())
         );
     }
@@ -427,7 +427,7 @@ public class PatchGlobalPluginCommandHandlerTest
     }
 
     [Test]
-    public void PatchGlobalPlugin_NameUpdatedButAlreadyUsedInAnotherPlugin_Test()
+    public async Task PatchGlobalPlugin_NameUpdatedButAlreadyUsedInAnotherPlugin_TestAsync()
     {
         var plugin = new Plugin
         {
@@ -449,7 +449,7 @@ public class PatchGlobalPluginCommandHandlerTest
         _ = _mockPluginRepo
             .Setup(repo => repo.CheckGlobalPluginNameExists("Atlas Agena"))
             .ReturnsAsync(true);
-        _ = Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() =>
+        _ = await Assert.ThrowsAsync<PluginNameAlreadyExistsException>(() =>
             _handler.Handle(
                 new PatchGlobalPluginCommand(42, "Atlas Agena"),
                 It.IsAny<CancellationToken>()
@@ -703,7 +703,7 @@ public class PatchGlobalPluginCommandHandlerTest
         _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync(plugin);
         var request = new PatchGlobalPluginCommand(42, null, false, "https://mercury.redstone");
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

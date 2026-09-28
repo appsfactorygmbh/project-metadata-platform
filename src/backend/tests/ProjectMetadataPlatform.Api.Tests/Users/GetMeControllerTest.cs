@@ -68,7 +68,7 @@ public class GetMeControllerTest
     }
 
     [Test]
-    public void GetMe_Test_NotFound()
+    public async Task GetMe_Test_NotFoundAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -79,11 +79,11 @@ public class GetMeControllerTest
             )
             .ThrowsAsync(new UserNotFoundException("Dr. Dre"));
         var controller = new UsersController(_mediator.Object, MockHttpContextAccessor("Dr. Dre"));
-        _ = Assert.ThrowsAsync<UserNotFoundException>(() => controller.GetMe());
+        _ = await Assert.ThrowsAsync<UserNotFoundException>(() => controller.GetMe());
     }
 
     [Test]
-    public void GetMe_Test_InternalError()
+    public async Task GetMe_Test_InternalErrorAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -98,11 +98,11 @@ public class GetMeControllerTest
             MockHttpContextAccessor("Dr. Nefario")
         );
 
-        _ = Assert.ThrowsAsync<InvalidOperationException>(() => controller.GetMe());
+        _ = await Assert.ThrowsAsync<InvalidOperationException>(() => controller.GetMe());
     }
 
     [Test]
-    public void GetMe_Test_Unauthorized()
+    public async Task GetMe_Test_UnauthorizedAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -114,7 +114,7 @@ public class GetMeControllerTest
             .ThrowsAsync(new UserUnauthenticatedException());
         var controller = new UsersController(_mediator.Object, MockHttpContextAccessor(null));
 
-        _ = Assert.ThrowsAsync<UserUnauthenticatedException>(() => controller.GetMe());
+        _ = await Assert.ThrowsAsync<UserUnauthenticatedException>(() => controller.GetMe());
     }
 
     private static HttpContextAccessor MockHttpContextAccessor(string? email)

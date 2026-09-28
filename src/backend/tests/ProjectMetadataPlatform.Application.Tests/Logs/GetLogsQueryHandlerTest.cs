@@ -334,7 +334,7 @@ public class GetLogsQueryHandlerTest
     }
 
     [Test]
-    public void GetLogs_ThrowsExceptionWhenProjectNotFound_Test()
+    public async Task GetLogs_ThrowsExceptionWhenProjectNotFound_TestAsync()
     {
         _ = _mockLogsRepo
             .Setup(m => m.GetLogsForProject(It.IsAny<int>(), It.IsAny<LogCursor?>()))
@@ -348,7 +348,7 @@ public class GetLogsQueryHandlerTest
             )
             .ReturnsAsync((IQueryable<Log> query, Dictionary<string, string>? dict) => query);
         var request = new GetLogsQuery(null, null, null, null, 404);
-        _ = Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        _ = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await _handler.Handle(request, It.IsAny<CancellationToken>())
         );
 

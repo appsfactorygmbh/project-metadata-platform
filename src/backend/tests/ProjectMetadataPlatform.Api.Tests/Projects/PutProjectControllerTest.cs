@@ -139,7 +139,7 @@ public class PutProjectControllerTest
     }
 
     [Test]
-    public void CreateProject_BadRequestTest_SlugAlreadyExists()
+    public async Task CreateProject_BadRequestTest_SlugAlreadyExistsAsync()
     {
         _ = _mediator
             .Setup(mediator =>
@@ -161,11 +161,13 @@ public class PutProjectControllerTest
             Notes: "Example Notes"
         );
 
-        _ = Assert.ThrowsAsync<ProjectSlugAlreadyExistsException>(() => _controller.Put(request));
+        _ = await Assert.ThrowsAsync<ProjectSlugAlreadyExistsException>(() =>
+            _controller.Put(request)
+        );
     }
 
     [Test]
-    public void CreateProject_MediatorThrowsInvalidOperationExceptionTest()
+    public async Task CreateProject_MediatorThrowsInvalidOperationExceptionTestAsync()
     {
         _ = _mediator
             .Setup(mediator =>
@@ -186,11 +188,11 @@ public class PutProjectControllerTest
             Notes: "Example Notes"
         );
 
-        _ = Assert.ThrowsAsync<InvalidOperationException>(() => _controller.Put(request));
+        _ = await Assert.ThrowsAsync<InvalidOperationException>(() => _controller.Put(request));
     }
 
     [Test]
-    public void CreateProject_MediatorThrowsOtherExceptionTest()
+    public async Task CreateProject_MediatorThrowsOtherExceptionTestAsync()
     {
         _ = _mediator
             .Setup(mediator =>
@@ -212,7 +214,7 @@ public class PutProjectControllerTest
             Notes: "Example Notes"
         );
 
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Put(request));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Put(request));
     }
 
     [Test]
@@ -385,7 +387,7 @@ public class PutProjectControllerTest
     }
 
     [Test]
-    public void UpdateProjectWithSlug_NotFound_Test()
+    public async Task UpdateProjectWithSlug_NotFound_TestAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -405,7 +407,7 @@ public class PutProjectControllerTest
             IsEoC: false,
             Notes: "Updated Notes"
         );
-        _ = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
+        _ = await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
             _controller.Put(updateRequest, "updatedproject")
         );
     }

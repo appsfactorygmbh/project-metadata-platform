@@ -165,7 +165,7 @@ public class GetAllUsersControllerTest
     }
 
     [Test]
-    public void Get_ReturnsMediatorException()
+    public async Task Get_ReturnsMediatorExceptionAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -180,6 +180,6 @@ public class GetAllUsersControllerTest
             )
             .ThrowsAsync(new InvalidOperationException("Test exception"));
 
-        _ = Assert.ThrowsAsync<InvalidOperationException>(() => _controller.Get());
+        _ = await Assert.ThrowsAsync<InvalidOperationException>(() => _controller.Get());
     }
 }

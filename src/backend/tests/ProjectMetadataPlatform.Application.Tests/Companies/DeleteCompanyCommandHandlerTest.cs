@@ -86,7 +86,7 @@ public class DeleteCompanyCommandHandlerTest
     }
 
     [Test]
-    public void DeleteCompany_StillLinkedProjects_ThrowsCompanyStillLinkedToProjectsException()
+    public async Task DeleteCompany_StillLinkedProjects_ThrowsCompanyStillLinkedToProjectsExceptionAsync()
     {
         // Arrange
         _ = _mockCompanyRepository
@@ -123,7 +123,7 @@ public class DeleteCompanyCommandHandlerTest
             .ReturnsAsync(returnCompany);
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<CompanyStillLinkedToProjectsException>(async () =>
+        var ex = await Assert.ThrowsAsync<CompanyStillLinkedToProjectsException>(async () =>
             await _handler.Handle(new DeleteCompanyCommand(Id: 1), It.IsAny<CancellationToken>())
         );
 
@@ -145,7 +145,7 @@ public class DeleteCompanyCommandHandlerTest
 
         var request = new DeleteCompanyCommand(Id: 1);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

@@ -90,7 +90,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetApiTokenById_NotFoundTest()
     {
-        _ = Assert.ThrowsAsync<ApiTokenNotFoundException>(() =>
+        _ = await Assert.ThrowsAsync<ApiTokenNotFoundException>(() =>
             _apiTokenRepository.GetApiTokenById(1)
         );
     }
@@ -116,7 +116,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetApiTokenByName_NotFoundTest()
     {
-        _ = Assert.ThrowsAsync<ApiTokenNotFoundException>(() =>
+        _ = await Assert.ThrowsAsync<ApiTokenNotFoundException>(() =>
             _apiTokenRepository.GetApiTokenByName("Token")
         );
     }
@@ -158,7 +158,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
 
         await _apiTokenRepository.DeleteApiToken(result);
         _ = await _context.SaveChangesAsync();
-        _ = Assert.ThrowsAsync<ApiTokenNotFoundException>(() =>
+        _ = await Assert.ThrowsAsync<ApiTokenNotFoundException>(() =>
             _apiTokenRepository.GetApiTokenById(1)
         );
     }

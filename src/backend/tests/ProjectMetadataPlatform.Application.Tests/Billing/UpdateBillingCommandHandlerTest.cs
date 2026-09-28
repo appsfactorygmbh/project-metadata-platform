@@ -147,7 +147,7 @@ public class UpdateBillingCommandHandlerTest
     }
 
     [Test]
-    public void UpdateBilling_ThrowsBillingKindAlreadyExistsException_IfNewBillingKindAlreadyExists()
+    public async Task UpdateBilling_ThrowsBillingKindAlreadyExistsException_IfNewBillingKindAlreadyExistsAsync()
     {
         // Arrange
         var returnBilling = new GlobalBilling() { Id = 1, BillingKind = "Test_1" };
@@ -173,7 +173,7 @@ public class UpdateBillingCommandHandlerTest
             .ReturnsAsync(true);
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<BillingKindAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<BillingKindAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new UpdateBillingCommand(1, BillingKind: "Test_2", null, null, null),
                 It.IsAny<CancellationToken>()
@@ -208,7 +208,7 @@ public class UpdateBillingCommandHandlerTest
             TimeFrame.YEARLY
         );
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

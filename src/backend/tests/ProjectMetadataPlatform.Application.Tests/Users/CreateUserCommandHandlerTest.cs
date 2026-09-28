@@ -137,7 +137,7 @@ public class CreateUserCommandHandlerTest
     }
 
     [Test]
-    public void CreateUser_ThrowsException_Test()
+    public async Task CreateUser_ThrowsException_TestAsync()
     {
         _ = _authorizationServiceMock
             .Setup(a =>
@@ -162,7 +162,7 @@ public class CreateUserCommandHandlerTest
             )
             .Returns(Task.CompletedTask);
 
-        _ = Assert.ThrowsAsync<Exception>(() =>
+        _ = await Assert.ThrowsAsync<Exception>(() =>
             _handler.Handle(
                 new CreateUserCommand(
                     "Example Email",
@@ -264,7 +264,7 @@ public class CreateUserCommandHandlerTest
             null
         );
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

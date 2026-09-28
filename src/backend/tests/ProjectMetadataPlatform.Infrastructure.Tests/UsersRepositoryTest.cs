@@ -117,7 +117,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     }
 
     [Test]
-    public void CreateUserAsync_InvalidPassword_Test()
+    public async Task CreateUserAsync_InvalidPassword_TestAsync()
     {
         _ = _context.Users.Add(
             new ApplicationUser
@@ -141,13 +141,13 @@ public class UsersRepositoryTest : TestsWithDatabase
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed());
 
-        _ = Assert.ThrowsAsync<UserCouldNotBeCreatedException>(() =>
+        _ = await Assert.ThrowsAsync<UserCouldNotBeCreatedException>(() =>
             _repository.CreateUserAsync(user, password)
         );
     }
 
     [Test]
-    public void CreateUserAsync_DuplicateEmail_Test()
+    public async Task CreateUserAsync_DuplicateEmail_TestAsync()
     {
         _ = _context.Users.Add(
             new ApplicationUser
@@ -171,7 +171,7 @@ public class UsersRepositoryTest : TestsWithDatabase
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateUserName" }));
 
-        var exception = Assert.ThrowsAsync<UserAlreadyExistsException>(() =>
+        var exception = await Assert.ThrowsAsync<UserAlreadyExistsException>(() =>
             _repository.CreateUserAsync(user, password)
         );
         Assert.That(exception.Message, Is.EqualTo("User creation Failed : DuplicateEmail"));
@@ -352,12 +352,14 @@ public class UsersRepositoryTest : TestsWithDatabase
     }
 
     [Test]
-    public void GetUserByIdAsync_NonexistentUser_Test()
+    public async Task GetUserByIdAsync_NonexistentUser_TestAsync()
     {
         _ = _mockUserManager
             .Setup(m => m.FindByIdAsync("1"))
             .ThrowsAsync(new UserNotFoundException("1"));
-        _ = Assert.ThrowsAsync<UserNotFoundException>(() => _repository.GetUserByIdAsync("1"));
+        _ = await Assert.ThrowsAsync<UserNotFoundException>(() =>
+            _repository.GetUserByIdAsync("1")
+        );
     }
 
     [Test]
@@ -378,13 +380,15 @@ public class UsersRepositoryTest : TestsWithDatabase
     }
 
     [Test]
-    public void GetUserByEmailAsync_NotFound_Test()
+    public async Task GetUserByEmailAsync_NotFound_TestAsync()
     {
         _ = _mockUserManager
             .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
             .ThrowsAsync(new UserNotFoundException("1"));
 
-        _ = Assert.ThrowsAsync<UserNotFoundException>(() => _repository.GetUserByEmailAsync("1"));
+        _ = await Assert.ThrowsAsync<UserNotFoundException>(() =>
+            _repository.GetUserByEmailAsync("1")
+        );
     }
 
     [Test]
@@ -430,7 +434,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     }
 
     [Test]
-    public void StoreUserAsync_Create_DuplicateEmail_Test()
+    public async Task StoreUserAsync_Create_DuplicateEmail_TestAsync()
     {
         _ = _context.Users.Add(
             new ApplicationUser
@@ -454,11 +458,11 @@ public class UsersRepositoryTest : TestsWithDatabase
             .Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateUserName" }));
 
-        _ = Assert.ThrowsAsync<UserAlreadyExistsException>(() => _repository.StoreUser(user));
+        _ = await Assert.ThrowsAsync<UserAlreadyExistsException>(() => _repository.StoreUser(user));
     }
 
     [Test]
-    public void StoreUserAsync_Update_DuplicateEmail_Test()
+    public async Task StoreUserAsync_Update_DuplicateEmail_TestAsync()
     {
         _ = _context.Users.Add(
             new ApplicationUser
@@ -482,7 +486,7 @@ public class UsersRepositoryTest : TestsWithDatabase
             .Setup(m => m.UpdateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateUserName" }));
 
-        _ = Assert.ThrowsAsync<UserAlreadyExistsException>(() => _repository.StoreUser(user));
+        _ = await Assert.ThrowsAsync<UserAlreadyExistsException>(() => _repository.StoreUser(user));
     }
 
     [Test]
@@ -506,7 +510,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     }
 
     [Test]
-    public void DeleteUser_Failed_Test()
+    public async Task DeleteUser_Failed_TestAsync()
     {
         var user = new ApplicationUser
         {
@@ -518,7 +522,7 @@ public class UsersRepositoryTest : TestsWithDatabase
         _ = _mockUserManager.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
         _ = _mockUserManager.Setup(m => m.DeleteAsync(user)).ReturnsAsync(IdentityResult.Failed());
 
-        _ = Assert.ThrowsAsync<UserCouldNotBeDeletedException>(() =>
+        _ = await Assert.ThrowsAsync<UserCouldNotBeDeletedException>(() =>
             _repository.DeleteUserAsync(user)
         );
     }
@@ -532,10 +536,10 @@ public class UsersRepositoryTest : TestsWithDatabase
     }
 
     [Test]
-    public void CheckPasswordFormat_Incorrect_Test()
+    public async Task CheckPasswordFormat_Incorrect_TestAsync()
     {
         const string password = "test";
-        _ = Assert.ThrowsAsync<UserInvalidPasswordFormatException>(() =>
+        _ = await Assert.ThrowsAsync<UserInvalidPasswordFormatException>(() =>
             _repository.CheckPasswordFormat(password)
         );
     }

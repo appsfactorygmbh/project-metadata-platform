@@ -67,7 +67,7 @@ public class GetTeamQueryHandlerTest
     }
 
     [Test]
-    public void GetTeam_ThrowTeamNotFoundException_IfTeamNotFound()
+    public async Task GetTeam_ThrowTeamNotFoundException_IfTeamNotFoundAsync()
     {
         // Arrange
         _ = _mockTeamRepository
@@ -83,7 +83,7 @@ public class GetTeamQueryHandlerTest
             )
             .ReturnsAsync(true);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<TeamNotFoundException>(async () =>
+        var ex = await Assert.ThrowsAsync<TeamNotFoundException>(async () =>
             await _handler.Handle(new GetTeamQuery(Id: 1), It.IsAny<CancellationToken>())
         );
 
@@ -105,7 +105,7 @@ public class GetTeamQueryHandlerTest
 
         var request = new GetTeamQuery(Id: 1);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

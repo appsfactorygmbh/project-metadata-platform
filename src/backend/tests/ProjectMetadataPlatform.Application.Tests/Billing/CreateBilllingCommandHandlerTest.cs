@@ -104,7 +104,7 @@ public class CreateBillingCommandHandlerTest
     }
 
     [Test]
-    public void CreateBilling_KindAlreadyExists_ThrowsBillingKindAlreadyExistsException()
+    public async Task CreateBilling_KindAlreadyExists_ThrowsBillingKindAlreadyExistsExceptionAsync()
     {
         // Arrange
         _ = _authorizationServiceMock
@@ -120,7 +120,7 @@ public class CreateBillingCommandHandlerTest
             .Setup(repo => repo.CheckBillingKindExists(It.IsAny<string>()))
             .ReturnsAsync(true);
         // Act + Assert
-        var ex = Assert.ThrowsAsync<BillingKindAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<BillingKindAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new CreateBillingCommand(BillingKind: "Test Name", null, null, null),
                 It.IsAny<CancellationToken>()
@@ -144,7 +144,7 @@ public class CreateBillingCommandHandlerTest
             .ReturnsAsync(false);
 
         var request = new CreateBillingCommand(BillingKind: "Test Name", null, null, null);
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

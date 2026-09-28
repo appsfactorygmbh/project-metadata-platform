@@ -125,7 +125,7 @@ public class CompaniesControllerTest
                 >(It.IsAny<GetAllCompaniesQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
     }
 
     [Test]
@@ -139,7 +139,7 @@ public class CompaniesControllerTest
                 >(It.IsAny<GetCompanyQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
     }
 
     [Test]
@@ -177,7 +177,7 @@ public class CompaniesControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetLinkedProjects(1));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.GetLinkedProjects(1));
     }
 
     [Test]
@@ -215,7 +215,7 @@ public class CompaniesControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Put(new CreateCompanyRequest("a"))
         );
     }
@@ -268,7 +268,7 @@ public class CompaniesControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Patch(1, new UpdateCompanyRequest())
         );
     }
@@ -316,7 +316,7 @@ public class CompaniesControllerTest
                 mediator.Send(It.IsAny<DeleteCompanyCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
     }
 
     [Test]

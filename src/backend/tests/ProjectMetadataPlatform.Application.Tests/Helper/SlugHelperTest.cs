@@ -89,7 +89,7 @@ public class SlugHelperTest
     }
 
     [Test]
-    public void GetProjectIdBySlug_Test_ThrowsException()
+    public async Task GetProjectIdBySlug_Test_ThrowsExceptionAsync()
     {
         const string slug = "example_project";
 
@@ -97,7 +97,7 @@ public class SlugHelperTest
             .Setup(m => m.GetProjectIdBySlugAsync(It.IsAny<string>()))
             .ThrowsAsync(new ProjectNotFoundException("Project not found"));
 
-        _ = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
+        _ = await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
             _slugHelper.GetProjectIdBySlug(slug)
         );
     }

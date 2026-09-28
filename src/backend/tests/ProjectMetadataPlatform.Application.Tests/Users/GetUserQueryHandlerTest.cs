@@ -84,7 +84,7 @@ public class GetUserQueryHandlerTest
             "11111111111111111111111111111111111111111111111111111111111111111111"
         );
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

@@ -403,7 +403,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
         _ = _context.Projects.Add(project2);
         _ = await _context.SaveChangesAsync();
 
-        _ = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
+        _ = await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
             _repository.GetProjectIdBySlugAsync("regen")
         );
     }

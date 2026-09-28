@@ -199,7 +199,7 @@ public class ProjectsControllerTest
     }
 
     [Test]
-    public void GetAllProjects_MediatorThrowsExceptionTest()
+    public async Task GetAllProjects_MediatorThrowsExceptionTestAsync()
     {
         _ = _mediator
             .Setup(mediator =>
@@ -213,7 +213,7 @@ public class ProjectsControllerTest
                 >(It.IsAny<GetAllProjectsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(null, "search"));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(null, "search"));
     }
 
     [Test]
@@ -362,7 +362,7 @@ public class ProjectsControllerTest
     }
 
     [Test]
-    public void DeleteProject_WhenProjectIsNotArchived_ReturnsBadRequest()
+    public async Task DeleteProject_WhenProjectIsNotArchived_ReturnsBadRequestAsync()
     {
         var project = new Project
         {
@@ -383,11 +383,11 @@ public class ProjectsControllerTest
             )
             .ThrowsAsync(new ProjectNotArchivedException(project));
 
-        _ = Assert.ThrowsAsync<ProjectNotArchivedException>(() => _controller.Delete(1));
+        _ = await Assert.ThrowsAsync<ProjectNotArchivedException>(() => _controller.Delete(1));
     }
 
     [Test]
-    public void DeleteProject_WhenProjectDoesNotExist_ReturnsBadRequest()
+    public async Task DeleteProject_WhenProjectDoesNotExist_ReturnsBadRequestAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -398,11 +398,11 @@ public class ProjectsControllerTest
             )
             .ThrowsAsync(new ProjectNotFoundException(1));
 
-        _ = Assert.ThrowsAsync<ProjectNotFoundException>(() => _controller.Delete(1));
+        _ = await Assert.ThrowsAsync<ProjectNotFoundException>(() => _controller.Delete(1));
     }
 
     [Test]
-    public void DeleteProject_InternalServerError()
+    public async Task DeleteProject_InternalServerErrorAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -413,7 +413,7 @@ public class ProjectsControllerTest
             )
             .ThrowsAsync(new Exception("Database error"));
 
-        _ = Assert.ThrowsAsync<Exception>(() => _controller.Delete(1));
+        _ = await Assert.ThrowsAsync<Exception>(() => _controller.Delete(1));
     }
 
     [Test]
@@ -452,7 +452,7 @@ public class ProjectsControllerTest
     }
 
     [Test]
-    public void DeleteProjectBySlug_WhenProjectDoesNotExist()
+    public async Task DeleteProjectBySlug_WhenProjectDoesNotExistAsync()
     {
         _ = _mediator
             .Setup(m =>
@@ -463,11 +463,11 @@ public class ProjectsControllerTest
             )
             .ThrowsAsync(new ProjectNotFoundException("test"));
 
-        _ = Assert.ThrowsAsync<ProjectNotFoundException>(() => _controller.Delete("test"));
+        _ = await Assert.ThrowsAsync<ProjectNotFoundException>(() => _controller.Delete("test"));
     }
 
     [Test]
-    public void DeleteProjectBySlug_InternalServerError()
+    public async Task DeleteProjectBySlug_InternalServerErrorAsync()
     {
         _ = _mediator
             .Setup(mediator =>
@@ -477,6 +477,6 @@ public class ProjectsControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete("test"));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete("test"));
     }
 }

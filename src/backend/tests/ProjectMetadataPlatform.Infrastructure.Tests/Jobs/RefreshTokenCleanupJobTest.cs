@@ -43,7 +43,7 @@ public class RefreshTokenCleanUpJobTest
         _mediator
             .Setup(m => m.Send(It.IsAny<CleanUpRefreshTokensCommand>()))
             .ThrowsAsync(new Exception("this is a Exception"));
-        _ = Assert.ThrowsAsync<JobExecutionException>(() =>
+        _ = await Assert.ThrowsAsync<JobExecutionException>(() =>
             _job.Execute(_context.Object, CancellationToken.None).AsTask()
         );
     }

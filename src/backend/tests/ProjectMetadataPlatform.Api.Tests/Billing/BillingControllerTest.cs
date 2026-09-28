@@ -120,7 +120,7 @@ public class BillingControllerTest
                 >(It.IsAny<GetAllBillingQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get());
     }
 
     [Test]
@@ -134,7 +134,7 @@ public class BillingControllerTest
                 >(It.IsAny<GetBillingByIdQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Get(0));
     }
 
     [Test]
@@ -172,7 +172,7 @@ public class BillingControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Put(new CreateBillingRequest("a", null, null, null))
         );
     }
@@ -225,7 +225,7 @@ public class BillingControllerTest
                 )
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() =>
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() =>
             _controller.Update(1, new UpdateBillingRequest("Billing", null, null, null))
         );
     }
@@ -276,7 +276,7 @@ public class BillingControllerTest
                 mediator.Send(It.IsAny<DeleteBillingCommand>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
-        _ = Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _controller.Delete(1));
     }
 
     [Test]

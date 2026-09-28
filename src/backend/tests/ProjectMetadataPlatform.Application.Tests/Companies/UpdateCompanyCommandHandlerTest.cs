@@ -145,7 +145,7 @@ public class UpdateCompanyCommandHandlerTest
     }
 
     [Test]
-    public void UpdateCompany_ThrowsCompanyNameAlreadyExistsException_IfNewCompanyNameAlreadyExists()
+    public async Task UpdateCompany_ThrowsCompanyNameAlreadyExistsException_IfNewCompanyNameAlreadyExistsAsync()
     {
         // Arrange
         var returnCompany = new Company() { Id = 1, CompanyName = "Test_1" };
@@ -171,7 +171,7 @@ public class UpdateCompanyCommandHandlerTest
             .ReturnsAsync(true);
 
         // Act + Assert
-        var ex = Assert.ThrowsAsync<CompanyNameAlreadyExistsException>(async () =>
+        var ex = await Assert.ThrowsAsync<CompanyNameAlreadyExistsException>(async () =>
             await _handler.Handle(
                 new UpdateCompanyCommand(Id: 1, CompanyName: "Test_2"),
                 It.IsAny<CancellationToken>()
@@ -199,7 +199,7 @@ public class UpdateCompanyCommandHandlerTest
             .ReturnsAsync(returnCompany);
         var request = new UpdateCompanyCommand(Id: 1, CompanyName: "Test_2");
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }

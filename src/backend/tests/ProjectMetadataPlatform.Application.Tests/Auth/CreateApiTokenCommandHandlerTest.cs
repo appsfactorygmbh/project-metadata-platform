@@ -56,7 +56,7 @@ public class CreateApiTokenCommandHandlerTest
 
         var request = new CreateApiTokenCommand("Token", [TokenScopes.SCIM]);
 
-        _ = Assert.ThrowsAsync<ScimTokenAlreadyExistsException>(() =>
+        _ = await Assert.ThrowsAsync<ScimTokenAlreadyExistsException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
@@ -76,7 +76,7 @@ public class CreateApiTokenCommandHandlerTest
 
         var request = new CreateApiTokenCommand("Token", [TokenScopes.SCIM]);
 
-        _ = Assert.ThrowsAsync<UnauthorizedException>(() =>
+        _ = await Assert.ThrowsAsync<UnauthorizedException>(() =>
             _handler.Handle(request, It.IsAny<CancellationToken>())
         );
     }
