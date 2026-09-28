@@ -16,7 +16,7 @@ public class LogModelConfig : IEntityTypeConfiguration<Log>
     public void Configure(EntityTypeBuilder<Log> builder)
     {
         _ = builder.HasKey(e => e.Id);
-
+        _ = builder.HasIndex(e=> new {e.TimeStamp, e.Id}).IsDescending(true,true);
         _ = builder
             .HasOne(e => e.Project)
             .WithMany(e => e.Logs)

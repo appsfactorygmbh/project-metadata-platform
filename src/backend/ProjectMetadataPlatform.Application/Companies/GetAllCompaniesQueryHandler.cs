@@ -15,22 +15,25 @@ namespace ProjectMetadataPlatform.Application.Companies;
 public class GetAllCompaniesQueryHandler
     : IRequestHandler<
         GetAllCompaniesQuery,
-        (IEnumerable<Company>, IEnumerable<AuthorizationConstants.Actions>)
+        (IEnumerable<Company>, IEnumerable<AuthorizationConstants.Actions>, CompanyCursor?)
     >
 {
     private readonly ICompanyRepository _companyRepository;
     private readonly IAuthorizationService _authorizationService;
+    private readonly IPaginationHelper _paginationHelper;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetAllCompaniesQueryHandler" />.
     /// </summary>
     public GetAllCompaniesQueryHandler(
         ICompanyRepository companyRepository,
-        IAuthorizationService authorizationService
+        IAuthorizationService authorizationService,
+        IPaginationHelper paginationHelper
     )
     {
         _companyRepository = companyRepository;
         _authorizationService = authorizationService;
+        _paginationHelper = paginationHelper;
     }
 
     /// <summary>
@@ -39,42 +42,21 @@ public class GetAllCompaniesQueryHandler
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
     /// <returns>List of Companies and allowed actions.</returns>
-    public async Task<(IEnumerable<Company>, IEnumerable<AuthorizationConstants.Actions>)> Handle(
-        GetAllCompaniesQuery request,
-        CancellationToken cancellationToken
-    )
+    public async Task<(
+        IEnumerable<Company>,
+        IEnumerable<AuthorizationConstants.Actions>,
+        CompanyCursor?
+    )> Handle(GetAllCompaniesQuery request, CancellationToken cancellationToken)
     {
-        var companies = await _companyRepository.GetCompaniesAsync();
-        var queriedCompanies = await _authorizationService.TryGetPlanResourceQuery(companies);
+        var companies = await _companyRepository.GetCompaniesAsync(request.Cursor);
+        var (paginatedCompanies, lastCompany) = await _paginationHelper.PaginateWithAuthAsync(
+            companies,
+            request.Limit
+        );
         var permissions = await _authorizationService.GetAllowedActions<Company>(
             actions: [AuthorizationConstants.Actions.CREATE]
         );
-        if (queriedCompanies == null)
-        {
-            var companyList = await companies.ToListAsync(cancellationToken: cancellationToken);
-            List<Company> filteredCompanies = [];
-            foreach (var company in companyList)
-            {
-                if (
-                    await _authorizationService.CheckAccess(
-                        company,
-                        AuthorizationConstants.Actions.GET
-                    )
-                )
-                {
-                    filteredCompanies.Add(company);
-                }
-            }
-            return (
-                filteredCompanies.OrderBy(company => company.CompanyName.ToLowerInvariant()),
-                permissions
-            );
-        }
-        return (
-            (await queriedCompanies.ToListAsync(cancellationToken: cancellationToken)).OrderBy(
-                company => company.CompanyName.ToLowerInvariant()
-            ),
-            permissions
-        );
+        var nextCursor = lastCompany == null ? null : new CompanyCursor(lastCompany.CompanyName);
+        return (paginatedCompanies, permissions, nextCursor);
     }
 }

@@ -11,5 +11,6 @@ namespace ProjectMetadataPlatform.Api.Common.Models;
 /// <param name="Permissions">Permissions on the Resource type.</param>
 public record GetListResponse<T>(
     List<T> Resources,
-    List<AuthorizationConstants.Actions> Permissions
+    List<AuthorizationConstants.Actions> Permissions,
+    string? Cursor = null
 );

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Plugins.Models;
@@ -117,17 +118,22 @@ public class PluginsController : ControllerBase
         typeof(GetListResponse<GetGlobalPluginResponse>),
         StatusCodes.Status200OK
     )]
-    public async Task<ActionResult<GetListResponse<GetGlobalPluginResponse>>> GetGlobal()
+    public async Task<ActionResult<GetListResponse<GetGlobalPluginResponse>>> GetGlobal(
+        [FromQuery] int? limit = null,
+        [FromQuery] string? cursor = null
+    )
     {
-        var query = new GetGlobalPluginsQuery();
-        var (plugins, globalPermissions) = await _mediator.Send<
+        var cursorPosition = CursorConverter.Decode<PluginCursor>(cursor);
+        var query = new GetGlobalPluginsQuery(cursorPosition, limit);
+        var (plugins, globalPermissions, nextCursor) = await _mediator.Send<
             GetGlobalPluginsQuery,
             (
                 IEnumerable<(
                     Plugin plugin,
                     IEnumerable<AuthorizationConstants.Actions> permissions
                 )>,
-                IEnumerable<AuthorizationConstants.Actions>
+                IEnumerable<AuthorizationConstants.Actions>,
+                PluginCursor?
             )
         >(query);
 
@@ -138,9 +144,11 @@ public class PluginsController : ControllerBase
             item.plugin.BaseUrl,
             [.. item.permissions]
         ));
+        var encodedCursor = CursorConverter.Encode(nextCursor);
         var response = new GetListResponse<GetGlobalPluginResponse>(
             [.. pluginResponse],
-            [.. globalPermissions]
+            [.. globalPermissions],
+            encodedCursor
         );
         return Ok(response);
     }

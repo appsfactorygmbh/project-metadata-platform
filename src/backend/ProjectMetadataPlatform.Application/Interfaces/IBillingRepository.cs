@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using ProjectMetadataPlatform.Application.Billing;
 using ProjectMetadataPlatform.Domain.Billing;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
@@ -71,7 +72,9 @@ public interface IBillingRepository
     /// Returns queryable containing all global billing objects.
     /// </summary>
     /// <returns>All Global Billing Information. </returns>
-    Task<IQueryable<GlobalBilling>> GetAllGlobalBillingInformationAsync();
+    Task<IQueryable<GlobalBilling>> GetAllGlobalBillingInformationAsync(
+        BillingCursor? cursor
+    );
 
     /// <summary>
     /// Deletes global billing Information.

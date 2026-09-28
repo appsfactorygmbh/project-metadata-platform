@@ -5,7 +5,7 @@ using ProjectMetadataPlatform.Domain.Authorization;
 namespace ProjectMetadataPlatform.Api.Users.Models;
 
 /// <summary>
-/// Response for getting a List of Users. Follow the Scim standard for a List Response.
+/// Response for getting a List of Users. Follows the Scim standard for a List Response (more or less).
 /// </summary>
 public record GetUsersResponse
 {
@@ -29,4 +29,6 @@ public record GetUsersResponse
     /// Permissions on User Resources.
     /// </summary>
     public List<AuthorizationConstants.Actions>? Permissions { get; set; }
+
+    public string? Cursor { get; set; } = null;
 }

@@ -13,62 +13,49 @@ namespace ProjectMetadataPlatform.Application.Teams;
 public class GetAllTeamsQueryHandler
     : IRequestHandler<
         GetAllTeamsQuery,
-        (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)
+        (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>, TeamCursor?)
     >
 {
     private readonly ITeamRepository _teamRepository;
     private readonly IAuthorizationService _authorizationService;
+
+    private readonly IPaginationHelper _paginationHelper;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetAllTeamsQueryHandler" />.
     /// </summary>
     public GetAllTeamsQueryHandler(
         ITeamRepository teamRepository,
-        IAuthorizationService authorizationService
+        IAuthorizationService authorizationService,
+        IPaginationHelper paginationHelper
     )
     {
         _teamRepository = teamRepository;
         _authorizationService = authorizationService;
+        _paginationHelper = paginationHelper;
     }
 
     /// <inheritdoc />
-    public async Task<(IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)> Handle(
-        GetAllTeamsQuery request,
-        CancellationToken cancellationToken
-    )
+    public async Task<(
+        IEnumerable<Team>,
+        IEnumerable<AuthorizationConstants.Actions>,
+        TeamCursor?
+    )> Handle(GetAllTeamsQuery request, CancellationToken cancellationToken)
     {
         var teams = await _teamRepository.GetTeamsAsync(
             fullTextQuery: request.FullTextQuery,
-            teamName: request.TeamName
+            teamName: request.TeamName,
+            request.Cursor
+        );
+        var (paginatedTeams, lastTeam) = await _paginationHelper.PaginateWithAuthAsync(
+            teams,
+            request.Limit
         );
 
-        var queriedteams = await _authorizationService.TryGetPlanResourceQuery(teams);
         var permissions = await _authorizationService.GetAllowedActions<Team>(
             actions: [AuthorizationConstants.Actions.CREATE]
         );
-        if (queriedteams == null)
-        {
-            var teamList = await teams.ToListAsync(cancellationToken: cancellationToken);
-            List<Team> filteredteams = [];
-            foreach (var team in teamList)
-            {
-                if (
-                    await _authorizationService.CheckAccess(
-                        team,
-                        AuthorizationConstants.Actions.GET
-                    )
-                )
-                {
-                    filteredteams.Add(team);
-                }
-            }
-            return (filteredteams.OrderBy(team => team.TeamName.ToLowerInvariant()), permissions);
-        }
-        return (
-            (await queriedteams.ToListAsync(cancellationToken: cancellationToken)).OrderBy(team =>
-                team.TeamName.ToLowerInvariant()
-            ),
-            permissions
-        );
+        var nextCursor = lastTeam == null ? null : new TeamCursor(lastTeam.TeamName);
+        return (paginatedTeams, permissions, nextCursor);
     }
 }

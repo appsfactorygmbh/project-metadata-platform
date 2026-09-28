@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using ProjectMetadataPlatform.Application.OfficeLocations;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
@@ -13,7 +14,7 @@ public interface IOfficeLocationRepository
     /// Returns all Office Locations.
     /// </summary>
     /// <returns>List of all Office Locations.</returns>
-    Task<IQueryable<OfficeLocation>> GetOfficeLocationsAsync();
+    Task<IQueryable<OfficeLocation>> GetOfficeLocationsAsync(OfficeLocationCursor? cursor);
 
     /// <summary>
     /// Returns a Office Location by its Id.

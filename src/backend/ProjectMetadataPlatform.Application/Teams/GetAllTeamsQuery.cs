@@ -10,5 +10,5 @@ namespace ProjectMetadataPlatform.Application.Teams;
 /// <param name="FullTextQuery">Optional. Full text search over all attributes of a team except the id.</param>
 /// <param name="TeamName">Optional. The name of the team to filter by.</param>
 /// </summary>
-public record GetAllTeamsQuery(string? FullTextQuery, string? TeamName)
-    : IRequest<(IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)>;
+public record GetAllTeamsQuery(string? FullTextQuery, string? TeamName, TeamCursor? Cursor, int? Limit)
+    : IRequest<(IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>, TeamCursor?)>;

@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Authorization;
@@ -15,11 +13,12 @@ namespace ProjectMetadataPlatform.Application.Auth;
 public class GetAllApiTokensQueryHandler
     : IRequestHandler<
         GetAllApiTokensQuery,
-        (IEnumerable<ApiToken>, IEnumerable<AuthorizationConstants.Actions>)
+        (IEnumerable<ApiToken>, IEnumerable<AuthorizationConstants.Actions>, ApiTokenCursor?)
     >
 {
     private readonly IApiTokenRepository _apiTokenRepository;
     private readonly IAuthorizationService _authorizationService;
+    private readonly IPaginationHelper _paginationHelper;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetAllApiTokensQueryHandler" />.
@@ -28,11 +27,13 @@ public class GetAllApiTokensQueryHandler
     /// <param name="authorizationService"></param>
     public GetAllApiTokensQueryHandler(
         IApiTokenRepository apiTokenRepository,
-        IAuthorizationService authorizationService
+        IAuthorizationService authorizationService,
+        IPaginationHelper paginationHelper
     )
     {
         _apiTokenRepository = apiTokenRepository;
         _authorizationService = authorizationService;
+        _paginationHelper = paginationHelper;
     }
 
     /// <summary>
@@ -41,38 +42,21 @@ public class GetAllApiTokensQueryHandler
     /// <param name="request">Request that is handled.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>List of Api Tokens and allowed actions</returns>
-    public async Task<(IEnumerable<ApiToken>, IEnumerable<AuthorizationConstants.Actions>)> Handle(
-        GetAllApiTokensQuery request,
-        CancellationToken cancellationToken
-    )
+    public async Task<(
+        IEnumerable<ApiToken>,
+        IEnumerable<AuthorizationConstants.Actions>,
+        ApiTokenCursor?
+    )> Handle(GetAllApiTokensQuery request, CancellationToken cancellationToken)
     {
-        var tokens = await _apiTokenRepository.GetApiTokens();
-
-        var queriedTokens = await _authorizationService.TryGetPlanResourceQuery(tokens);
+        var tokens = await _apiTokenRepository.GetApiTokens(request.Cursor);
+        var (paginatedTokens, lastToken) = await _paginationHelper.PaginateWithAuthAsync(
+            tokens,
+            request.Limit
+        );
         var permissions = await _authorizationService.GetAllowedActions<ApiToken>(
             actions: [AuthorizationConstants.Actions.CREATE]
         );
-        if (queriedTokens == null)
-        {
-            var tokenList = await tokens.ToListAsync(cancellationToken: cancellationToken);
-            List<ApiToken> apiTokens = [];
-            foreach (var token in tokenList)
-            {
-                if (
-                    await _authorizationService.CheckAccess(
-                        token,
-                        AuthorizationConstants.Actions.GET
-                    )
-                )
-                {
-                    apiTokens.Add(token);
-                }
-            }
-            return (apiTokens, permissions);
-        }
-        else
-        {
-            return (await queriedTokens.ToListAsync(cancellationToken), permissions);
-        }
+        var nextCursor = lastToken == null ? null : new ApiTokenCursor(lastToken.Name);
+        return (paginatedTokens, permissions, nextCursor);
     }
 }

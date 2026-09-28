@@ -14,70 +14,48 @@ public class GetGlobalPluginsQueryHandler
         GetGlobalPluginsQuery,
         (
             IEnumerable<(Plugin plugin, IEnumerable<AuthorizationConstants.Actions> permissions)>,
-            IEnumerable<AuthorizationConstants.Actions>
+            IEnumerable<AuthorizationConstants.Actions>,
+            PluginCursor?
         )
     >
 {
     private readonly IPluginRepository _pluginRepository;
     private readonly IAuthorizationService _authorizationService;
 
+    private readonly IPaginationHelper _paginationHelper;
+
     /// <summary>
     /// Creates a new instance of <see cref="GetGlobalPluginsQueryHandler"/>.
     /// </summary>
     public GetGlobalPluginsQueryHandler(
         IPluginRepository pluginRepository,
-        IAuthorizationService authorizationService
+        IAuthorizationService authorizationService,
+        IPaginationHelper paginationHelper
     )
     {
         _pluginRepository = pluginRepository;
         _authorizationService = authorizationService;
+        _paginationHelper = paginationHelper;
     }
 
     /// <inheritdoc />
     public async Task<(
         IEnumerable<(Plugin plugin, IEnumerable<AuthorizationConstants.Actions> permissions)>,
-        IEnumerable<AuthorizationConstants.Actions>
+        IEnumerable<AuthorizationConstants.Actions>,
+        PluginCursor?
     )> Handle(GetGlobalPluginsQuery request, CancellationToken cancellationToken)
     {
-        var pluginQuery = await _pluginRepository.GetGlobalPluginsAsync();
-        var queriedPlugins = await _authorizationService.TryGetPlanResourceQuery(pluginQuery);
+        var pluginQuery = await _pluginRepository.GetGlobalPluginsAsync(request.Cursor);
+        var (paginatedPlugins, lastPlugin) = await _paginationHelper.PaginateWithAuthAsync(
+            pluginQuery,
+            request.Limit
+        );
 
         var globalPermissions = await _authorizationService.GetAllowedActions<Plugin>(
             actions: [AuthorizationConstants.Actions.CREATE]
         );
         List<(Plugin, IEnumerable<AuthorizationConstants.Actions>)> plugins = [];
-        if (queriedPlugins == null)
-        {
-            var pluginList = await pluginQuery.ToListAsync(cancellationToken: cancellationToken);
-            foreach (var plugin in pluginList)
-            {
-                if (
-                    await _authorizationService.CheckAccess(
-                        plugin,
-                        AuthorizationConstants.Actions.GET
-                    )
-                )
-                {
-                    plugins.Add(
-                        (
-                            plugin,
-                            await _authorizationService.GetAllowedActions(
-                                plugin,
-                                [
-                                    AuthorizationConstants.Actions.EDIT,
-                                    AuthorizationConstants.Actions.DELETE,
-                                ]
-                            )
-                        )
-                    );
-                }
-            }
-            return (plugins, globalPermissions);
-        }
-
-        foreach (
-            var plugin in await queriedPlugins.ToListAsync(cancellationToken: cancellationToken)
-        )
+        foreach (var plugin in paginatedPlugins)
         {
             plugins.Add(
                 (
@@ -89,6 +67,7 @@ public class GetGlobalPluginsQueryHandler
                 )
             );
         }
-        return (plugins, globalPermissions);
+        var nextCursor = lastPlugin == null ? null : new PluginCursor(lastPlugin.PluginName);
+        return (plugins, globalPermissions, nextCursor);
     }
 }

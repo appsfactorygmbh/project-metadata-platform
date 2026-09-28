@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using ProjectMetadataPlatform.Application.Companies;
 using ProjectMetadataPlatform.Domain.Companies;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
@@ -13,7 +14,7 @@ public interface ICompanyRepository
     /// Returns all companies.
     /// </summary>
     /// <returns>List of all Companies.</returns>
-    Task<IQueryable<Company>> GetCompaniesAsync();
+    Task<IQueryable<Company>> GetCompaniesAsync(CompanyCursor? cursor);
 
     /// <summary>
     /// Returns a Company by its Id.

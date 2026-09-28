@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Auth.Models;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Auth;
@@ -86,12 +89,16 @@ public class AuthController : ControllerBase
         typeof(GetListResponse<GetApiTokenDetailsResponse>),
         StatusCodes.Status200OK
     )]
-    public async Task<ActionResult<GetListResponse<GetApiTokenDetailsResponse>>> GetApiTokens()
+    public async Task<ActionResult<GetListResponse<GetApiTokenDetailsResponse>>> GetApiTokens(
+        [FromQuery] int? limit = null,
+        [FromQuery] string? cursor = null
+    )
     {
-        var query = new GetAllApiTokensQuery();
-        var (tokens, permissions) = await _mediator.Send<
+        var cursorPosition = CursorConverter.Decode<ApiTokenCursor>(cursor);
+        var query = new GetAllApiTokensQuery(cursorPosition, limit);
+        var (tokens, permissions, nextCursor) = await _mediator.Send<
             GetAllApiTokensQuery,
-            (IEnumerable<ApiToken>, IEnumerable<AuthorizationConstants.Actions>)
+            (IEnumerable<ApiToken>, IEnumerable<AuthorizationConstants.Actions>, ApiTokenCursor?)
         >(query);
         var tokenResponse = tokens.Select(t => new GetApiTokenDetailsResponse(
             t.Id,
@@ -99,9 +106,11 @@ public class AuthController : ControllerBase
             t.Scopes ?? [],
             t.ExpirationDate
         ));
+        var encodedCursor = CursorConverter.Encode(nextCursor);
         var response = new GetListResponse<GetApiTokenDetailsResponse>(
             [.. tokenResponse],
-            [.. permissions]
+            [.. permissions],
+            encodedCursor
         );
         return Ok(response);
     }

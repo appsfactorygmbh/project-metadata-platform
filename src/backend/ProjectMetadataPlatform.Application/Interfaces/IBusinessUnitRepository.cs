@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using ProjectMetadataPlatform.Application.BusinessUnits;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
@@ -13,7 +14,7 @@ public interface IBusinessUnitRepository
     /// Returns all BUs.
     /// </summary>
     /// <returns>List of all Business Units.</returns>
-    Task<IQueryable<BusinessUnit>> GetBusinessUnitsAsync();
+    Task<IQueryable<BusinessUnit>> GetBusinessUnitsAsync(BusinessUnitCursor? cursor);
 
     /// <summary>
     /// Returns a BU by its Id.

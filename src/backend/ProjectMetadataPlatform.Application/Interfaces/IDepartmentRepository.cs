@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using ProjectMetadataPlatform.Application.Departments;
 using ProjectMetadataPlatform.Domain.Departments;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
@@ -13,7 +14,7 @@ public interface IDepartmentRepository
     /// Returns all Departments.
     /// </summary>
     /// <returns>List of all Departments.</returns>
-    Task<IQueryable<Department>> GetDepartmentsAsync();
+    Task<IQueryable<Department>> GetDepartmentsAsync(DepartmentCursor? cursor);
 
     /// <summary>
     /// Returns a Department by its Id.

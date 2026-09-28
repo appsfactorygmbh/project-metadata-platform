@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectMetadataPlatform.Application.Departments;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Departments;
 using ProjectMetadataPlatform.Domain.Errors.DepartmentExceptions;
@@ -26,11 +27,17 @@ public class DepartmentRepository : RepositoryBase<Department>, IDepartmentRepos
     }
 
     /// <inheritdoc/>
-    public async Task<IQueryable<Department>> GetDepartmentsAsync()
+    public async Task<IQueryable<Department>> GetDepartmentsAsync(DepartmentCursor? cursor)
     {
-        return _context.Departments.AsNoTracking();
+        var query = GetEverything();
+        if (cursor != null)
+        {
+            query = query.Where(d =>
+                d.DepartmentName.CompareTo(cursor.DepartmentName) > 0
+            );
+        }
+        return query.OrderBy(d => d.DepartmentName);
     }
-
     /// <inheritdoc/>
     public async Task<Department> GetDepartmentAsync(int id)
     {
