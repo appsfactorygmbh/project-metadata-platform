@@ -4586,7 +4586,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"baseline-browser-mapping@npm:^2.11.12, baseline-browser-mapping@npm:^2.11.20":
+"baseline-browser-mapping@npm:^2.11.26":
   version: 2.11.26
   resolution: "baseline-browser-mapping@npm:2.11.26"
   bin:
@@ -4754,33 +4754,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.0.0, browserslist@npm:^4.16.3, browserslist@npm:^4.21.4, browserslist@npm:^4.28.9":
-  version: 4.28.9
-  resolution: "browserslist@npm:4.28.9"
+"browserslist@npm:^4.0.0, browserslist@npm:^4.16.3, browserslist@npm:^4.21.4, browserslist@npm:^4.24.0, browserslist@npm:^4.28.1, browserslist@npm:^4.28.9":
+  version: 4.29.2
+  resolution: "browserslist@npm:4.29.2"
   dependencies:
-    baseline-browser-mapping: "npm:^2.11.20"
-    caniuse-lite: "npm:^1.0.30001810"
-    electron-to-chromium: "npm:^1.5.420"
-    node-releases: "npm:^2.0.54"
-    update-browserslist-db: "npm:^1.3.2"
+    baseline-browser-mapping: "npm:^2.11.26"
+    caniuse-lite: "npm:^1.0.30001812"
+    electron-to-chromium: "npm:^1.5.439"
+    node-releases: "npm:^2.0.57"
+    update-browserslist-db: "npm:^1.3.3"
   bin:
     browserslist: cli.js
-  checksum: 10c0/c4c7457cccb188bb904bb84566ff2d09e6f45ccf48619333111e5d60dfad456522a64e3e4af7c7608bc171371fc006f32bcc296877b0586bf80fb9f60841a110
-  languageName: node
-  linkType: hard
-
-"browserslist@npm:^4.24.0, browserslist@npm:^4.28.1":
-  version: 4.28.8
-  resolution: "browserslist@npm:4.28.8"
-  dependencies:
-    baseline-browser-mapping: "npm:^2.11.12"
-    caniuse-lite: "npm:^1.0.30001809"
-    electron-to-chromium: "npm:^1.5.402"
-    node-releases: "npm:^2.0.53"
-    update-browserslist-db: "npm:^1.3.0"
-  bin:
-    browserslist: cli.js
-  checksum: 10c0/047dd517c8d1f1f56a253d752c3127b8ad01c58e4cbb7e21cb5cd07ebd13e083a2237c3afb13eb60674282c9132bd4534aea2c3ff7c6f7d29be0687a00cbd537
+  checksum: 10c0/eee6d82d9b2c8c16bf8083957c51e639b3d1a769393bfdc66d5f67828cecfef9c4fb31946d239d78b09fcdf7f071da8652d3d6d42f42bba54e1a3b42ec9b570b
   languageName: node
   linkType: hard
 
@@ -4937,10 +4922,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.30001809":
-  version: 1.0.30001809
-  resolution: "caniuse-lite@npm:1.0.30001809"
-  checksum: 10c0/cac2ed4e66cc6c4cbf126b94d2c02012566eb92f93c89949290f99edcd2bdc4ed1290b5c537ccb9b42c773936a479ed468e5d4e9b8938b126a0947090e42e008
+"caniuse-lite@npm:^1.0.30001812":
+  version: 1.0.30001813
+  resolution: "caniuse-lite@npm:1.0.30001813"
+  checksum: 10c0/18b160024af4a7daecf43ce0b4203aad956ec71c2438844810af54194a733c8a203a8a9e6b502a904bce30ca312b173099b3c900327ff1cd7178406ada6b684f
   languageName: node
   linkType: hard
 
@@ -6402,17 +6387,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-to-chromium@npm:^1.5.402":
-  version: 1.5.404
-  resolution: "electron-to-chromium@npm:1.5.404"
-  checksum: 10c0/cb927cdd422b5bfab5e3ac4be5bf200232fb54c1b22af8c80e646fd980c850af0b1a07f4172c9fa5aed760efcb11779bf3d1e4315dcf8dab7d005c932e12516c
-  languageName: node
-  linkType: hard
-
-"electron-to-chromium@npm:^1.5.420":
-  version: 1.5.426
-  resolution: "electron-to-chromium@npm:1.5.426"
-  checksum: 10c0/7ab4e61e4bd7aa813b7b5ee9eeddda0a21ffba7069310263b3aa5bfd04321b9a3383228be822d29ebeeec077eb51acb2600e4486c5fb5d77a1dd2aa0c9423250
+"electron-to-chromium@npm:^1.5.439":
+  version: 1.5.439
+  resolution: "electron-to-chromium@npm:1.5.439"
+  checksum: 10c0/cacda90b1addee4f59d57b1f850c0558a678d1b911a0f64e06af555c2ed6844562858f74255a83d7d83ea0618948377ba56e276108ef7f1249f5c3128ca96494
   languageName: node
   linkType: hard
 
@@ -10953,17 +10931,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-releases@npm:^2.0.53":
-  version: 2.0.53
-  resolution: "node-releases@npm:2.0.53"
-  checksum: 10c0/db9fb29b21ec12e223ead8bd9406100ff14fce01678a9a4865e288098456b84869431421a739f216aa520b6f57d9425f6537662501ae8a2d9e1771bfa87751bc
-  languageName: node
-  linkType: hard
-
-"node-releases@npm:^2.0.54":
-  version: 2.0.55
-  resolution: "node-releases@npm:2.0.55"
-  checksum: 10c0/35a779a188b3c1801820b77ea3c429d0aacac346368016a92c357dfd781f2908540fc3782b25d41647c3334dec83c976890f40d254bfd788eb5e72c3730146d1
+"node-releases@npm:^2.0.57":
+  version: 2.0.57
+  resolution: "node-releases@npm:2.0.57"
+  checksum: 10c0/fe5b68fba1fef524243b54828a118f13a4a40db08bb42c0b92680c3ca5c246f4ae6f139515071d46b9a3a9195945f5ac78064f5b7674c4dcc3dd6bfe933ff9e8
   languageName: node
   linkType: hard
 
@@ -14787,9 +14758,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"update-browserslist-db@npm:^1.3.0":
-  version: 1.3.1
-  resolution: "update-browserslist-db@npm:1.3.1"
+"update-browserslist-db@npm:^1.3.3":
+  version: 1.3.3
+  resolution: "update-browserslist-db@npm:1.3.3"
   dependencies:
     escalade: "npm:^3.2.0"
     picocolors: "npm:^1.1.1"
@@ -14797,21 +14768,7 @@ __metadata:
     browserslist: ">= 4.21.0"
   bin:
     update-browserslist-db: cli.js
-  checksum: 10c0/2a924f5aa283af2d918e5cd941c7e8d77b05adf2ffbe5ca461506b1ff05fee6e8bca74c0f1ba37eb28f00ec93b15e80de24c7222825835aec2dd7bf0a0f6a417
-  languageName: node
-  linkType: hard
-
-"update-browserslist-db@npm:^1.3.2":
-  version: 1.3.2
-  resolution: "update-browserslist-db@npm:1.3.2"
-  dependencies:
-    escalade: "npm:^3.2.0"
-    picocolors: "npm:^1.1.1"
-  peerDependencies:
-    browserslist: ">= 4.21.0"
-  bin:
-    update-browserslist-db: cli.js
-  checksum: 10c0/837b4ea8c4934228c5c2a922ea747a54b0ec9d1c408d2fbc9220a9b98327c04109776e6ea1206fa056ea61ed8534863af472d9f2cfce569d35f04e98c95db739
+  checksum: 10c0/07bab166c18f47ba51f3b755e42f109ef5069d0d7c7224887decbd523d5ccd404f63661ebd5a740099972ed47f41f0e28c04df8be31d76716a346f948ce2aa61
   languageName: node
   linkType: hard
 
