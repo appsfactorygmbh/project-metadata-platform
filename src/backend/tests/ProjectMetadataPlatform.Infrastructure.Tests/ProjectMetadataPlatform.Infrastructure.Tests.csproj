@@ -14,7 +14,7 @@
         <PackageReference Include="NUnit" Version="5.0.*" />
         <PackageReference Include="NUnit3TestAdapter" Version="4.6.*" />
         <PackageReference Include="NUnit.Analyzers" Version="4.15.*" />
-        <PackageReference Include="coverlet.collector" Version="6.0.*" />
+        <PackageReference Include="coverlet.collector" Version="10.1.*" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\ProjectMetadataPlatform.Api\ProjectMetadataPlatform.Api.csproj" />
