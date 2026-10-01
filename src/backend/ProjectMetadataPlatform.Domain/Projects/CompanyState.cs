@@ -8,10 +8,10 @@ public enum CompanyState
     /// <summary>
     /// Represents an external company.
     /// </summary>
-    EXTERNAL,
+    EXTERNAL = 0,
 
     /// <summary>
     /// Represents an internal company.
     /// </summary>
-    INTERNAL,
+    INTERNAL = 1,
 }

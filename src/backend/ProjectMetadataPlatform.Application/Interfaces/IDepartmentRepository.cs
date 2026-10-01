@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using ProjectMetadataPlatform.Application.Departments;
 using ProjectMetadataPlatform.Domain.Departments;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
@@ -13,7 +14,7 @@ public interface IDepartmentRepository
     /// Returns all Departments.
     /// </summary>
     /// <returns>List of all Departments.</returns>
-    Task<IQueryable<Department>> GetDepartmentsAsync();
+    Task<IQueryable<Department>> GetDepartmentsAsync(DepartmentCursor? cursor);
 
     /// <summary>
     /// Returns a Department by its Id.
@@ -23,14 +24,14 @@ public interface IDepartmentRepository
     Task<Department> GetDepartmentAsync(int id);
 
     /// <summary>
-    /// Checks wether a Departments with the specified Id exists.
+    /// Checks whether a Departments with the specified Id exists.
     /// </summary>
     /// <param name="id">Id that gets checked.</param>
     /// <returns>Boolean representing the Existence of the Department</returns>
     Task<bool> CheckIfDepartmentExistsAsync(int id);
 
     /// <summary>
-    /// Checks wether a Departments with the specified Name exists.
+    /// Checks whether a Departments with the specified Name exists.
     /// </summary>
     /// <param name="departmentName">Name that gets checked.</param>
     /// <returns>Boolean representing the Existence of the Department</returns>

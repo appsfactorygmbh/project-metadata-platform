@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 
@@ -11,10 +12,11 @@ namespace ProjectMetadataPlatform.Application.Interfaces;
 public interface IApiTokenRepository
 {
     /// <summary>
-    /// Gets a List of all Api Tokens.
+    /// Gets all Api-Tokens
     /// </summary>
-    /// <returns>List of Api Tokens</returns>
-    Task<IQueryable<ApiToken>> GetApiTokens();
+    /// <param name="cursor">Optional Cursor for pagination.</param>
+    /// <returns>List of ApiTokens</returns>
+    Task<IQueryable<ApiToken>> GetApiTokens(ApiTokenCursor? cursor);
 
     /// <summary>
     /// Gets a specific Api Token via its id.

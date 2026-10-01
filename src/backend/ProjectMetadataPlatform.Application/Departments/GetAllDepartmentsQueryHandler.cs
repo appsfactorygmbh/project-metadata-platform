@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Departments;
@@ -15,22 +13,25 @@ namespace ProjectMetadataPlatform.Application.Departments;
 public class GetAllDepartmentsQueryHandler
     : IRequestHandler<
         GetAllDepartmentsQuery,
-        (IEnumerable<Department>, IEnumerable<AuthorizationConstants.Actions>)
+        (IEnumerable<Department>, IEnumerable<AuthorizationConstants.Actions>, DepartmentCursor?)
     >
 {
     private readonly IDepartmentRepository _departmentRepository;
     private readonly IAuthorizationService _authorizationService;
+    private readonly IPaginationHelper _paginationHelper;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetAllDepartmentsQueryHandler" />.
     /// </summary>
     public GetAllDepartmentsQueryHandler(
         IDepartmentRepository departmentRepository,
-        IAuthorizationService authorizationService
+        IAuthorizationService authorizationService,
+        IPaginationHelper paginationHelper
     )
     {
         _departmentRepository = departmentRepository;
         _authorizationService = authorizationService;
+        _paginationHelper = paginationHelper;
     }
 
     /// <summary>
@@ -41,44 +42,20 @@ public class GetAllDepartmentsQueryHandler
     /// <returns>List of Departments and allowed actions.</returns>
     public async Task<(
         IEnumerable<Department>,
-        IEnumerable<AuthorizationConstants.Actions>
+        IEnumerable<AuthorizationConstants.Actions>,
+        DepartmentCursor?
     )> Handle(GetAllDepartmentsQuery request, CancellationToken cancellationToken)
     {
-        var departments = await _departmentRepository.GetDepartmentsAsync();
-        var queriedDepartments = await _authorizationService.TryGetPlanResourceQuery(departments);
+        var departments = await _departmentRepository.GetDepartmentsAsync(request.Cursor);
+        var (paginatedDepartments, lastDepartment) = await _paginationHelper.PaginateWithAuthAsync(
+            departments,
+            request.Limit
+        );
         var permissions = await _authorizationService.GetAllowedActions<Department>(
             actions: [AuthorizationConstants.Actions.CREATE]
         );
-        if (queriedDepartments == null)
-        {
-            var departmentList = await departments.ToListAsync(
-                cancellationToken: cancellationToken
-            );
-            List<Department> filteredDepartments = [];
-            foreach (var department in departmentList)
-            {
-                if (
-                    await _authorizationService.CheckAccess(
-                        department,
-                        AuthorizationConstants.Actions.GET
-                    )
-                )
-                {
-                    filteredDepartments.Add(department);
-                }
-            }
-            return (
-                filteredDepartments.OrderBy(department =>
-                    department.DepartmentName.ToLowerInvariant()
-                ),
-                permissions
-            );
-        }
-        return (
-            (await queriedDepartments.ToListAsync(cancellationToken: cancellationToken)).OrderBy(
-                department => department.DepartmentName.ToLowerInvariant()
-            ),
-            permissions
-        );
+        var nextCursor =
+            lastDepartment == null ? null : new DepartmentCursor(lastDepartment.DepartmentName);
+        return (paginatedDepartments, permissions, nextCursor);
     }
 }

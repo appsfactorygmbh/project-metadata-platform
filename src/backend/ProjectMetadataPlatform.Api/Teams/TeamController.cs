@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.BusinessUnits.Models;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Teams.Models;
@@ -107,6 +108,8 @@ public class TeamsController : ControllerBase
     /// </summary>
     /// <param name="teamName">Search string to filter teams with that team name.</param>
     /// <param name="search">Search string to filter the teams by (across all attributes).</param>
+    /// <param name="limit">Optional Limit of returned responses for pagination.</param>
+    /// <param name="cursor">Optional Cursor for pagination.</param>
     /// <returns>All teams that match the given filters and allowed actions for the type.</returns>
     /// <response code="200">The teams are returned successfully.</response>
     /// <response code="500">An internal error occurred.</response>
@@ -114,13 +117,21 @@ public class TeamsController : ControllerBase
     [ProducesResponseType(typeof(GetListResponse<GetTeamResponse>), StatusCodes.Status200OK)]
     public async Task<ActionResult<GetListResponse<GetTeamResponse>>> Get(
         string? teamName = "",
-        string? search = ""
+        string? search = "",
+        [FromQuery] int? limit = null,
+        [FromQuery] string? cursor = null
     )
     {
-        var query = new GetAllTeamsQuery(FullTextQuery: search, TeamName: teamName);
-        var (teams, permissions) = await _mediator.Send<
+        var cursorPosition = CursorConverter.Decode<TeamCursor>(cursor);
+        var query = new GetAllTeamsQuery(
+            FullTextQuery: search,
+            TeamName: teamName,
+            cursorPosition,
+            limit
+        );
+        var (teams, permissions, nextCursor) = await _mediator.Send<
             GetAllTeamsQuery,
-            (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)
+            (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>, TeamCursor?)
         >(query);
         var teamResponse = teams.Select(t => new GetTeamResponse()
         {
@@ -132,7 +143,12 @@ public class TeamsController : ControllerBase
             ),
             PTL = t.PTL,
         });
-        var response = new GetListResponse<GetTeamResponse>([.. teamResponse], [.. permissions]);
+        var encodedCursor = CursorConverter.Encode(nextCursor);
+        var response = new GetListResponse<GetTeamResponse>(
+            [.. teamResponse],
+            [.. permissions],
+            encodedCursor
+        );
         return Ok(response);
     }
 

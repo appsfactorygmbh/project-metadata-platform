@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.Billing.Models;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Billing;
@@ -151,12 +152,20 @@ public class BillingController : ControllerBase
     /// <response code="500">An internal error occurred.</response>
     [HttpGet]
     [ProducesResponseType(typeof(GetListResponse<GetBillingResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<GetListResponse<GetBillingResponse>>> Get()
+    public async Task<ActionResult<GetListResponse<GetBillingResponse>>> Get(
+        [FromQuery] int? limit = null,
+        [FromQuery] string? cursor = null
+    )
     {
-        var query = new GetAllBillingQuery();
-        var (billing, globalPermissions) = await _mediator.Send<
+        var cursorPosition = CursorConverter.Decode<BillingCursor>(cursor);
+        var query = new GetAllBillingQuery(cursorPosition, limit);
+        var (billing, globalPermissions, nextCursor) = await _mediator.Send<
             GetAllBillingQuery,
-            (IEnumerable<GlobalBilling>, IEnumerable<AuthorizationConstants.Actions>)
+            (
+                IEnumerable<GlobalBilling>,
+                IEnumerable<AuthorizationConstants.Actions>,
+                BillingCursor?
+            )
         >(query);
 
         var billingResponse = billing.Select(billing => new GetBillingResponse(
@@ -166,9 +175,11 @@ public class BillingController : ControllerBase
             billing.TargetMargin,
             billing.TimeFrame
         ));
+        var encodedCursor = CursorConverter.Encode(nextCursor);
         var response = new GetListResponse<GetBillingResponse>(
             [.. billingResponse],
-            [.. globalPermissions]
+            [.. globalPermissions],
+            encodedCursor
         );
         return Ok(response);
     }

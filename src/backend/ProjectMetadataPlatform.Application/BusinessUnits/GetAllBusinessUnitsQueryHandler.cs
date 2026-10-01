@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
@@ -15,22 +13,30 @@ namespace ProjectMetadataPlatform.Application.BusinessUnits;
 public class GetAllBusinessUnitsQueryHandler
     : IRequestHandler<
         GetAllBusinessUnitsQuery,
-        (IEnumerable<BusinessUnit>, IEnumerable<AuthorizationConstants.Actions>)
+        (
+            IEnumerable<BusinessUnit>,
+            IEnumerable<AuthorizationConstants.Actions>,
+            BusinessUnitCursor?
+        )
     >
 {
     private readonly IBusinessUnitRepository _businessUnitRepository;
     private readonly IAuthorizationService _authorizationService;
+
+    private readonly IPaginationHelper _paginationHelper;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetAllBusinessUnitsQueryHandler" />.
     /// </summary>
     public GetAllBusinessUnitsQueryHandler(
         IBusinessUnitRepository businessUnitRepository,
-        IAuthorizationService authorizationService
+        IAuthorizationService authorizationService,
+        IPaginationHelper paginationHelper
     )
     {
         _businessUnitRepository = businessUnitRepository;
         _authorizationService = authorizationService;
+        _paginationHelper = paginationHelper;
     }
 
     /// <summary>
@@ -41,46 +47,20 @@ public class GetAllBusinessUnitsQueryHandler
     /// <returns>List of BU's and allowed actions</returns>
     public async Task<(
         IEnumerable<BusinessUnit>,
-        IEnumerable<AuthorizationConstants.Actions>
+        IEnumerable<AuthorizationConstants.Actions>,
+        BusinessUnitCursor?
     )> Handle(GetAllBusinessUnitsQuery request, CancellationToken cancellationToken)
     {
-        var businessUnits = await _businessUnitRepository.GetBusinessUnitsAsync();
-        var queriedBusinessUnits = await _authorizationService.TryGetPlanResourceQuery(
-            businessUnits
-        );
+        var businessUnits = await _businessUnitRepository.GetBusinessUnitsAsync(request.Cursor);
+        var (paginatedBusinessUnits, lastBusinessUnit) =
+            await _paginationHelper.PaginateWithAuthAsync(businessUnits, request.Limit);
         var permissions = await _authorizationService.GetAllowedActions<BusinessUnit>(
             actions: [AuthorizationConstants.Actions.CREATE]
         );
-        if (queriedBusinessUnits == null)
-        {
-            var businessUnitList = await businessUnits.ToListAsync(
-                cancellationToken: cancellationToken
-            );
-            List<BusinessUnit> filteredBusinessUnits = [];
-            foreach (var businessUnit in businessUnitList)
-            {
-                if (
-                    await _authorizationService.CheckAccess(
-                        businessUnit,
-                        AuthorizationConstants.Actions.GET
-                    )
-                )
-                {
-                    filteredBusinessUnits.Add(businessUnit);
-                }
-            }
-            return (
-                filteredBusinessUnits.OrderBy(businessUnit =>
-                    businessUnit.BusinessUnitName.ToLowerInvariant()
-                ),
-                permissions
-            );
-        }
-        return (
-            (await queriedBusinessUnits.ToListAsync(cancellationToken: cancellationToken)).OrderBy(
-                businessUnit => businessUnit.BusinessUnitName.ToLowerInvariant()
-            ),
-            permissions
-        );
+        var nextCursor =
+            lastBusinessUnit == null
+                ? null
+                : new BusinessUnitCursor(lastBusinessUnit.BusinessUnitName);
+        return (paginatedBusinessUnits, permissions, nextCursor);
     }
 }

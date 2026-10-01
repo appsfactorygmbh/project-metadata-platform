@@ -9,25 +9,25 @@ public enum TimeFrame
     /// <summary>
     /// Plugin is billed monthly.
     /// </summary>
-    MONTHLY,
+    MONTHLY = 0,
 
     /// <summary>
     /// Plugin is billed quarterly.
     /// </summary>
-    QUARTERLY,
+    QUARTERLY = 1,
 
     /// <summary>
     /// Plugin is billed yearly.
     /// </summary>
-    YEARLY,
+    YEARLY = 2,
 
     /// <summary>
     /// Plugin is billed on a specific date.
     /// </summary>
-    DATE,
+    DATE = 3,
 
     /// <summary>
     /// Plugin is never billed.
     /// </summary>
-    NEVER,
+    NEVER = 4,
 }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 using ProjectMetadataPlatform.Domain.Users;
@@ -38,9 +39,17 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
     /// Asynchronously retrieves all projects from the database.
     /// </summary>
     /// <returns>A task representing the asynchronous operation. When this task completes, it returns a collection of projects.</returns>
-    public async Task<IQueryable<ApplicationUser>> GetUsersAsync(string filter)
+    public async Task<IQueryable<ApplicationUser>> GetUsersAsync(string filter, UserCursor? cursor)
     {
-        var filteredQuery = _context.Users.AsQueryable();
+        var filteredQuery = GetEverything();
+        if (cursor != null)
+        {
+            filteredQuery = filteredQuery.Where(u =>
+                string.Compare(u.Email, cursor.Email) > 0
+                || (u.Email == cursor.Email && string.Compare(u.EmployeeId, cursor.Email) > 0)
+            );
+        }
+
         var filterElements = filter.Split(" ");
         if (filterElements.Length == 3 && filterElements[1] == "eq")
         {
@@ -64,7 +73,9 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
             .Include(u => u.Company)
             .Include(u => u.BusinessUnits)
             .Include(u => u.Departments)
-            .Include(u => u.OfficeLocation);
+            .Include(u => u.OfficeLocation)
+            .OrderBy(u => u.Email)
+            .ThenBy(u => u.EmployeeId);
     }
 
     /// <summary>

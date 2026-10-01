@@ -23,6 +23,7 @@ public static class DependencyInjection
     {
         _ = serviceCollection.AddScoped<ISlugHelper, SlugHelper>();
         _ = serviceCollection.AddScoped<IGetOrCreateHelper, GetOrCreateHelper>();
+        _ = serviceCollection.AddScoped<IPaginationHelper, PaginationHelper>();
 
         _ = serviceCollection.AddTransient(
             typeof(IPipelineBehavior<,>),

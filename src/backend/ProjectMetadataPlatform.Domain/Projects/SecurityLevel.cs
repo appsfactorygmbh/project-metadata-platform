@@ -8,15 +8,15 @@ public enum SecurityLevel
     /// <summary>
     /// Represents a normal security level.
     /// </summary>
-    NORMAL,
+    NORMAL = 0,
 
     /// <summary>
     /// Represents a high security level.
     /// </summary>
-    HIGH,
+    HIGH = 1,
 
     /// <summary>
     /// Represents a very high security level.
     /// </summary>
-    VERY_HIGH,
+    VERY_HIGH = 2,
 }

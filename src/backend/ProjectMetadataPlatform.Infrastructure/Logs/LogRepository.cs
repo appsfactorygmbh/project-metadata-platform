@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Application.Logs;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Billing;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
@@ -506,92 +508,131 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
     }
 
     ///  <inheritdoc />
-    public async Task<IQueryable<Log>> GetLogsForProject(int projectId)
+    public async Task<IQueryable<Log>> GetLogsForProject(int projectId, LogCursor? cursor)
     {
         var res = _context
-            .Logs.Include(l => l.Changes)
+            .Logs.AsNoTracking()
+            .Include(l => l.Changes)
             .Include(l => l.Project)
             .Include(l => l.Author)
             .Include(l => l.AuthorToken)
             .Where(log => log.ProjectId == projectId);
-        return res;
+        return ApplyCursorAndSort(res, cursor);
     }
 
     ///  <inheritdoc />
-    public async Task<IQueryable<Log>> GetLogsWithSearch(string search)
+    public async Task<IQueryable<Log>> GetLogsWithSearch(
+        string search,
+        DateTimeOffset? startDate,
+        DateTimeOffset? endDate,
+        LogCursor? cursor
+    )
     {
-        var lowerSearch = search.ToLower();
-
         var actionsToInclude = ActionMessages
-            .Keys.Where(action => ActionMessages[action].Contains(lowerSearch))
+            .Keys.Where(action =>
+                ActionMessages[action]
+                    .Contains(search, System.StringComparison.InvariantCultureIgnoreCase)
+            )
             .ToList();
 
         var res = _context
-            .Logs.Include(l => l.Changes)
-            .Include(l => l.Project)
+            .Logs.AsNoTracking()
+            .Include(l => l.Changes)
             .Include(l => l.Author)
             .Include(l => l.AuthorToken)
-            .Include(l => l.AffectedUser)
-            .Include(l => l.GlobalPlugin)
             .Where(log =>
                 (
                     log.AuthorName != null
-                    && EF.Functions.Like(log.AuthorName.ToLower(), $"%{lowerSearch}%")
+                    && EF.Functions.ILike(log.AuthorName.ToLower(), $"%{search}%")
                 )
                 || (
                     log.AffectedUserEmail != null
-                    && EF.Functions.Like(log.AffectedUserEmail.ToLower(), $"%{lowerSearch}%")
+                    && EF.Functions.ILike(log.AffectedUserEmail.ToLower(), $"%{search}%")
                 )
                 || (
                     log.GlobalPluginName != null
-                    && EF.Functions.Like(log.GlobalPluginName.ToLower(), $"%{lowerSearch}%")
+                    && EF.Functions.ILike(log.GlobalPluginName.ToLower(), $"%{search}%")
                 )
                 || actionsToInclude.Contains(log.Action)
                 || (
-                    log.Project != null
-                    && EF.Functions.Like(log.Project.ProjectName.ToLower(), $"%{lowerSearch}%")
+                    log.ProjectName != null
+                    && EF.Functions.ILike(log.ProjectName.ToLower(), $"%{search}%")
+                )
+                || (
+                    log.TeamName != null
+                    && EF.Functions.ILike(log.TeamName.ToLower(), $"%{search}%")
+                )
+                || (
+                    log.AffectedTokenName != null
+                    && EF.Functions.ILike(log.AffectedTokenName.ToLower(), $"%{search}%")
+                )
+                || (
+                    log.CompanyName != null
+                    && EF.Functions.ILike(log.CompanyName.ToLower(), $"%{search}%")
+                )
+                || (
+                    log.DepartmentName != null
+                    && EF.Functions.ILike(log.DepartmentName.ToLower(), $"%{search}%")
+                )
+                || (
+                    log.BusinessUnitName != null
+                    && EF.Functions.ILike(log.BusinessUnitName.ToLower(), $"%{search}%")
+                )
+                || (
+                    log.OfficeLocationName != null
+                    && EF.Functions.ILike(log.OfficeLocationName.ToLower(), $"%{search}%")
+                )
+                || (
+                    log.GlobalBillingKind != null
+                    && EF.Functions.ILike(log.GlobalBillingKind.ToLower(), $"%{search}%")
+                )
+                || (
+                    log.PluginName != null
+                    && EF.Functions.ILike(log.PluginName.ToLower(), $"%{search}%")
                 )
                 || (
                     log.Changes != null
                     && log.Changes.Any(change =>
-                        EF.Functions.Like(change.Property.ToLower(), $"%{lowerSearch}%")
-                        || EF.Functions.Like(change.OldValue.ToLower(), $"%{lowerSearch}%")
-                        || EF.Functions.Like(change.NewValue.ToLower(), $"%{lowerSearch}%")
+                        EF.Functions.ILike(change.Property.ToLower(), $"%{search}%")
+                        || EF.Functions.ILike(change.OldValue.ToLower(), $"%{search}%")
+                        || EF.Functions.ILike(change.NewValue.ToLower(), $"%{search}%")
                     )
                 )
             );
 
-        return res;
+        return ApplyCursorAndSort(res, cursor);
     }
 
     ///  <inheritdoc />
-    public async Task<IQueryable<Log>> GetLogsForUser(string userId)
+    public async Task<IQueryable<Log>> GetLogsForUser(string userId, LogCursor? cursor)
     {
         var res = _context
-            .Logs.Include(l => l.Changes)
+            .Logs.AsNoTracking()
+            .Include(l => l.Changes)
             .Include(l => l.AffectedUser)
             .Include(l => l.AuthorToken)
             .Include(l => l.Author)
             .Where(log => log.AffectedUserId == userId);
-        return res;
+        return ApplyCursorAndSort(res, cursor);
     }
 
     ///  <inheritdoc />
-    public async Task<IQueryable<Log>> GetLogsForGlobalPlugin(int globalPluginId)
+    public async Task<IQueryable<Log>> GetLogsForGlobalPlugin(int globalPluginId, LogCursor? cursor)
     {
         var res = _context
-            .Logs.Include(l => l.Changes)
+            .Logs.AsNoTracking()
+            .Include(l => l.Changes)
             .Include(l => l.GlobalPlugin)
             .Include(l => l.Author)
             .Include(l => l.AuthorToken)
             .Where(log => log.GlobalPluginId == globalPluginId);
-        return res;
+        return ApplyCursorAndSort(res, cursor);
     }
 
     ///  <inheritdoc />
-    public async Task<IQueryable<Log>> GetAllLogs()
+    public async Task<IQueryable<Log>> GetAllLogs(LogCursor? cursor)
     {
-        return GetEverything()
+        var res = GetEverything()
             .Include(log => log.Project)
             .Include(log => log.Team)
             .Include(log => log.AffectedToken)
@@ -602,5 +643,19 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
             .Include(log => log.Author)
             .Include(l => l.AuthorToken)
             .Include(log => log.Changes);
+        return ApplyCursorAndSort(res, cursor);
+    }
+
+    private static IQueryable<Log> ApplyCursorAndSort(IQueryable<Log> query, LogCursor? cursor)
+    {
+        if (cursor != null)
+        {
+            query = query.Where(l =>
+                l.TimeStamp < cursor.TimeStamp
+                || (l.TimeStamp == cursor.TimeStamp && l.Id < cursor.Id)
+            );
+        }
+
+        return query.OrderByDescending(l => l.TimeStamp).ThenByDescending(l => l.Id);
     }
 }

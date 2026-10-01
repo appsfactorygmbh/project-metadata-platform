@@ -18,9 +18,10 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.11")
+                .HasAnnotation("ProductVersion", "10.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pg_trgm");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("ApplicationUserBusinessUnit", b =>
@@ -361,6 +362,130 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.ToTable("BusinessUnits");
                 });
 
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Common.CompanyStateLookup", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CompanyStateLookup");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 0,
+                            Name = "external"
+                        },
+                        new
+                        {
+                            Id = 1,
+                            Name = "internal"
+                        });
+                });
+
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Common.CurrencyLookup", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CurrencyLookup");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 849,
+                            Name = "usd"
+                        },
+                        new
+                        {
+                            Id = 978,
+                            Name = "eur"
+                        });
+                });
+
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Common.SecurityLevelLookup", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SecurityLevelLookup");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 0,
+                            Name = "normal"
+                        },
+                        new
+                        {
+                            Id = 1,
+                            Name = "high"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "very high"
+                        });
+                });
+
+            modelBuilder.Entity("ProjectMetadataPlatform.Domain.Common.TimeFrameLookup", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TimeFrameLookup");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 0,
+                            Name = "monthly"
+                        },
+                        new
+                        {
+                            Id = 1,
+                            Name = "quarterly"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "yearly"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "date"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "never"
+                        });
+                });
+
             modelBuilder.Entity("ProjectMetadataPlatform.Domain.Companies.Company", b =>
                 {
                     b.Property<int>("Id")
@@ -524,6 +649,9 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("TeamId");
+
+                    b.HasIndex("TimeStamp", "Id")
+                        .IsDescending();
 
                     b.ToTable("Logs");
                 });
@@ -937,7 +1065,71 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
 
                     b.HasIndex("OfficeLocationId");
 
+                    b.HasIndex("Email", "EmployeeId");
+
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("ProjectSearchModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("BillingSearchText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("BusinessUnitName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClientName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CompanyStateText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsEoC")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PTL")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PluginsSearchText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SecurityLevelText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TeamName")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("mv_project_search", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationUserBusinessUnit", b =>

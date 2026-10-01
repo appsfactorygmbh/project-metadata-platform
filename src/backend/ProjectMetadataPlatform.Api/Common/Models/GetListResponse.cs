@@ -9,7 +9,9 @@ namespace ProjectMetadataPlatform.Api.Common.Models;
 /// <typeparam name="T">Resource Type.</typeparam>
 /// <param name="Resources">List of Resources.</param>
 /// <param name="Permissions">Permissions on the Resource type.</param>
+/// <param name="Cursor">Optional encoded cursor string used for pagination.</param>
 public record GetListResponse<T>(
     List<T> Resources,
-    List<AuthorizationConstants.Actions> Permissions
+    List<AuthorizationConstants.Actions> Permissions,
+    string? Cursor = null
 );

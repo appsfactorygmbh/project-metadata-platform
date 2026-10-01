@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
@@ -15,22 +13,30 @@ namespace ProjectMetadataPlatform.Application.OfficeLocations;
 public class GetAllOfficeLocationsQueryHandler
     : IRequestHandler<
         GetAllOfficeLocationsQuery,
-        (IEnumerable<OfficeLocation>, IEnumerable<AuthorizationConstants.Actions>)
+        (
+            IEnumerable<OfficeLocation>,
+            IEnumerable<AuthorizationConstants.Actions>,
+            OfficeLocationCursor?
+        )
     >
 {
     private readonly IOfficeLocationRepository _officeLocationRepository;
     private readonly IAuthorizationService _authorizationService;
+
+    private readonly IPaginationHelper _paginationHelper;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetAllOfficeLocationsQueryHandler" />.
     /// </summary>
     public GetAllOfficeLocationsQueryHandler(
         IOfficeLocationRepository officeLocationRepository,
-        IAuthorizationService authorizationService
+        IAuthorizationService authorizationService,
+        IPaginationHelper paginationHelper
     )
     {
         _officeLocationRepository = officeLocationRepository;
         _authorizationService = authorizationService;
+        _paginationHelper = paginationHelper;
     }
 
     /// <summary>
@@ -41,43 +47,22 @@ public class GetAllOfficeLocationsQueryHandler
     /// <returns>List of Office Locations and allowed actions.</returns>
     public async Task<(
         IEnumerable<OfficeLocation>,
-        IEnumerable<AuthorizationConstants.Actions>
+        IEnumerable<AuthorizationConstants.Actions>,
+        OfficeLocationCursor?
     )> Handle(GetAllOfficeLocationsQuery request, CancellationToken cancellationToken)
     {
-        var officeLocations = await _officeLocationRepository.GetOfficeLocationsAsync();
-        var queriedOfficeLocations = await _authorizationService.TryGetPlanResourceQuery(
-            officeLocations
+        var officeLocations = await _officeLocationRepository.GetOfficeLocationsAsync(
+            request.Cursor
         );
+        var (paginatedOfficeLocations, lastOfficeLocation) =
+            await _paginationHelper.PaginateWithAuthAsync(officeLocations, request.Limit);
         var permissions = await _authorizationService.GetAllowedActions<OfficeLocation>(
             actions: [AuthorizationConstants.Actions.CREATE]
         );
-        if (queriedOfficeLocations == null)
-        {
-            List<OfficeLocation> filteredOfficeLocations = [];
-            foreach (var officeLocation in officeLocations)
-            {
-                if (
-                    await _authorizationService.CheckAccess(
-                        officeLocation,
-                        AuthorizationConstants.Actions.GET
-                    )
-                )
-                {
-                    filteredOfficeLocations.Add(officeLocation);
-                }
-            }
-            return (
-                filteredOfficeLocations.OrderBy(officeLocation =>
-                    officeLocation.OfficeLocationName.ToLowerInvariant()
-                ),
-                permissions
-            );
-        }
-        return (
-            (
-                await queriedOfficeLocations.ToListAsync(cancellationToken: cancellationToken)
-            ).OrderBy(officeLocation => officeLocation.OfficeLocationName.ToLowerInvariant()),
-            permissions
-        );
+        var nextCursor =
+            lastOfficeLocation == null
+                ? null
+                : new OfficeLocationCursor(lastOfficeLocation.OfficeLocationName);
+        return (paginatedOfficeLocations, permissions, nextCursor);
     }
 }

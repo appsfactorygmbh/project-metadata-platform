@@ -11,7 +11,7 @@ namespace ProjectMetadataPlatform.Application.Users;
 /// <param name="Email">Email of the user.</param>
 /// <param name="Password">Password of the user.</param>
 /// <param name="IsActive">Activity status of the user.</param>
-/// <param name="IsScimProvisioned">Wether the user was created via api token or manually</param>
+/// <param name="IsScimProvisioned">Whether the user was created via api token or manually</param>
 /// <param name="Teams"> List of teamnames of teams the user belongs to.</param>
 /// <param name="TeamSupport">List of teamnames of teams the user is supporting.</param>
 /// <param name="BusinessUnits">List of BUs the user belongs to.</param>

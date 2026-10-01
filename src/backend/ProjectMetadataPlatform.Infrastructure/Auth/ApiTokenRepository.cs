@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
@@ -31,9 +32,14 @@ public class ApiTokenRepository : RepositoryBase<ApiToken>, IApiTokenRepository
     }
 
     /// <inheritdoc/>
-    public async Task<IQueryable<ApiToken>> GetApiTokens()
+    public async Task<IQueryable<ApiToken>> GetApiTokens(ApiTokenCursor? cursor)
     {
-        return GetEverything();
+        var query = GetEverything();
+        if (cursor != null)
+        {
+            query = query.Where(a => a.Name.CompareTo(cursor.Name) > 0);
+        }
+        return query.OrderBy(a => a.Name);
     }
 
     /// <inheritdoc/>

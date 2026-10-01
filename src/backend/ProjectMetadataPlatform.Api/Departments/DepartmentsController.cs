@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Departments.Models;
 using ProjectMetadataPlatform.Api.Errors;
@@ -42,20 +43,30 @@ public class DepartmentsController : ControllerBase
     /// <response code="500">An internal error occurred.</response>
     [HttpGet]
     [ProducesResponseType(typeof(GetListResponse<GetDepartmentResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<GetListResponse<GetDepartmentResponse>>> Get()
+    public async Task<ActionResult<GetListResponse<GetDepartmentResponse>>> Get(
+        [FromQuery] int? limit = null,
+        [FromQuery] string? cursor = null
+    )
     {
-        var query = new GetAllDepartmentsQuery();
-        var (departments, permissions) = await _mediator.Send<
+        var cursorPosition = CursorConverter.Decode<DepartmentCursor>(cursor);
+        var query = new GetAllDepartmentsQuery(cursorPosition, limit);
+        var (departments, permissions, nextCursor) = await _mediator.Send<
             GetAllDepartmentsQuery,
-            (IEnumerable<Department>, IEnumerable<AuthorizationConstants.Actions>)
+            (
+                IEnumerable<Department>,
+                IEnumerable<AuthorizationConstants.Actions>,
+                DepartmentCursor?
+            )
         >(query);
         var departmentResponse = departments.Select(department => new GetDepartmentResponse(
             Id: department.Id,
             DepartmentName: department.DepartmentName
         ));
+        var encodedCursor = CursorConverter.Encode(nextCursor);
         var response = new GetListResponse<GetDepartmentResponse>(
             [.. departmentResponse],
-            [.. permissions]
+            [.. permissions],
+            encodedCursor
         );
         return Ok(response);
     }

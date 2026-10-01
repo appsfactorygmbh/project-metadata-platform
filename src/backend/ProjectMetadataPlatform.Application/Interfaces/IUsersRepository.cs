@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Users;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
@@ -21,8 +22,9 @@ public interface IUsersRepository
     /// Returns all users that conform to the given filter.
     /// </summary>
     /// <param name="filter">Scim style filter.</param>
+    /// <param name="cursor">Optional Cursor for pagination.</param>
     /// <returns>Enumerable of all filtered User-Objects</returns>
-    Task<IQueryable<ApplicationUser>> GetUsersAsync(string filter);
+    Task<IQueryable<ApplicationUser>> GetUsersAsync(string filter, UserCursor? cursor);
 
     /// <summary>
     /// Returns a user by their ID.

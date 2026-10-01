@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ProjectMetadataPlatform.Domain.Common;
 using ProjectMetadataPlatform.Domain.Projects;
 
 namespace ProjectMetadataPlatform.Application.Projects;
@@ -14,6 +15,8 @@ namespace ProjectMetadataPlatform.Application.Projects;
 /// <param name="IsEoC"> Optional. If the project is an Engineer on Call project.</param>
 /// <param name="Company">Optional. A list of companies to filter the projects by.</param>
 /// <param name="IsmsLevel">Optional. The ISMS level to filter the projects by.</param>
+/// <param name="SortAttribute"> Attribute to Sort the Projects by. Clientname by default.</param>
+/// <param name="SortOrder">Order to Sort the Projects by. Ascending Order by default.</param>
 public record ProjectFilterRequest(
     string? ProjectName,
     string? ClientName,
@@ -22,5 +25,7 @@ public record ProjectFilterRequest(
     bool? IsArchived,
     bool? IsEoC,
     List<string>? Company,
-    SecurityLevel? IsmsLevel
+    SecurityLevel? IsmsLevel,
+    ProjectSortCharacteristic SortAttribute = ProjectSortCharacteristic.ClientName,
+    SortOrder SortOrder = SortOrder.ASC
 );

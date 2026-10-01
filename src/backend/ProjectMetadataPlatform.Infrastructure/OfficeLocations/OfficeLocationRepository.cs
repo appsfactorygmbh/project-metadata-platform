@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Application.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -26,9 +27,18 @@ public class OfficeLocationRepository : RepositoryBase<OfficeLocation>, IOfficeL
     }
 
     /// <inheritdoc/>
-    public async Task<IQueryable<OfficeLocation>> GetOfficeLocationsAsync()
+    public async Task<IQueryable<OfficeLocation>> GetOfficeLocationsAsync(
+        OfficeLocationCursor? cursor
+    )
     {
-        return _context.OfficeLocations.AsNoTracking();
+        var query = GetEverything();
+        if (cursor != null)
+        {
+            query = query.Where(ol =>
+                ol.OfficeLocationName.CompareTo(cursor.OfficeLocationName) > 0
+            );
+        }
+        return query.OrderBy(ol => ol.OfficeLocationName);
     }
 
     /// <inheritdoc/>
