@@ -77,7 +77,7 @@ public class Project
     public SecurityLevel IsmsLevel { get; set; }
 
     /// <summary>
-    /// Wether the Project is an Engineer on Call Project.
+    /// Whether the Project is an Engineer on Call Project.
     /// </summary>
     public bool IsEoC { get; set; }
 

@@ -108,6 +108,8 @@ public class TeamsController : ControllerBase
     /// </summary>
     /// <param name="teamName">Search string to filter teams with that team name.</param>
     /// <param name="search">Search string to filter the teams by (across all attributes).</param>
+    /// <param name="limit">Optional Limit of returned responses for pagination.</param>
+    /// <param name="cursor">Optional Cursor for pagination.</param>
     /// <returns>All teams that match the given filters and allowed actions for the type.</returns>
     /// <response code="200">The teams are returned successfully.</response>
     /// <response code="500">An internal error occurred.</response>

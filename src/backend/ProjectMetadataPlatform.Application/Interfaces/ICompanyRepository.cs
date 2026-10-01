@@ -24,14 +24,14 @@ public interface ICompanyRepository
     Task<Company> GetCompanyAsync(int id);
 
     /// <summary>
-    /// Checks wether a Companies with the specified Id exists.
+    /// Checks whether a Companies with the specified Id exists.
     /// </summary>
     /// <param name="id">Id that gets checked.</param>
     /// <returns>Boolean representing the Existence of the Company</returns>
     Task<bool> CheckIfCompanyExistsAsync(int id);
 
     /// <summary>
-    /// Checks wether a Companies with the specified Name exists.
+    /// Checks whether a Companies with the specified Name exists.
     /// </summary>
     /// <param name="companyName">Name that gets checked.</param>
     /// <returns>Boolean representing the Existence of the Company</returns>

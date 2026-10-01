@@ -32,12 +32,11 @@ public class DepartmentRepository : RepositoryBase<Department>, IDepartmentRepos
         var query = GetEverything();
         if (cursor != null)
         {
-            query = query.Where(d =>
-                d.DepartmentName.CompareTo(cursor.DepartmentName) > 0
-            );
+            query = query.Where(d => d.DepartmentName.CompareTo(cursor.DepartmentName) > 0);
         }
         return query.OrderBy(d => d.DepartmentName);
     }
+
     /// <inheritdoc/>
     public async Task<Department> GetDepartmentAsync(int id)
     {

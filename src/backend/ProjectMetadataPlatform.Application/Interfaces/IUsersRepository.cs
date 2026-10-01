@@ -22,6 +22,7 @@ public interface IUsersRepository
     /// Returns all users that conform to the given filter.
     /// </summary>
     /// <param name="filter">Scim style filter.</param>
+    /// <param name="cursor">Optional Cursor for pagination.</param>
     /// <returns>Enumerable of all filtered User-Objects</returns>
     Task<IQueryable<ApplicationUser>> GetUsersAsync(string filter, UserCursor? cursor);
 

@@ -103,9 +103,7 @@ public class BillingRepository : RepositoryBase<GlobalBilling>, IBillingReposito
         var query = GetEverything();
         if (cursor != null)
         {
-            query = query.Where(gb =>
-                gb.BillingKind.CompareTo(cursor.BillingKind) > 0
-            );
+            query = query.Where(gb => gb.BillingKind.CompareTo(cursor.BillingKind) > 0);
         }
         return query.OrderBy(gb => gb.BillingKind);
     }

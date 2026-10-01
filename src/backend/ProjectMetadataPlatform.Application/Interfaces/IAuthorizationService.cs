@@ -65,4 +65,12 @@ public interface IAuthorizationService
     Task<Dictionary<AuthorizationConstants.Actions, FilterTree>> GetPermissions(
         string resourceKind
     );
+
+    /// <summary>
+    /// Method to check if an Attribute can be included in a search request.
+    /// </summary>
+    /// <param name="resource">Resource that is queried.</param>
+    /// <param name="filterAttribute">Related Resource that is checked.</param>
+    /// <returns>If the attribute is allowed to be included in a search request.</returns>
+    Task<bool> CheckSearchAttribute(string resource, string filterAttribute);
 }

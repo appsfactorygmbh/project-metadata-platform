@@ -24,14 +24,14 @@ public interface IDepartmentRepository
     Task<Department> GetDepartmentAsync(int id);
 
     /// <summary>
-    /// Checks wether a Departments with the specified Id exists.
+    /// Checks whether a Departments with the specified Id exists.
     /// </summary>
     /// <param name="id">Id that gets checked.</param>
     /// <returns>Boolean representing the Existence of the Department</returns>
     Task<bool> CheckIfDepartmentExistsAsync(int id);
 
     /// <summary>
-    /// Checks wether a Departments with the specified Name exists.
+    /// Checks whether a Departments with the specified Name exists.
     /// </summary>
     /// <param name="departmentName">Name that gets checked.</param>
     /// <returns>Boolean representing the Existence of the Department</returns>

@@ -24,14 +24,14 @@ public interface IBusinessUnitRepository
     Task<BusinessUnit> GetBusinessUnitAsync(int id);
 
     /// <summary>
-    /// Checks wether a Business Units with the specified Id exists.
+    /// Checks whether a Business Units with the specified Id exists.
     /// </summary>
     /// <param name="id">Id that gets checked.</param>
     /// <returns>Boolean representing the Existence of the BU</returns>
     Task<bool> CheckIfBusinessUnitExistsAsync(int id);
 
     /// <summary>
-    /// Checks wether a Business Units with the specified Name exists.
+    /// Checks whether a Business Units with the specified Name exists.
     /// </summary>
     /// <param name="buName">Name that gets checked.</param>
     /// <returns>Boolean representing the Existence of the BU</returns>

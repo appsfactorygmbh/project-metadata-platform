@@ -32,9 +32,7 @@ public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUni
         var query = GetEverything();
         if (cursor != null)
         {
-            query = query.Where(bu =>
-                bu.BusinessUnitName.CompareTo(cursor.BusinessUnitName) > 0
-            );
+            query = query.Where(bu => bu.BusinessUnitName.CompareTo(cursor.BusinessUnitName) > 0);
         }
         return query.OrderBy(bu => bu.BusinessUnitName);
     }

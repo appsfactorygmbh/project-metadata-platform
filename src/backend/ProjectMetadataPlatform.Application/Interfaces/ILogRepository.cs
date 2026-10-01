@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ProjectMetadataPlatform.Application.Logs;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Billing;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
@@ -12,6 +14,7 @@ using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Domain.Users;
+using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
 
@@ -148,33 +151,44 @@ public interface ILogRepository
     /// Retrieves the logs for a specific project.
     /// </summary>
     /// <param name="projectId">The unique identifier of the project.</param>
+    /// <param name="cursor">Optional Cursor for pagination</param>
     /// <returns>A list of logs associated with the specified project.</returns>
-    Task<IQueryable<Log>> GetLogsForProject(int projectId);
+    Task<IQueryable<Log>> GetLogsForProject(int projectId, LogCursor? cursor);
 
     /// <summary>
     /// Retrieves logs that match the specified search term.
     /// </summary>
     /// <param name="search">The search term to filter logs.</param>
-    /// <returns>A list of logs that match the search term.</returns>
-    Task<IQueryable<Log>> GetLogsWithSearch(string search);
+    /// <param name="startDate">Optional Startdate for filtering logs.</param>
+    /// <param name="endDate">Optional Enddate for filtering logs.</param>
+    /// <param name="cursor">Optional Cursor for pagination.</param>
+    /// <returns>A list of logs that match the search term and the dates.</returns>
+    Task<IQueryable<Log>> GetLogsWithSearch(
+        string search,
+        DateTimeOffset? startDate,
+        DateTimeOffset? endDate,
+        LogCursor? cursor
+    );
 
     /// <summary>
     /// Retrieves the logs for a specific user.
     /// </summary>
     /// <param name="userId">The unique identifier of the user.</param>
+    /// <param name="cursor">Optional Cursor for pagination.</param>
     /// <returns> A list of logs associated with the specified user.</returns>
-    Task<IQueryable<Log>> GetLogsForUser(string userId);
+    Task<IQueryable<Log>> GetLogsForUser(string userId, LogCursor? cursor);
 
     /// <summary>
     /// Retrieves the logs for a specific project.
     /// </summary>
     /// <param name="globalPluginId">The unique identifier of the global plugin.</param>
+    /// <param name="cursor">Optional Cursor for pagination.</param>
     /// <returns> A list of logs associated with the specified global plugin.</returns>
-    Task<IQueryable<Log>> GetLogsForGlobalPlugin(int globalPluginId);
+    Task<IQueryable<Log>> GetLogsForGlobalPlugin(int globalPluginId, LogCursor? cursor);
 
     /// <summary>
     /// Retrieves all logs from the database.
     /// </summary>
     /// <returns>A list of all logs, sorted by timestamp.</returns>
-    Task<IQueryable<Log>> GetAllLogs();
+    Task<IQueryable<Log>> GetAllLogs(LogCursor? cursor);
 }

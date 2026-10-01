@@ -25,6 +25,7 @@ public class GetAllApiTokensQueryHandler
     /// </summary>
     /// <param name="apiTokenRepository"></param>
     /// <param name="authorizationService"></param>
+    /// <param name="paginationHelper"></param>
     public GetAllApiTokensQueryHandler(
         IApiTokenRepository apiTokenRepository,
         IAuthorizationService authorizationService,

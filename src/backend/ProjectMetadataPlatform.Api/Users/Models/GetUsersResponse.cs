@@ -30,5 +30,8 @@ public record GetUsersResponse
     /// </summary>
     public List<AuthorizationConstants.Actions>? Permissions { get; set; }
 
-    public string? Cursor { get; set; } = null;
+    /// <summary>
+    /// Cursor to next resource for pagination.
+    /// </summary>
+    public string? Cursor { get; set; }
 }

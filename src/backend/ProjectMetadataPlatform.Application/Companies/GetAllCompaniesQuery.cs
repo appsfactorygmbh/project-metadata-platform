@@ -9,4 +9,4 @@ namespace ProjectMetadataPlatform.Application.Companies;
 /// Query to return all Companies.
 /// </summary>
 public record GetAllCompaniesQuery(CompanyCursor? Cursor, int? Limit)
-    : IRequest<(IEnumerable<Company>, IEnumerable<AuthorizationConstants.Actions>,CompanyCursor?)>;
+    : IRequest<(IEnumerable<Company>, IEnumerable<AuthorizationConstants.Actions>, CompanyCursor?)>;

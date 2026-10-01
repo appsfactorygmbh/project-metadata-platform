@@ -11,6 +11,11 @@ namespace ProjectMetadataPlatform.Application.Interfaces;
 /// </summary>
 public interface IApiTokenRepository
 {
+    /// <summary>
+    /// Gets all Api-Tokens
+    /// </summary>
+    /// <param name="cursor">Optional Cursor for pagination.</param>
+    /// <returns>List of ApiTokens</returns>
     Task<IQueryable<ApiToken>> GetApiTokens(ApiTokenCursor? cursor);
 
     /// <summary>

@@ -7,15 +7,23 @@ using ProjectMetadataPlatform.Domain.Authorization;
 
 namespace ProjectMetadataPlatform.Application.Helper;
 
+/// <summary>
+/// Helper Class for applying pagination to queries.
+/// </summary>
 public class PaginationHelper : IPaginationHelper
 {
     private readonly IAuthorizationService _authorizationService;
 
+    /// <summary>
+    /// Constructor for <see cref="PaginationHelper"/>
+    /// </summary>
+    /// <param name="authorizationService"></param>
     public PaginationHelper(IAuthorizationService authorizationService)
     {
         _authorizationService = authorizationService;
     }
 
+    /// <inheritdoc/>
     public async Task<(
         IEnumerable<TResource> Resources,
         TResource? LastResource

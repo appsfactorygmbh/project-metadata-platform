@@ -83,6 +83,7 @@ public static class DependencyInjection
         >();
         _ = serviceCollection.AddScoped<IPasswordHasher<ApiToken>, PasswordHasher<ApiToken>>();
         _ = serviceCollection.AddScoped<ILogRepository, LogRepository>();
+        _ = serviceCollection.AddScoped<IJobScheduler, JobScheduler>();
         _ = serviceCollection.AddScoped<IAuthorizationService, AuthorizationService>();
         _ = serviceCollection.AddScoped<IAuthorizationAdminService, AuthorizationAdminService>();
         _ = serviceCollection.AddScoped(provider => AddCerbosClient(cerbosUrl ?? ""));
@@ -380,14 +381,19 @@ public static class DependencyInjection
     {
         _ = serviceCollection.AddQuartz(q =>
         {
-            var jobKey = new JobKey("RefreshTokenCleanUpJob");
+            var cleanUpJobKey = new JobKey("RefreshTokenCleanUpJob");
 
-            _ = q.AddJob<RefreshTokenCleanUpJob>(opts => opts.WithIdentity(jobKey));
+            _ = q.AddJob<RefreshTokenCleanUpJob>(opts => opts.WithIdentity(cleanUpJobKey));
 
             _ = q.AddTrigger(opts =>
-                opts.ForJob(jobKey)
+                opts.ForJob(cleanUpJobKey)
                     .WithIdentity("RefreshTokenCleanUpTrigger")
                     .WithCronSchedule("0 0 6 1 * ?")
+            );
+
+            var refreshJobKey = new JobKey("RefreshSearchViewJob");
+            _ = q.AddJob<RefreshSearchViewJob>(opts =>
+                opts.WithIdentity(refreshJobKey).StoreDurably()
             );
         });
 

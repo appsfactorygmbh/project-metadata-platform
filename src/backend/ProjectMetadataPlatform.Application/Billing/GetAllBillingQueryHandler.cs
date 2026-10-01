@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Billing;
@@ -26,6 +25,7 @@ public class GetAllBillingQueryHandler
     /// </summary>
     /// <param name="billingRepository"></param>
     /// <param name="authorizationService"></param>
+    /// <param name="paginationHelper"></param>
     public GetAllBillingQueryHandler(
         IBillingRepository billingRepository,
         IAuthorizationService authorizationService,
@@ -58,8 +58,7 @@ public class GetAllBillingQueryHandler
         var permissions = await _authorizationService.GetAllowedActions<GlobalBilling>(
             actions: [AuthorizationConstants.Actions.CREATE]
         );
-        var nextCursor =
-            lastBilling == null ? null : new BillingCursor(lastBilling.BillingKind);
+        var nextCursor = lastBilling == null ? null : new BillingCursor(lastBilling.BillingKind);
         return (paginatedBilling, permissions, nextCursor);
     }
 }

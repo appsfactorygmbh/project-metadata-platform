@@ -37,9 +37,7 @@ public class ApiTokenRepository : RepositoryBase<ApiToken>, IApiTokenRepository
         var query = GetEverything();
         if (cursor != null)
         {
-            query = query.Where(a =>
-                a.Name.CompareTo(cursor.Name) > 0
-            );
+            query = query.Where(a => a.Name.CompareTo(cursor.Name) > 0);
         }
         return query.OrderBy(a => a.Name);
     }

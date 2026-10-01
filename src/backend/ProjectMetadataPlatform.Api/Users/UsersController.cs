@@ -127,6 +127,8 @@ public class UsersController : ControllerBase
     /// Gets all user that correspond to a filter. Filter only works for equality to username or employee id.
     /// </summary>
     /// <param name="filter">String Scim filter. </param>
+    /// <param name="limit">Optional Limit of returned responses for pagination.</param>
+    /// <param name="cursor">Optional Cursor for pagination.</param>
     /// <returns>List object containing the users.</returns>
     /// <response code="200">The users are returned successfully.</response>
     /// <response code="500">An internal error occurred.</response>

@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Logs;
 
 namespace ProjectMetadataPlatform.Application.Logs;
@@ -12,23 +9,20 @@ namespace ProjectMetadataPlatform.Application.Logs;
 /// <summary>
 /// Handles the query to retrieve logs based on project ID and search criteria.
 /// </summary>
-public class GetLogsQueryHandler : IRequestHandler<GetLogsQuery, IEnumerable<Log>>
+public class GetLogsQueryHandler : IRequestHandler<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>
 {
     private readonly ILogRepository _logRepository;
-    private readonly IAuthorizationService _authorizationService;
+    private readonly IPaginationHelper _paginationHelper;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GetLogsQueryHandler"/> class.
     /// </summary>
     /// <param name="logRepository">The log repository instance.</param>
-    /// <param name="authorizationService"></param>
-    public GetLogsQueryHandler(
-        ILogRepository logRepository,
-        IAuthorizationService authorizationService
-    )
+    /// <param name="paginationHelper"></param>
+    public GetLogsQueryHandler(ILogRepository logRepository, IPaginationHelper paginationHelper)
     {
         _logRepository = logRepository;
-        _authorizationService = authorizationService;
+        _paginationHelper = paginationHelper;
     }
 
     /// <summary>
@@ -40,39 +34,35 @@ public class GetLogsQueryHandler : IRequestHandler<GetLogsQuery, IEnumerable<Log
     /// <param name="request">The request containing project ID and search criteria.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A list of log responses.</returns>
-    public async Task<IEnumerable<Log>> Handle(
+    public async Task<(IEnumerable<Log>, LogCursor?)> Handle(
         GetLogsQuery request,
         CancellationToken cancellationToken
     )
     {
         var logs = request switch
         {
-            { ProjectId: { } projectId } => await _logRepository.GetLogsForProject(projectId),
-            { Search: { } search } => await _logRepository.GetLogsWithSearch(search),
-            { UserId: { } userId } => await _logRepository.GetLogsForUser(userId),
-            { GlobalPluginId: { } globalPluginId } => await _logRepository.GetLogsForGlobalPlugin(
-                globalPluginId
+            { ProjectId: { } projectId } => await _logRepository.GetLogsForProject(
+                projectId,
+                request.Cursor
             ),
-            _ => await _logRepository.GetAllLogs(),
+            { Search: { } search } => await _logRepository.GetLogsWithSearch(
+                search,
+                request.StartDate,
+                request.EndDate,
+                request.Cursor
+            ),
+            { UserId: { } userId } => await _logRepository.GetLogsForUser(userId, request.Cursor),
+            { GlobalPluginId: { } globalPluginId } => await _logRepository.GetLogsForGlobalPlugin(
+                globalPluginId,
+                request.Cursor
+            ),
+            _ => await _logRepository.GetAllLogs(request.Cursor),
         };
-        var queriedLogs = await _authorizationService.TryGetPlanResourceQuery(logs);
-        if (queriedLogs == null)
-        {
-            var logList = await logs.ToListAsync(cancellationToken: cancellationToken);
-            List<Log> filteredLogs = [];
-            foreach (var log in logList)
-            {
-                if (
-                    await _authorizationService.CheckAccess(log, AuthorizationConstants.Actions.GET)
-                )
-                {
-                    filteredLogs.Add(log);
-                }
-            }
-            return filteredLogs.OrderByDescending(log => log.TimeStamp);
-        }
-        return (
-            await queriedLogs.ToListAsync(cancellationToken: cancellationToken)
-        ).OrderByDescending(log => log.TimeStamp);
+        var (paginatedLogs, lastLog) = await _paginationHelper.PaginateWithAuthAsync(
+            logs,
+            request.Limit
+        );
+        var nextCursor = lastLog == null ? null : new LogCursor(lastLog.TimeStamp, lastLog.Id);
+        return (paginatedLogs, nextCursor);
     }
 }

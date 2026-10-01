@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,8 @@ public sealed class ProjectMetadataPlatformDbContext
     : IdentityDbContext<ApplicationUser>,
         IUnitOfWork
 {
+    private readonly IJobScheduler? _scheduler;
+
     /// <summary>
     /// Represents the table for the relation between Project and Plugin entities.
     /// </summary>
@@ -39,6 +42,11 @@ public sealed class ProjectMetadataPlatformDbContext
     /// Represents the table for project entities.
     /// </summary>
     public DbSet<Project> Projects { get; set; }
+
+    /// <summary>
+    /// Represents the materialized view for project search information.
+    /// </summary>
+    public DbSet<ProjectSearchModel> ProjectSearchIndex { get; set; }
 
     /// <summary>
     /// Represents the table for team entities.
@@ -93,11 +101,19 @@ public sealed class ProjectMetadataPlatformDbContext
     /// <inheritdoc />
     public ProjectMetadataPlatformDbContext() { }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Initializes a new instance of the IdentityDbContext class.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="scheduler"></param>
     public ProjectMetadataPlatformDbContext(
-        DbContextOptions<ProjectMetadataPlatformDbContext> options
+        DbContextOptions<ProjectMetadataPlatformDbContext> options,
+        IJobScheduler? scheduler = null
     )
-        : base(options) { }
+        : base(options)
+    {
+        _scheduler = scheduler;
+    }
 
     /// <summary>
     ///     Configures the model that was discovered by convention from the entity types
@@ -112,9 +128,11 @@ public sealed class ProjectMetadataPlatformDbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        _ = builder.HasPostgresExtension("pg_trgm");
         _ = builder.ApplyConfigurationsFromAssembly(
             typeof(ProjectMetadataPlatformDbContext).Assembly
         );
+
         SeedData(builder);
     }
 
@@ -267,13 +285,44 @@ public sealed class ProjectMetadataPlatformDbContext
     /// <inheritdoc />
     public async Task CompleteAsync()
     {
+        var needsRefresh = HasSearchIndexChanges();
+
         try
         {
             _ = await SaveChangesAsync();
+            if (needsRefresh && _scheduler != null)
+            {
+                await _scheduler.ScheduleSearchViewRefreshAsync();
+            }
         }
         catch (Exception e)
         {
             throw new DatabaseException(e);
         }
+    }
+
+    private bool HasSearchIndexChanges()
+    {
+        var relevantTypes = new[]
+        {
+            typeof(Project),
+            typeof(Company),
+            typeof(Team),
+            typeof(BusinessUnit),
+            typeof(ProjectPlugin),
+            typeof(Plugin),
+            typeof(PluginBilling),
+            typeof(GlobalBilling),
+        };
+
+        return ChangeTracker
+            .Entries()
+            .Any(e =>
+                (
+                    e.State == EntityState.Added
+                    || e.State == EntityState.Modified
+                    || e.State == EntityState.Deleted
+                ) && relevantTypes.Contains(e.Entity.GetType())
+            );
     }
 }

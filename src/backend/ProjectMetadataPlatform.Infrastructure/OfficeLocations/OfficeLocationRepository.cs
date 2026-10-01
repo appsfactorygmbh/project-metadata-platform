@@ -27,7 +27,9 @@ public class OfficeLocationRepository : RepositoryBase<OfficeLocation>, IOfficeL
     }
 
     /// <inheritdoc/>
-    public async Task<IQueryable<OfficeLocation>> GetOfficeLocationsAsync(OfficeLocationCursor? cursor)
+    public async Task<IQueryable<OfficeLocation>> GetOfficeLocationsAsync(
+        OfficeLocationCursor? cursor
+    )
     {
         var query = GetEverything();
         if (cursor != null)

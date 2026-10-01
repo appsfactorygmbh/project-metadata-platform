@@ -15,8 +15,13 @@ public interface ITeamRepository
     /// </summary>
     /// <param name="fullTextQuery">Optional. Full text search over all attributes of a team except the id.</param>
     /// <param name="teamName">Optional. The name of the team to filter by.</param>
-    /// <returns></returns>
-    Task<IQueryable<Team>> GetTeamsAsync(string? fullTextQuery, string? teamName,         TeamCursor? cursor);
+    /// <param name="cursor">Optional Cursor for pagination.</param>
+    /// <returns>List of Teams.</returns>
+    Task<IQueryable<Team>> GetTeamsAsync(
+        string? fullTextQuery,
+        string? teamName,
+        TeamCursor? cursor
+    );
 
     /// <summary>
     /// Retrieves the team by the given id.
