@@ -14,7 +14,7 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Cerbos.Sdk" Version="1.11.1" />
+        <PackageReference Include="Cerbos.Sdk" Version="1.11.2" />
         <PackageReference
             Include="Microsoft.AspNetCore.Authentication.JwtBearer"
             Version="10.0.*"
@@ -27,13 +27,13 @@
             Include="Microsoft.Extensions.DependencyInjection.Abstractions"
             Version="10.0.*"
         />
-        <PackageReference Include="Microsoft.Extensions.Resilience" Version="10.10.*" />
-        <PackageReference Include="Microsoft.Identity.Web" Version="4.15.*" />
+        <PackageReference Include="Microsoft.Extensions.Resilience" Version="10.11.*" />
+        <PackageReference Include="Microsoft.Identity.Web" Version="4.16.*" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.*" />
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.23.*" />
-        <PackageReference Include="Quartz" Version="4.3.0" />
-        <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="4.3.0" />
-        <PackageReference Include="Quartz.Extensions.Hosting" Version="4.3.0" />
+        <PackageReference Include="Quartz" Version="4.5.0" />
+        <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="4.5.0" />
+        <PackageReference Include="Quartz.Extensions.Hosting" Version="4.5.0" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.23.*" />
     </ItemGroup>
     <ItemGroup>
