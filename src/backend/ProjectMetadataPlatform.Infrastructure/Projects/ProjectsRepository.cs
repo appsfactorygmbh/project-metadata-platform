@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Projects;
+using ProjectMetadataPlatform.Domain.Common;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -31,105 +32,234 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
     /// Asynchronously retrieves all projects with specific search pattern or filter matches from the database.
     /// </summary>
     /// <param name="query">The query containing filters and search pattern.</param>
-    /// <returns>A task representing the asynchronous operation. When this task completes, it returns a collection of projects.</returns>
-    public async Task<IQueryable<Project>> GetProjectsAsync(GetAllProjectsQuery query)
+    /// <param name="cursor">Optional Cursor for pagination.</param>
+    /// <param name="canSearchPlugin">Whether Plugin Attributes are allowed to be filtered.</param>
+    /// <param name="canSearchBilling">Whether Billing Attributes are allowed to be filtered.</param>
+    /// <returns>A collection of projects.</returns>
+    public async Task<IQueryable<Project>> GetProjectsAsync(
+        GetAllProjectsQuery query,
+        ProjectCursor? cursor,
+        bool canSearchPlugin = false,
+        bool canSearchBilling = false
+    )
     {
-        var filteredQuery = _context.Projects.AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(query.Search))
-        {
-            var lowerTextSearch = query.Search.ToLowerInvariant();
-
-            filteredQuery = filteredQuery.Where(project =>
-                EF.Functions.Like(project.ProjectName.ToLower(), $"%{lowerTextSearch}%")
-                || EF.Functions.Like(project.ClientName.ToLower(), $"%{lowerTextSearch}%")
-                || (
-                    project.Team != null
-                    && EF.Functions.Like(
-                        project.Team.BusinessUnit!.BusinessUnitName.ToLower(),
-                        $"%{lowerTextSearch}%"
-                    )
-                )
-                || (
-                    project.Team != null
-                    && EF.Functions.Like(project.Team.TeamName.ToLower(), $"%{lowerTextSearch}%")
-                )
-                || EF.Functions.Like(project.Company!.CompanyName.ToLower(), $"%{lowerTextSearch}%")
-                || EF.Functions.Like(project.Notes.ToLower(), $"%{lowerTextSearch}%")
+        var joinQuery = GetEverything()
+            .Include(p => p.Team)
+                .ThenInclude(t => t!.BusinessUnit)
+            .Include(p => p.Company)
+            .Join(
+                _context.ProjectSearchIndex,
+                p => p.Id,
+                s => s.Id,
+                (p, s) => new { Project = p, Search = s }
             );
-        }
 
         if (query.Request != null)
         {
             if (!string.IsNullOrWhiteSpace(query.Request.ProjectName))
             {
-                var lowerProjectNameSearch = query.Request.ProjectName.ToLower();
-                filteredQuery = filteredQuery.Where(project =>
-                    EF.Functions.Like(project.ProjectName.ToLower(), $"%{lowerProjectNameSearch}%")
+                joinQuery = joinQuery.Where(x =>
+                    EF.Functions.ILike(
+                        x.Search.ProjectName,
+                        $"%{query.Request.ProjectName.Trim()}%"
+                    )
                 );
             }
 
             if (!string.IsNullOrWhiteSpace(query.Request.ClientName))
             {
-                var lowerClientNameSearch = query.Request.ClientName.ToLower();
-                filteredQuery = filteredQuery.Where(project =>
-                    EF.Functions.Like(project.ClientName.ToLower(), $"%{lowerClientNameSearch}%")
+                joinQuery = joinQuery.Where(x =>
+                    EF.Functions.ILike(x.Search.ClientName, $"%{query.Request.ClientName.Trim()}%")
                 );
             }
 
-            if (query.Request.BusinessUnit is { Count: > 0 })
+            if (query.Request.BusinessUnit?.Any() == true)
             {
-                var lowerBusinessUnits = query
-                    .Request.BusinessUnit.Select(bu => bu.ToLower())
-                    .ToList();
-                filteredQuery = filteredQuery.Where(project =>
-                    project.Team != null
-                    && lowerBusinessUnits.Contains(
-                        project.Team.BusinessUnit!.BusinessUnitName.ToLower()
-                    )
+                var lowerBUs = query.Request.BusinessUnit.Select(b => b.ToLower()).ToList();
+                joinQuery = joinQuery.Where(x =>
+                    x.Search.BusinessUnitName != null
+                    && lowerBUs.Contains(x.Search.BusinessUnitName)
                 );
             }
 
-            if (query.Request.TeamName is { Count: > 0 })
+            if (query.Request.TeamName?.Any() == true)
             {
-                var lowerTeamNames = query.Request.TeamName.Select(tn => tn.ToLower()).ToList();
-                filteredQuery = filteredQuery.Where(project =>
-                    project.Team != null && lowerTeamNames.Contains(project.Team.TeamName.ToLower())
+                var lowerTeams = query.Request.TeamName.Select(t => t.ToLower()).ToList();
+                joinQuery = joinQuery.Where(x =>
+                    x.Search.TeamName != null && lowerTeams.Contains(x.Search.TeamName)
                 );
             }
 
-            if (query.Request.IsArchived is not null)
-            {
-                filteredQuery = filteredQuery.Where(project =>
-                    project.IsArchived == query.Request.IsArchived
-                );
-            }
-            if (query.Request.IsEoC is not null)
-            {
-                filteredQuery = filteredQuery.Where(project =>
-                    project.IsEoC == query.Request.IsEoC
-                );
-            }
-            if (query.Request.Company is { Count: > 0 })
+            if (query.Request.Company?.Any() == true)
             {
                 var lowerCompanies = query.Request.Company.Select(c => c.ToLower()).ToList();
-                filteredQuery = filteredQuery.Where(project =>
-                    lowerCompanies.Contains(project.Company!.CompanyName.ToLower())
+                joinQuery = joinQuery.Where(x =>
+                    x.Search.CompanyName != null && lowerCompanies.Contains(x.Search.CompanyName)
                 );
             }
 
-            if (query.Request.IsmsLevel is not null)
+            if (query.Request.IsArchived.HasValue)
             {
-                filteredQuery = filteredQuery.Where(project =>
-                    project.IsmsLevel == query.Request.IsmsLevel
+                joinQuery = joinQuery.Where(x =>
+                    x.Search.IsArchived == query.Request.IsArchived.Value
+                );
+            }
+
+            if (query.Request.IsEoC.HasValue)
+            {
+                joinQuery = joinQuery.Where(x => x.Search.IsEoC == query.Request.IsEoC.Value);
+            }
+
+            if (query.Request.IsmsLevel.HasValue)
+            {
+                joinQuery = joinQuery.Where(x =>
+                    x.Project.IsmsLevel == query.Request.IsmsLevel.Value
                 );
             }
         }
 
-        return filteredQuery
-            .Include(p => p.Team)
-                .ThenInclude(t => t!.BusinessUnit)
-            .Include(p => p.Company);
+        if (!string.IsNullOrWhiteSpace(query.Search))
+        {
+            var term = $"%{query.Search.Trim()}%";
+            var isArchivedSearch = nameof(Project.IsArchived)
+                .Contains(query.Search.Trim(), System.StringComparison.InvariantCultureIgnoreCase);
+            var isEoCSearch = nameof(Project.IsEoC)
+                .Contains(query.Search.Trim(), System.StringComparison.InvariantCultureIgnoreCase);
+            joinQuery = joinQuery.Where(x =>
+                EF.Functions.ILike(x.Search.ProjectName, term)
+                || EF.Functions.ILike(x.Search.ClientName, term)
+                || EF.Functions.ILike(x.Search.CompanyName ?? "", term)
+                || (canSearchPlugin && EF.Functions.ILike(x.Search.PluginsSearchText, term))
+                || EF.Functions.ILike(x.Search.Notes ?? "", term)
+                || EF.Functions.ILike(x.Search.CompanyStateText, term)
+                || EF.Functions.ILike(x.Search.SecurityLevelText, term)
+                || (isArchivedSearch && x.Search.IsArchived)
+                || (isEoCSearch && x.Search.IsEoC)
+                || (canSearchBilling && EF.Functions.ILike(x.Search.BillingSearchText, term))
+            );
+        }
+
+        var sortBy = query.Request?.SortAttribute ?? ProjectSortCharacteristic.ClientName;
+        var desc = query.Request?.SortOrder == SortOrder.DESC;
+
+        if (cursor != null)
+        {
+            joinQuery = sortBy switch
+            {
+                ProjectSortCharacteristic.Company => desc
+                    ? joinQuery.Where(x =>
+                        (x.Search.CompanyName ?? "").CompareTo(cursor.CursorValue) < 0
+                        || (
+                            (x.Search.CompanyName ?? "") == cursor.CursorValue
+                            && x.Search.Slug.CompareTo(cursor.Slug) < 0
+                        )
+                    )
+                    : joinQuery.Where(x =>
+                        (x.Search.CompanyName ?? "").CompareTo(cursor.CursorValue) > 0
+                        || (
+                            (x.Search.CompanyName ?? "") == cursor.CursorValue
+                            && x.Search.Slug.CompareTo(cursor.Slug) > 0
+                        )
+                    ),
+
+                ProjectSortCharacteristic.BusinessUnit => desc
+                    ? joinQuery.Where(x =>
+                        (x.Search.BusinessUnitName ?? "").CompareTo(cursor.CursorValue) < 0
+                        || (
+                            (x.Search.BusinessUnitName ?? "") == cursor.CursorValue
+                            && x.Search.Slug.CompareTo(cursor.Slug) < 0
+                        )
+                    )
+                    : joinQuery.Where(x =>
+                        (x.Search.BusinessUnitName ?? "").CompareTo(cursor.CursorValue) > 0
+                        || (
+                            (x.Search.BusinessUnitName ?? "") == cursor.CursorValue
+                            && x.Search.Slug.CompareTo(cursor.Slug) > 0
+                        )
+                    ),
+
+                ProjectSortCharacteristic.Team => desc
+                    ? joinQuery.Where(x =>
+                        (x.Search.TeamName ?? "").CompareTo(cursor.CursorValue) < 0
+                        || (
+                            (x.Search.TeamName ?? "") == cursor.CursorValue
+                            && x.Search.Slug.CompareTo(cursor.Slug) < 0
+                        )
+                    )
+                    : joinQuery.Where(x =>
+                        (x.Search.TeamName ?? "").CompareTo(cursor.CursorValue) > 0
+                        || (
+                            (x.Search.TeamName ?? "") == cursor.CursorValue
+                            && x.Search.Slug.CompareTo(cursor.Slug) > 0
+                        )
+                    ),
+                ProjectSortCharacteristic.ProjectName => desc
+                    ? joinQuery.Where(x =>
+                        x.Search.ProjectName.CompareTo(cursor.CursorValue) < 0
+                        || (
+                            x.Search.ProjectName == cursor.CursorValue
+                            && x.Search.Slug.CompareTo(cursor.Slug) < 0
+                        )
+                    )
+                    : joinQuery.Where(x =>
+                        x.Search.ProjectName.CompareTo(cursor.CursorValue) > 0
+                        || (
+                            x.Search.ProjectName == cursor.CursorValue
+                            && x.Search.Slug.CompareTo(cursor.Slug) > 0
+                        )
+                    ),
+                ProjectSortCharacteristic.ClientName or _ => desc
+                    ? joinQuery.Where(x =>
+                        x.Search.ClientName.CompareTo(cursor.CursorValue) < 0
+                        || (
+                            x.Search.ClientName == cursor.CursorValue
+                            && x.Search.Slug.CompareTo(cursor.Slug) < 0
+                        )
+                    )
+                    : joinQuery.Where(x =>
+                        x.Search.ClientName.CompareTo(cursor.CursorValue) > 0
+                        || (
+                            x.Search.ClientName == cursor.CursorValue
+                            && x.Search.Slug.CompareTo(cursor.Slug) > 0
+                        )
+                    ),
+            };
+        }
+
+        joinQuery = sortBy switch
+        {
+            ProjectSortCharacteristic.Company => desc
+                ? joinQuery
+                    .OrderByDescending(x => x.Search.CompanyName ?? "")
+                    .ThenByDescending(x => x.Search.Slug)
+                : joinQuery.OrderBy(x => x.Search.CompanyName ?? "").ThenBy(x => x.Search.Slug),
+
+            ProjectSortCharacteristic.BusinessUnit => desc
+                ? joinQuery
+                    .OrderByDescending(x => x.Search.BusinessUnitName ?? "")
+                    .ThenByDescending(x => x.Search.Slug)
+                : joinQuery
+                    .OrderBy(x => x.Search.BusinessUnitName ?? "")
+                    .ThenBy(x => x.Search.Slug),
+
+            ProjectSortCharacteristic.Team => desc
+                ? joinQuery
+                    .OrderByDescending(x => x.Search.TeamName ?? "")
+                    .ThenByDescending(x => x.Search.Slug)
+                : joinQuery.OrderBy(x => x.Search.TeamName ?? "").ThenBy(x => x.Search.Slug),
+            ProjectSortCharacteristic.ProjectName => desc
+                ? joinQuery
+                    .OrderByDescending(x => x.Search.ProjectName)
+                    .ThenByDescending(x => x.Search.Slug)
+                : joinQuery.OrderBy(x => x.Search.ProjectName).ThenBy(x => x.Search.Slug),
+            ProjectSortCharacteristic.ClientName or _ => desc
+                ? joinQuery
+                    .OrderByDescending(x => x.Search.ClientName)
+                    .ThenByDescending(x => x.Search.Slug)
+                : joinQuery.OrderBy(x => x.Search.ClientName).ThenBy(x => x.Search.Slug),
+        };
+
+        return joinQuery.Select(x => x.Project);
     }
 
     /// <summary>

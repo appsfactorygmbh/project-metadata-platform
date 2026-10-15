@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using ProjectMetadataPlatform.Application.Companies;
 using ProjectMetadataPlatform.Domain.Companies;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
@@ -13,7 +14,7 @@ public interface ICompanyRepository
     /// Returns all companies.
     /// </summary>
     /// <returns>List of all Companies.</returns>
-    Task<IQueryable<Company>> GetCompaniesAsync();
+    Task<IQueryable<Company>> GetCompaniesAsync(CompanyCursor? cursor);
 
     /// <summary>
     /// Returns a Company by its Id.
@@ -23,14 +24,14 @@ public interface ICompanyRepository
     Task<Company> GetCompanyAsync(int id);
 
     /// <summary>
-    /// Checks wether a Companies with the specified Id exists.
+    /// Checks whether a Companies with the specified Id exists.
     /// </summary>
     /// <param name="id">Id that gets checked.</param>
     /// <returns>Boolean representing the Existence of the Company</returns>
     Task<bool> CheckIfCompanyExistsAsync(int id);
 
     /// <summary>
-    /// Checks wether a Companies with the specified Name exists.
+    /// Checks whether a Companies with the specified Name exists.
     /// </summary>
     /// <param name="companyName">Name that gets checked.</param>
     /// <returns>Boolean representing the Existence of the Company</returns>

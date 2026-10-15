@@ -39,5 +39,6 @@ public class ApplicationUserModelConfig : IEntityTypeConfiguration<ApplicationUs
 
         _ = builder.HasIndex(u => u.EmployeeId).IsUnique();
         _ = builder.Property(e => e.EmployeeId).IsRequired();
+        _ = builder.HasIndex(e => new { e.Email, e.EmployeeId });
     }
 }

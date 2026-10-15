@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.BusinessUnits.Models;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.BusinessUnits;
@@ -45,20 +46,30 @@ public class BusinessUnitsController : ControllerBase
         typeof(GetListResponse<GetBusinessUnitResponse>),
         StatusCodes.Status200OK
     )]
-    public async Task<ActionResult<GetListResponse<GetBusinessUnitResponse>>> Get()
+    public async Task<ActionResult<GetListResponse<GetBusinessUnitResponse>>> Get(
+        [FromQuery] int? limit = null,
+        [FromQuery] string? cursor = null
+    )
     {
-        var query = new GetAllBusinessUnitsQuery();
-        var (businessUnits, permissions) = await _mediator.Send<
+        var cursorPosition = CursorConverter.Decode<BusinessUnitCursor>(cursor);
+        var query = new GetAllBusinessUnitsQuery(cursorPosition, limit);
+        var (businessUnits, permissions, nextCursor) = await _mediator.Send<
             GetAllBusinessUnitsQuery,
-            (IEnumerable<BusinessUnit>, IEnumerable<AuthorizationConstants.Actions>)
+            (
+                IEnumerable<BusinessUnit>,
+                IEnumerable<AuthorizationConstants.Actions>,
+                BusinessUnitCursor?
+            )
         >(query);
         var buResponse = businessUnits.Select(businessUnit => new GetBusinessUnitResponse(
             Id: businessUnit.Id,
             BusinessUnitName: businessUnit.BusinessUnitName
         ));
+        var encodedCursor = CursorConverter.Encode(nextCursor);
         var response = new GetListResponse<GetBusinessUnitResponse>(
             [.. buResponse],
-            [.. permissions]
+            [.. permissions],
+            encodedCursor
         );
         return Ok(response);
     }

@@ -8,5 +8,9 @@ namespace ProjectMetadataPlatform.Application.Users;
 /// <summary>
 /// Query to retrieve all projects with a scim filter.
 /// </summary>
-public record GetAllUsersQuery(string Filter)
-    : IRequest<(IEnumerable<ApplicationUser>, IEnumerable<AuthorizationConstants.Actions>)>;
+public record GetAllUsersQuery(string Filter, UserCursor? Cursor, int? Limit)
+    : IRequest<(
+        IEnumerable<ApplicationUser>,
+        IEnumerable<AuthorizationConstants.Actions>,
+        UserCursor?
+    )>;

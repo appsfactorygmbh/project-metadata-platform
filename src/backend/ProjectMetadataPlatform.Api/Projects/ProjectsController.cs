@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMetadataPlatform.Api.BusinessUnits.Models;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Companies.Models;
 using ProjectMetadataPlatform.Api.Errors;
@@ -40,6 +41,8 @@ public class ProjectsController : ControllerBase
     /// </summary>
     /// <param name="request">The collection of filters to search by.</param>
     /// <param name="search">Search string to filter the projects by.</param>
+    /// <param name="limit">Optional Limit of returned responses for pagination.</param>
+    /// <param name="cursor">Optional Cursor for pagination.</param>
     /// <returns>All projects or all projects that match the given search string or filters with the allowed actions on the type.</returns>
     /// <response code="200">The projects are returned successfully.</response>
     /// <response code="500">An internal error occurred.</response>
@@ -47,13 +50,16 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(typeof(GetListResponse<GetProjectResponse>), StatusCodes.Status200OK)]
     public async Task<ActionResult<GetListResponse<GetProjectResponse>>> Get(
         [FromQuery] ProjectFilterRequest? request,
-        string? search = " "
+        string? search = " ",
+        [FromQuery] int? limit = null,
+        [FromQuery] string? cursor = null
     )
     {
-        var query = new GetAllProjectsQuery(request, search);
-        var (projects, permissions) = await _mediator.Send<
+        var cursorPosition = CursorConverter.Decode<ProjectCursor>(cursor);
+        var query = new GetAllProjectsQuery(request, search, cursorPosition, limit);
+        var (projects, permissions, nextCursor) = await _mediator.Send<
             GetAllProjectsQuery,
-            (IEnumerable<Project>, IEnumerable<AuthorizationConstants.Actions>)
+            (IEnumerable<Project>, IEnumerable<AuthorizationConstants.Actions>, ProjectCursor?)
         >(query);
         var projectResponse = projects.Select(project => new GetProjectResponse(
             Id: project.Id,
@@ -78,9 +84,11 @@ public class ProjectsController : ControllerBase
             IsEoC: project.IsEoC,
             Notes: project.Notes
         ));
+        var encodedCursor = CursorConverter.Encode(nextCursor);
         var response = new GetListResponse<GetProjectResponse>(
             [.. projectResponse],
-            [.. permissions]
+            [.. permissions],
+            encodedCursor
         );
         return Ok(response);
     }

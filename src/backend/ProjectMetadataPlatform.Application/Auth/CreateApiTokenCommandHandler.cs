@@ -84,6 +84,7 @@ public class CreateApiTokenCommandHandler : IRequestHandler<CreateApiTokenComman
         {
             throw new ScimTokenAlreadyExistsException();
         }
+
         await _apiTokenRepository.StoreApiToken(apiToken);
         await AddCreateTokenLog(apiToken);
         await _unitOfWork.CompleteAsync();

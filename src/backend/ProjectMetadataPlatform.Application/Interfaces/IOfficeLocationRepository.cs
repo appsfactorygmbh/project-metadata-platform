@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using ProjectMetadataPlatform.Application.OfficeLocations;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
@@ -13,7 +14,7 @@ public interface IOfficeLocationRepository
     /// Returns all Office Locations.
     /// </summary>
     /// <returns>List of all Office Locations.</returns>
-    Task<IQueryable<OfficeLocation>> GetOfficeLocationsAsync();
+    Task<IQueryable<OfficeLocation>> GetOfficeLocationsAsync(OfficeLocationCursor? cursor);
 
     /// <summary>
     /// Returns a Office Location by its Id.
@@ -23,14 +24,14 @@ public interface IOfficeLocationRepository
     Task<OfficeLocation> GetOfficeLocationAsync(int id);
 
     /// <summary>
-    /// Checks wether a Office Locations with the specified Id exists.
+    /// Checks whether a Office Locations with the specified Id exists.
     /// </summary>
     /// <param name="id">Id that gets checked.</param>
     /// <returns>Boolean representing the Existence of the Office Location</returns>
     Task<bool> CheckIfOfficeLocationExistsAsync(int id);
 
     /// <summary>
-    /// Checks wether a Office Locations with the specified Name exists.
+    /// Checks whether a Office Locations with the specified Name exists.
     /// </summary>
     /// <param name="officeLocationName">Name that gets checked.</param>
     /// <returns>Boolean representing the Existence of the Office Location</returns>
