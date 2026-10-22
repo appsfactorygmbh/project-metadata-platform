@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Users.Models;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -126,59 +127,63 @@ public class UsersController : ControllerBase
     /// Gets all user that correspond to a filter. Filter only works for equality to username or employee id.
     /// </summary>
     /// <param name="filter">String Scim filter. </param>
+    /// <param name="limit">Optional Limit of returned responses for pagination.</param>
+    /// <param name="cursor">Optional Cursor for pagination.</param>
     /// <returns>List object containing the users.</returns>
     /// <response code="200">The users are returned successfully.</response>
     /// <response code="500">An internal error occurred.</response>
     [HttpGet]
     [ProducesResponseType(typeof(GetUsersResponse), StatusCodes.Status200OK)]
-    public async Task<ActionResult<GetUsersResponse>> Get([FromQuery] string filter = "")
+    public async Task<ActionResult<GetUsersResponse>> Get(
+        [FromQuery] string filter = "",
+        [FromQuery] int? limit = null,
+        [FromQuery] string? cursor = null
+    )
     {
-        var query = new GetAllUsersQuery(filter);
-        var (users, permissions) = await _mediator.Send<
+        var cursorPosition = CursorConverter.Decode<UserCursor>(cursor);
+        var query = new GetAllUsersQuery(filter, cursorPosition, limit);
+        var (users, permissions, nextCursor) = await _mediator.Send<
             GetAllUsersQuery,
-            (IEnumerable<ApplicationUser>, IEnumerable<AuthorizationConstants.Actions>)
+            (IEnumerable<ApplicationUser>, IEnumerable<AuthorizationConstants.Actions>, UserCursor?)
         >(query);
-
+        var encodedCursor = CursorConverter.Encode(nextCursor);
         var response = new GetUsersResponse
         {
-            Resources = users
-                .Select(user => new PmpScimUser
+            Resources = users.Select(user => new PmpScimUser
+            {
+                Id = user.EmployeeId,
+                ExternalId = user.EmployeeId,
+                UserName = user.Email!,
+                Active = user.IsActive,
+                Addresses =
+                    user.OfficeLocation == null
+                        ? []
+                        :
+                        [
+                            new PmpScimUser.AddressRecord
+                            {
+                                Locality = user.OfficeLocation.OfficeLocationName,
+                            },
+                        ],
+                EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
                 {
-                    Id = user.EmployeeId,
-                    ExternalId = user.EmployeeId,
-                    UserName = user.Email!,
-                    Active = user.IsActive,
-                    Addresses =
-                        user.OfficeLocation == null
-                            ? []
-                            :
-                            [
-                                new PmpScimUser.AddressRecord
-                                {
-                                    Locality = user.OfficeLocation.OfficeLocationName,
-                                },
-                            ],
-                    EnterpriseUser = new PmpScimUser.EnterpriseUserExtension
-                    {
-                        Organization = user.Company?.CompanyName,
-                    },
-                    PmpUser = new PmpScimUser.PmpUserExtension
-                    {
-                        Departments = user
-                            .Departments?.Select(department => department.DepartmentName)
-                            .ToList(),
-                        TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
-                        JobTitles = user.JobTitles,
-                        Team = user.Teams?.Select(team => team.TeamName).ToList(),
-                        BusinessUnits = user
-                            .BusinessUnits?.Select(bu => bu.BusinessUnitName)
-                            .ToList(),
-                        IsScimProvisioned = user.IsScimProvisioned,
-                    },
-                })
-                .OrderBy(u => u.UserName),
+                    Organization = user.Company?.CompanyName,
+                },
+                PmpUser = new PmpScimUser.PmpUserExtension
+                {
+                    Departments = user
+                        .Departments?.Select(department => department.DepartmentName)
+                        .ToList(),
+                    TeamSupport = user.TeamSupport?.Select(team => team.TeamName).ToList(),
+                    JobTitles = user.JobTitles,
+                    Team = user.Teams?.Select(team => team.TeamName).ToList(),
+                    BusinessUnits = user.BusinessUnits?.Select(bu => bu.BusinessUnitName).ToList(),
+                    IsScimProvisioned = user.IsScimProvisioned,
+                },
+            }),
             TotalResults = users.Count(),
             Permissions = [.. permissions],
+            Cursor = encodedCursor,
         };
         return Ok(response);
     }

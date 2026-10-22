@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Application.Plugins;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Plugins;
@@ -151,9 +152,14 @@ public class PluginRepository : RepositoryBase<Plugin>, IPluginRepository
     /// Gets all global plugins from the database.
     /// </summary>
     /// <returns>All global plugins</returns>
-    public async Task<IQueryable<Plugin>> GetGlobalPluginsAsync()
+    public async Task<IQueryable<Plugin>> GetGlobalPluginsAsync(PluginCursor? cursor)
     {
-        return _context.Plugins;
+        var query = GetEverything();
+        if (cursor != null)
+        {
+            query = query.Where(p => p.PluginName.CompareTo(cursor.PluginName) > 0);
+        }
+        return query.OrderBy(p => p.PluginName);
     }
 
     /// <summary>

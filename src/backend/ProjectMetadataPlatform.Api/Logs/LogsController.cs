@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMetadataPlatform.Api.Common;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Api.Logs.Models;
@@ -48,22 +51,31 @@ public class LogsController : ControllerBase
     /// <param name="userId">The ID of the affected user to filter logs by.</param>
     /// <param name="globalPluginId">The ID of the global plugin to filter logs by.</param>
     /// <param name="projectSlug">The slug of the project to filter logs by.</param>
+    /// <param name="startDate">The startDate to filter logs by.</param>
+    /// <param name="endDate">The endDate to filter logs by.</param>
+    /// <param name="limit">Optional Limit of returned responses for pagination.</param>
+    /// <param name="cursor">Optional Cursor for pagination.</param>
     /// <returns>A list of log responses.</returns>
     /// <response code="200">Returns the list of log responses.</response>
     /// <response code="404">Not Project with the given id was found.</response>
     /// <response code="500">If an error occurs while processing the request.</response>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<LogResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetListResponse<LogResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<LogResponse>>> Get(
+    public async Task<ActionResult<GetListResponse<LogResponse>>> Get(
         int? projectId,
         string? search,
         string? userId,
         int? globalPluginId,
-        string? projectSlug
+        string? projectSlug,
+        [FromQuery] DateTimeOffset? startDate,
+        [FromQuery] DateTimeOffset? endDate,
+        [FromQuery] int? limit = null,
+        [FromQuery] string? cursor = null
     )
     {
-        var projectFromSlugId = (int?)null;
+        var cursorPosition = CursorConverter.Decode<LogCursor>(cursor);
+        int? projectFromSlugId = null;
 
         if (projectSlug != null && projectId == null)
         {
@@ -74,14 +86,25 @@ public class LogsController : ControllerBase
         }
 
         var query = new GetLogsQuery(
+            cursorPosition,
+            limit,
+            startDate,
+            endDate,
             projectId ?? projectFromSlugId,
             search,
             userId,
             globalPluginId
         );
 
-        var logs = await _mediator.Send<GetLogsQuery, IEnumerable<Log>>(query);
-
-        return Ok(logs.Select(_converter.BuildLogMessage));
+        var (logs, nextCursor) = await _mediator.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
+            query
+        );
+        var encodedCursor = CursorConverter.Encode(nextCursor);
+        var response = new GetListResponse<LogResponse>(
+            [.. logs.Select(_converter.BuildLogMessage)],
+            [],
+            encodedCursor
+        );
+        return Ok(response);
     }
 }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.OfficeLocations.Models;
@@ -45,20 +46,30 @@ public class OfficeLocationsController : ControllerBase
         typeof(GetListResponse<GetOfficeLocationResponse>),
         StatusCodes.Status200OK
     )]
-    public async Task<ActionResult<GetListResponse<GetOfficeLocationResponse>>> Get()
+    public async Task<ActionResult<GetListResponse<GetOfficeLocationResponse>>> Get(
+        [FromQuery] int? limit = null,
+        [FromQuery] string? cursor = null
+    )
     {
-        var query = new GetAllOfficeLocationsQuery();
-        var (locations, permissions) = await _mediator.Send<
+        var cursorPosition = CursorConverter.Decode<OfficeLocationCursor>(cursor);
+        var query = new GetAllOfficeLocationsQuery(cursorPosition, limit);
+        var (locations, permissions, nextCursor) = await _mediator.Send<
             GetAllOfficeLocationsQuery,
-            (IEnumerable<OfficeLocation>, IEnumerable<AuthorizationConstants.Actions>)
+            (
+                IEnumerable<OfficeLocation>,
+                IEnumerable<AuthorizationConstants.Actions>,
+                OfficeLocationCursor?
+            )
         >(query);
         var locationResponse = locations.Select(location => new GetOfficeLocationResponse(
             Id: location.Id,
             OfficeLocationName: location.OfficeLocationName
         ));
+        var encodedCursor = CursorConverter.Encode(nextCursor);
         var response = new GetListResponse<GetOfficeLocationResponse>(
             [.. locationResponse],
-            [.. permissions]
+            [.. permissions],
+            encodedCursor
         );
         return Ok(response);
     }

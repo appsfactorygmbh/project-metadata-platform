@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Users;
@@ -14,22 +13,26 @@ namespace ProjectMetadataPlatform.Application.Users;
 public class GetAllUsersQueryHandler
     : IRequestHandler<
         GetAllUsersQuery,
-        (IEnumerable<ApplicationUser>, IEnumerable<AuthorizationConstants.Actions>)
+        (IEnumerable<ApplicationUser>, IEnumerable<AuthorizationConstants.Actions>, UserCursor?)
     >
 {
     private readonly IUsersRepository _usersRepository;
     private readonly IAuthorizationService _authorizationService;
+
+    private readonly IPaginationHelper _paginationHelper;
 
     /// <summary>
     /// Creates a new instance of <see cref="GetAllUsersQueryHandler" />.
     /// </summary>
     public GetAllUsersQueryHandler(
         IUsersRepository usersRepository,
-        IAuthorizationService authorizationService
+        IAuthorizationService authorizationService,
+        IPaginationHelper paginationHelper
     )
     {
         _usersRepository = usersRepository;
         _authorizationService = authorizationService;
+        _paginationHelper = paginationHelper;
     }
 
     /// <summary>
@@ -37,32 +40,20 @@ public class GetAllUsersQueryHandler
     /// </summary>
     public async Task<(
         IEnumerable<ApplicationUser>,
-        IEnumerable<AuthorizationConstants.Actions>
+        IEnumerable<AuthorizationConstants.Actions>,
+        UserCursor?
     )> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
     {
-        var users = await _usersRepository.GetUsersAsync(request.Filter);
-        var queriedUsers = await _authorizationService.TryGetPlanResourceQuery(users);
+        var users = await _usersRepository.GetUsersAsync(request.Filter, request.Cursor);
+        var (paginatedUsers, lastUser) = await _paginationHelper.PaginateWithAuthAsync(
+            users,
+            request.Limit
+        );
         var permissions = await _authorizationService.GetAllowedActions<ApplicationUser>(
             actions: [AuthorizationConstants.Actions.CREATE]
         );
-        if (queriedUsers == null)
-        {
-            var userList = await users.ToListAsync(cancellationToken: cancellationToken);
-            List<ApplicationUser> filteredUsers = [];
-            foreach (var user in userList)
-            {
-                if (
-                    await _authorizationService.CheckAccess(
-                        user,
-                        AuthorizationConstants.Actions.GET
-                    )
-                )
-                {
-                    filteredUsers.Add(user);
-                }
-            }
-            return (filteredUsers, permissions);
-        }
-        return (await queriedUsers.ToListAsync(cancellationToken: cancellationToken), permissions);
+        var nextCursor =
+            lastUser == null ? null : new UserCursor(lastUser.Email!, lastUser.EmployeeId);
+        return (paginatedUsers, permissions, nextCursor);
     }
 }

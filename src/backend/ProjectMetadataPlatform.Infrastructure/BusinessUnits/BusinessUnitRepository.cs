@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectMetadataPlatform.Application.BusinessUnits;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
@@ -26,9 +27,14 @@ public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUni
     }
 
     /// <inheritdoc/>
-    public async Task<IQueryable<BusinessUnit>> GetBusinessUnitsAsync()
+    public async Task<IQueryable<BusinessUnit>> GetBusinessUnitsAsync(BusinessUnitCursor? cursor)
     {
-        return _context.BusinessUnits.AsNoTracking();
+        var query = GetEverything();
+        if (cursor != null)
+        {
+            query = query.Where(bu => bu.BusinessUnitName.CompareTo(cursor.BusinessUnitName) > 0);
+        }
+        return query.OrderBy(bu => bu.BusinessUnitName);
     }
 
     /// <inheritdoc/>

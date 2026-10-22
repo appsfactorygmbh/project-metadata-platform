@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectMetadataPlatform.Application.Companies;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
@@ -26,9 +27,14 @@ public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
     }
 
     /// <inheritdoc/>
-    public async Task<IQueryable<Company>> GetCompaniesAsync()
+    public async Task<IQueryable<Company>> GetCompaniesAsync(CompanyCursor? cursor)
     {
-        return _context.Companies.AsNoTracking();
+        var query = GetEverything();
+        if (cursor != null)
+        {
+            query = query.Where(c => c.CompanyName.CompareTo(cursor.CompanyName) > 0);
+        }
+        return query.OrderBy(c => c.CompanyName);
     }
 
     /// <inheritdoc/>

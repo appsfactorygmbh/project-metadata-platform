@@ -167,7 +167,7 @@ public partial class AuthorizationService : IAuthorizationService
         Dictionary<AuthorizationConstants.Actions, FilterTree> filterDict = [];
         var principal = await GetPrincipalFromContext();
         var resourceObject = Resource
-            .NewInstance(resourceKind, "default")
+            .NewInstance(resourceKind, "Default")
             .WithPolicyVersion(AuthorizationConstants.POLICY_VERSION);
         foreach (var action in Enum.GetValues<AuthorizationConstants.Actions>())
         {
@@ -191,6 +191,26 @@ public partial class AuthorizationService : IAuthorizationService
         }
 
         return filterDict;
+    }
+
+    /// <inheritdoc/>
+    public async Task<bool> CheckSearchAttribute(string resource, string filterAttribute)
+    {
+        var principal = await GetPrincipalFromContext();
+        var resourceObject = Resource
+            .NewInstance("Filter", "Default")
+            .WithAttribute("Resource", AttributeValue.StringValue(resource))
+            .WithAttribute("FilterAttribute", AttributeValue.StringValue(filterAttribute))
+            .WithPolicyVersion(AuthorizationConstants.POLICY_VERSION);
+
+        var result = (
+            await CheckRequest(
+                principal,
+                resourceObject,
+                [AuthorizationConstants.Actions.GET.ToString()]
+            )
+        ).Find("Default");
+        return result.IsAllowed(AuthorizationConstants.Actions.GET.ToString());
     }
 
     /// <summary>

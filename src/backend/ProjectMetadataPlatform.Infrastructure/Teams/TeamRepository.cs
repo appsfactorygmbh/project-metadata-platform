@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Application.Teams;
 using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -26,34 +27,36 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
     }
 
     /// <inheritdoc/>
-    public async Task<IQueryable<Team>> GetTeamsAsync(string? fullTextQuery, string? teamName)
+    public async Task<IQueryable<Team>> GetTeamsAsync(
+        string? fullTextQuery,
+        string? teamName,
+        TeamCursor? cursor
+    )
     {
-        var filteredQuery = _context.Teams.AsQueryable();
+        var filteredQuery = GetEverything();
+        if (cursor != null)
+        {
+            filteredQuery = filteredQuery.Where(t => t.TeamName.CompareTo(cursor.TeamName) > 0);
+        }
         if (!string.IsNullOrWhiteSpace(fullTextQuery))
         {
-            var lowerTextSearch = fullTextQuery.ToLowerInvariant();
             filteredQuery = filteredQuery.Where(team =>
-                EF.Functions.Like(
-                    team.BusinessUnit!.BusinessUnitName.ToLower(),
-                    $"%{lowerTextSearch}%"
-                )
-                || (
-                    team.PTL != null
-                    && EF.Functions.Like(team.PTL.ToLower(), $"%{lowerTextSearch}%")
-                )
-                || EF.Functions.Like(team.TeamName.ToLower(), $"%{lowerTextSearch}%")
+                EF.Functions.ILike(team.BusinessUnit!.BusinessUnitName, $"%{fullTextQuery}%")
+                || (team.PTL != null && EF.Functions.ILike(team.PTL, $"%{fullTextQuery}%"))
+                || EF.Functions.ILike(team.TeamName, $"%{fullTextQuery}%")
             );
         }
         if (!string.IsNullOrWhiteSpace(teamName))
         {
             filteredQuery = filteredQuery.Where(team =>
-                EF.Functions.Like(team.TeamName.ToLower(), $"%{teamName.ToLower()}%")
+                EF.Functions.ILike(team.TeamName, $"%{teamName}%")
             );
         }
         return filteredQuery
             .Include(t => t.BusinessUnit)
                 .ThenInclude(b => b!.Users!)
-                    .ThenInclude(u => u.Departments);
+                    .ThenInclude(u => u.Departments)
+            .OrderBy(t => t.TeamName);
     }
 
     /// <inheritdoc/>

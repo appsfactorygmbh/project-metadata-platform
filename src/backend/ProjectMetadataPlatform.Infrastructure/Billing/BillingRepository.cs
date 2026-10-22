@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectMetadataPlatform.Application.Billing;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Billing;
 using ProjectMetadataPlatform.Domain.Errors.BillingExceptions;
@@ -95,9 +96,16 @@ public class BillingRepository : RepositoryBase<GlobalBilling>, IBillingReposito
     }
 
     /// <inheritdoc />
-    public async Task<IQueryable<GlobalBilling>> GetAllGlobalBillingInformationAsync()
+    public async Task<IQueryable<GlobalBilling>> GetAllGlobalBillingInformationAsync(
+        BillingCursor? cursor
+    )
     {
-        return GetEverything();
+        var query = GetEverything();
+        if (cursor != null)
+        {
+            query = query.Where(gb => gb.BillingKind.CompareTo(cursor.BillingKind) > 0);
+        }
+        return query.OrderBy(gb => gb.BillingKind);
     }
 
     /// <inheritdoc />

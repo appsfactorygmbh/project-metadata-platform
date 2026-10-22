@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Companies.Models;
 using ProjectMetadataPlatform.Api.Errors;
@@ -43,20 +44,26 @@ public class CompaniesController : ControllerBase
     /// <response code="500"> Internal Error. </response>
     [HttpGet]
     [ProducesResponseType(typeof(GetListResponse<GetCompanyResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<GetListResponse<GetCompanyResponse>>> Get()
+    public async Task<ActionResult<GetListResponse<GetCompanyResponse>>> Get(
+        [FromQuery] int? limit = null,
+        [FromQuery] string? cursor = null
+    )
     {
-        var query = new GetAllCompaniesQuery();
-        var (companies, permissions) = await _mediator.Send<
+        var cursorPosition = CursorConverter.Decode<CompanyCursor>(cursor);
+        var query = new GetAllCompaniesQuery(cursorPosition, limit);
+        var (companies, permissions, nextCursor) = await _mediator.Send<
             GetAllCompaniesQuery,
-            (IEnumerable<Company>, IEnumerable<AuthorizationConstants.Actions>)
+            (IEnumerable<Company>, IEnumerable<AuthorizationConstants.Actions>, CompanyCursor?)
         >(query);
         var companyResponse = companies.Select(company => new GetCompanyResponse(
             Id: company.Id,
             CompanyName: company.CompanyName
         ));
+        var encodedCursor = CursorConverter.Encode(nextCursor);
         var response = new GetListResponse<GetCompanyResponse>(
             [.. companyResponse],
-            [.. permissions]
+            [.. permissions],
+            encodedCursor
         );
         return Ok(response);
     }

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using ProjectMetadataPlatform.Application.Billing;
 using ProjectMetadataPlatform.Domain.Billing;
 
 namespace ProjectMetadataPlatform.Application.Interfaces;
@@ -10,7 +11,7 @@ namespace ProjectMetadataPlatform.Application.Interfaces;
 public interface IBillingRepository
 {
     /// <summary>
-    /// Checks wether billing information of the specified kind already exists.
+    /// Checks whether billing information of the specified kind already exists.
     /// </summary>
     /// <param name="kind">Billing kind</param>
     /// <returns>True if billing info exists.</returns>
@@ -71,7 +72,7 @@ public interface IBillingRepository
     /// Returns queryable containing all global billing objects.
     /// </summary>
     /// <returns>All Global Billing Information. </returns>
-    Task<IQueryable<GlobalBilling>> GetAllGlobalBillingInformationAsync();
+    Task<IQueryable<GlobalBilling>> GetAllGlobalBillingInformationAsync(BillingCursor? cursor);
 
     /// <summary>
     /// Deletes global billing Information.

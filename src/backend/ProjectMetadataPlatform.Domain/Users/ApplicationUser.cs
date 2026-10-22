@@ -29,12 +29,12 @@ public class ApplicationUser : IdentityUser
     public ICollection<Team>? TeamSupport { get; set; }
 
     /// <summary>
-    /// Signals wether the user is active or not.
+    /// Signals whether the user is active or not.
     /// </summary>
     public bool IsActive { get; set; }
 
     /// <summary>
-    /// Signals wether the user was scimprovisioned or not.
+    /// Signals whether the user was scimprovisioned or not.
     /// </summary>
     public bool IsScimProvisioned { get; set; }
 

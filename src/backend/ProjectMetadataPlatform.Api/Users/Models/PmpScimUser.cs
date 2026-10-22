@@ -35,7 +35,7 @@ public record PmpScimUser
     public required string UserName { get; set; }
 
     /// <summary>
-    /// Wether the user is an active employee.
+    /// Whether the user is an active employee.
     /// </summary>
     public bool Active { get; set; }
 
@@ -121,7 +121,7 @@ public record PmpScimUser
         public List<string>? BusinessUnits { get; set; }
 
         /// <summary>
-        /// Wether the last change to the user was made via scim or manually.
+        /// Whether the last change to the user was made via scim or manually.
         /// </summary>
         public bool? IsScimProvisioned { get; set; }
     }

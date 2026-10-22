@@ -16,8 +16,16 @@ public interface IProjectsRepository
     /// Returns a collection of all projects with specific search pattern.
     /// </summary>
     /// <param name="query">The query containing filters and search pattern.</param>
+    /// <param name="cursor">Optional Cursor for pagination. fpr</param>
+    /// <param name="canSearchPlugin">Whether to include plugin attributes in fulltext search.</param>
+    /// <param name="canSearchBilling">Whether to include billing attributes in fulltext search.</param>
     /// <returns>An Enumeration of projects.</returns>
-    Task<IQueryable<Project>> GetProjectsAsync(GetAllProjectsQuery query);
+    Task<IQueryable<Project>> GetProjectsAsync(
+        GetAllProjectsQuery query,
+        ProjectCursor? cursor,
+        bool canSearchPlugin = false,
+        bool canSearchBilling = false
+    );
 
     /// <summary>
     /// Returns a collection of all projects.
