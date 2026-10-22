@@ -18,6 +18,7 @@ public class DeleteApiTokenCommandHandlerTest
     private Mock<IApiTokenRepository> _apiTokenRepositoryMock;
     private Mock<ILogRepository> _logRepositoryMock;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+
     private Mock<IUnitOfWork> _unitOfWorkMock;
 
     private DeleteApiTokenCommandHandler _handler;
@@ -30,6 +31,7 @@ public class DeleteApiTokenCommandHandlerTest
         _unitOfWorkMock = new Mock<IUnitOfWork>();
 
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+
         _handler = new DeleteApiTokenCommandHandler(
             _apiTokenRepositoryMock.Object,
             _unitOfWorkMock.Object,

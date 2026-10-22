@@ -22,6 +22,7 @@ public class UpdatePluginBillingCommandHandlerTest
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
     private Mock<IBillingRepository> _mockPluginBillingRepository;
 
     [SetUp]
@@ -31,6 +32,7 @@ public class UpdatePluginBillingCommandHandlerTest
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _handler = new UpdatePluginBillingCommandHandler(
             billingRepository: _mockPluginBillingRepository.Object,
             logRepository: _mockLogRepo.Object,

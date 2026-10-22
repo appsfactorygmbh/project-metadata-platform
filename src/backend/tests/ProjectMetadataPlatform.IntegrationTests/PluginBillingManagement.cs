@@ -87,7 +87,7 @@ public class PluginBillingManagement : IntegrationTestsBase
             Assert.That(billing.GetProperty("timeFrame").GetString(), Is.EqualTo("NEVER"));
         });
 
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
 
         Assert.Multiple(() =>
         {
@@ -96,7 +96,7 @@ public class PluginBillingManagement : IntegrationTestsBase
             Assert.That(
                 logs[0].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin added new billing information to project testProject with properties: ProjectPlugin = Plugin, GlobalBilling = devOps, ContractIds = [Contract1, Contract2], BudgetLimit = 500, HostingFee = 300, Currency = EUR, TargetMargin = 30, TimeFrame = NEVER, Notes = null"
+                    "admin added new billing information to project testProject with properties: ProjectPlugin = Plugin, Notes = null, TimeFrame = NEVER, TargetMargin = 30, Currency = EUR, HostingFee = 300, BudgetLimit = 500, ContractIds = [Contract1, Contract2], GlobalBilling = devOps"
                 )
             );
         });
@@ -194,7 +194,7 @@ public class PluginBillingManagement : IntegrationTestsBase
             );
         });
 
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
         Assert.Multiple(() =>
         {
             Assert.That(logs.GetArrayLength(), Is.EqualTo(7));
@@ -207,7 +207,7 @@ public class PluginBillingManagement : IntegrationTestsBase
             Assert.That(
                 logs[0].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin updated billing information from plugin Plugin in project testProject: set ContractIds from [Contract1, Contract2] to [], set BudgetLimit from 500 to 501, set HostingFee from 300 to 301, set Currency from EUR to USD, set TargetMargin from 30 to 0, set TimeFrame from NEVER to 04/21/2012"
+                    "admin updated billing information from plugin Plugin in project testProject: set ContractIds from [Contract1, Contract2] to [], set TimeFrame from NEVER to 04/21/2012, set TargetMargin from 30 to 0, set Currency from EUR to USD, set HostingFee from 300 to 301, set BudgetLimit from 500 to 501"
                 )
             );
         });
@@ -239,14 +239,14 @@ public class PluginBillingManagement : IntegrationTestsBase
             HttpStatusCode.NotFound
         );
 
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
         Assert.Multiple(() =>
         {
             Assert.That(logs.GetArrayLength(), Is.EqualTo(7));
             Assert.That(
                 logs[1].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin added new billing information to project testProject with properties: ProjectPlugin = Plugin, GlobalBilling = devOps, ContractIds = [Contract1, Contract2], BudgetLimit = 500, HostingFee = 300, Currency = EUR, TargetMargin = 30, TimeFrame = NEVER, Notes = null"
+                    "admin added new billing information to project testProject with properties: Notes = null, TimeFrame = NEVER, TargetMargin = 30, Currency = EUR, HostingFee = 300, BudgetLimit = 500, ContractIds = [Contract1, Contract2], GlobalBilling = devOps, ProjectPlugin = Plugin"
                 )
             );
             Assert.That(

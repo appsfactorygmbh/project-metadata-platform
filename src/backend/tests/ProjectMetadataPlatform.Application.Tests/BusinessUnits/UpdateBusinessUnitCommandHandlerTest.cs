@@ -20,6 +20,7 @@ public class UpdateBusinessUnitCommandHandlerTest
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
     private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
 
     [SetUp]
@@ -29,6 +30,7 @@ public class UpdateBusinessUnitCommandHandlerTest
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _handler = new UpdateBusinessUnitCommandHandler(
             businessUnitRepository: _mockBusinessUnitRepository.Object,
             logRepository: _mockLogRepo.Object,

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -36,6 +37,7 @@ public class ProjectByIdRepositoryTest : TestsWithDatabase
     public async Task GetProjectByIDAsync_ReturnProject()
     {
         // Arrange
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var project = new Project
         {
             Id = 1,

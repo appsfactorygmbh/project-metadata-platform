@@ -19,11 +19,13 @@ public class GetAllUnarchivedPluginsForProjectIdQueryHandlerTest
     private Mock<IPluginRepository> _pluginRepositoryMock;
     private Mock<IBillingRepository> _mockBillingRepo;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
 
     [SetUp]
     public void SetUp()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockBillingRepo = new Mock<IBillingRepository>();
         _pluginRepositoryMock = new Mock<IPluginRepository>();
         _handler = new GetAllUnarchivedPluginsForProjectIdQueryHandler(

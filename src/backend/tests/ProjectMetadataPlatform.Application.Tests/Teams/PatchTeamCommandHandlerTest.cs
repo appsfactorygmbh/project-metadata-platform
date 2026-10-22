@@ -22,11 +22,13 @@ public class PatchTeamCommandHandlerTest
     private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
     private Mock<ITeamRepository> _mockTeamRepository;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
 
     [SetUp]
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockTeamRepository = new Mock<ITeamRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();

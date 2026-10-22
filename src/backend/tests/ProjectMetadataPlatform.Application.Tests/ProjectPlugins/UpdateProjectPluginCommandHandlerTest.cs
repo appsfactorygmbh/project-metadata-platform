@@ -22,6 +22,7 @@ public class UpdateProjectPluginCommandHandlerTest
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
     private Mock<IPluginRepository> _mockPluginRepository;
 
     private Mock<IProjectsRepository> _mockProjectsRepository;
@@ -34,6 +35,7 @@ public class UpdateProjectPluginCommandHandlerTest
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockProjectsRepository = new Mock<IProjectsRepository>();
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _handler = new UpdateProjectPluginCommandHandler(
             projectsRepository: _mockProjectsRepository.Object,
             pluginRepository: _mockPluginRepository.Object,

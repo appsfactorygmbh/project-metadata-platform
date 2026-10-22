@@ -17,15 +17,18 @@ public class GetAllBillingQueryHandlerTest
     private GetAllBillingQueryHandler _handler;
     private Mock<IBillingRepository> _mockBillingRepository;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
 
     [SetUp]
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockBillingRepository = new Mock<IBillingRepository>();
         _handler = new GetAllBillingQueryHandler(
             billingRepository: _mockBillingRepository.Object,
-            authorizationService: _authorizationServiceMock.Object
+            authorizationService: _authorizationServiceMock.Object,
+            _paginationHelperMock.Object
         );
     }
 
@@ -36,25 +39,23 @@ public class GetAllBillingQueryHandlerTest
         var returnBilling = new GlobalBilling() { Id = 1, BillingKind = "Test_1" };
 
         _ = _mockBillingRepository
-            .Setup(repo => repo.GetAllGlobalBillingInformationAsync())
+            .Setup(repo => repo.GetAllGlobalBillingInformationAsync(null))
             .ReturnsAsync(new List<GlobalBilling> { returnBilling }.BuildMock());
-        _ = _authorizationServiceMock
+        _ = _paginationHelperMock
             .Setup(a =>
-                a.TryGetPlanResourceQuery(
-                    It.IsAny<IQueryable<GlobalBilling>>(),
-                    It.IsAny<Dictionary<string, string>?>()
-                )
+                a.PaginateWithAuthAsync(It.IsAny<IQueryable<GlobalBilling>>(), It.IsAny<int?>())
             )
-            .ReturnsAsync(
-                (IQueryable<GlobalBilling> query, Dictionary<string, string>? dict) => query
-            );
+            .ReturnsAsync((IQueryable<GlobalBilling> query, int? limit) => (query, null));
         // Act
-        var result = await _handler.Handle(new GetAllBillingQuery(), It.IsAny<CancellationToken>());
+        var result = await _handler.Handle(
+            new GetAllBillingQuery(null, null),
+            It.IsAny<CancellationToken>()
+        );
 
         // Assert
         Assert.That(result.Item1.Count, Is.EqualTo(1));
         Assert.That(result.Item1.First(), Is.EqualTo(returnBilling));
-        _mockBillingRepository.Verify(m => m.GetAllGlobalBillingInformationAsync(), Times.Once);
+        _mockBillingRepository.Verify(m => m.GetAllGlobalBillingInformationAsync(null), Times.Once);
     }
 
     [Test]
@@ -70,20 +71,18 @@ public class GetAllBillingQueryHandlerTest
         ];
 
         _ = _mockBillingRepository
-            .Setup(repo => repo.GetAllGlobalBillingInformationAsync())
+            .Setup(repo => repo.GetAllGlobalBillingInformationAsync(null))
             .ReturnsAsync(returnBilling.BuildMock());
-        _ = _authorizationServiceMock
+        _ = _paginationHelperMock
             .Setup(a =>
-                a.TryGetPlanResourceQuery(
-                    It.IsAny<IQueryable<GlobalBilling>>(),
-                    It.IsAny<Dictionary<string, string>?>()
-                )
+                a.PaginateWithAuthAsync(It.IsAny<IQueryable<GlobalBilling>>(), It.IsAny<int?>())
             )
-            .ReturnsAsync(
-                (IQueryable<GlobalBilling> query, Dictionary<string, string>? dict) => query
-            );
+            .ReturnsAsync((IQueryable<GlobalBilling> query, int? limit) => (query, null));
         // Act
-        var result = await _handler.Handle(new GetAllBillingQuery(), It.IsAny<CancellationToken>());
+        var result = await _handler.Handle(
+            new GetAllBillingQuery(null, null),
+            It.IsAny<CancellationToken>()
+        );
 
         // Assert
         var resultList = result.Item1.ToList();

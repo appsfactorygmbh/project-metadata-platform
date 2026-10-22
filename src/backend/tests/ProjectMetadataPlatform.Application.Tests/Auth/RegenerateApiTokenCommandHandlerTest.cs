@@ -20,6 +20,7 @@ public class RegenerateApiTokenCommandHandlerTest
     private Mock<ILogRepository> _logRepositoryMock;
     private Mock<IUnitOfWork> _unitOfWorkMock;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+
     private RegenerateApiTokenCommandHandler _handler;
 
     [SetUp]

@@ -41,8 +41,6 @@ public class RefreshTokenRepositoryTest : TestsWithDatabase
     public void TearDown()
     {
         using var context = DbContext();
-
-        _ = context.Database.EnsureDeleted();
         _context?.Dispose();
     }
 

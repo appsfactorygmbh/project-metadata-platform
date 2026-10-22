@@ -36,10 +36,14 @@ public class CompaniesControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllCompaniesQuery,
-                    (IEnumerable<Company>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<Company>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        CompanyCursor?
+                    )
                 >(It.IsAny<GetAllCompaniesQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync(([], []));
+            .ReturnsAsync(([], [], null));
         var result = await _controller.Get();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
@@ -62,7 +66,11 @@ public class CompaniesControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllCompaniesQuery,
-                    (IEnumerable<Company>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<Company>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        CompanyCursor?
+                    )
                 >(It.IsAny<GetAllCompaniesQuery>(), It.IsAny<CancellationToken>())
             )
             .ReturnsAsync(
@@ -71,7 +79,8 @@ public class CompaniesControllerTest
                         new Company { Id = 1, CompanyName = "Company1" },
                         new Company { Id = 2, CompanyName = "Company2" },
                     ],
-                    []
+                    [],
+                    null
                 )
             );
         var result = await _controller.Get();
@@ -100,7 +109,11 @@ public class CompaniesControllerTest
             .Setup(mediator =>
                 mediator.Send<
                     GetAllCompaniesQuery,
-                    (IEnumerable<Company>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<Company>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        CompanyCursor?
+                    )
                 >(It.IsAny<GetAllCompaniesQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));

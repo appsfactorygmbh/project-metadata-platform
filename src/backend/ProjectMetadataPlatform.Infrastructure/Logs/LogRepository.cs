@@ -541,61 +541,46 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
             .Include(l => l.Author)
             .Include(l => l.AuthorToken)
             .Where(log =>
-                (
-                    log.AuthorName != null
-                    && EF.Functions.ILike(log.AuthorName.ToLower(), $"%{search}%")
-                )
+                (log.AuthorName != null && EF.Functions.ILike(log.AuthorName, $"%{search}%"))
                 || (
                     log.AffectedUserEmail != null
-                    && EF.Functions.ILike(log.AffectedUserEmail.ToLower(), $"%{search}%")
+                    && EF.Functions.ILike(log.AffectedUserEmail, $"%{search}%")
                 )
                 || (
                     log.GlobalPluginName != null
-                    && EF.Functions.ILike(log.GlobalPluginName.ToLower(), $"%{search}%")
+                    && EF.Functions.ILike(log.GlobalPluginName, $"%{search}%")
                 )
                 || actionsToInclude.Contains(log.Action)
-                || (
-                    log.ProjectName != null
-                    && EF.Functions.ILike(log.ProjectName.ToLower(), $"%{search}%")
-                )
-                || (
-                    log.TeamName != null
-                    && EF.Functions.ILike(log.TeamName.ToLower(), $"%{search}%")
-                )
+                || (log.ProjectName != null && EF.Functions.ILike(log.ProjectName, $"%{search}%"))
+                || (log.TeamName != null && EF.Functions.ILike(log.TeamName, $"%{search}%"))
                 || (
                     log.AffectedTokenName != null
-                    && EF.Functions.ILike(log.AffectedTokenName.ToLower(), $"%{search}%")
+                    && EF.Functions.ILike(log.AffectedTokenName, $"%{search}%")
                 )
-                || (
-                    log.CompanyName != null
-                    && EF.Functions.ILike(log.CompanyName.ToLower(), $"%{search}%")
-                )
+                || (log.CompanyName != null && EF.Functions.ILike(log.CompanyName, $"%{search}%"))
                 || (
                     log.DepartmentName != null
-                    && EF.Functions.ILike(log.DepartmentName.ToLower(), $"%{search}%")
+                    && EF.Functions.ILike(log.DepartmentName, $"%{search}%")
                 )
                 || (
                     log.BusinessUnitName != null
-                    && EF.Functions.ILike(log.BusinessUnitName.ToLower(), $"%{search}%")
+                    && EF.Functions.ILike(log.BusinessUnitName, $"%{search}%")
                 )
                 || (
                     log.OfficeLocationName != null
-                    && EF.Functions.ILike(log.OfficeLocationName.ToLower(), $"%{search}%")
+                    && EF.Functions.ILike(log.OfficeLocationName, $"%{search}%")
                 )
                 || (
                     log.GlobalBillingKind != null
-                    && EF.Functions.ILike(log.GlobalBillingKind.ToLower(), $"%{search}%")
+                    && EF.Functions.ILike(log.GlobalBillingKind, $"%{search}%")
                 )
-                || (
-                    log.PluginName != null
-                    && EF.Functions.ILike(log.PluginName.ToLower(), $"%{search}%")
-                )
+                || (log.PluginName != null && EF.Functions.ILike(log.PluginName, $"%{search}%"))
                 || (
                     log.Changes != null
                     && log.Changes.Any(change =>
-                        EF.Functions.ILike(change.Property.ToLower(), $"%{search}%")
-                        || EF.Functions.ILike(change.OldValue.ToLower(), $"%{search}%")
-                        || EF.Functions.ILike(change.NewValue.ToLower(), $"%{search}%")
+                        EF.Functions.ILike(change.Property, $"%{search}%")
+                        || EF.Functions.ILike(change.OldValue, $"%{search}%")
+                        || EF.Functions.ILike(change.NewValue, $"%{search}%")
                     )
                 )
             );

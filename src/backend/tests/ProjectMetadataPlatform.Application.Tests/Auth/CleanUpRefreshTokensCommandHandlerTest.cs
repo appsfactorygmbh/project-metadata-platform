@@ -16,6 +16,7 @@ public class CleanUpRefreshTokensCommandHandlerTest
     private CleanUpRefreshTokensCommandHandler _handler;
     private Mock<IRefreshTokenRepository> _mockRefreshTokenRepo;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+
     private Mock<IUnitOfWork> _unitOfWorkMock;
     private Mock<ILogger<CleanUpRefreshTokensCommandHandler>> _logger;
 

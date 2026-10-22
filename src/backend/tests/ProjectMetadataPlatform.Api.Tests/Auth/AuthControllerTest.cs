@@ -133,10 +133,14 @@ public class Tests
             .Setup(m =>
                 m.Send<
                     GetAllApiTokensQuery,
-                    (IEnumerable<ApiToken>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<ApiToken>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        ApiTokenCursor?
+                    )
                 >(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync(([], []));
+            .ReturnsAsync(([], [], null));
         var result = await _controller.GetApiTokens();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
@@ -159,7 +163,11 @@ public class Tests
             .Setup(m =>
                 m.Send<
                     GetAllApiTokensQuery,
-                    (IEnumerable<ApiToken>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<ApiToken>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        ApiTokenCursor?
+                    )
                 >(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>())
             )
             .ReturnsAsync(
@@ -179,7 +187,8 @@ public class Tests
                             ExpirationDate = DateTime.Now,
                         },
                     ],
-                    []
+                    [],
+                    null
                 )
             );
         var result = await _controller.GetApiTokens();
@@ -208,7 +217,11 @@ public class Tests
             .Setup(mediator =>
                 mediator.Send<
                     GetAllApiTokensQuery,
-                    (IEnumerable<ApiToken>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<ApiToken>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        ApiTokenCursor?
+                    )
                 >(It.IsAny<GetAllApiTokensQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));

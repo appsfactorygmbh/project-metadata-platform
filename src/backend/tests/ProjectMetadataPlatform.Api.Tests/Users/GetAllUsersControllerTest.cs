@@ -72,10 +72,14 @@ public class GetAllUsersControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllUsersQuery,
-                    (IEnumerable<ApplicationUser>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<ApplicationUser>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        UserCursor?
+                    )
                 >(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync((users, []));
+            .ReturnsAsync((users, [], null));
 
         var result = await _controller.Get();
 
@@ -134,10 +138,14 @@ public class GetAllUsersControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllUsersQuery,
-                    (IEnumerable<ApplicationUser>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<ApplicationUser>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        UserCursor?
+                    )
                 >(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync((new List<ApplicationUser>(), []));
+            .ReturnsAsync(([], [], null));
 
         var result = await _controller.Get();
 
@@ -155,7 +163,11 @@ public class GetAllUsersControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllUsersQuery,
-                    (IEnumerable<ApplicationUser>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<ApplicationUser>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        UserCursor?
+                    )
                 >(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidOperationException("Test exception"));

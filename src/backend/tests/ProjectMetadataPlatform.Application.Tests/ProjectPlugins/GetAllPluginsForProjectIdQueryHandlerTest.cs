@@ -20,6 +20,7 @@ public class GetAllPluginsForProjectIdQueryHandlerTest
     public void SetUp()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _pluginRepositoryMock = new Mock<IPluginRepository>();
         _mockBillingRepo = new Mock<IBillingRepository>();
         _handler = new GetAllPluginsForProjectIdQueryHandler(
@@ -32,6 +33,7 @@ public class GetAllPluginsForProjectIdQueryHandlerTest
     private GetAllPluginsForProjectIdQueryHandler _handler;
     private Mock<IPluginRepository> _pluginRepositoryMock;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
     private Mock<IBillingRepository> _mockBillingRepo;
 
     [Test]

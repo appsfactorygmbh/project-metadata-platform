@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Projects;
+using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 using ProjectMetadataPlatform.Infrastructure.Projects;
@@ -33,6 +36,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
     public async Task GetProjectsWithSearchTest()
     {
         // Arrange
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var exampleProject = new Project
         {
             Id = 1,
@@ -42,13 +46,15 @@ public class ProjectsBySearchTest : TestsWithDatabase
             CompanyId = 1,
         };
 
-        var query = new GetAllProjectsQuery(null, "Reg");
+        var query = new GetAllProjectsQuery(null, "Reg", null, null);
 
         _ = _context.Projects.Add(exampleProject);
         _ = await _context.SaveChangesAsync();
-
+        _ = await _context.Database.ExecuteSqlRawAsync(
+            "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
+        );
         // Act
-        var result = (await _repository.GetProjectsAsync(query)).ToList();
+        var result = (await _repository.GetProjectsAsync(query, null)).ToList();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(1));
@@ -64,6 +70,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
     [Test]
     public async Task GetProjectsWithSearch_WithoutMatch_Test()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var project = new Project
         {
             Id = 1,
@@ -71,14 +78,18 @@ public class ProjectsBySearchTest : TestsWithDatabase
             Slug = "regen",
             ClientName = "Nasa",
             CompanyId = 1,
+            CompanyState = CompanyState.INTERNAL,
         };
 
-        var query = new GetAllProjectsQuery(null, "x");
+        var query = new GetAllProjectsQuery(null, "x", null, null);
 
         _ = _context.Projects.Add(project);
         _ = await _context.SaveChangesAsync();
+        _ = await _context.Database.ExecuteSqlRawAsync(
+            "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
+        );
+        var result = await _repository.GetProjectsAsync(query, null);
 
-        var result = await _repository.GetProjectsAsync(query);
         Assert.That(result, Is.Empty);
     }
 
@@ -86,6 +97,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
     public async Task GetProjectsWithSearch_MultipleMatches_Test()
     {
         // Arrange
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var projects = new List<Project>
         {
             new()
@@ -114,14 +126,17 @@ public class ProjectsBySearchTest : TestsWithDatabase
             },
         };
 
-        var query = new GetAllProjectsQuery(null, "Reg");
+        var query = new GetAllProjectsQuery(null, "Reg", null, null);
 
         _context.Projects.AddRange(projects);
 
         _ = await _context.SaveChangesAsync();
+        _ = await _context.Database.ExecuteSqlRawAsync(
+            "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
+        );
 
         // Act
-        var result = await _repository.GetProjectsAsync(query);
+        var result = await _repository.GetProjectsAsync(query, null);
 
         // Assert
         Assert.That(result.Count(), Is.EqualTo(2));
@@ -131,6 +146,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
     public async Task GetProjectsWithSearch_IgnoreCase_Test()
     {
         // Arrange
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var projects = new List<Project>
         {
             new()
@@ -159,20 +175,22 @@ public class ProjectsBySearchTest : TestsWithDatabase
             },
         };
 
-        var query1 = new GetAllProjectsQuery(null, "Reg");
-        var query2 = new GetAllProjectsQuery(null, "EGen");
+        var query1 = new GetAllProjectsQuery(null, "Reg", null, null);
+        var query2 = new GetAllProjectsQuery(null, "EGen", null, null);
 
         _context.Projects.AddRange(projects);
 
         _ = await _context.SaveChangesAsync();
-
+        _ = await _context.Database.ExecuteSqlRawAsync(
+            "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
+        );
         // Act
-        var result = await _repository.GetProjectsAsync(query1);
+        var result = await _repository.GetProjectsAsync(query1, null);
 
         // Assert
         Assert.That(result.Count(), Is.EqualTo(2));
 
-        var resultIgnoreCase = await _repository.GetProjectsAsync(query2);
+        var resultIgnoreCase = await _repository.GetProjectsAsync(query2, null);
 
         // Assert
         Assert.That(resultIgnoreCase.Count(), Is.EqualTo(2));
@@ -182,6 +200,8 @@ public class ProjectsBySearchTest : TestsWithDatabase
     public async Task GetProjectsWithTeamNumber_Test()
     {
         // Arrange
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
+        _context.BusinessUnits.Add(new BusinessUnit { Id = 1, BusinessUnitName = "A" });
         var projects = new List<Project>
         {
             new()
@@ -190,12 +210,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
                 ProjectName = "Wasserfall",
                 Slug = "wasserfall",
                 ClientName = "whatever_taucht_nicht_auf",
-                Team = new()
-                {
-                    TeamName = "41",
-                    BusinessUnit = new() { BusinessUnitName = "BU Test" },
-                    BusinessUnitId = 1,
-                },
+                Team = new() { TeamName = "41", BusinessUnitId = 1 },
                 CompanyId = 1,
             },
             new()
@@ -223,30 +238,32 @@ public class ProjectsBySearchTest : TestsWithDatabase
             },
         };
 
-        var query1 = new GetAllProjectsQuery(null, "42");
-        var query2 = new GetAllProjectsQuery(null, "41");
-        var query3 = new GetAllProjectsQuery(null, "4");
-        var query4 = new GetAllProjectsQuery(null, "2");
+        var query1 = new GetAllProjectsQuery(null, "42", null, null);
+        var query2 = new GetAllProjectsQuery(null, "41", null, null);
+        var query3 = new GetAllProjectsQuery(null, "4", null, null);
+        var query4 = new GetAllProjectsQuery(null, "2", null, null);
 
         _context.Projects.AddRange(projects);
 
         _ = await _context.SaveChangesAsync();
-
+        _ = await _context.Database.ExecuteSqlRawAsync(
+            "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
+        );
         // Act
-        var resultExactDouble = await _repository.GetProjectsAsync(query1);
+        var resultExactDouble = (await _repository.GetProjectsAsync(query1, null)).ToList();
 
         // Assert
         Assert.That(resultExactDouble.Count(), Is.EqualTo(2));
 
-        var resultExactSingle = await _repository.GetProjectsAsync(query2);
+        var resultExactSingle = await _repository.GetProjectsAsync(query2, null);
         // Assert
         Assert.That(resultExactSingle.Count(), Is.EqualTo(1));
 
-        var resultOnlyFirstNumber = await _repository.GetProjectsAsync(query3);
+        var resultOnlyFirstNumber = await _repository.GetProjectsAsync(query3, null);
         // Assert
         Assert.That(resultOnlyFirstNumber.Count(), Is.EqualTo(3));
 
-        var resultOnlySecondNumberNumber = await _repository.GetProjectsAsync(query4);
+        var resultOnlySecondNumberNumber = await _repository.GetProjectsAsync(query4, null);
         // Assert
         Assert.That(resultOnlySecondNumberNumber.Count(), Is.EqualTo(2));
     }

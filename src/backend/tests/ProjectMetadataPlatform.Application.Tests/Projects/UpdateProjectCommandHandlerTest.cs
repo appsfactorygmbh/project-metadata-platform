@@ -29,11 +29,13 @@ public class UpdateProjectCommandHandlerTest
     private Mock<ILogRepository> _mockLogRepository;
     private Mock<ISlugHelper> _mockSlugHelper;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
 
     [SetUp]
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockProjectRepo = new Mock<IProjectsRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockTeamRepository = new Mock<ITeamRepository>();

@@ -17,11 +17,13 @@ public class GetUserByEmailQueryHandlerTest
     private GetUserByEmailQueryHandler _handler;
     private Mock<IUsersRepository> _mockUserRepo;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
 
     [SetUp]
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockUserRepo = new Mock<IUsersRepository>();
         _handler = new GetUserByEmailQueryHandler(
             _mockUserRepo.Object,

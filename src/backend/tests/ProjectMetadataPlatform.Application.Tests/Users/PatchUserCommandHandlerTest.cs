@@ -31,12 +31,14 @@ public class PatchUserCommandHandlerTest
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<ITeamRepository> _mockTeamRepo;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
     private Mock<IGetOrCreateHelper> _getOrCreateHelperMock;
 
     [SetUp]
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockUsersRepo = new Mock<IUsersRepository>();
         _mockPasswordHasher = new Mock<IPasswordHasher<ApplicationUser>>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();

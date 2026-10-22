@@ -2,10 +2,12 @@
 using System.Data.Common;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 
 namespace ProjectMetadataPlatform.IntegrationTests.Utilities;
@@ -46,6 +48,13 @@ public class PmpWebApplicationFactory : WebApplicationFactory<Program>
                         )
                     );
             });
+        });
+
+        builder.ConfigureTestServices(services =>
+        {
+            services.RemoveAll<IJobScheduler>();
+
+            services.AddSingleton<IJobScheduler, TestJobScheduler>();
         });
 
         _ = builder.UseEnvironment("Production");

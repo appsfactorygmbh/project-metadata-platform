@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Plugins;
@@ -27,14 +28,13 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [TearDown]
     public void TearDown()
     {
-        // Clean up the database after each test
-        _ = _context.Database.EnsureDeleted();
         _context.Dispose();
     }
 
     [Test]
     public async Task TestPluginRepository()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var project = new Project
         {
             Id = 1,
@@ -146,6 +146,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public async Task CreateProjectPlugins_IdsDifferent_Test()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         _context.Projects.Add(
             new Project
             {
@@ -197,6 +198,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public async Task StoreProjectPlugin_NoIdIncrementWhenIdExists_Test()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         _context.Projects.Add(
             new Project
             {
@@ -271,6 +273,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetProjectPluginById_Test()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         _context.Projects.Add(
             new Project
             {
@@ -332,7 +335,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
         _ = _context.Add(examplePlugin);
         _ = await _context.SaveChangesAsync();
 
-        var plugin = (await _repository.GetGlobalPluginsAsync()).ToList();
+        var plugin = (await _repository.GetGlobalPluginsAsync(null)).ToList();
 
         Assert.That(plugin, Is.Not.Null);
 
@@ -346,7 +349,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetGlobalPlugins_NoPlugins_Test()
     {
-        var plugin = await _repository.GetGlobalPluginsAsync();
+        var plugin = await _repository.GetGlobalPluginsAsync(null);
 
         Assert.That(plugin, Is.Empty);
     }
@@ -354,6 +357,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetAllUnarchivedPluginsForProjectIdAsync_ShouldReturnOnlyUnarchivedPlugins()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var project = new Project
         {
             Id = 1,
@@ -409,6 +413,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetAllUnarchivedPluginsForProjectIdAsync_ShouldReturnEmptyWhenNoUnarchivedPlugins()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var project = new Project
         {
             Id = 1,
@@ -446,6 +451,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetAllUnarchivedPluginsForProjectIdAsync_ShouldReturnEmptyWhenNoPluginsForProject()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var project = new Project
         {
             Id = 1,
@@ -467,6 +473,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetAllUnarchivedPluginsForProjectIdAsync_ShouldReturnEmptyWhenAllPluginsAreArchived()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var project = new Project
         {
             Id = 1,
@@ -506,6 +513,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetAllUnarchivedPluginsForProjectIdAsync_ShouldReturnOnlyUnarchivedWhenMixOfArchivedAndUnarchived()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var project = new Project
         {
             Id = 1,
@@ -560,6 +568,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetAllUnarchivedPluginsForProjectIdAsync_ShouldReturnPluginsBelongingToTheSpecifiedProject()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var project1 = new Project
         {
             Id = 1,
@@ -629,6 +638,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public async Task TestDeletePlugins()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         // Arrange
         var project1 = new Project
         {
@@ -703,6 +713,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public async Task TestDeleteProjectPlugins()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         // Arrange
         var project1 = new Project
         {
@@ -793,6 +804,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public async Task CheckProjectPluginExists_Test()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         _context.Projects.Add(
             new Project
             {

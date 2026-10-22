@@ -9,6 +9,7 @@ using NUnit.Framework;
 using ProjectMetadataPlatform.Api.BusinessUnits;
 using ProjectMetadataPlatform.Api.BusinessUnits.Models;
 using ProjectMetadataPlatform.Api.Common.Models;
+using ProjectMetadataPlatform.Application.Billing;
 using ProjectMetadataPlatform.Application.BusinessUnits;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Authorization;
@@ -36,10 +37,14 @@ public class BusinessUnitsControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllBusinessUnitsQuery,
-                    (IEnumerable<BusinessUnit>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<BusinessUnit>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        BusinessUnitCursor?
+                    )
                 >(It.IsAny<GetAllBusinessUnitsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync(([], []));
+            .ReturnsAsync(([], [], null));
         var result = await _controller.Get();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
@@ -62,7 +67,11 @@ public class BusinessUnitsControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllBusinessUnitsQuery,
-                    (IEnumerable<BusinessUnit>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<BusinessUnit>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        BusinessUnitCursor?
+                    )
                 >(It.IsAny<GetAllBusinessUnitsQuery>(), It.IsAny<CancellationToken>())
             )
             .ReturnsAsync(
@@ -71,7 +80,8 @@ public class BusinessUnitsControllerTest
                         new BusinessUnit { Id = 1, BusinessUnitName = "BusinessUnit1" },
                         new BusinessUnit { Id = 2, BusinessUnitName = "BusinessUnit2" },
                     ],
-                    []
+                    [],
+                    null
                 )
             );
         var result = await _controller.Get();
@@ -100,7 +110,11 @@ public class BusinessUnitsControllerTest
             .Setup(mediator =>
                 mediator.Send<
                     GetAllBusinessUnitsQuery,
-                    (IEnumerable<BusinessUnit>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<BusinessUnit>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        BusinessUnitCursor?
+                    )
                 >(It.IsAny<GetAllBusinessUnitsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));

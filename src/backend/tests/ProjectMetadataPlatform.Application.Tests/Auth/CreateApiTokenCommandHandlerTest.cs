@@ -20,6 +20,7 @@ public class CreateApiTokenCommandHandlerTest
     private Mock<IApiTokenRepository> _apiTokenRepositoryMock;
     private Mock<ILogRepository> _logRepositoryMock;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+
     private Mock<IUnitOfWork> _unitOfWorkMock;
 
     private CreateApiTokenCommandHandler _handler;

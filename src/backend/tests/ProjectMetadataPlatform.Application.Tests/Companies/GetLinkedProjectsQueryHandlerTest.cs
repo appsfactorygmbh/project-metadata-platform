@@ -17,11 +17,13 @@ public class GetLinkedProjectsQueryHandlerTest
     private GetLinkedProjectsQueryHandler _handler;
     private Mock<ICompanyRepository> _mockCompanyRepository;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
 
     [SetUp]
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockCompanyRepository = new Mock<ICompanyRepository>();
         _handler = new GetLinkedProjectsQueryHandler(
             companyRepository: _mockCompanyRepository.Object,

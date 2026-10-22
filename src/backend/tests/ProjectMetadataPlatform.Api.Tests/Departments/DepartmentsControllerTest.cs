@@ -36,10 +36,14 @@ public class DepartmentsControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllDepartmentsQuery,
-                    (IEnumerable<Department>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<Department>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        DepartmentCursor?
+                    )
                 >(It.IsAny<GetAllDepartmentsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync(([], []));
+            .ReturnsAsync(([], [], null));
         var result = await _controller.Get();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
@@ -62,7 +66,11 @@ public class DepartmentsControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllDepartmentsQuery,
-                    (IEnumerable<Department>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<Department>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        DepartmentCursor?
+                    )
                 >(It.IsAny<GetAllDepartmentsQuery>(), It.IsAny<CancellationToken>())
             )
             .ReturnsAsync(
@@ -71,7 +79,8 @@ public class DepartmentsControllerTest
                         new Department { Id = 1, DepartmentName = "Department1" },
                         new Department { Id = 2, DepartmentName = "Department2" },
                     ],
-                    []
+                    [],
+                    null
                 )
             );
         var result = await _controller.Get();
@@ -100,7 +109,11 @@ public class DepartmentsControllerTest
             .Setup(mediator =>
                 mediator.Send<
                     GetAllDepartmentsQuery,
-                    (IEnumerable<Department>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<Department>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        DepartmentCursor?
+                    )
                 >(It.IsAny<GetAllDepartmentsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));

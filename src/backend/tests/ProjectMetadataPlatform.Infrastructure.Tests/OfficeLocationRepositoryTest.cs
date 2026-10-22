@@ -43,7 +43,7 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         // Act
-        var result = (await _repository.GetOfficeLocationsAsync()).ToList();
+        var result = (await _repository.GetOfficeLocationsAsync(null)).ToList();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(2));

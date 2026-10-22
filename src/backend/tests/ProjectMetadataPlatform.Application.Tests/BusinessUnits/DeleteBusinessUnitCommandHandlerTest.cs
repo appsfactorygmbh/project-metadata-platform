@@ -19,6 +19,7 @@ public class DeleteBusinessUnitCommandHandlerTest
     private DeleteBusinessUnitCommandHandler _handler;
     private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
 
@@ -26,6 +27,7 @@ public class DeleteBusinessUnitCommandHandlerTest
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockBusinessUnitRepository = new Mock<IBusinessUnitRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();

@@ -47,7 +47,7 @@ public class TeamManagement : IntegrationTestsBase
         Assert.That(teams[1].GetProperty("id").GetInt32(), Is.EqualTo(teamId2));
         Assert.That(teams[1].GetProperty("teamName").GetString(), Is.EqualTo("Team2"));
 
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
 
         Assert.That(logs.GetArrayLength(), Is.EqualTo(4));
 

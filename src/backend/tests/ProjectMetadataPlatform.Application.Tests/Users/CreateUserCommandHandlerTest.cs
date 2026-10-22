@@ -27,6 +27,7 @@ public class CreateUserCommandHandlerTest
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<ITeamRepository> _mockTeamRepo;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
     private Mock<IGetOrCreateHelper> _getOrCreateHelperMock;
     private Mock<IUnitOfWork> _mockUnitOfWork;
 
@@ -34,6 +35,7 @@ public class CreateUserCommandHandlerTest
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockUsersRepo = new Mock<IUsersRepository>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockTeamRepo = new Mock<ITeamRepository>();

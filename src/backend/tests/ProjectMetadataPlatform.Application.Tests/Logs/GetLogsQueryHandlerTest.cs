@@ -20,16 +20,15 @@ public class GetLogsQueryHandlerTest
     private GetLogsQueryHandler _handler;
     private Mock<ILogRepository> _mockLogsRepo;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
 
     [SetUp]
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockLogsRepo = new Mock<ILogRepository>();
-        _handler = new GetLogsQueryHandler(
-            _mockLogsRepo.Object,
-            authorizationService: _authorizationServiceMock.Object
-        );
+        _handler = new GetLogsQueryHandler(_mockLogsRepo.Object, _paginationHelperMock.Object);
     }
 
     [Test]
@@ -73,19 +72,17 @@ public class GetLogsQueryHandlerTest
                 },
             ],
         };
-        _ = _authorizationServiceMock
-            .Setup(a =>
-                a.TryGetPlanResourceQuery(
-                    It.IsAny<IQueryable<Log>>(),
-                    It.IsAny<Dictionary<string, string>?>()
-                )
-            )
-            .ReturnsAsync((IQueryable<Log> query, Dictionary<string, string>? dict) => query);
+        _ = _paginationHelperMock
+            .Setup(a => a.PaginateWithAuthAsync(It.IsAny<IQueryable<Log>>(), It.IsAny<int?>()))
+            .ReturnsAsync((IQueryable<Log> query, int? limit) => (query, null));
         _ = _mockLogsRepo
-            .Setup(r => r.GetAllLogs())
+            .Setup(r => r.GetAllLogs(null))
             .ReturnsAsync(new List<Log> { log, log2 }.BuildMock());
 
-        var result = await _handler.Handle(new GetLogsQuery(), CancellationToken.None);
+        var (result, cursor) = await _handler.Handle(
+            new GetLogsQuery(null, null, null, null),
+            CancellationToken.None
+        );
         var logList = result.ToList();
 
         Assert.That(logList, Has.Count.EqualTo(2));
@@ -95,7 +92,7 @@ public class GetLogsQueryHandlerTest
             Assert.That(logList[1], Is.EqualTo(log2));
         });
 
-        _mockLogsRepo.Verify(r => r.GetAllLogs(), Times.Once);
+        _mockLogsRepo.Verify(r => r.GetAllLogs(null), Times.Once);
     }
 
     [Test]
@@ -139,14 +136,9 @@ public class GetLogsQueryHandlerTest
                 },
             ],
         };
-        _ = _authorizationServiceMock
-            .Setup(a =>
-                a.TryGetPlanResourceQuery(
-                    It.IsAny<IQueryable<Log>>(),
-                    It.IsAny<Dictionary<string, string>?>()
-                )
-            )
-            .ReturnsAsync((IQueryable<Log>?)null);
+        _ = _paginationHelperMock
+            .Setup(a => a.PaginateWithAuthAsync(It.IsAny<IQueryable<Log>>(), It.IsAny<int?>()))
+            .ReturnsAsync((IQueryable<Log> query, int? limit) => (query, null));
         _ = _authorizationServiceMock
             .Setup(a =>
                 a.CheckAccess(
@@ -157,10 +149,13 @@ public class GetLogsQueryHandlerTest
             )
             .ReturnsAsync(true);
         _ = _mockLogsRepo
-            .Setup(r => r.GetAllLogs())
+            .Setup(r => r.GetAllLogs(null))
             .ReturnsAsync(new List<Log> { log, log2 }.BuildMock());
 
-        var result = await _handler.Handle(new GetLogsQuery(), CancellationToken.None);
+        var (result, cursor) = await _handler.Handle(
+            new GetLogsQuery(null, null, null, null),
+            CancellationToken.None
+        );
         var logList = result.ToList();
 
         Assert.That(logList, Has.Count.EqualTo(2));
@@ -170,7 +165,7 @@ public class GetLogsQueryHandlerTest
             Assert.That(logList[1], Is.EqualTo(log2));
         });
 
-        _mockLogsRepo.Verify(r => r.GetAllLogs(), Times.Once);
+        _mockLogsRepo.Verify(r => r.GetAllLogs(null), Times.Once);
     }
 
     [Test]
@@ -195,25 +190,23 @@ public class GetLogsQueryHandlerTest
                 },
             ],
         };
-        _ = _authorizationServiceMock
-            .Setup(a =>
-                a.TryGetPlanResourceQuery(
-                    It.IsAny<IQueryable<Log>>(),
-                    It.IsAny<Dictionary<string, string>?>()
-                )
-            )
-            .ReturnsAsync((IQueryable<Log> query, Dictionary<string, string>? dict) => query);
+        _ = _paginationHelperMock
+            .Setup(a => a.PaginateWithAuthAsync(It.IsAny<IQueryable<Log>>(), It.IsAny<int?>()))
+            .ReturnsAsync((IQueryable<Log> query, int? limit) => (query, null));
         _ = _mockLogsRepo
-            .Setup(r => r.GetLogsForProject(1))
+            .Setup(r => r.GetLogsForProject(1, null))
             .ReturnsAsync(new List<Log> { log }.BuildMock());
 
-        var result = await _handler.Handle(new GetLogsQuery(1), CancellationToken.None);
+        var (result, cursor) = await _handler.Handle(
+            new GetLogsQuery(null, null, null, null, 1),
+            CancellationToken.None
+        );
         var logList = result.ToList();
 
         Assert.That(logList, Has.Count.EqualTo(1));
         Assert.That(logList[0], Is.EqualTo(log));
 
-        _mockLogsRepo.Verify(r => r.GetLogsForProject(1), Times.Once);
+        _mockLogsRepo.Verify(r => r.GetLogsForProject(1, null), Times.Once);
     }
 
     [Test]
@@ -238,20 +231,15 @@ public class GetLogsQueryHandlerTest
                 },
             ],
         };
-        _ = _authorizationServiceMock
-            .Setup(a =>
-                a.TryGetPlanResourceQuery(
-                    It.IsAny<IQueryable<Log>>(),
-                    It.IsAny<Dictionary<string, string>?>()
-                )
-            )
-            .ReturnsAsync((IQueryable<Log> query, Dictionary<string, string>? dict) => query);
+        _ = _paginationHelperMock
+            .Setup(a => a.PaginateWithAuthAsync(It.IsAny<IQueryable<Log>>(), It.IsAny<int?>()))
+            .ReturnsAsync((IQueryable<Log> query, int? limit) => (query, null));
         _ = _mockLogsRepo
-            .Setup(r => r.GetLogsWithSearch("exp(x)"))
+            .Setup(r => r.GetLogsWithSearch("exp(x)", null, null, null))
             .ReturnsAsync(new List<Log> { log }.BuildMock());
 
-        var result = await _handler.Handle(
-            new GetLogsQuery(null, "exp(x)"),
+        var (result, cursor) = await _handler.Handle(
+            new GetLogsQuery(null, null, null, null, null, "exp(x)"),
             CancellationToken.None
         );
         var logList = result.ToList();
@@ -259,7 +247,7 @@ public class GetLogsQueryHandlerTest
         Assert.That(logList, Has.Count.EqualTo(1));
         Assert.That(logList[0], Is.EqualTo(log));
 
-        _mockLogsRepo.Verify(r => r.GetLogsWithSearch("exp(x)"), Times.Once);
+        _mockLogsRepo.Verify(r => r.GetLogsWithSearch("exp(x)", null, null, null), Times.Once);
     }
 
     [Test]
@@ -284,20 +272,15 @@ public class GetLogsQueryHandlerTest
                 },
             ],
         };
-        _ = _authorizationServiceMock
-            .Setup(a =>
-                a.TryGetPlanResourceQuery(
-                    It.IsAny<IQueryable<Log>>(),
-                    It.IsAny<Dictionary<string, string>?>()
-                )
-            )
-            .ReturnsAsync((IQueryable<Log> query, Dictionary<string, string>? dict) => query);
+        _ = _paginationHelperMock
+            .Setup(a => a.PaginateWithAuthAsync(It.IsAny<IQueryable<Log>>(), It.IsAny<int?>()))
+            .ReturnsAsync((IQueryable<Log> query, int? limit) => (query, null));
         _ = _mockLogsRepo
-            .Setup(r => r.GetLogsForUser("Newton"))
+            .Setup(r => r.GetLogsForUser("Newton", null))
             .ReturnsAsync(new List<Log> { log }.BuildMock());
 
-        var result = await _handler.Handle(
-            new GetLogsQuery(null, null, "Newton"),
+        var (result, cursor) = await _handler.Handle(
+            new GetLogsQuery(null, null, null, null, null, null, "Newton"),
             CancellationToken.None
         );
         var logList = result.ToList();
@@ -305,7 +288,7 @@ public class GetLogsQueryHandlerTest
         Assert.That(logList, Has.Count.EqualTo(1));
         Assert.That(logList[0], Is.EqualTo(log));
 
-        _mockLogsRepo.Verify(r => r.GetLogsForUser("Newton"), Times.Once);
+        _mockLogsRepo.Verify(r => r.GetLogsForUser("Newton", null), Times.Once);
     }
 
     [Test]
@@ -331,20 +314,15 @@ public class GetLogsQueryHandlerTest
                 },
             ],
         };
-        _ = _authorizationServiceMock
-            .Setup(a =>
-                a.TryGetPlanResourceQuery(
-                    It.IsAny<IQueryable<Log>>(),
-                    It.IsAny<Dictionary<string, string>?>()
-                )
-            )
-            .ReturnsAsync((IQueryable<Log> query, Dictionary<string, string>? dict) => query);
+        _ = _paginationHelperMock
+            .Setup(a => a.PaginateWithAuthAsync(It.IsAny<IQueryable<Log>>(), It.IsAny<int?>()))
+            .ReturnsAsync((IQueryable<Log> query, int? limit) => (query, null));
         _ = _mockLogsRepo
-            .Setup(r => r.GetLogsForGlobalPlugin(42))
+            .Setup(r => r.GetLogsForGlobalPlugin(42, null))
             .ReturnsAsync(new List<Log> { log }.BuildMock());
 
-        var result = await _handler.Handle(
-            new GetLogsQuery(null, null, null, 42),
+        var (result, cursor) = await _handler.Handle(
+            new GetLogsQuery(null, null, null, null, null, null, null, 42),
             CancellationToken.None
         );
         var logList = result.ToList();
@@ -352,14 +330,14 @@ public class GetLogsQueryHandlerTest
         Assert.That(logList, Has.Count.EqualTo(1));
         Assert.That(logList[0], Is.EqualTo(log));
 
-        _mockLogsRepo.Verify(r => r.GetLogsForGlobalPlugin(42), Times.Once);
+        _mockLogsRepo.Verify(r => r.GetLogsForGlobalPlugin(42, null), Times.Once);
     }
 
     [Test]
     public void GetLogs_ThrowsExceptionWhenProjectNotFound_Test()
     {
         _ = _mockLogsRepo
-            .Setup(m => m.GetLogsForProject(It.IsAny<int>()))
+            .Setup(m => m.GetLogsForProject(It.IsAny<int>(), It.IsAny<LogCursor?>()))
             .ThrowsAsync(new InvalidOperationException());
         _ = _authorizationServiceMock
             .Setup(a =>
@@ -369,11 +347,11 @@ public class GetLogsQueryHandlerTest
                 )
             )
             .ReturnsAsync((IQueryable<Log> query, Dictionary<string, string>? dict) => query);
-        var request = new GetLogsQuery(404);
+        var request = new GetLogsQuery(null, null, null, null, 404);
         _ = Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await _handler.Handle(request, It.IsAny<CancellationToken>())
         );
 
-        _mockLogsRepo.Verify(m => m.GetLogsForProject(404), Times.Once);
+        _mockLogsRepo.Verify(m => m.GetLogsForProject(404, null), Times.Once);
     }
 }

@@ -55,7 +55,7 @@ public class GlobalPluginManagement : IntegrationTestsBase
             );
         });
 
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
 
         Assert.Multiple(() =>
         {
@@ -109,7 +109,7 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(plugins[0].GetProperty("isArchived").GetBoolean(), Is.False);
         });
 
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
         Assert.Multiple(() =>
         {
             Assert.That(logs.GetArrayLength(), Is.EqualTo(2));
@@ -181,7 +181,7 @@ public class GlobalPluginManagement : IntegrationTestsBase
             Assert.That(plugins[0].GetProperty("isArchived").GetBoolean(), Is.False);
         });
 
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
 
         Assert.Multiple(() =>
         {
@@ -229,7 +229,7 @@ public class GlobalPluginManagement : IntegrationTestsBase
         var plugins = (await ToJsonElement(client.GetAsync("/Plugins"))).GetProperty("resources");
 
         Assert.That(plugins.GetArrayLength(), Is.EqualTo(0));
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
         Assert.Multiple(() =>
         {
             Assert.That(logs.GetArrayLength(), Is.EqualTo(3));

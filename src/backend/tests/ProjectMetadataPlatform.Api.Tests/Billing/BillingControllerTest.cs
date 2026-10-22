@@ -36,10 +36,14 @@ public class BillingControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllBillingQuery,
-                    (IEnumerable<GlobalBilling>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<GlobalBilling>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        BillingCursor?
+                    )
                 >(It.IsAny<GetAllBillingQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync(([], []));
+            .ReturnsAsync(([], [], null));
         var result = await _controller.Get();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
@@ -62,7 +66,11 @@ public class BillingControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllBillingQuery,
-                    (IEnumerable<GlobalBilling>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<GlobalBilling>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        BillingCursor?
+                    )
                 >(It.IsAny<GetAllBillingQuery>(), It.IsAny<CancellationToken>())
             )
             .ReturnsAsync(
@@ -71,7 +79,8 @@ public class BillingControllerTest
                         new GlobalBilling { Id = 1, BillingKind = "Billing1" },
                         new GlobalBilling { Id = 2, BillingKind = "Billing2" },
                     ],
-                    []
+                    [],
+                    null
                 )
             );
         var result = await _controller.Get();
@@ -100,7 +109,11 @@ public class BillingControllerTest
             .Setup(mediator =>
                 mediator.Send<
                     GetAllBillingQuery,
-                    (IEnumerable<GlobalBilling>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<GlobalBilling>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        BillingCursor?
+                    )
                 >(It.IsAny<GetAllBillingQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));

@@ -41,18 +41,18 @@ public class GlobalBillingManagement : IntegrationTestsBase
         Assert.Multiple(() =>
         {
             Assert.That(billing.GetArrayLength(), Is.EqualTo(2));
-            Assert.That(billing[0].GetProperty("id").GetInt32(), Is.EqualTo(billingId1));
-            Assert.That(billing[0].GetProperty("billingKind").GetString(), Is.EqualTo("gitLab"));
-            Assert.That(billing[0].GetProperty("currency").GetString(), Is.EqualTo("EUR"));
+            Assert.That(billing[1].GetProperty("id").GetInt32(), Is.EqualTo(billingId1));
+            Assert.That(billing[1].GetProperty("billingKind").GetString(), Is.EqualTo("gitLab"));
+            Assert.That(billing[1].GetProperty("currency").GetString(), Is.EqualTo("EUR"));
 
-            Assert.That(billing[0].GetProperty("targetMargin").GetInt32(), Is.EqualTo(30));
-            Assert.That(billing[0].GetProperty("timeFrame").GetString(), Is.EqualTo("NEVER"));
+            Assert.That(billing[1].GetProperty("targetMargin").GetInt32(), Is.EqualTo(30));
+            Assert.That(billing[1].GetProperty("timeFrame").GetString(), Is.EqualTo("NEVER"));
 
-            Assert.That(billing[1].GetProperty("id").GetInt32(), Is.EqualTo(billingId2));
-            Assert.That(billing[1].GetProperty("billingKind").GetString(), Is.EqualTo("devOps"));
+            Assert.That(billing[0].GetProperty("id").GetInt32(), Is.EqualTo(billingId2));
+            Assert.That(billing[0].GetProperty("billingKind").GetString(), Is.EqualTo("devOps"));
         });
 
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
 
         Assert.Multiple(() =>
         {
@@ -106,7 +106,8 @@ public class GlobalBillingManagement : IntegrationTestsBase
             Assert.That(billing[0].GetProperty("billingKind").GetString(), Is.EqualTo("devOps"));
         });
 
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
+
         Assert.Multiple(() =>
         {
             Assert.That(logs.GetArrayLength(), Is.EqualTo(2));
@@ -119,7 +120,7 @@ public class GlobalBillingManagement : IntegrationTestsBase
             Assert.That(
                 logs[0].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin updated global billing information devOps: set BillingKind from gitLab to devOps, set Currency from EUR to null, set TargetMargin from 30 to null, set TimeFrame from NEVER to null"
+                    "admin updated global billing information devOps: set TimeFrame from NEVER to null, set BillingKind from gitLab to devOps, set Currency from EUR to null, set TargetMargin from 30 to null"
                 )
             );
         });
@@ -145,7 +146,8 @@ public class GlobalBillingManagement : IntegrationTestsBase
         var billing = (await ToJsonElement(client.GetAsync("/Billing"))).GetProperty("resources");
 
         Assert.That(billing.GetArrayLength(), Is.EqualTo(0));
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
+
         Assert.Multiple(() =>
         {
             Assert.That(logs.GetArrayLength(), Is.EqualTo(2));

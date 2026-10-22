@@ -20,6 +20,7 @@ public class CreateCompanyCommandHandlerTest
     private CreateCompanyCommandHandler _handler;
     private Mock<ICompanyRepository> _mockCompanyRepository;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
 
@@ -28,6 +29,7 @@ public class CreateCompanyCommandHandlerTest
     {
         _mockCompanyRepository = new Mock<ICompanyRepository>();
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockLogRepo = new Mock<ILogRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _handler = new CreateCompanyCommandHandler(

@@ -43,8 +43,6 @@ public class UsersRepositoryTest : TestsWithDatabase
     {
         using var context = DbContext();
 
-        _ = context.Database.EnsureDeleted();
-
         _context?.Dispose();
     }
 
@@ -181,7 +179,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetUsersAsync_EmptyResponse_Test()
     {
-        var result = await _repository.GetUsersAsync("");
+        var result = await _repository.GetUsersAsync("", null);
 
         Assert.That(result, Is.Empty);
     }
@@ -204,7 +202,7 @@ public class UsersRepositoryTest : TestsWithDatabase
         _context.Users.AddRange(usersResponseContent);
         _ = await _context.SaveChangesAsync();
 
-        var result = (await _repository.GetUsersAsync("")).ToList();
+        var result = (await _repository.GetUsersAsync("", null)).ToList();
 
         Assert.Multiple(() =>
         {
@@ -240,7 +238,7 @@ public class UsersRepositoryTest : TestsWithDatabase
         _context.Users.AddRange(usersResponseContent);
         _ = await _context.SaveChangesAsync();
 
-        var result = (await _repository.GetUsersAsync("externalId eq \"Id\"")).ToList();
+        var result = (await _repository.GetUsersAsync("externalId eq \"Id\"", null)).ToList();
 
         Assert.Multiple(() =>
         {
@@ -276,7 +274,7 @@ public class UsersRepositoryTest : TestsWithDatabase
         _context.Users.AddRange(usersResponseContent);
         _ = await _context.SaveChangesAsync();
 
-        var result = (await _repository.GetUsersAsync("userName eq \"Hanz\"")).ToList();
+        var result = (await _repository.GetUsersAsync("userName eq \"Hanz\"", null)).ToList();
 
         Assert.Multiple(() =>
         {

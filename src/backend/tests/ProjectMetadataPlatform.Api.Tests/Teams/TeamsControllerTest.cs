@@ -250,10 +250,10 @@ public class TeamsControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllTeamsQuery,
-                    (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)
+                    (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>, TeamCursor?)
                 >(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync((teams, []));
+            .ReturnsAsync((teams, [], null));
 
         // Act
         var actionResult = await _controller.Get(null, null);
@@ -283,10 +283,10 @@ public class TeamsControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllTeamsQuery,
-                    (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)
+                    (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>, TeamCursor?)
                 >(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync((new List<Team>(), []));
+            .ReturnsAsync((new List<Team>(), [], null));
 
         // Act
         var actionResult = await _controller.Get(null, null);
@@ -309,10 +309,10 @@ public class TeamsControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllTeamsQuery,
-                    (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)
+                    (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>, TeamCursor?)
                 >(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync((new List<Team>(), []));
+            .ReturnsAsync((new List<Team>(), [], null));
 
         // Act
         _ = await _controller.Get(teamName: teamNameFilter, search: searchQuery);
@@ -322,7 +322,7 @@ public class TeamsControllerTest
             m =>
                 m.Send<
                     GetAllTeamsQuery,
-                    (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>)
+                    (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>, TeamCursor?)
                 >(
                     It.Is<GetAllTeamsQuery>(q =>
                         q.TeamName == teamNameFilter && q.FullTextQuery == searchQuery

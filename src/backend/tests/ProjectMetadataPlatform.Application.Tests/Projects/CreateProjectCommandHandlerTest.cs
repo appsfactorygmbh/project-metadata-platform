@@ -27,6 +27,7 @@ public class CreateProjectCommandHandlerTest
     private Mock<IUnitOfWork> _mockUnitOfWork;
     private Mock<ISlugHelper> _mockSlugHelper;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
 
     [SetUp]
     public void Setup()
@@ -38,6 +39,7 @@ public class CreateProjectCommandHandlerTest
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockSlugHelper = new Mock<ISlugHelper>();
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _handler = new CreateProjectCommandHandler(
             _mockProjectRepo.Object,
             _teamRepository.Object,

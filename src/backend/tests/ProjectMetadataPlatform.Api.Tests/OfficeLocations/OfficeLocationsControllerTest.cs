@@ -36,10 +36,14 @@ public class OfficeLocationsControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllOfficeLocationsQuery,
-                    (IEnumerable<OfficeLocation>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<OfficeLocation>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        OfficeLocationCursor?
+                    )
                 >(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync(([], []));
+            .ReturnsAsync(([], [], null));
         var result = await _controller.Get();
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
@@ -62,7 +66,11 @@ public class OfficeLocationsControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllOfficeLocationsQuery,
-                    (IEnumerable<OfficeLocation>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<OfficeLocation>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        OfficeLocationCursor?
+                    )
                 >(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
             )
             .ReturnsAsync(
@@ -71,7 +79,8 @@ public class OfficeLocationsControllerTest
                         new OfficeLocation { Id = 1, OfficeLocationName = "OfficeLocation1" },
                         new OfficeLocation { Id = 2, OfficeLocationName = "OfficeLocation2" },
                     ],
-                    []
+                    [],
+                    null
                 )
             );
         var result = await _controller.Get();
@@ -106,7 +115,11 @@ public class OfficeLocationsControllerTest
             .Setup(mediator =>
                 mediator.Send<
                     GetAllOfficeLocationsQuery,
-                    (IEnumerable<OfficeLocation>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<OfficeLocation>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        OfficeLocationCursor?
+                    )
                 >(It.IsAny<GetAllOfficeLocationsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));

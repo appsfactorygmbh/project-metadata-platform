@@ -44,7 +44,7 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         // Act
-        var result = (await _repository.GetBusinessUnitsAsync()).ToList();
+        var result = (await _repository.GetBusinessUnitsAsync(null)).ToList();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(2));

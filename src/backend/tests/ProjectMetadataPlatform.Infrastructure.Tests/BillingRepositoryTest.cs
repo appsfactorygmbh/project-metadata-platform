@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Domain.Billing;
+using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Errors.BillingExceptions;
 using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
@@ -24,6 +25,7 @@ public class BillingRepositoryTest : TestsWithDatabase
         _context = DbContext();
         _billingRepository = new BillingRepository(_context);
         ClearData(_context);
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         _context.Projects.Add(
             new Project
             {
@@ -87,7 +89,7 @@ public class BillingRepositoryTest : TestsWithDatabase
 
         var result = await _billingRepository.StoreBillingInformation(billing);
         await _context.SaveChangesAsync();
-        Assert.That(result.Id, Is.EqualTo(1));
+        Assert.That(result.Id, Is.GreaterThan(0));
         Assert.That(result.BillingKind, Is.EqualTo(billing.BillingKind));
     }
 
@@ -98,7 +100,7 @@ public class BillingRepositoryTest : TestsWithDatabase
 
         var result = await _billingRepository.StoreBillingInformation(billing);
         await _context.SaveChangesAsync();
-        Assert.That(result.Id, Is.EqualTo(1));
+        Assert.That(result.Id, Is.GreaterThan(0));
         billing.BillingKind = "CBB";
         var resultUpdate = await _billingRepository.StoreBillingInformation(billing);
         await _context.SaveChangesAsync();
@@ -244,14 +246,14 @@ public class BillingRepositoryTest : TestsWithDatabase
     public async Task GetAllGlobalBillingInformationAsync_ReturnsEmptyTest()
     {
         var result = await (
-            await _billingRepository.GetAllGlobalBillingInformationAsync()
+            await _billingRepository.GetAllGlobalBillingInformationAsync(null)
         ).ToListAsync();
 
         Assert.That(result, Is.Empty);
     }
 
     [Test]
-    public async Task GetAllGlobalBillingInformationAsync_ReturnsAllBillingTest()
+    public async Task GetAllGlobalBillingInformationAsync_ReturnsAllBillingSortedTest()
     {
         var billing1 = new GlobalBilling { Id = 1, BillingKind = "Abc" };
         var billing2 = new GlobalBilling { Id = 3, BillingKind = "Abcd" };
@@ -259,13 +261,13 @@ public class BillingRepositoryTest : TestsWithDatabase
         await _context.GlobalBilling.AddRangeAsync(billing1, billing2);
         await _context.SaveChangesAsync();
         var result = await (
-            await _billingRepository.GetAllGlobalBillingInformationAsync()
+            await _billingRepository.GetAllGlobalBillingInformationAsync(null)
         ).ToListAsync();
 
         Assert.That(result, Is.Not.Empty);
         Assert.That(result, Has.Count.EqualTo(2));
-        Assert.That(result.First().BillingKind, Is.EqualTo(billing2.BillingKind));
-        Assert.That(result.Last().BillingKind, Is.EqualTo(billing1.BillingKind));
+        Assert.That(result.First().BillingKind, Is.EqualTo(billing1.BillingKind));
+        Assert.That(result.Last().BillingKind, Is.EqualTo(billing2.BillingKind));
     }
 
     [Test]

@@ -18,6 +18,7 @@ public class GetProjectByIdQueryHandlerTest
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockProjectRepo = new Mock<IProjectsRepository>();
         _handler = new GetProjectQueryHandler(
             _mockProjectRepo.Object,
@@ -28,6 +29,7 @@ public class GetProjectByIdQueryHandlerTest
     private GetProjectQueryHandler _handler;
     private Mock<IProjectsRepository> _mockProjectRepo;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
 
     [Test]
     public async Task HandleGetProjectRequest_NonexistentProject_Test()

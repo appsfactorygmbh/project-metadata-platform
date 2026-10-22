@@ -16,6 +16,7 @@ namespace ProjectMetadataPlatform.Application.Tests.Billing;
 public class GetBillingByIdQueryHandlerTest
 {
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
     private GetBillingByIdQueryHandler _handler;
     private Mock<IBillingRepository> _mockBillingRepository;
 
@@ -23,6 +24,7 @@ public class GetBillingByIdQueryHandlerTest
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockBillingRepository = new Mock<IBillingRepository>();
         _handler = new GetBillingByIdQueryHandler(
             billingRepository: _mockBillingRepository.Object,

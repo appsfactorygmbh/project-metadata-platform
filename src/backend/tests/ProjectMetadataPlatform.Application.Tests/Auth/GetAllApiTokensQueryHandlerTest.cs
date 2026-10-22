@@ -17,6 +17,7 @@ public class GetAllApiTokensQueryHandlerTest
 {
     private Mock<IApiTokenRepository> _apiTokenRepositoryMock;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
     private GetAllApiTokensQueryHandler _handler;
 
     [SetUp]
@@ -24,9 +25,12 @@ public class GetAllApiTokensQueryHandlerTest
     {
         _apiTokenRepositoryMock = new Mock<IApiTokenRepository>();
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
+
         _handler = new GetAllApiTokensQueryHandler(
             _apiTokenRepositoryMock.Object,
-            _authorizationServiceMock.Object
+            _authorizationServiceMock.Object,
+            _paginationHelperMock.Object
         );
     }
 
@@ -39,70 +43,24 @@ public class GetAllApiTokensQueryHandlerTest
             new ApiToken { Name = "Token2", Token = "TokenHash2" },
         ];
 
-        _ = _apiTokenRepositoryMock.Setup(m => m.GetApiTokens()).ReturnsAsync(tokens.BuildMock());
-        _ = _authorizationServiceMock
-            .Setup(a =>
-                a.TryGetPlanResourceQuery(
-                    It.IsAny<IQueryable<ApiToken>>(),
-                    It.IsAny<Dictionary<string, string>?>()
-                )
-            )
-            .ReturnsAsync(
-                (IQueryable<ApiToken> apiTokens, Dictionary<string, string>? dict) => apiTokens
-            );
-        var request = new GetAllApiTokensQuery();
+        _ = _apiTokenRepositoryMock
+            .Setup(m => m.GetApiTokens(null))
+            .ReturnsAsync(tokens.BuildMock());
+        _ = _paginationHelperMock
+            .Setup(a => a.PaginateWithAuthAsync(It.IsAny<IQueryable<ApiToken>>(), It.IsAny<int?>()))
+            .ReturnsAsync((IQueryable<ApiToken> apiTokens, int? limit) => (apiTokens, null));
+        var request = new GetAllApiTokensQuery(null, null);
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
         Assert.That(result.Item1, Is.EqualTo(tokens));
 
-        _authorizationServiceMock.Verify(
-            a => a.TryGetPlanResourceQuery(It.IsAny<IQueryable<ApiToken>>(), null),
+        _paginationHelperMock.Verify(
+            a => a.PaginateWithAuthAsync(It.IsAny<IQueryable<ApiToken>>(), null),
             Times.Once
         );
         _authorizationServiceMock.Verify(
             a => a.CheckAccess(It.IsAny<ApiToken>(), AuthorizationConstants.Actions.GET, null),
             Times.Never
-        );
-    }
-
-    [Test]
-    public async Task GetAllApiTokensQuery_ReturnsFilteredApiTokens()
-    {
-        IList<ApiToken> tokens =
-        [
-            new ApiToken { Name = "Token1", Token = "TokenHash1" },
-            new ApiToken { Name = "Token2", Token = "TokenHash2" },
-        ];
-
-        _ = _apiTokenRepositoryMock.Setup(m => m.GetApiTokens()).ReturnsAsync(tokens.BuildMock());
-        _ = _authorizationServiceMock
-            .Setup(a =>
-                a.TryGetPlanResourceQuery(
-                    It.IsAny<IQueryable<ApiToken>>(),
-                    It.IsAny<Dictionary<string, string>?>()
-                )
-            )
-            .ReturnsAsync((IQueryable<ApiToken>?)null);
-        _ = _authorizationServiceMock
-            .Setup(a =>
-                a.CheckAccess(
-                    It.IsAny<ApiToken>(),
-                    It.IsAny<AuthorizationConstants.Actions>(),
-                    It.IsAny<Dictionary<string, object?>?>()
-                )
-            )
-            .ReturnsAsync(true);
-        var request = new GetAllApiTokensQuery();
-        var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
-
-        Assert.That(result.Item1, Is.EqualTo(tokens.ToList()));
-        _authorizationServiceMock.Verify(
-            a => a.TryGetPlanResourceQuery(It.IsAny<IQueryable<ApiToken>>(), null),
-            Times.Once
-        );
-        _authorizationServiceMock.Verify(
-            a => a.CheckAccess(It.IsAny<ApiToken>(), AuthorizationConstants.Actions.GET, null),
-            Times.Exactly(2)
         );
     }
 }

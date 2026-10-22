@@ -16,6 +16,7 @@ namespace ProjectMetadataPlatform.Application.Tests.Departments;
 public class GetDepartmentQueryHandlerTest
 {
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
     private GetDepartmentQueryHandler _handler;
     private Mock<IDepartmentRepository> _mockDepartmentRepository;
 
@@ -23,6 +24,7 @@ public class GetDepartmentQueryHandlerTest
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockDepartmentRepository = new Mock<IDepartmentRepository>();
         _handler = new GetDepartmentQueryHandler(
             departmentRepository: _mockDepartmentRepository.Object,

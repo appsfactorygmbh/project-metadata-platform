@@ -129,6 +129,7 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
                 EF.Functions.ILike(x.Search.ProjectName, term)
                 || EF.Functions.ILike(x.Search.ClientName, term)
                 || EF.Functions.ILike(x.Search.CompanyName ?? "", term)
+                || EF.Functions.ILike(x.Search.TeamName ?? "", term)
                 || (canSearchPlugin && EF.Functions.ILike(x.Search.PluginsSearchText, term))
                 || EF.Functions.ILike(x.Search.Notes ?? "", term)
                 || EF.Functions.ILike(x.Search.CompanyStateText, term)

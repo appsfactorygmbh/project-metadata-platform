@@ -173,7 +173,8 @@ public class Tests
                             Plugin plugin,
                             IEnumerable<AuthorizationConstants.Actions> permissions
                         )>,
-                        IEnumerable<AuthorizationConstants.Actions>
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        PluginCursor?
                     )
                 >(It.IsAny<GetGlobalPluginsQuery>(), It.IsAny<CancellationToken>())
             )
@@ -263,11 +264,12 @@ public class Tests
                             Plugin plugin,
                             IEnumerable<AuthorizationConstants.Actions> permissions
                         )>,
-                        IEnumerable<AuthorizationConstants.Actions>
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        PluginCursor?
                     )
                 >(It.IsAny<GetGlobalPluginsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync(([], []));
+            .ReturnsAsync(([], [], null));
         var result = await _controller.GetGlobal();
 
         Assert.That(result, Is.Not.Null);
@@ -302,11 +304,12 @@ public class Tests
                             Plugin plugin,
                             IEnumerable<AuthorizationConstants.Actions> permissions
                         )>,
-                        IEnumerable<AuthorizationConstants.Actions>
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        PluginCursor?
                     )
                 >(It.IsAny<GetGlobalPluginsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync((pluginList, []));
+            .ReturnsAsync((pluginList, [], null));
         var result = await _controller.GetGlobal();
 
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());

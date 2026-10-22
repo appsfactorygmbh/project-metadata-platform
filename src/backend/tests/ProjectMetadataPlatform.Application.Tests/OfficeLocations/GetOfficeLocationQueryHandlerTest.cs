@@ -18,11 +18,13 @@ public class GetOfficeLocationQueryHandlerTest
     private GetOfficeLocationQueryHandler _handler;
     private Mock<IOfficeLocationRepository> _mockOfficeLocationRepository;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
 
     [SetUp]
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockOfficeLocationRepository = new Mock<IOfficeLocationRepository>();
         _handler = new GetOfficeLocationQueryHandler(
             officeLocationRepository: _mockOfficeLocationRepository.Object,

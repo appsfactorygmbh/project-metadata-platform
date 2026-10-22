@@ -25,11 +25,13 @@ public class CreateTeamCommandHandlerTest
     private Mock<ILogRepository> _mockLogRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
 
     [SetUp]
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockTeamRepository = new Mock<ITeamRepository>();
         _mockBusinessUnitRepository = new Mock<IBusinessUnitRepository>();
         _mockLogRepo = new Mock<ILogRepository>();

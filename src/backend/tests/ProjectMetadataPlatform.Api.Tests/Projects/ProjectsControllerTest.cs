@@ -40,10 +40,14 @@ public class ProjectsControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllProjectsQuery,
-                    (IEnumerable<Project>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<Project>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        ProjectCursor?
+                    )
                 >(It.IsAny<GetAllProjectsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync(([], []));
+            .ReturnsAsync(([], [], null));
 
         // act
         var result = await _controller.Get(null, null);
@@ -85,10 +89,14 @@ public class ProjectsControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllProjectsQuery,
-                    (IEnumerable<Project>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<Project>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        ProjectCursor?
+                    )
                 >(It.IsAny<GetAllProjectsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync((projectsResponseContent, []));
+            .ReturnsAsync((projectsResponseContent, [], null));
 
         // act
         var result = await _controller.Get(null, null);
@@ -141,10 +149,14 @@ public class ProjectsControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllProjectsQuery,
-                    (IEnumerable<Project>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<Project>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        ProjectCursor?
+                    )
                 >(It.Is<GetAllProjectsQuery>(x => x.Search == "R"), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync((projectsResponseContent, []));
+            .ReturnsAsync((projectsResponseContent, [], null));
 
         // act
         var result = await _controller.Get(null, "R");
@@ -181,7 +193,11 @@ public class ProjectsControllerTest
             .Setup(mediator =>
                 mediator.Send<
                     GetAllProjectsQuery,
-                    (IEnumerable<Project>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<Project>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        ProjectCursor?
+                    )
                 >(It.IsAny<GetAllProjectsQuery>(), It.IsAny<CancellationToken>())
             )
             .ThrowsAsync(new InvalidDataException("An error message"));
@@ -207,7 +223,11 @@ public class ProjectsControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllProjectsQuery,
-                    (IEnumerable<Project>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<Project>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        ProjectCursor?
+                    )
                 >(It.IsAny<GetAllProjectsQuery>(), CancellationToken.None)
             )
             .ReturnsAsync(
@@ -227,7 +247,8 @@ public class ProjectsControllerTest
                             IsmsLevel = SecurityLevel.HIGH,
                         },
                     },
-                    []
+                    [],
+                    null
                 )
             );
 
@@ -276,10 +297,14 @@ public class ProjectsControllerTest
             .Setup(m =>
                 m.Send<
                     GetAllProjectsQuery,
-                    (IEnumerable<Project>, IEnumerable<AuthorizationConstants.Actions>)
+                    (
+                        IEnumerable<Project>,
+                        IEnumerable<AuthorizationConstants.Actions>,
+                        ProjectCursor?
+                    )
                 >(It.IsAny<GetAllProjectsQuery>(), CancellationToken.None)
             )
-            .ReturnsAsync(([], []));
+            .ReturnsAsync(([], [], null));
 
         var result = await _controller.Get(filters, search);
 

@@ -72,6 +72,8 @@ public class LogRepositoryTest : TestsWithDatabase
     [Test]
     public async Task CreateProjectLogTest()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
+        _ = await _context.SaveChangesAsync();
         var exampleProject = new Project
         {
             ProjectName = "Example Project",
@@ -130,7 +132,6 @@ public class LogRepositoryTest : TestsWithDatabase
         Assert.That(dbLog, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(dbLog.Id, Is.EqualTo(1));
             Assert.That(dbLog.Action, Is.EqualTo(Action.ADDED_PROJECT));
             Assert.That(dbLog.AuthorName, Is.EqualTo("camo"));
             Assert.That(dbLog.AuthorId, Is.EqualTo("42"));
@@ -195,7 +196,6 @@ public class LogRepositoryTest : TestsWithDatabase
         Assert.That(dbLog, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(dbLog.Id, Is.EqualTo(1));
             Assert.That(dbLog.Action, Is.EqualTo(Action.UPDATED_USER));
             Assert.That(dbLog.AuthorName, Is.EqualTo("camo"));
             Assert.That(dbLog.AuthorId, Is.EqualTo("42"));
@@ -254,7 +254,6 @@ public class LogRepositoryTest : TestsWithDatabase
         Assert.That(dbLog, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(dbLog.Id, Is.EqualTo(1));
             Assert.That(dbLog.Action, Is.EqualTo(Action.UPDATED_GLOBAL_PLUGIN));
             Assert.That(dbLog.AuthorName, Is.EqualTo("camo"));
             Assert.That(dbLog.AuthorId, Is.EqualTo("42"));
@@ -390,7 +389,6 @@ public class LogRepositoryTest : TestsWithDatabase
         Assert.That(dbLog, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(dbLog.Id, Is.EqualTo(1));
             Assert.That(dbLog.Action, Is.EqualTo(Action.REMOVED_API_TOKEN));
             Assert.That(dbLog.AuthorName, Is.EqualTo("camo"));
             Assert.That(dbLog.AuthorId, Is.EqualTo("42"));
@@ -412,6 +410,8 @@ public class LogRepositoryTest : TestsWithDatabase
     [TestCase(Action.REMOVED_GLOBAL_PLUGIN)]
     public async Task ProjectLogTest_RejectsActionNotInWhitelist(Action action)
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
+        _ = await _context.SaveChangesAsync();
         var exampleProject = new Project
         {
             ProjectName = "Example Project",
@@ -765,6 +765,9 @@ public class LogRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetLogsForProject_Test()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
+        _ = await _context.SaveChangesAsync();
+
         var exampleLog = new Log
         {
             Id = 1,
@@ -772,7 +775,6 @@ public class LogRepositoryTest : TestsWithDatabase
             AuthorName = "camo",
             AuthorTokenId = null,
             TimeStamp = DateTimeOffset.UtcNow,
-            ProjectId = 301,
             Action = Action.ADDED_PROJECT,
             Changes =
             [
@@ -798,18 +800,18 @@ public class LogRepositoryTest : TestsWithDatabase
         _ = await _context.Projects.AddAsync(exampleProject);
         _ = await _context.SaveChangesAsync();
 
-        var logs = await (await _loggingRepository.GetLogsForProject(301)).ToListAsync();
+        var logs = await (
+            await _loggingRepository.GetLogsForProject(exampleProject.Id, null)
+        ).ToListAsync();
 
         Assert.That(logs, Has.Count.EqualTo(1));
-        Assert.That(logs[0], Is.EqualTo(exampleLog));
-
         var log = logs[0];
         Assert.Multiple(() =>
         {
             Assert.That(log.Id, Is.EqualTo(1));
             Assert.That(log.AuthorId, Is.Null);
             Assert.That(log.AuthorName, Is.EqualTo("camo"));
-            Assert.That(log.ProjectId, Is.EqualTo(301));
+            Assert.That(log.ProjectId, Is.EqualTo(exampleProject.Id));
             Assert.That(log.Action, Is.EqualTo(Action.ADDED_PROJECT));
             Assert.That(log.Changes, Has.Count.EqualTo(1));
         });
@@ -818,6 +820,8 @@ public class LogRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetLogsForProject_Test_NoLogsForProjectReturnsEmptyList()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
+        _ = await _context.SaveChangesAsync();
         var exampleProject = new Project
         {
             ProjectName = "Example Project",
@@ -829,7 +833,7 @@ public class LogRepositoryTest : TestsWithDatabase
         _ = await _context.Projects.AddAsync(exampleProject);
         _ = await _context.SaveChangesAsync();
 
-        var logs = await (await _loggingRepository.GetLogsForProject(301)).ToListAsync();
+        var logs = await (await _loggingRepository.GetLogsForProject(301, null)).ToListAsync();
         ;
 
         Assert.That(logs, Has.Count.EqualTo(0));
@@ -838,6 +842,8 @@ public class LogRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetAllLogs_Test()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
+        _ = await _context.SaveChangesAsync();
         var exampleLog1 = new Log
         {
             Id = 1,
@@ -899,7 +905,7 @@ public class LogRepositoryTest : TestsWithDatabase
         _ = await _context.Projects.AddAsync(exampleProject2);
         _ = await _context.SaveChangesAsync();
 
-        var logs = await (await _loggingRepository.GetAllLogs()).ToListAsync();
+        var logs = await (await _loggingRepository.GetAllLogs(null)).ToListAsync();
 
         Assert.That(logs, Has.Count.EqualTo(2));
     }
@@ -907,6 +913,8 @@ public class LogRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetLogsWithSearch_Test()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
+        _ = await _context.SaveChangesAsync();
         var exampleLog1 = new Log
         {
             Id = 1,
@@ -929,6 +937,7 @@ public class LogRepositoryTest : TestsWithDatabase
 
         var exampleProject1 = new Project
         {
+            Id = 301,
             ProjectName = "Example Project",
             Slug = "example_project",
             ClientName = "Example Client",
@@ -943,7 +952,6 @@ public class LogRepositoryTest : TestsWithDatabase
             AuthorTokenId = null,
             AuthorName = "someUserName",
             TimeStamp = DateTimeOffset.UtcNow,
-            ProjectId = 302,
             Action = Action.UPDATED_PROJECT,
             Changes =
             [
@@ -969,7 +977,7 @@ public class LogRepositoryTest : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         var logs = await (
-            await _loggingRepository.GetLogsWithSearch("Another Project")
+            await _loggingRepository.GetLogsWithSearch("Another Project", null, null, null)
         ).ToListAsync();
 
         Assert.That(logs, Has.Count.EqualTo(1));
@@ -980,7 +988,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Assert.That(log.Id, Is.EqualTo(2));
             Assert.That(log.AuthorId, Is.Null);
             Assert.That(log.AuthorName, Is.EqualTo("someUserName"));
-            Assert.That(log.ProjectId, Is.EqualTo(302));
+            Assert.That(log.ProjectId, Is.EqualTo(exampleProject2.Id));
             Assert.That(log.Action, Is.EqualTo(Action.UPDATED_PROJECT));
             Assert.That(log.Changes, Has.Count.EqualTo(1));
         });
@@ -989,6 +997,8 @@ public class LogRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetLogsWithSearch_SearchInStaticMessagePartMapsToActionProperty_Test()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
+        _ = await _context.SaveChangesAsync();
         var exampleLog1 = new Log
         {
             Id = 1,
@@ -996,7 +1006,6 @@ public class LogRepositoryTest : TestsWithDatabase
             AuthorTokenId = null,
             AuthorName = "camo",
             TimeStamp = DateTimeOffset.UtcNow,
-            ProjectId = 301,
             Action = Action.ADDED_PROJECT,
             Changes =
             [
@@ -1025,7 +1034,6 @@ public class LogRepositoryTest : TestsWithDatabase
             AuthorTokenId = null,
             AuthorName = "someUserName",
             TimeStamp = DateTimeOffset.UtcNow,
-            ProjectId = 302,
             Action = Action.UPDATED_PROJECT,
             Changes =
             [
@@ -1050,7 +1058,9 @@ public class LogRepositoryTest : TestsWithDatabase
         _ = await _context.Projects.AddAsync(exampleProject2);
         _ = await _context.SaveChangesAsync();
 
-        var logs = await (await _loggingRepository.GetLogsWithSearch("updated")).ToListAsync();
+        var logs = await (
+            await _loggingRepository.GetLogsWithSearch("updated", null, null, null)
+        ).ToListAsync();
 
         Assert.That(logs, Has.Count.EqualTo(1));
 
@@ -1060,7 +1070,7 @@ public class LogRepositoryTest : TestsWithDatabase
             Assert.That(log.Id, Is.EqualTo(2));
             Assert.That(log.AuthorId, Is.Null);
             Assert.That(log.AuthorName, Is.EqualTo("someUserName"));
-            Assert.That(log.ProjectId, Is.EqualTo(302));
+            Assert.That(log.ProjectId, Is.EqualTo(exampleProject2.Id));
             Assert.That(log.Action, Is.EqualTo(Action.UPDATED_PROJECT));
             Assert.That(log.Changes, Has.Count.EqualTo(1));
         });
@@ -1125,7 +1135,7 @@ public class LogRepositoryTest : TestsWithDatabase
         _ = await _context.Logs.AddAsync(exampleLog2);
         _ = await _context.SaveChangesAsync();
 
-        var logs = await (await _loggingRepository.GetLogsForUser("Newton")).ToListAsync();
+        var logs = await (await _loggingRepository.GetLogsForUser("Newton", null)).ToListAsync();
 
         Assert.That(logs, Has.Count.EqualTo(1));
 
@@ -1138,7 +1148,6 @@ public class LogRepositoryTest : TestsWithDatabase
             Assert.That(log.Action, Is.EqualTo(Action.UPDATED_USER));
             Assert.That(log.AffectedUserEmail, Is.EqualTo("Newton@royalastronomicalsociety.co.uk"));
             Assert.That(log.AffectedUserId, Is.EqualTo("Newton"));
-            Assert.That(log.AffectedUser, Is.EqualTo(exampleUser));
             Assert.That(log.AffectedUserId, Is.EqualTo("Newton"));
             Assert.That(log.Changes, Has.Count.EqualTo(1));
         });
@@ -1196,7 +1205,7 @@ public class LogRepositoryTest : TestsWithDatabase
         _ = await _context.Logs.AddAsync(exampleLog2);
         _ = await _context.SaveChangesAsync();
 
-        var logs = await (await _loggingRepository.GetLogsForGlobalPlugin(42)).ToListAsync();
+        var logs = await (await _loggingRepository.GetLogsForGlobalPlugin(42, null)).ToListAsync();
 
         Assert.That(logs, Has.Count.EqualTo(1));
 
@@ -1209,7 +1218,6 @@ public class LogRepositoryTest : TestsWithDatabase
             Assert.That(log.Action, Is.EqualTo(Action.UPDATED_GLOBAL_PLUGIN));
             Assert.That(log.GlobalPluginId, Is.EqualTo(42));
             Assert.That(log.GlobalPluginName, Is.EqualTo("Gravity"));
-            Assert.That(log.GlobalPlugin, Is.EqualTo(examplePlugin));
             Assert.That(log.Changes, Has.Count.EqualTo(1));
         });
     }

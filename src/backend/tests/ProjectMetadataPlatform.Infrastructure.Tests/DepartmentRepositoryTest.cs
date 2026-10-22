@@ -43,7 +43,7 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         // Act
-        var result = (await _repository.GetDepartmentsAsync()).ToList();
+        var result = (await _repository.GetDepartmentsAsync(null)).ToList();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(2));

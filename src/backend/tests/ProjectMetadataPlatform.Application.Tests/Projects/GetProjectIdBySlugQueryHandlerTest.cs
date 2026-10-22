@@ -14,6 +14,7 @@ public class GetProjectIdBySlugQueryHandlerTest
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockProjectRepo = new Mock<IProjectsRepository>();
         _handler = new GetProjectIdBySlugQueryHandler(
             _mockProjectRepo.Object,
@@ -22,6 +23,7 @@ public class GetProjectIdBySlugQueryHandlerTest
     }
 
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
     private GetProjectIdBySlugQueryHandler _handler;
     private Mock<IProjectsRepository> _mockProjectRepo;
 

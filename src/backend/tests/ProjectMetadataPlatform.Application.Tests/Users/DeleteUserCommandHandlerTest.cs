@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Application.Logs;
 using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
@@ -24,6 +26,7 @@ public class DeleteUserCommandHandlerTest
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockUsersRepo = new Mock<IUsersRepository>();
         var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
         var identity = new ClaimsIdentity(
@@ -42,7 +45,14 @@ public class DeleteUserCommandHandlerTest
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockLogRepository = new Mock<ILogRepository>();
         _ = _mockLogRepository
-            .Setup(repository => repository.GetLogsWithSearch(It.IsAny<string>()))
+            .Setup(repository =>
+                repository.GetLogsWithSearch(
+                    It.IsAny<string>(),
+                    It.IsAny<DateTimeOffset?>(),
+                    It.IsAny<DateTimeOffset?>(),
+                    It.IsAny<LogCursor?>()
+                )
+            )
             .ReturnsAsync(new List<Log> { }.AsQueryable());
         _handler = new DeleteUserCommandHandler(
             _mockUsersRepo.Object,
@@ -57,6 +67,7 @@ public class DeleteUserCommandHandlerTest
     }
 
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
     private DeleteUserCommandHandler _handler;
     private Mock<IUsersRepository> _mockUsersRepo;
     private Mock<IUnitOfWork> _mockUnitOfWork;

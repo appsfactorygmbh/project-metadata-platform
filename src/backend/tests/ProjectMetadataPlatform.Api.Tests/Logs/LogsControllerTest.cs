@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Api.Logs;
 using ProjectMetadataPlatform.Api.Logs.Models;
@@ -66,22 +67,22 @@ public class LogsControllerTest
         };
         _ = _mediator
             .Setup(m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.IsAny<GetLogsQuery>(),
                     CancellationToken.None
                 )
             )
-            .ReturnsAsync([log]);
+            .ReturnsAsync(([log], null));
         _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("Project updated", "1970-01-01T00:00:00+01:00"));
 
-        var result = await _controller.Get(null, null, null, null, null);
+        var result = await _controller.Get(null, null, null, null, null, null, null);
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var logResponses = (okResult.Value as IEnumerable<LogResponse>)?.ToList();
+        var logResponses = (okResult.Value as GetListResponse<LogResponse>)?.Resources.ToList();
         Assert.That(logResponses, Is.Not.Null);
         Assert.That(logResponses, Has.Count.EqualTo(1));
         Assert.Multiple(() =>
@@ -92,7 +93,7 @@ public class LogsControllerTest
 
         _mediator.Verify(
             m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.IsAny<GetLogsQuery>(),
                     CancellationToken.None
                 ),
@@ -127,22 +128,22 @@ public class LogsControllerTest
         };
         _ = _mediator
             .Setup(m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.IsAny<GetLogsQuery>(),
                     CancellationToken.None
                 )
             )
-            .ReturnsAsync([log]);
+            .ReturnsAsync(([log], null));
         _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("Project updated", "1970-01-01T00:00:00+01:00"));
 
-        var result = await _controller.Get(42, null, null, null, null);
+        var result = await _controller.Get(42, null, null, null, null, null, null);
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var logResponses = (okResult.Value as IEnumerable<LogResponse>)?.ToList();
+        var logResponses = (okResult.Value as GetListResponse<LogResponse>)?.Resources.ToList();
         Assert.That(logResponses, Is.Not.Null);
         Assert.That(logResponses, Has.Count.EqualTo(1));
         Assert.Multiple(() =>
@@ -153,7 +154,7 @@ public class LogsControllerTest
 
         _mediator.Verify(
             m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.Is<GetLogsQuery>(q => q.ProjectId == 42),
                     CancellationToken.None
                 ),
@@ -194,22 +195,22 @@ public class LogsControllerTest
         };
         _ = _mediator
             .Setup(m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.IsAny<GetLogsQuery>(),
                     CancellationToken.None
                 )
             )
-            .ReturnsAsync([log]);
+            .ReturnsAsync(([log], null));
         _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("Project updated", "1970-01-01T00:00:00+01:00"));
 
-        var result = await _controller.Get(null, "updated", null, null, null);
+        var result = await _controller.Get(null, "updated", null, null, null, null, null);
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var logResponses = (okResult.Value as IEnumerable<LogResponse>)?.ToList();
+        var logResponses = (okResult.Value as GetListResponse<LogResponse>)?.Resources.ToList();
         Assert.That(logResponses, Is.Not.Null);
         Assert.That(logResponses, Has.Count.EqualTo(1));
         Assert.Multiple(() =>
@@ -220,7 +221,7 @@ public class LogsControllerTest
 
         _mediator.Verify(
             m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.Is<GetLogsQuery>(q => q.Search == "updated"),
                     CancellationToken.None
                 ),
@@ -261,22 +262,22 @@ public class LogsControllerTest
         };
         _ = _mediator
             .Setup(m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.IsAny<GetLogsQuery>(),
                     CancellationToken.None
                 )
             )
-            .ReturnsAsync([log]);
+            .ReturnsAsync(([log], null));
         _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("User updated", "1970-01-01T00:00:00+01:00"));
 
-        var result = await _controller.Get(null, null, "Newton", null, null);
+        var result = await _controller.Get(null, null, "Newton", null, null, null, null);
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var logResponses = (okResult.Value as IEnumerable<LogResponse>)?.ToList();
+        var logResponses = (okResult.Value as GetListResponse<LogResponse>)?.Resources.ToList();
         Assert.That(logResponses, Is.Not.Null);
         Assert.That(logResponses, Has.Count.EqualTo(1));
         Assert.Multiple(() =>
@@ -287,7 +288,7 @@ public class LogsControllerTest
 
         _mediator.Verify(
             m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.Is<GetLogsQuery>(q => q.UserId == "Newton"),
                     CancellationToken.None
                 ),
@@ -329,22 +330,22 @@ public class LogsControllerTest
         };
         _ = _mediator
             .Setup(m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.IsAny<GetLogsQuery>(),
                     CancellationToken.None
                 )
             )
-            .ReturnsAsync([log]);
+            .ReturnsAsync(([log], null));
         _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("Global plugin updated", "1970-01-01T00:00:00+01:00"));
 
-        var result = await _controller.Get(null, null, null, 42, null);
+        var result = await _controller.Get(null, null, null, 42, null, null, null);
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var logResponses = (okResult.Value as IEnumerable<LogResponse>)?.ToList();
+        var logResponses = (okResult.Value as GetListResponse<LogResponse>)?.Resources.ToList();
         Assert.That(logResponses, Is.Not.Null);
         Assert.That(logResponses, Has.Count.EqualTo(1));
         Assert.Multiple(() =>
@@ -355,7 +356,7 @@ public class LogsControllerTest
 
         _mediator.Verify(
             m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.Is<GetLogsQuery>(q => q.GlobalPluginId == 42),
                     CancellationToken.None
                 ),
@@ -396,12 +397,12 @@ public class LogsControllerTest
         };
         _ = _mediator
             .Setup(m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.IsAny<GetLogsQuery>(),
                     CancellationToken.None
                 )
             )
-            .ReturnsAsync([log]);
+            .ReturnsAsync(([log], null));
         _ = _mediator
             .Setup(m =>
                 m.Send<GetProjectIdBySlugQuery, int>(
@@ -414,12 +415,12 @@ public class LogsControllerTest
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("Project updated", "1970-01-01T00:00:00+01:00"));
 
-        var result = await _controller.Get(null, null, null, null, "deepthought");
+        var result = await _controller.Get(null, null, null, null, "deepthought", null, null);
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var logResponses = (okResult.Value as IEnumerable<LogResponse>)?.ToList();
+        var logResponses = (okResult.Value as GetListResponse<LogResponse>)?.Resources.ToList();
         Assert.That(logResponses, Is.Not.Null);
         Assert.That(logResponses, Has.Count.EqualTo(1));
         Assert.Multiple(() =>
@@ -430,7 +431,7 @@ public class LogsControllerTest
 
         _mediator.Verify(
             m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.Is<GetLogsQuery>(q => q.ProjectId == 42),
                     CancellationToken.None
                 ),
@@ -479,22 +480,22 @@ public class LogsControllerTest
         };
         _ = _mediator
             .Setup(m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.IsAny<GetLogsQuery>(),
                     CancellationToken.None
                 )
             )
-            .ReturnsAsync([log]);
+            .ReturnsAsync(([log], null));
         _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("Project updated", "1970-01-01T00:00:00+01:00"));
 
-        var result = await _controller.Get(42, null, null, null, "deepthought");
+        var result = await _controller.Get(42, null, null, null, "deepthought", null, null);
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        var logResponses = (okResult.Value as IEnumerable<LogResponse>)?.ToList();
+        var logResponses = (okResult.Value as GetListResponse<LogResponse>)?.Resources.ToList();
         Assert.That(logResponses, Is.Not.Null);
         Assert.That(logResponses, Has.Count.EqualTo(1));
         Assert.Multiple(() =>
@@ -505,7 +506,7 @@ public class LogsControllerTest
 
         _mediator.Verify(
             m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.Is<GetLogsQuery>(q => q.ProjectId == 42),
                     CancellationToken.None
                 ),
@@ -535,7 +536,15 @@ public class LogsControllerTest
             .ThrowsAsync(new ProjectNotFoundException("answerToLifeTheUniverseAndEverything"));
 
         _ = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
-            _controller.Get(null, null, null, null, "answerToLifeTheUniverseAndEverything")
+            _controller.Get(
+                null,
+                null,
+                null,
+                null,
+                "answerToLifeTheUniverseAndEverything",
+                null,
+                null
+            )
         );
     }
 
@@ -544,7 +553,7 @@ public class LogsControllerTest
     {
         _ = _mediator
             .Setup(m =>
-                m.Send<GetLogsQuery, IEnumerable<Log>>(
+                m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(
                     It.IsAny<GetLogsQuery>(),
                     CancellationToken.None
                 )
@@ -552,7 +561,7 @@ public class LogsControllerTest
             .ThrowsAsync(new FormatException("Something went wrong"));
 
         var exception = Assert.ThrowsAsync<FormatException>(() =>
-            _controller.Get(null, null, null, null, null)
+            _controller.Get(null, null, null, null, null, null, null)
         );
         Assert.That(exception.Message, Is.EqualTo("Something went wrong"));
     }

@@ -139,7 +139,7 @@ public class ProjectPluginManagement : IntegrationTestsBase
             );
         });
 
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
 
         Assert.Multiple(() =>
         {
@@ -212,7 +212,7 @@ public class ProjectPluginManagement : IntegrationTestsBase
             Assert.That(plugin[0].GetProperty("pluginId").GetInt32(), Is.EqualTo(_globalPluginId));
         });
 
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
         Assert.Multiple(() =>
         {
             Assert.That(logs.GetArrayLength(), Is.EqualTo(5));
@@ -256,7 +256,7 @@ public class ProjectPluginManagement : IntegrationTestsBase
         ).GetProperty("resources");
 
         Assert.That(plugin.GetArrayLength(), Is.EqualTo(0));
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
         Assert.Multiple(() =>
         {
             Assert.That(logs.GetArrayLength(), Is.EqualTo(5));
@@ -269,7 +269,7 @@ public class ProjectPluginManagement : IntegrationTestsBase
             Assert.That(
                 logs[0].GetProperty("logMessage").GetString(),
                 Is.EqualTo(
-                    "admin removed a plugin from project testProject with properties: Plugin = Example Global Plugin, DisplayName = GitLab, Url = https://gitlab.com"
+                    "admin removed a plugin from project testProject with properties: Url = https://gitlab.com, Plugin = Example Global Plugin, DisplayName = GitLab"
                 )
             );
         });

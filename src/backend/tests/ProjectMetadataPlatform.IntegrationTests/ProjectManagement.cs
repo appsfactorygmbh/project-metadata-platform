@@ -218,20 +218,20 @@ public class ProjectManagement : IntegrationTestsBase
         Assert.That(rootElement.GetProperty("id").GetInt32(), Is.GreaterThan(0));
         Assert.That(rootElement.GetProperty("notes").GetString(), Is.EqualTo("testNotes2"));
 
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
         Assert.That(logs.GetArrayLength(), Is.EqualTo(4));
 
         Assert.That(
             logs[2].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = Example Notes"
+                "admin created a new project with properties: IsmsLevel = NORMAL, Notes = Example Notes, IsEoC = False, ProjectName = testProject, Slug = testproject, ClientName = testClient, Company = testCompany, CompanyState = EXTERNAL"
             )
         );
 
         Assert.That(
             logs[0].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "admin updated project testProject:  set ClientName from testClient to testClient2,  set Company from testCompany to testCompany2,  set CompanyState from EXTERNAL to INTERNAL,  set IsmsLevel from NORMAL to HIGH,  set Notes from Example Notes to testNotes2"
+                "admin updated project testProject:  set Notes from Example Notes to testNotes2,  set ClientName from testClient to testClient2,  set Company from testCompany to testCompany2,  set CompanyState from EXTERNAL to INTERNAL,  set IsmsLevel from NORMAL to HIGH"
             )
         );
     }
@@ -284,14 +284,14 @@ public class ProjectManagement : IntegrationTestsBase
         );
         Assert.That(projects2.GetArrayLength(), Is.EqualTo(count - 1));
 
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
 
         Assert.That(logs.GetArrayLength(), Is.EqualTo(4));
 
         Assert.That(
             logs[2].GetProperty("logMessage").GetString(),
             Is.EqualTo(
-                "admin created a new project with properties: ProjectName = testProject, Slug = testproject, ClientName = testClient, Company = testCompany, CompanyState = EXTERNAL, IsmsLevel = NORMAL, IsEoC = False, Notes = Example Notes"
+                "admin created a new project with properties: ClientName = testClient, Company = testCompany, CompanyState = EXTERNAL, IsEoC = False, Notes = Example Notes, IsmsLevel = NORMAL, ProjectName = testProject, Slug = testproject"
             )
         );
         Assert.That(

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -36,6 +37,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
     public async Task GetAllProjectsAsync_ShouldReturnAllProjects()
     {
         // Arrange
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var project = new Project
         {
             Id = 1,
@@ -76,6 +78,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
             ["AppsFact"],
             SecurityLevel.VERY_HIGH
         );
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var projects = new List<Project>
         {
             new()
@@ -130,13 +133,14 @@ public class ProjectsRepositoryTests : TestsWithDatabase
             },
         };
 
-        var query = new GetAllProjectsQuery(filters, "Hea");
+        var query = new GetAllProjectsQuery(filters, "Hea", null, null);
 
-        _ = await _context.Database.EnsureCreatedAsync();
         _context.Projects.AddRange(projects);
         _ = await _context.SaveChangesAsync();
-
-        var result = (await _repository.GetProjectsAsync(query)).ToList();
+        _ = await _context.Database.ExecuteSqlRawAsync(
+            "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
+        );
+        var result = (await _repository.GetProjectsAsync(query, null)).ToList();
 
         Assert.That(result, Has.Count.EqualTo(1));
         Assert.Multiple(() =>
@@ -162,6 +166,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
             ["Nothing else"],
             null
         );
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var projects = new List<Project>
         {
             new()
@@ -185,13 +190,14 @@ public class ProjectsRepositoryTests : TestsWithDatabase
             },
         };
 
-        var query = new GetAllProjectsQuery(filters, null);
+        var query = new GetAllProjectsQuery(filters, null, null, null);
 
-        _ = await _context.Database.EnsureCreatedAsync();
         _context.Projects.AddRange(projects);
         _ = await _context.SaveChangesAsync();
-
-        var result = await _repository.GetProjectsAsync(query);
+        _ = await _context.Database.ExecuteSqlRawAsync(
+            "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
+        );
+        var result = await _repository.GetProjectsAsync(query, null);
 
         Assert.That(result, Is.Empty);
     }
@@ -199,6 +205,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
     [Test]
     public async Task GetProjectsByFiltersAsync_NoFilters_ReturnsAllProjects()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var projects = new List<Project>
         {
             new()
@@ -227,13 +234,15 @@ public class ProjectsRepositoryTests : TestsWithDatabase
             },
         };
 
-        var query = new GetAllProjectsQuery(null, null);
+        var query = new GetAllProjectsQuery(null, null, null, null);
 
-        _ = await _context.Database.EnsureCreatedAsync();
         _context.Projects.AddRange(projects);
-        _ = await _context.SaveChangesAsync();
 
-        var result = await _repository.GetProjectsAsync(query);
+        _ = await _context.SaveChangesAsync();
+        _ = await _context.Database.ExecuteSqlRawAsync(
+            "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
+        );
+        var result = await _repository.GetProjectsAsync(query, null);
 
         Assert.That(result.Count(), Is.EqualTo(3));
     }
@@ -241,6 +250,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
     [Test]
     public async Task DeleteProjectAsync_ShouldDeleteProject()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var project = new Project
         {
             Id = 1,
@@ -268,6 +278,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
     [Test]
     public async Task GetProjectBySlug_Test()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var project1 = new Project
         {
             Id = 1,
@@ -299,6 +310,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
     [Test]
     public async Task GetProjectBySlug_Test_NotFoundReturnsNull()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
         var project2 = new Project
         {
             Id = 2,

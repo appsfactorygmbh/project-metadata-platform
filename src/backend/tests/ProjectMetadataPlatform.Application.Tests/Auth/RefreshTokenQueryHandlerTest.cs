@@ -21,6 +21,7 @@ public class RefreshTokenQueryHandlerTest
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+
         _mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
         _handler = new RefreshTokenQueryHandler(
             _mockRefreshTokenRepo.Object,

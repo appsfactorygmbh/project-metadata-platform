@@ -18,6 +18,7 @@ public class GetUserQueryHandlerTest
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockUserRepo = new Mock<IUsersRepository>();
         _handler = new GetUserQueryHandler(
             _mockUserRepo.Object,
@@ -28,6 +29,7 @@ public class GetUserQueryHandlerTest
     private GetUserQueryHandler _handler;
     private Mock<IUsersRepository> _mockUserRepo;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
 
     [Test]
     public async Task HandleGetUserRequest_Test()

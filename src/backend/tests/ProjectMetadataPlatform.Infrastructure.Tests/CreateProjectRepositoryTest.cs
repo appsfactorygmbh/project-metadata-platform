@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 using ProjectMetadataPlatform.Infrastructure.Plugins;
@@ -16,12 +17,14 @@ public class CreateProjectRepositoryTest : TestsWithDatabase
     private PluginRepository _pluginRepository;
 
     [SetUp]
-    public void Setup()
+    public async Task SetupAsync()
     {
         _context = DbContext();
         _repository = new ProjectsRepository(_context);
         _pluginRepository = new PluginRepository(_context);
         ClearData(_context);
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
+        _ = await _context.SaveChangesAsync();
     }
 
     [TearDown]

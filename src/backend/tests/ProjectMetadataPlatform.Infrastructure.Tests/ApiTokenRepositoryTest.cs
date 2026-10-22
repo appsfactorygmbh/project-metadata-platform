@@ -37,7 +37,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetApiTokens_EmptyResponseTest()
     {
-        var result = await _apiTokenRepository.GetApiTokens();
+        var result = await _apiTokenRepository.GetApiTokens(null);
         Assert.That(result, Is.Empty);
     }
 
@@ -51,7 +51,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
         ];
         await _context.ApiTokens.AddRangeAsync(tokens);
         _ = await _context.SaveChangesAsync();
-        var result = await _apiTokenRepository.GetApiTokens();
+        var result = await _apiTokenRepository.GetApiTokens(null);
         var resultList = result.ToList();
         Assert.That(result, Is.Not.Empty);
         Assert.That(result.Count(), Is.EqualTo(2));

@@ -17,12 +17,14 @@ public class GetBusinessUnitQueryHandlerTest
 {
     private GetBusinessUnitQueryHandler _handler;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
     private Mock<IBusinessUnitRepository> _mockBusinessUnitRepository;
 
     [SetUp]
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockBusinessUnitRepository = new Mock<IBusinessUnitRepository>();
         _handler = new GetBusinessUnitQueryHandler(
             businessUnitRepository: _mockBusinessUnitRepository.Object,

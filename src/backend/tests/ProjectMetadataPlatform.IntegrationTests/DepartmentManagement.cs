@@ -58,7 +58,7 @@ public class DepartmentManagement : IntegrationTestsBase
             );
         });
 
-        var logs = await ToJsonElement(client.GetAsync("/Logs"));
+        var logs = (await ToJsonElement(client.GetAsync("/Logs"))).GetProperty("resources");
         Assert.Multiple(() =>
         {
             Assert.That(

@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
+using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Projects;
 using ProjectMetadataPlatform.Domain.Teams;
@@ -58,7 +60,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         // Act
-        var result = (await _repository.GetTeamsAsync(null, null)).ToList();
+        var result = (await _repository.GetTeamsAsync(null, null, null)).ToList();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(2));
@@ -123,7 +125,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
 
         // Act
         var result = (
-            await _repository.GetTeamsAsync(teamName: teamName, fullTextQuery: null)
+            await _repository.GetTeamsAsync(teamName: teamName, fullTextQuery: null, cursor: null)
         ).ToList();
 
         // Assert
@@ -132,7 +134,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
         Assert.Multiple(() =>
         {
             Assert.That(ids, Has.Count.EqualTo(goalIds.Count));
-            Assert.That(goalIds, Is.EqualTo(ids));
+            Assert.That(ids, Is.EquivalentTo(goalIds));
         });
     }
 
@@ -183,7 +185,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
 
         // Act
         var result = (
-            await _repository.GetTeamsAsync(teamName: null, fullTextQuery: query)
+            await _repository.GetTeamsAsync(teamName: null, fullTextQuery: query, cursor: null)
         ).ToList();
 
         // Assert
@@ -192,7 +194,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
         Assert.Multiple(() =>
         {
             Assert.That(ids, Has.Count.EqualTo(goalIds.Count));
-            Assert.That(goalIds, Is.EqualTo(ids));
+            Assert.That(goalIds, Is.EquivalentTo(ids));
         });
     }
 
@@ -243,7 +245,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
 
         // Act
         var result = (
-            await _repository.GetTeamsAsync(teamName: teamName, fullTextQuery: query)
+            await _repository.GetTeamsAsync(cursor: null, teamName: teamName, fullTextQuery: query)
         ).ToList();
 
         // Assert
@@ -252,7 +254,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
         Assert.Multiple(() =>
         {
             Assert.That(ids, Has.Count.EqualTo(goalIds.Count));
-            Assert.That(goalIds, Is.EqualTo(ids));
+            Assert.That(goalIds, Is.EquivalentTo(ids));
         });
     }
 
@@ -290,6 +292,8 @@ public class TeamsRepositoryTests : TestsWithDatabase
     [Test]
     public async Task GetTeamWithProjectsAsync_ShouldReturnTeamWithAssociatedProjects()
     {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
+        _ = await _context.SaveChangesAsync();
         // Arrange
         var team = new Team
         {

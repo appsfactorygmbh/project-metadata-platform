@@ -19,34 +19,32 @@ public class GetAllUsersQueryHandlerTest
     public void Setup()
     {
         _authorizationServiceMock = new Mock<IAuthorizationService>();
+        _paginationHelperMock = new Mock<IPaginationHelper>();
         _mockUserRepo = new Mock<IUsersRepository>();
         _handler = new GetAllUsersQueryHandler(
             _mockUserRepo.Object,
-            authorizationService: _authorizationServiceMock.Object
+            authorizationService: _authorizationServiceMock.Object,
+            _paginationHelperMock.Object
         );
     }
 
     private GetAllUsersQueryHandler _handler;
     private Mock<IUsersRepository> _mockUserRepo;
     private Mock<IAuthorizationService> _authorizationServiceMock;
+    private Mock<IPaginationHelper> _paginationHelperMock;
 
     [Test]
     public async Task HandleGetAllUsersRequest_EmptyResponse_Test()
     {
-        _ = _authorizationServiceMock
+        _ = _paginationHelperMock
             .Setup(a =>
-                a.TryGetPlanResourceQuery(
-                    It.IsAny<IQueryable<ApplicationUser>>(),
-                    It.IsAny<Dictionary<string, string>?>()
-                )
+                a.PaginateWithAuthAsync(It.IsAny<IQueryable<ApplicationUser>>(), It.IsAny<int?>())
             )
-            .ReturnsAsync(
-                (IQueryable<ApplicationUser> query, Dictionary<string, string>? dict) => query
-            );
+            .ReturnsAsync((IQueryable<ApplicationUser> query, int? limit) => (query, null));
         _ = _mockUserRepo
-            .Setup(m => m.GetUsersAsync(""))
+            .Setup(m => m.GetUsersAsync("", null))
             .ReturnsAsync(new List<ApplicationUser> { }.BuildMock());
-        var request = new GetAllUsersQuery("");
+        var request = new GetAllUsersQuery("", null, null);
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
         ApplicationUser[] resultArray = result.Item1 as ApplicationUser[] ?? result.Item1.ToArray();
@@ -70,72 +68,15 @@ public class GetAllUsersQueryHandlerTest
                 IsScimProvisioned = false,
             },
         };
-        _ = _authorizationServiceMock
+        _ = _paginationHelperMock
             .Setup(a =>
-                a.TryGetPlanResourceQuery(
-                    It.IsAny<IQueryable<ApplicationUser>>(),
-                    It.IsAny<Dictionary<string, string>?>()
-                )
+                a.PaginateWithAuthAsync(It.IsAny<IQueryable<ApplicationUser>>(), It.IsAny<int?>())
             )
-            .ReturnsAsync(
-                (IQueryable<ApplicationUser> query, Dictionary<string, string>? dict) => query
-            );
+            .ReturnsAsync((IQueryable<ApplicationUser> query, int? limit) => (query, null));
         _ = _mockUserRepo
-            .Setup(m => m.GetUsersAsync("qweqweqwe"))
+            .Setup(m => m.GetUsersAsync("qweqweqwe", null))
             .ReturnsAsync(usersResponseContent.BuildMock());
-        var request = new GetAllUsersQuery("qweqweqwe");
-        var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).Item1.ToList();
-
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.InstanceOf<IEnumerable<ApplicationUser>>());
-
-        var resultArray = result.ToArray();
-        Assert.That(resultArray, Has.Length.EqualTo(1));
-        Assert.Multiple(() =>
-        {
-            Assert.That(resultArray[0].Id, Is.EqualTo("1"));
-            Assert.That(resultArray[0].Email, Is.EqualTo("Hinz"));
-            Assert.That(resultArray[0].EmployeeId, Is.EqualTo("abc"));
-            Assert.That(resultArray[0].IsActive, Is.True);
-            Assert.That(resultArray[0].IsScimProvisioned, Is.False);
-        });
-    }
-
-    [Test]
-    public async Task HandleGetAllFilteredUsersRequest_Test()
-    {
-        var usersResponseContent = new List<ApplicationUser>
-        {
-            new()
-            {
-                EmployeeId = "abc",
-                Id = "1",
-                Email = "Hinz",
-                IsActive = true,
-                IsScimProvisioned = false,
-            },
-        };
-        _ = _authorizationServiceMock
-            .Setup(a =>
-                a.TryGetPlanResourceQuery(
-                    It.IsAny<IQueryable<ApplicationUser>>(),
-                    It.IsAny<Dictionary<string, string>?>()
-                )
-            )
-            .ReturnsAsync((IQueryable<ApplicationUser>?)null);
-        _ = _authorizationServiceMock
-            .Setup(a =>
-                a.CheckAccess(
-                    It.IsAny<ApplicationUser>(),
-                    It.IsAny<AuthorizationConstants.Actions>(),
-                    It.IsAny<Dictionary<string, object?>?>()
-                )
-            )
-            .ReturnsAsync(true);
-        _ = _mockUserRepo
-            .Setup(m => m.GetUsersAsync("qweqweqwe"))
-            .ReturnsAsync(usersResponseContent.BuildMock());
-        var request = new GetAllUsersQuery("qweqweqwe");
+        var request = new GetAllUsersQuery("qweqweqwe", null, null);
         var result = (await _handler.Handle(request, It.IsAny<CancellationToken>())).Item1.ToList();
 
         Assert.That(result, Is.Not.Null);
