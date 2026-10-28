@@ -6,7 +6,7 @@
         <IsTestProject>true</IsTestProject>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="JunitXml.TestLogger" Version="3.1.*" />
+        <PackageReference Include="JunitXml.TestLogger" Version="8.1.*" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.*" />
         <PackageReference Include="Moq" Version="4.21.*" />
         <PackageReference Include="NUnit" Version="5.0.*" />
