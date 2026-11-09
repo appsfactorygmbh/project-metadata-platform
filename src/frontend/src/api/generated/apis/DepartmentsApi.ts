@@ -28,6 +28,11 @@ import {
   UpdateDepartmentRequestToJSON,
 } from '../models/index';
 
+export interface DepartmentsGetRequest {
+  limit?: number;
+  cursor?: string;
+}
+
 export interface DepartmentsIdDeleteRequest {
   id: number;
 }
@@ -55,11 +60,14 @@ export interface DepartmentsApiInterface {
   /**
    *
    * @summary Gets all Departments.
+   * @param {number} [limit]
+   * @param {string} [cursor]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof DepartmentsApiInterface
    */
   departmentsGetRaw(
+    requestParameters: DepartmentsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetDepartmentResponseGetListResponse>>;
 
@@ -67,6 +75,7 @@ export interface DepartmentsApiInterface {
    * Gets all Departments.
    */
   departmentsGet(
+    requestParameters: DepartmentsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetDepartmentResponseGetListResponse>;
 
@@ -167,9 +176,18 @@ export class DepartmentsApi
    * Gets all Departments.
    */
   async departmentsGetRaw(
+    requestParameters: DepartmentsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetDepartmentResponseGetListResponse>> {
     const queryParameters: any = {};
+
+    if (requestParameters['limit'] != null) {
+      queryParameters['limit'] = requestParameters['limit'];
+    }
+
+    if (requestParameters['cursor'] != null) {
+      queryParameters['cursor'] = requestParameters['cursor'];
+    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 
@@ -200,9 +218,13 @@ export class DepartmentsApi
    * Gets all Departments.
    */
   async departmentsGet(
+    requestParameters: DepartmentsGetRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetDepartmentResponseGetListResponse> {
-    const response = await this.departmentsGetRaw(initOverrides);
+    const response = await this.departmentsGetRaw(
+      requestParameters,
+      initOverrides,
+    );
     return await response.value();
   }
 

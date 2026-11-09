@@ -38,6 +38,12 @@ export interface GetOfficeLocationResponseGetListResponse {
    * @memberof GetOfficeLocationResponseGetListResponse
    */
   permissions: Array<Actions>;
+  /**
+   * Optional encoded cursor string used for pagination.
+   * @type {string}
+   * @memberof GetOfficeLocationResponseGetListResponse
+   */
+  cursor?: string | null;
 }
 
 /**
@@ -70,6 +76,7 @@ export function GetOfficeLocationResponseGetListResponseFromJSONTyped(
       GetOfficeLocationResponseFromJSON,
     ),
     permissions: (json['permissions'] as Array<any>).map(ActionsFromJSON),
+    cursor: json['cursor'] == null ? undefined : json['cursor'],
   };
 }
 
@@ -92,5 +99,6 @@ export function GetOfficeLocationResponseGetListResponseToJSONTyped(
       GetOfficeLocationResponseToJSON,
     ),
     permissions: (value['permissions'] as Array<any>).map(ActionsToJSON),
+    cursor: value['cursor'],
   };
 }

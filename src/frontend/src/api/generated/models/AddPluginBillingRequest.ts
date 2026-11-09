@@ -30,7 +30,7 @@ export interface AddPluginBillingRequest {
    */
   billingId: number;
   /**
-   *
+   * Array of Contract Ids
    * @type {Array<string>}
    * @memberof AddPluginBillingRequest
    */

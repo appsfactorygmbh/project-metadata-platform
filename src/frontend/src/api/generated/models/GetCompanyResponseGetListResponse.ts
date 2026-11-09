@@ -38,6 +38,12 @@ export interface GetCompanyResponseGetListResponse {
    * @memberof GetCompanyResponseGetListResponse
    */
   permissions: Array<Actions>;
+  /**
+   * Optional encoded cursor string used for pagination.
+   * @type {string}
+   * @memberof GetCompanyResponseGetListResponse
+   */
+  cursor?: string | null;
 }
 
 /**
@@ -70,6 +76,7 @@ export function GetCompanyResponseGetListResponseFromJSONTyped(
       GetCompanyResponseFromJSON,
     ),
     permissions: (json['permissions'] as Array<any>).map(ActionsFromJSON),
+    cursor: json['cursor'] == null ? undefined : json['cursor'],
   };
 }
 
@@ -90,5 +97,6 @@ export function GetCompanyResponseGetListResponseToJSONTyped(
   return {
     resources: (value['resources'] as Array<any>).map(GetCompanyResponseToJSON),
     permissions: (value['permissions'] as Array<any>).map(ActionsToJSON),
+    cursor: value['cursor'],
   };
 }

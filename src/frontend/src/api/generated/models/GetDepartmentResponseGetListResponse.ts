@@ -38,6 +38,12 @@ export interface GetDepartmentResponseGetListResponse {
    * @memberof GetDepartmentResponseGetListResponse
    */
   permissions: Array<Actions>;
+  /**
+   * Optional encoded cursor string used for pagination.
+   * @type {string}
+   * @memberof GetDepartmentResponseGetListResponse
+   */
+  cursor?: string | null;
 }
 
 /**
@@ -70,6 +76,7 @@ export function GetDepartmentResponseGetListResponseFromJSONTyped(
       GetDepartmentResponseFromJSON,
     ),
     permissions: (json['permissions'] as Array<any>).map(ActionsFromJSON),
+    cursor: json['cursor'] == null ? undefined : json['cursor'],
   };
 }
 
@@ -92,5 +99,6 @@ export function GetDepartmentResponseGetListResponseToJSONTyped(
       GetDepartmentResponseToJSON,
     ),
     permissions: (value['permissions'] as Array<any>).map(ActionsToJSON),
+    cursor: value['cursor'],
   };
 }

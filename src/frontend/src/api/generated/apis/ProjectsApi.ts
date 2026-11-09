@@ -16,9 +16,11 @@ import * as runtime from '../runtime';
 import type {
   GetProjectDetailsResponse,
   GetProjectResponseGetListResponse,
+  ProjectSortCharacteristic,
   PutProjectRequest,
   PutProjectResponse,
   SecurityLevel,
+  SortOrder,
 } from '../models/index';
 import {
   GetProjectDetailsResponseFromJSON,
@@ -36,7 +38,11 @@ export interface ProjectsGetRequest {
   isEoC?: boolean;
   company?: Array<string>;
   ismsLevel?: SecurityLevel;
+  sortAttribute?: ProjectSortCharacteristic;
+  sortOrder?: SortOrder;
   search?: string;
+  limit?: number;
+  cursor?: string;
 }
 
 export interface ProjectsIdDeleteRequest {
@@ -83,7 +89,11 @@ export interface ProjectsApiInterface {
    * @param {boolean} [isEoC] Optional. If the project is an Engineer on Call project.
    * @param {Array<string>} [company] Optional. A list of companies to filter the projects by.
    * @param {SecurityLevel} [ismsLevel] Optional. The ISMS level to filter the projects by.
+   * @param {ProjectSortCharacteristic} [sortAttribute] Attribute to Sort the Projects by. Clientname by default.
+   * @param {SortOrder} [sortOrder] Order to Sort the Projects by. Ascending Order by default.
    * @param {string} [search] Search string to filter the projects by.
+   * @param {number} [limit] Optional Limit of returned responses for pagination.
+   * @param {string} [cursor] Optional Cursor for pagination.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof ProjectsApiInterface
@@ -278,8 +288,24 @@ export class ProjectsApi
       queryParameters['IsmsLevel'] = requestParameters['ismsLevel'];
     }
 
+    if (requestParameters['sortAttribute'] != null) {
+      queryParameters['SortAttribute'] = requestParameters['sortAttribute'];
+    }
+
+    if (requestParameters['sortOrder'] != null) {
+      queryParameters['SortOrder'] = requestParameters['sortOrder'];
+    }
+
     if (requestParameters['search'] != null) {
       queryParameters['search'] = requestParameters['search'];
+    }
+
+    if (requestParameters['limit'] != null) {
+      queryParameters['limit'] = requestParameters['limit'];
+    }
+
+    if (requestParameters['cursor'] != null) {
+      queryParameters['cursor'] = requestParameters['cursor'];
     }
 
     const headerParameters: runtime.HTTPHeaders = {};

@@ -44,7 +44,7 @@ export interface GetPluginBillingResponse {
    */
   billingId: number;
   /**
-   *
+   * List of Contract Ids
    * @type {Array<string>}
    * @memberof GetPluginBillingResponse
    */

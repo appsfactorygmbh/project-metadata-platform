@@ -38,6 +38,12 @@ export interface GetBillingResponseGetListResponse {
    * @memberof GetBillingResponseGetListResponse
    */
   permissions: Array<Actions>;
+  /**
+   * Optional encoded cursor string used for pagination.
+   * @type {string}
+   * @memberof GetBillingResponseGetListResponse
+   */
+  cursor?: string | null;
 }
 
 /**
@@ -70,6 +76,7 @@ export function GetBillingResponseGetListResponseFromJSONTyped(
       GetBillingResponseFromJSON,
     ),
     permissions: (json['permissions'] as Array<any>).map(ActionsFromJSON),
+    cursor: json['cursor'] == null ? undefined : json['cursor'],
   };
 }
 
@@ -90,5 +97,6 @@ export function GetBillingResponseGetListResponseToJSONTyped(
   return {
     resources: (value['resources'] as Array<any>).map(GetBillingResponseToJSON),
     permissions: (value['permissions'] as Array<any>).map(ActionsToJSON),
+    cursor: value['cursor'],
   };
 }

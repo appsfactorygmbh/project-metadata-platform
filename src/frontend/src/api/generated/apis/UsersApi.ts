@@ -27,6 +27,8 @@ import {
 
 export interface UsersGetRequest {
   filter?: string;
+  limit?: number;
+  cursor?: string;
 }
 
 export interface UsersPostRequest {
@@ -57,6 +59,8 @@ export interface UsersApiInterface {
    *
    * @summary Gets all user that correspond to a filter. Filter only works for equality to username or employee id.
    * @param {string} [filter] String Scim filter.
+   * @param {number} [limit] Optional Limit of returned responses for pagination.
+   * @param {string} [cursor] Optional Cursor for pagination.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof UsersApiInterface
@@ -193,6 +197,14 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
 
     if (requestParameters['filter'] != null) {
       queryParameters['filter'] = requestParameters['filter'];
+    }
+
+    if (requestParameters['limit'] != null) {
+      queryParameters['limit'] = requestParameters['limit'];
+    }
+
+    if (requestParameters['cursor'] != null) {
+      queryParameters['cursor'] = requestParameters['cursor'];
     }
 
     const headerParameters: runtime.HTTPHeaders = {};

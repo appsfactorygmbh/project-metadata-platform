@@ -13,7 +13,7 @@
  */
 
 /**
- *
+ * Represents Currencies by their Currency Code and number based on ISO4217.
  * @export
  */
 export const Currencies = {

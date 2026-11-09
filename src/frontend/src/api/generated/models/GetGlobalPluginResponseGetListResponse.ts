@@ -38,6 +38,12 @@ export interface GetGlobalPluginResponseGetListResponse {
    * @memberof GetGlobalPluginResponseGetListResponse
    */
   permissions: Array<Actions>;
+  /**
+   * Optional encoded cursor string used for pagination.
+   * @type {string}
+   * @memberof GetGlobalPluginResponseGetListResponse
+   */
+  cursor?: string | null;
 }
 
 /**
@@ -70,6 +76,7 @@ export function GetGlobalPluginResponseGetListResponseFromJSONTyped(
       GetGlobalPluginResponseFromJSON,
     ),
     permissions: (json['permissions'] as Array<any>).map(ActionsFromJSON),
+    cursor: json['cursor'] == null ? undefined : json['cursor'],
   };
 }
 
@@ -92,5 +99,6 @@ export function GetGlobalPluginResponseGetListResponseToJSONTyped(
       GetGlobalPluginResponseToJSON,
     ),
     permissions: (value['permissions'] as Array<any>).map(ActionsToJSON),
+    cursor: value['cursor'],
   };
 }

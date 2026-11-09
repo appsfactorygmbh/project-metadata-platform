@@ -13,8 +13,8 @@
  */
 
 import * as runtime from '../runtime';
-import type { LogResponse } from '../models/index';
-import { LogResponseFromJSON } from '../models/index';
+import type { LogResponseGetListResponse } from '../models/index';
+import { LogResponseGetListResponseFromJSON } from '../models/index';
 
 export interface LogsGetRequest {
   projectId?: number;
@@ -22,6 +22,10 @@ export interface LogsGetRequest {
   userId?: string;
   globalPluginId?: number;
   projectSlug?: string;
+  startDate?: Date;
+  endDate?: Date;
+  limit?: number;
+  cursor?: string;
 }
 
 /**
@@ -39,6 +43,10 @@ export interface LogsApiInterface {
    * @param {string} [userId] The ID of the affected user to filter logs by.
    * @param {number} [globalPluginId] The ID of the global plugin to filter logs by.
    * @param {string} [projectSlug] The slug of the project to filter logs by.
+   * @param {Date} [startDate] The startDate to filter logs by.
+   * @param {Date} [endDate] The endDate to filter logs by.
+   * @param {number} [limit] Optional Limit of returned responses for pagination.
+   * @param {string} [cursor] Optional Cursor for pagination.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof LogsApiInterface
@@ -46,7 +54,7 @@ export interface LogsApiInterface {
   logsGetRaw(
     requestParameters: LogsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<LogResponse>>>;
+  ): Promise<runtime.ApiResponse<LogResponseGetListResponse>>;
 
   /**
    * Retrieves log entries based on the specified project ID and search criteria. Filters are optional and can *not* be used in combination. if multiple filters are used, the first one will be used. projectId > search > userId > globalPluginId
@@ -54,7 +62,7 @@ export interface LogsApiInterface {
   logsGet(
     requestParameters: LogsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<LogResponse>>;
+  ): Promise<LogResponseGetListResponse>;
 }
 
 /**
@@ -67,7 +75,7 @@ export class LogsApi extends runtime.BaseAPI implements LogsApiInterface {
   async logsGetRaw(
     requestParameters: LogsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<LogResponse>>> {
+  ): Promise<runtime.ApiResponse<LogResponseGetListResponse>> {
     const queryParameters: any = {};
 
     if (requestParameters['projectId'] != null) {
@@ -88,6 +96,26 @@ export class LogsApi extends runtime.BaseAPI implements LogsApiInterface {
 
     if (requestParameters['projectSlug'] != null) {
       queryParameters['projectSlug'] = requestParameters['projectSlug'];
+    }
+
+    if (requestParameters['startDate'] != null) {
+      queryParameters['startDate'] = (
+        requestParameters['startDate'] as any
+      ).toISOString();
+    }
+
+    if (requestParameters['endDate'] != null) {
+      queryParameters['endDate'] = (
+        requestParameters['endDate'] as any
+      ).toISOString();
+    }
+
+    if (requestParameters['limit'] != null) {
+      queryParameters['limit'] = requestParameters['limit'];
+    }
+
+    if (requestParameters['cursor'] != null) {
+      queryParameters['cursor'] = requestParameters['cursor'];
     }
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -111,7 +139,7 @@ export class LogsApi extends runtime.BaseAPI implements LogsApiInterface {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      jsonValue.map(LogResponseFromJSON),
+      LogResponseGetListResponseFromJSON(jsonValue),
     );
   }
 
@@ -121,7 +149,7 @@ export class LogsApi extends runtime.BaseAPI implements LogsApiInterface {
   async logsGet(
     requestParameters: LogsGetRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<LogResponse>> {
+  ): Promise<LogResponseGetListResponse> {
     const response = await this.logsGetRaw(requestParameters, initOverrides);
     return await response.value();
   }

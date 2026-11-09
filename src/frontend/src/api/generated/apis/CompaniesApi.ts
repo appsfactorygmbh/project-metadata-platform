@@ -30,6 +30,11 @@ import {
   UpdateCompanyRequestToJSON,
 } from '../models/index';
 
+export interface CompaniesGetRequest {
+  limit?: number;
+  cursor?: string;
+}
+
 export interface CompaniesIdDeleteRequest {
   id: number;
 }
@@ -61,11 +66,14 @@ export interface CompaniesApiInterface {
   /**
    *
    * @summary Returns all Companies
+   * @param {number} [limit]
+   * @param {string} [cursor]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof CompaniesApiInterface
    */
   companiesGetRaw(
+    requestParameters: CompaniesGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetCompanyResponseGetListResponse>>;
 
@@ -73,6 +81,7 @@ export interface CompaniesApiInterface {
    * Returns all Companies
    */
   companiesGet(
+    requestParameters: CompaniesGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetCompanyResponseGetListResponse>;
 
@@ -194,9 +203,18 @@ export class CompaniesApi
    * Returns all Companies
    */
   async companiesGetRaw(
+    requestParameters: CompaniesGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetCompanyResponseGetListResponse>> {
     const queryParameters: any = {};
+
+    if (requestParameters['limit'] != null) {
+      queryParameters['limit'] = requestParameters['limit'];
+    }
+
+    if (requestParameters['cursor'] != null) {
+      queryParameters['cursor'] = requestParameters['cursor'];
+    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 
@@ -227,9 +245,13 @@ export class CompaniesApi
    * Returns all Companies
    */
   async companiesGet(
+    requestParameters: CompaniesGetRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetCompanyResponseGetListResponse> {
-    const response = await this.companiesGetRaw(initOverrides);
+    const response = await this.companiesGetRaw(
+      requestParameters,
+      initOverrides,
+    );
     return await response.value();
   }
 

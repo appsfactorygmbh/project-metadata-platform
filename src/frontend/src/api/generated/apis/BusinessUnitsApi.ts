@@ -30,6 +30,11 @@ import {
   UpdateBusinessUnitRequestToJSON,
 } from '../models/index';
 
+export interface BusinessUnitsGetRequest {
+  limit?: number;
+  cursor?: string;
+}
+
 export interface BusinessUnitsIdDeleteRequest {
   id: number;
 }
@@ -61,11 +66,14 @@ export interface BusinessUnitsApiInterface {
   /**
    *
    * @summary Gets all Business Units.
+   * @param {number} [limit]
+   * @param {string} [cursor]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof BusinessUnitsApiInterface
    */
   businessUnitsGetRaw(
+    requestParameters: BusinessUnitsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetBusinessUnitResponseGetListResponse>>;
 
@@ -73,6 +81,7 @@ export interface BusinessUnitsApiInterface {
    * Gets all Business Units.
    */
   businessUnitsGet(
+    requestParameters: BusinessUnitsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetBusinessUnitResponseGetListResponse>;
 
@@ -194,9 +203,18 @@ export class BusinessUnitsApi
    * Gets all Business Units.
    */
   async businessUnitsGetRaw(
+    requestParameters: BusinessUnitsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetBusinessUnitResponseGetListResponse>> {
     const queryParameters: any = {};
+
+    if (requestParameters['limit'] != null) {
+      queryParameters['limit'] = requestParameters['limit'];
+    }
+
+    if (requestParameters['cursor'] != null) {
+      queryParameters['cursor'] = requestParameters['cursor'];
+    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 
@@ -227,9 +245,13 @@ export class BusinessUnitsApi
    * Gets all Business Units.
    */
   async businessUnitsGet(
+    requestParameters: BusinessUnitsGetRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetBusinessUnitResponseGetListResponse> {
-    const response = await this.businessUnitsGetRaw(initOverrides);
+    const response = await this.businessUnitsGetRaw(
+      requestParameters,
+      initOverrides,
+    );
     return await response.value();
   }
 

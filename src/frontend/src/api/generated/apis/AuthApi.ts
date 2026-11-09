@@ -28,6 +28,11 @@ import {
   LoginResponseFromJSON,
 } from '../models/index';
 
+export interface AuthApiTokensGetRequest {
+  limit?: number;
+  cursor?: string;
+}
+
 export interface AuthApiTokensPostRequest {
   createApiTokenRequest?: CreateApiTokenRequest;
 }
@@ -58,11 +63,14 @@ export interface AuthApiInterface {
   /**
    *
    * @summary Returns a List of all Api Tokens without details.
+   * @param {number} [limit]
+   * @param {string} [cursor]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof AuthApiInterface
    */
   authApiTokensGetRaw(
+    requestParameters: AuthApiTokensGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetApiTokenDetailsResponseGetListResponse>>;
 
@@ -70,6 +78,7 @@ export interface AuthApiInterface {
    * Returns a List of all Api Tokens without details.
    */
   authApiTokensGet(
+    requestParameters: AuthApiTokensGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetApiTokenDetailsResponseGetListResponse>;
 
@@ -205,9 +214,18 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
    * Returns a List of all Api Tokens without details.
    */
   async authApiTokensGetRaw(
+    requestParameters: AuthApiTokensGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetApiTokenDetailsResponseGetListResponse>> {
     const queryParameters: any = {};
+
+    if (requestParameters['limit'] != null) {
+      queryParameters['limit'] = requestParameters['limit'];
+    }
+
+    if (requestParameters['cursor'] != null) {
+      queryParameters['cursor'] = requestParameters['cursor'];
+    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 
@@ -238,9 +256,13 @@ export class AuthApi extends runtime.BaseAPI implements AuthApiInterface {
    * Returns a List of all Api Tokens without details.
    */
   async authApiTokensGet(
+    requestParameters: AuthApiTokensGetRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetApiTokenDetailsResponseGetListResponse> {
-    const response = await this.authApiTokensGetRaw(initOverrides);
+    const response = await this.authApiTokensGetRaw(
+      requestParameters,
+      initOverrides,
+    );
     return await response.value();
   }
 

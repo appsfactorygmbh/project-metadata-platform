@@ -37,6 +37,11 @@ export interface BillingBillingIdPatchRequest {
   updateBillingRequest?: UpdateBillingRequest;
 }
 
+export interface BillingGetRequest {
+  limit?: number;
+  cursor?: string;
+}
+
 export interface BillingIdDeleteRequest {
   id: number;
 }
@@ -98,11 +103,14 @@ export interface BillingApiInterface {
   /**
    *
    * @summary Return all global billing information.
+   * @param {number} [limit]
+   * @param {string} [cursor]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof BillingApiInterface
    */
   billingGetRaw(
+    requestParameters: BillingGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetBillingResponseGetListResponse>>;
 
@@ -110,6 +118,7 @@ export interface BillingApiInterface {
    * Return all global billing information.
    */
   billingGet(
+    requestParameters: BillingGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetBillingResponseGetListResponse>;
 
@@ -285,9 +294,18 @@ export class BillingApi extends runtime.BaseAPI implements BillingApiInterface {
    * Return all global billing information.
    */
   async billingGetRaw(
+    requestParameters: BillingGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetBillingResponseGetListResponse>> {
     const queryParameters: any = {};
+
+    if (requestParameters['limit'] != null) {
+      queryParameters['limit'] = requestParameters['limit'];
+    }
+
+    if (requestParameters['cursor'] != null) {
+      queryParameters['cursor'] = requestParameters['cursor'];
+    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 
@@ -318,9 +336,10 @@ export class BillingApi extends runtime.BaseAPI implements BillingApiInterface {
    * Return all global billing information.
    */
   async billingGet(
+    requestParameters: BillingGetRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetBillingResponseGetListResponse> {
-    const response = await this.billingGetRaw(initOverrides);
+    const response = await this.billingGetRaw(requestParameters, initOverrides);
     return await response.value();
   }
 

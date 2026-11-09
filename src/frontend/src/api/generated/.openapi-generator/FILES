@@ -70,6 +70,7 @@ models/GetTeamResponse.ts
 models/GetTeamResponseGetListResponse.ts
 models/GetUsersResponse.ts
 models/LogResponse.ts
+models/LogResponseGetListResponse.ts
 models/LoginRequest.ts
 models/LoginResponse.ts
 models/MetaResourceData.ts
@@ -80,9 +81,11 @@ models/PatchTeamRequest.ts
 models/PatchUserRequest.ts
 models/PmpScimUser.ts
 models/PmpUserExtension.ts
+models/ProjectSortCharacteristic.ts
 models/PutProjectRequest.ts
 models/PutProjectResponse.ts
 models/SecurityLevel.ts
+models/SortOrder.ts
 models/TimeFrame.ts
 models/TokenScopes.ts
 models/UpdateBillingRequest.ts

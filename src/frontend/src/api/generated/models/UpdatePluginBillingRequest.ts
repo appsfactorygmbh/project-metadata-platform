@@ -24,7 +24,7 @@ import { CurrenciesFromJSON, CurrenciesToJSON } from './Currencies';
  */
 export interface UpdatePluginBillingRequest {
   /**
-   *
+   * List of Contract Ids
    * @type {Array<string>}
    * @memberof UpdatePluginBillingRequest
    */

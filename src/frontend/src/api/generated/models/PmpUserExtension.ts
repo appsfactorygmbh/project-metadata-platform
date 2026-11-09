@@ -49,7 +49,7 @@ export interface PmpUserExtension {
    */
   businessUnits?: Array<string> | null;
   /**
-   * Wether the last change to the user was made via scim or manually.
+   * Whether the last change to the user was made via scim or manually.
    * @type {boolean}
    * @memberof PmpUserExtension
    */

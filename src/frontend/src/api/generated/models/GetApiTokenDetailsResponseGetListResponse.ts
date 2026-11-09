@@ -38,6 +38,12 @@ export interface GetApiTokenDetailsResponseGetListResponse {
    * @memberof GetApiTokenDetailsResponseGetListResponse
    */
   permissions: Array<Actions>;
+  /**
+   * Optional encoded cursor string used for pagination.
+   * @type {string}
+   * @memberof GetApiTokenDetailsResponseGetListResponse
+   */
+  cursor?: string | null;
 }
 
 /**
@@ -70,6 +76,7 @@ export function GetApiTokenDetailsResponseGetListResponseFromJSONTyped(
       GetApiTokenDetailsResponseFromJSON,
     ),
     permissions: (json['permissions'] as Array<any>).map(ActionsFromJSON),
+    cursor: json['cursor'] == null ? undefined : json['cursor'],
   };
 }
 
@@ -92,5 +99,6 @@ export function GetApiTokenDetailsResponseGetListResponseToJSONTyped(
       GetApiTokenDetailsResponseToJSON,
     ),
     permissions: (value['permissions'] as Array<any>).map(ActionsToJSON),
+    cursor: value['cursor'],
   };
 }

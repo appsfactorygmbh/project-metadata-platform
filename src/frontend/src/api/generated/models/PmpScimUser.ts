@@ -61,7 +61,7 @@ export interface PmpScimUser {
    */
   userName: string;
   /**
-   * Wether the user is an active employee.
+   * Whether the user is an active employee.
    * @type {boolean}
    * @memberof PmpScimUser
    */

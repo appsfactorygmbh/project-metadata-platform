@@ -28,6 +28,11 @@ import {
   UpdateOfficeLocationRequestToJSON,
 } from '../models/index';
 
+export interface OfficeLocationsGetRequest {
+  limit?: number;
+  cursor?: string;
+}
+
 export interface OfficeLocationsIdDeleteRequest {
   id: number;
 }
@@ -55,11 +60,14 @@ export interface OfficeLocationsApiInterface {
   /**
    *
    * @summary Gets all Office Locations.
+   * @param {number} [limit]
+   * @param {string} [cursor]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof OfficeLocationsApiInterface
    */
   officeLocationsGetRaw(
+    requestParameters: OfficeLocationsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetOfficeLocationResponseGetListResponse>>;
 
@@ -67,6 +75,7 @@ export interface OfficeLocationsApiInterface {
    * Gets all Office Locations.
    */
   officeLocationsGet(
+    requestParameters: OfficeLocationsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetOfficeLocationResponseGetListResponse>;
 
@@ -167,9 +176,18 @@ export class OfficeLocationsApi
    * Gets all Office Locations.
    */
   async officeLocationsGetRaw(
+    requestParameters: OfficeLocationsGetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetOfficeLocationResponseGetListResponse>> {
     const queryParameters: any = {};
+
+    if (requestParameters['limit'] != null) {
+      queryParameters['limit'] = requestParameters['limit'];
+    }
+
+    if (requestParameters['cursor'] != null) {
+      queryParameters['cursor'] = requestParameters['cursor'];
+    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 
@@ -200,9 +218,13 @@ export class OfficeLocationsApi
    * Gets all Office Locations.
    */
   async officeLocationsGet(
+    requestParameters: OfficeLocationsGetRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetOfficeLocationResponseGetListResponse> {
-    const response = await this.officeLocationsGetRaw(initOverrides);
+    const response = await this.officeLocationsGetRaw(
+      requestParameters,
+      initOverrides,
+    );
     return await response.value();
   }
 

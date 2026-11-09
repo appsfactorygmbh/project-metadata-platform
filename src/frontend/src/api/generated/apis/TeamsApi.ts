@@ -35,6 +35,8 @@ import {
 export interface TeamsGetRequest {
   teamName?: string;
   search?: string;
+  limit?: number;
+  cursor?: string;
 }
 
 export interface TeamsIdGetRequest {
@@ -70,6 +72,8 @@ export interface TeamsApiInterface {
    * @summary Gets all teams that match the given filters. Filters are optional.
    * @param {string} [teamName] Search string to filter teams with that team name.
    * @param {string} [search] Search string to filter the teams by (across all attributes).
+   * @param {number} [limit] Optional Limit of returned responses for pagination.
+   * @param {string} [cursor] Optional Cursor for pagination.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof TeamsApiInterface
@@ -213,6 +217,14 @@ export class TeamsApi extends runtime.BaseAPI implements TeamsApiInterface {
 
     if (requestParameters['search'] != null) {
       queryParameters['search'] = requestParameters['search'];
+    }
+
+    if (requestParameters['limit'] != null) {
+      queryParameters['limit'] = requestParameters['limit'];
+    }
+
+    if (requestParameters['cursor'] != null) {
+      queryParameters['cursor'] = requestParameters['cursor'];
     }
 
     const headerParameters: runtime.HTTPHeaders = {};

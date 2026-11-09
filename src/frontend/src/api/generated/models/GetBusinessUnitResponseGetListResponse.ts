@@ -38,6 +38,12 @@ export interface GetBusinessUnitResponseGetListResponse {
    * @memberof GetBusinessUnitResponseGetListResponse
    */
   permissions: Array<Actions>;
+  /**
+   * Optional encoded cursor string used for pagination.
+   * @type {string}
+   * @memberof GetBusinessUnitResponseGetListResponse
+   */
+  cursor?: string | null;
 }
 
 /**
@@ -70,6 +76,7 @@ export function GetBusinessUnitResponseGetListResponseFromJSONTyped(
       GetBusinessUnitResponseFromJSON,
     ),
     permissions: (json['permissions'] as Array<any>).map(ActionsFromJSON),
+    cursor: json['cursor'] == null ? undefined : json['cursor'],
   };
 }
 
@@ -92,5 +99,6 @@ export function GetBusinessUnitResponseGetListResponseToJSONTyped(
       GetBusinessUnitResponseToJSON,
     ),
     permissions: (value['permissions'] as Array<any>).map(ActionsToJSON),
+    cursor: value['cursor'],
   };
 }

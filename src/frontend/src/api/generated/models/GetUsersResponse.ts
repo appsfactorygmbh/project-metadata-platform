@@ -18,7 +18,7 @@ import type { PmpScimUser } from './PmpScimUser';
 import { PmpScimUserFromJSON, PmpScimUserToJSON } from './PmpScimUser';
 
 /**
- * Response for getting a List of Users. Follow the Scim standard for a List Response.
+ * Response for getting a List of Users. Follows the Scim standard for a List Response (more or less).
  * @export
  * @interface GetUsersResponse
  */
@@ -47,6 +47,12 @@ export interface GetUsersResponse {
    * @memberof GetUsersResponse
    */
   permissions?: Array<Actions> | null;
+  /**
+   * Cursor to next resource for pagination.
+   * @type {string}
+   * @memberof GetUsersResponse
+   */
+  cursor?: string | null;
 }
 
 /**
@@ -80,6 +86,7 @@ export function GetUsersResponseFromJSONTyped(
       json['permissions'] == null
         ? undefined
         : (json['permissions'] as Array<any>).map(ActionsFromJSON),
+    cursor: json['cursor'] == null ? undefined : json['cursor'],
   };
 }
 
@@ -103,5 +110,6 @@ export function GetUsersResponseToJSONTyped(
       value['permissions'] == null
         ? undefined
         : (value['permissions'] as Array<any>).map(ActionsToJSON),
+    cursor: value['cursor'],
   };
 }
