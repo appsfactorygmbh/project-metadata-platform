@@ -682,7 +682,7 @@ public class TeamsRepositoryTests : TestsWithDatabase
     [Test]
     public async Task GetTeamByNameAsync_NonExistingTeam_ShouldThrowTeamNotFoundException()
     {
-        Assert.ThrowsAsync<TeamNotFoundException>(async () =>
+        await Assert.ThrowsAsync<TeamNotFoundException>(async () =>
             await _repository.GetTeamByNameAsync("")
         );
     }

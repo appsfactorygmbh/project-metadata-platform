@@ -318,7 +318,7 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
     [Test]
     public async Task GetDepartmentByNameAsync_NonExistingDepartment_ShouldThrowDepartmentNotFoundException()
     {
-        Assert.ThrowsAsync<DepartmentNotFoundException>(async () =>
+        await Assert.ThrowsAsync<DepartmentNotFoundException>(async () =>
             await _repository.GetDepartmentByNameAsync("")
         );
     }

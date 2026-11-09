@@ -359,7 +359,7 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
     [Test]
     public async Task GetOfficeLocationByNameAsync_NonExistingOfficeLocation_ShouldThrowOfficeLocationNotFoundException()
     {
-        Assert.ThrowsAsync<OfficeLocationNotFoundException>(async () =>
+        await Assert.ThrowsAsync<OfficeLocationNotFoundException>(async () =>
             await _repository.GetOfficeLocationByNameAsync("")
         );
     }

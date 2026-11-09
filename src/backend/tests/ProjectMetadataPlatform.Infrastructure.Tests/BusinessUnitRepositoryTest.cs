@@ -405,7 +405,7 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
     [Test]
     public async Task GetBusinessUnitByNameAsync_NonExistingBusinessUnit_ShouldThrowBusinessUnitNotFoundException()
     {
-        Assert.ThrowsAsync<BusinessUnitNotFoundException>(async () =>
+        await Assert.ThrowsAsync<BusinessUnitNotFoundException>(async () =>
             await _repository.GetBusinessUnitByNameAsync("")
         );
     }

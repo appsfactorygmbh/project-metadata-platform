@@ -41,18 +41,18 @@ public class RefreshSearchViewJobTest : TestsWithDatabase
     [Test]
     public async Task RefreshSearchViewJob_Success_Test()
     {
-        Assert.DoesNotThrowAsync(async () =>
+        await Assert.DoesNotThrowAsync(async () =>
         {
             await _job.Execute(_jobContext.Object, CancellationToken.None);
         });
     }
 
     [Test]
-    public void RefreshSearchViewJob_Failure_Test()
+    public async Task RefreshSearchViewJob_Failure_TestAsync()
     {
         _context.Dispose();
 
-        var exception = Assert.ThrowsAsync<JobExecutionException>(async () =>
+        var exception = await Assert.ThrowsAsync<JobExecutionException>(async () =>
         {
             await _job.Execute(_jobContext.Object, CancellationToken.None);
         });

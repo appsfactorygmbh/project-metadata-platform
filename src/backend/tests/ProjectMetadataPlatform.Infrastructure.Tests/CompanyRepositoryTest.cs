@@ -355,7 +355,7 @@ public class CompaniesRepositoryTests : TestsWithDatabase
     [Test]
     public async Task GetCompanyByNameAsync_NonExistingCompany_ShouldThrowCompanyNotFoundException()
     {
-        Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
+        await Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
             await _repository.GetCompanyByNameAsync("")
         );
     }

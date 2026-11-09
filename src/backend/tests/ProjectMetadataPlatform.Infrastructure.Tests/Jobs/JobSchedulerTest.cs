@@ -68,7 +68,7 @@ public class JobSchedulerTest
         _mockScheduler
             .Setup(m => m.ScheduleJob(It.IsAny<ITrigger>()))
             .ThrowsAsync(new ObjectAlreadyExistsException(""));
-        Assert.DoesNotThrowAsync(_jobScheduler.ScheduleSearchViewRefreshAsync);
+        await Assert.DoesNotThrowAsync(_jobScheduler.ScheduleSearchViewRefreshAsync);
         _mockScheduler.Verify(
             m =>
                 m.ScheduleJob(
@@ -88,7 +88,7 @@ public class JobSchedulerTest
         _mockScheduler.Setup(m => m.Exists(It.IsAny<TriggerKey>())).ReturnsAsync(false);
         _mockTimeProvider.Setup(m => m.GetUtcNow()).Returns(new DateTimeOffset());
         _mockScheduler.Setup(m => m.ScheduleJob(It.IsAny<ITrigger>())).ThrowsAsync(new Exception());
-        Assert.ThrowsAsync<Exception>(_jobScheduler.ScheduleSearchViewRefreshAsync);
+        await Assert.ThrowsAsync<Exception>(_jobScheduler.ScheduleSearchViewRefreshAsync);
         _mockScheduler.Verify(
             m =>
                 m.ScheduleJob(
