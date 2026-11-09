@@ -38,9 +38,7 @@ public class GetAllProjectsQueryHandlerTest
     public async Task CallsRepositoryWithRequest()
     {
         _ = _mockProjectRepo
-            .Setup(m =>
-                m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>(), It.IsAny<ProjectCursor?>())
-            )
+            .Setup(m => m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>()))
             .ReturnsAsync(new List<Project> { }.BuildMock());
 
         _ = _paginationHelperMock
@@ -49,10 +47,7 @@ public class GetAllProjectsQueryHandlerTest
         var request = new GetAllProjectsQuery(null, "", null, null);
         _ = await _handler.Handle(request, CancellationToken.None);
 
-        _mockProjectRepo.Verify(
-            repository => repository.GetProjectsAsync(request, null),
-            Times.Once
-        );
+        _mockProjectRepo.Verify(repository => repository.GetProjectsAsync(request), Times.Once);
         _mockProjectRepo.VerifyNoOtherCalls();
     }
 
@@ -108,9 +103,7 @@ public class GetAllProjectsQueryHandlerTest
         };
 
         _ = _mockProjectRepo
-            .Setup(m =>
-                m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>(), It.IsAny<ProjectCursor?>())
-            )
+            .Setup(m => m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>()))
             .ReturnsAsync(projects.BuildMock());
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 

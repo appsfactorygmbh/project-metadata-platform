@@ -122,6 +122,15 @@ public class DeletePluginCommandHandlerTest
             Id = 42,
             PluginName = "Flat-Earth",
             IsArchived = true,
+            ProjectPlugins =
+            [
+                new ProjectPlugin
+                {
+                    PluginId = 1,
+                    Url = "Url",
+                    DisplayName = "DisplayName",
+                },
+            ],
         };
         var changes = new List<LogChange>();
         _ = _authorizationServiceMock

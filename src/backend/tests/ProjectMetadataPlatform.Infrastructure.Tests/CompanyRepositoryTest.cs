@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Application.Companies;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Errors.CompanyExceptions;
 using ProjectMetadataPlatform.Domain.Projects;
@@ -61,7 +62,36 @@ public class CompaniesRepositoryTests : TestsWithDatabase
     }
 
     [Test]
-    public async Task DeleteProjectAsync_ShouldDeleteProject()
+    public async Task GetCompaniesAsync_ShouldNotReturnCursorCompany()
+    {
+        // Arrange
+        var company = new Company { Id = 1, CompanyName = "Test_1" };
+
+        var company2 = new Company { Id = 2, CompanyName = "Test_2" };
+
+        _context.Companies.RemoveRange(_context.Companies);
+        _ = _context.Companies.Add(company);
+        _ = _context.Companies.Add(company2);
+        _ = await _context.SaveChangesAsync();
+
+        // Act
+        var result = (
+            await _repository.GetCompaniesAsync(new CompanyCursor(company.CompanyName))
+        ).ToList();
+
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(1));
+        var companyRes = result.First();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(companyRes.Id, Is.EqualTo(2));
+            Assert.That(companyRes.CompanyName, Is.EqualTo("Test_2"));
+        });
+    }
+
+    [Test]
+    public async Task DeleteCompanyAsync_ShouldDeleteCompany()
     {
         // Arrange
         var company = new Company { Id = 1, CompanyName = "Test_1" };
@@ -300,5 +330,33 @@ public class CompaniesRepositoryTests : TestsWithDatabase
             Assert.That(result.Id, Is.EqualTo(expectedCompany.Id));
             Assert.That(result.CompanyName, Is.EqualTo(expectedCompany.CompanyName));
         });
+    }
+
+    [Test]
+    public async Task GetCompanyByNameAsync_ExistingCompany_ShouldReturnCorrectCompany()
+    {
+        // Arrange
+        var expectedCompany = new Company { Id = 400, CompanyName = "Company Zeta" };
+        _ = _context.Companies.Add(expectedCompany);
+        _ = await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _repository.GetCompanyByNameAsync(expectedCompany.CompanyName);
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Id, Is.EqualTo(expectedCompany.Id));
+            Assert.That(result.CompanyName, Is.EqualTo(expectedCompany.CompanyName));
+        });
+    }
+
+    [Test]
+    public async Task GetCompanyByNameAsync_NonExistingCompany_ShouldThrowCompanyNotFoundException()
+    {
+        Assert.ThrowsAsync<CompanyNotFoundException>(async () =>
+            await _repository.GetCompanyByNameAsync("")
+        );
     }
 }

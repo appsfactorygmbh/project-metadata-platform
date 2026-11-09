@@ -46,7 +46,7 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
         {
             filteredQuery = filteredQuery.Where(u =>
                 string.Compare(u.Email, cursor.Email) > 0
-                || (u.Email == cursor.Email && string.Compare(u.EmployeeId, cursor.Email) > 0)
+                || (u.Email == cursor.Email && string.Compare(u.EmployeeId, cursor.EmployeeId) > 0)
             );
         }
 

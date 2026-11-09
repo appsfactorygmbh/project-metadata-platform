@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cerbos.Api.V1.Policy;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Projects;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
+using ProjectMetadataPlatform.Domain.Common;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Projects;
+using ProjectMetadataPlatform.Domain.Teams;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
 using ProjectMetadataPlatform.Infrastructure.Projects;
 
@@ -47,20 +50,96 @@ public class ProjectsRepositoryTests : TestsWithDatabase
             CompanyId = 1,
         };
 
+        var project2 = new Project
+        {
+            Id = 2,
+            ProjectName = "Regen2",
+            Slug = "regen2",
+            ClientName = "Nasa",
+            CompanyId = 1,
+        };
+
         _context.Projects.RemoveRange(_context.Projects);
-        _ = _context.Projects.Add(project);
+        _context.Projects.AddRange(project, project2);
         _ = await _context.SaveChangesAsync();
 
         // Act
         var result = (await _repository.GetProjectsAsync()).ToList();
 
         // Assert
-        Assert.That(result, Has.Count.EqualTo(1));
+        Assert.That(result, Has.Count.EqualTo(2));
         project = result.First();
+        project2 = result.Last();
         Assert.Multiple(() =>
         {
             Assert.That(project.Id, Is.EqualTo(1));
             Assert.That(project.ProjectName, Is.EqualTo("Regen"));
+            Assert.That(project.ClientName, Is.EqualTo("Nasa"));
+            Assert.That(project2.Id, Is.EqualTo(2));
+            Assert.That(project2.ProjectName, Is.EqualTo("Regen2"));
+            Assert.That(project2.ClientName, Is.EqualTo("Nasa"));
+        });
+    }
+
+    [Test]
+    public async Task GetAllProjectsAsync_ShouldNotReturnCursorProject()
+    {
+        // Arrange
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
+        var project = new Project
+        {
+            Id = 1,
+            ProjectName = "Regen",
+            Slug = "regen",
+            ClientName = "Nasa",
+            CompanyId = 1,
+        };
+
+        var project2 = new Project
+        {
+            Id = 2,
+            ProjectName = "Regen2",
+            Slug = "regen2",
+            ClientName = "Nasa",
+            CompanyId = 1,
+        };
+
+        _context.Projects.AddRange(project, project2);
+        _ = await _context.SaveChangesAsync();
+        _ = await _context.Database.ExecuteSqlRawAsync(
+            "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
+        );
+
+        // Act
+        var result = (
+            await _repository.GetProjectsAsync(
+                new GetAllProjectsQuery(
+                    new ProjectFilterRequest(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        ProjectSortCharacteristic.ClientName,
+                        SortOrder.ASC
+                    ),
+                    null,
+                    new ProjectCursor(project.Slug, project.ClientName),
+                    null
+                )
+            )
+        ).ToList();
+
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(1));
+        project = result.First();
+        Assert.Multiple(() =>
+        {
+            Assert.That(project.Id, Is.EqualTo(2));
+            Assert.That(project.ProjectName, Is.EqualTo("Regen2"));
             Assert.That(project.ClientName, Is.EqualTo("Nasa"));
         });
     }
@@ -140,7 +219,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
         _ = await _context.Database.ExecuteSqlRawAsync(
             "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
         );
-        var result = (await _repository.GetProjectsAsync(query, null)).ToList();
+        var result = (await _repository.GetProjectsAsync(query)).ToList();
 
         Assert.That(result, Has.Count.EqualTo(1));
         Assert.Multiple(() =>
@@ -197,7 +276,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
         _ = await _context.Database.ExecuteSqlRawAsync(
             "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
         );
-        var result = await _repository.GetProjectsAsync(query, null);
+        var result = await _repository.GetProjectsAsync(query);
 
         Assert.That(result, Is.Empty);
     }
@@ -242,7 +321,7 @@ public class ProjectsRepositoryTests : TestsWithDatabase
         _ = await _context.Database.ExecuteSqlRawAsync(
             "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
         );
-        var result = await _repository.GetProjectsAsync(query, null);
+        var result = await _repository.GetProjectsAsync(query);
 
         Assert.That(result.Count(), Is.EqualTo(3));
     }
@@ -327,5 +406,95 @@ public class ProjectsRepositoryTests : TestsWithDatabase
         _ = Assert.ThrowsAsync<ProjectNotFoundException>(() =>
             _repository.GetProjectIdBySlugAsync("regen")
         );
+    }
+
+    [Test]
+    public async Task GetSortedProjects_ReturnsInsOrder(
+        [Values] ProjectSortCharacteristic sortCharacteristic,
+        [Values] SortOrder sortOrder
+    )
+    {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A Company" });
+        _context.Companies.Add(new Company { Id = 2, CompanyName = "B Company" });
+        _context.BusinessUnits.Add(
+            new BusinessUnit { Id = 1, BusinessUnitName = "A BusinessUnit" }
+        );
+        _context.BusinessUnits.Add(
+            new BusinessUnit { Id = 2, BusinessUnitName = "B BusinessUnit" }
+        );
+        _context.Teams.Add(
+            new Team
+            {
+                Id = 1,
+                TeamName = "A Company",
+                BusinessUnitId = 1,
+            }
+        );
+        _context.Teams.Add(
+            new Team
+            {
+                Id = 2,
+                TeamName = "B Company",
+                BusinessUnitId = 2,
+            }
+        );
+
+        var project = new Project()
+        {
+            Id = 1,
+            ProjectName = "A Project",
+            Slug = "a_project",
+            ClientName = "A Client",
+            CompanyId = 1,
+            TeamId = 1,
+        };
+        var project2 = new Project()
+        {
+            Id = 2,
+            ProjectName = "B Project",
+            Slug = "b_project",
+            ClientName = "B Client",
+            CompanyId = 2,
+            TeamId = 2,
+        };
+
+        var query = new GetAllProjectsQuery(
+            new ProjectFilterRequest(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                sortCharacteristic,
+                sortOrder
+            ),
+            null,
+            null,
+            null
+        );
+
+        _context.Projects.AddRange(project, project2);
+
+        _ = await _context.SaveChangesAsync();
+        _ = await _context.Database.ExecuteSqlRawAsync(
+            "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
+        );
+        var result = await (await _repository.GetProjectsAsync(query)).ToListAsync();
+
+        Assert.That(result, Has.Count.EqualTo(2));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(
+                result[0 + ((int)sortOrder)],
+                Is.EqualTo(project).UsingPropertiesComparer()
+            );
+            Assert.That(
+                result[1 - ((int)sortOrder)],
+                Is.EqualTo(project2).UsingPropertiesComparer()
+            );
+        }
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.OfficeLocations;
 using ProjectMetadataPlatform.Api.OfficeLocations.Models;
@@ -80,10 +81,13 @@ public class OfficeLocationsControllerTest
                         new OfficeLocation { Id = 2, OfficeLocationName = "OfficeLocation2" },
                     ],
                     [],
-                    null
+                    new OfficeLocationCursor("Test")
                 )
             );
-        var result = await _controller.Get();
+        var result = await _controller.Get(
+            10,
+            CursorConverter.Encode(new OfficeLocationCursor("Cursor"))
+        );
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;
@@ -93,6 +97,9 @@ public class OfficeLocationsControllerTest
         var getOfficeLocationsResponseList = (
             okResult.Value as GetListResponse<GetOfficeLocationResponse>
         )!.Resources.ToList();
+        var getOfficeLocationsResponseCursor = (
+            okResult.Value as GetListResponse<GetOfficeLocationResponse>
+        )!.Cursor;
         Assert.That(getOfficeLocationsResponseList, Is.Not.Null);
 
         Assert.That(getOfficeLocationsResponseList, Has.Count.EqualTo(2));
@@ -105,6 +112,10 @@ public class OfficeLocationsControllerTest
         Assert.That(
             getOfficeLocationsResponseList[1].OfficeLocationName,
             Is.EqualTo("OfficeLocation2")
+        );
+        Assert.That(
+            getOfficeLocationsResponseCursor,
+            Is.EqualTo(CursorConverter.Encode(new OfficeLocationCursor("Test")))
         );
     }
 

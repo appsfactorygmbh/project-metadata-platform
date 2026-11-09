@@ -10,7 +10,9 @@ using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Errors.AuthorizationExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
 using ProjectMetadataPlatform.Domain.Logs;
+using ProjectMetadataPlatform.Domain.Plugins;
 using ProjectMetadataPlatform.Domain.Projects;
+using ProjectMetadataPlatform.Domain.Teams;
 using Action = ProjectMetadataPlatform.Domain.Logs.Action;
 
 namespace ProjectMetadataPlatform.Application.Tests.Projects;
@@ -139,6 +141,16 @@ public class DeleteProjectCommandHandlerTest
             ClientName = "Metatron",
             IsArchived = true,
             CompanyId = 1,
+            Team = new Team { TeamName = "Team", BusinessUnitId = 1 },
+            ProjectPlugins =
+            [
+                new ProjectPlugin
+                {
+                    PluginId = 1,
+                    Url = "Url",
+                    DisplayName = "DisplayName",
+                },
+            ],
         };
         _ = _mockProjectRepo.Setup(m => m.GetProjectAsync(It.IsAny<int>())).ReturnsAsync(project);
         _ = _mockProjectRepo
@@ -177,6 +189,7 @@ public class DeleteProjectCommandHandlerTest
         );
     }
 
+    [Test]
     public async Task CreateProject_AuthorizationFailsThrowsTest()
     {
         _ = _authorizationServiceMock

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Teams;
@@ -253,10 +254,13 @@ public class TeamsControllerTest
                     (IEnumerable<Team>, IEnumerable<AuthorizationConstants.Actions>, TeamCursor?)
                 >(It.IsAny<GetAllTeamsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync((teams, [], null));
+            .ReturnsAsync((teams, [], new TeamCursor("Test")));
 
         // Act
-        var actionResult = await _controller.Get(null, null);
+        var actionResult = await _controller.Get(
+            limit: 200,
+            cursor: CursorConverter.Encode(new TeamCursor("Cursor"))
+        );
 
         // Assert
         Assert.That(actionResult.Result, Is.InstanceOf<OkObjectResult>());
@@ -264,6 +268,7 @@ public class TeamsControllerTest
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
         var response = okResult.Value as GetListResponse<GetTeamResponse>;
+        var getTeamsResponseCursor = (okResult.Value as GetListResponse<GetTeamResponse>)!.Cursor;
         Assert.That(response, Is.Not.Null);
         Assert.That(response.Resources.Count(), Is.EqualTo(teams.Count));
         var firstResponseTeam = response.Resources.First();
@@ -273,6 +278,10 @@ public class TeamsControllerTest
             Assert.That(firstResponseTeam.Id, Is.EqualTo(firstOriginalTeam.Id));
             Assert.That(firstResponseTeam.TeamName, Is.EqualTo(firstOriginalTeam.TeamName));
         });
+        Assert.That(
+            getTeamsResponseCursor,
+            Is.EqualTo(CursorConverter.Encode(new TeamCursor("Test")))
+        );
     }
 
     [Test]

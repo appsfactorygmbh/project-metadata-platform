@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
+using ProjectMetadataPlatform.Application.Logs;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Companies;
@@ -41,11 +42,10 @@ public class LogRepositoryTest : TestsWithDatabase
         _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
 
         var identity = new ClaimsIdentity(
-            new[]
-            {
+            [
                 new Claim(ClaimTypes.Email, "camo"),
                 new Claim(ClaimTypes.AuthenticationMethod, "JWT Token"),
-            },
+            ],
             "TestAuth"
         );
         var contextUser = new ClaimsPrincipal(identity); //add claims as needed
@@ -908,6 +908,81 @@ public class LogRepositoryTest : TestsWithDatabase
         var logs = await (await _loggingRepository.GetAllLogs(null)).ToListAsync();
 
         Assert.That(logs, Has.Count.EqualTo(2));
+    }
+
+    [Test]
+    public async Task GetAllLogs_DoesntReturnCursorLog_Test()
+    {
+        _context.Companies.Add(new Company { Id = 1, CompanyName = "A" });
+        _ = await _context.SaveChangesAsync();
+        var exampleLog1 = new Log
+        {
+            Id = 1,
+            AuthorId = null,
+            AuthorTokenId = null,
+            AuthorName = "camo",
+            TimeStamp = DateTimeOffset.UtcNow,
+            ProjectId = 301,
+            Action = Action.ADDED_PROJECT,
+            Changes =
+            [
+                new LogChange
+                {
+                    OldValue = "",
+                    NewValue = "Example Project",
+                    Property = "ProjectName",
+                },
+            ],
+        };
+
+        var exampleProject1 = new Project
+        {
+            ProjectName = "Example Project",
+            Slug = "example_project",
+            ClientName = "Example Client",
+            Logs = [exampleLog1],
+            CompanyId = 1,
+        };
+
+        var exampleLog2 = new Log
+        {
+            Id = 2,
+            AuthorId = null,
+            AuthorTokenId = null,
+            AuthorName = "someUserName",
+            TimeStamp = DateTimeOffset.UtcNow,
+            ProjectId = 302,
+            Action = Action.UPDATED_PROJECT,
+            Changes =
+            [
+                new LogChange
+                {
+                    OldValue = "Example Project",
+                    NewValue = "Another Project",
+                    Property = "ProjectName",
+                },
+            ],
+        };
+
+        var exampleProject2 = new Project
+        {
+            ProjectName = "Another Project",
+            Slug = "another_project",
+            ClientName = "Example Client",
+            Logs = [exampleLog2],
+            CompanyId = 1,
+        };
+        _ = await _context.Projects.AddAsync(exampleProject1);
+        _ = await _context.Projects.AddAsync(exampleProject2);
+        _ = await _context.SaveChangesAsync();
+
+        var logs = await (
+            await _loggingRepository.GetAllLogs(
+                new LogCursor(exampleLog2.TimeStamp, exampleLog2.Id)
+            )
+        ).ToListAsync();
+
+        Assert.That(logs, Has.Count.EqualTo(1));
     }
 
     [Test]

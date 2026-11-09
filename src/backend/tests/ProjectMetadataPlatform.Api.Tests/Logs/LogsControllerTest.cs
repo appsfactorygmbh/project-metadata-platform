@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Interfaces;
 using ProjectMetadataPlatform.Api.Logs;
@@ -200,17 +201,33 @@ public class LogsControllerTest
                     CancellationToken.None
                 )
             )
-            .ReturnsAsync(([log], null));
+            .ReturnsAsync(
+                ([log], new LogCursor(new DateTimeOffset(1, 1, 1, 1, 1, 1, TimeSpan.Zero), 1))
+            );
         _ = _logConverter
             .Setup(lc => lc.BuildLogMessage(log))
             .Returns(new LogResponse("Project updated", "1970-01-01T00:00:00+01:00"));
 
-        var result = await _controller.Get(null, "updated", null, null, null, null, null);
+        var result = await _controller.Get(
+            null,
+            "updated",
+            null,
+            null,
+            null,
+            null,
+            null,
+            50,
+            CursorConverter.Encode(
+                new LogCursor(new DateTimeOffset(2, 2, 2, 2, 2, 2, TimeSpan.Zero), 10)
+            )
+        );
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
         var logResponses = (okResult.Value as GetListResponse<LogResponse>)?.Resources.ToList();
+
+        var logResponseCursor = (okResult.Value as GetListResponse<LogResponse>)!.Cursor;
         Assert.That(logResponses, Is.Not.Null);
         Assert.That(logResponses, Has.Count.EqualTo(1));
         Assert.Multiple(() =>
@@ -218,7 +235,14 @@ public class LogsControllerTest
             Assert.That(logResponses[0].LogMessage, Is.EqualTo("Project updated"));
             Assert.That(logResponses[0].Timestamp, Is.EqualTo("1970-01-01T00:00:00+01:00"));
         });
-
+        Assert.That(
+            logResponseCursor,
+            Is.EqualTo(
+                CursorConverter.Encode(
+                    new LogCursor(new DateTimeOffset(1, 1, 1, 1, 1, 1, TimeSpan.Zero), 1)
+                )
+            )
+        );
         _mediator.Verify(
             m =>
                 m.Send<GetLogsQuery, (IEnumerable<Log>, LogCursor?)>(

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Application.OfficeLocations;
 using ProjectMetadataPlatform.Domain.Errors.OfficeLocationExceptions;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -60,7 +61,37 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
     }
 
     [Test]
-    public async Task DeleteProjectAsync_ShouldDeleteProject()
+    public async Task GetOfficeLocationsAsync_ShouldNotReturnCursorOfficeLocation()
+    {
+        // Arrange
+        var officeLocation = new OfficeLocation { Id = 1, OfficeLocationName = "Test_1" };
+
+        var officeLocation2 = new OfficeLocation { Id = 2, OfficeLocationName = "Test_2" };
+
+        _context.OfficeLocations.RemoveRange(_context.OfficeLocations);
+        _ = _context.OfficeLocations.Add(officeLocation);
+        _ = _context.OfficeLocations.Add(officeLocation2);
+        _ = await _context.SaveChangesAsync();
+
+        // Act
+        var result = (
+            await _repository.GetOfficeLocationsAsync(
+                new OfficeLocationCursor(officeLocation.OfficeLocationName)
+            )
+        ).ToList();
+
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(1));
+        var officeLocationRes = result.First();
+        Assert.Multiple(() =>
+        {
+            Assert.That(officeLocationRes.Id, Is.EqualTo(2));
+            Assert.That(officeLocationRes.OfficeLocationName, Is.EqualTo("Test_2"));
+        });
+    }
+
+    [Test]
+    public async Task DeleteOfficeLocationAsync_ShouldOfficeLocationProject()
     {
         // Arrange
         var officeLocation = new OfficeLocation { Id = 1, OfficeLocationName = "Test_1" };
@@ -294,5 +325,42 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
                 Is.EqualTo(expectedOfficeLocation.OfficeLocationName)
             );
         });
+    }
+
+    [Test]
+    public async Task GetOfficeLocationByNameAsync_ExistingOfficeLocation_ShouldReturnCorrectOfficeLocation()
+    {
+        // Arrange
+        var expectedOfficeLocation = new OfficeLocation
+        {
+            Id = 400,
+            OfficeLocationName = "OfficeLocation Zeta",
+        };
+        _ = _context.OfficeLocations.Add(expectedOfficeLocation);
+        _ = await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _repository.GetOfficeLocationByNameAsync(
+            expectedOfficeLocation.OfficeLocationName
+        );
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Id, Is.EqualTo(expectedOfficeLocation.Id));
+            Assert.That(
+                result.OfficeLocationName,
+                Is.EqualTo(expectedOfficeLocation.OfficeLocationName)
+            );
+        });
+    }
+
+    [Test]
+    public async Task GetOfficeLocationByNameAsync_NonExistingOfficeLocation_ShouldThrowOfficeLocationNotFoundException()
+    {
+        Assert.ThrowsAsync<OfficeLocationNotFoundException>(async () =>
+            await _repository.GetOfficeLocationByNameAsync("")
+        );
     }
 }

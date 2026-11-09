@@ -32,13 +32,11 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
     /// Asynchronously retrieves all projects with specific search pattern or filter matches from the database.
     /// </summary>
     /// <param name="query">The query containing filters and search pattern.</param>
-    /// <param name="cursor">Optional Cursor for pagination.</param>
     /// <param name="canSearchPlugin">Whether Plugin Attributes are allowed to be filtered.</param>
     /// <param name="canSearchBilling">Whether Billing Attributes are allowed to be filtered.</param>
     /// <returns>A collection of projects.</returns>
     public async Task<IQueryable<Project>> GetProjectsAsync(
         GetAllProjectsQuery query,
-        ProjectCursor? cursor,
         bool canSearchPlugin = false,
         bool canSearchBilling = false
     )
@@ -143,85 +141,87 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
         var sortBy = query.Request?.SortAttribute ?? ProjectSortCharacteristic.ClientName;
         var desc = query.Request?.SortOrder == SortOrder.DESC;
 
-        if (cursor != null)
+        if (query.Cursor != null)
         {
+            var cursorValue = query.Cursor.CursorValue?.ToLower() ?? string.Empty;
+            var cursorSlug = query.Cursor.Slug?.ToLower() ?? string.Empty;
             joinQuery = sortBy switch
             {
                 ProjectSortCharacteristic.Company => desc
                     ? joinQuery.Where(x =>
-                        (x.Search.CompanyName ?? "").CompareTo(cursor.CursorValue) < 0
+                        (x.Search.CompanyName ?? "").CompareTo(cursorValue) < 0
                         || (
-                            (x.Search.CompanyName ?? "") == cursor.CursorValue
-                            && x.Search.Slug.CompareTo(cursor.Slug) < 0
+                            (x.Search.CompanyName ?? "") == cursorValue
+                            && x.Search.Slug.CompareTo(cursorSlug) < 0
                         )
                     )
                     : joinQuery.Where(x =>
-                        (x.Search.CompanyName ?? "").CompareTo(cursor.CursorValue) > 0
+                        (x.Search.CompanyName ?? "").CompareTo(cursorValue) > 0
                         || (
-                            (x.Search.CompanyName ?? "") == cursor.CursorValue
-                            && x.Search.Slug.CompareTo(cursor.Slug) > 0
+                            (x.Search.CompanyName ?? "") == cursorValue
+                            && x.Search.Slug.CompareTo(cursorSlug) > 0
                         )
                     ),
 
                 ProjectSortCharacteristic.BusinessUnit => desc
                     ? joinQuery.Where(x =>
-                        (x.Search.BusinessUnitName ?? "").CompareTo(cursor.CursorValue) < 0
+                        (x.Search.BusinessUnitName ?? "").CompareTo(cursorValue) < 0
                         || (
-                            (x.Search.BusinessUnitName ?? "") == cursor.CursorValue
-                            && x.Search.Slug.CompareTo(cursor.Slug) < 0
+                            (x.Search.BusinessUnitName ?? "") == cursorValue
+                            && x.Search.Slug.CompareTo(cursorSlug) < 0
                         )
                     )
                     : joinQuery.Where(x =>
-                        (x.Search.BusinessUnitName ?? "").CompareTo(cursor.CursorValue) > 0
+                        (x.Search.BusinessUnitName ?? "").CompareTo(cursorValue) > 0
                         || (
-                            (x.Search.BusinessUnitName ?? "") == cursor.CursorValue
-                            && x.Search.Slug.CompareTo(cursor.Slug) > 0
+                            (x.Search.BusinessUnitName ?? "") == cursorValue
+                            && x.Search.Slug.CompareTo(cursorSlug) > 0
                         )
                     ),
 
                 ProjectSortCharacteristic.Team => desc
                     ? joinQuery.Where(x =>
-                        (x.Search.TeamName ?? "").CompareTo(cursor.CursorValue) < 0
+                        (x.Search.TeamName ?? "").CompareTo(cursorValue) < 0
                         || (
-                            (x.Search.TeamName ?? "") == cursor.CursorValue
-                            && x.Search.Slug.CompareTo(cursor.Slug) < 0
+                            (x.Search.TeamName ?? "") == cursorValue
+                            && x.Search.Slug.CompareTo(cursorSlug) < 0
                         )
                     )
                     : joinQuery.Where(x =>
-                        (x.Search.TeamName ?? "").CompareTo(cursor.CursorValue) > 0
+                        (x.Search.TeamName ?? "").CompareTo(cursorValue) > 0
                         || (
-                            (x.Search.TeamName ?? "") == cursor.CursorValue
-                            && x.Search.Slug.CompareTo(cursor.Slug) > 0
+                            (x.Search.TeamName ?? "") == cursorValue
+                            && x.Search.Slug.CompareTo(cursorSlug) > 0
                         )
                     ),
                 ProjectSortCharacteristic.ProjectName => desc
                     ? joinQuery.Where(x =>
-                        x.Search.ProjectName.CompareTo(cursor.CursorValue) < 0
+                        x.Search.ProjectName.CompareTo(cursorValue) < 0
                         || (
-                            x.Search.ProjectName == cursor.CursorValue
-                            && x.Search.Slug.CompareTo(cursor.Slug) < 0
+                            x.Search.ProjectName == cursorValue
+                            && x.Search.Slug.CompareTo(cursorSlug) < 0
                         )
                     )
                     : joinQuery.Where(x =>
-                        x.Search.ProjectName.CompareTo(cursor.CursorValue) > 0
+                        x.Search.ProjectName.CompareTo(cursorValue) > 0
                         || (
-                            x.Search.ProjectName == cursor.CursorValue
-                            && x.Search.Slug.CompareTo(cursor.Slug) > 0
+                            x.Search.ProjectName == cursorValue
+                            && x.Search.Slug.CompareTo(cursorSlug) > 0
                         )
                     ),
                 ProjectSortCharacteristic.ClientName or _ => desc
                     ? joinQuery.Where(x =>
-                        x.Search.ClientName.CompareTo(cursor.CursorValue) < 0
+                        x.Search.ClientName.CompareTo(cursorValue) < 0
                         || (
-                            x.Search.ClientName == cursor.CursorValue
-                            && x.Search.Slug.CompareTo(cursor.Slug) < 0
+                            x.Search.ClientName == cursorValue
+                            && x.Search.Slug.CompareTo(cursorSlug) < 0
                         )
                     )
                     : joinQuery.Where(x =>
-                        x.Search.ClientName.CompareTo(cursor.CursorValue) > 0
+                        x.Search.ClientName.CompareTo(cursorValue) > 0
                         || (
-                            x.Search.ClientName == cursor.CursorValue
-                            && x.Search.Slug.CompareTo(cursor.Slug) > 0
+                            x.Search.ClientName == cursorValue
+                            && x.Search.Slug.CompareTo(cursorSlug) > 0
                         )
                     ),
             };

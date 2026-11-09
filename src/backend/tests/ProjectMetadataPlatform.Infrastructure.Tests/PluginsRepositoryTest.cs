@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Application.Plugins;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Errors.PluginExceptions;
 using ProjectMetadataPlatform.Domain.Errors.ProjectExceptions;
@@ -332,17 +333,57 @@ public class PluginsRepositoryTest : TestsWithDatabase
             ProjectPlugins = [],
             Id = 42,
         };
-        _ = _context.Add(examplePlugin);
+        var examplePlugin2 = new Plugin
+        {
+            PluginName = "Warp-Drive2",
+            ProjectPlugins = [],
+            Id = 45,
+        };
+        _ = _context.AddRangeAsync(examplePlugin, examplePlugin2);
         _ = await _context.SaveChangesAsync();
 
-        var plugin = (await _repository.GetGlobalPluginsAsync(null)).ToList();
+        var plugins = (await _repository.GetGlobalPluginsAsync(null)).ToList();
 
-        Assert.That(plugin, Is.Not.Null);
+        Assert.That(plugins, Has.Count.EqualTo(2));
 
         Assert.Multiple(() =>
         {
-            Assert.That(plugin.First().PluginName, Is.EqualTo("Warp-Drive"));
-            Assert.That(plugin.First().Id, Is.EqualTo(42));
+            Assert.That(plugins.First().PluginName, Is.EqualTo("Warp-Drive"));
+            Assert.That(plugins.First().Id, Is.EqualTo(42));
+
+            Assert.That(plugins.Last().PluginName, Is.EqualTo("Warp-Drive2"));
+            Assert.That(plugins.Last().Id, Is.EqualTo(45));
+        });
+    }
+
+    [Test]
+    public async Task GetGlobalPlugins_DoesNotReturnCursorPlugin_Test()
+    {
+        var examplePlugin = new Plugin
+        {
+            PluginName = "Warp-Drive",
+            ProjectPlugins = [],
+            Id = 42,
+        };
+        var examplePlugin2 = new Plugin
+        {
+            PluginName = "Warp-Drive2",
+            ProjectPlugins = [],
+            Id = 45,
+        };
+        _ = _context.AddRangeAsync(examplePlugin, examplePlugin2);
+        _ = await _context.SaveChangesAsync();
+
+        var plugins = (
+            await _repository.GetGlobalPluginsAsync(new PluginCursor(examplePlugin.PluginName))
+        ).ToList();
+
+        Assert.That(plugins, Has.Count.EqualTo(1));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(plugins.First().PluginName, Is.EqualTo("Warp-Drive2"));
+            Assert.That(plugins.First().Id, Is.EqualTo(45));
         });
     }
 

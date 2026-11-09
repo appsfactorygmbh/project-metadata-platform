@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Users;
 using ProjectMetadataPlatform.Api.Users.Models;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -79,9 +80,12 @@ public class GetAllUsersControllerTest
                     )
                 >(It.IsAny<GetAllUsersQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync((users, [], null));
+            .ReturnsAsync((users, [], new UserCursor("Test", "Test2")));
 
-        var result = await _controller.Get();
+        var result = await _controller.Get(
+            limit: 200,
+            cursor: CursorConverter.Encode(new UserCursor("Cursor", "Cursor2"))
+        );
 
         var okResult = result.Result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
@@ -127,6 +131,10 @@ public class GetAllUsersControllerTest
             Assert.That(
                 response.Resources.ElementAt(1).PmpUser!.TeamSupport,
                 Is.EqualTo(new List<string> { })
+            );
+            Assert.That(
+                response.Cursor,
+                Is.EqualTo(CursorConverter.Encode(new UserCursor("Test", "Test2")))
             );
         });
     }

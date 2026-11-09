@@ -44,7 +44,7 @@ public class GetProjectsBySearchingHandlerTest
             .ReturnsAsync((IQueryable<Project> query, int? limit) => (query, null));
         var query = new GetAllProjectsQuery(null, "M", null, null);
         _ = _mockProjectRepo
-            .Setup(m => m.GetProjectsAsync(query, null))
+            .Setup(m => m.GetProjectsAsync(query))
             .ReturnsAsync(emptyProjectList.BuildMock());
 
         var result = await _handler.Handle(query, It.IsAny<CancellationToken>());
@@ -71,7 +71,7 @@ public class GetProjectsBySearchingHandlerTest
         var query = new GetAllProjectsQuery(null, "R", null, null);
 
         _ = _mockProjectRepo
-            .Setup(m => m.GetProjectsAsync(query, null))
+            .Setup(m => m.GetProjectsAsync(query))
             .ReturnsAsync(projectsResponseContent.BuildMock());
 
         var result = await _handler.Handle(query, It.IsAny<CancellationToken>());
@@ -105,9 +105,7 @@ public class GetProjectsBySearchingHandlerTest
             .Setup(a => a.PaginateWithAuthAsync(It.IsAny<IQueryable<Project>>(), It.IsAny<int?>()))
             .ReturnsAsync((IQueryable<Project> query, int? limit) => (query, null));
         _ = _mockProjectRepo
-            .Setup(m =>
-                m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>(), It.IsAny<ProjectCursor?>())
-            )
+            .Setup(m => m.GetProjectsAsync(It.IsAny<GetAllProjectsQuery>()))
             .ReturnsAsync(projectsResponseContent.BuildMock());
         var query = new GetAllProjectsQuery(null, "", null, null);
         var result = await _handler.Handle(query, It.IsAny<CancellationToken>());

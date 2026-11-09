@@ -11,14 +11,17 @@ namespace ProjectMetadataPlatform.Infrastructure.Jobs;
 public class JobScheduler : IJobScheduler
 {
     private readonly ISchedulerFactory _schedulerFactory;
+    private readonly TimeProvider _timeProvider;
 
     /// <summary>
     /// Constructor for <see cref="JobScheduler"/>
     /// </summary>
     /// <param name="schedulerFactory"></param>
-    public JobScheduler(ISchedulerFactory schedulerFactory)
+    /// <param name="timeProvider"></param>
+    public JobScheduler(ISchedulerFactory schedulerFactory, TimeProvider timeProvider)
     {
         _schedulerFactory = schedulerFactory;
+        _timeProvider = timeProvider;
     }
 
     /// <inheritdoc/>
@@ -33,7 +36,7 @@ public class JobScheduler : IJobScheduler
                 .Create()
                 .WithIdentity(triggerKey)
                 .ForJob(new JobKey("RefreshSearchViewJob"))
-                .StartAt(DateTimeOffset.UtcNow.AddSeconds(5))
+                .StartAt(_timeProvider.GetUtcNow().AddSeconds(5))
                 .Build();
 
             try

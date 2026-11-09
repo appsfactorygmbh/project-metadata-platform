@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
+using ProjectMetadataPlatform.Application.Teams;
 using ProjectMetadataPlatform.Domain.Companies;
 using ProjectMetadataPlatform.Domain.Errors.TeamExceptions;
 using ProjectMetadataPlatform.Domain.Projects;
@@ -76,6 +77,49 @@ public class TeamsRepositoryTests : TestsWithDatabase
             Assert.That(teamRes2.TeamName, Is.EqualTo("Test_2"));
             Assert.That(teamRes2.PTL, Is.EqualTo(null));
             Assert.That(teamRes2.BusinessUnit!.BusinessUnitName, Is.EqualTo("BU Foo"));
+        });
+    }
+
+    [Test]
+    public async Task GetTeamsAsync_ShouldNotReturnCursorTeam()
+    {
+        // Arrange
+        var team = new Team
+        {
+            Id = 1,
+            TeamName = "Test_1",
+            BusinessUnit = new() { BusinessUnitName = "BU Test" },
+            BusinessUnitId = 1,
+            PTL = "Max Mustermann",
+        };
+
+        var team2 = new Team
+        {
+            Id = 2,
+            TeamName = "Test_2",
+            BusinessUnit = new() { BusinessUnitName = "BU Foo" },
+            BusinessUnitId = 2,
+        };
+
+        _context.Teams.RemoveRange(_context.Teams);
+        _ = _context.Teams.Add(team);
+        _ = _context.Teams.Add(team2);
+        _ = await _context.SaveChangesAsync();
+
+        // Act
+        var result = (
+            await _repository.GetTeamsAsync(null, null, new TeamCursor(team.TeamName))
+        ).ToList();
+
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(1));
+        var teamRes = result.First();
+        Assert.Multiple(() =>
+        {
+            Assert.That(teamRes.Id, Is.EqualTo(2));
+            Assert.That(teamRes.TeamName, Is.EqualTo("Test_2"));
+            Assert.That(teamRes.PTL, Is.EqualTo(null));
+            Assert.That(teamRes.BusinessUnit!.BusinessUnitName, Is.EqualTo("BU Foo"));
         });
     }
 
@@ -606,5 +650,40 @@ public class TeamsRepositoryTests : TestsWithDatabase
             Assert.That(result.BusinessUnit, Is.EqualTo(expectedTeam.BusinessUnit));
             Assert.That(result.PTL, Is.EqualTo(expectedTeam.PTL));
         });
+    }
+
+    [Test]
+    public async Task GetTeamByNameAsync_ExistingTeam_ShouldReturnCorrectTeam()
+    {
+        // Arrange
+        var expectedTeam = new Team
+        {
+            Id = 400,
+            TeamName = "Team Zeta",
+            BusinessUnitId = 5,
+            BusinessUnit = new() { BusinessUnitName = "Core Services" },
+        };
+        _ = _context.Teams.Add(expectedTeam);
+        _ = await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _repository.GetTeamByNameAsync(expectedTeam.TeamName);
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Id, Is.EqualTo(expectedTeam.Id));
+            Assert.That(result.TeamName, Is.EqualTo(expectedTeam.TeamName));
+            Assert.That(result.BusinessUnit, Is.EqualTo(expectedTeam.BusinessUnit));
+        });
+    }
+
+    [Test]
+    public async Task GetTeamByNameAsync_NonExistingTeam_ShouldThrowTeamNotFoundException()
+    {
+        Assert.ThrowsAsync<TeamNotFoundException>(async () =>
+            await _repository.GetTeamByNameAsync("")
+        );
     }
 }

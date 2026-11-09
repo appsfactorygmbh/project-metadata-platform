@@ -10,6 +10,7 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Auth;
 using ProjectMetadataPlatform.Api.Auth.Models;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Application.Auth;
@@ -188,10 +189,13 @@ public class Tests
                         },
                     ],
                     [],
-                    null
+                    new ApiTokenCursor("Test")
                 )
             );
-        var result = await _controller.GetApiTokens();
+        var result = await _controller.GetApiTokens(
+            100,
+            CursorConverter.Encode(new ApiTokenCursor("Cursor"))
+        );
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;
@@ -201,6 +205,9 @@ public class Tests
         var getTokensResponseList = (
             okResult.Value as GetListResponse<GetApiTokenDetailsResponse>
         )!.Resources.ToList();
+        var cursorResponse = (
+            okResult.Value as GetListResponse<GetApiTokenDetailsResponse>
+        )!.Cursor;
         Assert.That(getTokensResponseList, Is.Not.Null);
 
         Assert.That(getTokensResponseList, Has.Count.EqualTo(2));
@@ -208,6 +215,7 @@ public class Tests
         Assert.That(getTokensResponseList[0].Name, Is.EqualTo("Token1"));
         Assert.That(getTokensResponseList[1].Id, Is.EqualTo(2));
         Assert.That(getTokensResponseList[1].Name, Is.EqualTo("Token2"));
+        Assert.That(cursorResponse, Is.EqualTo(CursorConverter.Encode(new ApiTokenCursor("Test"))));
     }
 
     [Test]

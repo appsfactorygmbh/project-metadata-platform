@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Application.Users;
 using ProjectMetadataPlatform.Domain.Errors.UserException;
 using ProjectMetadataPlatform.Domain.Users;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
@@ -281,6 +282,47 @@ public class UsersRepositoryTest : TestsWithDatabase
             Assert.That(result, Has.Count.EqualTo(1));
             Assert.That(result[0].Id, Is.EqualTo("2"));
             Assert.That(result[0].Email, Is.EqualTo("Hanz"));
+        });
+    }
+
+    [Test]
+    public async Task GetUsersAsync_CursorUserNotReturned_Test()
+    {
+        var usersResponseContent = new List<ApplicationUser>
+        {
+            new()
+            {
+                EmployeeId = "Id",
+                Id = "1",
+                Email = "Hanz",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            new()
+            {
+                EmployeeId = "Id2",
+                Id = "2",
+                Email = "Hinz",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+        };
+
+        _context.Users.AddRange(usersResponseContent);
+        _ = await _context.SaveChangesAsync();
+
+        var result = (
+            await _repository.GetUsersAsync(
+                "",
+                new UserCursor(usersResponseContent[0].Email!, usersResponseContent[0].EmployeeId)
+            )
+        ).ToList();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Has.Count.EqualTo(1));
+            Assert.That(result[0].Id, Is.EqualTo("2"));
+            Assert.That(result[0].Email, Is.EqualTo("Hinz"));
         });
     }
 

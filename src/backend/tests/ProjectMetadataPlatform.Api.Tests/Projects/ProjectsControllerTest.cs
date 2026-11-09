@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Projects;
 using ProjectMetadataPlatform.Api.Projects.Models;
@@ -96,10 +97,14 @@ public class ProjectsControllerTest
                     )
                 >(It.IsAny<GetAllProjectsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync((projectsResponseContent, [], null));
+            .ReturnsAsync((projectsResponseContent, [], new ProjectCursor("Test", "Test2")));
 
         // act
-        var result = await _controller.Get(null, null);
+        var result = await _controller.Get(
+            null,
+            limit: 200,
+            cursor: CursorConverter.Encode(new ProjectCursor("Cursor", "CursorValue"))
+        );
 
         // assert
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
@@ -111,6 +116,9 @@ public class ProjectsControllerTest
         var getProjectsResponseArray = (
             okResult.Value as GetListResponse<GetProjectResponse>
         )?.Resources.ToArray();
+        var getProjectsResponseCursor = (
+            okResult.Value as GetListResponse<GetProjectResponse>
+        )!.Cursor;
         Assert.That(getProjectsResponseArray, Is.Not.Null);
 
         Assert.That(getProjectsResponseArray, Has.Length.EqualTo(1));
@@ -125,6 +133,10 @@ public class ProjectsControllerTest
             Assert.That(project.Company.CompanyName, Is.EqualTo("Geostorm"));
             Assert.That(project.IsmsLevel, Is.EqualTo(SecurityLevel.VERY_HIGH));
         });
+        Assert.That(
+            getProjectsResponseCursor,
+            Is.EqualTo(CursorConverter.Encode(new ProjectCursor("Test", "Test2")))
+        );
     }
 
     [Test]

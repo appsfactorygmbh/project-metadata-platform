@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Errors;
 using ProjectMetadataPlatform.Api.Plugins;
@@ -309,8 +310,11 @@ public class Tests
                     )
                 >(It.IsAny<GetGlobalPluginsQuery>(), It.IsAny<CancellationToken>())
             )
-            .ReturnsAsync((pluginList, [], null));
-        var result = await _controller.GetGlobal();
+            .ReturnsAsync((pluginList, [], new PluginCursor("Test")));
+        var result = await _controller.GetGlobal(
+            200,
+            CursorConverter.Encode(new PluginCursor("Cursor"))
+        );
 
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
@@ -324,6 +328,9 @@ public class Tests
         var resultValue = (
             okResult?.Value as GetListResponse<GetGlobalPluginResponse>
         )!.Resources.ToList();
+        var getGlobalPluginResponseCursor = (
+            okResult.Value as GetListResponse<GetGlobalPluginResponse>
+        )!.Cursor;
         Assert.That(resultValue, Has.Count.EqualTo(1));
 
         var resultObj = resultValue[0];
@@ -334,6 +341,10 @@ public class Tests
             Assert.That(resultObj.IsArchived, Is.False);
             Assert.That(resultObj.BaseUrl, Is.EqualTo("https://plugin1.com"));
         });
+        Assert.That(
+            getGlobalPluginResponseCursor,
+            Is.EqualTo(CursorConverter.Encode(new PluginCursor("Test")))
+        );
     }
 
     [Test]

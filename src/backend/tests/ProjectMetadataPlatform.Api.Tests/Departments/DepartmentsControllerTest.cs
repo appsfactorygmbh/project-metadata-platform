@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Departments;
 using ProjectMetadataPlatform.Api.Departments.Models;
@@ -80,10 +81,13 @@ public class DepartmentsControllerTest
                         new Department { Id = 2, DepartmentName = "Department2" },
                     ],
                     [],
-                    null
+                    new DepartmentCursor("Test")
                 )
             );
-        var result = await _controller.Get();
+        var result = await _controller.Get(
+            200,
+            CursorConverter.Encode(new DepartmentCursor("Cursor"))
+        );
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;
@@ -93,6 +97,9 @@ public class DepartmentsControllerTest
         var getDepartmentsResponseList = (
             okResult.Value as GetListResponse<GetDepartmentResponse>
         )!.Resources.ToList();
+        var getDepartmentsResponseCursor = (
+            okResult.Value as GetListResponse<GetDepartmentResponse>
+        )!.Cursor;
         Assert.That(getDepartmentsResponseList, Is.Not.Null);
 
         Assert.That(getDepartmentsResponseList, Has.Count.EqualTo(2));
@@ -100,6 +107,10 @@ public class DepartmentsControllerTest
         Assert.That(getDepartmentsResponseList[0].DepartmentName, Is.EqualTo("Department1"));
         Assert.That(getDepartmentsResponseList[1].Id, Is.EqualTo(2));
         Assert.That(getDepartmentsResponseList[1].DepartmentName, Is.EqualTo("Department2"));
+        Assert.That(
+            getDepartmentsResponseCursor,
+            Is.EqualTo(CursorConverter.Encode(new DepartmentCursor("Test")))
+        );
     }
 
     [Test]

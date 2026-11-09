@@ -8,6 +8,7 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.Billing;
 using ProjectMetadataPlatform.Api.Billing.Models;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Application.Billing;
 using ProjectMetadataPlatform.Application.Interfaces;
@@ -80,10 +81,10 @@ public class BillingControllerTest
                         new GlobalBilling { Id = 2, BillingKind = "Billing2" },
                     ],
                     [],
-                    null
+                    new BillingCursor("Test")
                 )
             );
-        var result = await _controller.Get();
+        var result = await _controller.Get(10, CursorConverter.Encode(new BillingCursor("Cursor")));
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;
@@ -93,6 +94,7 @@ public class BillingControllerTest
         var getBillingResponseList = (
             okResult.Value as GetListResponse<GetBillingResponse>
         )!.Resources.ToList();
+        var cursorResponse = (okResult.Value as GetListResponse<GetBillingResponse>)!.Cursor;
         Assert.That(getBillingResponseList, Is.Not.Null);
 
         Assert.That(getBillingResponseList, Has.Count.EqualTo(2));
@@ -100,6 +102,7 @@ public class BillingControllerTest
         Assert.That(getBillingResponseList[0].BillingKind, Is.EqualTo("Billing1"));
         Assert.That(getBillingResponseList[1].Id, Is.EqualTo(2));
         Assert.That(getBillingResponseList[1].BillingKind, Is.EqualTo("Billing2"));
+        Assert.That(cursorResponse, Is.EqualTo(CursorConverter.Encode(new BillingCursor("Test"))));
     }
 
     [Test]

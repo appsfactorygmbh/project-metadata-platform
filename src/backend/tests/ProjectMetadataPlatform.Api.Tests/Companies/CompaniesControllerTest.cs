@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Api.Companies;
 using ProjectMetadataPlatform.Api.Companies.Models;
@@ -80,10 +81,10 @@ public class CompaniesControllerTest
                         new Company { Id = 2, CompanyName = "Company2" },
                     ],
                     [],
-                    null
+                    new CompanyCursor("Test")
                 )
             );
-        var result = await _controller.Get();
+        var result = await _controller.Get(30, CursorConverter.Encode(new CompanyCursor("Cursor")));
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;
@@ -93,6 +94,9 @@ public class CompaniesControllerTest
         var getCompaniesResponseList = (
             okResult.Value as GetListResponse<GetCompanyResponse>
         )!.Resources.ToList();
+        var getCompaniesResponseCursor = (
+            okResult.Value as GetListResponse<GetCompanyResponse>
+        )!.Cursor;
         Assert.That(getCompaniesResponseList, Is.Not.Null);
 
         Assert.That(getCompaniesResponseList, Has.Count.EqualTo(2));
@@ -100,6 +104,10 @@ public class CompaniesControllerTest
         Assert.That(getCompaniesResponseList[0].CompanyName, Is.EqualTo("Company1"));
         Assert.That(getCompaniesResponseList[1].Id, Is.EqualTo(2));
         Assert.That(getCompaniesResponseList[1].CompanyName, Is.EqualTo("Company2"));
+        Assert.That(
+            getCompaniesResponseCursor,
+            Is.EqualTo(CursorConverter.Encode(new CompanyCursor("Test")))
+        );
     }
 
     [Test]

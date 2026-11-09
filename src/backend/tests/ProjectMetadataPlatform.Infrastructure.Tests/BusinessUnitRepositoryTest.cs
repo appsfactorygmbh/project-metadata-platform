@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Application.BusinessUnits;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 using ProjectMetadataPlatform.Domain.Errors.BusinessUnitExceptions;
 using ProjectMetadataPlatform.Domain.Teams;
@@ -61,7 +62,38 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
     }
 
     [Test]
-    public async Task DeleteTeamAsync_ShouldDeleteTeam()
+    public async Task GetBusinessUnitsAsync_ShouldNotReturnCursorBu()
+    {
+        // Arrange
+        var businessUnit = new BusinessUnit { Id = 1, BusinessUnitName = "Test_1" };
+
+        var businessUnit2 = new BusinessUnit { Id = 2, BusinessUnitName = "Test_2" };
+
+        _context.BusinessUnits.RemoveRange(_context.BusinessUnits);
+        _ = _context.BusinessUnits.Add(businessUnit);
+        _ = _context.BusinessUnits.Add(businessUnit2);
+        _ = await _context.SaveChangesAsync();
+
+        // Act
+        var result = (
+            await _repository.GetBusinessUnitsAsync(
+                new BusinessUnitCursor(businessUnit.BusinessUnitName)
+            )
+        ).ToList();
+
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(1));
+        var businessUnitRes = result.First();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(businessUnitRes.Id, Is.EqualTo(2));
+            Assert.That(businessUnitRes.BusinessUnitName, Is.EqualTo("Test_2"));
+        });
+    }
+
+    [Test]
+    public async Task DeleteBuAsync_ShouldDeleteBu()
     {
         // Arrange
         var businessUnit = new BusinessUnit { Id = 1, BusinessUnitName = "Test_1" };
@@ -342,5 +374,39 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
             Assert.That(result.Id, Is.EqualTo(expectedBusinessUnit.Id));
             Assert.That(result.BusinessUnitName, Is.EqualTo(expectedBusinessUnit.BusinessUnitName));
         });
+    }
+
+    [Test]
+    public async Task GetBusinessUnitByNameAsync_ExistingBusinessUnit_ShouldReturnCorrectBusinessUnit()
+    {
+        // Arrange
+        var expectedBusinessUnit = new BusinessUnit
+        {
+            Id = 400,
+            BusinessUnitName = "BusinessUnit Zeta",
+        };
+        _ = _context.BusinessUnits.Add(expectedBusinessUnit);
+        _ = await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _repository.GetBusinessUnitByNameAsync(
+            expectedBusinessUnit.BusinessUnitName
+        );
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Id, Is.EqualTo(expectedBusinessUnit.Id));
+            Assert.That(result.BusinessUnitName, Is.EqualTo(expectedBusinessUnit.BusinessUnitName));
+        });
+    }
+
+    [Test]
+    public async Task GetBusinessUnitByNameAsync_NonExistingBusinessUnit_ShouldThrowBusinessUnitNotFoundException()
+    {
+        Assert.ThrowsAsync<BusinessUnitNotFoundException>(async () =>
+            await _repository.GetBusinessUnitByNameAsync("")
+        );
     }
 }

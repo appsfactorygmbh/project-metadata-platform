@@ -42,7 +42,6 @@ public class GetAllProjectsQueryHandler
     {
         var projectsQuery = await _projectRepository.GetProjectsAsync(
             request,
-            request.Cursor,
             await _authorizationService.CheckSearchAttribute(
                 nameof(Project),
                 nameof(ProjectPlugin)

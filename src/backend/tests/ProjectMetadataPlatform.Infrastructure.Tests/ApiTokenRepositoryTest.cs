@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using ProjectMetadataPlatform.Api.Common;
+using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;
 using ProjectMetadataPlatform.Infrastructure.Auth;
@@ -61,6 +63,27 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
             Assert.That(resultList[0].Token, Is.EqualTo("TokenHash1"));
             Assert.That(resultList[1].Name, Is.EqualTo("Token2"));
             Assert.That(resultList[1].Token, Is.EqualTo("TokenHash2"));
+        });
+    }
+
+    [Test]
+    public async Task GetApiTokens_EnumerableResponse_WithCursorTest()
+    {
+        List<ApiToken> tokens =
+        [
+            new ApiToken { Name = "Token1", Token = "TokenHash1" },
+            new ApiToken { Name = "Token2", Token = "TokenHash2" },
+        ];
+        await _context.ApiTokens.AddRangeAsync(tokens);
+        _ = await _context.SaveChangesAsync();
+        var result = await _apiTokenRepository.GetApiTokens(new ApiTokenCursor(tokens[0].Name));
+        var resultList = result.ToList();
+        Assert.That(result, Is.Not.Empty);
+        Assert.That(result.Count(), Is.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(resultList[0].Name, Is.EqualTo("Token2"));
+            Assert.That(resultList[0].Token, Is.EqualTo("TokenHash2"));
         });
     }
 

@@ -8,6 +8,7 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Api.BusinessUnits;
 using ProjectMetadataPlatform.Api.BusinessUnits.Models;
+using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
 using ProjectMetadataPlatform.Application.Billing;
 using ProjectMetadataPlatform.Application.BusinessUnits;
@@ -81,10 +82,13 @@ public class BusinessUnitsControllerTest
                         new BusinessUnit { Id = 2, BusinessUnitName = "BusinessUnit2" },
                     ],
                     [],
-                    null
+                    new BusinessUnitCursor("Test")
                 )
             );
-        var result = await _controller.Get();
+        var result = await _controller.Get(
+            200,
+            CursorConverter.Encode(new BusinessUnitCursor("Cursor"))
+        );
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;
@@ -94,6 +98,9 @@ public class BusinessUnitsControllerTest
         var getBusinessUnitsResponseList = (
             okResult.Value as GetListResponse<GetBusinessUnitResponse>
         )!.Resources.ToList();
+        var getBusinessUnitsResponseCursor = (
+            okResult.Value as GetListResponse<GetBusinessUnitResponse>
+        )!.Cursor;
         Assert.That(getBusinessUnitsResponseList, Is.Not.Null);
 
         Assert.That(getBusinessUnitsResponseList, Has.Count.EqualTo(2));
@@ -101,6 +108,10 @@ public class BusinessUnitsControllerTest
         Assert.That(getBusinessUnitsResponseList[0].BusinessUnitName, Is.EqualTo("BusinessUnit1"));
         Assert.That(getBusinessUnitsResponseList[1].Id, Is.EqualTo(2));
         Assert.That(getBusinessUnitsResponseList[1].BusinessUnitName, Is.EqualTo("BusinessUnit2"));
+        Assert.That(
+            getBusinessUnitsResponseCursor,
+            Is.EqualTo(CursorConverter.Encode(new BusinessUnitCursor("Test")))
+        );
     }
 
     [Test]

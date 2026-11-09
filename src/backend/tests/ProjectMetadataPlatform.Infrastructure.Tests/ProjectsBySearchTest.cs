@@ -54,7 +54,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
             "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
         );
         // Act
-        var result = (await _repository.GetProjectsAsync(query, null)).ToList();
+        var result = (await _repository.GetProjectsAsync(query)).ToList();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(1));
@@ -88,7 +88,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
         _ = await _context.Database.ExecuteSqlRawAsync(
             "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
         );
-        var result = await _repository.GetProjectsAsync(query, null);
+        var result = await _repository.GetProjectsAsync(query);
 
         Assert.That(result, Is.Empty);
     }
@@ -136,7 +136,7 @@ public class ProjectsBySearchTest : TestsWithDatabase
         );
 
         // Act
-        var result = await _repository.GetProjectsAsync(query, null);
+        var result = await _repository.GetProjectsAsync(query);
 
         // Assert
         Assert.That(result.Count(), Is.EqualTo(2));
@@ -185,12 +185,12 @@ public class ProjectsBySearchTest : TestsWithDatabase
             "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
         );
         // Act
-        var result = await _repository.GetProjectsAsync(query1, null);
+        var result = await _repository.GetProjectsAsync(query1);
 
         // Assert
         Assert.That(result.Count(), Is.EqualTo(2));
 
-        var resultIgnoreCase = await _repository.GetProjectsAsync(query2, null);
+        var resultIgnoreCase = await _repository.GetProjectsAsync(query2);
 
         // Assert
         Assert.That(resultIgnoreCase.Count(), Is.EqualTo(2));
@@ -250,20 +250,20 @@ public class ProjectsBySearchTest : TestsWithDatabase
             "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_project_search;"
         );
         // Act
-        var resultExactDouble = (await _repository.GetProjectsAsync(query1, null)).ToList();
+        var resultExactDouble = (await _repository.GetProjectsAsync(query1)).ToList();
 
         // Assert
         Assert.That(resultExactDouble.Count(), Is.EqualTo(2));
 
-        var resultExactSingle = await _repository.GetProjectsAsync(query2, null);
+        var resultExactSingle = await _repository.GetProjectsAsync(query2);
         // Assert
         Assert.That(resultExactSingle.Count(), Is.EqualTo(1));
 
-        var resultOnlyFirstNumber = await _repository.GetProjectsAsync(query3, null);
+        var resultOnlyFirstNumber = await _repository.GetProjectsAsync(query3);
         // Assert
         Assert.That(resultOnlyFirstNumber.Count(), Is.EqualTo(3));
 
-        var resultOnlySecondNumberNumber = await _repository.GetProjectsAsync(query4, null);
+        var resultOnlySecondNumberNumber = await _repository.GetProjectsAsync(query4);
         // Assert
         Assert.That(resultOnlySecondNumberNumber.Count(), Is.EqualTo(2));
     }
