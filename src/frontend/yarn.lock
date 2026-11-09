@@ -12195,12 +12195,11 @@ __metadata:
   linkType: hard
 
 "postcss-selector-parser@npm:^6.0.2, postcss-selector-parser@npm:^6.0.4, postcss-selector-parser@npm:^6.0.5, postcss-selector-parser@npm:^6.0.9":
-  version: 6.1.5
-  resolution: "postcss-selector-parser@npm:6.1.5"
+  version: 6.1.6
+  resolution: "postcss-selector-parser@npm:6.1.6"
   dependencies:
-    cssesc: "npm:^3.0.0"
     util-deprecate: "npm:^1.0.2"
-  checksum: 10c0/1b328959d68b90a680979cfb99501fe3781f2da61e56748a912c9a9c8c20f9644a0bd510ac820d74d94ed0990bce747aea75cc5b17b966ea3a70c7c1932d31fd
+  checksum: 10c0/553c0eee43055660b000938373558667254b87c46d7d55ceaa183689a1ebcf3d186c23b68c0ab8fad24b4d6cfc987b683c9f8036f28db3165e230ef0870bcb32
   languageName: node
   linkType: hard
 
