@@ -134,7 +134,7 @@ describe('ProjectSearchView.vue', () => {
     await flushPromises();
 
     const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
-    expect(button).toHaveStyle({ borderColor: '#3e8ee2' });
+    expect(button.style.borderColor).toBe('rgb(62, 142, 226)');
   });
 
   it('not highlight button when clear search and filter', async () => {
@@ -157,7 +157,7 @@ describe('ProjectSearchView.vue', () => {
     await flushPromises();
 
     const button = wrapper.find('[name="resetButton"]').element as HTMLElement;
-    expect(button).toHaveStyle({ borderColor: '#3e8ee2' });
+    expect(button.style.borderColor).toBe('rgb(62, 142, 226)');
   });
 
   it('sets the router query with the search query in the storage', async () => {
