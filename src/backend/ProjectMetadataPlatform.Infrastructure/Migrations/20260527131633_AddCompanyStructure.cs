@@ -203,10 +203,11 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_ApplicationUserBusinessUnit",
-                        x => new { x.BusinessUnitsId, x.UsersId }
-                    );
+                    table.PrimaryKey("PK_ApplicationUserBusinessUnit", x => new
+                    {
+                        x.BusinessUnitsId,
+                        x.UsersId,
+                    });
                     table.ForeignKey(
                         name: "FK_ApplicationUserBusinessUnit_AspNetUsers_UsersId",
                         column: x => x.UsersId,
@@ -233,10 +234,11 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_ApplicationUserDepartment",
-                        x => new { x.DepartmentsId, x.UsersId }
-                    );
+                    table.PrimaryKey("PK_ApplicationUserDepartment", x => new
+                    {
+                        x.DepartmentsId,
+                        x.UsersId,
+                    });
                     table.ForeignKey(
                         name: "FK_ApplicationUserDepartment_AspNetUsers_UsersId",
                         column: x => x.UsersId,

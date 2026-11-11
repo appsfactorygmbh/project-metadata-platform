@@ -216,8 +216,7 @@ public partial class AuthorizationService : IAuthorizationService
     /// <returns>Authorization Principle.</returns>
     private async Task<Principal> GetUserPrincipal()
     {
-        var email =
-            _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
+        var email = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
             ?? "Unknown user";
         var user = await _usersRepository.GetUserByEmailNoTrackingAsync(email);
 
@@ -230,8 +229,7 @@ public partial class AuthorizationService : IAuthorizationService
     /// <returns>Authorization Principle.</returns>
     private async Task<Principal> GetApiTokenPrincipalAsync()
     {
-        var name =
-            _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Name)
+        var name = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Name)
             ?? "Unknown Token";
         var token = await _apiTokenRepository.GetApiTokenByName(name);
 

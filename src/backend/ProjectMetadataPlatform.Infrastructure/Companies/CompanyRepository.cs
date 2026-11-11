@@ -97,8 +97,8 @@ public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
     public async Task<Company> GetCompanyWithProjectsAsync(int id)
     {
         return await _context
-                .Companies.Include(company => company.Projects)
-                .FirstOrDefaultAsync(company => company.Id == id)
+            .Companies.Include(company => company.Projects)
+            .FirstOrDefaultAsync(company => company.Id == id)
             ?? throw new CompanyNotFoundException(id);
     }
 }

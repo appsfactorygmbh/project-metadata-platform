@@ -56,8 +56,8 @@ public class OfficeLocationRepository : RepositoryBase<OfficeLocation>, IOfficeL
     public async Task<OfficeLocation> GetOfficeLocationByNameAsync(string officeLocationName)
     {
         return await _context.OfficeLocations.FirstOrDefaultAsync(o =>
-                o.OfficeLocationName == officeLocationName
-            ) ?? throw new OfficeLocationNotFoundException(officeLocationName);
+            o.OfficeLocationName == officeLocationName
+        ) ?? throw new OfficeLocationNotFoundException(officeLocationName);
     }
 
     /// <inheritdoc/>

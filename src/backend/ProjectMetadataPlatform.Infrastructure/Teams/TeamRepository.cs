@@ -60,8 +60,8 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
     public async Task<Team> GetTeamAsync(int id)
     {
         return await _context
-                .Teams.Include(t => t.BusinessUnit)
-                .FirstOrDefaultAsync(team => team.Id == id)
+            .Teams.Include(t => t.BusinessUnit)
+            .FirstOrDefaultAsync(team => team.Id == id)
             ?? throw new TeamNotFoundException(id);
     }
 
@@ -69,8 +69,8 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
     public async Task<Team> GetTeamByNameAsync(string teamName)
     {
         return await _context
-                .Teams.Include(t => t.BusinessUnit)
-                .FirstOrDefaultAsync(team => team.TeamName == teamName)
+            .Teams.Include(t => t.BusinessUnit)
+            .FirstOrDefaultAsync(team => team.TeamName == teamName)
             ?? throw new TeamNotFoundException(teamName: teamName);
     }
 
@@ -126,9 +126,9 @@ public class TeamRepository : RepositoryBase<Team>, ITeamRepository
     public async Task<Team> GetTeamWithProjectsAsync(int id)
     {
         return await _context
-                .Teams.Include(t => t.BusinessUnit)
-                .Include(team => team.Projects)
-                .FirstOrDefaultAsync(team => team.Id == id)
+            .Teams.Include(t => t.BusinessUnit)
+            .Include(team => team.Projects)
+            .FirstOrDefaultAsync(team => team.Id == id)
             ?? throw new TeamNotFoundException(id);
     }
 }
