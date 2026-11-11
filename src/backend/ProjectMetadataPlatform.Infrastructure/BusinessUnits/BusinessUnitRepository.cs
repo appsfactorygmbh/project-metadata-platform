@@ -35,8 +35,8 @@ public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUni
     public async Task<BusinessUnit> GetBusinessUnitAsync(int id)
     {
         return await _context.BusinessUnits.FirstOrDefaultAsync(businessUnit =>
-                businessUnit.Id == id
-            ) ?? throw new BusinessUnitNotFoundException(id);
+            businessUnit.Id == id
+        ) ?? throw new BusinessUnitNotFoundException(id);
     }
 
     /// <inheritdoc/>
@@ -98,8 +98,8 @@ public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUni
     public async Task<BusinessUnit> GetBusinessUnitWithTeamsAsync(int id)
     {
         return await _context
-                .BusinessUnits.Include(bu => bu.Teams)
-                .FirstOrDefaultAsync(bu => bu.Id == id)
+            .BusinessUnits.Include(bu => bu.Teams)
+            .FirstOrDefaultAsync(bu => bu.Id == id)
             ?? throw new BusinessUnitNotFoundException(id);
     }
 }

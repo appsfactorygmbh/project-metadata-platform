@@ -51,8 +51,7 @@ public class DeleteGlobalPluginCommandHandler : IRequestHandler<DeleteGlobalPlug
         CancellationToken cancellationToken
     )
     {
-        var plugin =
-            await _pluginRepository.GetPluginByIdAsync(request.Id)
+        var plugin = await _pluginRepository.GetPluginByIdAsync(request.Id)
             ?? throw new PluginNotFoundException(request.Id);
 
         if (!await _authorizationService.CheckAccess(plugin, AuthorizationConstants.Actions.DELETE))

@@ -54,8 +54,7 @@ public class PatchGlobalPluginCommandHandler : IRequestHandler<PatchGlobalPlugin
         CancellationToken cancellationToken
     )
     {
-        var plugin =
-            await _pluginRepository.GetPluginByIdAsync(request.Id)
+        var plugin = await _pluginRepository.GetPluginByIdAsync(request.Id)
             ?? throw new PluginNotFoundException(request.Id);
         await CheckAuthorization(plugin, request);
         if (

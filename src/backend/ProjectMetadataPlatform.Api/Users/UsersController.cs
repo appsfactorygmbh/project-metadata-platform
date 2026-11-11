@@ -339,8 +339,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<PmpScimUser>> GetMe()
     {
-        var email =
-            _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
+        var email = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
             ?? throw new UserUnauthenticatedException();
 
         var query = new GetUserByEmailQuery(email);
