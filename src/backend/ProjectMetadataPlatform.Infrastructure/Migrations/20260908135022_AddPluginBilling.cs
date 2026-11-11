@@ -126,10 +126,11 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_PluginBillingRelation",
-                        x => new { x.ProjectId, x.PluginId }
-                    );
+                    table.PrimaryKey("PK_PluginBillingRelation", x => new
+                    {
+                        x.ProjectId,
+                        x.PluginId,
+                    });
                     table.ForeignKey(
                         name: "FK_PluginBillingRelation_GlobalBilling_BillingId",
                         column: x => x.BillingId,

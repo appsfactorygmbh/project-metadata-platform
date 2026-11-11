@@ -56,8 +56,8 @@ public class DepartmentRepository : RepositoryBase<Department>, IDepartmentRepos
     public async Task<Department> GetDepartmentByNameAsync(string departmentName)
     {
         return await _context.Departments.FirstOrDefaultAsync(d =>
-                d.DepartmentName == departmentName
-            ) ?? throw new DepartmentNotFoundException(departmentName);
+            d.DepartmentName == departmentName
+        ) ?? throw new DepartmentNotFoundException(departmentName);
     }
 
     /// <inheritdoc/>

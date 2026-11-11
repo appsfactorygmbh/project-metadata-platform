@@ -25,15 +25,15 @@
         />
         <PackageReference
             Include="Microsoft.Extensions.DependencyInjection.Abstractions"
-            Version="10.0.*"
+            Version="11.0.*"
         />
         <PackageReference Include="Microsoft.Extensions.Resilience" Version="10.11.*" />
-        <PackageReference Include="Microsoft.Identity.Web" Version="4.16.*" />
+        <PackageReference Include="Microsoft.Identity.Web" Version="4.18.*" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.*" />
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.23.*" />
-        <PackageReference Include="Quartz" Version="4.7.1" />
-        <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="4.7.1" />
-        <PackageReference Include="Quartz.Extensions.Hosting" Version="4.7.1" />
+        <PackageReference Include="Quartz" Version="4.7.3" />
+        <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="4.7.3" />
+        <PackageReference Include="Quartz.Extensions.Hosting" Version="4.7.3" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.23.*" />
     </ItemGroup>
     <ItemGroup>

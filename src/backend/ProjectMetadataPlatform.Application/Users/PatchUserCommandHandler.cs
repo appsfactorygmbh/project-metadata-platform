@@ -185,9 +185,9 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
                 new LogChange
                 {
                     OldValue = oldValue?.ToString() ?? "null",
-                    NewValue =
-                        (await JsonElementToPrimitive((JsonElement)operation.Value!))?.ToString()
-                        ?? "null",
+                    NewValue = (
+                        await JsonElementToPrimitive((JsonElement)operation.Value!)
+                    )?.ToString() ?? "null",
                     Property = nameof(ApplicationUser.Email),
                 }
             );
@@ -540,8 +540,9 @@ public class PatchUserCommandHandler : IRequestHandler<PatchUserCommand, Applica
     )
     {
         var oldValueList = (oldValue as List<string>) ?? [];
-        var valueList =
-            (await JsonElementToPrimitive((JsonElement)operation.Value!) as List<string>) ?? [];
+        var valueList = (
+            await JsonElementToPrimitive((JsonElement)operation.Value!) as List<string>
+        ) ?? [];
 
         if (!oldValueList.SequenceEqual(valueList))
         {

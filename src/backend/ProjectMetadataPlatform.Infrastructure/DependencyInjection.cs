@@ -190,32 +190,29 @@ public static class DependencyInjection
                     };
                 }
             )
-            .AddJwtBearer(
-                AuthenticationSchemes.BASIC,
-                options =>
+            .AddJwtBearer(AuthenticationSchemes.BASIC, options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = tokenDescriptorInformation.ValidIssuer,
-                        ValidAudience = tokenDescriptorInformation.ValidAudience,
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(tokenDescriptorInformation.IssuerSigningKey)
-                        ),
-                        ClockSkew = Environment.GetEnvironmentVariable("PMP_JWT_CLOCK_SKEW_SECONDS")
-                            is { } clockSkew
-                            ? TimeSpan.FromSeconds(
-                                double.Parse(clockSkew, CultureInfo.InvariantCulture)
-                            )
-                            : TimeSpan.FromMinutes(5),
-                    };
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = tokenDescriptorInformation.ValidIssuer,
+                    ValidAudience = tokenDescriptorInformation.ValidAudience,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(tokenDescriptorInformation.IssuerSigningKey)
+                    ),
+                    ClockSkew = Environment.GetEnvironmentVariable("PMP_JWT_CLOCK_SKEW_SECONDS")
+                        is { } clockSkew
+                        ? TimeSpan.FromSeconds(
+                            double.Parse(clockSkew, CultureInfo.InvariantCulture)
+                        )
+                        : TimeSpan.FromMinutes(5),
+                };
 
-                    options.Events = jwtBearerEvents;
-                }
-            )
+                options.Events = jwtBearerEvents;
+            })
             .AddScheme<AuthenticationSchemeOptions, ApiTokenAuthenticationHandler>(
                 AuthenticationSchemes.API_TOKEN,
                 options => { }

@@ -94,10 +94,9 @@ public class PluginRepository : RepositoryBase<Plugin>, IPluginRepository
     {
         if (plugin.Id == 0)
         {
-            var maxId =
-                await _context
-                    .ProjectPluginsRelation.Where(pp => pp.ProjectId == plugin.ProjectId)
-                    .MaxAsync(pp => (int?)pp.Id)
+            var maxId = await _context
+                .ProjectPluginsRelation.Where(pp => pp.ProjectId == plugin.ProjectId)
+                .MaxAsync(pp => (int?)pp.Id)
                 ?? 0;
 
             plugin.Id = ++maxId;
@@ -119,12 +118,12 @@ public class PluginRepository : RepositoryBase<Plugin>, IPluginRepository
     public async Task<Plugin?> GetPluginByIdAsync(int id)
     {
         return await _context
-                .Plugins.Where(p => p.Id == id)
-                .Include(p => p.ProjectPlugins!)
-                    .ThenInclude(pp => pp.Project)
-                .Include(p => p.ProjectPlugins!)
-                    .ThenInclude(pp => pp.PluginBilling)
-                .FirstOrDefaultAsync()
+            .Plugins.Where(p => p.Id == id)
+            .Include(p => p.ProjectPlugins!)
+                .ThenInclude(pp => pp.Project)
+            .Include(p => p.ProjectPlugins!)
+                .ThenInclude(pp => pp.PluginBilling)
+            .FirstOrDefaultAsync()
             ?? throw new PluginNotFoundException(id);
     }
 
@@ -132,11 +131,11 @@ public class PluginRepository : RepositoryBase<Plugin>, IPluginRepository
     public async Task<ProjectPlugin> GetProjectPluginAsync(int projectId, int id)
     {
         return await _context
-                .ProjectPluginsRelation.Include(p => p.Project)
-                .Include(p => p.Plugin)
-                .Include(pp => pp.PluginBilling)
-                .Where(p => p.Id == id && p.ProjectId == projectId)
-                .FirstOrDefaultAsync()
+            .ProjectPluginsRelation.Include(p => p.Project)
+            .Include(p => p.Plugin)
+            .Include(pp => pp.PluginBilling)
+            .Where(p => p.Id == id && p.ProjectId == projectId)
+            .FirstOrDefaultAsync()
             ?? throw new ProjectPluginNotFoundException(projectId, id);
     }
 

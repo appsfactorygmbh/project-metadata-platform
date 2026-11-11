@@ -166,8 +166,9 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
             .Entry(project)
             .Property<string>(nameof(Project.ProjectName))
             .OriginalValue;
-        log.PluginName =
-            plugin?.DisplayName ?? plugin?.Plugin?.PluginName ?? globalPlugin?.PluginName;
+        log.PluginName = plugin?.DisplayName
+            ?? plugin?.Plugin?.PluginName
+            ?? globalPlugin?.PluginName;
         log.GlobalPlugin = globalPlugin;
         log.GlobalPluginId = globalPlugin?.Id;
         log.GlobalPluginName =
@@ -459,8 +460,7 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
     /// <returns>A task that represents the asynchronous operation. The task result contains the prepared log entry.</returns>
     private async Task<Log> PrepareGenericLogForCurrentUser(Action action, List<LogChange> changes)
     {
-        var email =
-            _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
+        var email = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
             ?? "Unknown user";
         var author = await _usersRepository.GetUserByEmailAsync(email);
 
@@ -487,8 +487,7 @@ public class LogRepository : RepositoryBase<Log>, ILogRepository
         List<LogChange> changes
     )
     {
-        var name =
-            _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Name)
+        var name = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Name)
             ?? "Unknown Token";
         var author = await _apiTokenRepository.GetApiTokenByName(name);
 

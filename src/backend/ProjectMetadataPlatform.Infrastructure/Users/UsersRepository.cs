@@ -75,13 +75,13 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
     public async Task<ApplicationUser> GetUserByEmailAsync(string email)
     {
         return await _context
-                .Users.Include(p => p.Teams)
-                .Include(u => u.TeamSupport)
-                .Include(u => u.Company)
-                .Include(u => u.BusinessUnits)
-                .Include(u => u.Departments)
-                .Include(u => u.OfficeLocation)
-                .FirstOrDefaultAsync(u => u.Email == email)
+            .Users.Include(p => p.Teams)
+            .Include(u => u.TeamSupport)
+            .Include(u => u.Company)
+            .Include(u => u.BusinessUnits)
+            .Include(u => u.Departments)
+            .Include(u => u.OfficeLocation)
+            .FirstOrDefaultAsync(u => u.Email == email)
             ?? throw new UserNotFoundException(email);
     }
 
@@ -93,14 +93,14 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
     public async Task<ApplicationUser> GetUserByEmailNoTrackingAsync(string email)
     {
         return await _context
-                .Users.AsNoTracking()
-                .Include(p => p.Teams)
-                .Include(u => u.TeamSupport)
-                .Include(u => u.Company)
-                .Include(u => u.BusinessUnits)
-                .Include(u => u.Departments)
-                .Include(u => u.OfficeLocation)
-                .FirstOrDefaultAsync(u => u.Email == email)
+            .Users.AsNoTracking()
+            .Include(p => p.Teams)
+            .Include(u => u.TeamSupport)
+            .Include(u => u.Company)
+            .Include(u => u.BusinessUnits)
+            .Include(u => u.Departments)
+            .Include(u => u.OfficeLocation)
+            .FirstOrDefaultAsync(u => u.Email == email)
             ?? throw new UserNotFoundException(email);
     }
 
@@ -130,13 +130,13 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
     public async Task<ApplicationUser> GetUserByIdAsync(string id)
     {
         return await _context
-                .Users.Include(p => p.Teams)
-                .Include(u => u.TeamSupport)
-                .Include(u => u.Company)
-                .Include(u => u.BusinessUnits)
-                .Include(u => u.Departments)
-                .Include(u => u.OfficeLocation)
-                .FirstOrDefaultAsync(u => u.EmployeeId == id)
+            .Users.Include(p => p.Teams)
+            .Include(u => u.TeamSupport)
+            .Include(u => u.Company)
+            .Include(u => u.BusinessUnits)
+            .Include(u => u.Departments)
+            .Include(u => u.OfficeLocation)
+            .FirstOrDefaultAsync(u => u.EmployeeId == id)
             ?? throw new UserNotFoundException(id);
     }
 
@@ -148,14 +148,14 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
     public async Task<ApplicationUser> GetUserByIdNoTrackingAsync(string id)
     {
         return await _context
-                .Users.AsNoTracking()
-                .Include(p => p.Teams)
-                .Include(u => u.TeamSupport)
-                .Include(u => u.Company)
-                .Include(u => u.BusinessUnits)
-                .Include(u => u.Departments)
-                .Include(u => u.OfficeLocation)
-                .FirstOrDefaultAsync(u => u.EmployeeId == id)
+            .Users.AsNoTracking()
+            .Include(p => p.Teams)
+            .Include(u => u.TeamSupport)
+            .Include(u => u.Company)
+            .Include(u => u.BusinessUnits)
+            .Include(u => u.Departments)
+            .Include(u => u.OfficeLocation)
+            .FirstOrDefaultAsync(u => u.EmployeeId == id)
             ?? throw new UserNotFoundException(id);
     }
 
