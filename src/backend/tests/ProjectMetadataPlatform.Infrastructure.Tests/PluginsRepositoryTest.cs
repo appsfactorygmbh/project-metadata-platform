@@ -334,17 +334,19 @@ public class PluginsRepositoryTest : TestsWithDatabase
             PluginName = "Warp-Drive",
             ProjectPlugins = [],
             Id = 42,
+            IsArchived = true,
         };
         var examplePlugin2 = new Plugin
         {
             PluginName = "Warp-Drive2",
             ProjectPlugins = [],
             Id = 45,
+            IsArchived = false,
         };
         _ = _context.AddRangeAsync(examplePlugin, examplePlugin2);
         _ = await _context.SaveChangesAsync();
 
-        var plugins = (await _repository.GetGlobalPluginsAsync(null)).ToList();
+        var plugins = (await _repository.GetGlobalPluginsAsync(null, null)).ToList();
 
         Assert.That(plugins, Has.Count.EqualTo(2));
 
@@ -355,6 +357,68 @@ public class PluginsRepositoryTest : TestsWithDatabase
 
             Assert.That(plugins.Last().PluginName, Is.EqualTo("Warp-Drive2"));
             Assert.That(plugins.Last().Id, Is.EqualTo(45));
+        });
+    }
+
+    [Test]
+    public async Task GetGlobalPlugins_FltersForArchived_Test()
+    {
+        var examplePlugin = new Plugin
+        {
+            PluginName = "Warp-Drive",
+            ProjectPlugins = [],
+            Id = 42,
+            IsArchived = true,
+        };
+        var examplePlugin2 = new Plugin
+        {
+            PluginName = "Warp-Drive2",
+            ProjectPlugins = [],
+            Id = 45,
+            IsArchived = false,
+        };
+        _ = _context.AddRangeAsync(examplePlugin, examplePlugin2);
+        _ = await _context.SaveChangesAsync();
+
+        var plugins = (await _repository.GetGlobalPluginsAsync(true, null)).ToList();
+
+        Assert.That(plugins, Has.Count.EqualTo(1));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(plugins.First().PluginName, Is.EqualTo("Warp-Drive"));
+            Assert.That(plugins.First().Id, Is.EqualTo(42));
+        });
+    }
+
+    [Test]
+    public async Task GetGlobalPlugins_FltersForUnarchived_Test()
+    {
+        var examplePlugin = new Plugin
+        {
+            PluginName = "Warp-Drive",
+            ProjectPlugins = [],
+            Id = 42,
+            IsArchived = true,
+        };
+        var examplePlugin2 = new Plugin
+        {
+            PluginName = "Warp-Drive2",
+            ProjectPlugins = [],
+            Id = 45,
+            IsArchived = false,
+        };
+        _ = _context.AddRangeAsync(examplePlugin, examplePlugin2);
+        _ = await _context.SaveChangesAsync();
+
+        var plugins = (await _repository.GetGlobalPluginsAsync(false, null)).ToList();
+
+        Assert.That(plugins, Has.Count.EqualTo(1));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(plugins.First().PluginName, Is.EqualTo("Warp-Drive2"));
+            Assert.That(plugins.First().Id, Is.EqualTo(45));
         });
     }
 
@@ -377,7 +441,10 @@ public class PluginsRepositoryTest : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         var plugins = (
-            await _repository.GetGlobalPluginsAsync(new PluginCursor(examplePlugin.PluginName))
+            await _repository.GetGlobalPluginsAsync(
+                null,
+                new PluginCursor(examplePlugin.PluginName)
+            )
         ).ToList();
 
         Assert.That(plugins, Has.Count.EqualTo(1));
@@ -392,7 +459,7 @@ public class PluginsRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetGlobalPlugins_NoPlugins_Test()
     {
-        var plugin = await _repository.GetGlobalPluginsAsync(null);
+        var plugin = await _repository.GetGlobalPluginsAsync(null, null);
 
         Assert.That(plugin, Is.Empty);
     }

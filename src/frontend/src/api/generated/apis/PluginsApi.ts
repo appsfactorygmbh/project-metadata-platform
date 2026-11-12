@@ -31,6 +31,7 @@ import {
 } from '../models/index';
 
 export interface PluginsGetRequest {
+  isArchived?: boolean;
   limit?: number;
   cursor?: string;
 }
@@ -58,8 +59,9 @@ export interface PluginsApiInterface {
   /**
    *
    * @summary Gets all global plugins.
-   * @param {number} [limit]
-   * @param {string} [cursor]
+   * @param {boolean} [isArchived] Wether to filter by the plugins archived status.
+   * @param {number} [limit] Optional Limit for Pagination.
+   * @param {string} [cursor] Optional Cursor for Pagination.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof PluginsApiInterface
@@ -154,6 +156,10 @@ export class PluginsApi extends runtime.BaseAPI implements PluginsApiInterface {
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetGlobalPluginResponseGetListResponse>> {
     const queryParameters: any = {};
+
+    if (requestParameters['isArchived'] != null) {
+      queryParameters['isArchived'] = requestParameters['isArchived'];
+    }
 
     if (requestParameters['limit'] != null) {
       queryParameters['limit'] = requestParameters['limit'];

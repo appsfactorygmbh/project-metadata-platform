@@ -316,6 +316,7 @@ public class Tests
             )
             .ReturnsAsync((pluginList, [], new PluginCursor("Test")));
         var result = await _controller.GetGlobal(
+            null,
             200,
             CursorConverter.Encode(new PluginCursor("Cursor"))
         );

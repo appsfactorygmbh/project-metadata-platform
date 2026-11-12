@@ -52,12 +52,12 @@ public class GetGlobalPluginsQueryHandlerTest
             },
         };
         _ = _pluginRepositoryMock
-            .Setup(r => r.GetGlobalPluginsAsync(null))
+            .Setup(r => r.GetGlobalPluginsAsync(null, null))
             .ReturnsAsync(plugins.BuildMock());
         _ = _paginationHelperMock
             .Setup(a => a.PaginateWithAuthAsync(It.IsAny<IQueryable<Plugin>>(), It.IsAny<int?>()))
             .ReturnsAsync((IQueryable<Plugin> query, int? limit) => (query, null));
-        var query = new GetGlobalPluginsQuery(null, null);
+        var query = new GetGlobalPluginsQuery(null, null, null);
         var result = (await _handler.Handle(query, It.IsAny<CancellationToken>())).Item1.ToList();
 
         Assert.That(result, Is.Not.Null);
@@ -90,12 +90,12 @@ public class GetGlobalPluginsQueryHandlerTest
     public async Task HandleGetGlobalPluginsQueryHandler_WhenZeroPlugins_Test()
     {
         _ = _pluginRepositoryMock
-            .Setup(r => r.GetGlobalPluginsAsync(null))
+            .Setup(r => r.GetGlobalPluginsAsync(null, null))
             .ReturnsAsync(new List<Plugin> { }.BuildMock());
         _ = _paginationHelperMock
             .Setup(a => a.PaginateWithAuthAsync(It.IsAny<IQueryable<Plugin>>(), It.IsAny<int?>()))
             .ReturnsAsync((IQueryable<Plugin> query, int? limit) => (query, null));
-        var queryFail = new GetGlobalPluginsQuery(null, null);
+        var queryFail = new GetGlobalPluginsQuery(null, null, null);
         var resultFail = await _handler.Handle(queryFail, It.IsAny<CancellationToken>());
         Assert.That(resultFail.Item1, Is.Empty);
     }

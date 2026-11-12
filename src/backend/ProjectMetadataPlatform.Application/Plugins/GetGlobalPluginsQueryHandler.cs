@@ -44,7 +44,10 @@ public class GetGlobalPluginsQueryHandler
         PluginCursor?
     )> Handle(GetGlobalPluginsQuery request, CancellationToken cancellationToken)
     {
-        var pluginQuery = await _pluginRepository.GetGlobalPluginsAsync(request.Cursor);
+        var pluginQuery = await _pluginRepository.GetGlobalPluginsAsync(
+            request.IsArchived,
+            request.Cursor
+        );
         var (paginatedPlugins, lastPlugin) = await _paginationHelper.PaginateWithAuthAsync(
             pluginQuery,
             request.Limit
