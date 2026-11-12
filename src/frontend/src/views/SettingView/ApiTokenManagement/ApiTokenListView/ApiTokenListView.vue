@@ -9,13 +9,15 @@
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { ResourceActions } from '@/models/utils';
   import { Empty } from 'ant-design-vue';
+  import { useInfiniteScroll } from '@vueuse/core';
   const token = useThemeToken();
 
   const collapsed = ref<boolean>(false);
   const selectedKeys = ref<string[]>([]);
   const apiTokenStore = inject(apiTokenStoreSymbol)!;
   const { routerApiTokenId, setApiTokenId } = inject(apiTokenRoutingSymbol)!;
-  const { getIsLoading, getApiTokens } = storeToRefs(apiTokenStore);
+  const { getIsLoading, getApiTokens, getCursor, getIsFetchingMore } =
+    storeToRefs(apiTokenStore);
 
   const router = useRouter();
 
@@ -46,19 +48,61 @@
     },
   );
 
+  interface VueComponentWithEl extends HTMLElement {
+    $el: HTMLElement;
+  }
+
+  const siderRef = ref<VueComponentWithEl | null>(null);
+
+  const scrollToSelectedMenuItem = async () => {
+    await nextTick();
+    if (siderRef.value && selectedKeys.value && selectedKeys.value.length > 0) {
+      const siderElement = siderRef.value.$el || siderRef.value;
+
+      const selectedItemElement = siderElement.querySelector(
+        '.ant-menu-item-selected',
+      ) as HTMLElement;
+
+      if (selectedItemElement) {
+        selectedItemElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
+      }
+    }
+  };
+
   const clickTab = async (apiTokenId: string) => {
     selectedApiTokenId.value = apiTokenId;
     setApiTokenId(apiTokenId);
   };
 
+  const loadMore = async () => {
+    await apiTokenStore?.fetchAll(false);
+  };
+
+  useInfiniteScroll(
+    siderRef,
+    async () => {
+      if (getCursor.value && !getIsFetchingMore.value) {
+        await loadMore();
+      }
+    },
+    {
+      distance: 150,
+    },
+  );
+
   onMounted(async () => {
     if (apiTokenStore.getApiToken?.id != undefined) {
       setApiTokenId(String(apiTokenStore.getApiToken?.id));
     }
-    await apiTokenStore?.fetchAll();
+    await apiTokenStore?.fetchAll(true);
     if (routerApiTokenId.value) {
       try {
         await apiTokenStore?.fetchApiToken(Number(routerApiTokenId.value));
+        selectedKeys.value = [routerApiTokenId.value];
+        scrollToSelectedMenuItem();
       } catch (error) {
         if ((error as Error).message === 'This action is unauthorized.') {
           router.push('/403');
@@ -115,6 +159,9 @@
             </div>
           </a-menu-item>
         </a-menu>
+        <div v-if="getIsFetchingMore" class="loading-spinner-container">
+          <a-spin size="small" />
+        </div>
       </template>
       <a-skeleton
         v-else
@@ -182,7 +229,13 @@
     flex: 1;
     min-width: 0;
   }
-
+  .loading-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 0;
+    background-color: v-bind('token.colorBgElevated');
+  }
   :deep(.ant-menu-title-content) {
     display: flex;
     overflow: hidden;

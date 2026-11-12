@@ -9,6 +9,7 @@
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { ResourceActions } from '@/models/utils';
   import { Empty } from 'ant-design-vue';
+  import { useInfiniteScroll } from '@vueuse/core';
 
   const token = useThemeToken();
 
@@ -17,7 +18,8 @@
   const companyStore = inject(companyStoreSymbol)!;
 
   const { routerCompanyId, setCompanyId } = inject(companyRoutingSymbol)!;
-  const { getCompanies, getIsLoadingCompanies } = storeToRefs(companyStore);
+  const { getCompanies, getIsLoadingCompanies, getCursor, getIsFetchingMore } =
+    storeToRefs(companyStore);
 
   const router = useRouter();
 
@@ -77,6 +79,22 @@
     selectedCompanyId.value = companyId;
     setCompanyId(companyId);
   };
+
+  const loadMore = async () => {
+    await companyStore?.fetchAll(false);
+  };
+
+  useInfiniteScroll(
+    siderRef,
+    async () => {
+      if (getCursor.value && !getIsFetchingMore.value) {
+        await loadMore();
+      }
+    },
+    {
+      distance: 150,
+    },
+  );
 
   onMounted(async () => {
     if (companyStore.getCompany?.id != undefined) {
@@ -142,6 +160,9 @@
             <span>{{ company.companyName }}</span>
           </a-menu-item>
         </a-menu>
+        <div v-if="getIsFetchingMore" class="loading-spinner-container">
+          <a-spin size="small" />
+        </div>
       </template>
       <a-skeleton
         v-else
@@ -192,6 +213,13 @@
   }
 
   .menuItem {
+    background-color: v-bind('token.colorBgElevated');
+  }
+  .loading-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 0;
     background-color: v-bind('token.colorBgElevated');
   }
 </style>

@@ -6,6 +6,7 @@
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { ResourceActions } from '@/models/utils';
   import { Empty } from 'ant-design-vue';
+  import { useInfiniteScroll } from '@vueuse/core';
 
   const token = useThemeToken();
 
@@ -14,7 +15,8 @@
   const teamStore = inject(teamStoreSymbol)!;
 
   const { routerTeamId, setTeamId } = inject(teamRoutingSymbol)!;
-  const { getTeams, getIsLoadingTeams } = storeToRefs(teamStore);
+  const { getTeams, getIsLoadingTeams, getCursor, getIsFetchingMore } =
+    storeToRefs(teamStore);
 
   const router = useRouter();
 
@@ -73,12 +75,26 @@
     selectedTeamId.value = teamId;
     setTeamId(teamId);
   };
+  const loadMore = async () => {
+    await teamStore?.fetchAll(false);
+  };
 
+  useInfiniteScroll(
+    siderRef,
+    async () => {
+      if (getCursor.value && !getIsFetchingMore.value) {
+        await loadMore();
+      }
+    },
+    {
+      distance: 150,
+    },
+  );
   onMounted(async () => {
     if (teamStore.getTeam?.id != undefined) {
       setTeamId(String(teamStore.getTeam?.id));
     }
-    await teamStore?.fetchAll();
+    await teamStore?.fetchAll(true);
     if (routerTeamId.value) {
       try {
         await teamStore?.fetch(Number(routerTeamId.value));
@@ -138,6 +154,9 @@
             <span>{{ team.teamName }}</span>
           </a-menu-item>
         </a-menu>
+        <div v-if="getIsFetchingMore" class="loading-spinner-container">
+          <a-spin size="small" />
+        </div>
       </template>
       <a-skeleton
         v-else
@@ -188,6 +207,13 @@
   }
 
   .menuItem {
+    background-color: v-bind('token.colorBgElevated');
+  }
+  .loading-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 0;
     background-color: v-bind('token.colorBgElevated');
   }
 </style>

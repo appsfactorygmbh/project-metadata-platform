@@ -18,6 +18,9 @@ type StoreState = {
   linkedProjects: string[];
   isLoadingCompany: boolean;
   isLoadingCompanies: boolean;
+  cursor: string | null;
+  isFetchingMore: boolean;
+  limit: number | undefined;
 };
 
 type StoreGetters = {
@@ -28,11 +31,15 @@ type StoreGetters = {
   getPermissions: () => ResourceActions[];
   getIsLoadingCompanies: () => boolean;
   getIsLoadingCompany: () => boolean;
+  getCursor: () => string | null;
+  getIsFetchingMore: () => boolean;
 };
 
 type StoreActions = {
   refreshAuth: () => void;
-  fetchAll: () => Promise<void>;
+  fetchAll: (reset?: boolean) => Promise<void>;
+  setCursor: (cursor: string | null) => void;
+  setFetchingMore: (status: boolean) => void;
   fetch: (companyId: number) => Promise<void>;
   fetchLinkedProjects: (companyId: number) => Promise<void>;
   create: (companyCreate: CreateCompanyModel) => Promise<number>;
@@ -62,6 +69,9 @@ export const useCompanyStore = (pinia: Pinia = piniaInstance): Store => {
         linkedProjects: [],
         isLoadingCompanies: false,
         isLoadingCompany: false,
+        cursor: null,
+        isFetchingMore: false,
+        limit: Number(import.meta.env.VITE_LIST_PAGINATION_LIMIT) || undefined,
       },
 
       getters: {
@@ -85,6 +95,12 @@ export const useCompanyStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getPermissions(): ResourceActions[] {
           return this.permissions;
+        },
+        getCursor(): string | null {
+          return this.cursor;
+        },
+        getIsFetchingMore(): boolean {
+          return this.isFetchingMore;
         },
       },
 
@@ -112,6 +128,12 @@ export const useCompanyStore = (pinia: Pinia = piniaInstance): Store => {
         setCompany(company: CompanyModel) {
           this.company = company;
         },
+        setCursor(cursor: string | null) {
+          this.cursor = cursor;
+        },
+        setFetchingMore(status: boolean) {
+          this.isFetchingMore = status;
+        },
         async create(companyCreate: CreateCompanyModel): Promise<number> {
           try {
             this.setLoadingCompany(true);
@@ -138,17 +160,40 @@ export const useCompanyStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingCompany(false);
           }
         },
-        async fetchAll(): Promise<void> {
+        async fetchAll(reset = true): Promise<void> {
           try {
-            this.setLoadingCompanies(true);
+            if (reset) {
+              this.setLoadingCompanies(true);
+              this.setCursor(null);
+              this.setCompanies([]);
+            } else {
+              this.setFetchingMore(true);
+            }
+
+            const payload: { limit: number | undefined; cursor?: string } = {
+              limit: this.limit,
+            };
+
+            if (!reset && this.cursor) {
+              payload.cursor = this.cursor;
+            }
+
             const companiesGet: CompanyListModel = await this.callApi(
               'companiesGet',
-              undefined,
+              payload,
             );
-            this.setCompanies(companiesGet.resources);
+
+            if (reset) {
+              this.setCompanies(companiesGet.resources);
+            } else {
+              this.setCompanies([...this.companies, ...companiesGet.resources]);
+            }
+
             this.setPermissions(companiesGet.permissions);
+            this.setCursor(companiesGet.cursor ?? null);
           } finally {
             this.setLoadingCompanies(false);
+            this.setFetchingMore(false);
           }
         },
         async delete(companyId: number): Promise<void> {

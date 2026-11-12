@@ -1,3 +1,4 @@
-import type { LogResponse } from '@/api/generated';
+import type { LogResponse, LogResponseGetListResponse } from '@/api/generated';
 
 export type LogEntryModel = LogResponse;
+export type LogListModel = LogResponseGetListResponse;

@@ -17,6 +17,9 @@ type StoreState = {
 
   isLoadingGlobalBillingList: boolean;
   isLoadingGlobalBilling: boolean;
+  cursor: string | null;
+  isFetchingMore: boolean;
+  limit: number | undefined;
 };
 
 type StoreGetters = {
@@ -26,11 +29,15 @@ type StoreGetters = {
   getGlobalBillingKinds: () => string[];
   getIsLoadingGlobalBillingList: () => boolean;
   getIsLoadingGlobalBilling: () => boolean;
+  getCursor: () => string | null;
+  getIsFetchingMore: () => boolean;
 };
 
 type StoreActions = {
   refreshAuth: () => void;
-  fetchAll: () => Promise<void>;
+  fetchAll: (reset?: boolean) => Promise<void>;
+  setCursor: (cursor: string | null) => void;
+  setFetchingMore: (status: boolean) => void;
   fetch: (billingId: number) => Promise<void>;
   create: (billingCreate: CreateGlobalBillingModel) => Promise<number>;
   update: (
@@ -63,6 +70,9 @@ export const useGlobalBillingStore = (pinia: Pinia = piniaInstance): Store => {
         billing: undefined,
         isLoadingGlobalBillingList: false,
         isLoadingGlobalBilling: false,
+        cursor: null,
+        isFetchingMore: false,
+        limit: Number(import.meta.env.VITE_LIST_PAGINATION_LIMIT) || undefined,
       },
 
       getters: {
@@ -83,6 +93,12 @@ export const useGlobalBillingStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getPermissions(): ResourceActions[] {
           return this.permissions;
+        },
+        getCursor(): string | null {
+          return this.cursor;
+        },
+        getIsFetchingMore(): boolean {
+          return this.isFetchingMore;
         },
       },
 
@@ -110,6 +126,12 @@ export const useGlobalBillingStore = (pinia: Pinia = piniaInstance): Store => {
         setGlobalBilling(billing: GlobalBillingModel) {
           this.billing = billing;
         },
+        setCursor(cursor: string | null) {
+          this.cursor = cursor;
+        },
+        setFetchingMore(status: boolean) {
+          this.isFetchingMore = status;
+        },
         async create(billingCreate: CreateGlobalBillingModel): Promise<number> {
           try {
             this.setLoadingGlobalBilling(true);
@@ -135,26 +157,43 @@ export const useGlobalBillingStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingGlobalBilling(false);
           }
         },
-        async fetchAll(): Promise<void> {
+        async fetchAll(reset = true): Promise<void> {
           try {
-            this.setLoadingGlobalBillingList(true);
-            const billingGet: GlobalBillingListModel = await this.callApi(
+            if (reset) {
+              this.setLoadingGlobalBillingList(true);
+              this.setCursor(null);
+              this.setGlobalBillingList([]);
+            } else {
+              this.setFetchingMore(true);
+            }
+
+            const payload: { limit: number | undefined; cursor?: string } = {
+              limit: this.limit,
+            };
+
+            if (!reset && this.cursor) {
+              payload.cursor = this.cursor;
+            }
+
+            const globalBillingGet: GlobalBillingListModel = await this.callApi(
               'billingGet',
-              undefined,
+              payload,
             );
-            this.setGlobalBillingList(billingGet.resources);
-            this.setPermissions(billingGet.permissions);
+
+            if (reset) {
+              this.setGlobalBillingList(globalBillingGet.resources);
+            } else {
+              this.setGlobalBillingList([
+                ...this.billingList,
+                ...globalBillingGet.resources,
+              ]);
+            }
+
+            this.setPermissions(globalBillingGet.permissions);
+            this.setCursor(globalBillingGet.cursor ?? null);
           } finally {
             this.setLoadingGlobalBillingList(false);
-          }
-        },
-        async delete(billingId: number): Promise<void> {
-          try {
-            this.setLoadingGlobalBilling(true);
-            await this.callApi('billingIdDelete', { id: billingId });
-            await this.fetchAll();
-          } finally {
-            this.setLoadingGlobalBilling(false);
+            this.setFetchingMore(false);
           }
         },
         async update(

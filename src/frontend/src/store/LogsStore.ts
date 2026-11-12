@@ -1,4 +1,4 @@
-import type { LogEntryModel } from '@/models/Log/LogEntryModel';
+import type { LogEntryModel, LogListModel } from '@/models/Log/LogEntryModel';
 import { type Pinia } from 'pinia';
 import { type PiniaStore, useStore } from 'pinia-generic';
 import { piniaInstance } from './piniaInstance';
@@ -68,10 +68,10 @@ export const useLogsStore = (pinia: Pinia = piniaInstance): Store => {
           return await this.callApi('logsGet', {
             search: searchParam,
           })
-            .then((logs: LogEntryModel[]) => {
-              this.setGlobalLogs(logs);
+            .then((logs: LogListModel) => {
+              this.setGlobalLogs(logs.resources ?? []);
               this.setLoadedGlobalLogsSuccessfully(true);
-              return logs;
+              return logs.resources;
             })
             .catch((e) => {
               console.error('fetch', e);

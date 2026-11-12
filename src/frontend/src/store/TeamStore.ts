@@ -15,6 +15,9 @@ type StoreState = {
   linkedProjects: string[];
   isLoadingTeam: boolean;
   isLoadingTeams: boolean;
+  cursor: string | null;
+  isFetchingMore: boolean;
+  limit: number | undefined;
 };
 
 type StoreGetters = {
@@ -25,11 +28,15 @@ type StoreGetters = {
   getPermissions: () => ResourceActions[];
   getIsLoadingTeams: () => boolean;
   getIsLoadingTeam: () => boolean;
+  getCursor: () => string | null;
+  getIsFetchingMore: () => boolean;
 };
 
 type StoreActions = {
   refreshAuth: () => void;
-  fetchAll: () => Promise<void>;
+  fetchAll: (reset?: boolean) => Promise<void>;
+  setCursor: (cursor: string | null) => void;
+  setFetchingMore: (status: boolean) => void;
   fetch: (teamId: number) => Promise<void>;
   fetchLinkedProjects: (teamId: number) => Promise<void>;
   create: (teamCreate: CreateTeamModel) => Promise<number>;
@@ -56,6 +63,9 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
         linkedProjects: [],
         isLoadingTeams: false,
         isLoadingTeam: false,
+        cursor: null,
+        isFetchingMore: false,
+        limit: Number(import.meta.env.VITE_LIST_PAGINATION_LIMIT) || undefined,
       },
 
       getters: {
@@ -79,6 +89,12 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getPermissions(): ResourceActions[] {
           return this.permissions;
+        },
+        getCursor(): string | null {
+          return this.cursor;
+        },
+        getIsFetchingMore(): boolean {
+          return this.isFetchingMore;
         },
       },
 
@@ -104,6 +120,12 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
         setTeam(team: TeamModel) {
           this.team = team;
         },
+        setCursor(cursor: string | null) {
+          this.cursor = cursor;
+        },
+        setFetchingMore(status: boolean) {
+          this.isFetchingMore = status;
+        },
         async create(teamCreate: CreateTeamModel): Promise<number> {
           try {
             this.setLoadingTeam(true);
@@ -127,17 +149,40 @@ export const useTeamStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingTeam(false);
           }
         },
-        async fetchAll(): Promise<void> {
+        async fetchAll(reset = true): Promise<void> {
           try {
-            this.setLoadingTeams(true);
+            if (reset) {
+              this.setLoadingTeams(true);
+              this.setCursor(null);
+              this.setTeams([]);
+            } else {
+              this.setFetchingMore(true);
+            }
+
+            const payload: { limit: number | undefined; cursor?: string } = {
+              limit: this.limit,
+            };
+
+            if (!reset && this.cursor) {
+              payload.cursor = this.cursor;
+            }
+
             const teamsGet: TeamListModel = await this.callApi(
               'teamsGet',
-              undefined,
+              payload,
             );
-            this.setTeams(teamsGet.resources);
+
+            if (reset) {
+              this.setTeams(teamsGet.resources);
+            } else {
+              this.setTeams([...this.teams, ...teamsGet.resources]);
+            }
+
             this.setPermissions(teamsGet.permissions);
+            this.setCursor(teamsGet.cursor ?? null);
           } finally {
             this.setLoadingTeams(false);
+            this.setFetchingMore(false);
           }
         },
         async delete(teamId: number): Promise<void> {

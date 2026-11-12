@@ -6,13 +6,15 @@
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { ResourceActions } from '@/models/utils';
   import { Empty } from 'ant-design-vue';
+  import { useInfiniteScroll } from '@vueuse/core';
   const token = useThemeToken();
 
   const collapsed = ref<boolean>(false);
   const selectedKeys = ref<string[]>([]);
   const userStore = inject(userStoreSymbol)!;
   const { routerUserId, setUserId } = inject(userRoutingSymbol)!;
-  const { getIsLoading, getUsers } = storeToRefs(userStore);
+  const { getIsLoading, getUsers, getCursor, getIsFetchingMore } =
+    storeToRefs(userStore);
 
   const router = useRouter();
 
@@ -43,21 +45,64 @@
     },
   );
 
+  interface VueComponentWithEl extends HTMLElement {
+    $el: HTMLElement;
+  }
+
+  // used for scrolling to the selected department on mount
+  const siderRef = ref<VueComponentWithEl | null>(null);
+
+  const scrollToSelectedMenuItem = async () => {
+    await nextTick();
+    if (siderRef.value && selectedKeys.value && selectedKeys.value.length > 0) {
+      const siderElement = siderRef.value.$el || siderRef.value;
+
+      const selectedItemElement = siderElement.querySelector(
+        '.ant-menu-item-selected',
+      ) as HTMLElement;
+
+      if (selectedItemElement) {
+        selectedItemElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
+      }
+    }
+  };
+
   const clickTab = async (userID: string) => {
     selectedUserId.value = userID;
     setUserId(userID);
   };
 
+  const loadMore = async () => {
+    await userStore?.fetchAll(false);
+  };
+
+  useInfiniteScroll(
+    siderRef,
+    async () => {
+      if (getCursor.value && !getIsFetchingMore.value) {
+        await loadMore();
+      }
+    },
+    {
+      distance: 150,
+    },
+  );
+
   const getNameFromEmail = (email: string) => email.split('@')[0];
 
   onMounted(async () => {
-    await userStore?.fetchAll();
+    await userStore?.fetchAll(true);
     if (userStore.getUser?.externalId != undefined) {
       setUserId(userStore.getUser?.externalId);
     }
     if (routerUserId.value) {
       try {
         await userStore?.fetchUser(routerUserId.value);
+        selectedKeys.value = [routerUserId.value];
+        scrollToSelectedMenuItem();
       } catch (error) {
         if ((error as Error).message === 'This action is unauthorized.') {
           router.push('/403');
@@ -124,6 +169,9 @@
             </div>
           </a-menu-item>
         </a-menu>
+        <div v-if="getIsFetchingMore" class="loading-spinner-container">
+          <a-spin size="small" />
+        </div>
       </template>
       <a-skeleton
         v-else
@@ -209,5 +257,12 @@
   .button {
     width: 100%;
     margin-top: 0.5%;
+  }
+  .loading-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 0;
+    background-color: v-bind('token.colorBgElevated');
   }
 </style>

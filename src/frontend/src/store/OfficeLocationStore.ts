@@ -17,6 +17,9 @@ type StoreState = {
 
   isLoadingOfficeLocation: boolean;
   isLoadingOfficeLocations: boolean;
+  cursor: string | null;
+  isFetchingMore: boolean;
+  limit: number | undefined;
 };
 
 type StoreGetters = {
@@ -26,11 +29,15 @@ type StoreGetters = {
   getOfficeLocationNames: () => string[];
   getIsLoadingOfficeLocations: () => boolean;
   getIsLoadingOfficeLocation: () => boolean;
+  getCursor: () => string | null;
+  getIsFetchingMore: () => boolean;
 };
 
 type StoreActions = {
   refreshAuth: () => void;
-  fetchAll: () => Promise<void>;
+  fetchAll: (reset?: boolean) => Promise<void>;
+  setCursor: (cursor: string | null) => void;
+  setFetchingMore: (status: boolean) => void;
   fetch: (officeLocationId: number) => Promise<void>;
   create: (officeLocationCreate: CreateOfficeLocationModel) => Promise<number>;
   update: (
@@ -64,6 +71,9 @@ export const useOfficeLocationStore = (pinia: Pinia = piniaInstance): Store => {
 
         isLoadingOfficeLocations: false,
         isLoadingOfficeLocation: false,
+        cursor: null,
+        isFetchingMore: false,
+        limit: Number(import.meta.env.VITE_LIST_PAGINATION_LIMIT) || undefined,
       },
 
       getters: {
@@ -86,6 +96,12 @@ export const useOfficeLocationStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getPermissions(): ResourceActions[] {
           return this.permissions;
+        },
+        getCursor(): string | null {
+          return this.cursor;
+        },
+        getIsFetchingMore(): boolean {
+          return this.isFetchingMore;
         },
       },
 
@@ -115,6 +131,12 @@ export const useOfficeLocationStore = (pinia: Pinia = piniaInstance): Store => {
         setOfficeLocation(officeLocation: OfficeLocationModel) {
           this.officeLocation = officeLocation;
         },
+        setCursor(cursor: string | null) {
+          this.cursor = cursor;
+        },
+        setFetchingMore(status: boolean) {
+          this.isFetchingMore = status;
+        },
         async create(
           officeLocationCreate: CreateOfficeLocationModel,
         ): Promise<number> {
@@ -142,15 +164,41 @@ export const useOfficeLocationStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingOfficeLocation(false);
           }
         },
-        async fetchAll(): Promise<void> {
+        async fetchAll(reset = true): Promise<void> {
           try {
-            this.setLoadingOfficeLocations(true);
+            if (reset) {
+              this.setLoadingOfficeLocations(true);
+              this.setCursor(null);
+              this.setOfficeLocations([]);
+            } else {
+              this.setFetchingMore(true);
+            }
+
+            const payload: { limit: number | undefined; cursor?: string } = {
+              limit: this.limit,
+            };
+
+            if (!reset && this.cursor) {
+              payload.cursor = this.cursor;
+            }
+
             const officeLocationsGet: OfficeLocationListModel =
-              await this.callApi('officeLocationsGet', undefined);
-            this.setOfficeLocations(officeLocationsGet.resources);
+              await this.callApi('officeLocationsGet', payload);
+
+            if (reset) {
+              this.setOfficeLocations(officeLocationsGet.resources);
+            } else {
+              this.setOfficeLocations([
+                ...this.officeLocations,
+                ...officeLocationsGet.resources,
+              ]);
+            }
+
             this.setPermissions(officeLocationsGet.permissions);
+            this.setCursor(officeLocationsGet.cursor ?? null);
           } finally {
             this.setLoadingOfficeLocations(false);
+            this.setFetchingMore(false);
           }
         },
         async delete(officeLocationId: number): Promise<void> {

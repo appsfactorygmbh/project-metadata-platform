@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   import { inject, computed, onMounted, ref, watch } from 'vue';
+  import { useInfiniteScroll } from '@vueuse/core';
   import {
     departmentRoutingSymbol,
     departmentStoreSymbol,
@@ -19,8 +20,12 @@
   const { routerDepartmentId, setDepartmentId } = inject(
     departmentRoutingSymbol,
   )!;
-  const { getDepartments, getIsLoadingDepartments } =
-    storeToRefs(departmentStore);
+  const {
+    getDepartments,
+    getIsLoadingDepartments,
+    getCursor,
+    getIsFetchingMore,
+  } = storeToRefs(departmentStore);
 
   const router = useRouter();
 
@@ -80,11 +85,27 @@
     setDepartmentId(departmentId);
   };
 
+  const loadMore = async () => {
+    await departmentStore?.fetchAll(false);
+  };
+
+  useInfiniteScroll(
+    siderRef,
+    async () => {
+      if (getCursor.value && !getIsFetchingMore.value) {
+        await loadMore();
+      }
+    },
+    {
+      distance: 150,
+    },
+  );
+
   onMounted(async () => {
     if (departmentStore.getDepartment?.id != undefined) {
       setDepartmentId(String(departmentStore.getDepartment?.id));
     }
-    await departmentStore?.fetchAll();
+    await departmentStore?.fetchAll(true);
     if (routerDepartmentId.value) {
       try {
         await departmentStore?.fetch(Number(routerDepartmentId.value));
@@ -146,6 +167,9 @@
             <span>{{ department.departmentName }}</span>
           </a-menu-item>
         </a-menu>
+        <div v-if="getIsFetchingMore" class="loading-spinner-container">
+          <a-spin size="small" />
+        </div>
       </template>
       <a-skeleton
         v-else
@@ -199,6 +223,13 @@
   }
 
   .menuItem {
+    background-color: v-bind('token.colorBgElevated');
+  }
+  .loading-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 0;
     background-color: v-bind('token.colorBgElevated');
   }
 </style>

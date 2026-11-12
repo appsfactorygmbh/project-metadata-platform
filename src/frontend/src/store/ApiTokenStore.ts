@@ -24,6 +24,9 @@ type StoreState = {
   createdSuccessfully: boolean;
   removedSuccessfully: boolean;
   regeneratedSuccessfully: boolean;
+  cursor: string | null;
+  isFetchingMore: boolean;
+  limit: number | undefined;
 };
 
 type StoreGetters = {
@@ -41,6 +44,8 @@ type StoreGetters = {
   getCreatedSuccessfully: () => boolean;
   getRemovedSuccessfully: () => boolean;
   getRegeneratedSuccessfully: () => boolean;
+  getCursor: () => string | null;
+  getIsFetchingMore: () => boolean;
 };
 
 type StoreActions = {
@@ -57,7 +62,9 @@ type StoreActions = {
   setCreatedSuccessfully: (createdSuccessfully: boolean) => void;
   setRemovedSuccessfully: (removedSuccessfully: boolean) => void;
   setRegeneratedSuccessfully: (regeneratedSuccessfully: boolean) => void;
-  fetchAll: () => Promise<void>;
+  fetchAll: (reset?: boolean) => Promise<void>;
+  setCursor: (cursor: string | null) => void;
+  setFetchingMore: (status: boolean) => void;
   fetchApiToken: (tokenId: number) => Promise<void>;
   create: (newToken: CreateApiTokenModel) => Promise<number>;
   regenerate: (tokenId: ApiTokenModel['id']) => Promise<number>;
@@ -83,6 +90,9 @@ export const useApiTokenStore = (pinia: Pinia = piniaInstance): Store => {
         createdSuccessfully: false,
         removedSuccessfully: false,
         regeneratedSuccessfully: false,
+        cursor: null,
+        isFetchingMore: false,
+        limit: Number(import.meta.env.VITE_LIST_PAGINATION_LIMIT) || undefined,
       },
       getters: {
         getApiTokens(): ApiTokenModel[] {
@@ -127,6 +137,12 @@ export const useApiTokenStore = (pinia: Pinia = piniaInstance): Store => {
         getRegeneratedSuccessfully(): boolean {
           return this.regeneratedSuccessfully;
         },
+        getCursor(): string | null {
+          return this.cursor;
+        },
+        getIsFetchingMore(): boolean {
+          return this.isFetchingMore;
+        },
       },
       actions: {
         refreshAuth(): void {
@@ -165,19 +181,43 @@ export const useApiTokenStore = (pinia: Pinia = piniaInstance): Store => {
         setRegeneratedSuccessfully(regeneratedSuccessfully: boolean): void {
           this.regeneratedSuccessfully = regeneratedSuccessfully;
         },
+        setCursor(cursor: string | null) {
+          this.cursor = cursor;
+        },
+        setFetchingMore(status: boolean) {
+          this.isFetchingMore = status;
+        },
 
-        async fetchAll(): Promise<void> {
-          this.setIsLoadingApiTokens(true);
+        async fetchAll(reset = true): Promise<void> {
           try {
+            if (reset) {
+              this.setIsLoadingApiTokens(true);
+              this.setCursor(null);
+              this.setApiTokens([]);
+            } else {
+              this.setFetchingMore(true);
+            }
+            const payload: { limit: number | undefined; cursor?: string } = {
+              limit: this.limit,
+            };
+
+            if (!reset && this.cursor) {
+              payload.cursor = this.cursor;
+            }
             const tokens: ApiTokenListModel = await this.callApi(
               'authApiTokensGet',
-              {},
+              payload,
             );
-            tokens.resources.sort((a, b) => a.id - b.id);
-            this.setApiTokens(tokens.resources);
+            if (reset) {
+              this.setApiTokens(tokens.resources);
+            } else {
+              this.setApiTokens([...this.apiTokens, ...tokens.resources]);
+            }
             this.setPermissions(tokens.permissions);
+            this.setCursor(tokens.cursor ?? null);
           } finally {
             this.setIsLoadingApiTokens(false);
+            this.setFetchingMore(false);
           }
         },
 

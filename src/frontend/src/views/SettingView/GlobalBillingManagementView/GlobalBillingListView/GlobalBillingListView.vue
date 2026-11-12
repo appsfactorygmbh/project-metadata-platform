@@ -9,6 +9,7 @@
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { ResourceActions } from '@/models/utils';
   import { Empty } from 'ant-design-vue';
+  import { useInfiniteScroll } from '@vueuse/core';
 
   const token = useThemeToken();
 
@@ -19,8 +20,12 @@
   const { routerGlobalBillingId, setGlobalBillingId } = inject(
     globalBillingRoutingSymbol,
   )!;
-  const { getGlobalBillingList, getIsLoadingGlobalBillingList } =
-    storeToRefs(globalBillingStore);
+  const {
+    getGlobalBillingList,
+    getIsLoadingGlobalBillingList,
+    getCursor,
+    getIsFetchingMore,
+  } = storeToRefs(globalBillingStore);
 
   const router = useRouter();
 
@@ -80,11 +85,27 @@
     setGlobalBillingId(globalBillingId);
   };
 
+  const loadMore = async () => {
+    await globalBillingStore?.fetchAll(false);
+  };
+
+  useInfiniteScroll(
+    siderRef,
+    async () => {
+      if (getCursor.value && !getIsFetchingMore.value) {
+        await loadMore();
+      }
+    },
+    {
+      distance: 150,
+    },
+  );
+
   onMounted(async () => {
     if (globalBillingStore.getGlobalBilling?.id != undefined) {
       setGlobalBillingId(String(globalBillingStore.getGlobalBilling?.id));
     }
-    await globalBillingStore?.fetchAll();
+    await globalBillingStore?.fetchAll(true);
     if (routerGlobalBillingId.value) {
       try {
         await globalBillingStore?.fetch(Number(routerGlobalBillingId.value));
@@ -146,6 +167,9 @@
             <span>{{ globalBilling.billingKind }}</span>
           </a-menu-item>
         </a-menu>
+        <div v-if="getIsFetchingMore" class="loading-spinner-container">
+          <a-spin size="small" />
+        </div>
       </template>
       <a-skeleton
         v-else
@@ -199,6 +223,13 @@
   }
 
   .menuItem {
+    background-color: v-bind('token.colorBgElevated');
+  }
+  .loading-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 0;
     background-color: v-bind('token.colorBgElevated');
   }
 </style>

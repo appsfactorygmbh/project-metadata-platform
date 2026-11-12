@@ -9,6 +9,7 @@
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { ResourceActions } from '@/models/utils';
   import { Empty } from 'ant-design-vue';
+  import { useInfiniteScroll } from '@vueuse/core';
 
   const token = useThemeToken();
 
@@ -19,8 +20,12 @@
   const { routerBusinessUnitId, setBusinessUnitId } = inject(
     businessUnitRoutingSymbol,
   )!;
-  const { getBusinessUnits, getIsLoadingBusinessUnits } =
-    storeToRefs(businessUnitStore);
+  const {
+    getBusinessUnits,
+    getIsLoadingBusinessUnits,
+    getCursor,
+    getIsFetchingMore,
+  } = storeToRefs(businessUnitStore);
 
   const router = useRouter();
 
@@ -81,11 +86,27 @@
     setBusinessUnitId(businessUnitId);
   };
 
+  const loadMore = async () => {
+    await businessUnitStore?.fetchAll(false);
+  };
+
+  useInfiniteScroll(
+    siderRef,
+    async () => {
+      if (getCursor.value && !getIsFetchingMore.value) {
+        await loadMore();
+      }
+    },
+    {
+      distance: 150,
+    },
+  );
+
   onMounted(async () => {
     if (businessUnitStore.getBusinessUnit?.id != undefined) {
       setBusinessUnitId(String(businessUnitStore.getBusinessUnit?.id));
     }
-    await businessUnitStore?.fetchAll();
+    await businessUnitStore?.fetchAll(true);
     if (routerBusinessUnitId.value) {
       try {
         await businessUnitStore?.fetch(Number(routerBusinessUnitId.value));
@@ -147,6 +168,9 @@
             <span>{{ businessUnit.businessUnitName }}</span>
           </a-menu-item>
         </a-menu>
+        <div v-if="getIsFetchingMore" class="loading-spinner-container">
+          <a-spin size="small" />
+        </div>
       </template>
       <a-skeleton
         v-else
@@ -200,6 +224,13 @@
   }
 
   .menuItem {
+    background-color: v-bind('token.colorBgElevated');
+  }
+  .loading-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 0;
     background-color: v-bind('token.colorBgElevated');
   }
 </style>

@@ -17,6 +17,9 @@ type StoreState = {
 
   isLoadingDepartment: boolean;
   isLoadingDepartments: boolean;
+  cursor: string | null;
+  isFetchingMore: boolean;
+  limit: number | undefined;
 };
 
 type StoreGetters = {
@@ -26,11 +29,15 @@ type StoreGetters = {
   getDepartmentNames: () => string[];
   getIsLoadingDepartments: () => boolean;
   getIsLoadingDepartment: () => boolean;
+  getCursor: () => string | null;
+  getIsFetchingMore: () => boolean;
 };
 
 type StoreActions = {
   refreshAuth: () => void;
-  fetchAll: () => Promise<void>;
+  fetchAll: (reset?: boolean) => Promise<void>;
+  setCursor: (cursor: string | null) => void;
+  setFetchingMore: (status: boolean) => void;
   fetch: (departmentId: number) => Promise<void>;
   create: (departmentCreate: CreateDepartmentModel) => Promise<number>;
   update: (
@@ -59,6 +66,9 @@ export const useDepartmentStore = (pinia: Pinia = piniaInstance): Store => {
 
         isLoadingDepartments: false,
         isLoadingDepartment: false,
+        cursor: null,
+        isFetchingMore: false,
+        limit: Number(import.meta.env.VITE_LIST_PAGINATION_LIMIT) || undefined,
       },
 
       getters: {
@@ -82,6 +92,12 @@ export const useDepartmentStore = (pinia: Pinia = piniaInstance): Store => {
         getPermissions(): ResourceActions[] {
           return this.permissions;
         },
+        getCursor(): string | null {
+          return this.cursor;
+        },
+        getIsFetchingMore(): boolean {
+          return this.isFetchingMore;
+        },
       },
 
       actions: {
@@ -102,6 +118,12 @@ export const useDepartmentStore = (pinia: Pinia = piniaInstance): Store => {
         },
         setDepartments(departments: DepartmentModel[]) {
           this.departments = departments;
+        },
+        setCursor(cursor: string | null) {
+          this.cursor = cursor;
+        },
+        setFetchingMore(status: boolean) {
+          this.isFetchingMore = status;
         },
         refreshAuth(): void {
           this.initApi();
@@ -134,17 +156,43 @@ export const useDepartmentStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingDepartment(false);
           }
         },
-        async fetchAll(): Promise<void> {
+        async fetchAll(reset = true): Promise<void> {
           try {
-            this.setLoadingDepartments(true);
+            if (reset) {
+              this.setLoadingDepartments(true);
+              this.setCursor(null);
+              this.setDepartments([]);
+            } else {
+              this.setFetchingMore(true);
+            }
+
+            const payload: { limit: number | undefined; cursor?: string } = {
+              limit: this.limit,
+            };
+
+            if (!reset && this.cursor) {
+              payload.cursor = this.cursor;
+            }
+
             const departmentsGet: DepartmentListModel = await this.callApi(
               'departmentsGet',
-              undefined,
+              payload,
             );
-            this.setDepartments(departmentsGet.resources);
+
+            if (reset) {
+              this.setDepartments(departmentsGet.resources);
+            } else {
+              this.setDepartments([
+                ...this.departments,
+                ...departmentsGet.resources,
+              ]);
+            }
+
             this.setPermissions(departmentsGet.permissions);
+            this.setCursor(departmentsGet.cursor ?? null);
           } finally {
             this.setLoadingDepartments(false);
+            this.setFetchingMore(false);
           }
         },
         async delete(departmentId: number): Promise<void> {

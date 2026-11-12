@@ -18,6 +18,9 @@ type StoreState = {
   linkedTeams: number[];
   isLoadingBusinessUnit: boolean;
   isLoadingBusinessUnits: boolean;
+  cursor: string | null;
+  isFetchingMore: boolean;
+  limit: number | undefined;
 };
 
 type StoreGetters = {
@@ -28,11 +31,15 @@ type StoreGetters = {
   getPermissions: () => ResourceActions[];
   getIsLoadingBusinessUnits: () => boolean;
   getIsLoadingBusinessUnit: () => boolean;
+  getCursor: () => string | null;
+  getIsFetchingMore: () => boolean;
 };
 
 type StoreActions = {
   refreshAuth: () => void;
-  fetchAll: () => Promise<void>;
+  fetchAll: (reset?: boolean) => Promise<void>;
+  setCursor: (cursor: string | null) => void;
+  setFetchingMore: (status: boolean) => void;
   fetch: (businessUnitId: number) => Promise<void>;
   fetchLinkedTeams: (businessUnitId: number) => Promise<void>;
   create: (businessUnitCreate: CreateBusinessUnitModel) => Promise<number>;
@@ -62,6 +69,9 @@ export const useBusinessUnitStore = (pinia: Pinia = piniaInstance): Store => {
         linkedTeams: [],
         isLoadingBusinessUnits: false,
         isLoadingBusinessUnit: false,
+        cursor: null,
+        isFetchingMore: false,
+        limit: Number(import.meta.env.VITE_LIST_PAGINATION_LIMIT) || undefined,
       },
 
       getters: {
@@ -87,6 +97,12 @@ export const useBusinessUnitStore = (pinia: Pinia = piniaInstance): Store => {
         },
         getLinkedTeams(): number[] {
           return this.linkedTeams;
+        },
+        getCursor(): string | null {
+          return this.cursor;
+        },
+        getIsFetchingMore(): boolean {
+          return this.isFetchingMore;
         },
       },
 
@@ -116,6 +132,12 @@ export const useBusinessUnitStore = (pinia: Pinia = piniaInstance): Store => {
         setBusinessUnit(businessUnit: BusinessUnitModel) {
           this.businessUnit = businessUnit;
         },
+        setCursor(cursor: string | null) {
+          this.cursor = cursor;
+        },
+        setFetchingMore(status: boolean) {
+          this.isFetchingMore = status;
+        },
         async create(
           businessUnitCreate: CreateBusinessUnitModel,
         ): Promise<number> {
@@ -144,17 +166,43 @@ export const useBusinessUnitStore = (pinia: Pinia = piniaInstance): Store => {
             this.setLoadingBusinessUnit(false);
           }
         },
-        async fetchAll(): Promise<void> {
+        async fetchAll(reset = true): Promise<void> {
           try {
-            this.setLoadingBusinessUnits(true);
+            if (reset) {
+              this.setLoadingBusinessUnits(true);
+              this.setCursor(null);
+              this.setBusinessUnits([]);
+            } else {
+              this.setFetchingMore(true);
+            }
+
+            const payload: { limit: number | undefined; cursor?: string } = {
+              limit: this.limit,
+            };
+
+            if (!reset && this.cursor) {
+              payload.cursor = this.cursor;
+            }
+
             const businessUnitsGet: BusinessUnitListModel = await this.callApi(
               'businessUnitsGet',
-              undefined,
+              payload,
             );
-            this.setBusinessUnits(businessUnitsGet.resources);
+
+            if (reset) {
+              this.setBusinessUnits(businessUnitsGet.resources);
+            } else {
+              this.setBusinessUnits([
+                ...this.businessUnits,
+                ...businessUnitsGet.resources,
+              ]);
+            }
+
             this.setPermissions(businessUnitsGet.permissions);
+            this.setCursor(businessUnitsGet.cursor ?? null);
           } finally {
             this.setLoadingBusinessUnits(false);
+            this.setFetchingMore(false);
           }
         },
         async delete(businessUnitId: number): Promise<void> {

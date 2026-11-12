@@ -24,6 +24,9 @@ type StoreState = {
   createdSuccessfully: boolean;
   removedSuccessfully: boolean;
   updatedSuccessfully: boolean;
+  cursor: string | null;
+  isFetchingMore: boolean;
+  limit: number | undefined;
 };
 
 type StoreGetters = {
@@ -40,6 +43,8 @@ type StoreGetters = {
   getCreatedSuccessfully: () => boolean;
   getRemovedSuccessfully: () => boolean;
   getUpdatedSuccessfully: () => boolean;
+  getCursor: () => string | null;
+  getIsFetchingMore: () => boolean;
 };
 
 type StoreActions = {
@@ -56,7 +61,9 @@ type StoreActions = {
   setCreatedSuccessfully: (createdSuccessfully: boolean) => void;
   setRemovedSuccessfully: (removedSuccessfully: boolean) => void;
   setUpdatedSuccessfully: (updatedSuccessfully: boolean) => void;
-  fetchAll: () => Promise<void>;
+  fetchAll: (reset?: boolean) => Promise<void>;
+  setCursor: (cursor: string | null) => void;
+  setFetchingMore: (status: boolean) => void;
   fetchUser: (userId: string) => Promise<void>;
   fetchUserByEmail: (email: string) => Promise<void>;
   fetchMe: () => Promise<void>;
@@ -86,6 +93,9 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         createdSuccessfully: false,
         removedSuccessfully: false,
         updatedSuccessfully: false,
+        cursor: null,
+        isFetchingMore: false,
+        limit: Number(import.meta.env.VITE_LIST_PAGINATION_LIMIT) || undefined,
       },
       getters: {
         getUsers(): UserListModel[] {
@@ -127,6 +137,12 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         getPermissions(): ResourceActions[] {
           return this.permissions;
         },
+        getCursor(): string | null {
+          return this.cursor;
+        },
+        getIsFetchingMore(): boolean {
+          return this.isFetchingMore;
+        },
       },
       actions: {
         refreshAuth(): void {
@@ -165,11 +181,32 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
         setUpdatedSuccessfully(updatedSuccessfully: boolean): void {
           this.updatedSuccessfully = updatedSuccessfully;
         },
+        setCursor(cursor: string | null) {
+          this.cursor = cursor;
+        },
+        setFetchingMore(status: boolean) {
+          this.isFetchingMore = status;
+        },
 
-        async fetchAll(): Promise<void> {
-          this.setIsLoadingUsers(true);
+        async fetchAll(reset = true): Promise<void> {
           try {
-            const result = await this.callApi('usersGet', {});
+            if (reset) {
+              this.setIsLoadingUsers(true);
+              this.setCursor(null);
+              this.setUsers([]);
+            } else {
+              this.setFetchingMore(true);
+            }
+
+            const payload: { limit: number | undefined; cursor?: string } = {
+              limit: this.limit,
+            };
+
+            if (!reset && this.cursor) {
+              payload.cursor = this.cursor;
+            }
+
+            const result = await this.callApi('usersGet', payload);
             const users: UserListModel[] =
               result.resources.map((user) => ({
                 externalId: user.externalId,
@@ -178,10 +215,18 @@ export const useUserStore = (pinia: Pinia = piniaInstance): Store => {
                   user.urnIetfParamsScimSchemasExtensionPmpUser
                     .isScimProvisioned,
               })) ?? [];
-            this.setUsers(users);
+
+            if (reset) {
+              this.setUsers(users);
+            } else {
+              this.setUsers([...this.users, ...users]);
+            }
+
             this.setPermissions(result.permissions ?? []);
+            this.setCursor(result.cursor ?? null);
           } finally {
             this.setIsLoadingUsers(false);
+            this.setFetchingMore(false);
           }
         },
 
