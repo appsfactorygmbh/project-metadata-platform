@@ -353,6 +353,43 @@ public class Tests
     }
 
     [Test]
+    public async Task GetGlobalPlugin_Test()
+    {
+        var plugin = new Plugin
+        {
+            Id = 1,
+            PluginName = "plugin 1",
+            IsArchived = false,
+            BaseUrl = "https://plugin1.com",
+        };
+        _mediator
+            .Setup(m =>
+                m.Send<GetGlobalPluginQuery, (Plugin, IEnumerable<AuthorizationConstants.Actions>)>(
+                    It.IsAny<GetGlobalPluginQuery>()
+                )
+            )
+            .ReturnsAsync((plugin, []));
+
+        var result = await _controller.Get(1);
+        Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+        var okResult = result.Result as OkObjectResult;
+        Assert.Multiple(() =>
+        {
+            Assert.That(okResult!.Value, Is.Not.Null);
+            Assert.That(okResult.Value, Is.InstanceOf<GetGlobalPluginResponse?>());
+        });
+
+        var pluginResult = (okResult!.Value as GetGlobalPluginResponse)!;
+        Assert.Multiple(() =>
+        {
+            Assert.That(pluginResult.PluginName, Is.EqualTo("plugin 1"));
+            Assert.That(pluginResult.Id, Is.EqualTo(1));
+            Assert.That(pluginResult.IsArchived, Is.False);
+            Assert.That(pluginResult.BaseUrl, Is.EqualTo("https://plugin1.com"));
+        });
+    }
+
+    [Test]
     public async Task DeleteGlobalPlugin_Test()
     {
         _ = _mediator

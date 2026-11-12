@@ -40,6 +40,10 @@ export interface PluginsPluginIdDeleteRequest {
   pluginId: number;
 }
 
+export interface PluginsPluginIdGetRequest {
+  pluginId: number;
+}
+
 export interface PluginsPluginIdPatchRequest {
   pluginId: number;
   patchGlobalPluginRequest?: PatchGlobalPluginRequest;
@@ -99,6 +103,27 @@ export interface PluginsApiInterface {
     requestParameters: PluginsPluginIdDeleteRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<DeleteGlobalPluginResponse>;
+
+  /**
+   *
+   * @summary Gets a Global Plugin by its Id.
+   * @param {number} pluginId Id of the Plugin.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof PluginsApiInterface
+   */
+  pluginsPluginIdGetRaw(
+    requestParameters: PluginsPluginIdGetRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<GetGlobalPluginResponse>>;
+
+  /**
+   * Gets a Global Plugin by its Id.
+   */
+  pluginsPluginIdGet(
+    requestParameters: PluginsPluginIdGetRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<GetGlobalPluginResponse>;
 
   /**
    *
@@ -257,6 +282,64 @@ export class PluginsApi extends runtime.BaseAPI implements PluginsApiInterface {
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<DeleteGlobalPluginResponse> {
     const response = await this.pluginsPluginIdDeleteRaw(
+      requestParameters,
+      initOverrides,
+    );
+    return await response.value();
+  }
+
+  /**
+   * Gets a Global Plugin by its Id.
+   */
+  async pluginsPluginIdGetRaw(
+    requestParameters: PluginsPluginIdGetRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<GetGlobalPluginResponse>> {
+    if (requestParameters['pluginId'] == null) {
+      throw new runtime.RequiredError(
+        'pluginId',
+        'Required parameter "pluginId" was null or undefined when calling pluginsPluginIdGet().',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token('Bearer', []);
+
+      if (tokenString) {
+        headerParameters['Authorization'] = `Bearer ${tokenString}`;
+      }
+    }
+    const response = await this.request(
+      {
+        path: `/Plugins/{pluginId}`.replace(
+          `{${'pluginId'}}`,
+          encodeURIComponent(String(requestParameters['pluginId'])),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      GetGlobalPluginResponseFromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Gets a Global Plugin by its Id.
+   */
+  async pluginsPluginIdGet(
+    requestParameters: PluginsPluginIdGetRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<GetGlobalPluginResponse> {
+    const response = await this.pluginsPluginIdGetRaw(
       requestParameters,
       initOverrides,
     );

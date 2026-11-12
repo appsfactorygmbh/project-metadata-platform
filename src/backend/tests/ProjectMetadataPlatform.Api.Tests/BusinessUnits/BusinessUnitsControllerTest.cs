@@ -10,7 +10,6 @@ using ProjectMetadataPlatform.Api.BusinessUnits;
 using ProjectMetadataPlatform.Api.BusinessUnits.Models;
 using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Api.Common.Models;
-using ProjectMetadataPlatform.Application.Billing;
 using ProjectMetadataPlatform.Application.BusinessUnits;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Domain.Authorization;

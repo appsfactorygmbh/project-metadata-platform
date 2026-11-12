@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using ProjectMetadataPlatform.Application.Auth;
-using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Infrastructure.Jobs;
 using Quartz;
 

@@ -158,6 +158,35 @@ public class PluginsController : ControllerBase
     }
 
     /// <summary>
+    /// Gets a Global Plugin by its Id.
+    /// </summary>
+    /// <param name="pluginId">Id of the Plugin.</param>
+    /// <returns>The specified Plugin with its permissions</returns>
+    /// <response code="200">The Plugin was returned successfully.</response>
+    /// <response code="404">No Plugin with the requested id was found.</response>
+    [HttpGet("{pluginId:int}")]
+    [ProducesResponseType(typeof(GetGlobalPluginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<GetGlobalPluginResponse>> Get(int pluginId)
+    {
+        var query = new GetGlobalPluginQuery(pluginId);
+
+        (var plugin, var permissions) = await _mediator.Send<
+            GetGlobalPluginQuery,
+            (Plugin, IEnumerable<AuthorizationConstants.Actions>)
+        >(query);
+
+        var response = new GetGlobalPluginResponse(
+            plugin.PluginName,
+            plugin.Id,
+            plugin.IsArchived,
+            plugin.BaseUrl,
+            [.. permissions]
+        );
+        return Ok(response);
+    }
+
+    /// <summary>
     /// Deletes a plugin by its ID.
     /// </summary>
     /// <param name="pluginId">The unique identifier of the plugin to delete.</param>

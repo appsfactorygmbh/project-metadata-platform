@@ -7,7 +7,6 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.BusinessUnits;
 using ProjectMetadataPlatform.Application.Interfaces;
-using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.BusinessUnits;
 
 namespace ProjectMetadataPlatform.Application.Tests.BusinessUnits;

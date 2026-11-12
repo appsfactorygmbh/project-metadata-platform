@@ -43,7 +43,7 @@ public interface IPluginRepository
     /// </summary>
     /// <param name="id">The id of the plugin</param>
     /// <returns></returns>
-    Task<Plugin?> GetPluginByIdAsync(int id);
+    Task<Plugin> GetPluginByIdAsync(int id);
 
     /// <summary>
     /// Gets a specific Project Plugin by its ids.

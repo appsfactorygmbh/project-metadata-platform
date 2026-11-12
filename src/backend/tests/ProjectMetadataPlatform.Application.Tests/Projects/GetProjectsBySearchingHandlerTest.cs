@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 using MockQueryable;
 using Moq;
 using NUnit.Framework;
-using ProjectMetadataPlatform.Application.Helper.Models;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Projects;
-using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.Projects;
 
 namespace ProjectMetadataPlatform.Application.Tests.Projects;

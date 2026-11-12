@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
-using ProjectMetadataPlatform.Api.Common;
 using ProjectMetadataPlatform.Application.Auth;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Domain.Errors.AuthExceptions;

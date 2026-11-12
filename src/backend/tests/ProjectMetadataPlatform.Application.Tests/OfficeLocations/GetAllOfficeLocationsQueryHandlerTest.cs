@@ -7,7 +7,6 @@ using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.OfficeLocations;
-using ProjectMetadataPlatform.Domain.Authorization;
 using ProjectMetadataPlatform.Domain.OfficeLocations;
 
 namespace ProjectMetadataPlatform.Application.Tests.OfficeLocations;

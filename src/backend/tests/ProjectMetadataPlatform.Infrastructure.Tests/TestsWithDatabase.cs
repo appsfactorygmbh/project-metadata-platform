@@ -1,10 +1,8 @@
 ﻿using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Domain.Auth;
 using ProjectMetadataPlatform.Infrastructure.DataAccess;
-using Testcontainers.PostgreSql;
 
 namespace ProjectMetadataPlatform.Infrastructure.Tests;
 

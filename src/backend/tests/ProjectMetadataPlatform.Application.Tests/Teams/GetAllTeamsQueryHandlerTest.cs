@@ -1,14 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MockQueryable;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using ProjectMetadataPlatform.Application.Interfaces;
 using ProjectMetadataPlatform.Application.Teams;
-using ProjectMetadataPlatform.Domain.Authorization;
-using ProjectMetadataPlatform.Domain.Teams;
 
 namespace ProjectMetadataPlatform.Application.Tests.Teams;
 

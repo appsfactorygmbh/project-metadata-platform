@@ -328,26 +328,6 @@ public class PatchGlobalPluginCommandHandlerTest
     }
 
     [Test]
-    public async Task PatchGlobalPlugin_NotFound_TestAsync()
-    {
-        // Arrange
-        _ = _mockPluginRepo.Setup(repo => repo.GetPluginByIdAsync(42)).ReturnsAsync((Plugin?)null);
-        _ = _authorizationServiceMock
-            .Setup(a =>
-                a.CheckAccess(
-                    It.IsAny<Plugin>(),
-                    It.IsAny<AuthorizationConstants.Actions>(),
-                    It.IsAny<Dictionary<string, object?>?>()
-                )
-            )
-            .ReturnsAsync(true);
-        // Assert
-        _ = await Assert.ThrowsAsync<PluginNotFoundException>(() =>
-            _handler.Handle(new PatchGlobalPluginCommand(42), It.IsAny<CancellationToken>())
-        );
-    }
-
-    [Test]
     public async Task PatchGlobalPlugin_UpdateBaserUrl_Test()
     {
         // Arrange

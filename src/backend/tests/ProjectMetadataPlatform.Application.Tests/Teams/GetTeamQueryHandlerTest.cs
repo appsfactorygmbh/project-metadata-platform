@@ -91,7 +91,7 @@ public class GetTeamQueryHandlerTest
     }
 
     [Test]
-    public async Task CreateTeam_AuthorizationFailsThrowsTest()
+    public async Task GetTeam_AuthorizationFailsThrowsTest()
     {
         _ = _authorizationServiceMock
             .Setup(a =>
