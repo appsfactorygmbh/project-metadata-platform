@@ -247,7 +247,7 @@ public class BillingRepositoryTest : TestsWithDatabase
     public async Task GetAllGlobalBillingInformationAsync_ReturnsEmptyTest()
     {
         var result = await (
-            await _billingRepository.GetAllGlobalBillingInformationAsync(null)
+            await _billingRepository.GetAllGlobalBillingInformationAsync(null, null)
         ).ToListAsync();
 
         Assert.That(result, Is.Empty);
@@ -262,7 +262,7 @@ public class BillingRepositoryTest : TestsWithDatabase
         await _context.GlobalBilling.AddRangeAsync(billing1, billing2);
         await _context.SaveChangesAsync();
         var result = await (
-            await _billingRepository.GetAllGlobalBillingInformationAsync(null)
+            await _billingRepository.GetAllGlobalBillingInformationAsync(null, null)
         ).ToListAsync();
 
         Assert.That(result, Is.Not.Empty);
@@ -281,8 +281,26 @@ public class BillingRepositoryTest : TestsWithDatabase
         await _context.SaveChangesAsync();
         var result = await (
             await _billingRepository.GetAllGlobalBillingInformationAsync(
+                null,
                 new BillingCursor(billing1.BillingKind)
             )
+        ).ToListAsync();
+
+        Assert.That(result, Is.Not.Empty);
+        Assert.That(result, Has.Count.EqualTo(1));
+        Assert.That(result.First().BillingKind, Is.EqualTo(billing2.BillingKind));
+    }
+
+    [Test]
+    public async Task GetAllGlobalBillingInformationAsync_WithFilter()
+    {
+        var billing1 = new GlobalBilling { Id = 1, BillingKind = "Abc" };
+        var billing2 = new GlobalBilling { Id = 3, BillingKind = "Abcd" };
+
+        await _context.GlobalBilling.AddRangeAsync(billing1, billing2);
+        await _context.SaveChangesAsync();
+        var result = await (
+            await _billingRepository.GetAllGlobalBillingInformationAsync("d", null)
         ).ToListAsync();
 
         Assert.That(result, Is.Not.Empty);

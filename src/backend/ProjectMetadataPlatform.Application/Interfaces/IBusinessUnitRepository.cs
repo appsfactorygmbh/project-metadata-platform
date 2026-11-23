@@ -14,7 +14,7 @@ public interface IBusinessUnitRepository
     /// Returns all BUs.
     /// </summary>
     /// <returns>List of all Business Units.</returns>
-    Task<IQueryable<BusinessUnit>> GetBusinessUnitsAsync(BusinessUnitCursor? cursor);
+    Task<IQueryable<BusinessUnit>> GetBusinessUnitsAsync(string? name, BusinessUnitCursor? cursor);
 
     /// <summary>
     /// Returns a BU by its Id.

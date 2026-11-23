@@ -97,10 +97,10 @@ public class UpdateBillingCommandHandler : IRequestHandler<UpdateBillingCommand,
                 new LogChange
                 {
                     Property = nameof(GlobalBilling.TargetMargin),
-                    OldValue =
-                        billing.TargetMargin?.ToString(CultureInfo.InvariantCulture) ?? "null",
-                    NewValue =
-                        request.TargetMargin?.ToString(CultureInfo.InvariantCulture) ?? "null",
+                    OldValue = billing.TargetMargin?.ToString(CultureInfo.InvariantCulture)
+                        ?? "null",
+                    NewValue = request.TargetMargin?.ToString(CultureInfo.InvariantCulture)
+                        ?? "null",
                 }
             );
             billing.TargetMargin = request.TargetMargin;

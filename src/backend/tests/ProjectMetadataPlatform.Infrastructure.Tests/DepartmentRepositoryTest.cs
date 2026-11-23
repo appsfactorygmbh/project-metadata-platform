@@ -44,7 +44,7 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         // Act
-        var result = (await _repository.GetDepartmentsAsync(null)).ToList();
+        var result = (await _repository.GetDepartmentsAsync(null, null)).ToList();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(2));
@@ -75,8 +75,38 @@ public class DepartmentsRepositoryTests : TestsWithDatabase
 
         // Act
         var result = (
-            await _repository.GetDepartmentsAsync(new DepartmentCursor(department.DepartmentName))
+            await _repository.GetDepartmentsAsync(
+                null,
+                new DepartmentCursor(department.DepartmentName)
+            )
         ).ToList();
+
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(1));
+        var departmentRes = result.First();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(departmentRes.Id, Is.EqualTo(2));
+            Assert.That(departmentRes.DepartmentName, Is.EqualTo("Test_2"));
+        });
+    }
+
+    [Test]
+    public async Task GetDepartmentsAsync_WithFilter()
+    {
+        // Arrange
+        var department = new Department { Id = 1, DepartmentName = "Test_1" };
+
+        var department2 = new Department { Id = 2, DepartmentName = "Test_2" };
+
+        _context.Departments.RemoveRange(_context.Departments);
+        _ = _context.Departments.Add(department);
+        _ = _context.Departments.Add(department2);
+        _ = await _context.SaveChangesAsync();
+
+        // Act
+        var result = (await _repository.GetDepartmentsAsync("2", null)).ToList();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(1));

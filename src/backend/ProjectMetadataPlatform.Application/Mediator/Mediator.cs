@@ -19,8 +19,7 @@ public class Mediator(IServiceProvider provider) : IMediator
     )
         where TRequest : IRequest<TResult>
     {
-        var handler =
-            provider.GetService<IRequestHandler<TRequest, TResult>>()
+        var handler = provider.GetService<IRequestHandler<TRequest, TResult>>()
             ?? throw new InvalidOperationException(
                 $"No handler registered for {request.GetType().Name}"
             );

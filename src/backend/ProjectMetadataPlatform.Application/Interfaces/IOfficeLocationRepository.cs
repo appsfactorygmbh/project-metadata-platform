@@ -14,7 +14,10 @@ public interface IOfficeLocationRepository
     /// Returns all Office Locations.
     /// </summary>
     /// <returns>List of all Office Locations.</returns>
-    Task<IQueryable<OfficeLocation>> GetOfficeLocationsAsync(OfficeLocationCursor? cursor);
+    Task<IQueryable<OfficeLocation>> GetOfficeLocationsAsync(
+        string? name,
+        OfficeLocationCursor? cursor
+    );
 
     /// <summary>
     /// Returns a Office Location by its Id.

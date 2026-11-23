@@ -28,10 +28,15 @@ public class OfficeLocationRepository : RepositoryBase<OfficeLocation>, IOfficeL
 
     /// <inheritdoc/>
     public async Task<IQueryable<OfficeLocation>> GetOfficeLocationsAsync(
+        string? name,
         OfficeLocationCursor? cursor
     )
     {
         var query = GetEverything();
+        if (name != null)
+        {
+            query = query.Where(r => EF.Functions.ILike(r.OfficeLocationName, $"%{name.Trim()}%"));
+        }
         if (cursor != null)
         {
             query = query.Where(ol =>
@@ -66,8 +71,8 @@ public class OfficeLocationRepository : RepositoryBase<OfficeLocation>, IOfficeL
     public async Task<OfficeLocation> GetOfficeLocationByNameAsync(string officeLocationName)
     {
         return await _context.OfficeLocations.FirstOrDefaultAsync(o =>
-                o.OfficeLocationName == officeLocationName
-            ) ?? throw new OfficeLocationNotFoundException(officeLocationName);
+            o.OfficeLocationName == officeLocationName
+        ) ?? throw new OfficeLocationNotFoundException(officeLocationName);
     }
 
     /// <inheritdoc/>

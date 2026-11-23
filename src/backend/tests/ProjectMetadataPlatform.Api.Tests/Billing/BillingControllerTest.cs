@@ -84,7 +84,11 @@ public class BillingControllerTest
                     new BillingCursor("Test")
                 )
             );
-        var result = await _controller.Get(10, CursorConverter.Encode(new BillingCursor("Cursor")));
+        var result = await _controller.Get(
+            null,
+            10,
+            CursorConverter.Encode(new BillingCursor("Cursor"))
+        );
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;

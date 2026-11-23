@@ -27,9 +27,16 @@ public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUni
     }
 
     /// <inheritdoc/>
-    public async Task<IQueryable<BusinessUnit>> GetBusinessUnitsAsync(BusinessUnitCursor? cursor)
+    public async Task<IQueryable<BusinessUnit>> GetBusinessUnitsAsync(
+        string? name,
+        BusinessUnitCursor? cursor
+    )
     {
         var query = GetEverything();
+        if (name != null)
+        {
+            query = query.Where(r => EF.Functions.ILike(r.BusinessUnitName, $"%{name.Trim()}%"));
+        }
         if (cursor != null)
         {
             query = query.Where(bu => bu.BusinessUnitName.CompareTo(cursor.BusinessUnitName) > 0);
@@ -41,8 +48,8 @@ public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUni
     public async Task<BusinessUnit> GetBusinessUnitAsync(int id)
     {
         return await _context.BusinessUnits.FirstOrDefaultAsync(businessUnit =>
-                businessUnit.Id == id
-            ) ?? throw new BusinessUnitNotFoundException(id);
+            businessUnit.Id == id
+        ) ?? throw new BusinessUnitNotFoundException(id);
     }
 
     /// <inheritdoc/>
@@ -104,8 +111,8 @@ public class BusinessUnitRepository : RepositoryBase<BusinessUnit>, IBusinessUni
     public async Task<BusinessUnit> GetBusinessUnitWithTeamsAsync(int id)
     {
         return await _context
-                .BusinessUnits.Include(bu => bu.Teams)
-                .FirstOrDefaultAsync(bu => bu.Id == id)
+            .BusinessUnits.Include(bu => bu.Teams)
+            .FirstOrDefaultAsync(bu => bu.Id == id)
             ?? throw new BusinessUnitNotFoundException(id);
     }
 }

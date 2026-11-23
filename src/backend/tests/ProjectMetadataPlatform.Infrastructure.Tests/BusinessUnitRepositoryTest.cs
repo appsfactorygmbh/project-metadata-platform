@@ -45,7 +45,7 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         // Act
-        var result = (await _repository.GetBusinessUnitsAsync(null)).ToList();
+        var result = (await _repository.GetBusinessUnitsAsync(null, null)).ToList();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(2));
@@ -77,9 +77,37 @@ public class BusinessUnitsRepositoryTests : TestsWithDatabase
         // Act
         var result = (
             await _repository.GetBusinessUnitsAsync(
+                null,
                 new BusinessUnitCursor(businessUnit.BusinessUnitName)
             )
         ).ToList();
+
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(1));
+        var businessUnitRes = result.First();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(businessUnitRes.Id, Is.EqualTo(2));
+            Assert.That(businessUnitRes.BusinessUnitName, Is.EqualTo("Test_2"));
+        });
+    }
+
+    [Test]
+    public async Task GetBusinessUnitsAsync_WithFilter()
+    {
+        // Arrange
+        var businessUnit = new BusinessUnit { Id = 1, BusinessUnitName = "Test_1" };
+
+        var businessUnit2 = new BusinessUnit { Id = 2, BusinessUnitName = "Test_2" };
+
+        _context.BusinessUnits.RemoveRange(_context.BusinessUnits);
+        _ = _context.BusinessUnits.Add(businessUnit);
+        _ = _context.BusinessUnits.Add(businessUnit2);
+        _ = await _context.SaveChangesAsync();
+
+        // Act
+        var result = (await _repository.GetBusinessUnitsAsync("2", null)).ToList();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(1));

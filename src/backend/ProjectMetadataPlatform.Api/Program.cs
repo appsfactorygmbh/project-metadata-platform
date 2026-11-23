@@ -120,15 +120,12 @@ builder.Services.AddCors(options =>
     )
 );
 
-builder.Services.AddResiliencePipeline(
-    "DbCheck-Pipeline",
-    builder =>
-    {
-        _ = builder.AddRetry(
-            new RetryStrategyOptions() { MaxRetryAttempts = 10, Delay = TimeSpan.FromSeconds(5) }
-        );
-    }
-);
+builder.Services.AddResiliencePipeline("DbCheck-Pipeline", builder =>
+{
+    _ = builder.AddRetry(
+        new RetryStrategyOptions() { MaxRetryAttempts = 10, Delay = TimeSpan.FromSeconds(5) }
+    );
+});
 
 var app = builder.Build();
 await app.Services.CheckDbConnection();

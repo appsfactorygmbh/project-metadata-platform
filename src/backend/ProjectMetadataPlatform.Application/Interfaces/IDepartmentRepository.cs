@@ -14,7 +14,7 @@ public interface IDepartmentRepository
     /// Returns all Departments.
     /// </summary>
     /// <returns>List of all Departments.</returns>
-    Task<IQueryable<Department>> GetDepartmentsAsync(DepartmentCursor? cursor);
+    Task<IQueryable<Department>> GetDepartmentsAsync(string? name, DepartmentCursor? cursor);
 
     /// <summary>
     /// Returns a Department by its Id.

@@ -73,8 +73,7 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Appli
             == "JWT Token"
         )
         {
-            var email =
-                _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
+            var email = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email)
                 ?? "Unknown user";
             var activeUser = await _usersRepository.GetUserByEmailAsync(email);
 

@@ -45,7 +45,7 @@ public class CompaniesRepositoryTests : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         // Act
-        var result = (await _repository.GetCompaniesAsync(null)).ToList();
+        var result = (await _repository.GetCompaniesAsync(null, null)).ToList();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(2));
@@ -76,8 +76,35 @@ public class CompaniesRepositoryTests : TestsWithDatabase
 
         // Act
         var result = (
-            await _repository.GetCompaniesAsync(new CompanyCursor(company.CompanyName))
+            await _repository.GetCompaniesAsync(null, new CompanyCursor(company.CompanyName))
         ).ToList();
+
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(1));
+        var companyRes = result.First();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(companyRes.Id, Is.EqualTo(2));
+            Assert.That(companyRes.CompanyName, Is.EqualTo("Test_2"));
+        });
+    }
+
+    [Test]
+    public async Task GetCompaniesAsync_WithFilter()
+    {
+        // Arrange
+        var company = new Company { Id = 1, CompanyName = "Test_1" };
+
+        var company2 = new Company { Id = 2, CompanyName = "Test_2" };
+
+        _context.Companies.RemoveRange(_context.Companies);
+        _ = _context.Companies.Add(company);
+        _ = _context.Companies.Add(company2);
+        _ = await _context.SaveChangesAsync();
+
+        // Act
+        var result = (await _repository.GetCompaniesAsync("Test_2", null)).ToList();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(1));

@@ -63,10 +63,15 @@ public interface IPluginRepository
     /// <summary>
     /// Returns all global plugins
     /// </summary>
+    /// <param name="name">Optional Name filter</param>
     /// <param name="isArchived"> Wether to filter by the plugins archived status. </param>
     /// <param name="cursor">Optional Cursor for Pagination.</param>
     /// <returns>Collection of all global plugins</returns>
-    Task<IQueryable<Plugin>> GetGlobalPluginsAsync(bool? isArchived, PluginCursor? cursor);
+    Task<IQueryable<Plugin>> GetGlobalPluginsAsync(
+        string? name,
+        bool? isArchived,
+        PluginCursor? cursor
+    );
 
     /// <summary>
     /// Checks if a plugin exists.

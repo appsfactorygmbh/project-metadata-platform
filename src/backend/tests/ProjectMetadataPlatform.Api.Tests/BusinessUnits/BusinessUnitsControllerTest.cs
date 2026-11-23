@@ -85,6 +85,7 @@ public class BusinessUnitsControllerTest
                 )
             );
         var result = await _controller.Get(
+            null,
             200,
             CursorConverter.Encode(new BusinessUnitCursor("Cursor"))
         );

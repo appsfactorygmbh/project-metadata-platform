@@ -39,7 +39,7 @@ public class GetAllBillingQueryHandlerTest
         var returnBilling = new GlobalBilling() { Id = 1, BillingKind = "Test_1" };
 
         _ = _mockBillingRepository
-            .Setup(repo => repo.GetAllGlobalBillingInformationAsync(null))
+            .Setup(repo => repo.GetAllGlobalBillingInformationAsync(null, null))
             .ReturnsAsync(new List<GlobalBilling> { returnBilling }.BuildMock());
         _ = _paginationHelperMock
             .Setup(a =>
@@ -48,14 +48,17 @@ public class GetAllBillingQueryHandlerTest
             .ReturnsAsync((IQueryable<GlobalBilling> query, int? limit) => (query, null));
         // Act
         var result = await _handler.Handle(
-            new GetAllBillingQuery(null, null),
+            new GetAllBillingQuery(null, null, null),
             It.IsAny<CancellationToken>()
         );
 
         // Assert
         Assert.That(result.Item1.Count, Is.EqualTo(1));
         Assert.That(result.Item1.First(), Is.EqualTo(returnBilling));
-        _mockBillingRepository.Verify(m => m.GetAllGlobalBillingInformationAsync(null), Times.Once);
+        _mockBillingRepository.Verify(
+            m => m.GetAllGlobalBillingInformationAsync(null, null),
+            Times.Once
+        );
     }
 
     [Test]
@@ -71,7 +74,7 @@ public class GetAllBillingQueryHandlerTest
         ];
 
         _ = _mockBillingRepository
-            .Setup(repo => repo.GetAllGlobalBillingInformationAsync(null))
+            .Setup(repo => repo.GetAllGlobalBillingInformationAsync(null, null))
             .ReturnsAsync(returnBilling.BuildMock());
         _ = _paginationHelperMock
             .Setup(a =>
@@ -80,7 +83,7 @@ public class GetAllBillingQueryHandlerTest
             .ReturnsAsync((IQueryable<GlobalBilling> query, int? limit) => (query, null));
         // Act
         var result = await _handler.Handle(
-            new GetAllBillingQuery(null, null),
+            new GetAllBillingQuery(null, null, null),
             It.IsAny<CancellationToken>()
         );
 

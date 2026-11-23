@@ -49,7 +49,10 @@ public class GetAllBillingQueryHandler
         BillingCursor?
     )> Handle(GetAllBillingQuery request, CancellationToken cancellationToken = default)
     {
-        var billing = await _billingRepository.GetAllGlobalBillingInformationAsync(request.Cursor);
+        var billing = await _billingRepository.GetAllGlobalBillingInformationAsync(
+            request.Kind,
+            request.Cursor
+        );
 
         var (paginatedBilling, lastBilling) = await _paginationHelper.PaginateWithAuthAsync(
             billing,

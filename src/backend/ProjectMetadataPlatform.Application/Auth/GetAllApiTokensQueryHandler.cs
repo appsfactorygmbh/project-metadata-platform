@@ -49,7 +49,7 @@ public class GetAllApiTokensQueryHandler
         ApiTokenCursor?
     )> Handle(GetAllApiTokensQuery request, CancellationToken cancellationToken)
     {
-        var tokens = await _apiTokenRepository.GetApiTokens(request.Cursor);
+        var tokens = await _apiTokenRepository.GetApiTokens(request.Name, request.Cursor);
         var (paginatedTokens, lastToken) = await _paginationHelper.PaginateWithAuthAsync(
             tokens,
             request.Limit

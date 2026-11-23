@@ -14,9 +14,10 @@ public interface IApiTokenRepository
     /// <summary>
     /// Gets all Api-Tokens
     /// </summary>
+    /// <param name="name">Optional Name filter.</param>
     /// <param name="cursor">Optional Cursor for pagination.</param>
     /// <returns>List of ApiTokens</returns>
-    Task<IQueryable<ApiToken>> GetApiTokens(ApiTokenCursor? cursor);
+    Task<IQueryable<ApiToken>> GetApiTokens(string? name, ApiTokenCursor? cursor);
 
     /// <summary>
     /// Gets a specific Api Token via its id.

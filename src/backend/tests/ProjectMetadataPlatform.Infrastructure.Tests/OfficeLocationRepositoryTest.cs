@@ -44,7 +44,7 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         // Act
-        var result = (await _repository.GetOfficeLocationsAsync(null)).ToList();
+        var result = (await _repository.GetOfficeLocationsAsync(null, null)).ToList();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(2));
@@ -76,9 +76,36 @@ public class OfficeLocationsRepositoryTests : TestsWithDatabase
         // Act
         var result = (
             await _repository.GetOfficeLocationsAsync(
+                null,
                 new OfficeLocationCursor(officeLocation.OfficeLocationName)
             )
         ).ToList();
+
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(1));
+        var officeLocationRes = result.First();
+        Assert.Multiple(() =>
+        {
+            Assert.That(officeLocationRes.Id, Is.EqualTo(2));
+            Assert.That(officeLocationRes.OfficeLocationName, Is.EqualTo("Test_2"));
+        });
+    }
+
+    [Test]
+    public async Task GetOfficeLocationsAsync_WithFilter()
+    {
+        // Arrange
+        var officeLocation = new OfficeLocation { Id = 1, OfficeLocationName = "Test_1" };
+
+        var officeLocation2 = new OfficeLocation { Id = 2, OfficeLocationName = "Test_2" };
+
+        _context.OfficeLocations.RemoveRange(_context.OfficeLocations);
+        _ = _context.OfficeLocations.Add(officeLocation);
+        _ = _context.OfficeLocations.Add(officeLocation2);
+        _ = await _context.SaveChangesAsync();
+
+        // Act
+        var result = (await _repository.GetOfficeLocationsAsync("est_2", null)).ToList();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(1));

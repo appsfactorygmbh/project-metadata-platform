@@ -8,7 +8,7 @@ namespace ProjectMetadataPlatform.Application.Billing;
 /// <summary>
 /// Request to return all global billing objects.
 /// </summary>
-public record GetAllBillingQuery(BillingCursor? Cursor, int? Limit)
+public record GetAllBillingQuery(string? Kind, BillingCursor? Cursor, int? Limit)
     : IRequest<(
         IEnumerable<GlobalBilling>,
         IEnumerable<AuthorizationConstants.Actions>,

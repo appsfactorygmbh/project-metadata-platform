@@ -27,9 +27,16 @@ public class DepartmentRepository : RepositoryBase<Department>, IDepartmentRepos
     }
 
     /// <inheritdoc/>
-    public async Task<IQueryable<Department>> GetDepartmentsAsync(DepartmentCursor? cursor)
+    public async Task<IQueryable<Department>> GetDepartmentsAsync(
+        string? name,
+        DepartmentCursor? cursor
+    )
     {
         var query = GetEverything();
+        if (name != null)
+        {
+            query = query.Where(r => EF.Functions.ILike(r.DepartmentName, $"%{name.Trim()}%"));
+        }
         if (cursor != null)
         {
             query = query.Where(d => d.DepartmentName.CompareTo(cursor.DepartmentName) > 0);
@@ -62,8 +69,8 @@ public class DepartmentRepository : RepositoryBase<Department>, IDepartmentRepos
     public async Task<Department> GetDepartmentByNameAsync(string departmentName)
     {
         return await _context.Departments.FirstOrDefaultAsync(d =>
-                d.DepartmentName == departmentName
-            ) ?? throw new DepartmentNotFoundException(departmentName);
+            d.DepartmentName == departmentName
+        ) ?? throw new DepartmentNotFoundException(departmentName);
     }
 
     /// <inheritdoc/>

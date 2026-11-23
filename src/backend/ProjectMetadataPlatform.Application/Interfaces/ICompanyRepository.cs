@@ -14,7 +14,7 @@ public interface ICompanyRepository
     /// Returns all companies.
     /// </summary>
     /// <returns>List of all Companies.</returns>
-    Task<IQueryable<Company>> GetCompaniesAsync(CompanyCursor? cursor);
+    Task<IQueryable<Company>> GetCompaniesAsync(string? name, CompanyCursor? cursor);
 
     /// <summary>
     /// Returns a Company by its Id.

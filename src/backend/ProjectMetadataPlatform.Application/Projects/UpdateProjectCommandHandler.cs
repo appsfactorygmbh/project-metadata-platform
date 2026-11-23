@@ -55,8 +55,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
     /// <exception cref="ProjectNotFoundException">Thrown when the project is not found.</exception>
     public async Task<int> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
     {
-        var project =
-            await _projectsRepository.GetProjectAsync(request.Id)
+        var project = await _projectsRepository.GetProjectAsync(request.Id)
             ?? throw new ProjectNotFoundException(request.Id);
         await CheckAuthorization(project, request);
 

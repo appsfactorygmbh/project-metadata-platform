@@ -43,18 +43,21 @@ public class GetAllOfficeLocationsQueryHandlerTest
             )
             .ReturnsAsync((IQueryable<OfficeLocation> query, int? limit) => (query, null));
         _ = _mockOfficeLocationRepository
-            .Setup(repo => repo.GetOfficeLocationsAsync(null))
+            .Setup(repo => repo.GetOfficeLocationsAsync(null, null))
             .ReturnsAsync(new List<OfficeLocation> { returnOfficeLocation }.BuildMock());
 
         // Act
         var result = await _handler.Handle(
-            new GetAllOfficeLocationsQuery(null, null),
+            new GetAllOfficeLocationsQuery(null, null, null),
             It.IsAny<CancellationToken>()
         );
 
         // Assert
         Assert.That(result.Item1.Count, Is.EqualTo(1));
         Assert.That(result.Item1.First(), Is.EqualTo(returnOfficeLocation));
-        _mockOfficeLocationRepository.Verify(m => m.GetOfficeLocationsAsync(null), Times.Once);
+        _mockOfficeLocationRepository.Verify(
+            m => m.GetOfficeLocationsAsync(null, null),
+            Times.Once
+        );
     }
 }

@@ -39,7 +39,7 @@ public class GetAllDepartmentsQueryHandlerTest
         var returnDepartment = new Department() { Id = 1, DepartmentName = "Test_1" };
 
         _ = _mockDepartmentRepository
-            .Setup(repo => repo.GetDepartmentsAsync(null))
+            .Setup(repo => repo.GetDepartmentsAsync(null, null))
             .ReturnsAsync(new List<Department> { returnDepartment }.BuildMock());
         _ = _paginationHelperMock
             .Setup(a =>
@@ -48,13 +48,13 @@ public class GetAllDepartmentsQueryHandlerTest
             .ReturnsAsync((IQueryable<Department> query, int? limit) => (query, null));
         // Act
         var result = await _handler.Handle(
-            new GetAllDepartmentsQuery(null, null),
+            new GetAllDepartmentsQuery(null, null, null),
             It.IsAny<CancellationToken>()
         );
 
         // Assert
         Assert.That(result.Item1.Count, Is.EqualTo(1));
         Assert.That(result.Item1.First(), Is.EqualTo(returnDepartment));
-        _mockDepartmentRepository.Verify(m => m.GetDepartmentsAsync(null), Times.Once);
+        _mockDepartmentRepository.Verify(m => m.GetDepartmentsAsync(null, null), Times.Once);
     }
 }

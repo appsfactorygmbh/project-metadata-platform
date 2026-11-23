@@ -84,7 +84,11 @@ public class CompaniesControllerTest
                     new CompanyCursor("Test")
                 )
             );
-        var result = await _controller.Get(30, CursorConverter.Encode(new CompanyCursor("Cursor")));
+        var result = await _controller.Get(
+            null,
+            30,
+            CursorConverter.Encode(new CompanyCursor("Cursor"))
+        );
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
         var okResult = result.Result as OkObjectResult;

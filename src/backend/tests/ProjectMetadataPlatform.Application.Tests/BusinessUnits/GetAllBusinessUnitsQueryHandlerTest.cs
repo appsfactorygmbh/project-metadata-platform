@@ -39,7 +39,7 @@ public class GetAllBusinessUnitsQueryHandlerTest
         var returnBusinessUnit = new BusinessUnit() { Id = 1, BusinessUnitName = "Test_1" };
 
         _ = _mockBusinessUnitRepository
-            .Setup(repo => repo.GetBusinessUnitsAsync(null))
+            .Setup(repo => repo.GetBusinessUnitsAsync(null, null))
             .ReturnsAsync(new List<BusinessUnit> { returnBusinessUnit }.BuildMock());
         _ = _paginationHelperMock
             .Setup(a =>
@@ -48,13 +48,13 @@ public class GetAllBusinessUnitsQueryHandlerTest
             .ReturnsAsync((IQueryable<BusinessUnit> query, int? limiz) => (query, null));
         // Act
         var result = await _handler.Handle(
-            new GetAllBusinessUnitsQuery(null, null),
+            new GetAllBusinessUnitsQuery(null, null, null),
             It.IsAny<CancellationToken>()
         );
 
         // Assert
         Assert.That(result.Item1.Count, Is.EqualTo(1));
         Assert.That(result.Item1.First(), Is.EqualTo(returnBusinessUnit));
-        _mockBusinessUnitRepository.Verify(m => m.GetBusinessUnitsAsync(null), Times.Once);
+        _mockBusinessUnitRepository.Verify(m => m.GetBusinessUnitsAsync(null, null), Times.Once);
     }
 }

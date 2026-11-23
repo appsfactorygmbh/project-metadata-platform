@@ -65,15 +65,12 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_ProjectPluginsRelation",
-                        x => new
-                        {
-                            x.PluginId,
-                            x.ProjectId,
-                            x.Url,
-                        }
-                    );
+                    table.PrimaryKey("PK_ProjectPluginsRelation", x => new
+                    {
+                        x.PluginId,
+                        x.ProjectId,
+                        x.Url,
+                    });
                     table.ForeignKey(
                         name: "FK_ProjectPluginsRelation_Plugins_PluginId",
                         column: x => x.PluginId,

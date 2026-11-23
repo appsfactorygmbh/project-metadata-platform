@@ -46,7 +46,7 @@ public class GetAllCompaniesQueryHandler
         CompanyCursor?
     )> Handle(GetAllCompaniesQuery request, CancellationToken cancellationToken)
     {
-        var companies = await _companyRepository.GetCompaniesAsync(request.Cursor);
+        var companies = await _companyRepository.GetCompaniesAsync(request.Name, request.Cursor);
         var (paginatedCompanies, lastCompany) = await _paginationHelper.PaginateWithAuthAsync(
             companies,
             request.Limit

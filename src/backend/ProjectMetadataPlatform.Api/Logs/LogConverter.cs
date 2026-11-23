@@ -388,8 +388,9 @@ public class LogConverter : ILogConverter
     /// <returns>The constructed message.</returns>
     private static string BuildUpdatedUserMessage(Log log)
     {
-        var affectedUserEmail =
-            log.AffectedUser?.Email ?? log.AffectedUserEmail ?? "<Unknown User>";
+        var affectedUserEmail = log.AffectedUser?.Email
+            ?? log.AffectedUserEmail
+            ?? "<Unknown User>";
         affectedUserEmail = GetNameFromEmail(affectedUserEmail);
 
         var message = $"updated user {affectedUserEmail}: ";

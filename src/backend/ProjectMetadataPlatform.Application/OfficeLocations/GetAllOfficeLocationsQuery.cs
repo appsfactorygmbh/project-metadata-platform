@@ -8,7 +8,7 @@ namespace ProjectMetadataPlatform.Application.OfficeLocations;
 /// <summary>
 /// Query to return all Office Locations.
 /// </summary>
-public record GetAllOfficeLocationsQuery(OfficeLocationCursor? Cursor, int? Limit)
+public record GetAllOfficeLocationsQuery(string? Name, OfficeLocationCursor? Cursor, int? Limit)
     : IRequest<(
         IEnumerable<OfficeLocation>,
         IEnumerable<AuthorizationConstants.Actions>,

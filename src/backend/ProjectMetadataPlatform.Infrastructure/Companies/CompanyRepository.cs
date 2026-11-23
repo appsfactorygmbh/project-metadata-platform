@@ -27,9 +27,13 @@ public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
     }
 
     /// <inheritdoc/>
-    public async Task<IQueryable<Company>> GetCompaniesAsync(CompanyCursor? cursor)
+    public async Task<IQueryable<Company>> GetCompaniesAsync(string? name, CompanyCursor? cursor)
     {
         var query = GetEverything();
+        if (name != null)
+        {
+            query = query.Where(r => EF.Functions.ILike(r.CompanyName, $"%{name.Trim()}%"));
+        }
         if (cursor != null)
         {
             query = query.Where(c => c.CompanyName.CompareTo(cursor.CompanyName) > 0);
@@ -103,8 +107,8 @@ public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
     public async Task<Company> GetCompanyWithProjectsAsync(int id)
     {
         return await _context
-                .Companies.Include(company => company.Projects)
-                .FirstOrDefaultAsync(company => company.Id == id)
+            .Companies.Include(company => company.Projects)
+            .FirstOrDefaultAsync(company => company.Id == id)
             ?? throw new CompanyNotFoundException(id);
     }
 }

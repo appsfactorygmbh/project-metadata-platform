@@ -88,12 +88,13 @@ public class AuthController : ControllerBase
         StatusCodes.Status200OK
     )]
     public async Task<ActionResult<GetListResponse<GetApiTokenDetailsResponse>>> GetApiTokens(
+        [FromQuery] string? name = null,
         [FromQuery] int? limit = null,
         [FromQuery] string? cursor = null
     )
     {
         var cursorPosition = CursorConverter.Decode<ApiTokenCursor>(cursor);
-        var query = new GetAllApiTokensQuery(cursorPosition, limit);
+        var query = new GetAllApiTokensQuery(name, cursorPosition, limit);
         var (tokens, permissions, nextCursor) = await _mediator.Send<
             GetAllApiTokensQuery,
             (IEnumerable<ApiToken>, IEnumerable<AuthorizationConstants.Actions>, ApiTokenCursor?)

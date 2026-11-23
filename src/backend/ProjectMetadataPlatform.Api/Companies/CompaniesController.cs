@@ -45,12 +45,13 @@ public class CompaniesController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(GetListResponse<GetCompanyResponse>), StatusCodes.Status200OK)]
     public async Task<ActionResult<GetListResponse<GetCompanyResponse>>> Get(
+        [FromQuery] string? name = null,
         [FromQuery] int? limit = null,
         [FromQuery] string? cursor = null
     )
     {
         var cursorPosition = CursorConverter.Decode<CompanyCursor>(cursor);
-        var query = new GetAllCompaniesQuery(cursorPosition, limit);
+        var query = new GetAllCompaniesQuery(name, cursorPosition, limit);
         var (companies, permissions, nextCursor) = await _mediator.Send<
             GetAllCompaniesQuery,
             (IEnumerable<Company>, IEnumerable<AuthorizationConstants.Actions>, CompanyCursor?)

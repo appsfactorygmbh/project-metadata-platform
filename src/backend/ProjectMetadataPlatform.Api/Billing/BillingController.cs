@@ -153,12 +153,13 @@ public class BillingController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(GetListResponse<GetBillingResponse>), StatusCodes.Status200OK)]
     public async Task<ActionResult<GetListResponse<GetBillingResponse>>> Get(
+        [FromQuery] string? kind = null,
         [FromQuery] int? limit = null,
         [FromQuery] string? cursor = null
     )
     {
         var cursorPosition = CursorConverter.Decode<BillingCursor>(cursor);
-        var query = new GetAllBillingQuery(cursorPosition, limit);
+        var query = new GetAllBillingQuery(kind, cursorPosition, limit);
         var (billing, globalPermissions, nextCursor) = await _mediator.Send<
             GetAllBillingQuery,
             (

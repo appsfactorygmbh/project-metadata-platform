@@ -124,10 +124,11 @@ namespace ProjectMetadataPlatform.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_ApplicationUserTeam1",
-                        x => new { x.TeamSupportId, x.TeamSupportUsersId }
-                    );
+                    table.PrimaryKey("PK_ApplicationUserTeam1", x => new
+                    {
+                        x.TeamSupportId,
+                        x.TeamSupportUsersId,
+                    });
                     table.ForeignKey(
                         name: "FK_ApplicationUserTeam1_AspNetUsers_TeamSupportUsersId",
                         column: x => x.TeamSupportUsersId,

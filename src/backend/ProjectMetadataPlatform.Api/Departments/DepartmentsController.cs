@@ -44,12 +44,13 @@ public class DepartmentsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(GetListResponse<GetDepartmentResponse>), StatusCodes.Status200OK)]
     public async Task<ActionResult<GetListResponse<GetDepartmentResponse>>> Get(
+        [FromQuery] string? name = null,
         [FromQuery] int? limit = null,
         [FromQuery] string? cursor = null
     )
     {
         var cursorPosition = CursorConverter.Decode<DepartmentCursor>(cursor);
-        var query = new GetAllDepartmentsQuery(cursorPosition, limit);
+        var query = new GetAllDepartmentsQuery(name, cursorPosition, limit);
         var (departments, permissions, nextCursor) = await _mediator.Send<
             GetAllDepartmentsQuery,
             (

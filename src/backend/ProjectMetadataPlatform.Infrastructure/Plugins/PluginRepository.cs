@@ -152,11 +152,16 @@ public class PluginRepository : RepositoryBase<Plugin>, IPluginRepository
     /// </summary>
     /// <returns>All global plugins</returns>
     public async Task<IQueryable<Plugin>> GetGlobalPluginsAsync(
+        string? name,
         bool? isArchived,
         PluginCursor? cursor
     )
     {
         var query = GetEverything();
+        if (name != null)
+        {
+            query = query.Where(r => EF.Functions.ILike(r.PluginName, $"%{name.Trim()}%"));
+        }
         if (isArchived != null)
         {
             query = query.Where(p => p.IsArchived == isArchived);

@@ -47,12 +47,13 @@ public class OfficeLocationsController : ControllerBase
         StatusCodes.Status200OK
     )]
     public async Task<ActionResult<GetListResponse<GetOfficeLocationResponse>>> Get(
+        [FromQuery] string? name = null,
         [FromQuery] int? limit = null,
         [FromQuery] string? cursor = null
     )
     {
         var cursorPosition = CursorConverter.Decode<OfficeLocationCursor>(cursor);
-        var query = new GetAllOfficeLocationsQuery(cursorPosition, limit);
+        var query = new GetAllOfficeLocationsQuery(name, cursorPosition, limit);
         var (locations, permissions, nextCursor) = await _mediator.Send<
             GetAllOfficeLocationsQuery,
             (

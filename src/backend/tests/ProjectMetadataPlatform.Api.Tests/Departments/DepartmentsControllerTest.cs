@@ -85,6 +85,7 @@ public class DepartmentsControllerTest
                 )
             );
         var result = await _controller.Get(
+            null,
             200,
             CursorConverter.Encode(new DepartmentCursor("Cursor"))
         );

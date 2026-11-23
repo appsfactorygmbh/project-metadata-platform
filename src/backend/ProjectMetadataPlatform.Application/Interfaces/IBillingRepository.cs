@@ -72,7 +72,10 @@ public interface IBillingRepository
     /// Returns queryable containing all global billing objects.
     /// </summary>
     /// <returns>All Global Billing Information. </returns>
-    Task<IQueryable<GlobalBilling>> GetAllGlobalBillingInformationAsync(BillingCursor? cursor);
+    Task<IQueryable<GlobalBilling>> GetAllGlobalBillingInformationAsync(
+        string? kind,
+        BillingCursor? cursor
+    );
 
     /// <summary>
     /// Deletes global billing Information.

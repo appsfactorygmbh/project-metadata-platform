@@ -47,12 +47,13 @@ public class BusinessUnitsController : ControllerBase
         StatusCodes.Status200OK
     )]
     public async Task<ActionResult<GetListResponse<GetBusinessUnitResponse>>> Get(
+        [FromQuery] string? name = null,
         [FromQuery] int? limit = null,
         [FromQuery] string? cursor = null
     )
     {
         var cursorPosition = CursorConverter.Decode<BusinessUnitCursor>(cursor);
-        var query = new GetAllBusinessUnitsQuery(cursorPosition, limit);
+        var query = new GetAllBusinessUnitsQuery(name, cursorPosition, limit);
         var (businessUnits, permissions, nextCursor) = await _mediator.Send<
             GetAllBusinessUnitsQuery,
             (

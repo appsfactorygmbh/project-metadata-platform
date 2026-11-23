@@ -38,7 +38,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
     [Test]
     public async Task GetApiTokens_EmptyResponseTest()
     {
-        var result = await _apiTokenRepository.GetApiTokens(null);
+        var result = await _apiTokenRepository.GetApiTokens(null, null);
         Assert.That(result, Is.Empty);
     }
 
@@ -52,7 +52,7 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
         ];
         await _context.ApiTokens.AddRangeAsync(tokens);
         _ = await _context.SaveChangesAsync();
-        var result = await _apiTokenRepository.GetApiTokens(null);
+        var result = await _apiTokenRepository.GetApiTokens(null, null);
         var resultList = result.ToList();
         Assert.That(result, Is.Not.Empty);
         Assert.That(result.Count(), Is.EqualTo(2));
@@ -75,13 +75,37 @@ public class ApiTokenRepositoryTest : TestsWithDatabase
         ];
         await _context.ApiTokens.AddRangeAsync(tokens);
         _ = await _context.SaveChangesAsync();
-        var result = await _apiTokenRepository.GetApiTokens(new ApiTokenCursor(tokens[0].Name));
+        var result = await _apiTokenRepository.GetApiTokens(
+            null,
+            new ApiTokenCursor(tokens[0].Name)
+        );
         var resultList = result.ToList();
         Assert.That(result, Is.Not.Empty);
         Assert.That(result.Count(), Is.EqualTo(1));
         Assert.Multiple(() =>
         {
             Assert.That(resultList[0].Name, Is.EqualTo("Token2"));
+            Assert.That(resultList[0].Token, Is.EqualTo("TokenHash2"));
+        });
+    }
+
+    [Test]
+    public async Task GetApiTokens_EnumerableResponse_WithFilterTest()
+    {
+        List<ApiToken> tokens =
+        [
+            new ApiToken { Name = "TokenA", Token = "TokenHash1" },
+            new ApiToken { Name = "TokenB", Token = "TokenHash2" },
+        ];
+        await _context.ApiTokens.AddRangeAsync(tokens);
+        _ = await _context.SaveChangesAsync();
+        var result = await _apiTokenRepository.GetApiTokens("b", null);
+        var resultList = result.ToList();
+        Assert.That(result, Is.Not.Empty);
+        Assert.That(result.Count(), Is.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(resultList[0].Name, Is.EqualTo("TokenB"));
             Assert.That(resultList[0].Token, Is.EqualTo("TokenHash2"));
         });
     }

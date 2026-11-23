@@ -39,20 +39,20 @@ public class GetAllCompaniesQueryHandlerTest
         var returnCompany = new Company() { Id = 1, CompanyName = "Test_1" };
 
         _ = _mockCompanyRepository
-            .Setup(repo => repo.GetCompaniesAsync(null))
+            .Setup(repo => repo.GetCompaniesAsync(null, null))
             .ReturnsAsync(new List<Company> { returnCompany }.BuildMock());
         _ = _paginationHelperMock
             .Setup(a => a.PaginateWithAuthAsync(It.IsAny<IQueryable<Company>>(), It.IsAny<int?>()))
             .ReturnsAsync((IQueryable<Company> query, int? limiz) => (query, null));
         // Act
         var result = await _handler.Handle(
-            new GetAllCompaniesQuery(null, null),
+            new GetAllCompaniesQuery(null, null, null),
             It.IsAny<CancellationToken>()
         );
 
         // Assert
         Assert.That(result.Item1.Count, Is.EqualTo(1));
         Assert.That(result.Item1.First(), Is.EqualTo(returnCompany));
-        _mockCompanyRepository.Verify(m => m.GetCompaniesAsync(null), Times.Once);
+        _mockCompanyRepository.Verify(m => m.GetCompaniesAsync(null, null), Times.Once);
     }
 }

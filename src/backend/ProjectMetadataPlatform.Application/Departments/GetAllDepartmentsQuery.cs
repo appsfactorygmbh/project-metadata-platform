@@ -8,7 +8,7 @@ namespace ProjectMetadataPlatform.Application.Departments;
 /// <summary>
 /// Query to get all departments.
 /// </summary>
-public record GetAllDepartmentsQuery(DepartmentCursor? Cursor, int? Limit)
+public record GetAllDepartmentsQuery(string? Name, DepartmentCursor? Cursor, int? Limit)
     : IRequest<(
         IEnumerable<Department>,
         IEnumerable<AuthorizationConstants.Actions>,

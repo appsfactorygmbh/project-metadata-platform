@@ -45,6 +45,7 @@ public class GetGlobalPluginsQueryHandler
     )> Handle(GetGlobalPluginsQuery request, CancellationToken cancellationToken)
     {
         var pluginQuery = await _pluginRepository.GetGlobalPluginsAsync(
+            request.Name,
             request.IsArchived,
             request.Cursor
         );

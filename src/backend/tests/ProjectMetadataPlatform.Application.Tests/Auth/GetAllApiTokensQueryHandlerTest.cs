@@ -44,12 +44,12 @@ public class GetAllApiTokensQueryHandlerTest
         ];
 
         _ = _apiTokenRepositoryMock
-            .Setup(m => m.GetApiTokens(null))
+            .Setup(m => m.GetApiTokens(null, null))
             .ReturnsAsync(tokens.BuildMock());
         _ = _paginationHelperMock
             .Setup(a => a.PaginateWithAuthAsync(It.IsAny<IQueryable<ApiToken>>(), It.IsAny<int?>()))
             .ReturnsAsync((IQueryable<ApiToken> apiTokens, int? limit) => (apiTokens, null));
-        var request = new GetAllApiTokensQuery(null, null);
+        var request = new GetAllApiTokensQuery(null, null, null);
         var result = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
         Assert.That(result.Item1, Is.EqualTo(tokens));

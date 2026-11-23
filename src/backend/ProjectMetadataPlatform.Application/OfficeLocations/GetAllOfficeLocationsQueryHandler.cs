@@ -52,6 +52,7 @@ public class GetAllOfficeLocationsQueryHandler
     )> Handle(GetAllOfficeLocationsQuery request, CancellationToken cancellationToken)
     {
         var officeLocations = await _officeLocationRepository.GetOfficeLocationsAsync(
+            request.Name,
             request.Cursor
         );
         var (paginatedOfficeLocations, lastOfficeLocation) =

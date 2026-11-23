@@ -32,9 +32,13 @@ public class ApiTokenRepository : RepositoryBase<ApiToken>, IApiTokenRepository
     }
 
     /// <inheritdoc/>
-    public async Task<IQueryable<ApiToken>> GetApiTokens(ApiTokenCursor? cursor)
+    public async Task<IQueryable<ApiToken>> GetApiTokens(string? name, ApiTokenCursor? cursor)
     {
         var query = GetEverything();
+        if (name != null)
+        {
+            query = query.Where(a => EF.Functions.ILike(a.Name, $"%{name.Trim()}%"));
+        }
         if (cursor != null)
         {
             query = query.Where(a => a.Name.CompareTo(cursor.Name) > 0);

@@ -51,7 +51,10 @@ public class GetAllBusinessUnitsQueryHandler
         BusinessUnitCursor?
     )> Handle(GetAllBusinessUnitsQuery request, CancellationToken cancellationToken)
     {
-        var businessUnits = await _businessUnitRepository.GetBusinessUnitsAsync(request.Cursor);
+        var businessUnits = await _businessUnitRepository.GetBusinessUnitsAsync(
+            request.Name,
+            request.Cursor
+        );
         var (paginatedBusinessUnits, lastBusinessUnit) =
             await _paginationHelper.PaginateWithAuthAsync(businessUnits, request.Limit);
         var permissions = await _authorizationService.GetAllowedActions<BusinessUnit>(

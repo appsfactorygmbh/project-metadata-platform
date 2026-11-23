@@ -64,11 +64,11 @@ public class BillingRepository : RepositoryBase<GlobalBilling>, IBillingReposito
     public async Task<GlobalBilling> GetBillingByIdAsync(int id)
     {
         return await _context
-                .GlobalBilling.Where(gb => gb.Id == id)
-                .Include(gb => gb.PluginBilling!)
-                    .ThenInclude(pb => pb.ProjectPlugin!)
-                        .ThenInclude(pp => pp.Project)
-                .FirstOrDefaultAsync()
+            .GlobalBilling.Where(gb => gb.Id == id)
+            .Include(gb => gb.PluginBilling!)
+                .ThenInclude(pb => pb.ProjectPlugin!)
+                    .ThenInclude(pp => pp.Project)
+            .FirstOrDefaultAsync()
             ?? throw new BillingInformationNotFoundException(id);
     }
 
@@ -76,15 +76,13 @@ public class BillingRepository : RepositoryBase<GlobalBilling>, IBillingReposito
     public async Task<PluginBilling> GetPluginBillingByIdAsync(int projectId, int pluginId)
     {
         return await _context
-                .PluginBillingRelation.Where(pb =>
-                    pb.ProjectId == projectId && pb.PluginId == pluginId
-                )
-                .Include(pb => pb.GlobalBilling)
-                .Include(pb => pb.ProjectPlugin!)
-                    .ThenInclude(pp => pp.Project)
-                .Include(pb => pb.ProjectPlugin!)
-                    .ThenInclude(pp => pp.Plugin)
-                .FirstOrDefaultAsync()
+            .PluginBillingRelation.Where(pb => pb.ProjectId == projectId && pb.PluginId == pluginId)
+            .Include(pb => pb.GlobalBilling)
+            .Include(pb => pb.ProjectPlugin!)
+                .ThenInclude(pp => pp.Project)
+            .Include(pb => pb.ProjectPlugin!)
+                .ThenInclude(pp => pp.Plugin)
+            .FirstOrDefaultAsync()
             ?? throw new PluginBillingInformationNotFoundException(projectId, pluginId);
     }
 
@@ -97,10 +95,15 @@ public class BillingRepository : RepositoryBase<GlobalBilling>, IBillingReposito
 
     /// <inheritdoc />
     public async Task<IQueryable<GlobalBilling>> GetAllGlobalBillingInformationAsync(
+        string? kind,
         BillingCursor? cursor
     )
     {
         var query = GetEverything();
+        if (kind != null)
+        {
+            query = query.Where(r => EF.Functions.ILike(r.BillingKind, $"%{kind.Trim()}%"));
+        }
         if (cursor != null)
         {
             query = query.Where(gb => gb.BillingKind.CompareTo(cursor.BillingKind) > 0);

@@ -110,6 +110,7 @@ public class PluginsController : ControllerBase
     /// <summary>
     /// Gets all global plugins.
     /// </summary>
+    /// <param name="name">Optional Name filter</param>
     /// <param name="isArchived"> Wether to filter by the plugins archived status. </param>
     /// <param name="cursor">Optional Cursor for Pagination.</param>
     /// <param name="limit">Optional Limit for Pagination. </param>
@@ -122,13 +123,14 @@ public class PluginsController : ControllerBase
         StatusCodes.Status200OK
     )]
     public async Task<ActionResult<GetListResponse<GetGlobalPluginResponse>>> GetGlobal(
+        [FromQuery] string? name = null,
         [FromQuery] bool? isArchived = null,
         [FromQuery] int? limit = null,
         [FromQuery] string? cursor = null
     )
     {
         var cursorPosition = CursorConverter.Decode<PluginCursor>(cursor);
-        var query = new GetGlobalPluginsQuery(isArchived, cursorPosition, limit);
+        var query = new GetGlobalPluginsQuery(name, isArchived, cursorPosition, limit);
         var (plugins, globalPermissions, nextCursor) = await _mediator.Send<
             GetGlobalPluginsQuery,
             (

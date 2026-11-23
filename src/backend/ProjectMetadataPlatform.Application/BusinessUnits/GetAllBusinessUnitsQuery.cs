@@ -8,7 +8,7 @@ namespace ProjectMetadataPlatform.Application.BusinessUnits;
 /// <summary>
 /// Query for getting all bu's.
 /// </summary>
-public record GetAllBusinessUnitsQuery(BusinessUnitCursor? Cursor, int? Limit)
+public record GetAllBusinessUnitsQuery(string? Name, BusinessUnitCursor? Cursor, int? Limit)
     : IRequest<(
         IEnumerable<BusinessUnit>,
         IEnumerable<AuthorizationConstants.Actions>,

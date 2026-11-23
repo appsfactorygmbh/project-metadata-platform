@@ -85,6 +85,7 @@ public class OfficeLocationsControllerTest
                 )
             );
         var result = await _controller.Get(
+            null,
             10,
             CursorConverter.Encode(new OfficeLocationCursor("Cursor"))
         );

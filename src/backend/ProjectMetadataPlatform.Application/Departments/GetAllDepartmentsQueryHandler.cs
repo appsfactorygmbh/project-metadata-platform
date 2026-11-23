@@ -46,7 +46,10 @@ public class GetAllDepartmentsQueryHandler
         DepartmentCursor?
     )> Handle(GetAllDepartmentsQuery request, CancellationToken cancellationToken)
     {
-        var departments = await _departmentRepository.GetDepartmentsAsync(request.Cursor);
+        var departments = await _departmentRepository.GetDepartmentsAsync(
+            request.Name,
+            request.Cursor
+        );
         var (paginatedDepartments, lastDepartment) = await _paginationHelper.PaginateWithAuthAsync(
             departments,
             request.Limit

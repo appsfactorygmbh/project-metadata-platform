@@ -281,14 +281,14 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
     public async Task<Project> GetProjectAsync(int id)
     {
         return await GetIf(p => p.Id == id)
-                .Include(p => p.ProjectPlugins!)
-                    .ThenInclude(pp => pp.PluginBilling)
-                .Include(p => p.ProjectPlugins!)
-                    .ThenInclude(pp => pp.Plugin)
-                .Include(p => p.Team)
-                    .ThenInclude(t => t!.BusinessUnit)
-                .Include(p => p.Company)
-                .FirstOrDefaultAsync()
+            .Include(p => p.ProjectPlugins!)
+                .ThenInclude(pp => pp.PluginBilling)
+            .Include(p => p.ProjectPlugins!)
+                .ThenInclude(pp => pp.Plugin)
+            .Include(p => p.Team)
+                .ThenInclude(t => t!.BusinessUnit)
+            .Include(p => p.Company)
+            .FirstOrDefaultAsync()
             ?? throw new ProjectNotFoundException(id);
     }
 
@@ -330,9 +330,9 @@ public class ProjectsRepository : RepositoryBase<Project>, IProjectsRepository
     public async Task<int> GetProjectIdBySlugAsync(string slug)
     {
         return await _context
-                .Projects.Where(p => p.Slug == slug)
-                .Select(p => (int?)p.Id)
-                .FirstOrDefaultAsync()
+            .Projects.Where(p => p.Slug == slug)
+            .Select(p => (int?)p.Id)
+            .FirstOrDefaultAsync()
             ?? throw new ProjectNotFoundException(slug);
     }
 }
