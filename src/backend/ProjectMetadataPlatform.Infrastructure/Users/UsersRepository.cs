@@ -50,20 +50,27 @@ public class UsersRepository : RepositoryBase<ApplicationUser>, IUsersRepository
             );
         }
 
-        var filterElements = filter.Split(" ");
-        if (filterElements.Length == 3 && filterElements[1] == "eq")
+        if (!string.IsNullOrWhiteSpace(filter))
         {
-            if (filterElements[0] == "externalId")
+            var filterElements = filter.Split(' ', 3);
+            if (filterElements.Length == 3)
             {
-                filteredQuery = filteredQuery.Where(user =>
-                    user.EmployeeId == filterElements[2].Replace("\"", "")
-                );
-            }
-            else if (filterElements[0] == "userName")
-            {
-                filteredQuery = filteredQuery.Where(user =>
-                    user.Email == filterElements[2].Replace("\"", "")
-                );
+                var attribute = filterElements[0];
+                var op = filterElements[1].ToLowerInvariant();
+                var value = filterElements[2].Trim('"');
+
+                filteredQuery = (attribute, op) switch
+                {
+                    ("externalId", "eq") => filteredQuery.Where(u => u.EmployeeId == value),
+                    ("externalId", "co") => filteredQuery.Where(u =>
+                        EF.Functions.ILike(u.EmployeeId, $"%{value}%")
+                    ),
+                    ("userName", "eq") => filteredQuery.Where(u => u.Email == value),
+                    ("userName", "co") => filteredQuery.Where(u =>
+                        EF.Functions.ILike(u.Email!, $"%{value}%")
+                    ),
+                    _ => filteredQuery,
+                };
             }
         }
 

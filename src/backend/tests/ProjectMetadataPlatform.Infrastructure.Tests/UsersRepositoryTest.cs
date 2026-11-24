@@ -214,7 +214,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     }
 
     [Test]
-    public async Task GetUsersAsyncEmployeeNumberFilter_Test()
+    public async Task GetUsersAsyncEmployeeNumberEqFilter_Test()
     {
         var usersResponseContent = new List<ApplicationUser>
         {
@@ -250,7 +250,7 @@ public class UsersRepositoryTest : TestsWithDatabase
     }
 
     [Test]
-    public async Task GetUsersAsyncEmailFilter_Test()
+    public async Task GetUsersAsyncEmailEqFilter_Test()
     {
         var usersResponseContent = new List<ApplicationUser>
         {
@@ -276,6 +276,78 @@ public class UsersRepositoryTest : TestsWithDatabase
         _ = await _context.SaveChangesAsync();
 
         var result = (await _repository.GetUsersAsync("userName eq \"Hanz\"", null)).ToList();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Has.Count.EqualTo(1));
+            Assert.That(result[0].Id, Is.EqualTo("2"));
+            Assert.That(result[0].Email, Is.EqualTo("Hanz"));
+        });
+    }
+
+    [Test]
+    public async Task GetUsersAsyncEmployeeNumberCoFilter_Test()
+    {
+        var usersResponseContent = new List<ApplicationUser>
+        {
+            new()
+            {
+                EmployeeId = "Id",
+                Id = "1",
+                Email = "Hinz",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            new()
+            {
+                EmployeeId = "It2",
+                Id = "2",
+                Email = "Hanz",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+        };
+
+        _context.Users.AddRange(usersResponseContent);
+        _ = await _context.SaveChangesAsync();
+
+        var result = (await _repository.GetUsersAsync("externalId co \"Id\"", null)).ToList();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Has.Count.EqualTo(1));
+            Assert.That(result[0].Id, Is.EqualTo("1"));
+            Assert.That(result[0].Email, Is.EqualTo("Hinz"));
+        });
+    }
+
+    [Test]
+    public async Task GetUsersAsyncEmailCoFilter_Test()
+    {
+        var usersResponseContent = new List<ApplicationUser>
+        {
+            new()
+            {
+                EmployeeId = "Id",
+                Id = "1",
+                Email = "Hinz",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+            new()
+            {
+                EmployeeId = "Id2",
+                Id = "2",
+                Email = "Hanz",
+                IsActive = true,
+                IsScimProvisioned = false,
+            },
+        };
+
+        _context.Users.AddRange(usersResponseContent);
+        _ = await _context.SaveChangesAsync();
+
+        var result = (await _repository.GetUsersAsync("userName co \"anz\"", null)).ToList();
 
         Assert.Multiple(() =>
         {
