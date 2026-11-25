@@ -470,7 +470,9 @@ public class PluginBillingManagement : IntegrationTestsBase
                 ),
                 HttpStatusCode.Created
             )
-        ).GetProperty("id").GetInt32();
+        )
+            .GetProperty("id")
+            .GetInt32();
     }
 
     private static async Task<int> CreateGlobalBilling(HttpClient client)
