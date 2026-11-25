@@ -8,9 +8,7 @@ import {
 import { useFormStore } from '@/components/Form';
 import type { AddPluginFormData } from '../AddPluginFormData';
 import { AddPluginForm } from '..';
-import { globalPluginStoreSymbol } from '@/store/injectionSymbols.ts';
 import { useGlobalPluginStore } from '@/store';
-import { createTestingPinia } from '@pinia/testing';
 
 const plugin = [
   {
@@ -142,19 +140,10 @@ describe('AddPluginForm.vue', () => {
     });
   });
 
-  it('choose plugin automatically', () => {
+  it('choose plugin automatically', async () => {
+    vi.spyOn(globalPluginStore, 'fetchAll').mockResolvedValue(undefined);
     globalPluginStore.setGlobalPlugins(plugin);
     wrapper = mount(AddPluginForm, {
-      plugins: [
-        createTestingPinia({
-          stubActions: false,
-        }),
-      ],
-      global: {
-        provide: {
-          [globalPluginStoreSymbol as symbol]: globalPluginStore,
-        },
-      },
       props: {
         formStore,
         initialValues: {
@@ -165,10 +154,15 @@ describe('AddPluginForm.vue', () => {
         },
       },
     });
+
     const input = wrapper.find('#inputAddPluginPluginUrl');
-    input.setValue('test.com');
+
+    await input.setValue('test.com');
+    await flushPromises();
     expect(formStore.getFieldValue('globalPlugin')).toBe('');
-    input.setValue('testPlugin.com');
+
+    await input.setValue('testPlugin.com');
+    await flushPromises();
     expect(formStore.getFieldValue('globalPlugin')).toBe('testPlugin');
   });
 });
