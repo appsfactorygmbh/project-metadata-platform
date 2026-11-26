@@ -41,6 +41,8 @@ public class PluginRepository : RepositoryBase<Plugin>, IPluginRepository
         return _context
             .ProjectPluginsRelation.Where(rel => rel.ProjectId == id)
             .Include(rel => rel.Project)
+                .ThenInclude(rel => rel!.Team)
+                    .ThenInclude(rel => rel!.BusinessUnit)
             .Include(rel => rel.Plugin)
             .Include(rel => rel.PluginBilling);
     }

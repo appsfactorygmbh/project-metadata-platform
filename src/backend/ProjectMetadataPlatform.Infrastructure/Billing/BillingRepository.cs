@@ -79,6 +79,8 @@ public class BillingRepository : RepositoryBase<GlobalBilling>, IBillingReposito
             .Include(pb => pb.GlobalBilling)
             .Include(pb => pb.ProjectPlugin!)
                 .ThenInclude(pp => pp.Project)
+                    .ThenInclude(p => p!.Team)
+                        .ThenInclude(t => t!.BusinessUnit)
             .Include(pb => pb.ProjectPlugin!)
                 .ThenInclude(pp => pp.Plugin)
             .FirstOrDefaultAsync()
